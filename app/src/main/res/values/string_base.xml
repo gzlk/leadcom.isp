@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">历康信息平台</string>
+
+    <string name="ui_base_text_confirm">确定</string>
+    <string name="ui_base_text_cancel">取消</string>
+    <string name="ui_base_text_back">返回</string>
+    <string name="ui_base_text_i_known">我知道了</string>
+</resources>

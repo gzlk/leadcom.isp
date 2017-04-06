@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ui_icon_left">&#xe612;</string>
+    <string name="ui_icon_query">&#xe63e;</string>
+</resources>

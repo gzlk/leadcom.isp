@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_ui_custom_title_left_container"
+    android:layout_width="wrap_content"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_marginStart="@dimen/ui_static_dp_10"
+    android:gravity="center_vertical"
+    android:minWidth="@dimen/ui_static_dp_35"
+    android:orientation="horizontal">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_ui_custom_title_left_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_icon_left"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ui_base_text_size_big" />
+
+    <TextView
+        android:id="@+id/ui_ui_custom_title_left_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_base_text_back"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>

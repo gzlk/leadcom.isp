@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/color_3cbaff</color>
+    <color name="colorPrimaryDark">@color/color_3cbaff</color>
+    <color name="colorAccent">@color/color_ff4081</color>
+
+    <color name="colorCaution">@color/color_db7763</color>
+    <color name="textColor">@color/color_65656a</color>
+    <color name="textColorPrimary">@color/color_65656a</color>
+    <color name="textColorHintLight">@color/color_dbdcdc</color>
+    <color name="textColorHint">@color/color_b9b9c8</color>
+    <color name="textColorHintDark">@color/color_a1a1a1</color>
+    <color name="windowBackground">@color/color_f5f5f5</color>
+    <color name="toastBackground">@color/color_a1a1a1</color>
+    <color name="buttonNormalColor">@color/color_52a2fb</color>
+    <color name="buttonActivityColor">@color/color_3cbaff</color>
 </resources>

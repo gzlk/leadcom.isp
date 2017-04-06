@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--半透明颜色-->
+    <color name="transparent_00">#00000000</color>
+    <color name="transparent_10">#19000000</color>
+    <color name="transparent_20">#33000000</color>
+    <color name="transparent_30">#4d000000</color>
+    <color name="transparent_40">#66000000</color>
+    <color name="transparent_50">#7f000000</color>
+    <color name="transparent_60">#99000000</color>
+    <color name="transparent_70">#b3000000</color>
+    <color name="transparent_80">#cc000000</color>
+    <color name="transparent_90">#e6000000</color>
+    <color name="transparent_ff">#ff000000</color>
+    <color name="transparent_60_white">#7fffffff</color>
+
+    <color name="color_3cbaff">#3cbaff</color>
+    <color name="color_52a2fb">#52a2fb</color>
+    <color name="color_a1a1a1">#a1a1a1</color>
+    <color name="color_db7763">#db7763</color>
+    <color name="color_b9b9c8">#b9b9c8</color>
+    <color name="color_dbdcdc">#dbdcdc</color>
+    <color name="color_65656a">#65656a</color>
+    <color name="color_f5f5f5">#f5f5f5</color>
+    <color name="color_ff4081">#ff4081</color>
+</resources>

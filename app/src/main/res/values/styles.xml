@@ -1,11 +1,44 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textSize">@dimen/ui_base_text_size</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textColorHint">@color/textColorHint</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:windowAnimationStyle">@style/ActivityStyle</item>
+    </style>
+
+    <style name="AppTheme" parent="BaseTheme" />
+
+    <!--主页面的theme-->
+    <style name="AppTheme.Main" parent="AppTheme" />
+
+    <!--container页面的theme-->
+    <style name="AppTheme.Container" parent="AppTheme" />
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="DialogAnimationFade">
+        <item name="android:windowEnterAnimation">@anim/dialog_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_fade_out</item>
+    </style>
+
+    <style name="DialogAnimationSlid">
+        <item name="android:windowEnterAnimation">@anim/slide_in_from_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_to_bottom</item>
+    </style>
+
+    <style name="ActivityStyle" parent="@android:style/Animation">
+        <item name="android:activityOpenEnterAnimation">@anim/activity_slide_right_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_slide_left_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/activity_slide_left_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/activity_slide_right_out</item>
     </style>
 
 </resources>

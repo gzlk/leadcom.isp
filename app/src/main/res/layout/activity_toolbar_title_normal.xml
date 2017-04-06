@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize">
+
+    <include layout="@layout/activity_toolbar_title_text" />
+
+    <include layout="@layout/activity_toolbar_title_left_container" />
+
+    <include layout="@layout/activity_toolbar_title_right_container" />
+
+</RelativeLayout>
