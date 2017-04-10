@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:fitsSystemWindows="true"
+        android:translationZ="@dimen/ui_static_dp_1"
         app:elevation="0dp">
 
         <include layout="@layout/activity_toolbar" />

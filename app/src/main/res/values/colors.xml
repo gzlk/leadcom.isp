@@ -12,6 +12,6 @@
     <color name="textColorHintDark">@color/color_a1a1a1</color>
     <color name="windowBackground">@color/color_f5f5f5</color>
     <color name="toastBackground">@color/color_a1a1a1</color>
-    <color name="buttonNormalColor">@color/color_52a2fb</color>
-    <color name="buttonActivityColor">@color/color_3cbaff</color>
+    <color name="buttonNormalColor">@color/color_3cbaff</color>
+    <color name="buttonActivityColor">@color/color_52a2fb</color>
 </resources>

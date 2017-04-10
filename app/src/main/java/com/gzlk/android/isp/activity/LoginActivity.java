@@ -1,6 +1,11 @@
 package com.gzlk.android.isp.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+
+import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.main.LoginFragment;
 
 /**
  * <b>功能描述：</b>登录页面<br />
@@ -20,5 +25,7 @@ public class LoginActivity extends TitleActivity {
         super.onCreate(savedInstanceState);
         // loading 页面不需要标题栏
         showToolbar(false);
+        appBarLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_f7f7f7));
+        setMainFrameLayout(new LoginFragment());
     }
 }

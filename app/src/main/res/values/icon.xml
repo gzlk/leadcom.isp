@@ -3,4 +3,9 @@
 
     <string name="ui_icon_left">&#xe612;</string>
     <string name="ui_icon_query">&#xe63e;</string>
+    <string name="ui_icon_phone">&#xe622;</string>
+    <string name="ui_icon_password">&#xe6df;</string>
+    <string name="ui_icon_qq">&#xe606;</string>
+    <string name="ui_icon_weibo">&#xe603;</string>
+    <string name="ui_icon_weixin">&#xe675;</string>
 </resources>

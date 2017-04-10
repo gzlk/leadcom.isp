@@ -16,7 +16,7 @@
 
     <!--登录页面的theme-->
     <style name="AppTheme.Login" parent="AppTheme">
-        <item name="colorPrimaryDark">@color/textColorHintLight</item>
+        <item name="colorPrimaryDark">@color/color_f7f7f7</item>
     </style>
 
     <!--主页面的theme-->

@@ -2,6 +2,7 @@ package com.gzlk.android.isp.fragment.main;
 
 import android.os.Bundle;
 
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseLayoutFragment;
 
 /**
@@ -19,7 +20,7 @@ public class LoginFragment extends BaseLayoutFragment {
 
     @Override
     public int getLayout() {
-        return 0;
+        return R.layout.fragment_login;
     }
 
     @Override

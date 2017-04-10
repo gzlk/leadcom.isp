@@ -70,9 +70,9 @@ public class TitleActivity extends BaseActivity {
         if (isToolbarSupported) {
             setSupportActionBar(mToolbar);
             resetLeftIconMargin();
-            if (!isInputSupported) {
-                setRootViewPadding(mToolbar, true);
-            }
+            //if (!isInputSupported) {
+            //    setRootViewPadding(mToolbar, true);
+            //}
         }
     }
 

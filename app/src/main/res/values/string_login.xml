@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_login_account_hint">请输入手机号码</string>
+    <string name="ui_login_password_hint">请输入密码</string>
+    <string name="ui_login_signup">新用户注册</string>
+    <string name="ui_login_forget_password">忘记密码</string>
+    <string name="ui_login_by_3rd_part_account">使用第三方账号登录</string>
+</resources>
