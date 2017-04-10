@@ -2,12 +2,14 @@ package com.gzlk.android.isp.fragment.base;
 
 import android.app.Activity;
 
-import com.gzlk.android.isp.activity.BaseActivity;
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.TitleActivity;
+import com.gzlk.android.isp.helper.DialogHelper.OnDialogConfirmListener;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>提供Activity页面标题栏相关属性读写的fragment基类<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/04/06 13:14 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -18,6 +20,25 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
  */
 
 public abstract class BaseTitleFragment extends BaseFragment {
+
+    /**
+     * BackKey事件
+     */
+    public boolean onBackKeyEvent() {
+        return false;
+    }
+
+    /**
+     * 询问用户是否放弃编辑
+     */
+    protected void warningUserStillEditing() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_warning_still_in_editing_mode_title, new OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                return true;
+            }
+        }, null);
+    }
 
     /**
      * 设置默认的标题栏事件处理
@@ -35,6 +56,13 @@ public abstract class BaseTitleFragment extends BaseFragment {
                 }
             });
         }
+    }
+
+    /**
+     * 设置顶部的标题栏是否可见
+     */
+    public void enableToolbar(boolean enable) {
+        ((TitleActivity) Activity()).showToolbar(enable);
     }
 
     /**

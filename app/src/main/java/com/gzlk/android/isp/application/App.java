@@ -18,7 +18,7 @@ import java.util.Map;
  * <b>修改备注：</b><br />
  */
 
-public class App extends BaseApplication {
+public class App extends OrmApplication {
 
     private Map<String, Activity> activities = new HashMap<>();
 
@@ -84,6 +84,8 @@ public class App extends BaseApplication {
      * 直接关闭程序但不关闭后台服务
      */
     public void exitDirectly() {
+        // 关闭数据库
+        closeOrm();
         // 清空已登录信息
         //PreferenceHelper.save(R.string.app_login_state, "0");
         // 退出程序关闭数据库连接

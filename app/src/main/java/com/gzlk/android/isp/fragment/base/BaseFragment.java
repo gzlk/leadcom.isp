@@ -1,17 +1,25 @@
 package com.gzlk.android.isp.fragment.base;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.activity.ContainerActivity;
 import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.main.MainFragment;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.hlk.hlklib.etc.Utility;
+
+import java.util.Locale;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>提供一些基本方法的fragment基类<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/04/04 20:08 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -21,22 +29,16 @@ import com.gzlk.android.isp.fragment.main.MainFragment;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseFragment extends PermissionHandleFragment {
-
-    /**
-     * 当前 fragment 的 layout 资源 id
-     */
-    private int mLayout;
+public abstract class BaseFragment extends BasePermissionHandleFragment {
 
     protected View _mView;
 
     protected Gson mGson = new Gson();
 
-    /**
-     * BackKey事件
-     */
-    public boolean onBackKeyEvent() {
-        return false;
+    private Handler mHandler = new Handler();
+
+    public Handler Handler() {
+        return mHandler;
     }
 
     /**
@@ -51,6 +53,74 @@ public abstract class BaseFragment extends PermissionHandleFragment {
             // 普通字符串
             return params.split(",", -1);
         }
+    }
+
+    /**
+     * 格式化字符串
+     */
+    public String format(String format, Object... args) {
+        return String.format(Locale.getDefault(), format, args);
+    }
+
+    /**
+     * 判断字符串是否为空，"null"也当作空
+     */
+    public boolean empty(String string) {
+        return StringHelper.isEmpty(string);
+    }
+
+    /**
+     * 获取颜色
+     */
+    public int getColor(int res) {
+        return ContextCompat.getColor(Activity(), res);
+    }
+
+    /**
+     * 获取dimention尺寸
+     */
+    public int getDimension(int res) {
+        return Activity().getDimension(res);
+    }
+
+    /**
+     * 获取字体大小，单位sp/dp
+     */
+    public int getFontDimension(int res) {
+        return Utility.ConvertPx(getDimension(res));
+    }
+
+    /**
+     * 关闭Activity页面
+     */
+    public void finish() {
+        finish(false);
+    }
+
+    /**
+     * 返回上一页Activity并指定返回成功，以便上一页通过onActivityResult捕获消息
+     */
+    public void resultSucceededActivity() {
+        resultData(null);
+    }
+
+    /**
+     * 返回数据时的字段名称
+     */
+    public static final String RESULT_STRING = "_result_string_";
+
+    /**
+     * 返回上一页Activity并指定要返回的数据内容，以便上一页通过onActivityResult捕获消息
+     */
+    public void resultData(String data) {
+        if (StringHelper.isEmpty(data)) {
+            Activity().setResult(Activity.RESULT_OK);
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra(RESULT_STRING, data);
+            Activity().setResult(Activity.RESULT_OK, intent);
+        }
+        finish();
     }
 
     /**
@@ -85,4 +155,47 @@ public abstract class BaseFragment extends PermissionHandleFragment {
             Activity().startActivity(intent);
         }
     }
+
+    /**
+     * 需求新打开的Activity返回结果
+     */
+    public static final int ACTIVITY_RESULT_REQUEST = 10000;
+    /**
+     * 不需要新打开的Activity返回结果
+     */
+    public static final int ACTIVITY_RESULT_NONE = -1;
+
+    /**
+     * 启动容器Activity(此时打开的新Activity不需要返回确认)
+     *
+     * @param fullClassName  fragment的类全名
+     * @param params         参数列表
+     * @param supportToolbar 是否支持toolbar
+     * @param supportBackKey 是否要处理backKey事件
+     */
+    public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey) {
+        openActivity(fullClassName, params, ACTIVITY_RESULT_NONE, supportToolbar, supportBackKey);
+    }
+
+    /**
+     * 启动容器Activity
+     *
+     * @param fullClassName  fragment的类全名
+     * @param params         参数列表
+     * @param requestCode    请求码
+     * @param supportToolbar 是否支持toolbar
+     * @param supportBackKey 是否要处理backKey事件
+     */
+    public void openActivity(String fullClassName, String params, int requestCode, boolean supportToolbar, boolean supportBackKey) {
+        Intent intent = new Intent(Activity(), ContainerActivity.class);
+        Bundle b = new Bundle();
+        b.putInt(ContainerActivity.REQUEST_CODE, requestCode);
+        b.putString(ContainerActivity.REQUEST_CLASS, fullClassName);
+        b.putString(ContainerActivity.REQUEST_PARAMS, params);
+        b.putBoolean(ContainerActivity.REQUEST_TOOL_BAR, supportToolbar);
+        b.putBoolean(ContainerActivity.REQUEST_BACK_KEY, supportBackKey);
+        intent.putExtra(ContainerActivity.EXTRA_BUNDLE, b);
+        startActivityForResult(intent, requestCode);
+    }
+
 }

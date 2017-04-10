@@ -43,10 +43,14 @@ public class SimpleDialogHelper {
         if (0 == text) {
             throw new IllegalArgumentException("You must set the dialog display text.");
         }
+        show(text, confirm, cancel, null, null);
+    }
+
+    public void show(int text, int confirm, int cancel, DialogHelper.OnDialogConfirmListener confirmListener, DialogHelper.OnDialogCancelListener cancelListener) {
         String content = activity.get().getString(text);
         String yes = 0 == confirm ? "" : activity.get().getString(confirm);
         String no = 0 == cancel ? "" : activity.get().getString(cancel);
-        show(content, yes, no);
+        show(content, yes, no, confirmListener, cancelListener);
     }
 
     public void show(String text) {

@@ -5,9 +5,10 @@
         <![CDATA[您需要允许app替您<font color="#0094b0">拨打电话</font>才能继续。]]>
     </string>
     <string name="ui_denied_permission_phone_call">
-        <![CDATA[很抱歉，app无法在权限被禁止的情况下<font color="#0094b0">拨打电话</font>。]]>
+        <![CDATA[很抱歉，无法在app里直接<font color="#0094b0">拨打电话</font>。]]>
     </string>
     <string name="ui_warning_none_fragment_will_display">
         <![CDATA[没有可以显示的内容：<font color="#db7763">fragment is not exists.</font>]]>
     </string>
+    <string name="ui_warning_still_in_editing_mode_title">您正在编辑的内容还未保存，确实要放弃吗？</string>
 </resources>

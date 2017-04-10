@@ -62,7 +62,7 @@ public class TitleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         // 无输入处理事件时，可以显示透明的状态栏，无toolbar的需要在fragment里自己设定padding
         if (isToolbarSupported && !isInputSupported) {
-            transparentStatusBar();
+            //transparentStatusBar();
         }
         // 是否有默认的toolbar布局，否则需要自己加载toolbar布局
         setContentView(R.layout.activity_container);
@@ -123,7 +123,6 @@ public class TitleActivity extends BaseActivity {
      * @param shown 显示或隐藏
      */
     public void showLeftIcon(boolean shown) {
-
         mLeftContainer.setVisibility(shown ? View.VISIBLE : View.INVISIBLE);
     }
 

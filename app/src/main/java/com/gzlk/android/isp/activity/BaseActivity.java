@@ -107,4 +107,12 @@ public class BaseActivity extends AppCompatActivity {
     public App app() {
         return (App) getApplicationContext();
     }
+
+    /**
+     * 获取dimension尺寸
+     */
+    public int getDimension(int res) {
+        return 0 == res ? 0 : app().getResources().getDimensionPixelOffset(res);
+    }
+
 }

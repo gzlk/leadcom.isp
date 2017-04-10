@@ -7,11 +7,11 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -27,7 +27,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
  * <b>修改备注：</b><br />
  */
 
-public abstract class PermissionHandleFragment extends Fragment {
+public abstract class BasePermissionHandleFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
@@ -43,6 +43,10 @@ public abstract class PermissionHandleFragment extends Fragment {
             //mActivity = (BaseActivity) LxbgApp.getInstance().getActivity();
         }
         return mActivity;
+    }
+
+    public void log(String string) {
+        LogHelper.log(this.getClass().getSimpleName(), string);
     }
 
     // Android 6.0 + 的 permission grant 操作的需求值
@@ -95,23 +99,24 @@ public abstract class PermissionHandleFragment extends Fragment {
     public void tryGrantPermission(String permission, int requestCode, String rationale, String denied) {
         warningPermissionDenied = denied;
         currentRequestCode = requestCode;
-        // Android 6.0+才需要权限申请判断
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(mActivity, permission) != PackageManager.PERMISSION_GRANTED) {
+        if (!hasPermission(permission)) {
+            // Android 6.0+才需要权限申请判断
+            if (Build.VERSION.SDK_INT >= 23) {
                 // 没有权限，是否需要向用户显示申请权限的理由
                 if (shouldShowRequestPermissionRationale(permission)) {
                     warningPermissionRationale(rationale, permission, requestCode);
                 } else {
-                    // 用户禁止了弹出权限提示
+                    // 用户禁止了弹出权限提示，尝试直接申请权限
                     //warningPermissionDenied();
                     requestPermission(permission, requestCode);
                 }
             } else {
-                // 权限已经申请过了
-                permissionGranted(new String[]{permission}, requestCode);
+                // 没有权限且SDK小于23时，只能汇报权限失败
+                warningPermissionDenied();
             }
         } else {
-            permissionGranted(new String[]{permission}, requestCode);
+            // 无响应权限
+            warningPermissionDenied();
         }
     }
 
@@ -119,14 +124,14 @@ public abstract class PermissionHandleFragment extends Fragment {
      * 检测当前app是否有某个相关运行时权限
      */
     public boolean hasPermission(String permission) {
-        // Android 6.0+ 才需要权限申请判断
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(mActivity, permission) != PackageManager.PERMISSION_GRANTED) {
-                // 没有权限，是否需要向用户显示申请权限的理由
-                return false;
-            }
-        }
-        return true;
+        return hasPermission(mActivity, permission);
+    }
+
+    /**
+     * 检测context是否有某个运行时权限
+     */
+    public static boolean hasPermission(Context context, String permission) {
+        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     private String warningPermissionDenied;

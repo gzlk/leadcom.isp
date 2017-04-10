@@ -14,6 +14,11 @@
 
     <style name="AppTheme" parent="BaseTheme" />
 
+    <!--登录页面的theme-->
+    <style name="AppTheme.Login" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/textColorHintLight</item>
+    </style>
+
     <!--主页面的theme-->
     <style name="AppTheme.Main" parent="AppTheme" />
 

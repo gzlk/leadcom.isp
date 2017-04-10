@@ -6,6 +6,8 @@ import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.hlk.hlklib.etc.Cryptography;
+
 import java.io.File;
 import java.util.UUID;
 
@@ -116,7 +118,7 @@ public class BaseApplication extends Application {
      * 创建指定的文件目录
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static void createDirs(String dirs) {
+    private synchronized void createDirs(String dirs) {
         File file = new File(dirs);
         // 查看文件目录是否存在，不存在则创建
         if (!file.exists())
@@ -151,8 +153,8 @@ public class BaseApplication extends Application {
      * @param dir 文件本地缓存的目录
      */
     public String getLocalFilePath(String url, String dir) {
-        //String suffix = url.substring(url.lastIndexOf('.'));
-        return null;//getCachePath(dir) + com.hlk.hlklib.etc.Cryptography.md5(url) + suffix;
+        String suffix = url.substring(url.lastIndexOf('.'));
+        return getCachePath(dir) + Cryptography.md5(url) + suffix;
     }
 
 }
