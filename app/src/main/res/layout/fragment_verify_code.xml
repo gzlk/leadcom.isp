@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/ui_static_dp_10">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_background_login_item"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/ui_static_dp_40"
+        android:padding="@dimen/ui_static_dp_8">
+
+        <com.gzlk.android.isp.lib.view.ClearEditText
+            android:id="@+id/ui_verify_code_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            app:cet_edit_active_border="@color/textColorHintLight"
+            app:cet_edit_corner_size="@dimen/ui_static_dp_5"
+            app:cet_edit_hint="@string/ui_text_verify_code_hint"
+            app:cet_edit_icon_clear="@string/ui_icon_clear"
+            app:cet_edit_input_type="text"
+            app:cet_edit_normal_border="@android:color/white"
+            app:cet_edit_padding="@dimen/ui_static_dp_8"
+            app:cet_edit_value_extract_regex="@string/regex_verify_code_filter"
+            app:cet_edit_value_max_length="@integer/integer_verify_code_length"
+            app:cet_edit_value_verify_regex="@string/regex_verify_code_verify" />
+
+        <View
+            android:layout_width="@dimen/ui_static_dp_half"
+            android:layout_height="@dimen/ui_static_dp_30"
+            android:layout_marginEnd="@dimen/ui_static_dp_8"
+            android:layout_marginStart="@dimen/ui_static_dp_8"
+            android:background="@color/textColorHintLight" />
+
+        <TextView
+            android:id="@+id/ui_verify_code_to_resend"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:paddingBottom="@dimen/ui_static_dp_8"
+            android:paddingTop="@dimen/ui_static_dp_8"
+            android:text="@string/ui_text_verify_code_time_count_down" />
+    </LinearLayout>
+
+    <com.hlk.hlklib.lib.view.CorneredButton
+        android:id="@+id/ui_verify_code_to_next_step"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_static_dp_12"
+        android:layout_marginStart="@dimen/ui_static_dp_12"
+        android:layout_marginTop="@dimen/ui_static_dp_10"
+        android:clickable="true"
+        android:gravity="center"
+        android:minHeight="@dimen/ui_static_dp_40"
+        android:text="@string/ui_base_text_next_step"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ui_base_text_size_big"
+        app:active_color="@color/buttonActivityColor"
+        app:corner_size="@dimen/ui_static_dp_5"
+        app:normal_color="@color/buttonNormalColor" />
+
+</LinearLayout>

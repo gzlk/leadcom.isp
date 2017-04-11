@@ -46,6 +46,7 @@ public abstract class BaseTitleFragment extends BaseFragment {
     public void setDefaultTitleClickEvent() {
         Activity().setResult(Activity.RESULT_CANCELED);
         if (Activity() != null) {
+            setLeftText(R.string.ui_base_text_back);
             setLeftTitleClickListener(new OnTitleButtonClickListener() {
 
                 @Override

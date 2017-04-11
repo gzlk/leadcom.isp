@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.gzlk.android.isp.lib.view.CorneredEditText
+        android:id="@+id/hlklib_clear_edit_text_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/hlklib_clear_edit_text_text"
+        android:layout_alignTop="@+id/hlklib_clear_edit_text_text"
+        android:gravity="end|center_vertical">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/hlklib_clear_edit_text_eye"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_10"
+            android:visibility="gone" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/hlklib_clear_edit_text_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_10"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</RelativeLayout>

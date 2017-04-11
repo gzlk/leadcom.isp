@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gzlk.android.isp.R;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 
 import java.lang.reflect.Field;
 
@@ -66,7 +67,7 @@ public abstract class BaseLayoutFragment extends BaseTitleFragment {
      * 由于此方法是在onCreateView的return之前调用的，所以使用注解时需要传入_rootView进行注解，
      * 否则所有的注解属性都会是null(因为此时rootView还未加到fragment里去)
      */
-    protected abstract void findViews();
+    //protected abstract void findViews();
 
     /**
      * Fragment onResume过程中需要执行的方法
@@ -102,14 +103,14 @@ public abstract class BaseLayoutFragment extends BaseTitleFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (null == _mView) {
-            _mView = inflater.inflate(mLayout, container, false);
+        if (null == mRootView) {
+            mRootView = inflater.inflate(mLayout, container, false);
         }
-        findViews();
+        ViewUtility.bind(this, mRootView);
         if (DEBUG) {
-            log("onCreateView, View: " + _mView);
+            log("onCreateView, View: " + mRootView);
         }
-        return _mView;
+        return mRootView;
     }
 
     @Override
@@ -171,7 +172,7 @@ public abstract class BaseLayoutFragment extends BaseTitleFragment {
         }
         destroyView();
         super.onDestroyView();
-        clearDirectParent(_mView);
+        clearDirectParent(mRootView);
     }
 
     @Override

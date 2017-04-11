@@ -10,6 +10,7 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.activity.ContainerActivity;
+import com.gzlk.android.isp.activity.LoginActivity;
 import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.main.MainFragment;
@@ -31,7 +32,10 @@ import java.util.Locale;
 
 public abstract class BaseFragment extends BasePermissionHandleFragment {
 
-    protected View _mView;
+    /**
+     * fragment的根UI
+     */
+    protected View mRootView;
 
     protected Gson mGson = new Gson();
 
@@ -139,10 +143,9 @@ public abstract class BaseFragment extends BasePermissionHandleFragment {
      * @param mainPageDisplayIndex 指定主页面中ViewPager要显示的index。小于0时跟普通Activity的backKey事件一样（并不一定能够返回到主页面）
      */
     public void finish(int mainPageDisplayIndex) {
-        Utils.hidingInputBoard(_mView);
-        if (mainPageDisplayIndex < 0) {
-            Activity().finish();
-        } else {
+        Utils.hidingInputBoard(mRootView);
+        Activity().finish();
+        if (mainPageDisplayIndex >= 0) {
             // 打开主UI
             Intent intent = new Intent(Activity(), MainActivity.class);
 
@@ -152,8 +155,20 @@ public abstract class BaseFragment extends BasePermissionHandleFragment {
             intent.putExtras(bundle);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Activity().startActivity(intent);
+            startActivity(intent);
         }
+    }
+
+    /**
+     * 回到登录页面
+     */
+    public void finishToSignIn() {
+        // 先关闭本页面
+        finish();
+
+        Intent intent = new Intent(Activity(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     /**

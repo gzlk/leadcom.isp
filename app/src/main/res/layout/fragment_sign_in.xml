@@ -55,16 +55,22 @@
                     android:textColor="@color/textColorHint"
                     android:textSize="@dimen/ui_static_sp_24" />
 
-                <com.hlk.hlklib.lib.view.CorneredEditText
+                <com.gzlk.android.isp.lib.view.ClearEditText
+                    android:id="@+id/ui_sign_in_account"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ui_static_dp_5"
                     android:layout_weight="1"
-                    android:hint="@string/ui_login_account_hint"
-                    android:padding="@dimen/ui_static_dp_8"
-                    app:cet_active_border="@color/textColorHintLight"
-                    app:cet_corner_size="@dimen/ui_static_dp_5"
-                    app:cet_normal_border="@android:color/white" />
+                    app:cet_edit_active_border="@color/textColorHintLight"
+                    app:cet_edit_corner_size="@dimen/ui_static_dp_5"
+                    app:cet_edit_hint="@string/ui_text_sign_in_account_hint"
+                    app:cet_edit_icon_clear="@string/ui_icon_clear"
+                    app:cet_edit_input_type="phone"
+                    app:cet_edit_normal_border="@android:color/white"
+                    app:cet_edit_padding="@dimen/ui_static_dp_8"
+                    app:cet_edit_value_extract_regex="@string/regex_phone_number_filter"
+                    app:cet_edit_value_max_length="@integer/integer_phone_number_length" />
+
             </LinearLayout>
 
             <View
@@ -73,6 +79,7 @@
                 android:layout_marginEnd="@dimen/ui_static_dp_12"
                 android:layout_marginStart="@dimen/ui_static_dp_12"
                 android:background="@color/textColorHintLight" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -94,17 +101,23 @@
                     android:textColor="@color/textColorHint"
                     android:textSize="@dimen/ui_static_sp_24" />
 
-                <com.hlk.hlklib.lib.view.CorneredEditText
+                <com.gzlk.android.isp.lib.view.ClearEditText
+                    android:id="@+id/ui_sign_in_password"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ui_static_dp_5"
                     android:layout_weight="1"
-                    android:hint="@string/ui_login_password_hint"
-                    android:inputType="textPassword"
-                    android:padding="@dimen/ui_static_dp_8"
-                    app:cet_active_border="@color/textColorHintLight"
-                    app:cet_corner_size="@dimen/ui_static_dp_5"
-                    app:cet_normal_border="@android:color/white" />
+                    app:cet_edit_active_border="@color/textColorHintLight"
+                    app:cet_edit_corner_size="@dimen/ui_static_dp_5"
+                    app:cet_edit_hint="@string/ui_text_sing_in_password_hint"
+                    app:cet_edit_icon_clear="@string/ui_icon_clear"
+                    app:cet_edit_icon_eye="@string/ui_icon_eye"
+                    app:cet_edit_input_type="password"
+                    app:cet_edit_normal_border="@android:color/white"
+                    app:cet_edit_padding="@dimen/ui_static_dp_8"
+                    app:cet_edit_value_extract_regex="@string/regex_password_filter"
+                    app:cet_edit_value_max_length="@integer/integer_password_max_length"
+                    app:cet_edit_value_verify_regex="@string/regex_password_verify" />
             </LinearLayout>
 
             <View
@@ -116,6 +129,7 @@
         </LinearLayout>
 
         <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_sign_in_to_sign_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/ui_static_dp_12"
@@ -137,20 +151,22 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/ui_sign_in_to_sign_up"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="@dimen/ui_static_dp_10"
-                android:text="@string/ui_login_signup"
+                android:text="@string/ui_text_sign_in_to_sign_up"
                 android:textColor="@color/colorPrimary" />
 
             <TextView
+                android:id="@+id/ui_sign_in_to_retrieve_password"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
                 android:padding="@dimen/ui_static_dp_10"
-                android:text="@string/ui_login_forget_password"
+                android:text="@string/ui_text_sign_in_forget_password"
                 android:textColor="@color/colorPrimary" />
         </LinearLayout>
     </LinearLayout>
@@ -179,7 +195,7 @@
                 android:layout_centerHorizontal="true"
                 android:background="@android:color/white"
                 android:padding="@dimen/ui_static_dp_8"
-                android:text="@string/ui_login_by_3rd_part_account"
+                android:text="@string/ui_text_sign_in_by_3rd_part_account"
                 android:textColor="@color/textColorHintLight" />
         </RelativeLayout>
 

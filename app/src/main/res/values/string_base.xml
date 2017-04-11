@@ -7,5 +7,7 @@
     <string name="ui_base_text_confirm">确定</string>
     <string name="ui_base_text_cancel">取消</string>
     <string name="ui_base_text_back">返回</string>
+    <string name="ui_base_text_next_step">下一步</string>
+    <string name="ui_base_text_finish">完成</string>
     <string name="ui_base_text_i_known">我知道了</string>
 </resources>
