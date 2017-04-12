@@ -8,9 +8,9 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.TimeCounter;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
 
 /**

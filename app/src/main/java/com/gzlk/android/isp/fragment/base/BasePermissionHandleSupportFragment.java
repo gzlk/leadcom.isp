@@ -27,7 +27,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BasePermissionHandleFragment extends Fragment {
+public abstract class BasePermissionHandleSupportFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {

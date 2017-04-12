@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="ui_base_text_size">@dimen/ui_static_sp_14</dimen>
-    <dimen name="ui_base_text_size_big">@dimen/ui_static_sp_16</dimen>
-    <dimen name="ui_base_text_size_small">@dimen/ui_static_sp_12</dimen>
+    <dimen name="ui_base_text_size">@dimen/ui_static_sp_16</dimen>
+    <dimen name="ui_base_text_size_big">@dimen/ui_static_sp_18</dimen>
+    <dimen name="ui_base_text_size_small">@dimen/ui_static_sp_14</dimen>
+    <dimen name="ui_base_text_size_little">@dimen/ui_static_sp_10</dimen>
 </resources>

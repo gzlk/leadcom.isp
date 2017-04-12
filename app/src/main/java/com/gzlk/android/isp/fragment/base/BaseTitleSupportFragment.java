@@ -19,7 +19,7 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseTitleFragment extends BaseFragment {
+public abstract class BaseTitleSupportFragment extends BaseFragment {
 
     /**
      * BackKey事件

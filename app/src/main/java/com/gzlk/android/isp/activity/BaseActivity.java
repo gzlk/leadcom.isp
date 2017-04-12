@@ -10,6 +10,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.helper.LogHelper;
 
 /**
  * <b>功能描述：</b>Activity 基类<br />
@@ -115,4 +116,7 @@ public class BaseActivity extends AppCompatActivity {
         return 0 == res ? 0 : app().getResources().getDimensionPixelOffset(res);
     }
 
+    protected void log(String string) {
+        LogHelper.log(getClass().getSimpleName(), string);
+    }
 }

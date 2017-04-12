@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseLayoutFragment extends BaseTitleFragment {
+public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment {
 
     protected boolean DEBUG = false;
     /**
@@ -41,12 +41,9 @@ public abstract class BaseLayoutFragment extends BaseTitleFragment {
         mLayout = resId;
     }
 
-    private boolean detached = false;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        detached = false;
         if (DEBUG) {
             log("onAttach");
         }
@@ -114,10 +111,26 @@ public abstract class BaseLayoutFragment extends BaseTitleFragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (DEBUG) {
+            log("onViewCreated, view: " + view);
+        }
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (DEBUG) {
             log("onActivityCreated");
+        }
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (DEBUG) {
+            log("onViewStateRestored, bundle: " + savedInstanceState);
         }
     }
 
@@ -141,17 +154,9 @@ public abstract class BaseLayoutFragment extends BaseTitleFragment {
 
     @Override
     public void onPause() {
-        super.onPause();
+        super.onPause();;
         if (DEBUG) {
             log("onPause");
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (DEBUG) {
-            log("onStop");
         }
     }
 
@@ -163,6 +168,22 @@ public abstract class BaseLayoutFragment extends BaseTitleFragment {
         if (null == outState) outState = new Bundle();
         saveParamsToBundle(outState);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (DEBUG) {
+            log("onStop");
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (DEBUG) {
+            log("onStop");
+        }
     }
 
     @Override
@@ -189,7 +210,6 @@ public abstract class BaseLayoutFragment extends BaseTitleFragment {
             log("onDetach");
         }
         super.onDetach();
-        detached = true;
         try {
             Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
             childFragmentManager.setAccessible(true);

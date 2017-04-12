@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/ui_static_dp_3"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/ui_tool_main_bottom_text_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_text_main_bottom_button_text_1"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/ui_base_text_size_small" />
+
+    <TextView
+        android:id="@+id/ui_tool_main_bottom_text_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_text_main_bottom_button_text_2"
+        android:textSize="@dimen/ui_base_text_size_small" />
+
+    <TextView
+        android:id="@+id/ui_tool_main_bottom_text_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_text_main_bottom_button_text_3"
+        android:textSize="@dimen/ui_base_text_size_small" />
+
+    <TextView
+        android:id="@+id/ui_tool_main_bottom_text_4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_text_main_bottom_button_text_4"
+        android:textSize="@dimen/ui_base_text_size_small" />
+</LinearLayout>

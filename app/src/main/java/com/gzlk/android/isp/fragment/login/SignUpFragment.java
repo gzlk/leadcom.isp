@@ -6,9 +6,9 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 
 /**
  * <b>功能描述：</b>注册新账号页面<br />
@@ -46,7 +46,7 @@ public class SignUpFragment extends BaseVerifyFragment {
         setCustomTitle(R.string.ui_text_sign_up_fragment_title);
         setLeftText(R.string.ui_text_reset_password_fragment_title_left_text);
         if (verifyType != VT_SIGN_UP) {
-            ToastHelper.make(Activity()).showMsg("无效的参数");
+            ToastHelper.make(Activity()).showMsg("无效的注册参数");
             finish();
         }
     }

@@ -2,7 +2,7 @@ package com.gzlk.android.isp.fragment.login;
 
 import android.os.Bundle;
 
-import com.gzlk.android.isp.fragment.base.BaseLayoutFragment;
+import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
 
 /**
  * <b>功能描述：</b>验证相关的fragment页面<br />
@@ -15,7 +15,7 @@ import com.gzlk.android.isp.fragment.base.BaseLayoutFragment;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseVerifyFragment extends BaseLayoutFragment {
+public abstract class BaseVerifyFragment extends BaseLayoutSupportFragment {
 
     /**
      * 注册时的验证

@@ -55,7 +55,7 @@
                     android:textColor="@color/textColorHint"
                     android:textSize="@dimen/ui_static_sp_24" />
 
-                <com.gzlk.android.isp.lib.view.ClearEditText
+                <com.hlk.hlklib.lib.view.ClearEditText
                     android:id="@+id/ui_sign_in_account"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                     android:textColor="@color/textColorHint"
                     android:textSize="@dimen/ui_static_sp_24" />
 
-                <com.gzlk.android.isp.lib.view.ClearEditText
+                <com.hlk.hlklib.lib.view.ClearEditText
                     android:id="@+id/ui_sign_in_password"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -157,7 +157,8 @@
                 android:layout_weight="1"
                 android:padding="@dimen/ui_static_dp_10"
                 android:text="@string/ui_text_sign_in_to_sign_up"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/ui_base_text_size_small" />
 
             <TextView
                 android:id="@+id/ui_sign_in_to_retrieve_password"
@@ -167,7 +168,8 @@
                 android:gravity="end"
                 android:padding="@dimen/ui_static_dp_10"
                 android:text="@string/ui_text_sign_in_forget_password"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/ui_base_text_size_small" />
         </LinearLayout>
     </LinearLayout>
 
@@ -196,7 +198,8 @@
                 android:background="@android:color/white"
                 android:padding="@dimen/ui_static_dp_8"
                 android:text="@string/ui_text_sign_in_by_3rd_part_account"
-                android:textColor="@color/textColorHintLight" />
+                android:textColor="@color/textColorHintLight"
+                android:textSize="@dimen/ui_base_text_size_small" />
         </RelativeLayout>
 
         <LinearLayout

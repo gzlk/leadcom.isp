@@ -3,6 +3,9 @@
 
     <string name="app_name">历康信息平台</string>
 
+    <string name="ui_base_text_loading">请稍候&#8230;</string>
+    <string name="ui_base_text_nothing">没有更多内容</string>
+
     <string name="ui_base_text_login">登录</string>
     <string name="ui_base_text_confirm">确定</string>
     <string name="ui_base_text_cancel">取消</string>

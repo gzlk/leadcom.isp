@@ -1,6 +1,9 @@
 package com.gzlk.android.isp.activity;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -126,10 +129,15 @@ public class TitleActivity extends BaseActivity {
         mLeftContainer.setVisibility(shown ? View.VISIBLE : View.INVISIBLE);
     }
 
+    private Fragment mFragment;
+
     /**
      * 设置主 frame
      */
     public void setMainFrameLayout(Fragment fragment) {
+        if (null == mFragment) {
+            mFragment = fragment;
+        }
         if (!isFinishing()) {
             try {
                 int id = R.id.activity_content_container;
@@ -139,6 +147,11 @@ public class TitleActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     /**

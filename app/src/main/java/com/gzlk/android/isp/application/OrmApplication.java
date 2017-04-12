@@ -2,7 +2,7 @@ package com.gzlk.android.isp.application;
 
 import android.Manifest;
 
-import com.gzlk.android.isp.fragment.base.BasePermissionHandleFragment;
+import com.gzlk.android.isp.fragment.base.BasePermissionHandleSupportFragment;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.etc.Cryptography;
@@ -56,7 +56,7 @@ public class OrmApplication extends BaseApplication {
     }
 
     private boolean initialize(String db) {
-        if (BasePermissionHandleFragment.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (BasePermissionHandleSupportFragment.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             try {
                 Orm = LiteOrm.newSingleInstance(getConfig(db));
                 return true;

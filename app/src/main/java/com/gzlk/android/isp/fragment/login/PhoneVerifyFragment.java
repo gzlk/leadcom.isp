@@ -7,9 +7,9 @@ import android.widget.LinearLayout;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 
 /**
  * <b>功能描述：</b>手机号码验证页面<br />

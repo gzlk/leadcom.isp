@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_tool_nothing_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:layout_gravity="center_horizontal"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/ui_tool_nothing_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/ui_base_text_nothing"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/ui_base_text_size_small" />
+
+</LinearLayout>

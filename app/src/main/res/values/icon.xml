@@ -3,6 +3,7 @@
 
     <string name="ui_icon_left">&#xe612;</string>
     <string name="ui_icon_query">&#xe63e;</string>
+    <string name="ui_icon_chat">&#xe6ba;</string>
     <string name="ui_icon_phone">&#xe622;</string>
     <string name="ui_icon_password">&#xe6df;</string>
     <string name="ui_icon_qq">&#xe606;</string>
@@ -11,4 +12,8 @@
     <string name="ui_icon_eye">&#xe609;</string>
     <string name="ui_icon_clear">&#xe634;</string>
     <string name="ui_icon_delete">&#xe602;</string>
+    <string name="ui_icon_main_home">&#xe607;</string>
+    <string name="ui_icon_main_activity">&#xe62e;</string>
+    <string name="ui_icon_main_organize">&#xe684;</string>
+    <string name="ui_icon_main_individual">&#xe899;</string>
 </resources>

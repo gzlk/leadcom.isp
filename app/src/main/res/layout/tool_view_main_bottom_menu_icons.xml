@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_tool_main_bottom_icon_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_icon_main_home"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/ui_text_size_main_bottom_icon" />
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_tool_main_bottom_icon_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_icon_main_activity"
+        android:textColor="@color/textColorHintDark"
+        android:textSize="@dimen/ui_text_size_main_bottom_icon" />
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_tool_main_bottom_icon_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_icon_main_organize"
+        android:textColor="@color/textColorHintDark"
+        android:textSize="@dimen/ui_text_size_main_bottom_icon" />
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_tool_main_bottom_icon_4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_icon_main_individual"
+        android:textColor="@color/textColorHintDark"
+        android:textSize="@dimen/ui_text_size_main_bottom_icon" />
+</LinearLayout>

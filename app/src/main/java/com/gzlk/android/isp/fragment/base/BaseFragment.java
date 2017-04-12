@@ -30,7 +30,7 @@ import java.util.Locale;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseFragment extends BasePermissionHandleFragment {
+public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
     /**
      * fragment的根UI

@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="@string/ui_text_sing_up_input_name_title" />
 
-        <com.gzlk.android.isp.lib.view.ClearEditText
+        <com.hlk.hlklib.lib.view.ClearEditText
             android:id="@+id/ui_sign_up_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:text="@string/ui_text_sing_up_input_password_title" />
 
-        <com.gzlk.android.isp.lib.view.ClearEditText
+        <com.hlk.hlklib.lib.view.ClearEditText
             android:id="@+id/ui_sign_up_password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

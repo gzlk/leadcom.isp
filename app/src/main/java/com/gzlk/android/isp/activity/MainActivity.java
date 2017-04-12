@@ -1,5 +1,9 @@
 package com.gzlk.android.isp.activity;
 
+import android.os.Bundle;
+
+import com.gzlk.android.isp.fragment.main.MainFragment;
+
 /**
  * <b>功能描述：</b><br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -12,4 +16,10 @@ package com.gzlk.android.isp.activity;
  */
 
 public class MainActivity extends TitleActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setMainFrameLayout(new MainFragment());
+    }
 }
