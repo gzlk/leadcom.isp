@@ -22,13 +22,6 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 public abstract class BaseTitleSupportFragment extends BaseFragment {
 
     /**
-     * BackKey事件
-     */
-    public boolean onBackKeyEvent() {
-        return false;
-    }
-
-    /**
      * 询问用户是否放弃编辑
      */
     protected void warningUserStillEditing() {

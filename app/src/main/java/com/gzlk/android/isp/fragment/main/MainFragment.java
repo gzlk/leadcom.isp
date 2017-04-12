@@ -63,7 +63,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
-            mFragments.add(SignUpFragment.newInstance("0"));
+            mFragments.add(new HomeFragment());
             mFragments.add(PhoneVerifyFragment.newInstance("0"));
             mFragments.add(CodeVerifyFragment.newInstance("0"));
             mFragments.add(ResetPasswordFragment.newInstance("1"));

@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    android:paddingTop="@dimen/ui_static_dp_10">
+    android:paddingTop="@dimen/ui_base_dimen_margin_padding">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_background_login_item"
         android:gravity="center_vertical"
-        android:minHeight="@dimen/ui_static_dp_40"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
         android:padding="@dimen/ui_static_dp_8">
 
         <TextView
@@ -24,10 +24,10 @@
             android:id="@+id/ui_verify_phone_phone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/ui_static_dp_10"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
             android:layout_weight="1"
             app:cet_edit_active_border="@color/textColorHintLight"
-            app:cet_edit_corner_size="@dimen/ui_static_dp_5"
+            app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
             app:cet_edit_hint="@string/ui_text_sign_in_account_hint"
             app:cet_edit_icon_clear="@string/ui_icon_clear"
             app:cet_edit_input_type="phone"
@@ -45,15 +45,15 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/ui_static_dp_12"
         android:layout_marginStart="@dimen/ui_static_dp_12"
-        android:layout_marginTop="@dimen/ui_static_dp_10"
+        android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
         android:clickable="true"
         android:gravity="center"
-        android:minHeight="@dimen/ui_static_dp_40"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
         android:text="@string/ui_base_text_next_step"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ui_base_text_size_big"
         app:active_color="@color/buttonActivityColor"
-        app:corner_size="@dimen/ui_static_dp_5"
+        app:corner_size="@dimen/ui_base_dimen_button_corner_size"
         app:normal_color="@color/buttonNormalColor" />
 
     <LinearLayout
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/ui_static_dp_12"
         android:layout_marginStart="@dimen/ui_static_dp_12"
-        android:layout_marginTop="@dimen/ui_static_dp_10"
+        android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 

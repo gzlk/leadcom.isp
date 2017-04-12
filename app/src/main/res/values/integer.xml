@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer name="integer_default_animate_duration">300</integer>
     <integer name="integer_account_max_length">20</integer>
     <integer name="integer_phone_number_length">11</integer>
     <integer name="integer_verify_code_length">8</integer>

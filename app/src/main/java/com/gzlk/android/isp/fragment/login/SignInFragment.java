@@ -82,12 +82,12 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         int id = view.getId();
         if (id == R.id.ui_sign_in_to_sign_in) {
             // 登录
-            if (!StringHelper.isEmpty(accountText.getValue()) && !StringHelper.isEmpty(passwordText.getValue())) {
+            //if (!StringHelper.isEmpty(accountText.getValue()) && !StringHelper.isEmpty(passwordText.getValue())) {
                 // 打开主页面
                 finish(true);
-            } else {
-                ToastHelper.make(Activity()).showMsg("您的账号或密码输入不正确");
-            }
+            //} else {
+            //    ToastHelper.make(Activity()).showMsg("您的账号或密码输入不正确");
+            //}
         } else {
             String params = String.valueOf(id == R.id.ui_sign_in_to_sign_up ? PhoneVerifyFragment.VT_SIGN_UP : PhoneVerifyFragment.VT_PASSWORD);
             openActivity(PhoneVerifyFragment.class.getName(), params, true, true);

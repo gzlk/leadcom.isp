@@ -4,4 +4,11 @@
     <dimen name="ui_base_text_size_big">@dimen/ui_static_sp_18</dimen>
     <dimen name="ui_base_text_size_small">@dimen/ui_static_sp_14</dimen>
     <dimen name="ui_base_text_size_little">@dimen/ui_static_sp_10</dimen>
+
+    <!--button高度-->
+    <dimen name="ui_base_dimen_button_height">@dimen/ui_static_dp_40</dimen>
+    <!--button边角大小-->
+    <dimen name="ui_base_dimen_button_corner_size">@dimen/ui_static_dp_5</dimen>
+    <!--UI默认的margin、padding-->
+    <dimen name="ui_base_dimen_margin_padding">@dimen/ui_static_dp_10</dimen>
 </resources>

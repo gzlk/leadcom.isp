@@ -5,14 +5,13 @@
     android:background="@drawable/ui_custom_toast_background"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="@dimen/ui_static_dp_5">
+    android:padding="@dimen/ui_base_dimen_margin_padding">
 
     <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_base_custom_toast_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/ui_static_dp_5"
-        android:layout_marginRight="@dimen/ui_static_dp_5"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ui_base_text_size"

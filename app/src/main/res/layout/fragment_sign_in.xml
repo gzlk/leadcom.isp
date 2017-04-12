@@ -44,7 +44,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ui_static_dp_10"
+                android:layout_margin="@dimen/ui_base_dimen_margin_padding"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -59,17 +59,18 @@
                     android:id="@+id/ui_sign_in_account"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/ui_static_dp_5"
+                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
                     android:layout_weight="1"
                     app:cet_edit_active_border="@color/textColorHintLight"
-                    app:cet_edit_corner_size="@dimen/ui_static_dp_5"
+                    app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
                     app:cet_edit_hint="@string/ui_text_sign_in_account_hint"
                     app:cet_edit_icon_clear="@string/ui_icon_clear"
                     app:cet_edit_input_type="phone"
                     app:cet_edit_normal_border="@android:color/white"
                     app:cet_edit_padding="@dimen/ui_static_dp_8"
                     app:cet_edit_value_extract_regex="@string/regex_phone_number_filter"
-                    app:cet_edit_value_max_length="@integer/integer_phone_number_length" />
+                    app:cet_edit_value_max_length="@integer/integer_phone_number_length"
+                    app:cet_edit_value_verify_regex="@string/regex_phone_number_verify" />
 
             </LinearLayout>
 
@@ -90,7 +91,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ui_static_dp_10"
+                android:layout_margin="@dimen/ui_base_dimen_margin_padding"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -105,10 +106,10 @@
                     android:id="@+id/ui_sign_in_password"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/ui_static_dp_5"
+                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
                     android:layout_weight="1"
                     app:cet_edit_active_border="@color/textColorHintLight"
-                    app:cet_edit_corner_size="@dimen/ui_static_dp_5"
+                    app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
                     app:cet_edit_hint="@string/ui_text_sing_in_password_hint"
                     app:cet_edit_icon_clear="@string/ui_icon_clear"
                     app:cet_edit_icon_eye="@string/ui_icon_eye"
@@ -134,15 +135,15 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/ui_static_dp_12"
             android:layout_marginStart="@dimen/ui_static_dp_12"
-            android:layout_marginTop="@dimen/ui_static_dp_10"
+            android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
             android:clickable="true"
             android:gravity="center"
-            android:minHeight="@dimen/ui_static_dp_40"
+            android:minHeight="@dimen/ui_base_dimen_button_height"
             android:text="@string/ui_base_text_login"
             android:textColor="@android:color/white"
             android:textSize="@dimen/ui_base_text_size_big"
             app:active_color="@color/buttonActivityColor"
-            app:corner_size="@dimen/ui_static_dp_5"
+            app:corner_size="@dimen/ui_base_dimen_button_corner_size"
             app:normal_color="@color/buttonNormalColor" />
 
         <LinearLayout
@@ -155,7 +156,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="@dimen/ui_static_dp_10"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
                 android:text="@string/ui_text_sign_in_to_sign_up"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/ui_base_text_size_small" />
@@ -166,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:padding="@dimen/ui_static_dp_10"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
                 android:text="@string/ui_text_sign_in_forget_password"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/ui_base_text_size_small" />
@@ -211,7 +212,7 @@
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ui_static_dp_10"
+                android:layout_margin="@dimen/ui_base_dimen_margin_padding"
                 android:text="@string/ui_icon_qq"
                 android:textColor="@color/color_4dafea"
                 android:textSize="@dimen/ui_static_sp_50" />
@@ -219,7 +220,7 @@
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ui_static_dp_10"
+                android:layout_margin="@dimen/ui_base_dimen_margin_padding"
                 android:text="@string/ui_icon_weibo"
                 android:textColor="@color/color_df4d69"
                 android:textSize="@dimen/ui_static_sp_50" />
@@ -227,7 +228,7 @@
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ui_static_dp_10"
+                android:layout_margin="@dimen/ui_base_dimen_margin_padding"
                 android:text="@string/ui_icon_weixin"
                 android:textColor="@color/color_3eb135"
                 android:textSize="@dimen/ui_static_sp_50" />

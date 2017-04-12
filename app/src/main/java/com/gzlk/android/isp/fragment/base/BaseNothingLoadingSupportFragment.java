@@ -25,7 +25,9 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
     @ViewId(R.id.ui_tool_loading_text)
     public TextView loadingTextView;
 
+    @ViewId(R.id.ui_tool_nothing_container)
     public LinearLayout nothingLayout;
+    @ViewId(R.id.ui_tool_nothing_text)
     public TextView nothingTextView;
 
     /**

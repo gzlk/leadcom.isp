@@ -9,7 +9,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     app:cv_border_size="0dp"
-    app:cv_corner_size="@dimen/ui_static_dp_10">
+    app:cv_corner_size="@dimen/ui_base_dimen_margin_padding">
 
     <TextView
         android:id="@+id/ui_custom_dialog_text"

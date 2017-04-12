@@ -116,6 +116,13 @@ public class BaseActivity extends AppCompatActivity {
         return 0 == res ? 0 : app().getResources().getDimensionPixelOffset(res);
     }
 
+    /**
+     * 获取integer值
+     */
+    public int getInteger(int res) {
+        return 0 == res ? 0 : app().getResources().getInteger(res);
+    }
+
     protected void log(String string) {
         LogHelper.log(getClass().getSimpleName(), string);
     }

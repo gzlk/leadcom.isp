@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseTitleSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 
 import java.lang.reflect.Method;
@@ -28,7 +28,7 @@ public class ContainerActivity extends TitleActivity {
      */
     private static final String STATIC_METHOD_NAME = "newInstance";
 
-    private BaseTitleSupportFragment mFragment = null;
+    private BaseFragment mFragment = null;
     private String mClass = "", mParams = "";
     /**
      * 是否需要处理BackKey事件
@@ -109,7 +109,7 @@ public class ContainerActivity extends TitleActivity {
     }
 
     @SuppressWarnings("unchecked")
-    private BaseTitleSupportFragment getFragment() {
+    private BaseFragment getFragment() {
         try {
             Class clazz = Class.forName(mClass);
             Method method = null;
@@ -118,9 +118,9 @@ public class ContainerActivity extends TitleActivity {
             } catch (Exception ignore) {
             }
             if (null != method) {
-                return (BaseTitleSupportFragment) method.invoke(null, mParams);
+                return (BaseFragment) method.invoke(null, mParams);
             } else {
-                return (BaseTitleSupportFragment) clazz.newInstance();
+                return (BaseFragment) clazz.newInstance();
             }
         } catch (Exception e) {
             e.printStackTrace();

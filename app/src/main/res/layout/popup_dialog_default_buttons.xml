@@ -7,8 +7,8 @@
     android:orientation="vertical"
     app:cv_background="@color/textColorHint"
     app:cv_border_size="@dimen/ui_static_dp_zero"
-    app:cv_left_bottom_corner="@dimen/ui_static_dp_10"
-    app:cv_right_bottom_corner="@dimen/ui_static_dp_10">
+    app:cv_left_bottom_corner="@dimen/ui_base_dimen_margin_padding"
+    app:cv_right_bottom_corner="@dimen/ui_base_dimen_margin_padding">
 
     <View
         android:layout_width="wrap_content"
@@ -24,24 +24,24 @@
         <com.hlk.hlklib.lib.view.CorneredButton
             android:id="@+id/ui_dialog_button_cancel"
             android:layout_width="0dp"
-            android:layout_height="@dimen/ui_static_dp_40"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
             android:layout_marginEnd="@dimen/ui_static_dp_half"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/ui_base_text_cancel"
             app:active_color="@color/textColorHintLight"
-            app:left_bottom_corner_size="@dimen/ui_static_dp_10"
+            app:left_bottom_corner_size="@dimen/ui_base_dimen_margin_padding"
             app:normal_color="@android:color/white" />
 
         <com.hlk.hlklib.lib.view.CorneredButton
             android:id="@+id/ui_dialog_button_confirm"
             android:layout_width="0dp"
-            android:layout_height="@dimen/ui_static_dp_40"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/ui_base_text_confirm"
             app:active_color="@color/textColorHintLight"
             app:normal_color="@android:color/white"
-            app:right_bottom_corner_size="@dimen/ui_static_dp_10" />
+            app:right_bottom_corner_size="@dimen/ui_base_dimen_margin_padding" />
     </LinearLayout>
 </com.hlk.hlklib.lib.view.CorneredView>

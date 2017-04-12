@@ -88,10 +88,24 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     /**
+     * 获取integer值
+     */
+    public int getInteger(int res) {
+        return Activity().getInteger(res);
+    }
+
+    /**
      * 获取字体大小，单位sp/dp
      */
     public int getFontDimension(int res) {
         return Utility.ConvertPx(getDimension(res));
+    }
+
+    /**
+     * BackKey事件
+     */
+    public boolean onBackKeyEvent() {
+        return false;
     }
 
     /**
