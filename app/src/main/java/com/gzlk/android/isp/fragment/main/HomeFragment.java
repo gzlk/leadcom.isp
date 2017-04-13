@@ -50,6 +50,16 @@ public class HomeFragment extends BaseMainFragment {
     }
 
     @Override
+    protected void onSwipeRefreshing() {
+
+    }
+
+    @Override
+    protected void onLoadingMore() {
+
+    }
+
+    @Override
     public void doingInResume() {
         tryPaddingContent();
         displayNothing(true);
@@ -143,7 +153,7 @@ public class HomeFragment extends BaseMainFragment {
         }
         if (fullChannelView.getVisibility() == View.GONE) {
             // 初始化全部选项的位置
-            fullChannelView.animate().translationY(-fullChannelView.getHeight()).setDuration(0).start();
+            fullChannelView.animate().translationY(-fullChannelView.getHeight()).setDuration(10).start();
         }
     }
 

@@ -1,9 +1,10 @@
 package com.gzlk.android.isp.fragment.main;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.gzlk.android.isp.activity.BaseActivity;
-import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 
 /**
  * <b>功能描述：</b>提供主页几个主要fragment相关方法的fragment基类<br />
@@ -16,13 +17,26 @@ import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseMainFragment extends BaseDelayRefreshSupportFragment {
+public abstract class BaseMainFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_INITIALIZED = "bmf_initialized";
     /**
      * fragment是否已经初始化了，为false时，需要设置顶部的padding
      */
     private boolean isInitialized = false;
+
+    private boolean isCurrentDisplayed = false;
+
+    /**
+     * 设置是否当前所显示的内容
+     */
+    public void setCurrentDisplayed(boolean displayed) {
+        isCurrentDisplayed = displayed;
+    }
+
+    protected boolean isCurrentDisplayed() {
+        return isCurrentDisplayed;
+    }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -43,17 +57,21 @@ public abstract class BaseMainFragment extends BaseDelayRefreshSupportFragment {
      * 设置内容布局的顶部padding以便正常显示
      */
     protected void tryPaddingContent() {
+        tryPaddingContent(mRootView);
+    }
+
+    protected void tryPaddingContent(View view) {
         if (!isInitialized) {
             isInitialized = true;
             int statusBarHeight = BaseActivity.getStatusHeight(Activity());
             int actionBarHeight = Activity().getActionBarSize();
             int padding = actionBarHeight + statusBarHeight;
-            int left = mRootView.getPaddingLeft();
-            int top = mRootView.getPaddingTop();
-            int right = mRootView.getPaddingRight();
-            int bottom = mRootView.getPaddingBottom();
+            int left = view.getPaddingLeft();
+            int top = view.getPaddingTop();
+            int right = view.getPaddingRight();
+            int bottom = view.getPaddingBottom();
             if (top < padding) {
-                mRootView.setPadding(left, top + padding, right, bottom);
+                view.setPadding(left, top + padding, right, bottom);
             }
         }
     }

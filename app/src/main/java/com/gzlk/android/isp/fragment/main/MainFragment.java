@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.login.SignInFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -36,6 +37,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private RelativeLayout toolBar;
     @ViewId(R.id.ui_main_tool_bar_background)
     private View toolBarBackground;
+    @ViewId(R.id.ui_ui_custom_title_text)
+    private TextView toolBarTitleText;
     @ViewId(R.id.ui_ui_custom_title_right_icon_1)
     private CustomTextView rightIcon;
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
@@ -67,6 +70,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         setLeftIcon(R.string.ui_icon_query);
         setLeftText(0);
         setRightIcon(R.string.ui_icon_chat);
+        ((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground);
     }
 
     @Override
@@ -101,6 +105,11 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         iconView4.setTextColor(position == 3 ? color2 : color1);
         textView4.setTextColor(position == 3 ? color2 : color1);
 
+        for (int i = 0, len = mFragments.size(); i < len; i++) {
+            if (mFragments.get(i) instanceof BaseMainFragment) {
+                ((BaseMainFragment) mFragments.get(i)).setCurrentDisplayed(position == i);
+            }
+        }
         handleTitleBar(position);
     }
 
@@ -146,6 +155,10 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
     private void transparentTitleBar(boolean transparent) {
         toolBarBackground.animate()
+                .alpha(transparent ? 0 : 1)
+                .setDuration(getInteger(R.integer.integer_default_animate_duration))
+                .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+        toolBarTitleText.animate()
                 .alpha(transparent ? 0 : 1)
                 .setDuration(getInteger(R.integer.integer_default_animate_duration))
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();

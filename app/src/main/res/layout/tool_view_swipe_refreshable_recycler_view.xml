@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zhy.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/ui_tool_refreshable_swipe_refresh_layout"
+        android:id="@+id/ui_tool_swipe_refreshable_swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/ui_tool_refreshable_recycler_view"
+            android:id="@+id/ui_tool_swipe_refreshable_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
@@ -17,4 +17,4 @@
     <include layout="@layout/tool_view_loading" />
 
     <include layout="@layout/tool_view_nothing" />
-</com.zhy.autolayout.AutoRelativeLayout>
+</RelativeLayout>

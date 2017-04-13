@@ -151,13 +151,13 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
         @Override
         public void add(Object object) {
             items.add((Item) object);
-            notifyItemChanged(items.size() - 1);
+            notifyItemInserted(items.size() - 1);
         }
 
         @Override
         public void add(Object object, int position) {
             items.add(position, (Item) object);
-            notifyItemInserted(position);
+            notifyItemRangeInserted(position, 1);
         }
 
         @Override

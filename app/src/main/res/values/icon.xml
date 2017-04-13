@@ -13,6 +13,8 @@
     <string name="ui_icon_clear">&#xe634;</string>
     <string name="ui_icon_delete">&#xe602;</string>
     <string name="ui_icon_setting">&#xe601;</string>
+    <string name="ui_icon_qr_code">&#xe63b;</string>
+    <string name="ui_icon_right">&#xe6f2;</string>
     <string name="ui_icon_main_home">&#xe607;</string>
     <string name="ui_icon_main_activity">&#xe62e;</string>
     <string name="ui_icon_main_organize">&#xe684;</string>
