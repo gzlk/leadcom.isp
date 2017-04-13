@@ -9,7 +9,7 @@ import android.os.HandlerThread;
  */
 public class PressAgainToExit {
 
-    private static final int PRESS_INTERVAL = 1500;
+    private static final int PRESS_INTERVAL = 1200;
     private boolean isExit = false;
 
     private Runnable task = new Runnable() {

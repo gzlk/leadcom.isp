@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>主页窗体<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/04/06 16:44 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -19,7 +19,9 @@ public class MainActivity extends TitleActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportPressAgainToExit = true;
         super.onCreate(savedInstanceState);
+        transparentStatusBar();
         setMainFrameLayout(new MainFragment());
     }
 }

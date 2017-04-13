@@ -49,6 +49,11 @@ public class PhoneVerifyFragment extends BaseVerifyFragment {
     }
 
     @Override
+    protected boolean supportDefaultTitle() {
+        return true;
+    }
+
+    @Override
     protected void destroyView() {
 
     }

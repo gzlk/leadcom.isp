@@ -48,7 +48,9 @@ public class ContainerActivity extends TitleActivity {
         }
     }
 
-    private void initializeParams(Bundle bundle) {
+    @Override
+    protected void initializeParams(Bundle bundle) {
+        super.initializeParams(bundle);
         if (null != bundle) {
             initParams(bundle);
         } else {
@@ -63,9 +65,12 @@ public class ContainerActivity extends TitleActivity {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        initializeParams(savedInstanceState);
-        super.onCreate(savedInstanceState);
+    protected boolean onBackKeyEvent(int keyCode, KeyEvent event) {
+        if (isBackKeySupported) {
+            boolean confirm = null != mFragment && mFragment.onBackKeyEvent();
+            return confirm || super.onKeyDown(keyCode, event);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -79,17 +84,6 @@ public class ContainerActivity extends TitleActivity {
         outState.putBoolean(REQUEST_BACK_KEY, isBackKeySupported);
         outState.putBoolean(REQUEST_INPUT, isInputSupported);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (isBackKeySupported) {
-                boolean confirm = null != mFragment && mFragment.onBackKeyEvent();
-                return confirm || super.onKeyDown(keyCode, event);
-            }
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override

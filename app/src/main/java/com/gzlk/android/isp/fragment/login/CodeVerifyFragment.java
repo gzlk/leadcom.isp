@@ -63,6 +63,11 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
         startTimeCounter();
     }
 
+    @Override
+    protected boolean supportDefaultTitle() {
+        return true;
+    }
+
     private void startTimeCounter() {
         if (null == timeCounter) {
             timeCounter = new TimeCounter(60000, 1000);

@@ -2,7 +2,10 @@ package com.gzlk.android.isp.application;
 
 import android.app.Activity;
 
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.PressAgainToExit;
+import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,10 +75,10 @@ public class App extends OrmApplication {
         if (mPressAgainToExit.isExit()) {
             exitDirectly();
         } else {
-            //LogHelper.log(TAG, "press again to exit.");
+            LogHelper.log(TAG, "press again to exit.");
             //String app_name = StringHelper.getString(R.string.app_name_lxbg_default);
-            //String text = StringHelper.getString(R.string.press_again_exit, app_name);
-            //ToastHelper.showMsg(text);
+            String text = getString(R.string.ui_base_text_press_again_to_exit);
+            ToastHelper.make(this).showMsg(text);
             mPressAgainToExit.doExitInOneSecond();
         }
     }

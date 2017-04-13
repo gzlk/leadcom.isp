@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -54,6 +55,14 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        app().addActivity(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        app().removeActivity(Integer.toHexString(this.hashCode()));
+        log(String.format("Activity '%s' is now destroy", getClass().getSimpleName()));
+        super.onDestroy();
     }
 
     /**
@@ -100,6 +109,17 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
         return statusHeight;
+    }
+
+    /**
+     * 获取ActionBar的高度
+     */
+    public int getActionBarSize() {
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            return TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        }
+        return 0;
     }
 
     /**

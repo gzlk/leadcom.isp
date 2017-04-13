@@ -2,14 +2,12 @@ package com.gzlk.android.isp.fragment.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
@@ -26,7 +24,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class HomeFragment extends BaseDelayRefreshSupportFragment {
+public class HomeFragment extends BaseMainFragment {
 
     @ViewId(R.id.ui_tool_home_top_channel_container)
     private RelativeLayout topChannelView;
@@ -48,26 +46,14 @@ public class HomeFragment extends BaseDelayRefreshSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_home;
-    }
-
-    @Override
-    protected void getParamsFromBundle(Bundle bundle) {
-
+        return R.layout.fragment_main_home;
     }
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.app_name);
+        tryPaddingContent();
         displayNothing(true);
         initializeHolder();
-        setLeftText(0);
-        setLeftTitleClickListener(null);
-    }
-
-    @Override
-    protected void saveParamsToBundle(Bundle bundle) {
-
     }
 
     @Override

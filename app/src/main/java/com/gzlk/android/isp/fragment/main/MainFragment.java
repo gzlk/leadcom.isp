@@ -1,14 +1,16 @@
 package com.gzlk.android.isp.fragment.main;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
-import com.gzlk.android.isp.fragment.login.CodeVerifyFragment;
-import com.gzlk.android.isp.fragment.login.PhoneVerifyFragment;
-import com.gzlk.android.isp.fragment.login.ResetPasswordFragment;
-import com.gzlk.android.isp.fragment.login.SignUpFragment;
+import com.gzlk.android.isp.fragment.login.SignInFragment;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -30,6 +32,12 @@ public class MainFragment extends BaseViewPagerSupportFragment {
      */
     public static final String PARAM_SELECTED = "mf_param1";
 
+    @ViewId(R.id.ui_main_tool_bar_container)
+    private RelativeLayout toolBar;
+    @ViewId(R.id.ui_main_tool_bar_background)
+    private View toolBarBackground;
+    @ViewId(R.id.ui_ui_custom_title_right_icon_1)
+    private CustomTextView rightIcon;
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
     private CustomTextView iconView1;
     @ViewId(R.id.ui_tool_main_bottom_icon_2)
@@ -54,6 +62,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
     @Override
     public void doingInResume() {
+        Activity().setRootViewPadding(toolBar, true);
         super.doingInResume();
         setLeftIcon(R.string.ui_icon_query);
         setLeftText(0);
@@ -61,12 +70,17 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     }
 
     @Override
+    protected boolean supportDefaultTitle() {
+        return false;
+    }
+
+    @Override
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
             mFragments.add(new HomeFragment());
-            mFragments.add(PhoneVerifyFragment.newInstance("0"));
-            mFragments.add(CodeVerifyFragment.newInstance("0"));
-            mFragments.add(ResetPasswordFragment.newInstance("1"));
+            mFragments.add(new SignInFragment());
+            mFragments.add(new SignInFragment());
+            mFragments.add(new IndividualFragment());
         }
     }
 
@@ -86,6 +100,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
         iconView4.setTextColor(position == 3 ? color2 : color1);
         textView4.setTextColor(position == 3 ? color2 : color1);
+
+        handleTitleBar(position);
     }
 
     @Override
@@ -94,7 +110,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     }
 
     @Click({R.id.ui_tool_main_bottom_clickable_1, R.id.ui_tool_main_bottom_clickable_2,
-            R.id.ui_tool_main_bottom_clickable_3, R.id.ui_tool_main_bottom_clickable_4})
+            R.id.ui_tool_main_bottom_clickable_3, R.id.ui_tool_main_bottom_clickable_4,
+            R.id.ui_ui_custom_title_right_icon_1})
     private void elementClick(View view) {
         int id = view.getId();
         switch (id) {
@@ -110,6 +127,51 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             case R.id.ui_tool_main_bottom_clickable_4:
                 setDisplayPage(3);
                 break;
+            case R.id.ui_ui_custom_title_right_icon_1:
+                ToastHelper.make(Activity()).showMsg("个人设置");
+                break;
         }
+    }
+
+    private void handleTitleBar(int position) {
+        switch (position) {
+            default:
+                transparentTitleBar(false);
+                break;
+            case 3:
+                transparentTitleBar(true);
+                break;
+        }
+    }
+
+    private void transparentTitleBar(boolean transparent) {
+        toolBarBackground.animate()
+                .alpha(transparent ? 0 : 1)
+                .setDuration(getInteger(R.integer.integer_default_animate_duration))
+                .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+        displayRightIcon(transparent);
+    }
+
+    private void displayRightIcon(final boolean show) {
+        rightIcon.animate().alpha(show ? 1 : 0)
+                .setDuration(getInteger(R.integer.integer_default_animate_duration))
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        if (!show) {
+                            rightIcon.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        if (show) {
+                            rightIcon.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }).start();
     }
 }

@@ -1,12 +1,10 @@
 package com.gzlk.android.isp.activity;
 
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -32,6 +30,7 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 
 public class TitleActivity extends BaseActivity {
 
+    private static final String PARAM_EXIT = "press_exit";
     // 这些UI貌似必须要用public才能访问到
     @ViewId(R.id.activity_app_bar_layout)
     public AppBarLayout appBarLayout;
@@ -59,24 +58,67 @@ public class TitleActivity extends BaseActivity {
      * 是否需要手动输入
      */
     protected boolean isInputSupported = false;
+    /**
+     * 是否支持再摁一次退出
+     */
+    protected boolean supportPressAgainToExit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        initializeParams(savedInstanceState);
         super.onCreate(savedInstanceState);
         // 无输入处理事件时，可以显示透明的状态栏，无toolbar的需要在fragment里自己设定padding
-        if (isToolbarSupported && !isInputSupported) {
-            //transparentStatusBar();
-        }
+        //if (isToolbarSupported && !isInputSupported) {
+        //transparentStatusBar();
+        //}
         // 是否有默认的toolbar布局，否则需要自己加载toolbar布局
-        setContentView(R.layout.activity_container);
+        int layout = (this instanceof MainActivity) ? R.layout.activity_main : R.layout.activity_container;
+        setContentView(layout);
         ViewUtility.bind(this);
-        if (isToolbarSupported) {
+        if (isToolbarSupported && null != mToolbar) {
             setSupportActionBar(mToolbar);
             resetLeftIconMargin();
             //if (!isInputSupported) {
             //    setRootViewPadding(mToolbar, true);
             //}
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (null == outState) {
+            outState = new Bundle();
+        }
+        outState.putBoolean(PARAM_EXIT, supportPressAgainToExit);
+        super.onSaveInstanceState(outState);
+    }
+
+    protected void initializeParams(Bundle bundle) {
+        if (null != bundle) {
+            supportPressAgainToExit = bundle.getBoolean(PARAM_EXIT, false);
+        }
+    }
+
+    /**
+     * 返回键摁下事件处理
+     */
+    protected boolean onBackKeyEvent(int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            boolean handled = onBackKeyEvent(keyCode, event);
+            if (!handled) {
+                if (supportPressAgainToExit) {
+                    app().pressAgainExit();
+                    return true;
+                }
+            }
+            return handled;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     // 重置左侧按钮的边距

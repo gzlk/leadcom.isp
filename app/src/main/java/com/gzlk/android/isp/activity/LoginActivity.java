@@ -21,6 +21,7 @@ public class LoginActivity extends TitleActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportPressAgainToExit = true;
         super.onCreate(savedInstanceState);
         // loading 页面不需要标题栏
         showToolbar(false);

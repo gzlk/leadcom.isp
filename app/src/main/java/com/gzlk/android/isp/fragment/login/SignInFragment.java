@@ -44,7 +44,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
 
     @Override
     public void onAttach(Context context) {
-        DEBUG = true;
+        //DEBUG = true;
         super.onAttach(context);
     }
 
@@ -58,6 +58,11 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         log("doing in resume");
         log(String.format("screen on: %s, visible: %s, resumed: %s",
                 isScreenOn(), isVisible(), isResumed()));
+    }
+
+    @Override
+    protected boolean supportDefaultTitle() {
+        return false;
     }
 
     @Override

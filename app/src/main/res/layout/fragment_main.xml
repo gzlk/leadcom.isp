@@ -4,13 +4,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
         <include layout="@layout/tool_view_view_pager" />
-    </LinearLayout>
+
+        <include layout="@layout/tool_view_main_title" />
+    </RelativeLayout>
 
     <include layout="@layout/tool_view_main_bottom_menu" />
 </LinearLayout>

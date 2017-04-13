@@ -22,7 +22,7 @@ import com.litesuits.orm.db.DataBaseConfig;
 
 public class OrmApplication extends BaseApplication {
 
-    private static final String TAG = OrmApplication.class.getSimpleName();
+    protected static final String TAG = OrmApplication.class.getSimpleName();
 
     public static LiteOrm Orm;
 

@@ -9,6 +9,5 @@
     android:theme="@style/AppTheme.AppBarOverlay"
     app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    <include layout="@layout/activity_toolbar_title_normal" />
-
+    <include layout="@layout/tool_view_activity_main_title" />
 </android.support.v7.widget.Toolbar>

@@ -72,6 +72,11 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
     public abstract void doingInResume();
 
     /**
+     * 是否支持设置默认的标题栏信息
+     */
+    protected abstract boolean supportDefaultTitle();
+
+    /**
      * 暂存fragment的初始化参数列表
      */
     protected abstract void saveParamsToBundle(Bundle bundle);
@@ -148,13 +153,16 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
         if (DEBUG) {
             log("onResume");
         }
-        setDefaultTitleClickEvent();
+        if (supportDefaultTitle()) {
+            setDefaultTitleClickEvent();
+        }
         doingInResume();
     }
 
     @Override
     public void onPause() {
-        super.onPause();;
+        super.onPause();
+        ;
         if (DEBUG) {
             log("onPause");
         }

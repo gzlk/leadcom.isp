@@ -13,7 +13,7 @@
         android:translationZ="@dimen/ui_static_dp_1"
         app:elevation="0dp">
 
-        <include layout="@layout/activity_toolbar" />
+        <include layout="@layout/tool_view_activity_normal_toolbar" />
 
     </android.support.design.widget.AppBarLayout>
 
