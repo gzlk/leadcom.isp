@@ -8,7 +8,7 @@
         <item name="android:textColor">@color/textColor</item>
         <item name="android:textColorHint">@color/textColorHint</item>
         <item name="android:windowBackground">@color/windowBackground</item>
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorPrimary">@color/textColor</item>
     </style>
 
     <style name="AppTheme" parent="BaseTheme" />

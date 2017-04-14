@@ -42,6 +42,7 @@ public class ContainerActivity extends TitleActivity {
         // 默认不需要处理backkey
         isBackKeySupported = bundle.getBoolean(REQUEST_BACK_KEY, false);
         isInputSupported = bundle.getBoolean(REQUEST_INPUT, false);
+        supportTransparentStatusBar = bundle.getBoolean(REQUEST_TRANSPARENT_STATUS_BAR, false);
         if (isBackKeySupported) {
             // 需要处理返回按键事件时，必定是需要用户输入的
             isInputSupported = true;
@@ -67,10 +68,9 @@ public class ContainerActivity extends TitleActivity {
     @Override
     protected boolean onBackKeyEvent(int keyCode, KeyEvent event) {
         if (isBackKeySupported) {
-            boolean confirm = null != mFragment && mFragment.onBackKeyEvent();
-            return confirm || super.onKeyDown(keyCode, event);
+            return null != mFragment && mFragment.onBackKeyEvent();
         }
-        return super.onKeyDown(keyCode, event);
+        return super.onBackKeyEvent(keyCode, event);
     }
 
     @Override
@@ -83,6 +83,7 @@ public class ContainerActivity extends TitleActivity {
         outState.putBoolean(REQUEST_TOOL_BAR, isToolbarSupported);
         outState.putBoolean(REQUEST_BACK_KEY, isBackKeySupported);
         outState.putBoolean(REQUEST_INPUT, isInputSupported);
+        outState.putBoolean(REQUEST_TRANSPARENT_STATUS_BAR, supportTransparentStatusBar);
         super.onSaveInstanceState(outState);
     }
 

@@ -62,17 +62,21 @@ public class TitleActivity extends BaseActivity {
      * 是否支持再摁一次退出
      */
     protected boolean supportPressAgainToExit = false;
+    /**
+     * 是否支持状态栏透明
+     */
+    protected boolean supportTransparentStatusBar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         initializeParams(savedInstanceState);
         super.onCreate(savedInstanceState);
-        // 无输入处理事件时，可以显示透明的状态栏，无toolbar的需要在fragment里自己设定padding
-        //if (isToolbarSupported && !isInputSupported) {
-        //transparentStatusBar();
-        //}
+        // 是否需要透明状态栏
+        if (supportTransparentStatusBar) {
+            transparentStatusBar();
+        }
         // 是否有默认的toolbar布局，否则需要自己加载toolbar布局
-        int layout = (this instanceof MainActivity) ? R.layout.activity_main : R.layout.activity_container;
+        int layout = ((this instanceof MainActivity) || !isToolbarSupported) ? R.layout.activity_main : R.layout.activity_container;
         setContentView(layout);
         ViewUtility.bind(this);
         if (isToolbarSupported && null != mToolbar) {
@@ -115,8 +119,9 @@ public class TitleActivity extends BaseActivity {
                     app().pressAgainExit();
                     return true;
                 }
+                return super.onKeyDown(keyCode, event);
             }
-            return handled;
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }

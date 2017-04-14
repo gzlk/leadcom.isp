@@ -20,8 +20,8 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         supportPressAgainToExit = true;
+        supportTransparentStatusBar = true;
         super.onCreate(savedInstanceState);
-        transparentStatusBar();
         setMainFrameLayout(new MainFragment());
     }
 }

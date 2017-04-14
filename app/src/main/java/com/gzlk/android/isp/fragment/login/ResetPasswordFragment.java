@@ -50,7 +50,7 @@ public class ResetPasswordFragment extends BaseVerifyFragment {
     }
 
     @Override
-    protected boolean supportDefaultTitle() {
+    protected boolean shouldSetDefaultTitleEvents() {
         return true;
     }
 

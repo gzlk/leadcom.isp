@@ -1,12 +1,20 @@
 package com.gzlk.android.isp.application;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.PressAgainToExit;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +32,12 @@ import java.util.Map;
 public class App extends OrmApplication {
 
     private Map<String, Activity> activities = new HashMap<>();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initializeImageLoader();
+    }
 
     /**
      * 添加Activity到监控列表
@@ -97,4 +111,36 @@ public class App extends OrmApplication {
         //LogHelper.log(TAG, "manual exit.");
         //CrashHandler.getInstance().clearDebugLog();
     }
+
+
+    private void initializeImageLoader() {
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.mipmap.img_image_default)
+                .showImageForEmptyUri(R.mipmap.img_image_loading_fail)
+                .showImageOnFail(R.mipmap.img_image_loading_fail)
+                //.delayBeforeLoading(100)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                //.displayer(new FadeInBitmapDisplayer(100))
+                .build();
+
+        File cacheDir = new File(getCachePath(IMAGE_UIL));
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration
+                .Builder(this)
+                .denyCacheImageMultipleSizesInMemory()
+                .memoryCache(new LruMemoryCache(2 * 1024 * 1024))
+                .memoryCacheSize(2 * 1024 * 1024)
+                .diskCache(new UnlimitedDiskCache(cacheDir))
+                .diskCacheSize(50 * 1024 * 1024)
+                .diskCacheFileCount(100)
+                .defaultDisplayImageOptions(options)
+                //.writeDebugLogs()
+                .build();
+
+        ImageLoader.getInstance().init(config);
+    }
+
 }

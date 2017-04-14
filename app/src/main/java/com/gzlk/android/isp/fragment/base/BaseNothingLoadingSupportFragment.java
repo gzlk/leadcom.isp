@@ -18,7 +18,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSupportFragment {
+public abstract class BaseNothingLoadingSupportFragment extends BaseTransparentSupportFragment {
 
     @ViewId(R.id.ui_tool_loading_container)
     public LinearLayout loadingLayout;

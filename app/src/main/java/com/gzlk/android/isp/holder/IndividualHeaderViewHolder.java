@@ -2,7 +2,11 @@ package com.gzlk.android.isp.holder;
 
 import android.view.View;
 
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.individual.QRCodeFragment;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 
 /**
  * <b>功能描述：</b>个人头像<br />
@@ -19,5 +23,16 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
 
     public IndividualHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
+        ViewUtility.bind(this, itemView);
+    }
+
+    @Click({R.id.ui_tool_individual_header_to_2d_code})
+    private void click(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.ui_tool_individual_header_to_2d_code:
+                openActivity(QRCodeFragment.class.getName(), "", false, false, true);
+                break;
+        }
     }
 }

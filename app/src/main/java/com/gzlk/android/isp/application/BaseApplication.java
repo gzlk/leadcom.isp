@@ -49,6 +49,10 @@ public class BaseApplication extends Application {
      */
     public static final String IMAGE_DIR = "images";
     /**
+     * 本地UIL图片缓存目录
+     */
+    public static final String IMAGE_UIL = "uil-images";
+    /**
      * 本地缩略图缓存目录
      */
     public static final String THUMB_DIR = "thumbnails";

@@ -8,8 +8,6 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
-import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -61,7 +59,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     @Override
-    protected boolean supportDefaultTitle() {
+    protected boolean shouldSetDefaultTitleEvents() {
         return false;
     }
 

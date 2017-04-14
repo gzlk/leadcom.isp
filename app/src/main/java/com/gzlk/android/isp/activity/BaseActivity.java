@@ -51,6 +51,10 @@ public class BaseActivity extends AppCompatActivity {
      * 是否需要手动输入
      */
     public static final String REQUEST_INPUT = "_request_input_";
+    /**
+     * 是否需要透明化状态栏
+     */
+    public static final String REQUEST_TRANSPARENT_STATUS_BAR = "_request_transparent_status_bar";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

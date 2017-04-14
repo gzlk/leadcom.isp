@@ -1,25 +1,18 @@
 package com.gzlk.android.isp.fragment.main;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.activity.MainActivity;
-import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
-import com.gzlk.android.isp.lib.layoutmanager.CustomLinearLayoutManager;
 import com.gzlk.android.isp.lib.view.LoadMoreRecyclerView;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,7 +26,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class IndividualFragment extends BaseMainFragment {
+public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private String[] test = new String[]{"", "测试1", "测试2", "测试3", "测试4", "测试5", "测试6", "测试7",
             "测试8", "测试9", "测试10", "测试11", "测试12", "测试13", "测试14", "测试15", "测试16", "测试17", "测试18"};
@@ -87,7 +80,7 @@ public class IndividualFragment extends BaseMainFragment {
     }
 
     @Override
-    protected boolean supportDefaultTitle() {
+    protected boolean shouldSetDefaultTitleEvents() {
         return false;
     }
 
@@ -120,7 +113,7 @@ public class IndividualFragment extends BaseMainFragment {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (!isCurrentDisplayed()) {
+            if (!isViewPagerDisplayedCurrent()) {
                 return;
             }
             scrolledY += dy;
@@ -199,7 +192,7 @@ public class IndividualFragment extends BaseMainFragment {
             if (viewType == VT_NORMAL) {
                 return new TextViewHolder(itemView, IndividualFragment.this);
             } else {
-                tryPaddingContent(itemView);
+                tryPaddingContent(itemView, true);
                 return new IndividualHeaderViewHolder(itemView, IndividualFragment.this);
             }
         }

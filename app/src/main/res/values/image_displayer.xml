@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ImageDisplayer">
+        <!--图片显示方式-->
+        <attr name="id_image_type">
+            <!--正常按原样显示-->
+            <enum name="normal" value="0" />
+            <!--圆形边角-->
+            <enum name="rounded" value="1" />
+            <!--圆形-->
+            <enum name="oval" value="2" />
+        </attr>
+        <attr name="id_image_size" format="dimension" />
+        <attr name="id_image_width" format="dimension" />
+        <attr name="id_image_height" format="dimension" />
+        <!--图片来源：资源-->
+        <attr name="id_image_res" format="reference" />
+        <!--图片来源：网址-->
+        <attr name="id_image_url" format="string" />
+        <!--删除按钮-->
+        <attr name="id_delete_icon" format="string" />
+        <!--是否显示删除按钮-->
+        <attr name="id_show_delete" format="boolean" />
+        <!--是选择按钮-->
+        <attr name="id_select_icon" format="string" />
+        <!--是否显示选择按钮-->
+        <attr name="id_show_select" format="boolean" />
+        <attr name="id_selected" format="boolean" />
+    </declare-styleable>
+</resources>

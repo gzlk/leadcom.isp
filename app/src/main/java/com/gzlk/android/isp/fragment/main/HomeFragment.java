@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
@@ -24,7 +25,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class HomeFragment extends BaseMainFragment {
+public class HomeFragment extends BaseSwipeRefreshSupportFragment {
 
     @ViewId(R.id.ui_tool_home_top_channel_container)
     private RelativeLayout topChannelView;
@@ -61,9 +62,14 @@ public class HomeFragment extends BaseMainFragment {
 
     @Override
     public void doingInResume() {
-        tryPaddingContent();
+        tryPaddingContent(true);
         displayNothing(true);
         initializeHolder();
+    }
+
+    @Override
+    protected boolean shouldSetDefaultTitleEvents() {
+        return false;
     }
 
     @Override

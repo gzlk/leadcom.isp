@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.login.SignInFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -74,7 +73,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     }
 
     @Override
-    protected boolean supportDefaultTitle() {
+    protected boolean shouldSetDefaultTitleEvents() {
         return false;
     }
 
@@ -106,9 +105,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         textView4.setTextColor(position == 3 ? color2 : color1);
 
         for (int i = 0, len = mFragments.size(); i < len; i++) {
-            if (mFragments.get(i) instanceof BaseMainFragment) {
-                ((BaseMainFragment) mFragments.get(i)).setCurrentDisplayed(position == i);
-            }
+            mFragments.get(i).setViewPagerDisplayedCurrent(position == i);
         }
         handleTitleBar(position);
     }
@@ -156,18 +153,18 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private void transparentTitleBar(boolean transparent) {
         toolBarBackground.animate()
                 .alpha(transparent ? 0 : 1)
-                .setDuration(getInteger(R.integer.integer_default_animate_duration))
+                .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();
         toolBarTitleText.animate()
                 .alpha(transparent ? 0 : 1)
-                .setDuration(getInteger(R.integer.integer_default_animate_duration))
+                .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();
         displayRightIcon(transparent);
     }
 
     private void displayRightIcon(final boolean show) {
         rightIcon.animate().alpha(show ? 1 : 0)
-                .setDuration(getInteger(R.integer.integer_default_animate_duration))
+                .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setListener(new AnimatorListenerAdapter() {
                     @Override

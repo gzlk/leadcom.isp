@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_text_2d_code_fragment_title">我的二维码</string>
+    <string name="ui_text_2d_code_warning">用xx扫一扫，加为好友</string>
+    <string name="ui_text_2d_code_right_title">扫一扫</string>
+    <string name="ui_text_2d_code_scan">扫描二维码</string>
+</resources>

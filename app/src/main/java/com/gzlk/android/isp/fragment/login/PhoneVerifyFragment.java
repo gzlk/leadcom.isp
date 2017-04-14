@@ -49,7 +49,7 @@ public class PhoneVerifyFragment extends BaseVerifyFragment {
     }
 
     @Override
-    protected boolean supportDefaultTitle() {
+    protected boolean shouldSetDefaultTitleEvents() {
         return true;
     }
 

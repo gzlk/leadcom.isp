@@ -23,7 +23,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseViewPagerSupportFragment extends BaseLayoutSupportFragment {
+public abstract class BaseViewPagerSupportFragment extends BaseTransparentSupportFragment {
 
     protected static final String PARAM_SELECTED_INDEX = "bvpf_param_selected_index";
 
@@ -38,7 +38,7 @@ public abstract class BaseViewPagerSupportFragment extends BaseLayoutSupportFrag
      * 当前选中的页面index
      */
     private int viewPagerSelectedPage = 0;
-    protected List<BaseLayoutSupportFragment> mFragments = new ArrayList<>();
+    protected List<BaseTransparentSupportFragment> mFragments = new ArrayList<>();
     private FragmentAdapter mAdapter;
 
     @Override

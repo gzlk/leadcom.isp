@@ -50,6 +50,13 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
     }
 
     /**
+     * 获取默认的动画时间长度
+     */
+    public int duration() {
+        return getInteger(R.integer.integer_default_animate_duration);
+    }
+
+    /**
      * 获取fragment的layout
      */
     public abstract int getLayout();
@@ -74,7 +81,7 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
     /**
      * 是否支持设置默认的标题栏信息
      */
-    protected abstract boolean supportDefaultTitle();
+    protected abstract boolean shouldSetDefaultTitleEvents();
 
     /**
      * 暂存fragment的初始化参数列表
@@ -153,7 +160,7 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
         if (DEBUG) {
             log("onResume");
         }
-        if (supportDefaultTitle()) {
+        if (shouldSetDefaultTitleEvents()) {
             setDefaultTitleClickEvent();
         }
         doingInResume();
