@@ -116,6 +116,8 @@ public class ImageDisplayer extends RelativeLayout {
         super.onAttachedToWindow();
         if (!TextUtils.isEmpty(displayUrl)) {
             displayImage(displayUrl, imageWidth, imageHeight, showSelect, showDelete);
+        } else {
+            imageView.setImageResource(R.mipmap.img_default_user_header);
         }
     }
 

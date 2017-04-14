@@ -3,8 +3,6 @@ package com.gzlk.android.isp.fragment.base;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.lib.layoutmanager.CustomLinearLayoutManager;
@@ -27,16 +25,8 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     @ViewId(R.id.ui_tool_swipe_refreshable_swipe_refresh_layout)
     public SwipeRefreshLayout mSwipeRefreshLayout;
     @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
-    public RecyclerView mRecyclerView;
+    public LoadMoreRecyclerView mRecyclerView;
 
-    /**
-     * 是否允许下拉刷新
-     */
-    private boolean isSwipeEnabled = true;
-    /**
-     * 是否需要加载更多
-     */
-    protected boolean isWillLoadingMore = false;
     /**
      * 是否自动初始化RecyclerView的LayoutManager
      */
@@ -46,9 +36,8 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
      * 设置是否允许下拉刷新
      */
     protected void enableSwipe(boolean enabled) {
-        isSwipeEnabled = enabled;
         if (null != mSwipeRefreshLayout) {
-            mSwipeRefreshLayout.setEnabled(isSwipeEnabled);
+            mSwipeRefreshLayout.setEnabled(enabled);
         }
     }
 
@@ -76,9 +65,8 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
             mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
             if (mRecyclerView instanceof LoadMoreRecyclerView) {
-                ((LoadMoreRecyclerView) mRecyclerView).addOnLoadingMoreListener(loadingMoreListener);
+                mRecyclerView.addOnLoadingMoreListener(loadingMoreListener);
             }
-            //mRecyclerView.addOnScrollListener(mScrollListener);
             registerForContextMenu(mRecyclerView);
         }
     }
@@ -102,9 +90,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
      * 设置数据是否已加载完毕
      */
     protected void isLoadingComplete(boolean complete) {
-        if (mRecyclerView instanceof LoadMoreRecyclerView) {
-            ((LoadMoreRecyclerView) mRecyclerView).isLoadingComplete(complete);
-        }
+        mRecyclerView.isLoadingComplete(complete);
     }
 
     /**

@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+        <com.gzlk.android.isp.lib.view.LoadMoreRecyclerView
             android:id="@+id/ui_tool_swipe_refreshable_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

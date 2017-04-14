@@ -9,4 +9,8 @@
     <string name="ui_text_main_bottom_button_text_4">个人</string>
 
     <string name="ui_text_home_top_channel_full">全部选项</string>
+
+    <string name="ui_text_individual_top_button_text_1">动态</string>
+    <string name="ui_text_individual_top_button_text_2">档案</string>
+    <string name="ui_text_individual_top_button_text_3">收藏</string>
 </resources>
