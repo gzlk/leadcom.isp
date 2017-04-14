@@ -6,7 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.lib.layoutmanager.CustomLinearLayoutManager;
-import com.gzlk.android.isp.lib.view.LoadMoreRecyclerView;
+import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 /**
@@ -25,7 +25,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     @ViewId(R.id.ui_tool_swipe_refreshable_swipe_refresh_layout)
     public SwipeRefreshLayout mSwipeRefreshLayout;
     @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
-    public LoadMoreRecyclerView mRecyclerView;
+    public LoadingMoreSupportedRecyclerView mRecyclerView;
 
     /**
      * 是否自动初始化RecyclerView的LayoutManager
@@ -64,9 +64,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
             //mSwipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
             mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            if (mRecyclerView instanceof LoadMoreRecyclerView) {
-                mRecyclerView.addOnLoadingMoreListener(loadingMoreListener);
-            }
+            mRecyclerView.addOnLoadingMoreListener(loadingMoreListener);
             registerForContextMenu(mRecyclerView);
         }
     }
@@ -79,7 +77,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         }
     };
 
-    private LoadMoreRecyclerView.OnLoadingMoreListener loadingMoreListener = new LoadMoreRecyclerView.OnLoadingMoreListener() {
+    private LoadingMoreSupportedRecyclerView.OnLoadingMoreListener loadingMoreListener = new LoadingMoreSupportedRecyclerView.OnLoadingMoreListener() {
         @Override
         public void onLoadingMore() {
             BaseSwipeRefreshSupportFragment.this.onLoadingMore();

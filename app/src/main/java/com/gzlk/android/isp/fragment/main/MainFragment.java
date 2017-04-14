@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.login.SignInFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -69,7 +70,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         setLeftIcon(R.string.ui_icon_query);
         setLeftText(0);
         setRightIcon(R.string.ui_icon_chat);
-        ((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground);
+        ((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
     }
 
     @Override
@@ -104,10 +105,20 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         iconView4.setTextColor(position == 3 ? color2 : color1);
         textView4.setTextColor(position == 3 ? color2 : color1);
 
+        boolean needHandleTitleBar = true;
         for (int i = 0, len = mFragments.size(); i < len; i++) {
-            mFragments.get(i).setViewPagerDisplayedCurrent(position == i);
+            BaseTransparentSupportFragment fragment = mFragments.get(i);
+            if (i == 2 || fragment instanceof IndividualFragment) {
+                // 个人界面已经显示了，此时不再需要改变标题栏背景
+                needHandleTitleBar = !((IndividualFragment) mFragments.get(3)).isTitleBarShown();
+            }
+            fragment.setViewPagerDisplayedCurrent(position == i);
         }
-        handleTitleBar(position);
+        if (needHandleTitleBar) {
+            handleTitleBar(position);
+        } else if (position != 3) {
+            transparentTitleText(false);
+        }
     }
 
     @Override
@@ -155,11 +166,15 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 .alpha(transparent ? 0 : 1)
                 .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();
+        transparentTitleText(transparent);
+        displayRightIcon(transparent);
+    }
+
+    private void transparentTitleText(boolean transparent) {
         toolBarTitleText.animate()
                 .alpha(transparent ? 0 : 1)
                 .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();
-        displayRightIcon(transparent);
     }
 
     private void displayRightIcon(final boolean show) {

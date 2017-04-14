@@ -2,7 +2,6 @@ package com.gzlk.android.isp.fragment.login;
 
 import android.content.Context;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.View;
 
@@ -36,11 +35,6 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     @Override
-    protected void getParamsFromBundle(Bundle bundle) {
-
-    }
-
-    @Override
     public void onAttach(Context context) {
         //DEBUG = true;
         super.onAttach(context);
@@ -67,11 +61,6 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         log("on hidden changed: " + hidden);
-    }
-
-    @Override
-    protected void saveParamsToBundle(Bundle bundle) {
-
     }
 
     @Override

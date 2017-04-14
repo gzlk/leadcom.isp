@@ -9,9 +9,10 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
-import com.gzlk.android.isp.lib.view.LoadMoreRecyclerView;
+import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +29,20 @@ import java.util.List;
 
 public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
+    private static final String PARAM_SHOWN = "title_bar_shown";
     private String[] test = new String[]{"", "测试1", "测试2", "测试3", "测试4", "测试5", "测试6", "测试7",
             "测试8", "测试9", "测试10", "测试11", "测试12", "测试13", "测试14", "测试15", "测试16", "测试17", "测试18"};
 
     private List<String> data = new ArrayList<>();
+
+    private boolean isTitleBarShown = false;
+
+    /**
+     * 标题栏是否已经显示了
+     */
+    public boolean isTitleBarShown() {
+        return isTitleBarShown;
+    }
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -66,7 +77,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
-
+        super.getParamsFromBundle(bundle);
+        isTitleBarShown = bundle.getBoolean(PARAM_SHOWN, false);
     }
 
     @Override
@@ -81,7 +93,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
-
+        bundle.putBoolean(PARAM_SHOWN, isTitleBarShown);
+        super.saveParamsToBundle(bundle);
     }
 
     @Override
@@ -89,11 +102,20 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    private View toolBarView;
+    private SoftReference<View> toolBarView;
 
-    public void setToolBar(View view) {
-        if (null == toolBarView) {
-            toolBarView = view;
+    public IndividualFragment setToolBar(View view) {
+        if (null == toolBarView || null == toolBarView.get()) {
+            toolBarView = new SoftReference<>(view);
+        }
+        return this;
+    }
+
+    private SoftReference<View> textView;
+
+    public void setToolBarTextView(View view) {
+        if (null == textView || null == textView.get()) {
+            textView = new SoftReference<>(view);
         }
     }
 
@@ -113,11 +135,15 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             }
             scrolledY += dy;
             if (scrolledY >= 0 && scrolledY <= 255) {
-                if (null != toolBarView) {
-                    toolBarView.setAlpha(scrolledY * 0.005f);
+                float alpha = scrolledY * 0.005f;
+                if (null != toolBarView && null != toolBarView.get()) {
+                    toolBarView.get().setAlpha(alpha);
+                    isTitleBarShown = toolBarView.get().getAlpha() >= 1;
+                }
+                if (null != textView && null != textView.get()) {
+                    textView.get().setAlpha(alpha);
                 }
             }
-            log(format("on scrolled dx: %d, dy: %d, scrolled: %d", dx, dy, scrolledY));
         }
     };
 
@@ -125,9 +151,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         if (null == mAdapter) {
             mAdapter = new TestAdapter();
             mRecyclerView.addOnScrollListener(scrollListener);
-
-            LoadMoreRecyclerView lmrv = (LoadMoreRecyclerView) mRecyclerView;
-            lmrv.setAdapter(mAdapter);
+            mRecyclerView.setAdapter(mAdapter);
             resetData();
         }
     }
@@ -141,7 +165,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private TestAdapter mAdapter;
 
-    private class TestAdapter extends LoadMoreRecyclerView.LoadingMoreAdapter<BaseViewHolder> implements RecycleAdapter<String> {
+    private class TestAdapter extends LoadingMoreSupportedRecyclerView.LoadingMoreAdapter<BaseViewHolder> implements RecycleAdapter<String> {
 
         int VT_HEADER = 0, VT_NORMAL = 1;
 

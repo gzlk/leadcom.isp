@@ -50,12 +50,14 @@ public abstract class BaseViewPagerSupportFragment extends BaseTransparentSuppor
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
         viewPagerSelectedPage = bundle.getInt(PARAM_SELECTED_INDEX, 1);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         bundle.putInt(PARAM_SELECTED_INDEX, viewPagerSelectedPage);
+        super.saveParamsToBundle(bundle);
     }
 
     @Override

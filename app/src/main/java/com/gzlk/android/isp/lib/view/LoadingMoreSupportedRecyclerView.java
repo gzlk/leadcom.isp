@@ -26,19 +26,19 @@ import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
  * <b>修改备注：</b><br />
  */
 
-public class LoadMoreRecyclerView extends RecyclerView {
+public class LoadingMoreSupportedRecyclerView extends RecyclerView {
 
-    public LoadMoreRecyclerView(Context context) {
+    public LoadingMoreSupportedRecyclerView(Context context) {
         super(context);
         initialize();
     }
 
-    public LoadMoreRecyclerView(Context context, @Nullable AttributeSet attrs) {
+    public LoadingMoreSupportedRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initialize();
     }
 
-    public LoadMoreRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public LoadingMoreSupportedRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initialize();
     }

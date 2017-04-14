@@ -6,7 +6,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
-import com.gzlk.android.isp.lib.view.LoadMoreRecyclerView;
+import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 
 import java.util.ArrayList;
@@ -79,8 +79,7 @@ public class TestFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeTest() {
         if (null == mAdapter) {
             mAdapter = new TestAdapter();
-            LoadMoreRecyclerView lmrv = (LoadMoreRecyclerView) mRecyclerView;
-            lmrv.setAdapter(mAdapter);
+            mRecyclerView.setAdapter(mAdapter);
             resetData();
         }
     }
@@ -94,7 +93,7 @@ public class TestFragment extends BaseSwipeRefreshSupportFragment {
 
     private TestAdapter mAdapter;
 
-    private class TestAdapter extends LoadMoreRecyclerView.LoadingMoreAdapter<BaseViewHolder> implements RecycleAdapter<String> {
+    private class TestAdapter extends LoadingMoreSupportedRecyclerView.LoadingMoreAdapter<BaseViewHolder> implements RecycleAdapter<String> {
 
         int VT_HEADER = 0, VT_NORMAL = 1;
 

@@ -2,7 +2,6 @@ package com.gzlk.android.isp.fragment.individual;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.LinearLayout;
@@ -44,11 +43,6 @@ public class QRCodeFragment extends BaseTransparentSupportFragment {
     }
 
     @Override
-    protected void getParamsFromBundle(Bundle bundle) {
-
-    }
-
-    @Override
     public void doingInResume() {
         tryPaddingContent(titleContainer, false);
         initializeElements();
@@ -57,11 +51,6 @@ public class QRCodeFragment extends BaseTransparentSupportFragment {
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return false;
-    }
-
-    @Override
-    protected void saveParamsToBundle(Bundle bundle) {
-
     }
 
     @Override

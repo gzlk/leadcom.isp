@@ -49,7 +49,7 @@ public abstract class BaseTransparentSupportFragment extends BaseLayoutSupportFr
     /**
      * 当前ViewPager显示的是否是本fragment
      */
-    protected boolean isViewPagerDisplayedCurrent() {
+    public boolean isViewPagerDisplayedCurrent() {
         return isDisplayedInViewPager;
     }
 
