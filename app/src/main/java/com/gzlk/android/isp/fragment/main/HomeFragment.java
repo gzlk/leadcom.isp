@@ -16,6 +16,7 @@ import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
 import com.gzlk.android.isp.api.system.LoginParam;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -169,7 +170,7 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeHolder() {
         if (null == topChannelHolder) {
             topChannelHolder = new HorizontalRecyclerViewHolder(topChannelView, HomeFragment.this);
-            topChannelHolder.addOnItemClickListener(topChannelItemClickListener);
+            topChannelHolder.addOnViewHolderClickListener(viewHolderClickListener);
             topChannelHolder.displaySelectedEffect(true);
             topChannelHolder.setDataSources(channel);
         }
@@ -179,9 +180,9 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private TextViewHolder.OnItemClickListener topChannelItemClickListener = new TextViewHolder.OnItemClickListener() {
+    private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
         @Override
-        public void onItemClick(int index) {
+        public void onClick(int index) {
             //openImageSelector();
             LiteHttp liteHttp = LiteHttp.build(Activity()).create();
 
@@ -209,7 +210,7 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
             public void onSuccess(Testing testing, Response<Testing> response) {
                 super.onSuccess(testing, response);
                 log("http on success: " + testing);
-                SimpleDialogHelper.init(Activity()).show("成功阿里空间里的数据；垃圾的空间发； 卡；的少了几分绿卡；理解的福利卡；离开对方；里卡德发","好的勒","放肆");
+                SimpleDialogHelper.init(Activity()).show("成功阿里空间里的数据；垃圾的空间发； 卡；的少了几分绿卡；理解的福利卡；离开对方；里卡德发", "好的勒", "放肆");
             }
 
             @Override

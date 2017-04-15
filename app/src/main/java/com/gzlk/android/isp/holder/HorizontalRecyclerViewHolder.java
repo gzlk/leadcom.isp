@@ -8,6 +8,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.lib.layoutmanager.CustomLinearLayoutManager;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -47,15 +48,6 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
             llm.setOrientation(CustomLinearLayoutManager.HORIZONTAL);
             recyclerView.setLayoutManager(llm);
         }
-    }
-
-    private TextViewHolder.OnItemClickListener itemClickListener;
-
-    /**
-     * 添加点击处理
-     */
-    public void addOnItemClickListener(TextViewHolder.OnItemClickListener l) {
-        itemClickListener = l;
     }
 
     private boolean displaySelectedEffect = false;
@@ -111,7 +103,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
         public TextViewHolder onCreateViewHolder(View itemView, int viewType) {
             TextViewHolder holder = new TextViewHolder(itemView, fragment());
             holder.showSelectedEffect(displaySelectedEffect);
-            holder.addOnItemClickListener(_listener);
+            holder.addOnViewHolderClickListener(holderClickListener);
             return holder;
         }
 
@@ -170,14 +162,14 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
 
     }
 
-    private TextViewHolder.OnItemClickListener _listener = new TextViewHolder.OnItemClickListener() {
+    private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
         @Override
-        public void onItemClick(int index) {
+        public void onClick(int index) {
             if (displaySelectedEffect) {
                 resetClickStatus(index);
             }
-            if (null != itemClickListener) {
-                itemClickListener.onItemClick(index);
+            if (null != mOnViewHolderClickListener) {
+                mOnViewHolderClickListener.onClick(index);
             }
         }
     };

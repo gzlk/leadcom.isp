@@ -13,6 +13,7 @@ import com.gzlk.android.isp.holder.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.holder.MomentViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
 import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 
 import java.lang.ref.SoftReference;
@@ -222,7 +223,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     return new IndividualHeaderViewHolder(itemView, IndividualFragment.this);
                 case VT_FUNCTIONS:
                     HorizontalRecyclerViewHolder holder = new HorizontalRecyclerViewHolder(itemView, IndividualFragment.this);
-                    holder.addOnItemClickListener(functionItemClickListener);
+                    holder.addOnViewHolderClickListener(holderClickListener);
                     // 默认选中动态选项
                     holder.setSelectedIndex(0);
                     holder.displaySelectedEffect(true);
@@ -279,9 +280,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private TextViewHolder.OnItemClickListener functionItemClickListener = new TextViewHolder.OnItemClickListener() {
+    private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
         @Override
-        public void onItemClick(int index) {
+        public void onClick(int index) {
             ToastHelper.make(Activity()).showMsg(functions[index].substring(2));
         }
     };

@@ -5,7 +5,10 @@
     android:background="@drawable/ui_custom_toast_background"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="@dimen/ui_base_dimen_margin_padding">
+    android:paddingBottom="@dimen/ui_static_dp_5"
+    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+    android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+    android:paddingTop="@dimen/ui_static_dp_5">
 
     <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_base_custom_toast_icon"

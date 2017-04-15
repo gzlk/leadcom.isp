@@ -84,29 +84,8 @@ public class TextViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_text_item_container})
     private void click(View view) {
-        if (null != mOnItemClickListener) {
-            mOnItemClickListener.onItemClick(index);
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(index);
         }
-    }
-
-    private OnItemClickListener mOnItemClickListener;
-
-    /**
-     * 添加点击处理
-     */
-    public void addOnItemClickListener(OnItemClickListener l) {
-        mOnItemClickListener = l;
-    }
-
-    /**
-     * 子项目点击事件接口
-     */
-    public interface OnItemClickListener {
-        /**
-         * 子项目点击
-         *
-         * @param index 当前点击项的文字
-         */
-        void onItemClick(int index);
     }
 }
