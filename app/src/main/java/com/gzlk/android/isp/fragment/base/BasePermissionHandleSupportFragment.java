@@ -78,6 +78,10 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
      * 请求读取手机联系人
      */
     public static final int GRANT_CONTACTS = GRANT_BASE + 6;
+    /**
+     * 请求sd卡读写权限
+     */
+    public static final int GRANT_STORAGE = GRANT_BASE + 7;
 
     /**
      * 尝试获取拨打电话的运行时权限
@@ -115,8 +119,8 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
                 warningPermissionDenied();
             }
         } else {
-            // 无响应权限
-            warningPermissionDenied();
+            // 已有权限了
+            permissionGranted(new String[]{permission}, requestCode);
         }
     }
 

@@ -6,7 +6,9 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.lib.layoutmanager.CustomLinearLayoutManager;
+import com.gzlk.android.isp.listener.RecycleAdapter;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -37,7 +39,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
     // 原始数据
     private List<String> data = new ArrayList<>();
 
-    public HorizontalRecyclerViewHolder(View itemView, BaseFragment fragment) {
+    public HorizontalRecyclerViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         if (null != recyclerView) {
@@ -80,7 +82,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
             itemAdapter = new ItemAdapter();
             recyclerView.setAdapter(itemAdapter);
             // 一个一个增加底部功能列表
-            displayItems(true);
+            displayItems();
         }
     }
 
@@ -92,22 +94,18 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
 
     /**
      * 显示列表
-     *
-     * @param performAddEffect RecyclerView的动画效果
      */
-    public void displayItems(boolean performAddEffect) {
+    public void displayItems() {
         itemAdapter.clear();
-        if (performAddEffect) {
-            for (String string : data) {
-                Item item = new Item();
-                item.text = string;
-                item.selected = string.contains(format("%d|", selectedIndex));
-                itemAdapter.add(item);
-            }
+        for (String string : data) {
+            Item item = new Item();
+            item.text = string;
+            item.selected = string.contains(format("%d|", selectedIndex));
+            itemAdapter.add(item);
         }
     }
 
-    private class ItemAdapter extends RecyclerViewAdapter<TextViewHolder> {
+    private class ItemAdapter extends RecyclerViewAdapter<TextViewHolder> implements RecycleAdapter<Item> {
 
         @Override
         public TextViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -149,19 +147,19 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
         }
 
         @Override
-        public void add(Object object) {
-            items.add((Item) object);
+        public void add(Item item) {
+            items.add(item);
             notifyItemInserted(items.size() - 1);
         }
 
         @Override
-        public void add(Object object, int position) {
-            items.add(position, (Item) object);
-            notifyItemRangeInserted(position, 1);
+        public void add(Item item, int position) {
+            items.add(position, item);
+            notifyItemInserted(position);
         }
 
         @Override
-        public boolean exist(Object value) {
+        public boolean exist(Item item) {
             return false;
         }
 

@@ -8,11 +8,25 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.system.Regist;
+import com.gzlk.android.isp.api.system.TestParam;
+import com.gzlk.android.isp.api.system.Testing;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
+import com.gzlk.android.isp.api.system.LoginParam;
+import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.litesuits.http.LiteHttp;
+import com.litesuits.http.exception.HttpException;
+import com.litesuits.http.listener.HttpListener;
+import com.litesuits.http.request.AbstractRequest;
+import com.litesuits.http.request.JsonRequest;
+import com.litesuits.http.request.param.HttpParamModel;
+import com.litesuits.http.request.param.HttpRichParamModel;
+import com.litesuits.http.response.Response;
 
 /**
  * <b>功能描述：</b>主页<br />
@@ -62,6 +76,8 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
+        // 设置选择图片不剪切
+        isChooseImageForCrop = false;
         tryPaddingContent(true);
         displayNothing(true);
         initializeHolder();
@@ -166,7 +182,78 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
     private TextViewHolder.OnItemClickListener topChannelItemClickListener = new TextViewHolder.OnItemClickListener() {
         @Override
         public void onItemClick(int index) {
+            //openImageSelector();
+            LiteHttp liteHttp = LiteHttp.build(Activity()).create();
 
+            switch (index) {
+                case 0:
+                    liteHttp.executeAsync(testRegist());
+                    break;
+                case 1:
+                    liteHttp.executeAsync(testQuery());
+                    break;
+            }
         }
     };
+
+    private HttpRichParamModel testQuery() {
+        TestParam param = new TestParam();
+        param.setHttpListener(new HttpListener<Testing>() {
+            @Override
+            public void onStart(AbstractRequest<Testing> request) {
+                super.onStart(request);
+                log("http on start");
+            }
+
+            @Override
+            public void onSuccess(Testing testing, Response<Testing> response) {
+                super.onSuccess(testing, response);
+                log("http on success: " + testing);
+                SimpleDialogHelper.init(Activity()).show("成功阿里空间里的数据；垃圾的空间发； 卡；的少了几分绿卡；理解的福利卡；离开对方；里卡德发","好的勒","放肆");
+            }
+
+            @Override
+            public void onFailure(HttpException e, Response<Testing> response) {
+                super.onFailure(e, response);
+                log("http on failure");
+            }
+
+            @Override
+            public void onEnd(Response<Testing> response) {
+                super.onEnd(response);
+                log("http on end");
+            }
+        });
+        return param;
+    }
+
+    private HttpRichParamModel testRegist() {
+        LoginParam login = new LoginParam("13999999999", "123456", "124");
+        login.setHttpListener(new HttpListener<Regist>() {
+            @Override
+            public void onStart(AbstractRequest<Regist> request) {
+                super.onStart(request);
+                log("http on start");
+            }
+
+            @Override
+            public void onSuccess(Regist regist, Response<Regist> response) {
+                super.onSuccess(regist, response);
+                log("http on success: " + regist);
+            }
+
+            @Override
+            public void onFailure(HttpException e, Response<Regist> response) {
+                super.onFailure(e, response);
+                log("http on failure");
+            }
+
+            @Override
+            public void onEnd(Response<Regist> response) {
+                super.onEnd(response);
+                log("http on end");
+            }
+        });
+        return login;
+    }
 }

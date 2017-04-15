@@ -10,7 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 
 /**
  * <b>功能：</b>RecyclerViewHolder基类<br />
@@ -20,14 +22,14 @@ import com.gzlk.android.isp.helper.LogHelper;
  */
 public class BaseViewHolder extends RecyclerView.ViewHolder {
 
-    private BaseFragment fragment;
+    private BaseSwipeRefreshSupportFragment fragment;
 
     /**
      * 当前 holder 的 tag 对象
      */
     private Object mTag;
 
-    public BaseViewHolder(View itemView, BaseFragment fragment) {
+    public BaseViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
         super(itemView);
         this.fragment = fragment;
     }
@@ -70,7 +72,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     protected void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey) {
-        openActivity(fullClassName, params, BaseFragment.ACTIVITY_RESULT_NONE, supportToolbar, supportBackKey);
+        openActivity(fullClassName, params, BaseFragment.RESULT_NONE, supportToolbar, supportBackKey);
     }
 
     protected void openActivity(String fullClassName, String params, int requestCode, boolean supportToolbar, boolean supportBackKey) {
@@ -78,14 +80,14 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     protected void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
-        openActivity(fullClassName, params, BaseFragment.ACTIVITY_RESULT_NONE, supportToolbar, supportBackKey, transparentStatusBar);
+        openActivity(fullClassName, params, BaseFragment.RESULT_NONE, supportToolbar, supportBackKey, transparentStatusBar);
     }
 
     protected void openActivity(String fullClassName, String params, int requestCode, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
         fragment.openActivity(fullClassName, params, requestCode, supportToolbar, supportBackKey, transparentStatusBar);
     }
 
-    protected BaseFragment fragment() {
+    protected BaseSwipeRefreshSupportFragment fragment() {
         return this.fragment;
     }
 
@@ -141,6 +143,15 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
      * 从bundle中恢复数据
      */
     public void getParamsFromBundle(Bundle bundle) {
+    }
+
+    protected OnViewHolderClickListener mOnViewHolderClickListener;
+
+    /**
+     * 添加ViewHolder点击处理回调
+     */
+    public void addOnViewHolderClickListener(OnViewHolderClickListener l) {
+        mOnViewHolderClickListener = l;
     }
 
     /**

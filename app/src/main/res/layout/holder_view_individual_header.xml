@@ -22,7 +22,7 @@
             <com.gzlk.android.isp.lib.view.ImageDisplayer
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:id_image_res="@mipmap/img_default_user_header"
+                app:id_image_src="@mipmap/img_default_user_header"
                 app:id_image_type="oval" />
 
         </com.hlk.hlklib.lib.view.CorneredView>

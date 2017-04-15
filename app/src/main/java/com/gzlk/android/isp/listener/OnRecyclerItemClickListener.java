@@ -51,6 +51,7 @@ public abstract class OnRecyclerItemClickListener<VH extends RecyclerView.ViewHo
 
     private class ItemTouchHelperGestureListener extends GestureDetector.SimpleOnGestureListener {
 
+        @SuppressWarnings("unchecked")
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             View child = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
@@ -61,6 +62,7 @@ public abstract class OnRecyclerItemClickListener<VH extends RecyclerView.ViewHo
             return false;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void onLongPress(MotionEvent e) {
             View child = mRecyclerView.findChildViewUnder(e.getX(), e.getY());

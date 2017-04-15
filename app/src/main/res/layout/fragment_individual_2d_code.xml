@@ -57,7 +57,7 @@
             android:layout_width="@dimen/ui_static_dp_240"
             android:layout_height="@dimen/ui_static_dp_240"
             android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-            app:id_image_res="@drawable/img_2d_code_sample" />
+            app:id_image_src="@drawable/img_2d_code_sample" />
 
         <TextView
             android:layout_width="match_parent"
@@ -96,10 +96,7 @@
             app:normal_color="@android:color/white"
             app:right_top_corner_size="@dimen/ui_base_dimen_margin_padding" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/ui_static_dp_half"
-            android:background="@color/textColorHint" />
+        <include layout="@layout/tool_view_half_line_horizontal" />
 
         <com.hlk.hlklib.lib.view.CorneredButton
             android:id="@+id/ui_2d_code_button_cancel"

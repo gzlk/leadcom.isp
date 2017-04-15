@@ -9,6 +9,7 @@
         <item name="android:textColorHint">@color/textColorHint</item>
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="AppTheme" parent="BaseTheme" />

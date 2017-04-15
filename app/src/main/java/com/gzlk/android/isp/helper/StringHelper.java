@@ -2,6 +2,7 @@ package com.gzlk.android.isp.helper;
 
 import android.text.TextUtils;
 
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -16,6 +17,13 @@ public class StringHelper {
         // 参数列表为空时直接返回待格式化的字符串
         if (null == args || args.length < 1) return fmt;
         return String.format(Locale.getDefault(), fmt, args);
+    }
+
+    /**
+     * 获取当前系统时间戳
+     */
+    public static long timestamp() {
+        return new Date().getTime();
     }
 
     /**

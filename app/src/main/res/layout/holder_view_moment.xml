@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/ui_base_dimen_margin_padding">
+
+    <TextView
+        android:id="@+id/ui_holder_view_moment_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="05"
+        android:textSize="@dimen/ui_base_text_size_huge" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_moment_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12月"
+        android:textSize="@dimen/ui_base_text_size_small" />
+
+    <LinearLayout
+        android:id="@+id/ui_holder_view_moment_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include layout="@layout/holder_view_moment_content_today" />
+    </LinearLayout>
+</LinearLayout>

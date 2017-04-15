@@ -76,7 +76,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/ui_static_dp_half"
+                android:layout_height="@dimen/ui_base_border_size_normal"
                 android:layout_marginEnd="@dimen/ui_static_dp_12"
                 android:layout_marginStart="@dimen/ui_static_dp_12"
                 android:background="@color/textColorHintLight" />
@@ -123,7 +123,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/ui_static_dp_half"
+                android:layout_height="@dimen/ui_base_border_size_normal"
                 android:layout_marginEnd="@dimen/ui_static_dp_12"
                 android:layout_marginStart="@dimen/ui_static_dp_12"
                 android:background="@color/textColorHintLight" />
@@ -182,15 +182,11 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/ui_static_dp_30">
+            android:minHeight="@dimen/ui_static_dp_30"
+            android:paddingEnd="@dimen/ui_static_dp_12"
+            android:paddingStart="@dimen/ui_static_dp_12">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/ui_static_dp_half"
-                android:layout_centerInParent="true"
-                android:layout_marginEnd="@dimen/ui_static_dp_12"
-                android:layout_marginStart="@dimen/ui_static_dp_12"
-                android:background="@color/textColorHintLight" />
+            <include layout="@layout/tool_view_half_line_horizontal" />
 
             <TextView
                 android:layout_width="wrap_content"

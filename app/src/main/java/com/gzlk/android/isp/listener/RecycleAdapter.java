@@ -26,16 +26,16 @@ public interface RecycleAdapter<T> {
     /**
      * 在列表末尾添加一个item
      */
-    void add(T object);
+    void add(T item);
 
     /**
      * 在指定位置添加一个item
      */
-    void add(T object, int position);
+    void add(T item, int position);
 
     /**
      * 当前列表中是否存在指定值的item(value可以指定为任意字段的值)
      */
-    boolean exist(T value);
+    boolean exist(T item);
 
 }

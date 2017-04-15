@@ -15,7 +15,7 @@
         <attr name="id_image_width" format="dimension" />
         <attr name="id_image_height" format="dimension" />
         <!--图片来源：资源-->
-        <attr name="id_image_res" format="reference" />
+        <attr name="id_image_src" format="reference" />
         <!--图片来源：网址-->
         <attr name="id_image_url" format="string" />
         <!--删除按钮-->

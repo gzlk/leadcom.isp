@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ui_text_permission_storage_request">您需要允许app访问您的存储设备才能继续进行</string>
+    <string name="ui_text_permission_storage_denied">抱歉，无法访问您的存储设备。</string>
+    <string name="ui_text_permission_camera_request">您需要允许app拍照才能继续进行</string>
+    <string name="ui_text_permission_camera_denied">抱歉，无法访问照相机进行拍照！\n请确认您的设备是否有相应的管理类软件禁止了app的相应行为。</string>
+
+</resources>

@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.hlk.hlklib.etc.Cryptography;
 
 import java.io.File;
@@ -37,6 +38,10 @@ public class BaseApplication extends Application {
     }
 
     /**
+     * 本地照片的缓存路径
+     */
+    public static final String CACHE_DIR = "gzlkisp";
+    /**
      * 本地数据库缓存目录
      */
     public static final String DB_DIR = "database";
@@ -44,6 +49,10 @@ public class BaseApplication extends Application {
      * 本地相机拍照之后照片缓存目录
      */
     public static final String CAMERA_DIR = "camera";
+    /**
+     * 本地剪切之后的照片缓存目录
+     */
+    public static final String CROPPED_DIR = "cropped";
     /**
      * 本地图片缓存目录
      */
@@ -75,10 +84,6 @@ public class BaseApplication extends Application {
      */
     @SuppressWarnings("ConstantConditions")
     public String gotExternalCacheDir() {
-        // return Environment.getExternalStorageDirectory().getAbsolutePath();
-        // if (null == StoaApp.getContext()) {
-        // throw new RuntimeException("null application context");
-        // }
         String path = null;
         try {
             // 获取外置SD卡中的缓存目录
@@ -107,11 +112,16 @@ public class BaseApplication extends Application {
      */
     public String getCachePath(String dir) {
         StringBuilder sb = new StringBuilder();
-        if (dir.equals(DB_DIR)) {
-            // 缓存数据库和图像都存在内置app私有空间里
+        if (!BuildConfig.DEBUG && dir.equals(DB_DIR)) {
+            // release时，db文件放在内置私有目录下
             sb.append(gotCacheDir());
         } else {
+            //if (dir.equals(DB_DIR)) {
+            // 缓存数据库和图像都存在内置app私有空间里
+            //    sb.append(gotCacheDir());
+            //} else {
             sb.append(gotExternalCacheDir());
+            //}
         }
         sb.append("/").append(dir).append("/");
         createDirs(sb.toString());
@@ -148,6 +158,13 @@ public class BaseApplication extends Application {
      */
     public String getLocalCameraDir() {
         return getCachePath(CAMERA_DIR);
+    }
+
+    /**
+     * 获取本地剪切之后照片缓存目录
+     */
+    public String getLocalCroppedDir() {
+        return getCachePath(CROPPED_DIR);
     }
 
     /**

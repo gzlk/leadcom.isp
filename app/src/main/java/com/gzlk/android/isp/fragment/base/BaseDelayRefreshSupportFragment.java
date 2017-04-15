@@ -13,7 +13,7 @@ import android.support.annotation.IntDef;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseDelayRefreshSupportFragment extends BaseNothingLoadingSupportFragment {
+public abstract class BaseDelayRefreshSupportFragment extends BaseImageSelectableSupportFragment {
 
     private static final long STATIC_DELAY_TIME = 500;
     /**

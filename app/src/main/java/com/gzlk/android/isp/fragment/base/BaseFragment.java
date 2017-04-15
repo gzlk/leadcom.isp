@@ -186,13 +186,25 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     /**
-     * 需求新打开的Activity返回结果
-     */
-    public static final int ACTIVITY_RESULT_REQUEST = 10000;
-    /**
      * 不需要新打开的Activity返回结果
      */
-    public static final int ACTIVITY_RESULT_NONE = -1;
+    public static final int RESULT_NONE = -1;
+    /**
+     * 需求新打开的Activity返回结果
+     */
+    public static final int RESULT_BASE_REQUEST = 10000;
+    /**
+     * 需求照相机
+     */
+    public static final int REQUEST_CAMERA = RESULT_BASE_REQUEST + 1;
+    /**
+     * 需求相册
+     */
+    public static final int REQUEST_GALLERY = RESULT_BASE_REQUEST + 2;
+    /**
+     * 需求剪切照片
+     */
+    public static final int REQUEST_CROP = RESULT_BASE_REQUEST + 3;
 
     /**
      * 启动容器Activity(此时打开的新Activity不需要返回确认)
@@ -203,7 +215,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * @param supportBackKey 是否要处理backKey事件
      */
     public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey) {
-        openActivity(fullClassName, params, ACTIVITY_RESULT_NONE, supportToolbar, supportBackKey);
+        openActivity(fullClassName, params, RESULT_NONE, supportToolbar, supportBackKey);
     }
 
     /**
@@ -229,7 +241,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * @param transparentStatusBar 是否需要状态栏透明化
      */
     public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
-        openActivity(fullClassName, params, ACTIVITY_RESULT_NONE, supportToolbar, supportBackKey, transparentStatusBar);
+        openActivity(fullClassName, params, RESULT_NONE, supportToolbar, supportBackKey, transparentStatusBar);
     }
 
     /**

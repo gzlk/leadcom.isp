@@ -141,7 +141,7 @@ public class TestFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == VT_HEADER ? R.layout.tool_view_individual_header : R.layout.holder_view_text_olny;
+            return viewType == VT_HEADER ? R.layout.holder_view_individual_header : R.layout.holder_view_text_olny;
         }
 
         @Override

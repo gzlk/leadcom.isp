@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,6 +129,7 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
         if (DEBUG) {
             log("onViewCreated, view: " + view);
         }
+        getScreenSize();
     }
 
     @Override
@@ -232,6 +234,32 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 当前设备屏幕宽度像素
+     */
+    protected int mScreenWidth;
+    /**
+     * 当前设备屏幕高度像素
+     */
+    protected int mScreenHeight;
+
+    /**
+     * 获取当前设备的屏幕尺寸
+     */
+    private void getScreenSize() {
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        mScreenWidth = dm.widthPixels;
+        mScreenHeight = dm.heightPixels;
+    }
+
+    public int getScreenWidth() {
+        return mScreenWidth;
+    }
+
+    public int getScreenHeight() {
+        return mScreenHeight;
     }
 
     /**

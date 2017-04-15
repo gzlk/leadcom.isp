@@ -60,6 +60,9 @@ public abstract class BaseTransparentSupportFragment extends BaseLayoutSupportFr
         tryPaddingContent(mRootView, includeActionBar);
     }
 
+    /**
+     * 设置指定布局的顶部padding以便正常显示
+     */
     protected void tryPaddingContent(View view, boolean includeActionBar) {
         if (!isInitialized) {
             isInitialized = true;

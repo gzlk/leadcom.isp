@@ -17,6 +17,8 @@
     <string name="ui_icon_right">&#xe6f2;</string>
     <string name="ui_icon_add">&#xe604;</string>
     <string name="ui_icon_choose">&#xe605;</string>
+    <string name="ui_icon_more">&#xe608;</string>
+    <string name="ui_icon_camera">&#xe64b;</string>
     <string name="ui_icon_caution_oval">&#xe747;</string>
     <string name="ui_icon_caution_triangle">&#xe640;</string>
     <string name="ui_icon_main_home">&#xe607;</string>

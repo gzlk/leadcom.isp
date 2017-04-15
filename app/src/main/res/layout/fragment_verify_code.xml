@@ -19,6 +19,7 @@
             android:id="@+id/ui_verify_code_code"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_8"
             android:layout_weight="3"
             app:cet_edit_active_border="@color/textColorHintLight"
             app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
@@ -31,17 +32,13 @@
             app:cet_edit_value_max_length="@integer/integer_verify_code_length"
             app:cet_edit_value_verify_regex="@string/regex_verify_code_verify" />
 
-        <View
-            android:layout_width="@dimen/ui_static_dp_half"
-            android:layout_height="@dimen/ui_static_dp_30"
-            android:layout_marginEnd="@dimen/ui_static_dp_8"
-            android:layout_marginStart="@dimen/ui_static_dp_8"
-            android:background="@color/textColorHintLight" />
+        <include layout="@layout/tool_view_half_line_vertical" />
 
         <TextView
             android:id="@+id/ui_verify_code_to_resend"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_static_dp_8"
             android:layout_weight="1.5"
             android:gravity="center_horizontal"
             android:paddingBottom="@dimen/ui_static_dp_8"

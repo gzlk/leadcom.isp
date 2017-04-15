@@ -57,11 +57,12 @@ public class ImageDisplayer extends RelativeLayout {
             displayType = array.getInt(R.styleable.ImageDisplayer_id_image_type, 0);
             initializeViews();
 
-            final Drawable drawable = array.getDrawable(R.styleable.ImageDisplayer_id_image_res);
-            if (null != drawable) {
-                imageView.setImageDrawable(drawable);
+            if (array.hasValue(R.styleable.ImageDisplayer_id_image_src)) {
+                srcDrawable = array.getResourceId(R.styleable.ImageDisplayer_id_image_src, 0);
+                if (0 < srcDrawable) {
+                    imageView.setImageResource(srcDrawable);
+                }
             }
-
             displayUrl = array.getString(R.styleable.ImageDisplayer_id_image_url);
 
             String string = array.getString(R.styleable.ImageDisplayer_id_delete_icon);
@@ -91,6 +92,7 @@ public class ImageDisplayer extends RelativeLayout {
         }
     }
 
+    private int srcDrawable = 0;
     private RoundedImageView imageView;
     private CircleProgressBar progressBar;
     private CorneredView selectContainer, deleteContainer;
@@ -117,7 +119,7 @@ public class ImageDisplayer extends RelativeLayout {
         if (!TextUtils.isEmpty(displayUrl)) {
             displayImage(displayUrl, imageWidth, imageHeight, showSelect, showDelete);
         } else {
-            imageView.setImageResource(R.mipmap.img_default_user_header);
+            imageView.setImageResource(0 < srcDrawable ? srcDrawable : R.mipmap.img_default_user_header);
         }
     }
 
@@ -126,6 +128,8 @@ public class ImageDisplayer extends RelativeLayout {
         // 显示空资源以便释放缓存
         imageView.setImageDrawable(null);
         super.onDetachedFromWindow();
+        // 释放图片时gc一下
+        //System.gc();
     }
 
     /**

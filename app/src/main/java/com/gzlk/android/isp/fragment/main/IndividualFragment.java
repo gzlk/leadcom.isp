@@ -6,8 +6,11 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
 import com.gzlk.android.isp.holder.IndividualHeaderViewHolder;
+import com.gzlk.android.isp.holder.MomentViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
 import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
 import com.gzlk.android.isp.listener.RecycleAdapter;
@@ -30,7 +33,9 @@ import java.util.List;
 public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_SHOWN = "title_bar_shown";
-    private String[] test = new String[]{"", "测试1", "测试2", "测试3", "测试4", "测试5", "测试6", "测试7",
+
+    private String[] functions;
+    private String[] test = new String[]{"", "", "测试2", "测试3", "测试4", "测试5", "测试6", "测试7",
             "测试8", "测试9", "测试10", "测试11", "测试12", "测试13", "测试14", "测试15", "测试16", "测试17", "测试18"};
 
     private List<String> data = new ArrayList<>();
@@ -54,7 +59,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mAdapter.add("下拉刷新的" + (data.size() + 1), 1);
+                mAdapter.add("下拉刷新的" + (data.size() + 1), 2);
                 stopRefreshing();
             }
         }, 1000);
@@ -83,6 +88,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
+        // 这里不缓存选择了的图片，选择了一张图片之后就立即打开新发布窗口
+        isSupportCacheSelected = false;
         initializeTest();
     }
 
@@ -134,7 +141,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 return;
             }
             scrolledY += dy;
-            if (scrolledY >= 0 && scrolledY <= 255) {
+            if (scrolledY >= 0 && scrolledY <= 500) {
                 float alpha = scrolledY * 0.005f;
                 if (null != toolBarView && null != toolBarView.get()) {
                     toolBarView.get().setAlpha(alpha);
@@ -149,6 +156,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeTest() {
         if (null == mAdapter) {
+            functions = Activity().getResources().getStringArray(R.array.ui_individual_functions);
             mAdapter = new TestAdapter();
             mRecyclerView.addOnScrollListener(scrollListener);
             mRecyclerView.setAdapter(mAdapter);
@@ -167,7 +175,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private class TestAdapter extends LoadingMoreSupportedRecyclerView.LoadingMoreAdapter<BaseViewHolder> implements RecycleAdapter<String> {
 
-        int VT_HEADER = 0, VT_NORMAL = 1;
+        private static final int VT_HEADER = 0, VT_FUNCTIONS = 1, VT_MOMENT = 2;
 
         @Override
         public void clear() {
@@ -208,23 +216,43 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
-            if (viewType == VT_NORMAL) {
-                return new TextViewHolder(itemView, IndividualFragment.this);
-            } else {
-                tryPaddingContent(itemView, true);
-                return new IndividualHeaderViewHolder(itemView, IndividualFragment.this);
+            switch (viewType) {
+                case VT_HEADER:
+                    tryPaddingContent(itemView, true);
+                    return new IndividualHeaderViewHolder(itemView, IndividualFragment.this);
+                case VT_FUNCTIONS:
+                    HorizontalRecyclerViewHolder holder = new HorizontalRecyclerViewHolder(itemView, IndividualFragment.this);
+                    holder.addOnItemClickListener(functionItemClickListener);
+                    // 默认选中动态选项
+                    holder.setSelectedIndex(0);
+                    holder.displaySelectedEffect(true);
+                    holder.setDataSources(functions);
+                    return holder;
+                default:
+                    return new MomentViewHolder(itemView, IndividualFragment.this);
             }
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == VT_HEADER ? R.layout.tool_view_individual_header : R.layout.holder_view_text_olny;
+            switch (viewType) {
+                case VT_HEADER:
+                    return R.layout.holder_view_individual_header;
+                case VT_FUNCTIONS:
+                    return R.layout.holder_view_individual_functions;
+                default:
+                    return R.layout.holder_view_moment;
+            }
         }
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position) {
-            if (holder instanceof TextViewHolder) {
-                ((TextViewHolder) holder).showContent(data.get(position));
+            if (holder instanceof HorizontalRecyclerViewHolder) {
+                ((HorizontalRecyclerViewHolder) holder).displayItems();
+            } else if (holder instanceof MomentViewHolder) {
+                MomentViewHolder moment = (MomentViewHolder) holder;
+                moment.setAsToday(position == 2);
+                moment.showContent();
             }
         }
 
@@ -235,10 +263,14 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int gotItemViewType(int position) {
-            if (position == 0) {
-                return VT_HEADER;
+            switch (position) {
+                case 0:
+                    return VT_HEADER;
+                case 1:
+                    return VT_FUNCTIONS;
+                default:
+                    return VT_MOMENT;
             }
-            return VT_NORMAL;
         }
 
         @Override
@@ -246,4 +278,11 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             return new TextViewHolder(itemView, IndividualFragment.this);
         }
     }
+
+    private TextViewHolder.OnItemClickListener functionItemClickListener = new TextViewHolder.OnItemClickListener() {
+        @Override
+        public void onItemClick(int index) {
+            ToastHelper.make(Activity()).showMsg(functions[index].substring(2));
+        }
+    };
 }

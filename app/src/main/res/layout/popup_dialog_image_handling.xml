@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/ui_base_dimen_margin_padding"
+    app:cv_border_size="@dimen/ui_static_dp_zero"
+    app:cv_corner_size="@dimen/ui_base_dimen_margin_padding">
+
+    <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+        android:layout_width="@dimen/ui_static_dp_40"
+        android:layout_height="@dimen/ui_static_dp_40"
+        android:layout_gravity="center"
+        app:mlpb_enable_circle_background="false"
+        app:mlpb_progress_color="@color/colorProgressing"
+        app:mlpb_progress_stoke_width="@dimen/ui_static_dp_2"
+        app:mlpb_progress_text_visibility="invisible" />
+
+    <TextView
+        android:id="@+id/ui_dialog_image_handling_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:text="@string/ui_base_text_compressing"
+        android:textSize="@dimen/ui_base_text_size_small" />
+</com.hlk.hlklib.lib.view.CorneredView>

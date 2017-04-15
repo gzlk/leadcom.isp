@@ -6,7 +6,7 @@
         </shape>
     </item>
     <item
-        android:top="@dimen/ui_static_dp_half">
+        android:top="@dimen/ui_base_border_size_normal">
         <shape android:shape="rectangle">
             <solid android:color="@color/windowBackground" />
         </shape>

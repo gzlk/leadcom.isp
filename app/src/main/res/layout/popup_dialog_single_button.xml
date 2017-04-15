@@ -5,15 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    app:cv_background="@color/textColorHint"
+    app:cv_background="@android:color/white"
     app:cv_border_size="@dimen/ui_static_dp_zero"
     app:cv_left_bottom_corner="@dimen/ui_base_dimen_margin_padding"
     app:cv_right_bottom_corner="@dimen/ui_base_dimen_margin_padding">
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/ui_static_dp_half"
-        android:background="@color/textColorHint" />
+    <include layout="@layout/tool_view_half_line_horizontal" />
 
     <com.hlk.hlklib.lib.view.CorneredButton
         android:id="@+id/ui_dialog_button_confirm"

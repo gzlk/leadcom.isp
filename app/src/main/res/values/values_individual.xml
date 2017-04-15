@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <array name="ui_individual_functions">
+        <item>0|动态</item>
+        <item>1|档案</item>
+        <item>2|收藏</item>
+    </array>
+
     <string name="ui_text_2d_code_fragment_title">我的二维码</string>
     <string name="ui_text_2d_code_warning">用xx扫一扫，加为好友</string>
     <string name="ui_text_2d_code_right_title">扫一扫</string>
     <string name="ui_text_2d_code_scan">扫描二维码</string>
+
+    <string name="ui_text_image_select_from_camera">拍摄</string>
+    <string name="ui_text_image_select_from_gallery">从手机相册选择</string>
 </resources>

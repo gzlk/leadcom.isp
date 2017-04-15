@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_simple_clickable"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/ui_base_dimen_button_height"
+    android:orientation="horizontal"
+    android:padding="@dimen/ui_base_dimen_margin_padding"
+    app:cv_background="@android:color/white"
+    app:cv_background_active="@color/textColorHintLight"
+    app:cv_border_size="@dimen/ui_static_dp_zero">
+
+    <TextView
+        android:id="@+id/ui_holder_view_simple_clickable_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/app_name" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_simple_clickable_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="@string/app_name"
+        android:textColor="@color/textColorHint"
+        android:textSize="@dimen/ui_base_text_size_small" />
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_icon_right"
+        android:textColor="@color/textColorHint" />
+
+</com.hlk.hlklib.lib.view.CorneredView>

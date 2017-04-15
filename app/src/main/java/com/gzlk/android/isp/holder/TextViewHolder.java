@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -31,7 +32,7 @@ public class TextViewHolder extends BaseViewHolder {
     private int index;
     private boolean showSelectedEffect = false;
 
-    public TextViewHolder(View itemView, BaseFragment fragment) {
+    public TextViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
