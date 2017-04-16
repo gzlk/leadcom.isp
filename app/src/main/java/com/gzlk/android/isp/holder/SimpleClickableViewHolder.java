@@ -32,15 +32,34 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
-    public void showContent(String title, String value) {
+    /**
+     * 是否需要最左侧的空白距离
+     */
+    public void isNeedLeftPadding(boolean need) {
+        int top = itemView.getPaddingTop();
+        int right = itemView.getPaddingRight();
+        int bottom = itemView.getPaddingBottom();
+        itemView.setPadding(need ? right : 0, top, right, bottom);
+    }
+
+    public void showContent(String string) {
+        String[] strings = string.split("\\|", -1);
+        showContent(Integer.valueOf(strings[0]), strings[1], strings[2]);
+    }
+
+    public void showContent(int index, String title, String value) {
+        this.index = index;
         titleTextView.setText(title);
         valueTextView.setText(value);
     }
 
+    private int index;
+
     @Click({R.id.ui_holder_view_simple_clickable})
     private void click(View view) {
         if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(getAdapterPosition());
+            int pos = getAdapterPosition();
+            mOnViewHolderClickListener.onClick(pos < 0 ? index : pos);
         }
     }
 }

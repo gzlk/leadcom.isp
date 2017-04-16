@@ -40,6 +40,13 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         super.onAttach(context);
     }
 
+    @Override
+    public void log(String string) {
+        if (DEBUG) {
+            super.log(string);
+        }
+    }
+
     private boolean isScreenOn() {
         PowerManager pm = (PowerManager) Activity().getSystemService(Context.POWER_SERVICE);
         return Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn();
@@ -60,7 +67,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        log("on hidden changed: " + hidden);
+        //log("on hidden changed: " + hidden);
     }
 
     @Override
@@ -75,8 +82,8 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         if (id == R.id.ui_sign_in_to_sign_in) {
             // 登录
             //if (!StringHelper.isEmpty(accountText.getValue()) && !StringHelper.isEmpty(passwordText.getValue())) {
-                // 打开主页面
-                finish(true);
+            // 打开主页面
+            finish(true);
             //} else {
             //    ToastHelper.make(Activity()).showMsg("您的账号或密码输入不正确");
             //}

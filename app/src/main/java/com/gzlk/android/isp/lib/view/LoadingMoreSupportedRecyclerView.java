@@ -2,9 +2,7 @@ package com.gzlk.android.isp.lib.view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.lib.layoutmanager.CustomLinearLayoutManager;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.helper.LogHelper;
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 /**
@@ -44,6 +44,7 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
     }
 
     private boolean forceToLoadingMore = false;
+    private boolean supportLoadingMore = true;
     private View footerView;
     private CircleProgressBar loadingProgress;
     private TextView loadingTextView;
@@ -57,7 +58,10 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-
+            // 如果用户设置了不需要加载更多，则此时直接不用处理后续的判断
+            if (!supportLoadingMore) {
+                return;
+            }
             CustomLinearLayoutManager manager = (CustomLinearLayoutManager) recyclerView.getLayoutManager();
             // 停止滚动时
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -82,6 +86,13 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
             super.onScrolled(recyclerView, dx, dy);
         }
     };
+
+    /**
+     * 设置是否支持滚动到底部的时候加载更多
+     */
+    public void setSupportLoadingMore(boolean loadingMore) {
+        supportLoadingMore = loadingMore;
+    }
 
     /**
      * 是否还需要继续加载更多
@@ -118,54 +129,30 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
 
     @Override
     public void setAdapter(Adapter adapter) {
-        if (!(adapter instanceof LoadingMoreAdapter)) {
-            throw new IllegalArgumentException("You should extends your adapter of LoadMoreRecyclerView.LoadingMoreAdapter");
-        }
         footerView = LayoutInflater.from(getContext()).inflate(R.layout.hlklib_refreshable_recycler_view_loading_more_item, this, false);
         findFooterViews();
         footerView.setVisibility(GONE);
-        ((LoadingMoreAdapter) adapter).setFooterView(footerView);
+        if (adapter instanceof LoadingMoreAdapter) {
+            ((LoadingMoreAdapter) adapter).setFooterView(footerView);
+            ((LoadingMoreAdapter) adapter).setSupportLoadingMore(supportLoadingMore);
+        } else {
+            LogHelper.log("LoadingMore", "You should extends your adapter of LoadMoreRecyclerView.LoadingMoreAdapter");
+        }
         super.setAdapter(adapter);
     }
 
-    public static abstract class LoadingMoreAdapter<VH extends ViewHolder> extends Adapter<VH> {
+    public static abstract class LoadingMoreAdapter<VH extends ViewHolder> extends RecyclerViewAdapter<VH> {
 
         private int VT_FOOTER = 999;
         private View footView;
+        private boolean supportLoadingMore = true;
 
         final void setFooterView(View view) {
             footView = view;
         }
 
-        @Override
-        public void onViewAttachedToWindow(VH holder) {
-            super.onViewAttachedToWindow(holder);
-            if (isFirstItemFullLine()) {
-                // 第一行占满全屏
-                ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
-                if (params != null && params instanceof StaggeredGridLayoutManager.LayoutParams) {
-                    StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) params;
-                    p.setFullSpan(holder.getLayoutPosition() == 0);
-                }
-            }
-        }
-
-        @Override
-        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-            super.onAttachedToRecyclerView(recyclerView);
-            if (isFirstItemFullLine()) {
-                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-                if (manager instanceof GridLayoutManager) {
-                    final GridLayoutManager gridManager = ((GridLayoutManager) manager);
-                    gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                        @Override
-                        public int getSpanSize(int position) {
-                            // 第一个item占满整行
-                            return (position == 0) ? gridManager.getSpanCount() : 1;
-                        }
-                    });
-                }
-            }
+        final void setSupportLoadingMore(boolean support) {
+            supportLoadingMore = support;
         }
 
         @SuppressWarnings("unchecked")
@@ -173,28 +160,34 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType == VT_FOOTER) {
                 return footerViewHolder(footView);
+            } else {
+                return super.onCreateViewHolder(parent, viewType);
             }
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(itemLayout(viewType), parent, false);
-            return onCreateViewHolder(view, viewType);
         }
 
         @Override
         public void onBindViewHolder(VH holder, int position) {
-            if (position < getItemCount() - 1) {
+            if (!supportLoadingMore) {
+                // 不支持加载更多时，直接绑定holder
                 onBindHolderOfView(holder, position);
+            } else {
+                if (position < getItemCount() - 1) {
+                    onBindHolderOfView(holder, position);
+                }
             }
         }
 
         @Override
         public int getItemCount() {
-            return gotItemCount() + 1;
+            return gotItemCount() + (supportLoadingMore ? 1 : 0);
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (position == getItemCount() - 1) {
-                return VT_FOOTER;
+            if (supportLoadingMore) {
+                if (position == getItemCount() - 1) {
+                    return VT_FOOTER;
+                }
             }
             return gotItemViewType(position);
         }
@@ -220,20 +213,9 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
         public abstract VH footerViewHolder(View itemView);
 
         /**
-         * 第一个item是否占满整行
-         */
-        public abstract boolean isFirstItemFullLine();
-
-        /**
          * 创建ViewHolder
          */
         public abstract VH onCreateViewHolder(View itemView, int viewType);
-
-        /**
-         * 返回单个item的layout布局
-         */
-        public abstract int itemLayout(int viewType);
-
     }
 
     private OnLoadingMoreListener mOnLoadingMoreListener;

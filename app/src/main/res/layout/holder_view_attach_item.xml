@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_attach_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    app:cv_active_border="@color/colorPrimary"
+    app:cv_normal_border="@color/textColorHintLight">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_icon_add"
+        android:textSize="@dimen/ui_static_sp_45"
+        app:ctv_active_color="@color/colorPrimary"
+        app:ctv_normal_color="@color/textColorHintLight" />
+</com.hlk.hlklib.lib.view.CorneredView>

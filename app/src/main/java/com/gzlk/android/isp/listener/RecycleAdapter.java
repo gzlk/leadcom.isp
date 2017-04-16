@@ -24,6 +24,11 @@ public interface RecycleAdapter<T> {
     void remove(int position);
 
     /**
+     * 删除指定的item
+     */
+    void remove(T item);
+
+    /**
      * 在列表末尾添加一个item
      */
     void add(T item);

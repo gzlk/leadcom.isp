@@ -16,4 +16,6 @@
     <color name="colorProgressing">@color/color_566da9</color>
     <color name="buttonNormalColor">@color/color_3cbaff</color>
     <color name="buttonActivityColor">@color/color_52a2fb</color>
+    <color name="buttonDialogNormalColor">@android:color/white</color>
+    <color name="buttonDialogActiveColor">@color/textColorHintLight</color>
 </resources>

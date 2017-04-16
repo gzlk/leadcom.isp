@@ -29,13 +29,13 @@
         android:layout_width="@dimen/ui_static_dp_30"
         android:layout_height="@dimen/ui_static_dp_30"
         android:layout_alignStart="@+id/ui_tool_image_view_image"
-        android:layout_margin="@dimen/ui_base_dimen_margin_padding" />
+        android:layout_margin="@dimen/ui_view_image_displayer_icon_bar_margin" />
 
     <include
         layout="@layout/tool_view_image_button_deleter"
         android:layout_width="@dimen/ui_static_dp_30"
         android:layout_height="@dimen/ui_static_dp_30"
         android:layout_alignEnd="@+id/ui_tool_image_view_image"
-        android:layout_margin="@dimen/ui_base_dimen_margin_padding" />
+        android:layout_margin="@dimen/ui_view_image_displayer_icon_bar_margin" />
 
 </RelativeLayout>

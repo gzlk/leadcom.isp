@@ -8,12 +8,14 @@
     <string name="ui_base_text_press_again_to_exit">再按一次退出</string>
     <string name="ui_base_text_no_sdcard_exists">没有可用的存储设备</string>
     <string name="ui_base_text_cannot_create_image_in_dcim">无法在您的相册中创建照片</string>
+    <string name="ui_base_text_image_cannot_attach_more">您不能再选择更多的照片了</string>
     <string name="ui_base_text_compressing">正在压缩图片，请稍候&#8230;</string>
     <string name="ui_base_text_uploading">正在上传图片，请稍候&#8230;</string>
 
     <string name="ui_base_text_login">登录</string>
     <string name="ui_base_text_confirm">确定</string>
     <string name="ui_base_text_cancel">取消</string>
+    <string name="ui_base_text_send">发送</string>
     <string name="ui_base_text_back">返回</string>
     <string name="ui_base_text_next_step">下一步</string>
     <string name="ui_base_text_finish">完成</string>

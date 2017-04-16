@@ -5,11 +5,10 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.lib.layoutmanager.CustomLinearLayoutManager;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -136,6 +135,12 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
         public void remove(int position) {
             items.remove(position);
             notifyItemRemoved(position);
+        }
+
+        @Override
+        public void remove(Item item) {
+            int index = items.indexOf(item);
+            remove(index);
         }
 
         @Override

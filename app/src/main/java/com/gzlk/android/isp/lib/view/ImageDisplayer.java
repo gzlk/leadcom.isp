@@ -149,7 +149,7 @@ public class ImageDisplayer extends RelativeLayout {
 
     private void setSelected() {
         if (showSelect) {
-            selectContainer.setBackground(ContextCompat.getColor(getContext(), selected ? R.color.colorPrimary : R.color.textColorHint));
+            selectContainer.setBackground(ContextCompat.getColor(getContext(), selected ? R.color.colorPrimary : R.color.textColorHintLight));
         }
     }
 
@@ -176,6 +176,7 @@ public class ImageDisplayer extends RelativeLayout {
         imageHeight = height;
         showDelete = deletable;
         showSelect = selectable;
+        displayUrl = url;
         displayImage();
     }
 
@@ -183,24 +184,23 @@ public class ImageDisplayer extends RelativeLayout {
         if (TextUtils.isEmpty(displayUrl) || displayUrl.length() < 5) {
             imageView.setImageResource(R.mipmap.img_image_loading_fail);
         } else {
-            if (!displayUrl.contains("://")) {
-                imageView.setImageResource(R.mipmap.img_image_loading_fail);
-            } else {
-                // String url = LxbgApp.getInstance().gotFullDownloadUrl(image);
-                // http://
-                // drawable://  ex.: "drawable://" + R.drawable.image
-                // assets://image.png
-                // file:///mnt/sdcard/image.png  ex.: "file://" + uri(string)
-                // content://media/external/audio/albumart/13
+            String url = displayUrl;
+            if (!url.contains("://")) {
+                // 默认显示本地图片
+                url = "file://" + displayUrl;
+                //imageView.setImageResource(R.mipmap.img_image_loading_fail);
+            } //else {
+            // String url = LxbgApp.getInstance().gotFullDownloadUrl(image);
+            // http://
+            // drawable://  ex.: "drawable://" + R.drawable.image
+            // assets://image.png
+            // file:///mnt/sdcard/image.png  ex.: "file://" + uri(string)
+            // content://media/external/audio/albumart/13
 
-                //String http = image.substring(0, 4).toLowerCase();
-                //String url = http.equals("http") ? image : (LxbgApp.getInstance().getDownloadUrl(image) + image);
-                ImageLoader.getInstance().displayImage(displayUrl,
-                        new ImageViewAware(imageView),
-                        null,
-                        new ImageSize(imageWidth, imageHeight),
-                        mImageLoadingListener, mImageLoadingProgressListener);
-            }
+            ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView),
+                    null, new ImageSize(imageWidth, imageHeight),
+                    mImageLoadingListener, mImageLoadingProgressListener);
+            //}
         }
     }
 
@@ -275,33 +275,65 @@ public class ImageDisplayer extends RelativeLayout {
     private OnClickListener onClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (v == deleteContainer && null != elementClickListener) {
-                elementClickListener.onDeleteClick();
-            } else if (v == imageView && null != elementClickListener) {
-                elementClickListener.onImageClick(imageView);
+            if (v == deleteContainer && null != deleteClickListener) {
+                deleteClickListener.onDeleteClick(displayUrl);
+            } else if (v == imageView && null != imageClickListener) {
+                imageClickListener.onImageClick(displayUrl);
+            } else if (v == selectContainer && null != selectorClickListener) {
+                setSelected(!selected);
+                selectorClickListener.onSelectorClick(displayUrl, selected);
             }
         }
     };
 
-    private OnElementClickListener elementClickListener;
+    private OnImageClickListener imageClickListener;
 
-    public void addOnElementClickListener(OnElementClickListener l) {
-        elementClickListener = l;
+    /**
+     * 添加图片点击事件回调
+     */
+    public void addOnImageClickListener(OnImageClickListener l) {
+        imageClickListener = l;
     }
 
     /**
-     * 点击事件接口
+     * 图片点击事件接口
      */
-    public interface OnElementClickListener {
-
+    public interface OnImageClickListener {
         /**
-         * 点击了图片
+         * 图片点击了
          */
-        void onImageClick(ImageView imageView);
+        void onImageClick(String url);
+    }
 
-        /**
-         * 点击了删除
-         */
-        void onDeleteClick();
+    private OnSelectorClickListener selectorClickListener;
+
+    /**
+     * 添加选择事件回调
+     */
+    public void addOnSelectorClickListener(OnSelectorClickListener l) {
+        selectorClickListener = l;
+    }
+
+    /**
+     * 选择事件处理接口
+     */
+    public interface OnSelectorClickListener {
+        void onSelectorClick(String url, boolean selected);
+    }
+
+    private OnDeleteClickListener deleteClickListener;
+
+    /**
+     * 添加删除事件回调
+     */
+    public void addOnDeleteClickListener(OnDeleteClickListener l) {
+        deleteClickListener = l;
+    }
+
+    /**
+     * 删除事件处理接口
+     */
+    public interface OnDeleteClickListener {
+        void onDeleteClick(String url);
     }
 }

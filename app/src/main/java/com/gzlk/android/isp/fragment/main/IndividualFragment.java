@@ -6,6 +6,8 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.individual.MomentNewFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
@@ -157,6 +159,10 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeTest() {
         if (null == mAdapter) {
+            // 这里不需要直接上传，只需要把选择的图片传递给新建动态页面即可，上传在那里实现
+            isSupportDirectlyUpload = false;
+            // 添加图片选择
+            addOnImageSelectedListener(imageSelectedListener);
             functions = Activity().getResources().getStringArray(R.array.ui_individual_functions);
             mAdapter = new TestAdapter();
             mRecyclerView.addOnScrollListener(scrollListener);
@@ -191,6 +197,11 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         public void remove(int position) {
             data.remove(position);
             notifyItemRemoved(position);
+        }
+
+        @Override
+        public void remove(String item) {
+            remove(data.indexOf(item));
         }
 
         @Override
@@ -284,6 +295,17 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             ToastHelper.make(Activity()).showMsg(functions[index].substring(2));
+            openActivity(MomentNewFragment.class.getName(), "", true, true);
+        }
+    };
+
+    private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {
+        @Override
+        public void onImageSelected(String compressed) {
+            if (!StringHelper.isEmpty(compressed)) {
+                // 打开新建动态页面
+                openActivity(MomentNewFragment.class.getName(), compressed, true, true);
+            }
         }
     };
 }

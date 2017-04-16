@@ -1,12 +1,16 @@
 package com.gzlk.android.isp.fragment.base;
 
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.lib.layoutmanager.CustomLinearLayoutManager;
 import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
+import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
+import com.hlk.hlklib.layoutmanager.CustomStaggeredGridLayoutManager;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 /**
@@ -41,18 +45,85 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         }
     }
 
+    private static final String PARAM_TYPE = "_bsrsf_layout_type";
+    private static final String PARAM_SPAN_COUNT = "bsrsf_layout_span_count";
+    private static final String PARAM_ORIENTATION = "bsrsf_layout_orientation";
+    /**
+     * 普通顺序列表
+     */
+    public static final int TYPE_LINEAR = 0;
+    /**
+     * 网格列表
+     */
+    public static final int TYPE_GRID = 1;
+    /**
+     * 混合列表
+     */
+    public static final int TYPE_SGRID = 2;
+
+    /**
+     * RecyclerView的列表方式
+     */
+    @IntDef({TYPE_LINEAR, TYPE_GRID, TYPE_SGRID})
+    public @interface LayoutType {
+    }
+
+    /**
+     * 默认显示列数
+     */
+    private static final int DFT_SPAN_COUNT = 4;
+    /**
+     * 默认RecyclerView为直接排列列表方式
+     */
+    protected int layoutType = TYPE_LINEAR;
+    /**
+     * 网格列表默认每行4列
+     */
+    protected int gridSpanCount = DFT_SPAN_COUNT;
+    /**
+     * 横向排列
+     */
+    protected int gridOrientation = 0;
+
     @Override
     public int getLayout() {
-        return R.layout.tool_view_swipe_refreshable_recycler_view;
+        return R.layout.tool_view_recycler_view_swipe_refreshable;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (null != mRecyclerView && isAutoLayoutManager) {
-            mRecyclerView.setLayoutManager(new CustomLinearLayoutManager(mRecyclerView.getContext()));
+            mRecyclerView.setLayoutManager(getLayoutManager());
         }
         initRefreshableItems();
+    }
+
+    private RecyclerView.LayoutManager getLayoutManager() {
+        switch (layoutType) {
+            case TYPE_GRID:
+                return new CustomGridLayoutManager(mRecyclerView.getContext(), gridSpanCount);
+            case TYPE_SGRID:
+                return new CustomStaggeredGridLayoutManager(gridSpanCount, gridOrientation);
+            default:
+                return new CustomLinearLayoutManager(mRecyclerView.getContext());
+        }
+    }
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        layoutType = bundle.getInt(PARAM_TYPE, TYPE_LINEAR);
+        gridSpanCount = bundle.getInt(PARAM_SPAN_COUNT, DFT_SPAN_COUNT);
+        gridOrientation = bundle.getInt(PARAM_ORIENTATION, 0);
+        super.getParamsFromBundle(bundle);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        bundle.putInt(PARAM_TYPE, layoutType);
+        bundle.putInt(PARAM_ORIENTATION, gridOrientation);
+        bundle.putInt(PARAM_SPAN_COUNT, gridSpanCount);
+        super.saveParamsToBundle(bundle);
     }
 
     protected void initRefreshableItems() {
@@ -63,6 +134,8 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
                     android.R.color.holo_green_light);
             //mSwipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
             mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
+        }
+        if (null != mRecyclerView) {
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
             mRecyclerView.addOnLoadingMoreListener(loadingMoreListener);
             registerForContextMenu(mRecyclerView);
@@ -88,7 +161,9 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
      * 设置数据是否已加载完毕
      */
     protected void isLoadingComplete(boolean complete) {
-        mRecyclerView.isLoadingComplete(complete);
+        if (null != mRecyclerView) {
+            mRecyclerView.isLoadingComplete(complete);
+        }
     }
 
     /**

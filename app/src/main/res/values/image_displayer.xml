@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="ui_view_image_displayer_icon_bar_margin">@dimen/ui_static_dp_5</dimen>
+
     <declare-styleable name="ImageDisplayer">
         <!--图片显示方式-->
         <attr name="id_image_type">

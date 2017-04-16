@@ -14,4 +14,10 @@
 
     <string name="ui_text_image_select_from_camera">拍摄</string>
     <string name="ui_text_image_select_from_gallery">从手机相册选择</string>
+
+    <string name="ui_text_new_moment_fragment_title">发布新动态</string>
+    <string name="ui_text_new_moment_content_hint">这一刻的心情&#8230;</string>
+    <string-array name="ui_individual_new_moment">
+        <item>0|谁可以看|%s</item>
+    </string-array>
 </resources>

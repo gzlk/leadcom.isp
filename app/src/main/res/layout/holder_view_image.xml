@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.gzlk.android.isp.lib.view.ImageDisplayer xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_image"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:id_delete_icon="@string/ui_icon_add"
+    app:id_show_delete="true" />

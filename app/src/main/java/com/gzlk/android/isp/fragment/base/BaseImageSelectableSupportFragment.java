@@ -54,6 +54,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
     private static final String KEY_DIRECTLY_UPLOAD = "directly_upload";
     private static final String KEY_CACHEABLE = "is_cacheable";
     private static final String KEY_CACHED_IMAGES = "cached_images";
+    private static final String KEY_MAX_CACHED = "max_cached_size";
     /**
      * 通过系统相机拍摄的照片的路径
      */
@@ -88,6 +89,11 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
      */
     protected boolean isSupportCacheSelected = true;
 
+    private static final int DFT_MAX_IMAGE = 9;
+    /**
+     * 最大可选择的图片数量
+     */
+    protected int maxCachedImage = DFT_MAX_IMAGE;
     /**
      * 已选择了的图片的缓存列表
      */
@@ -115,6 +121,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
         isChooseImageForCrop = bundle.getBoolean(KEY_FOR_CROP);
         isSupportDirectlyUpload = bundle.getBoolean(KEY_DIRECTLY_UPLOAD, true);
         isSupportCacheSelected = bundle.getBoolean(KEY_CACHEABLE, true);
+        maxCachedImage = bundle.getInt(KEY_MAX_CACHED, DFT_MAX_IMAGE);
         String string = bundle.getString(KEY_CACHED_IMAGES, "[]");
         cachedImages = mGson.fromJson(string, new TypeToken<List<String>>() {
         }.getType());
@@ -128,6 +135,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
         bundle.putBoolean(KEY_FOR_CROP, isChooseImageForCrop);
         bundle.putBoolean(KEY_DIRECTLY_UPLOAD, isSupportDirectlyUpload);
         bundle.putBoolean(KEY_CACHEABLE, isSupportCacheSelected);
+        bundle.putInt(KEY_MAX_CACHED, maxCachedImage);
         bundle.putString(KEY_CACHED_IMAGES, mGson.toJson(cachedImages));
     }
 
@@ -528,6 +536,10 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
      * 打开图片选择菜单
      */
     public void openImageSelector() {
+        if (cachedImages.size() >= maxCachedImage) {
+            ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_image_cannot_attach_more);
+            return;
+        }
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override
             public View onInitializeView() {
@@ -575,7 +587,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
     /**
      * 照片选择之后的处理接口
      */
-    interface OnImageSelectedListener {
+    protected interface OnImageSelectedListener {
         /**
          * 照片选择并且按照要求压缩完毕之后的回调接口
          *
