@@ -78,13 +78,22 @@ public class TitleActivity extends BaseActivity {
         // 是否有默认的toolbar布局，否则需要自己加载toolbar布局
         int layout = ((this instanceof MainActivity) || !isToolbarSupported) ? R.layout.activity_main : R.layout.activity_container;
         setContentView(layout);
-        ViewUtility.bind(this);
+        tryBindViews();
         if (isToolbarSupported && null != mToolbar) {
             setSupportActionBar(mToolbar);
             resetLeftIconMargin();
             //if (!isInputSupported) {
             //    setRootViewPadding(mToolbar, true);
             //}
+        }
+    }
+
+    /**
+     * 尝试通过注解方式绑定所有UI变量
+     */
+    private void tryBindViews() {
+        if (isToolbarSupported) {
+            ViewUtility.bind(this);
         }
     }
 
@@ -217,7 +226,7 @@ public class TitleActivity extends BaseActivity {
      */
     public void setLeftIcon(String text) {
         if (null == mLeftIcon) {
-            ViewUtility.bind(this);
+            tryBindViews();
         }
         setLeftIconText(text);
     }
@@ -247,7 +256,7 @@ public class TitleActivity extends BaseActivity {
      */
     public void setLeftText(String text) {
         if (null == mLeftText) {
-            ViewUtility.bind(this);
+            tryBindViews();
         }
         setLeftTextString(text);
     }
@@ -266,7 +275,7 @@ public class TitleActivity extends BaseActivity {
      */
     public void setLeftTextSize(float size) {
         if (null == mLeftText) {
-            ViewUtility.bind(this);
+            tryBindViews();
         }
         if (null != mLeftText) {
             mLeftText.setTextSize(size);
@@ -287,8 +296,9 @@ public class TitleActivity extends BaseActivity {
      * 设置中间标题文字
      */
     public void setCustomTitle(String title) {
-        if (null == mTitle)
-            ViewUtility.bind(this);
+        if (null == mTitle) {
+            tryBindViews();
+        }
         setTitleText(title);
     }
 
@@ -315,8 +325,9 @@ public class TitleActivity extends BaseActivity {
      * 设置菜单栏右边文字
      */
     public void setRightText(String text) {
-        if (null == mRightText)
-            ViewUtility.bind(this);
+        if (null == mRightText) {
+            tryBindViews();
+        }
         setRightTextString(text);
     }
 
@@ -333,8 +344,9 @@ public class TitleActivity extends BaseActivity {
      * 设置右边文字大小
      */
     public void setRightTextSize(float size) {
-        if (null == mRightText)
-            ViewUtility.bind(this);
+        if (null == mRightText) {
+            tryBindViews();
+        }
         mRightText.setTextSize(size);
     }
 
@@ -354,7 +366,7 @@ public class TitleActivity extends BaseActivity {
      */
     public void setRightIcon(String text) {
         if (null == mRightIcon) {
-            ViewUtility.bind(this);
+            tryBindViews();
         }
         setRightIconText(text);
     }
@@ -389,8 +401,9 @@ public class TitleActivity extends BaseActivity {
      * 设置左边菜单栏点击事件回调
      */
     public void setLeftTitleClickListener(OnTitleButtonClickListener l) {
-        if (null == mLeftText)
-            ViewUtility.bind(this);
+        if (null == mLeftText) {
+            tryBindViews();
+        }
         mLeftClick = l;
     }
 
@@ -402,8 +415,9 @@ public class TitleActivity extends BaseActivity {
      * 设置右边菜单栏点击事件回调
      */
     public void setRightTitleClickListener(OnTitleButtonClickListener l) {
-        if (null == mRightText)
-            ViewUtility.bind(this);
+        if (null == mRightText) {
+            tryBindViews();
+        }
         mRightClick = l;
     }
 }
