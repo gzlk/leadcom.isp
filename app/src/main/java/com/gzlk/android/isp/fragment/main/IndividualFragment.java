@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.individual.MomentDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -234,14 +235,16 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     return new IndividualHeaderViewHolder(itemView, IndividualFragment.this);
                 case VT_FUNCTIONS:
                     HorizontalRecyclerViewHolder holder = new HorizontalRecyclerViewHolder(itemView, IndividualFragment.this);
-                    holder.addOnViewHolderClickListener(holderClickListener);
+                    holder.addOnViewHolderClickListener(horizontalHolderClickListener);
                     // 默认选中动态选项
                     holder.setSelectedIndex(0);
                     holder.displaySelectedEffect(true);
                     holder.setDataSources(functions);
                     return holder;
                 default:
-                    return new MomentViewHolder(itemView, IndividualFragment.this);
+                    MomentViewHolder mvh = new MomentViewHolder(itemView, IndividualFragment.this);
+                    mvh.addOnViewHolderClickListener(momentHolderClickListener);
+                    return mvh;
             }
         }
 
@@ -291,11 +294,28 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
+    private OnViewHolderClickListener horizontalHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
             ToastHelper.make(Activity()).showMsg(functions[index].substring(2));
             openActivity(MomentNewFragment.class.getName(), "", true, true);
+        }
+    };
+
+    private OnViewHolderClickListener momentHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            switch (index) {
+                case 0:
+                case 1:
+                    break;
+                case 2:
+                    openImageSelector();
+                    break;
+                default:
+                    openActivity(MomentDetailsFragment.class.getName(), "", false, false, true);
+                    break;
+            }
         }
     };
 

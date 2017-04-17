@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
+import com.gzlk.android.isp.fragment.individual.SettingFragment;
 import com.gzlk.android.isp.fragment.login.SignInFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.hlk.hlklib.lib.inject.Click;
@@ -145,7 +146,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 setDisplayPage(3);
                 break;
             case R.id.ui_ui_custom_title_right_icon_1:
-                ToastHelper.make(Activity()).showMsg("个人设置");
+                openActivity(SettingFragment.class.getName(), "", true, false);
                 break;
         }
     }

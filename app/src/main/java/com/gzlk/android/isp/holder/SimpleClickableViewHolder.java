@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -27,7 +27,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_simple_clickable_value)
     private TextView valueTextView;
 
-    public SimpleClickableViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
+    public SimpleClickableViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }

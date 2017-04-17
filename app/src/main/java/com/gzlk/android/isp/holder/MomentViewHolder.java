@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -42,13 +43,20 @@ public class MomentViewHolder extends BaseViewHolder {
         isToday = asToday;
     }
 
+    @Override
+    protected BaseSwipeRefreshSupportFragment fragment() {
+        return (BaseSwipeRefreshSupportFragment) super.fragment();
+    }
+
     private void showToday() {
         if (!isToday) {
             return;
         }
         if (null == today) {
-            View view = LayoutInflater.from(itemView.getContext()).inflate(R.layout.holder_view_moment_content_today, fragment().mRecyclerView, false);
+            View view = LayoutInflater.from(itemView.getContext())
+                    .inflate(R.layout.holder_view_moment_content_today, fragment().mRecyclerView, false);
             today = new MomentContentTodayViewHolder(view, fragment());
+            today.addOnViewHolderClickListener(mOnViewHolderClickListener);
         }
         date.setText("今天");
         month.setText("");
@@ -61,6 +69,13 @@ public class MomentViewHolder extends BaseViewHolder {
             showToday();
         } else {
             date.setText("15");
+        }
+    }
+
+    @Click({R.id.ui_holder_view_moment_content})
+    private void viewClick(View view) {
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(getAdapterPosition());
         }
     }
 }

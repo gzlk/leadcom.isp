@@ -180,7 +180,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public void finishToSignIn() {
         // 先关闭本页面
-        finish();
+        Activity().finish();
 
         Intent intent = new Intent(Activity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -23,7 +23,7 @@ public class ToastHelper {
     private final Context mContext;
 
     private ToastHelper(Context context) {
-        mContext = null == context ? App.instance() : context;
+        mContext = null == context ? App.app() : context;
     }
 
     public static ToastHelper make() {

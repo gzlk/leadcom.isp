@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -21,7 +21,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
  */
 public class AttachItemViewHolder extends BaseViewHolder {
 
-    public AttachItemViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
+    public AttachItemViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }

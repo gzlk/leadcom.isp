@@ -36,7 +36,7 @@ public class App extends OrmApplication {
     /**
      * 获取全局Application实例
      */
-    public static App instance() {
+    public static App app() {
         try {
             App app = (App) getApplicationUsingReflectionOfAppGlobals();
             if (null == app) {

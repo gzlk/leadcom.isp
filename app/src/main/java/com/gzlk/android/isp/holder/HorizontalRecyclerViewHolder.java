@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
@@ -39,7 +40,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
     // 原始数据
     private List<String> data = new ArrayList<>();
 
-    public HorizontalRecyclerViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
+    public HorizontalRecyclerViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         if (null != recyclerView) {

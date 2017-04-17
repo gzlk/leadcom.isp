@@ -68,6 +68,7 @@
                     app:cet_edit_input_type="phone"
                     app:cet_edit_normal_border="@android:color/white"
                     app:cet_edit_padding="@dimen/ui_static_dp_8"
+                    app:cet_edit_text="13999999999"
                     app:cet_edit_value_extract_regex="@string/regex_phone_number_filter"
                     app:cet_edit_value_max_length="@integer/integer_phone_number_length"
                     app:cet_edit_value_verify_regex="@string/regex_phone_number_verify" />
@@ -116,6 +117,7 @@
                     app:cet_edit_input_type="password"
                     app:cet_edit_normal_border="@android:color/white"
                     app:cet_edit_padding="@dimen/ui_static_dp_8"
+                    app:cet_edit_text="111111"
                     app:cet_edit_value_extract_regex="@string/regex_password_filter"
                     app:cet_edit_value_max_length="@integer/integer_password_max_length"
                     app:cet_edit_value_verify_regex="@string/regex_password_verify" />

@@ -3,7 +3,7 @@ package com.gzlk.android.isp.holder;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -22,7 +22,7 @@ public class ImageViewHolder extends BaseViewHolder {
 
     private ImageDisplayer imageDisplayer;
 
-    public ImageViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
+    public ImageViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageDisplayer = (ImageDisplayer) itemView;

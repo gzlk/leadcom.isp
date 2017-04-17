@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 
@@ -22,14 +21,14 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
  */
 public class BaseViewHolder extends RecyclerView.ViewHolder {
 
-    private BaseSwipeRefreshSupportFragment fragment;
+    private BaseFragment fragment;
 
     /**
      * 当前 holder 的 tag 对象
      */
     private Object mTag;
 
-    public BaseViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
+    public BaseViewHolder(View itemView, BaseFragment fragment) {
         super(itemView);
         this.fragment = fragment;
     }
@@ -87,7 +86,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         fragment.openActivity(fullClassName, params, requestCode, supportToolbar, supportBackKey, transparentStatusBar);
     }
 
-    protected BaseSwipeRefreshSupportFragment fragment() {
+    protected BaseFragment fragment() {
         return this.fragment;
     }
 

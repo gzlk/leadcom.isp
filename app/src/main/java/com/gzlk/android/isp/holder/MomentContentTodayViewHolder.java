@@ -21,13 +21,15 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 
 public class MomentContentTodayViewHolder extends BaseViewHolder {
 
-    public MomentContentTodayViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
+    public MomentContentTodayViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
 
     @Click({R.id.ui_holder_view_moment_today})
     private void itemClick(View view) {
-        fragment().openImageSelector();
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(-1);
+        }
     }
 }

@@ -4,7 +4,6 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.QRCodeFragment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -22,7 +21,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 
 public class IndividualHeaderViewHolder extends BaseViewHolder {
 
-    public IndividualHeaderViewHolder(View itemView, BaseSwipeRefreshSupportFragment fragment) {
+    public IndividualHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
