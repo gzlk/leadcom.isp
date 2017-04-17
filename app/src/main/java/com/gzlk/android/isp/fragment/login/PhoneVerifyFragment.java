@@ -64,15 +64,18 @@ public class PhoneVerifyFragment extends BaseVerifyFragment {
         int id = view.getId();
         switch (id) {
             case R.id.ui_verify_phone_to_next_step:
-                if (!StringHelper.isEmpty(phoneText.getValue())) {
-                    openActivity(CodeVerifyFragment.class.getName(), String.valueOf(verifyType), true, true);
+                verifyPhone = phoneText.getValue();
+                if (!StringHelper.isEmpty(verifyPhone)) {
+                    openActivity(CodeVerifyFragment.class.getName(), StringHelper.format("%d,%s", verifyType, verifyPhone), true, true);
                 } else {
-                    ToastHelper.make(Activity()).showMsg("手机号码输入不正确");
+                    ToastHelper.make().showMsg(R.string.ui_text_verify_phone_value_incorrect);
                 }
                 break;
             case R.id.ui_verify_phone_to_service_protocol:
+                ToastHelper.make().showMsg(R.string.ui_text_verify_phone_protocol_2);
                 break;
             case R.id.ui_verify_phone_to_privacy_policy:
+                ToastHelper.make().showMsg(R.string.ui_text_verify_phone_protocol_4);
                 break;
         }
     }

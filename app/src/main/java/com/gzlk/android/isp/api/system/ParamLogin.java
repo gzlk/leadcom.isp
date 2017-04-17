@@ -7,7 +7,7 @@ import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.request.param.HttpRichParamModel;
 
 /**
- * <b>功能描述：</b>登录请求<br />
+ * <b>功能描述：</b>登录<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/04/15 20:55 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -17,8 +17,8 @@ import com.litesuits.http.request.param.HttpRichParamModel;
  * <b>修改备注：</b><br />
  */
 @HttpUri(BaseApi.URL + "/system/login")
-@HttpMethod(HttpMethods.Get)
-public class LoginParam extends HttpRichParamModel<Regist> {
+@HttpMethod(HttpMethods.Post)
+public class ParamLogin extends HttpRichParamModel<Regist> {
     private String phone;
     private String password;
     private String loginId;
@@ -26,7 +26,7 @@ public class LoginParam extends HttpRichParamModel<Regist> {
     /**
      * 登录参数
      */
-    public LoginParam(String phone, String password, String loginId) {
+    public ParamLogin(String phone, String password, String loginId) {
         this.phone = phone;
         this.password = password;
         this.loginId = loginId;

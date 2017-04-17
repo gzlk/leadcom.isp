@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.TimeCounter;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -28,8 +29,10 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
 
     public static CodeVerifyFragment newInstance(String params) {
         CodeVerifyFragment cvf = new CodeVerifyFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
-        bundle.putInt(PARAM_VERIFY_TYPE, Integer.valueOf(params));
+        bundle.putInt(PARAM_VERIFY_TYPE, Integer.valueOf(strings[0]));
+        bundle.putString(PARAM_VERIFY_PHONE, strings[1]);
         cvf.setArguments(bundle);
         return cvf;
     }
@@ -41,6 +44,8 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
     private TextView resend;
     @ViewId(R.id.ui_verify_code_to_next_step)
     private CorneredButton nextStep;
+    @ViewId(R.id.ui_verify_code_to_skip)
+    private TextView skipTextView;
 
     private TimeCounter timeCounter;
 
@@ -87,7 +92,13 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
 
         @Override
         public void onTick(long timeLeft) {
-            resend.setText(getString(R.string.ui_text_verify_code_time_count_down, timeLeft / 1000));
+            long timeUsed = timeLeft / 1000;
+            resend.setText(getString(R.string.ui_text_verify_code_time_count_down, timeUsed));
+            if (BuildConfig.DEBUG && timeUsed < 50 && skipTextView.getVisibility() == View.GONE) {
+                // debug版本在10s后可以随便输验证码并进行下一步
+                skipTextView.setVisibility(View.VISIBLE);
+                nextStep.setEnabled(true);
+            }
         }
 
         @Override
@@ -108,11 +119,14 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                 start();
                 break;
             case R.id.ui_verify_code_to_next_step:
-                if (!StringHelper.isEmpty(verifyCode.getValue())) {
+                timeCounter.cancel();
+                super.verifyCode = verifyCode.getValue();
+                if (!StringHelper.isEmpty(super.verifyCode)) {
                     String clazz = verifyType == VT_PASSWORD ? ResetPasswordFragment.class.getName() : SignUpFragment.class.getName();
-                    openActivity(clazz, String.valueOf(verifyType), true, true);
+                    String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, super.verifyCode);
+                    openActivity(clazz, params, true, true);
                 } else {
-                    ToastHelper.make(Activity()).showMsg("验证码输入不正确");
+                    ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_incorrect);
                 }
                 break;
         }

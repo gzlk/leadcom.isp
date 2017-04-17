@@ -5,12 +5,13 @@
     <string name="ui_text_sign_in_to_sign_up">新用户注册</string>
     <string name="ui_text_sign_in_forget_password">忘记密码</string>
     <string name="ui_text_sign_in_by_3rd_part_account">使用第三方账号登录</string>
-    <string name="ui_text_sign_in_error_account_error">请正确输入您的账号</string>
-    <string name="ui_text_sign_in_error_password_error">请正确输入您的密码</string>
+    <string name="ui_text_sign_in_account_value_incorrect">请正确输入您的账号</string>
+    <string name="ui_text_sign_in_password_value_incorrect">请输入有效的密码</string>
 
     <string name="ui_text_verify_phone_fragment_title_sin_up">新用户注册</string>
     <string name="ui_text_verify_phone_fragment_title_reset_password">重设密码</string>
     <string name="ui_text_verify_phone_input_title">手机号码</string>
+    <string name="ui_text_verify_phone_value_incorrect">手机号码输入不正确</string>
     <string name="ui_text_verify_phone_protocol_1">同意</string>
     <string name="ui_text_verify_phone_protocol_2">历康服务协议</string>
     <string name="ui_text_verify_phone_protocol_3">和</string>
@@ -22,6 +23,8 @@
     <string name="ui_text_verify_code_hint">请输入验证码</string>
     <string name="ui_text_verify_code_time_count_down" formatted="false">%d秒后重发</string>
     <string name="ui_text_verify_code_time_count_resend">重新发送</string>
+    <string name="ui_text_verify_code_value_incorrect">验证码输入不正确(4&#8211;8长度)</string>
+    <string name="ui_text_verify_code_skip_debug">要跳过可以随便输验证码(4&#8211;8长度)</string>
 
     <string name="ui_text_reset_password_fragment_title">重设密码</string>
     <string name="ui_text_reset_password_fragment_title_left_text">安全校验</string>
@@ -29,7 +32,10 @@
     <string name="ui_text_reset_password_input_hint">请输入6&#8211;18位数字或字母</string>
 
     <string name="ui_text_sign_up_fragment_title">设置账号</string>
-    <string name="ui_text_sing_up_input_name_title">姓名</string>
-    <string name="ui_text_sing_up_input_name_hint">请输入真实姓名</string>
-    <string name="ui_text_sing_up_input_password_title">密码</string>
+    <string name="ui_text_sign_up_incorrect_params">无效的注册参数</string>
+    <string name="ui_text_sign_up_input_name_title">姓名</string>
+    <string name="ui_text_sign_up_input_name_hint">请输入真实姓名</string>
+    <string name="ui_text_sign_up_name_value_incorrect">@string/ui_text_sign_up_input_name_hint</string>
+    <string name="ui_text_sign_up_input_password_title">密码</string>
+    <string name="ui_text_sign_up_password_value_incorrect">@string/ui_text_sign_in_password_value_incorrect</string>
 </resources>

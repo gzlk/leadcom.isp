@@ -69,29 +69,37 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/ui_static_dp_8"
             android:paddingTop="@dimen/ui_static_dp_8"
-            android:text="@string/ui_text_verify_phone_protocol_1" />
+            android:text="@string/ui_text_verify_phone_protocol_1"
+            android:textSize="@dimen/ui_base_text_size_small" />
 
         <TextView
             android:id="@+id/ui_verify_phone_to_service_protocol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/ui_static_dp_8"
             android:paddingTop="@dimen/ui_static_dp_8"
             android:text="@string/ui_text_verify_phone_protocol_2"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/ui_base_text_size_small" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/ui_static_dp_8"
             android:paddingTop="@dimen/ui_static_dp_8"
-            android:text="@string/ui_text_verify_phone_protocol_3" />
+            android:text="@string/ui_text_verify_phone_protocol_3"
+            android:textSize="@dimen/ui_base_text_size_small" />
 
         <TextView
             android:id="@+id/ui_verify_phone_to_privacy_policy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/ui_static_dp_8"
             android:paddingTop="@dimen/ui_static_dp_8"
             android:text="@string/ui_text_verify_phone_protocol_4"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/ui_base_text_size_small" />
     </LinearLayout>
 </LinearLayout>

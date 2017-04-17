@@ -4,7 +4,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.system.LoginParam;
+import com.gzlk.android.isp.api.system.ParamLogin;
 import com.gzlk.android.isp.api.system.Regist;
 import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -71,9 +71,9 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         if (id == R.id.ui_sign_in_to_sign_in) {
             // 登录
             if (TextUtils.isEmpty(accountText.getValue())) {
-                ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_error_account_error);
+                ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_account_value_incorrect);
             } else if (TextUtils.isEmpty(passwordText.getValue())) {
-                ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_error_password_error);
+                ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_password_value_incorrect);
             } else {
                 // 开始登录
                 httpRequest(loginParams(accountText.getValue(), passwordText.getValue()));
@@ -90,8 +90,8 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private JsonRequest<Regist> loginParams(String account, String password) {
-        LoginParam param = new LoginParam(account, password, "");
-        String json = Json.gson(HttpRichParamModel.class).toJson(param, new TypeToken<LoginParam>() {
+        ParamLogin param = new ParamLogin(account, password, "");
+        String json = Json.gson(HttpRichParamModel.class).toJson(param, new TypeToken<ParamLogin>() {
         }.getType());
         JsonRequest<Regist> login = new JsonRequest<>(param, Regist.class);
         login.setHttpListener(new OnHttpListener<Regist>() {

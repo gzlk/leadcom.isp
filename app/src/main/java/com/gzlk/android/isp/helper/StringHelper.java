@@ -27,10 +27,18 @@ public class StringHelper {
     }
 
     /**
-     * 判断字符串是否为空，"null"也当作空
+     * 判断字符串是否为空，也即(null == value) or (value.length = 0)
      */
-    public static boolean isEmpty(String string) {
-        return TextUtils.isEmpty(string) || string.toLowerCase().equals("null");
+    public static boolean isEmpty(String value) {
+        return isEmpty(value, false);
+    }
+
+    /**
+     * 判断字符串是否为空，字符串"null"也当作空，也即(null == value) or (value.length = 0) or (value == "null")
+     */
+    public static boolean isEmpty(String value, boolean nullable) {
+        return nullable ? (TextUtils.isEmpty(value) || value.toLowerCase().equals("null"))
+                : TextUtils.isEmpty(value);
     }
 
     /**
