@@ -25,6 +25,16 @@ import java.util.UUID;
 
 public class BaseApplication extends Application {
 
+    protected static BaseApplication getApplicationUsingReflectionOfActivityThread() throws Exception {
+        return (BaseApplication) Class.forName("android.app.ActivityThread")
+                .getMethod("currentApplication").invoke(null, (Object[]) null);
+    }
+
+    protected static BaseApplication getApplicationUsingReflectionOfAppGlobals() throws Exception {
+        return (BaseApplication) Class.forName("android.app.AppGlobals")
+                .getMethod("getInitialApplication").invoke(null, (Object[]) null);
+    }
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();

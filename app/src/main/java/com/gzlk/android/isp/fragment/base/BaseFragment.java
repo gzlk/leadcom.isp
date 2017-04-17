@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.activity.ContainerActivity;
 import com.gzlk.android.isp.activity.LoginActivity;
@@ -15,7 +14,12 @@ import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnHttpListener;
 import com.hlk.hlklib.etc.Utility;
+import com.litesuits.http.LiteHttp;
+import com.litesuits.http.request.AbstractRequest;
+import com.litesuits.http.request.param.HttpParamModel;
 
 import java.util.Locale;
 
@@ -37,8 +41,6 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     protected View mRootView;
 
-    protected Gson mGson = new Gson();
-
     private Handler mHandler = new Handler();
 
     public Handler Handler() {
@@ -51,7 +53,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     protected static String[] splitParameters(String params) {
         if (params.charAt(0) == '[') {
             // json 对象
-            return new Gson().fromJson(params, new TypeToken<String[]>() {
+            return Json.gson().fromJson(params, new TypeToken<String[]>() {
             }.getType());
         } else {
             // 普通字符串
@@ -267,4 +269,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         startActivityForResult(intent, requestCode);
     }
 
+    /**
+     * 执行网络请求
+     */
+    protected void httpRequest(AbstractRequest request) {
+        LiteHttp.build(Activity()).create().executeAsync(request);
+    }
 }

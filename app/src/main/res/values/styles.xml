@@ -19,6 +19,11 @@
         <item name="colorPrimaryDark">@color/color_f7f7f7</item>
     </style>
 
+    <style name="AppTheme.Container" parent="AppTheme">
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorPrimaryDark">@color/color_b9b9c8</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

@@ -13,7 +13,7 @@ package com.gzlk.android.isp.model.user;
 
 public class User {
 
-    private String _id;
+    private String id;
     //用户姓名
     private String name;
     //性别
@@ -44,12 +44,12 @@ public class User {
     //访问令牌：用于移动端访问的唯标志
     private String accessToken;
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

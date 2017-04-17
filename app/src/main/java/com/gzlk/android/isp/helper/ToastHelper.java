@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
@@ -22,18 +23,30 @@ public class ToastHelper {
     private final Context mContext;
 
     private ToastHelper(Context context) {
-        mContext = context;
+        mContext = null == context ? App.instance() : context;
+    }
+
+    public static ToastHelper make() {
+        return make(null);
     }
 
     public static ToastHelper make(Context context) {
         return new ToastHelper(context);
     }
 
+    private void checkContext() {
+        if (null == mContext) {
+            throw new IllegalArgumentException("Please set context first when you shown string from resources.");
+        }
+    }
+
     public void showMsg(int text) {
+        checkContext();
         showMsg(mContext.getString(text));
     }
 
     public void showMsg(int text, int icon) {
+        checkContext();
         showMsg(mContext.getString(text), mContext.getString(icon));
     }
 

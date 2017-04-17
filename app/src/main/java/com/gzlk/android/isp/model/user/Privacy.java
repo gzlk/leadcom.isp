@@ -13,7 +13,7 @@ package com.gzlk.android.isp.model.user;
 
 public class Privacy {
 
-    private String _id;
+    private String id;
     //用户名
     private String userId;
     //隐私设置类型  1.公开  2.不公开 3.对某些人公开
@@ -21,12 +21,12 @@ public class Privacy {
     //最后修改时间
     private String lastModifiedTime;
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUserId() {

@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.api.system;
 
+import com.gzlk.android.isp.api.BaseApi;
 import com.litesuits.http.annotation.HttpMethod;
 import com.litesuits.http.annotation.HttpUri;
 import com.litesuits.http.request.param.HttpMethods;
@@ -15,7 +16,7 @@ import com.litesuits.http.request.param.HttpRichParamModel;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@HttpUri("http://10.141.130.4/ajax/test.ashx")
+@HttpUri(BaseApi.URL + "/system/login")
 @HttpMethod(HttpMethods.Get)
 public class LoginParam extends HttpRichParamModel<Regist> {
     private String phone;

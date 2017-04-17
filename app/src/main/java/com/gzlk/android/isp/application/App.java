@@ -33,6 +33,22 @@ public class App extends OrmApplication {
 
     private Map<String, Activity> activities = new HashMap<>();
 
+    /**
+     * 获取全局Application实例
+     */
+    public static App instance() {
+        try {
+            App app = (App) getApplicationUsingReflectionOfAppGlobals();
+            if (null == app) {
+                app = (App) getApplicationUsingReflectionOfActivityThread();
+            }
+            return app;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

@@ -20,4 +20,8 @@
     <string name="ui_base_text_next_step">下一步</string>
     <string name="ui_base_text_finish">完成</string>
     <string name="ui_base_text_i_known">我知道了</string>
+    <string name="ui_base_text_favorite">收藏</string>
+    <string name="ui_base_text_delete">删除</string>
+    <string name="ui_base_text_expand">展开</string>
+    <string name="ui_base_text_collapse">收起</string>
 </resources>

@@ -13,7 +13,7 @@ package com.gzlk.android.isp.model.user;
 
 public class Document {
 
-    private String _id;
+    private String id;
     //用户姓名
     private String title;
     //性别
@@ -25,12 +25,12 @@ public class Document {
     //最后修改时间
     private String lastModifiedTime;
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {

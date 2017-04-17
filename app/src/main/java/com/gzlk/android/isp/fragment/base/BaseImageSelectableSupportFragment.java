@@ -23,10 +23,9 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTaskPreparedListener;
 import com.gzlk.android.isp.task.CompressImageTask;
-
-import org.json.JSONTokener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -123,7 +122,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
         isSupportCacheSelected = bundle.getBoolean(KEY_CACHEABLE, true);
         maxCachedImage = bundle.getInt(KEY_MAX_CACHED, DFT_MAX_IMAGE);
         String string = bundle.getString(KEY_CACHED_IMAGES, "[]");
-        cachedImages = mGson.fromJson(string, new TypeToken<List<String>>() {
+        cachedImages = Json.gson().fromJson(string, new TypeToken<List<String>>() {
         }.getType());
     }
 
@@ -136,7 +135,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
         bundle.putBoolean(KEY_DIRECTLY_UPLOAD, isSupportDirectlyUpload);
         bundle.putBoolean(KEY_CACHEABLE, isSupportCacheSelected);
         bundle.putInt(KEY_MAX_CACHED, maxCachedImage);
-        bundle.putString(KEY_CACHED_IMAGES, mGson.toJson(cachedImages));
+        bundle.putString(KEY_CACHED_IMAGES, Json.gson().toJson(cachedImages));
     }
 
     @Override

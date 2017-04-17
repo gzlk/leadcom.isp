@@ -14,6 +14,15 @@ package com.gzlk.android.isp.api;
 public class Output<T> extends BaseApi {
     // code = 000000 表示成功，code=1xxxxx表示失败
     private String code;
+    // 成功或失败的消息描述
+    private String msg;
+
+    /**
+     * 网络调用状态（true=成功，false=失败）
+     */
+    public boolean success() {
+        return SUCCEED.equals(code);
+    }
 
     protected T data;
 
@@ -37,6 +46,14 @@ public class Output<T> extends BaseApi {
      */
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public T getData() {

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ui_text_sign_in_account_hint">请输入手机号码</string>
-    <string name="ui_text_sing_in_password_hint">请输入密码</string>
+    <string name="ui_text_sing_in_password_hint">密码(6&#8211;18位数字或字母)</string>
     <string name="ui_text_sign_in_to_sign_up">新用户注册</string>
     <string name="ui_text_sign_in_forget_password">忘记密码</string>
     <string name="ui_text_sign_in_by_3rd_part_account">使用第三方账号登录</string>
+    <string name="ui_text_sign_in_error_account_error">请正确输入您的账号</string>
+    <string name="ui_text_sign_in_error_password_error">请正确输入您的密码</string>
 
     <string name="ui_text_verify_phone_fragment_title_sin_up">新用户注册</string>
     <string name="ui_text_verify_phone_fragment_title_reset_password">重设密码</string>

@@ -13,7 +13,7 @@ package com.gzlk.android.isp.model.user;
 
 public class Moment {
 
-    private String _id;
+    private String id;
     //用户姓名
     private String userId;
     //姓名
@@ -25,12 +25,14 @@ public class Moment {
     //动态内容
     private String content;
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
-    public void set_id(String _id) {
-        this._id = _id;
+
+    public void setId(String id) {
+        this.id = id;
     }
+
     public String getUserId() {
         return userId;
     }
