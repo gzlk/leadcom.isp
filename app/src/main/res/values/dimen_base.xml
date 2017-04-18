@@ -14,4 +14,7 @@
     <dimen name="ui_base_dimen_button_corner_size">@dimen/ui_static_dp_5</dimen>
     <!--UI默认的margin、padding-->
     <dimen name="ui_base_dimen_margin_padding">@dimen/ui_static_dp_10</dimen>
+
+    <dimen name="ui_base_translationZ">@dimen/ui_static_dp_3</dimen>
+    <dimen name="ui_base_translationZ_small">@dimen/ui_static_dp_1</dimen>
 </resources>

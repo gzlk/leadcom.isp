@@ -5,9 +5,11 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 
 /**
  * <b>功能描述：</b>简单的可点击的viewholder<br />
@@ -26,6 +28,8 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     private TextView titleTextView;
     @ViewId(R.id.ui_holder_view_simple_clickable_value)
     private TextView valueTextView;
+    @ViewId(R.id.ui_holder_view_simple_clickable_right_icon)
+    private CustomTextView rightIcon;
 
     public SimpleClickableViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -45,6 +49,10 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     public void showContent(String string) {
         String[] strings = string.split("\\|", -1);
         showContent(Integer.valueOf(strings[0]), strings[1], strings[2]);
+        if (strings.length > 3) {
+            boolean invisible = !StringHelper.isEmpty(strings[3]) && strings[3].equals("0");
+            rightIcon.setVisibility(invisible ? View.GONE : View.VISIBLE);
+        }
     }
 
     public void showContent(int index, String title, String value) {

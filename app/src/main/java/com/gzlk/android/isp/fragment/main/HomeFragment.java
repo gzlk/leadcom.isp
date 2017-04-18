@@ -14,18 +14,19 @@ import com.gzlk.android.isp.api.system.Testing;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
-import com.gzlk.android.isp.holder.TextViewHolder;
-import com.gzlk.android.isp.api.system.LoginParam;
+import com.gzlk.android.isp.api.system.ParamLogin;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.litesuits.http.LiteHttp;
+import com.litesuits.http.data.TypeToken;
 import com.litesuits.http.exception.HttpException;
 import com.litesuits.http.listener.HttpListener;
 import com.litesuits.http.request.AbstractRequest;
 import com.litesuits.http.request.JsonRequest;
-import com.litesuits.http.request.param.HttpParamModel;
+import com.litesuits.http.request.content.JsonBody;
+import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.request.param.HttpRichParamModel;
 import com.litesuits.http.response.Response;
 
@@ -185,7 +186,10 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             //openImageSelector();
             LiteHttp liteHttp = LiteHttp.build(Activity()).create();
-
+            liteHttp.getConfig().setDebugged(true);
+            //HttpConfig config = liteHttp.getConfig();
+            //config.setBaseUrl("http://113.108.144.2:8044");
+            //config.setDebugged(true);
             switch (index) {
                 case 0:
                     liteHttp.executeAsync(testRegist());
@@ -193,9 +197,47 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
                 case 1:
                     liteHttp.executeAsync(testQuery());
                     break;
+                case 2:
+                    liteHttp.executeAsync(testPost());
+                    break;
             }
         }
     };
+
+    private JsonRequest<Regist> testPost() {
+        ParamLogin param = new ParamLogin("", "222222", "chenziwen5");
+        String json = Json.gson().toJson(param, new TypeToken<ParamLogin>() {
+        }.getType());
+        JsonRequest<Regist> regist = new JsonRequest<>(param, Regist.class);
+        regist.setHttpBody(new JsonBody(json), HttpMethods.Post);
+        regist.setHttpListener(new HttpListener<Regist>() {
+            @Override
+            public void onStart(AbstractRequest<Regist> request) {
+                super.onStart(request);
+            }
+
+            @Override
+            public void onSuccess(Regist regist, Response<Regist> response) {
+                super.onSuccess(regist, response);
+            }
+
+            @Override
+            public void onFailure(HttpException e, Response<Regist> response) {
+                super.onFailure(e, response);
+            }
+
+            @Override
+            public void onCancel(Regist regist, Response<Regist> response) {
+                super.onCancel(regist, response);
+            }
+
+            @Override
+            public void onEnd(Response<Regist> response) {
+                super.onEnd(response);
+            }
+        });
+        return regist;
+    }
 
     private HttpRichParamModel testQuery() {
         TestParam param = new TestParam();
@@ -229,7 +271,7 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private HttpRichParamModel testRegist() {
-        LoginParam login = new LoginParam("13999999999", "123456", "124");
+        ParamLogin login = new ParamLogin("18676347017", "222222", "");
         login.setHttpListener(new HttpListener<Regist>() {
             @Override
             public void onStart(AbstractRequest<Regist> request) {

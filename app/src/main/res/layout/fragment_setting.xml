@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/ui_background_login_item"
         android:orientation="vertical"
-        android:translationZ="@dimen/ui_static_dp_1">
+        android:translationZ="@dimen/ui_base_translationZ_small">
 
         <include
             android:id="@+id/ui_setting_to_password"
@@ -49,7 +49,7 @@
         android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
         android:background="@drawable/ui_background_login_item"
         android:orientation="vertical"
-        android:translationZ="@dimen/ui_static_dp_1">
+        android:translationZ="@dimen/ui_base_translationZ_small">
 
         <com.hlk.hlklib.lib.view.CorneredButton
             android:id="@+id/ui_setting_sign_out"

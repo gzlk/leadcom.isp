@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:translationZ="@dimen/ui_static_dp_3"
+    android:translationZ="@dimen/ui_base_translationZ"
     app:cv_background="@color/textColorHintLight"
     app:cv_border_size="@dimen/ui_static_dp_zero"
     app:cv_corner_size="@dimen/ui_static_dp_15">

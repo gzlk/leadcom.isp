@@ -27,7 +27,7 @@ public class TextViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_text_item_text)
     private TextView text;
 
-    private String itemCode, title;
+    private String title;
     private int index;
     private boolean showSelectedEffect = false;
 

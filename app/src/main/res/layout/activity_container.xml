@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:fitsSystemWindows="true"
-        android:translationZ="@dimen/ui_static_dp_1"
+        android:translationZ="@dimen/ui_base_translationZ_small"
         app:elevation="0dp">
 
         <include layout="@layout/tool_view_activity_normal_toolbar" />

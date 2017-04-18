@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.login;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -33,10 +34,25 @@ import com.litesuits.http.response.Response;
 
 public class SignInFragment extends BaseDelayRefreshSupportFragment {
 
+    private static final String PARAM_STILL_SIGN_IN = "sif_still_in_sign_in";
     @ViewId(R.id.ui_sign_in_account)
     private ClearEditText accountText;
     @ViewId(R.id.ui_sign_in_password)
     private ClearEditText passwordText;
+
+    private boolean stillInSignIn = false;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        stillInSignIn = bundle.getBoolean(PARAM_STILL_SIGN_IN, false);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_STILL_SIGN_IN, stillInSignIn);
+    }
 
     @Override
     public int getLayout() {
@@ -75,8 +91,14 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
             } else if (TextUtils.isEmpty(passwordText.getValue())) {
                 ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_password_value_incorrect);
             } else {
-                // 开始登录
-                httpRequest(loginParams(accountText.getValue(), passwordText.getValue()));
+                finish(true);
+//                if (!stillInSignIn) {
+//                    stillInSignIn = true;
+//                    // 开始登录
+//                    httpRequest(loginParams(accountText.getValue(), passwordText.getValue()));
+//                } else {
+//                    ToastHelper.make().showMsg(R.string.ui_text_sign_in_still_processing);
+//                }
             }
         } else {
             String params = String.valueOf(id == R.id.ui_sign_in_to_sign_up ? PhoneVerifyFragment.VT_SIGN_UP : PhoneVerifyFragment.VT_PASSWORD);
@@ -107,6 +129,12 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 } else {
                     ToastHelper.make().showMsg(data.getMsg());
                 }
+            }
+
+            @Override
+            public void onEnd(Response<Regist> response) {
+                super.onEnd(response);
+                stillInSignIn = false;
             }
         }).setHttpBody(new JsonBody(json), HttpMethods.Post);
         return login;

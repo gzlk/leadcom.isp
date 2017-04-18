@@ -273,6 +273,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 执行网络请求
      */
     protected void httpRequest(AbstractRequest request) {
-        LiteHttp.build(Activity()).create().executeAsync(request);
+        LiteHttp liteHttp = LiteHttp.build(Activity()).create();
+        // 10秒网络超时
+        liteHttp.getConfig().setConnectTimeout(10000);
+        liteHttp.executeAsync(request);
     }
 }

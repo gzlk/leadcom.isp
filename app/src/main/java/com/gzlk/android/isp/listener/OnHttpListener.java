@@ -1,9 +1,9 @@
 package com.gzlk.android.isp.listener;
 
-import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.litesuits.http.data.HttpStatus;
 import com.litesuits.http.exception.HttpException;
 import com.litesuits.http.listener.HttpListener;
 import com.litesuits.http.response.Response;
@@ -43,14 +43,16 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     @Override
     public void onFailure(HttpException e, Response<T> response) {
         super.onFailure(e, response);
-        ToastHelper.make(null).showMsg(StringHelper.format("网咯操作失败: %d", response.getHttpStatus().getCode()));
+        HttpStatus status = response.getHttpStatus();
+        ToastHelper.make(null).showMsg(StringHelper.format("网咯操作失败: (%d)%s", (null == status ? -1 : status.getCode()), e.getMessage()));
         onFailed();
     }
 
     @Override
     public void onCancel(T t, Response<T> response) {
         super.onCancel(t, response);
-        ToastHelper.make(null).showMsg(StringHelper.format("网咯操作已取消: %d", response.getHttpStatus().getCode()));
+        HttpStatus status = response.getHttpStatus();
+        ToastHelper.make(null).showMsg(StringHelper.format("网咯操作已取消: (%d)", (null == status ? -1 : status.getCode())));
         onFailed();
     }
 }

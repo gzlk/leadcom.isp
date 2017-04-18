@@ -7,6 +7,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
@@ -76,14 +77,17 @@ public class SettingFragment extends BaseLayoutSupportFragment {
         }
         if (null == passwordHolder) {
             passwordHolder = new SimpleClickableViewHolder(passwordView, SettingFragment.this);
+            passwordHolder.addOnViewHolderClickListener(holderClickListener);
             passwordHolder.showContent(strings[0]);
         }
         if (null == messagingHolder) {
             messagingHolder = new SimpleClickableViewHolder(messagingView, SettingFragment.this);
+            messagingHolder.addOnViewHolderClickListener(holderClickListener);
             messagingHolder.showContent(strings[1]);
         }
         if (null == privacyHolder) {
             privacyHolder = new SimpleClickableViewHolder(privacyView, SettingFragment.this);
+            privacyHolder.addOnViewHolderClickListener(holderClickListener);
             privacyHolder.showContent(strings[2]);
         }
     }
@@ -92,4 +96,23 @@ public class SettingFragment extends BaseLayoutSupportFragment {
     private void elementClick(View view) {
         finishToSignIn();
     }
+
+    private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            switch (index) {
+                case 0:
+                    // 重置密码
+                    openActivity(SettingPasswordFragment.class.getName(), "", true, false);
+                    break;
+                case 1:
+                    // 消息设置
+                    openActivity(SettingMessagingFragment.class.getName(), "", true, false);
+                    break;
+                case 2:
+                    // 隐私设置
+                    break;
+            }
+        }
+    };
 }
