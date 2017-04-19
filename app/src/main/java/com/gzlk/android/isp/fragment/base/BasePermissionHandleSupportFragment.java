@@ -87,8 +87,8 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
      * 尝试获取拨打电话的运行时权限
      */
     public void requestPhoneCallPermission() {
-        String warning = mActivity.getString(R.string.ui_grant_permission_phone_call);
-        String denied = mActivity.getString(R.string.ui_denied_permission_phone_call);
+        String warning = StringHelper.getString(R.string.ui_grant_permission_phone_call);
+        String denied = StringHelper.getString(R.string.ui_denied_permission_phone_call);
         tryGrantPermission(Manifest.permission.CALL_PHONE, BaseFragment.GRANT_PHONE_CALL, warning, denied);
     }
 

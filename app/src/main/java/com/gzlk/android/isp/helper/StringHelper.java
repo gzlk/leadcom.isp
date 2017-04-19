@@ -2,6 +2,8 @@ package com.gzlk.android.isp.helper;
 
 import android.text.TextUtils;
 
+import com.gzlk.android.isp.application.App;
+
 import java.util.Date;
 import java.util.Locale;
 
@@ -12,6 +14,32 @@ import java.util.Locale;
  * <b>邮箱：</b>xiang.l.g@gmail.com <br />
  */
 public class StringHelper {
+
+    @SuppressWarnings("ConstantConditions")
+    public static String getString(int resId) {
+        if (0 == resId)
+            return null;
+        try {
+            return App.app().getResources().getString(resId);
+        } catch (Exception ignore) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static String getString(int resId, Object... formatArgs) {
+        return App.app().getResources().getString(resId, formatArgs);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static String[] getStringArray(int resid) {
+        return App.app().getResources().getStringArray(resid);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static int getInteger(int resId) {
+        return App.app().getResources().getInteger(resId);
+    }
 
     public static String format(String fmt, Object... args) {
         // 参数列表为空时直接返回待格式化的字符串

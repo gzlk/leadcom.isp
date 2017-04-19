@@ -93,7 +93,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
         @Override
         public void onTick(long timeLeft) {
             long timeUsed = timeLeft / 1000;
-            resend.setText(getString(R.string.ui_text_verify_code_time_count_down, timeUsed));
+            resend.setText(StringHelper.getString(R.string.ui_text_verify_code_time_count_down, timeUsed));
             if (BuildConfig.DEBUG && timeUsed < 50 && skipTextView.getVisibility() == View.GONE) {
                 // debug版本在10s后可以随便输验证码并进行下一步
                 skipTextView.setVisibility(View.VISIBLE);

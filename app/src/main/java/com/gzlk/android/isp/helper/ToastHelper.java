@@ -12,6 +12,8 @@ import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
+import java.lang.ref.SoftReference;
+
 /**
  * 提供静态显示Toast消息的Helper
  * Created by Hsiang Leekwok on 2015/07/17.
@@ -20,10 +22,10 @@ public class ToastHelper {
 
     private static final String TAG = "ToastHelper";
     private static long lastToasted = 0;
-    private final Context mContext;
+    private SoftReference<Context> mContext;
 
     private ToastHelper(Context context) {
-        mContext = null == context ? App.app() : context;
+        mContext = new SoftReference<>(null == context ? App.app() : context);
     }
 
     public static ToastHelper make() {
@@ -34,20 +36,12 @@ public class ToastHelper {
         return new ToastHelper(context);
     }
 
-    private void checkContext() {
-        if (null == mContext) {
-            throw new IllegalArgumentException("Please set context first when you shown string from resources.");
-        }
-    }
-
     public void showMsg(int text) {
-        checkContext();
-        showMsg(mContext.getString(text));
+        showMsg(StringHelper.getString(text));
     }
 
     public void showMsg(int text, int icon) {
-        checkContext();
-        showMsg(mContext.getString(text), mContext.getString(icon));
+        showMsg(StringHelper.getString(text), StringHelper.getString(icon));
     }
 
     public void showMsg(String msg) {
@@ -110,13 +104,17 @@ public class ToastHelper {
     }
 
     private void toast(String msg, String icon) {
-        View view = View.inflate(mContext, R.layout.base_custom_toast, null);
+        Context context = mContext.get();
+        if (null == context) {
+            context = App.app();
+        }
+        View view = View.inflate(context, R.layout.base_custom_toast, null);
         TextView text = (TextView) view.findViewById(R.id.ui_base_custom_toast_text);
         CustomTextView iconView = (CustomTextView) view.findViewById(R.id.ui_base_custom_toast_icon);
         text.setText(msg);
         iconView.setText(icon);
         iconView.setVisibility(null == icon ? View.GONE : View.VISIBLE);
-        Toast toast = new Toast(mContext);
+        Toast toast = new Toast(context);
         toast.setDuration(Toast.LENGTH_LONG);
         toast.setView(view);
         toast.show();

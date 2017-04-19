@@ -50,7 +50,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
         String[] strings = string.split("\\|", -1);
         showContent(Integer.valueOf(strings[0]), strings[1], strings[2]);
         if (strings.length > 3) {
-            boolean invisible = !StringHelper.isEmpty(strings[3]) && strings[3].equals("0");
+            boolean invisible = StringHelper.isEmpty(strings[3]) || strings[3].equals("0");
             rightIcon.setVisibility(invisible ? View.GONE : View.VISIBLE);
         }
     }

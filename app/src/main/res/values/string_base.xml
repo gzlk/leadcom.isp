@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">历康信息平台</string>
+    <string name="app_company_name">广州历康科技信息股份有限公司</string>
+    <string name="app_company_website">www.leadcom.net.cn</string>
 
     <string name="ui_base_text_loading">请稍候&#8230;</string>
     <string name="ui_base_text_nothing">没有更多内容</string>

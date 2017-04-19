@@ -47,9 +47,9 @@ public class SimpleDialogHelper {
     }
 
     public void show(int text, int confirm, int cancel, DialogHelper.OnDialogConfirmListener confirmListener, DialogHelper.OnDialogCancelListener cancelListener) {
-        String content = activity.get().getString(text);
-        String yes = 0 == confirm ? "" : activity.get().getString(confirm);
-        String no = 0 == cancel ? "" : activity.get().getString(cancel);
+        String content = StringHelper.getString(text);
+        String yes = 0 == confirm ? "" : StringHelper.getString(confirm);
+        String no = 0 == cancel ? "" : StringHelper.getString(cancel);
         show(content, yes, no, confirmListener, cancelListener);
     }
 
@@ -74,7 +74,7 @@ public class SimpleDialogHelper {
     }
 
     public void show(int text, DialogHelper.OnDialogConfirmListener confirmListener, DialogHelper.OnDialogCancelListener cancelListener) {
-        show(activity.get().getString(text), confirmListener, cancelListener);
+        show(StringHelper.getString(text), confirmListener, cancelListener);
     }
 
     public void show(String text, DialogHelper.OnDialogConfirmListener confirmListener, DialogHelper.OnDialogCancelListener cancelListener) {

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.PressAgainToExit;
 import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;

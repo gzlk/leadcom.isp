@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTaskPreparedListener;
@@ -493,11 +494,11 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
      */
     private void startCameraForResult() {
         if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            tryGrantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, GRANT_STORAGE, getString(R.string.ui_text_permission_storage_request), getString(R.string.ui_text_permission_storage_denied));
+            tryGrantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, GRANT_STORAGE, StringHelper.getString(R.string.ui_text_permission_storage_request), StringHelper.getString(R.string.ui_text_permission_storage_denied));
         } else {
             if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
                 if (!hasPermission(Manifest.permission.CAMERA)) {
-                    tryGrantPermission(Manifest.permission.CAMERA, GRANT_CAMERA, getString(R.string.ui_text_permission_camera_request), getString(R.string.ui_text_permission_camera_denied));
+                    tryGrantPermission(Manifest.permission.CAMERA, GRANT_CAMERA, StringHelper.getString(R.string.ui_text_permission_camera_request), StringHelper.getString(R.string.ui_text_permission_camera_denied));
                 } else {
                     Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     File picture = createImageFile();

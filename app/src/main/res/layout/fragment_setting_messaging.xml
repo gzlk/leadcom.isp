@@ -2,28 +2,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+    android:orientation="vertical">
 
-    <include layout="@layout/holder_view_simple_clickable" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+        android:background="@drawable/ui_background_login_item"
+        android:translationZ="@dimen/ui_base_translationZ_small">
+
+        <include layout="@layout/holder_view_simple_clickable" />
+    </LinearLayout>
 
     <include layout="@layout/tool_view_divider_big" />
 
     <LinearLayout
-        android:id="@+id/ui_setting_messaging_sound"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_background_login_item"
+        android:orientation="vertical"
+        android:translationZ="@dimen/ui_base_translationZ_small">
 
-        <include layout="@layout/holder_view_toggle" />
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ui_setting_messaging_sound"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <include layout="@layout/tool_view_half_line_horizontal" />
+            <include layout="@layout/holder_view_toggle" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ui_setting_messaging_vibration"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <include layout="@layout/tool_view_half_line_horizontal" />
 
-        <include layout="@layout/holder_view_toggle" />
+        <LinearLayout
+            android:id="@+id/ui_setting_messaging_vibration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/holder_view_toggle" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -2,15 +2,14 @@ package com.gzlk.android.isp.fragment.individual;
 
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.AttachItemViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.ImageViewHolder;
@@ -19,7 +18,6 @@ import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
-import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
@@ -100,7 +98,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override
@@ -115,11 +113,12 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeHolder() {
         if (null == textItems) {
-            textItems = Activity().app().getResources().getStringArray(R.array.ui_individual_new_moment);
+            textItems = StringHelper.getStringArray(R.array.ui_individual_new_moment);
         }
 
         if (null == privacyHolder) {
             privacyHolder = new SimpleClickableViewHolder(mRootView, MomentNewFragment.this);
+            privacyHolder.addOnViewHolderClickListener(privacyListener);
             privacyHolder.showContent(format(textItems[0], "公开"));
         }
     }
@@ -157,6 +156,12 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private OnViewHolderClickListener privacyListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            ToastHelper.make(Activity()).showMsg("隐私设置");
+        }
+    };
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {

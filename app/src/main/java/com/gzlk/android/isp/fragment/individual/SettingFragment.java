@@ -6,6 +6,7 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.hlk.hlklib.lib.inject.Click;
@@ -73,7 +74,7 @@ public class SettingFragment extends BaseLayoutSupportFragment {
     @SuppressWarnings("ConstantConditions")
     private void initializeHolders() {
         if (null == strings) {
-            strings = App.app().getResources().getStringArray(R.array.ui_individual_settings);
+            strings = StringHelper.getStringArray(R.array.ui_individual_settings);
         }
         if (null == passwordHolder) {
             passwordHolder = new SimpleClickableViewHolder(passwordView, SettingFragment.this);
@@ -111,6 +112,7 @@ public class SettingFragment extends BaseLayoutSupportFragment {
                     break;
                 case 2:
                     // 隐私设置
+                    openActivity(AboutFragment.class.getName(), "", true, false);
                     break;
             }
         }

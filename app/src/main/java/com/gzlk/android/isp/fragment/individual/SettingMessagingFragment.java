@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.ToggleableViewHolder;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -71,11 +72,11 @@ public class SettingMessagingFragment extends BaseLayoutSupportFragment {
     @SuppressWarnings("ConstantConditions")
     private void initializeHolders() {
         if (null == strings) {
-            strings = App.app().getResources().getStringArray(R.array.ui_individual_setting_messaging);
+            strings = StringHelper.getStringArray(R.array.ui_individual_setting_messaging);
         }
         if (null == titleHolder) {
             titleHolder = new SimpleClickableViewHolder(mRootView, SettingMessagingFragment.this);
-            titleHolder.showContent(format(strings[0], getString(R.string.ui_base_text_messaging_closed)));
+            titleHolder.showContent(format(strings[0], StringHelper.getString(R.string.ui_base_text_messaging_closed)));
         }
         if (null == soundHolder) {
             soundHolder = new ToggleableViewHolder(soundView, SettingMessagingFragment.this);
@@ -93,7 +94,7 @@ public class SettingMessagingFragment extends BaseLayoutSupportFragment {
     private void resetTitle() {
         boolean sound = soundHolder.isToggled();
         boolean vibration = vibrationHolder.isToggled();
-        titleHolder.showContent(format(strings[0], (sound || vibration ? getString(R.string.ui_base_text_messaging_opened) : getString(R.string.ui_base_text_messaging_closed))));
+        titleHolder.showContent(format(strings[0], (sound || vibration ? StringHelper.getString(R.string.ui_base_text_messaging_opened) : getString(R.string.ui_base_text_messaging_closed))));
     }
 
     private ToggleableViewHolder.OnViewHolderToggleChangedListener toggleChangedListener = new ToggleableViewHolder.OnViewHolderToggleChangedListener() {

@@ -164,7 +164,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             isSupportDirectlyUpload = false;
             // 添加图片选择
             addOnImageSelectedListener(imageSelectedListener);
-            functions = Activity().getResources().getStringArray(R.array.ui_individual_functions);
+            functions = StringHelper.getStringArray(R.array.ui_individual_functions);
             mAdapter = new TestAdapter();
             mRecyclerView.addOnScrollListener(scrollListener);
             mRecyclerView.setAdapter(mAdapter);

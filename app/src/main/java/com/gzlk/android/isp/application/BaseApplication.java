@@ -1,7 +1,11 @@
 package com.gzlk.android.isp.application;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
@@ -10,6 +14,7 @@ import com.gzlk.android.isp.BuildConfig;
 import com.hlk.hlklib.etc.Cryptography;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -33,6 +38,49 @@ public class BaseApplication extends Application {
     protected static BaseApplication getApplicationUsingReflectionOfAppGlobals() throws Exception {
         return (BaseApplication) Class.forName("android.app.AppGlobals")
                 .getMethod("getInitialApplication").invoke(null, (Object[]) null);
+    }
+
+    /**
+     * 获取application中配置的meta-data值
+     */
+    public String getMetadata(String name) {
+        try {
+            ApplicationInfo appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+            return appInfo.metaData.getString(name);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 获取当前apk的版本号
+     */
+    public String version() {
+        String version = "";
+        try {
+            PackageManager manager = getPackageManager();
+            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+            version = info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return version;
+    }
+
+    protected boolean shouldInit() {
+        ActivityManager am = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE));
+        List<ActivityManager.RunningAppProcessInfo> processInfos = am.getRunningAppProcesses();
+        String mainProcessName = getPackageName();
+        int myPid = android.os.Process.myPid();
+        boolean ret = false;
+        for (ActivityManager.RunningAppProcessInfo info : processInfos) {
+            if (info.pid == myPid && mainProcessName.equals(info.processName)) {
+                ret = true;
+                break;
+            }
+        }
+        return ret;
     }
 
     @Override

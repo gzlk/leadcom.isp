@@ -92,7 +92,7 @@ public class DialogHelper {
     private String _cancelText, _confirmText;
 
     public DialogHelper setCancelText(int res) {
-        return setCancelText(activity.get().getString(res));
+        return setCancelText(StringHelper.getString(res));
     }
 
     private int popupType = TYPE_FADE;
@@ -111,7 +111,7 @@ public class DialogHelper {
     }
 
     public DialogHelper setConfirmText(int res) {
-        return setConfirmText(activity.get().getString(res));
+        return setConfirmText(StringHelper.getString(res));
     }
 
     public DialogHelper setConfirmText(String text) {
