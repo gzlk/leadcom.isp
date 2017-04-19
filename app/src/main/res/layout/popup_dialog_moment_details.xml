@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/ui_base_dimen_margin_padding"
     android:orientation="vertical">
 
     <View
@@ -16,8 +15,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        app:cv_border_size="0dp"
-        app:cv_corner_size="@dimen/ui_base_dimen_margin_padding">
+        app:cv_border_size="0dp">
 
         <com.hlk.hlklib.lib.view.CorneredButton
             android:id="@+id/ui_dialog_moment_details_button_privacy"
@@ -28,9 +26,7 @@
             android:text="@string/ui_text_moment_details_button_privacy"
             android:textColor="@color/textColor"
             app:active_color="@color/buttonDialogActiveColor"
-            app:left_top_corner_size="@dimen/ui_base_dimen_margin_padding"
-            app:normal_color="@color/buttonDialogNormalColor"
-            app:right_top_corner_size="@dimen/ui_base_dimen_margin_padding" />
+            app:normal_color="@color/buttonDialogNormalColor"/>
 
         <include layout="@layout/tool_view_half_line_horizontal" />
 
@@ -69,9 +65,7 @@
             android:text="@string/ui_base_text_delete"
             android:textColor="@color/textColor"
             app:active_color="@color/buttonDialogActiveColor"
-            app:left_bottom_corner_size="@dimen/ui_base_dimen_margin_padding"
-            app:normal_color="@color/buttonDialogNormalColor"
-            app:right_bottom_corner_size="@dimen/ui_base_dimen_margin_padding" />
+            app:normal_color="@color/buttonDialogNormalColor" />
 
     </com.hlk.hlklib.lib.view.CorneredView>
 
@@ -86,7 +80,6 @@
         android:text="@string/ui_base_text_cancel"
         android:textColor="@color/textColor"
         app:active_color="@color/buttonDialogActiveColor"
-        app:corner_size="@dimen/ui_base_dimen_margin_padding"
         app:normal_color="@color/buttonDialogNormalColor" />
 
 </LinearLayout>

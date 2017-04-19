@@ -21,6 +21,14 @@ import com.litesuits.http.response.Response;
 
 public abstract class OnHttpListener<T> extends HttpListener<T> {
 
+    public OnHttpListener() {
+        super();
+    }
+
+    public OnHttpListener(boolean readingNotify, boolean uploadingNotify) {
+        super(true, readingNotify, uploadingNotify);
+    }
+
     @Override
     public void onSuccess(T data, Response<T> response) {
         super.onSuccess(data, response);

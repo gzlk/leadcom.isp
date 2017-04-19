@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
@@ -33,7 +34,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class MomentDetailsFragment extends BaseTransparentSupportFragment {
+public class MomentDetailsFragment extends BaseDownloadingUploadingSupportFragment {
 
     private static final String PARAM_ID = "mdf_moment_id";
     private static final String PARAM_SELECTED = "mdf_moment_selected";
@@ -150,9 +151,31 @@ public class MomentDetailsFragment extends BaseTransparentSupportFragment {
 
             @Override
             public boolean onClick(View view) {
+                handlePopupClick(view.getId());
                 return false;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true).show();
+    }
+
+    private void handlePopupClick(int id) {
+        switch (id) {
+            case R.id.ui_dialog_moment_details_button_privacy:
+                break;
+            case R.id.ui_dialog_moment_details_button_favorite:
+                break;
+            case R.id.ui_dialog_moment_details_button_save:
+                // 保存单张图片到本地
+                save();
+                break;
+            case R.id.ui_dialog_moment_details_button_delete:
+                break;
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void save() {
+        String url = "http://10.141.130.17/app.zip";
+        downloadFile(url, App.app().getLocalFilePath(url, App.OTHER_DIR));
     }
 
     private void initializeAdapter() {

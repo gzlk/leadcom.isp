@@ -2,7 +2,6 @@ package com.gzlk.android.isp.fragment.base;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,7 +15,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
@@ -46,7 +44,7 @@ import java.util.Locale;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoadingSupportFragment {
+public abstract class BaseImageSelectableSupportFragment extends BaseDownloadingUploadingSupportFragment {
 
     private static final String KEY_FOR_CROP = "is_for_crop";
     private static final String KEY_CROPPED_PATH = "cropped_path";
@@ -210,8 +208,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
     private OnTaskPreparedListener taskPreparedListener = new OnTaskPreparedListener() {
         @Override
         public void onPrepared() {
-            showImageHandlingDialog();
-            handlingTextView.setText(R.string.ui_base_text_compressing);
+            showImageHandlingDialog(R.string.ui_base_text_compressing);
         }
     };
 
@@ -220,13 +217,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
         public void onComplete(String compressedPath) {
             compressed = compressedPath;
             if (isSupportDirectlyUpload) {
-                handlingTextView.setText(R.string.ui_base_text_uploading);
-                Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        hideImageHandlingDialog();
-                    }
-                }, 5000);
+                showImageHandlingDialog(R.string.ui_base_text_uploading);
             } else {
                 if (!cachedImages.contains(compressedPath)) {
                     cachedImages.add(compressedPath);
@@ -238,36 +229,6 @@ public abstract class BaseImageSelectableSupportFragment extends BaseNothingLoad
             }
         }
     };
-
-    /**
-     * 进度框
-     */
-    private ProgressDialog progressDialog = null;
-    private TextView handlingTextView;
-
-    /**
-     * 显示图片处理对话框
-     */
-    protected void showImageHandlingDialog() {
-        if (null == progressDialog) {
-            progressDialog = new ProgressDialog(Activity());
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setCancelable(false);
-        }
-        progressDialog.show();
-        View progressDialogView = View.inflate(Activity(), R.layout.popup_dialog_image_handling, null);
-        handlingTextView = (TextView) progressDialogView.findViewById(R.id.ui_dialog_image_handling_text);
-        progressDialog.setContentView(progressDialogView);
-    }
-
-    /**
-     * 隐藏图片处理对话框
-     */
-    protected void hideImageHandlingDialog() {
-        if (null != progressDialog) {
-            progressDialog.dismiss();
-        }
-    }
 
     /**
      * 删除指定的文件

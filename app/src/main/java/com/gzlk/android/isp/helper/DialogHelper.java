@@ -1,11 +1,12 @@
 package com.gzlk.android.isp.helper;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.annotation.IntDef;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.gzlk.android.isp.R;
@@ -25,6 +26,7 @@ public class DialogHelper {
 
     private AlertDialog dialog;
     private boolean cancelable = true;
+    private boolean adjustScreenWidth = false;
     private boolean canceledWithOutsideTouch = true;
     private WeakReference<AppCompatActivity> activity;
 
@@ -68,6 +70,15 @@ public class DialogHelper {
         return this;
     }
 
+    /**
+     * 设置是否占满屏幕宽度
+     */
+    public DialogHelper setAdjustScreenWidth(boolean adjust) {
+        adjustScreenWidth = adjust;
+        return this;
+    }
+
+    @SuppressWarnings("ConstantConditions")
     private void initializeDialog() {
         dialog = new AlertDialog.Builder(activity.get()).create();
         // 弹出效果和滑入效果
@@ -78,6 +89,16 @@ public class DialogHelper {
         dialog.show();
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         dialog.getWindow().setBackgroundDrawableResource(R.color.transparent_00);
+        if (adjustScreenWidth) {
+            //Grab the window of the dialog, and change the width
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            Window window = dialog.getWindow();
+            lp.copyFrom(window.getAttributes());
+            //This makes the dialog take up the full width
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+            //lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(lp);
+        }
     }
 
     private DialogInterface.OnDismissListener dismissListener = new DialogInterface.OnDismissListener() {

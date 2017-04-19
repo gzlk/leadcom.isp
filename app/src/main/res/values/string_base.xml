@@ -13,6 +13,8 @@
     <string name="ui_base_text_image_cannot_attach_more">您不能再选择更多的照片了</string>
     <string name="ui_base_text_compressing">正在压缩图片，请稍候&#8230;</string>
     <string name="ui_base_text_uploading">正在上传图片，请稍候&#8230;</string>
+    <string name="ui_base_text_downloading">正在下载请稍候&#8230;</string>
+    <string name="ui_base_text_downloading_completed" formatted="false">已下载到：%s</string>
 
     <string name="ui_base_text_login">登录</string>
     <string name="ui_base_text_confirm">确定</string>
