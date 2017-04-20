@@ -18,7 +18,7 @@ import com.litesuits.http.request.param.HttpRichParamModel;
  */
 @HttpUri(BaseApi.URL + "/system/login")
 @HttpMethod(HttpMethods.Post)
-public class ParamLogin extends HttpRichParamModel<Regist> {
+public class SignIn extends HttpRichParamModel<Regist> {
     private String phone;
     private String password;
     private String loginId;
@@ -26,7 +26,7 @@ public class ParamLogin extends HttpRichParamModel<Regist> {
     /**
      * 登录参数
      */
-    public ParamLogin(String phone, String password, String loginId) {
+    public SignIn(String phone, String password, String loginId) {
         this.phone = phone;
         this.password = password;
         this.loginId = loginId;

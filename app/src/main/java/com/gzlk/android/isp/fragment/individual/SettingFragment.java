@@ -93,8 +93,10 @@ public class SettingFragment extends BaseLayoutSupportFragment {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Click({R.id.ui_setting_sign_out})
     private void elementClick(View view) {
+        App.app().logout();
         finishToSignIn();
     }
 

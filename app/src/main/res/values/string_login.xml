@@ -22,15 +22,20 @@
     <string name="ui_text_verify_code_fragment_title_left_text_sign_up">注册</string>
     <string name="ui_text_verify_code_fragment_title_left_text_reset_password">重设密码</string>
     <string name="ui_text_verify_code_hint">请输入验证码</string>
+    <string name="ui_text_verify_code_fetching_now">立即获取</string>
     <string name="ui_text_verify_code_time_count_down" formatted="false">%d秒后重发</string>
     <string name="ui_text_verify_code_time_count_resend">重新发送</string>
+    <string name="ui_text_verify_code_fetched">已获取</string>
     <string name="ui_text_verify_code_value_incorrect">验证码输入不正确(4&#8211;8长度)</string>
+    <string name="ui_text_verify_code_value_not_same_as_received">验证码跟接收到的不一样</string>
     <string name="ui_text_verify_code_skip_debug">要跳过可以随便输验证码(4&#8211;8长度)</string>
 
     <string name="ui_text_reset_password_fragment_title">重设密码</string>
     <string name="ui_text_reset_password_fragment_title_left_text">安全校验</string>
+    <string name="ui_text_reset_password_params_error">无效的参数，不能重设密码</string>
     <string name="ui_text_reset_password_input_title">新密码</string>
     <string name="ui_text_reset_password_input_hint">请输入6&#8211;18位数字或字母</string>
+    <string name="ui_text_reset_password_success">密码已重设，请用新密码登录</string>
 
     <string name="ui_text_sign_up_fragment_title">设置账号</string>
     <string name="ui_text_sign_up_incorrect_params">无效的注册参数</string>

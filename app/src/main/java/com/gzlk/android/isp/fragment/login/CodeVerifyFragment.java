@@ -1,18 +1,31 @@
 package com.gzlk.android.isp.fragment.login;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.system.GetCaptcha;
+import com.gzlk.android.isp.api.system.Regist;
+import com.gzlk.android.isp.api.system.ResetPwd;
 import com.gzlk.android.isp.etc.TimeCounter;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnHttpListener;
+import com.gzlk.android.isp.receiver.SmsReceiver;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.hlk.hlklib.lib.view.CorneredEditText;
+import com.litesuits.http.request.JsonRequest;
+import com.litesuits.http.request.content.JsonBody;
+import com.litesuits.http.request.param.HttpRichParamModel;
+import com.litesuits.http.response.Response;
 
 /**
  * <b>功能描述：</b>手机验证码页面<br />
@@ -27,6 +40,12 @@ import com.hlk.hlklib.lib.view.CorneredButton;
 
 public class CodeVerifyFragment extends BaseVerifyFragment {
 
+    private static final String PARAM_VERIFY_CODE = "srf_verify_code";
+    /**
+     * 用户接收到的验证码，如果为空则说明用户没有权限直接读取SMS内容
+     */
+    protected String receivedVerifyCode = "";
+
     public static CodeVerifyFragment newInstance(String params) {
         CodeVerifyFragment cvf = new CodeVerifyFragment();
         String[] strings = splitParameters(params);
@@ -35,6 +54,18 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
         bundle.putString(PARAM_VERIFY_PHONE, strings[1]);
         cvf.setArguments(bundle);
         return cvf;
+    }
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        receivedVerifyCode = bundle.getString(PARAM_VERIFY_CODE, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_VERIFY_CODE, receivedVerifyCode);
     }
 
     // UI
@@ -48,6 +79,8 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
     private TextView skipTextView;
 
     private TimeCounter timeCounter;
+    // 短消息接收器
+    private SmsReceiver mSmsReceiver;
 
     @Override
     public int getLayout() {
@@ -65,8 +98,27 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
     public void doingInResume() {
         setCustomTitle(R.string.ui_text_verify_code_fragment_title);
         setLeftText(verifyType == VT_SIGN_UP ? R.string.ui_text_verify_code_fragment_title_left_text_sign_up : R.string.ui_text_verify_code_fragment_title_left_text_reset_password);
-        startTimeCounter();
+        //startTimeCounter();
+        verifyCode.addOnValueVerifyingListener(valueVerifyingListener);
     }
+
+    private CorneredEditText.OnValueVerifyingListener valueVerifyingListener = new CorneredEditText.OnValueVerifyingListener() {
+        @Override
+        public void onVerifying(boolean passed) {
+            if (!passed) {
+                // 验证没通过则按钮禁用
+                nextStep.setEnabled(false);
+            } else {
+                if (!StringHelper.isEmpty(receivedVerifyCode)) {
+                    // 如果已经收到了验证码了则验证输入是否跟收到的一样
+                    nextStep.setEnabled(verifyCode.getValue().equals(receivedVerifyCode));
+                } else {
+                    // 没收到验证码时，依靠输入内容是否符合验证规则进行下一步操作
+                    nextStep.setEnabled(true);
+                }
+            }
+        }
+    };
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
@@ -81,11 +133,26 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
         }
     }
 
+    // 启动倒计时
     private void start() {
         resend.setEnabled(false);
         resend.setTextColor(getColor(R.color.textColorHint));
         nextStep.setEnabled(false);
         timeCounter.start();
+        // 注册SMS接收器
+        registerSmsReceiver();
+    }
+
+    // 手动停止计时器
+    private void stop() {
+        // 停止时取消SMS监听
+        unregisterSmsReceiver();
+        if (null != timeCounter) {
+            timeCounter.cancel();
+        }
+        resend.setEnabled(true);
+        resend.setTextColor(getColor(R.color.textColor));
+        resend.setText(R.string.ui_text_verify_code_time_count_resend);
     }
 
     private TimeCounter.OnTimeCounterListener timeCounterListener = new TimeCounter.OnTimeCounterListener() {
@@ -94,18 +161,16 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
         public void onTick(long timeLeft) {
             long timeUsed = timeLeft / 1000;
             resend.setText(StringHelper.getString(R.string.ui_text_verify_code_time_count_down, timeUsed));
-            if (BuildConfig.DEBUG && timeUsed < 50 && skipTextView.getVisibility() == View.GONE) {
-                // debug版本在10s后可以随便输验证码并进行下一步
-                skipTextView.setVisibility(View.VISIBLE);
-                nextStep.setEnabled(true);
-            }
+            //if (BuildConfig.DEBUG && timeUsed < 50 && skipTextView.getVisibility() == View.GONE) {
+            // debug版本在10s后可以随便输验证码并进行下一步
+            //    skipTextView.setVisibility(View.VISIBLE);
+            //    nextStep.setEnabled(true);
+            //}
         }
 
         @Override
         public void onFinished() {
-            resend.setEnabled(true);
-            resend.setTextColor(getColor(R.color.textColor));
-            resend.setText(R.string.ui_text_verify_code_time_count_resend);
+            stop();
             nextStep.setEnabled(true);
         }
     };
@@ -115,20 +180,144 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
         int id = view.getId();
         switch (id) {
             case R.id.ui_verify_code_to_resend:
-                timeCounter.cancel();
-                start();
+                // 检测SMS接收权限
+                checkSmsReceivablePermission();
+                //timeCounter.cancel();
+                //start();
                 break;
             case R.id.ui_verify_code_to_next_step:
-                timeCounter.cancel();
-                super.verifyCode = verifyCode.getValue();
-                if (!StringHelper.isEmpty(super.verifyCode)) {
-                    String clazz = verifyType == VT_PASSWORD ? ResetPasswordFragment.class.getName() : SignUpFragment.class.getName();
-                    String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, super.verifyCode);
-                    openActivity(clazz, params, true, true);
-                } else {
-                    ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_incorrect);
+                if (null != timeCounter) {
+                    timeCounter.cancel();
                 }
+                String code = verifyCode.getValue();
+                if (StringHelper.isEmpty(code)) {
+                    ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_incorrect);
+                    return;
+                }
+                if (!StringHelper.isEmpty(receivedVerifyCode) && !code.equals(receivedVerifyCode)) {
+                    // 如果收到的验证码不为空则需要先验证一下用户输入的是否正确
+                    ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_not_same_as_received);
+                    return;
+                }
+                super.verifyCode = code;
+                String clazz = verifyType == VT_PASSWORD ? ResetPasswordFragment.class.getName() : SignUpFragment.class.getName();
+                String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, code);
+                openActivity(clazz, params, true, true);
                 break;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterSmsReceiver();
+        super.onDestroy();
+    }
+
+    /**
+     * 注册sms接收器
+     */
+    private void registerSmsReceiver() {
+        if (null == mSmsReceiver) {
+            mSmsReceiver = new SmsReceiver();
+            mSmsReceiver.addOnSmsReceivedListener(mOnSmsReceivedListener);
+            try {
+                Activity().registerReceiver(mSmsReceiver, SmsReceiver.getIntentFilter());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private SmsReceiver.OnSmsReceivedListener mOnSmsReceivedListener = new SmsReceiver.OnSmsReceivedListener() {
+
+        @SuppressWarnings("ConstantConditions")
+        @Override
+        public void onReceived(String address, String body) {
+            if (body.contains(StringHelper.getString(R.string.app_sms_stuff_header))) {
+                unregisterSmsReceiver();
+                nextStep.setEnabled(true);
+                resend.setText(R.string.ui_text_verify_code_fetched);
+                timeCounter.cancel();
+                receivedVerifyCode = SmsReceiver.getVerifyCode(body);
+                verifyCode.setValue(receivedVerifyCode);
+            }
+        }
+    };
+
+    private void unregisterSmsReceiver() {
+        if (null != mSmsReceiver) {
+            try {
+                Activity().unregisterReceiver(mSmsReceiver);
+                mSmsReceiver = null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 申请SMS接收权限
+     */
+    private void requestSMSReceivePermission() {
+        tryGrantPermission(Manifest.permission.RECEIVE_SMS, GRANT_SMS, "", "");
+    }
+
+    /**
+     * 检测SMS接受权限
+     */
+    private void checkSmsReceivablePermission() {
+        if (hasPermission(Manifest.permission.RECEIVE_SMS)) {
+            requestVerifyCode();
+        } else {
+            requestSMSReceivePermission();
+        }
+    }
+
+    @Override
+    public void permissionGranted(String[] permissions, int requestCode) {
+        if (requestCode == GRANT_SMS) {
+            requestVerifyCode();
+        }
+        super.permissionGranted(permissions, requestCode);
+    }
+
+    @Override
+    public void permissionGrantFailed(int requestCode) {
+        if (requestCode == GRANT_SMS) {
+            requestVerifyCode();
+        }
+        super.permissionGrantFailed(requestCode);
+    }
+
+    // 请求验证码
+    private void requestVerifyCode() {
+        httpRequest(requestCaptcha());
+    }
+
+    // 建立发送验证码的请求
+    private JsonRequest<Regist> requestCaptcha() {
+        GetCaptcha captcha = new GetCaptcha(verifyPhone);
+        String json = Json.gson(HttpRichParamModel.class).toJson(captcha, new TypeToken<GetCaptcha>() {
+        }.getType());
+        JsonRequest<Regist> request = new JsonRequest<>(captcha, Regist.class);
+        request.setHttpListener(new OnHttpListener<Regist>() {
+            @Override
+            public void onSucceed(Regist data, Response<Regist> response) {
+                super.onSucceed(data, response);
+                if (data.success()) {
+                    // 请求发送成功之后开始倒计时
+                    startTimeCounter();
+                } else {
+                    ToastHelper.make().showMsg(data.getMsg());
+                }
+            }
+
+            @Override
+            public void onFailed() {
+                super.onFailed();
+                stop();
+            }
+        }).setHttpBody(new JsonBody(json));
+        return request;
     }
 }

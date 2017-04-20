@@ -146,10 +146,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 关闭Activity
      *
-     * @param toMainUI true=直接返回主页面并且固定显示“抢”页，false=普通Activity关闭（受backState堆栈的顺序影响）
+     * @param toMainUI true=直接返回主页面并且固定显示页，false=普通Activity关闭（受backState堆栈的顺序影响）
      */
     public void finish(boolean toMainUI) {
-        // 这里固定为2，也即首页中的“抢”
+        // 这里固定为2，也即首页中
         finish(toMainUI ? 2 : -1);
     }
 

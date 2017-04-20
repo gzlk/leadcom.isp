@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.listener;
 
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.task.OrmTask;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public interface OnLiteOrmTaskExecutingListener<E> {
+public interface OnLiteOrmTaskExecutingListener<E extends Model> {
 
     /**
      * 标记执行过程是否修改数据

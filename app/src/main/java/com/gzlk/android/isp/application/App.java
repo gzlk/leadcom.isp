@@ -1,13 +1,12 @@
 package com.gzlk.android.isp.application;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.etc.PressAgainToExit;
-import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.user.User;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -16,8 +15,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <b>功能描述：</b>Application类<br />
@@ -30,9 +27,7 @@ import java.util.Map;
  * <b>修改备注：</b><br />
  */
 
-public class App extends OrmApplication {
-
-    private Map<String, Activity> activities = new HashMap<>();
+public class App extends BaseActivityManagedApplication {
 
     /**
      * 获取全局Application实例
@@ -53,82 +48,11 @@ public class App extends OrmApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        initializeImageLoader();
-    }
-
-    /**
-     * 添加Activity到监控列表
-     */
-    public synchronized void addActivity(Activity activity) {
-        String hashCode = Integer.toHexString(activity.hashCode());
-        if (!activities.containsKey(hashCode)) {
-            activities.put(hashCode, activity);
+        if (shouldInit()) {
+            initializeImageLoader();
+            initializeDatabase();
         }
     }
-
-    private String[] getActivityKeys() {
-        int size = activities.size();
-        if (size > 0) {
-            return activities.keySet().toArray(new String[size]);
-        }
-        return null;
-    }
-
-    /**
-     * 移除已经finish的Activity
-     */
-    public synchronized void removeActivity(String hashCode) {
-        if (null != hashCode) {
-            if (activities.containsKey(hashCode)) {
-                Activity a = activities.remove(hashCode);
-                if (null != a && !a.isFinishing()) {
-                    a.finish();
-                }
-            }
-        }
-    }
-
-    private void clearActivity() {
-        String[] keys = getActivityKeys();
-        while (null != keys && keys.length > 0) {
-            int size = keys.length;
-            removeActivity(keys[size - 1]);
-            keys = getActivityKeys();
-        }
-    }
-
-    private PressAgainToExit mPressAgainToExit = new PressAgainToExit();
-
-    /**
-     * 再按一次退出程序。
-     */
-    public void pressAgainExit() {
-        if (mPressAgainToExit.isExit()) {
-            exitDirectly();
-        } else {
-            LogHelper.log(TAG, "press again to exit.");
-            //String app_name = StringHelper.getString(R.string.app_name_lxbg_default);
-            String text = getString(R.string.ui_base_text_press_again_to_exit);
-            ToastHelper.make(this).showMsg(text);
-            mPressAgainToExit.doExitInOneSecond();
-        }
-    }
-
-    /**
-     * 直接关闭程序但不关闭后台服务
-     */
-    public void exitDirectly() {
-        // 关闭数据库
-        closeOrm();
-        // 清空已登录信息
-        //PreferenceHelper.save(R.string.app_login_state, "0");
-        // 退出程序关闭数据库连接
-        //Utils.clearDBHelpers();
-        clearActivity();
-        //LogHelper.log(TAG, "manual exit.");
-        //CrashHandler.getInstance().clearDebugLog();
-    }
-
 
     private void initializeImageLoader() {
         DisplayImageOptions options = new DisplayImageOptions.Builder()
@@ -160,4 +84,33 @@ public class App extends OrmApplication {
         ImageLoader.getInstance().init(config);
     }
 
+    /**
+     * 初始化本地缓存数据库
+     */
+    private void initializeDatabase() {
+        String userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
+        if (!StringHelper.isEmpty(userId)) {
+            initializeLiteOrm(userId);
+            me = new Dao<>(User.class).query(userId);
+        }
+    }
+
+    private User me = null;
+
+    /**
+     * 当前登录的用户的信息
+     */
+    public User Me() {
+        if (null == me) {
+            initializeDatabase();
+        }
+        return me;
+    }
+
+    @Override
+    public void logout() {
+        // 清空当前登录的用户信息
+        me = null;
+        super.logout();
+    }
 }

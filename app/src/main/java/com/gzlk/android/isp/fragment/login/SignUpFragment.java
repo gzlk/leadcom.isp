@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.system.ParamRegist;
+import com.gzlk.android.isp.api.system.SignUp;
 import com.gzlk.android.isp.api.system.Regist;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -90,8 +90,8 @@ public class SignUpFragment extends BaseVerifyFragment {
     }
 
     private JsonRequest<Regist> registRequest(String name, String password) {
-        ParamRegist param = new ParamRegist(verifyPhone, password, name);
-        String json = Json.gson(HttpRichParamModel.class).toJson(param, new TypeToken<ParamRegist>() {
+        SignUp param = new SignUp(verifyPhone, "", password, name);
+        String json = Json.gson(HttpRichParamModel.class).toJson(param, new TypeToken<SignUp>() {
         }.getType());
         JsonRequest<Regist> regist = new JsonRequest<>(param, Regist.class);
         regist.setHttpListener(new OnHttpListener<Regist>() {

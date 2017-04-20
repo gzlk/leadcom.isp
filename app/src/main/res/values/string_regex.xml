@@ -3,11 +3,11 @@
     <string name="regex_phone_number_filter">\\d+</string>
     <string name="regex_phone_number_verify">^1\\d{10}</string>
 
-    <string name="regex_verify_code_filter">\\w+</string>
-    <string name="regex_verify_code_verify">\\w{4,8}</string>
+    <string name="regex_verify_code_filter">\\d+</string>
+    <string name="regex_verify_code_verify">\\d{4,8}</string>
 
-    <string name="regex_password_filter">\\w+</string>
-    <string name="regex_password_verify">\\w{6,18}</string>
+    <string name="regex_password_filter">[a-zA-Z0-9]+</string>
+    <string name="regex_password_verify">[a-zA-Z0-9]{6,18}</string>
 
     <string name="regex_name_filter">[\u4E00-\u9FA5]+</string>
     <string name="regex_name_verify">[\u4E00-\u9FA5]{2,4}</string>

@@ -1,5 +1,9 @@
 package com.gzlk.android.isp.model.user;
 
+import com.gzlk.android.isp.model.Model;
+import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Table;
+
 /**
  * <b>功能描述：</b>用户信息<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -11,46 +15,78 @@ package com.gzlk.android.isp.model.user;
  * <b>修改备注：</b><br />
  */
 
-public class User {
+@Table(Model.Table.USER)
+public class User extends Model {
 
-    private String id;
+    /**
+     * 表内字段名称
+     */
+    public static class Field extends Model.Field {
+        public static final String Name = "name";
+        public static final String Sex = "sex";
+        public static final String LoginId = "loginId";
+        public static final String QQ = "qq";
+        public static final String QQAccessToken = "qqAccessToken";
+        public static final String Phone = "phone";
+        public static final String Email = "email";
+        public static final String Password = "password";
+        public static final String Birthday = "birthday";
+        public static final String IsAuth = "isAuth";
+        public static final String HeadPhoto = "headPhoto";
+        public static final String LastModifiedTime = "lastModifiedTime";
+        public static final String LastLoginTime = "lastLoginTime";
+        public static final String Captcha = "captcha";
+        public static final String AccessToken = "accessToken";
+    }
+
     //用户姓名
+    @Column(Field.Name)
     private String name;
     //性别
+    @Column(Field.Sex)
     private String sex;
     //登录的Id
+    @Column(Field.LoginId)
     private String loginId;
     //qq
+    @Column(Field.QQ)
     private String qq;
     //qq授权指令，用于QQ登录
+    @Column(Field.QQAccessToken)
     private String qqAccessToken;
     //手机
+    @Column(Field.Phone)
     private String phone;
     //邮箱
+    @Column(Field.Email)
     private String email;
     //密码
+    @Column(Field.Password)
     private String password;
     //生日
+    @Column(Field.Birthday)
     private String brithday;
     //是否实名认证
+    @Column(Field.IsAuth)
     private boolean isAuth;
     //头像
+    @Column(Field.HeadPhoto)
     private String headPhoto;
     //最后修改时间
+    @Column(Field.LastModifiedTime)
     private String lastModifiedTime;
+    //最后登录时间
+    @Column(Field.LastLoginTime)
+    private String lastLoginTime;
     //创建时间
+    @Column(Field.CreateDate)
     private String createDate;
-
+    //验证码
+    @Column(Field.Captcha)
+    private String captcha;
     //访问令牌：用于移动端访问的唯标志
+    @Column(Field.AccessToken)
     private String accessToken;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -148,12 +184,28 @@ public class User {
         this.lastModifiedTime = lastModifiedTime;
     }
 
+    public String getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(String lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+    }
+
     public String getCreateDate() {
         return createDate;
     }
 
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
+    }
+
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
     }
 
     public String getAccessToken() {

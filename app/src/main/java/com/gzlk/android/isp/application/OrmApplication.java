@@ -29,6 +29,7 @@ public class OrmApplication extends BaseApplication {
     protected void closeOrm() {
         if (null != Orm) {
             Orm.close();
+            Orm = null;
         }
     }
 
@@ -59,6 +60,7 @@ public class OrmApplication extends BaseApplication {
         if (BasePermissionHandleSupportFragment.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             try {
                 Orm = LiteOrm.newSingleInstance(getConfig(db));
+                Orm.openOrCreateDatabase();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
