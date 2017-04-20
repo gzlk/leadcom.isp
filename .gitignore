@@ -41,3 +41,5 @@ captures/
 .DS_Store
 /captures
 .externalNativeBuild
+
+keystore.info

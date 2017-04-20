@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply from: 'signingConfigs.gradle'
 
 android {
     compileSdkVersion 25
@@ -9,6 +10,8 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0.0"
+        multiDexEnabled true
+        signingConfig signingConfigs.release
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -19,7 +22,18 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            zipAlignEnabled true  // 混淆后的zip优化
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        alpha {
+            initWith release
+            debuggable true
+        }
+        beta {
+            initWith alpha
+        }
+        debug {
+            initWith beta
         }
     }
     externalNativeBuild {
@@ -30,7 +44,7 @@ android {
 }
 repositories {
     mavenCentral()
-    maven(){
+    maven() {
         //url 'https://repo1.maven.org/maven2/com/github/hsiangleekwok/hlklib/'
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
@@ -39,7 +53,7 @@ repositories {
     }
 }
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     //compile(name: 'hlklib-1.0.6.1-release', ext: 'aar')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
