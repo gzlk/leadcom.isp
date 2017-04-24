@@ -11,8 +11,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
-import com.gzlk.android.isp.fragment.login.SignInFragment;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -71,7 +69,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         setLeftIcon(R.string.ui_icon_query);
         setLeftText(0);
         setRightIcon(R.string.ui_icon_chat);
-        ((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
+        ((IndividualFragmentMultiType) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
     }
 
     @Override
@@ -83,9 +81,9 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
             mFragments.add(new HomeFragment());
-            mFragments.add(new SignInFragment());
-            mFragments.add(new SignInFragment());
-            mFragments.add(new IndividualFragment());
+            mFragments.add(new ActivityFragment());
+            mFragments.add(new OrganizationFragment());
+            mFragments.add(new IndividualFragmentMultiType());
         }
     }
 
@@ -109,9 +107,9 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         boolean needHandleTitleBar = true;
         for (int i = 0, len = mFragments.size(); i < len; i++) {
             BaseTransparentSupportFragment fragment = mFragments.get(i);
-            if (i == 2 || fragment instanceof IndividualFragment) {
+            if (i == 2 || fragment instanceof IndividualFragmentMultiType) {
                 // 个人界面已经显示了，此时不再需要改变标题栏背景
-                needHandleTitleBar = !((IndividualFragment) mFragments.get(3)).isTitleBarShown();
+                needHandleTitleBar = !((IndividualFragmentMultiType) mFragments.get(3)).isTitleBarShown();
             }
             fragment.setViewPagerDisplayedCurrent(position == i);
         }

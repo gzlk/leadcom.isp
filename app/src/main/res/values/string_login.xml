@@ -44,4 +44,5 @@
     <string name="ui_text_sign_up_name_value_incorrect">@string/ui_text_sign_up_input_name_hint</string>
     <string name="ui_text_sign_up_input_password_title">密码</string>
     <string name="ui_text_sign_up_password_value_incorrect">@string/ui_text_sign_in_password_value_incorrect</string>
+    <string name="ui_text_sign_up_success">您已注册，请登录</string>
 </resources>

@@ -15,7 +15,7 @@ import com.litesuits.http.request.param.HttpRichParamModel;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@HttpUri("http://10.141.130.4/ajax/test.ashx")
+@HttpUri("http://10.141.130.17/ajax/test.ashx")
 @HttpMethod(HttpMethods.Get)
 public class TestParam extends HttpRichParamModel<Testing> {
     public String type = "list";

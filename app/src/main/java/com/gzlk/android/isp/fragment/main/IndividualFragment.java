@@ -5,19 +5,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.listener.OnRequestListListener;
+import com.gzlk.android.isp.api.user.MomentRequest;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.MomentDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
+import com.gzlk.android.isp.holder.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.holder.MomentViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.user.moment.Moment;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -37,14 +45,12 @@ import java.util.List;
 public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_SHOWN = "title_bar_shown";
-
-    private String[] functions;
-    private String[] test = new String[]{"", "", "测试2", "测试3", "测试4", "测试5", "测试6", "测试7",
-            "测试8", "测试9", "测试10", "测试11", "测试12", "测试13", "测试14", "测试15", "测试16", "测试17", "测试18"};
-
-    private List<String> data = new ArrayList<>();
+    private static final String PARAM_SELECTED = "function_selected";
 
     private boolean isTitleBarShown = false;
+    private int selectedFunction = 0;
+
+    private List<Moment> moments = new ArrayList<>();
 
     /**
      * 标题栏是否已经显示了
@@ -60,34 +66,67 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.add("下拉刷新的" + (data.size() + 1), 2);
-                stopRefreshing();
-            }
-        }, 1000);
+        refreshingComment();
     }
 
     @Override
     protected void onLoadingMore() {
-        Handler().postDelayed(new Runnable() {
+        refreshingMore();
+    }
+
+    /**
+     * 拉取我的最新说说列表
+     */
+    @SuppressWarnings("ConstantConditions")
+    private void refreshingComment() {
+        MomentRequest.request().setOnRequestListListener(new OnRequestListListener<Moment>() {
+
+            @SuppressWarnings("unchecked")
             @Override
-            public void run() {
-                if (data.size() > 30) {
-                    isLoadingComplete(true);
-                } else {
-                    mAdapter.add("测试" + (data.size() + 1));
-                    isLoadingComplete(false);
+            public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (list.size() > 0) {
+                        new Dao<>(Moment.class).save(list);
+                        // 下拉刷新的时候需要清空已显示的记录列表
+                        //mAdapter.update((List<Model>) (Object) list);
+                        //appendListHeader();
+                    }
                 }
+                stopRefreshing();
             }
-        }, 1000);
+        }).list(App.app().UserId());
+    }
+
+    /**
+     * 加载更多
+     */
+    @SuppressWarnings("ConstantConditions")
+    private void refreshingMore() {
+        QueryBuilder<Moment> builder = new QueryBuilder<>(Moment.class);
+        builder.whereEquals(Model.Field.UserId, App.app().UserId())
+                .appendOrderDescBy(Model.Field.CreateDate)
+                .limit(localPageNumber, PAGE_SIZE);
+        List<Moment> more = new Dao<>(Moment.class).query(builder);
+        if (null != more) {
+            if (more.size() >= PAGE_SIZE) {
+                // 取出了一整页则对应的本地页码增1，下次会获取下一页
+                localPageNumber++;
+                // 还未加载完，下次还要继续加载下一页
+                isLoadingComplete(false);
+            } else {
+                // 没有更多了
+                isLoadingComplete(true);
+            }
+            mAdapter.add(more, false);
+        }
     }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         isTitleBarShown = bundle.getBoolean(PARAM_SHOWN, false);
+        selectedFunction = bundle.getInt(PARAM_SELECTED, 0);
     }
 
     @Override
@@ -105,6 +144,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         bundle.putBoolean(PARAM_SHOWN, isTitleBarShown);
+        bundle.putInt(PARAM_SELECTED, selectedFunction);
         super.saveParamsToBundle(bundle);
     }
 
@@ -164,7 +204,6 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             isSupportDirectlyUpload = false;
             // 添加图片选择
             addOnImageSelectedListener(imageSelectedListener);
-            functions = StringHelper.getStringArray(R.array.ui_individual_functions);
             mAdapter = new TestAdapter();
             mRecyclerView.addOnScrollListener(scrollListener);
             mRecyclerView.setAdapter(mAdapter);
@@ -173,59 +212,15 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resetData() {
-        mAdapter.clear();
-        for (String string : test) {
-            mAdapter.add(string);
-        }
+        mAdapter.update(moments);
     }
 
     private TestAdapter mAdapter;
 
-    private class TestAdapter extends LoadingMoreSupportedRecyclerView.LoadingMoreAdapter<BaseViewHolder> implements RecycleAdapter<String> {
+    private class TestAdapter extends LoadingMoreSupportedRecyclerView.LoadingMoreAdapter<BaseViewHolder, Moment>
+            implements RecycleAdapter<Moment> {
 
-        private static final int VT_HEADER = 0, VT_FUNCTIONS = 1, VT_MOMENT = 2;
-
-        @Override
-        public void clear() {
-            int size = data.size();
-            while (size > 0) {
-                remove(size - 1);
-                size = data.size();
-            }
-        }
-
-        @Override
-        public void remove(int position) {
-            data.remove(position);
-            notifyItemRemoved(position);
-        }
-
-        @Override
-        public void remove(String item) {
-            remove(data.indexOf(item));
-        }
-
-        @Override
-        public void add(String object) {
-            data.add(object);
-            notifyItemInserted(data.size() - 1);
-        }
-
-        @Override
-        public void add(String object, int position) {
-            data.add(position, object);
-            notifyItemInserted(position);
-        }
-
-        @Override
-        public boolean exist(String value) {
-            return false;
-        }
-
-        @Override
-        public boolean isFirstItemFullLine() {
-            return false;
-        }
+        private static final int VT_HEADER = 0, VT_FUNCTIONS = 1, VT_MOMENT = 2, VT_DOCUMENT = 3, VT_FAVORITE = 4;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -234,12 +229,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     tryPaddingContent(itemView, true);
                     return new IndividualHeaderViewHolder(itemView, IndividualFragment.this);
                 case VT_FUNCTIONS:
-                    HorizontalRecyclerViewHolder holder = new HorizontalRecyclerViewHolder(itemView, IndividualFragment.this);
-                    holder.addOnViewHolderClickListener(horizontalHolderClickListener);
-                    // 默认选中动态选项
-                    holder.setSelectedIndex(0);
-                    holder.displaySelectedEffect(true);
-                    holder.setDataSources(functions);
+                    IndividualFunctionViewHolder holder = new IndividualFunctionViewHolder(itemView, IndividualFragment.this);
+                    holder.addOnFunctionChangeListener(functionChangeListener);
                     return holder;
                 default:
                     MomentViewHolder mvh = new MomentViewHolder(itemView, IndividualFragment.this);
@@ -254,26 +245,27 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case VT_HEADER:
                     return R.layout.holder_view_individual_header;
                 case VT_FUNCTIONS:
-                    return R.layout.holder_view_individual_functions;
+                    return R.layout.holder_view_individual_main_functions;
                 default:
                     return R.layout.holder_view_moment;
             }
         }
 
         @Override
-        public void onBindHolderOfView(BaseViewHolder holder, int position) {
-            if (holder instanceof HorizontalRecyclerViewHolder) {
-                ((HorizontalRecyclerViewHolder) holder).displayItems();
+        public void onBindHolderOfView(BaseViewHolder holder, int position, Moment item) {
+            if (holder instanceof IndividualFunctionViewHolder) {
+                ((IndividualFunctionViewHolder) holder).setSelected(selectedFunction);
             } else if (holder instanceof MomentViewHolder) {
                 MomentViewHolder moment = (MomentViewHolder) holder;
-                moment.setAsToday(position == 2);
-                moment.showContent();
+                //moment.setAsToday(position == 2);
             }
         }
 
         @Override
-        public int gotItemCount() {
-            return data.size();
+        protected int comparator(Moment item1, Moment item2) {
+            // 按照创建时间倒序排序
+            int compared = item1.getCreateDate().compareTo(item2.getCreateDate());
+            return compared == 0 ? 0 : -compared;
         }
 
         @Override
@@ -292,13 +284,17 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         public BaseViewHolder footerViewHolder(View itemView) {
             return new TextViewHolder(itemView, IndividualFragment.this);
         }
+
     }
 
-    private OnViewHolderClickListener horizontalHolderClickListener = new OnViewHolderClickListener() {
+    private IndividualFunctionViewHolder.OnFunctionChangeListener functionChangeListener = new IndividualFunctionViewHolder.OnFunctionChangeListener() {
         @Override
-        public void onClick(int index) {
-            ToastHelper.make(Activity()).showMsg(functions[index].substring(2));
-            openActivity(MomentNewFragment.class.getName(), "", true, true);
+        public void onChange(int index) {
+            if (selectedFunction != index) {
+                selectedFunction = index;
+                // 拉取不同类型的数据并显示
+                ToastHelper.make().showMsg(StringHelper.getStringArray(R.array.ui_individual_functions)[selectedFunction].replaceAll("\\d\\|", ""));
+            }
         }
     };
 
@@ -321,11 +317,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {
         @Override
-        public void onImageSelected(String compressed) {
-            if (!StringHelper.isEmpty(compressed)) {
-                // 打开新建动态页面
-                openActivity(MomentNewFragment.class.getName(), compressed, true, true);
-            }
+        public void onImageSelected(ArrayList<String> selected) {
+            // 打开新建动态页面
+            openActivity(MomentNewFragment.class.getName(), Json.gson().toJson(selected), true, true);
         }
     };
 }

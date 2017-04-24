@@ -72,6 +72,8 @@ public class App extends BaseActivityManagedApplication {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration
                 .Builder(this)
                 .denyCacheImageMultipleSizesInMemory()
+                // 缓存图片的最大尺寸为480x800
+                .memoryCacheExtraOptions(480, 800)
                 .memoryCache(new LruMemoryCache(2 * 1024 * 1024))
                 .memoryCacheSize(2 * 1024 * 1024)
                 .diskCache(new UnlimitedDiskCache(cacheDir))
@@ -88,11 +90,37 @@ public class App extends BaseActivityManagedApplication {
      * 初始化本地缓存数据库
      */
     private void initializeDatabase() {
-        String userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
-        if (!StringHelper.isEmpty(userId)) {
-            initializeLiteOrm(userId);
-            me = new Dao<>(User.class).query(userId);
+        if (null == _userId) {
+            _userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
         }
+        if (!StringHelper.isEmpty(_userId)) {
+            initializeLiteOrm(_userId);
+            if (null == me || !_userId.equals(me.getId())) {
+                me = new Dao<>(User.class).query(_userId);
+            }
+        }
+    }
+
+    private String _userId, _userToken;
+
+    /**
+     * 当前登录用户的user id
+     */
+    public String UserId() {
+        if (StringHelper.isEmpty(_userId)) {
+            initializeDatabase();
+        }
+        return _userId;
+    }
+
+    /**
+     * 当前登陆用户的accessToken
+     */
+    public String UserToken() {
+        if (StringHelper.isEmpty(_userToken)) {
+            initializeDatabase();
+        }
+        return _userToken;
     }
 
     private User me = null;
@@ -107,10 +135,23 @@ public class App extends BaseActivityManagedApplication {
         return me;
     }
 
+    /**
+     * 重设当前登录用户
+     */
+    public void Me(User user) {
+        me = user;
+        _userId = me.getId();
+        _userToken = me.getAccessToken();
+        PreferenceHelper.save(R.string.pf_last_login_user_id, me.getId());
+        initializeDatabase();
+    }
+
     @Override
     public void logout() {
         // 清空当前登录的用户信息
         me = null;
+        _userId = null;
+        _userToken = null;
         super.logout();
     }
 }

@@ -5,27 +5,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
-import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.system.GetCaptcha;
-import com.gzlk.android.isp.api.system.Regist;
-import com.gzlk.android.isp.api.system.ResetPwd;
+import com.gzlk.android.isp.api.SystemRequest;
+import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.etc.TimeCounter;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.listener.OnHttpListener;
+import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.receiver.SmsReceiver;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
-import com.litesuits.http.request.JsonRequest;
-import com.litesuits.http.request.content.JsonBody;
-import com.litesuits.http.request.param.HttpRichParamModel;
-import com.litesuits.http.response.Response;
 
 /**
  * <b>功能描述：</b>手机验证码页面<br />
@@ -291,33 +283,14 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
 
     // 请求验证码
     private void requestVerifyCode() {
-        httpRequest(requestCaptcha());
-    }
-
-    // 建立发送验证码的请求
-    private JsonRequest<Regist> requestCaptcha() {
-        GetCaptcha captcha = new GetCaptcha(verifyPhone);
-        String json = Json.gson(HttpRichParamModel.class).toJson(captcha, new TypeToken<GetCaptcha>() {
-        }.getType());
-        JsonRequest<Regist> request = new JsonRequest<>(captcha, Regist.class);
-        request.setHttpListener(new OnHttpListener<Regist>() {
+        SystemRequest.request().setOnRequestListener(new OnRequestListener<User>() {
             @Override
-            public void onSucceed(Regist data, Response<Regist> response) {
-                super.onSucceed(data, response);
-                if (data.success()) {
-                    // 请求发送成功之后开始倒计时
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
                     startTimeCounter();
-                } else {
-                    ToastHelper.make().showMsg(data.getMsg());
                 }
             }
-
-            @Override
-            public void onFailed() {
-                super.onFailed();
-                stop();
-            }
-        }).setHttpBody(new JsonBody(json));
-        return request;
+        }).getCaptcha(verifyPhone, (verifyType == VT_PASSWORD));
     }
 }

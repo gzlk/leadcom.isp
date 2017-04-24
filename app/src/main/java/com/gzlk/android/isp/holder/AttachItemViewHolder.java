@@ -2,12 +2,16 @@ package com.gzlk.android.isp.holder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredButton;
+import com.hlk.hlklib.lib.view.CorneredView;
 
 /**
  * <b>功能描述：</b>添加附件的holder<br />
@@ -21,13 +25,16 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
  */
 public class AttachItemViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_attach_item)
+    private CorneredView container;
+
     public AttachItemViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
 
     public AttachItemViewHolder setSize(int width, int height) {
-        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) container.getLayoutParams();
         params.width = width;
         params.height = height;
         itemView.setLayoutParams(params);
@@ -37,6 +44,10 @@ public class AttachItemViewHolder extends BaseViewHolder {
     public AttachItemViewHolder setOnViewHolderClickListener(OnViewHolderClickListener l) {
         super.addOnViewHolderClickListener(l);
         return this;
+    }
+
+    public void showContent(boolean shown) {
+        container.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_holder_view_attach_item})

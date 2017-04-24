@@ -20,6 +20,7 @@ import com.hlk.hlklib.etc.Utility;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.request.AbstractRequest;
 import com.litesuits.http.request.param.HttpParamModel;
+import com.litesuits.http.request.param.HttpRichParamModel;
 
 import java.util.Locale;
 
@@ -36,6 +37,10 @@ import java.util.Locale;
 
 public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
+    /**
+     * 空的json数组
+     */
+    public static final String EMPTY_ARRAY = "[]";
     /**
      * fragment的根UI
      */
@@ -204,9 +209,13 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_GALLERY = RESULT_BASE_REQUEST + 2;
     /**
+     * 第三方相册预览
+     */
+    public static final int REQUEST_PREVIEW = RESULT_BASE_REQUEST + 3;
+    /**
      * 需求剪切照片
      */
-    public static final int REQUEST_CROP = RESULT_BASE_REQUEST + 3;
+    public static final int REQUEST_CROP = RESULT_BASE_REQUEST + 4;
 
     /**
      * 启动容器Activity(此时打开的新Activity不需要返回确认)
@@ -269,13 +278,24 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         startActivityForResult(intent, requestCode);
     }
 
+    private LiteHttp http() {
+        LiteHttp liteHttp = LiteHttp.build(Activity()).create();
+        // 10秒网络超时
+        liteHttp.getConfig().setConnectTimeout(10000);
+        return liteHttp;
+    }
+
     /**
      * 执行网络请求
      */
     protected void httpRequest(AbstractRequest request) {
-        LiteHttp liteHttp = LiteHttp.build(Activity()).create();
-        // 10秒网络超时
-        liteHttp.getConfig().setConnectTimeout(10000);
-        liteHttp.executeAsync(request);
+        http().executeAsync(request);
+    }
+
+    /**
+     * 执行网络请求
+     */
+    protected void httpRequest(HttpRichParamModel mode) {
+        http().executeAsync(mode);
     }
 }

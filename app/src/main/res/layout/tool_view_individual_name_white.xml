@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/ui_tool_individual_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -15,6 +16,7 @@
         android:textSize="@dimen/ui_base_text_size_big" />
 
     <TextView
+        android:id="@+id/ui_tool_individual_additional"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"

@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
-import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -23,7 +23,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class SettingFragment extends BaseLayoutSupportFragment {
+public class SettingFragment extends BaseTransparentSupportFragment {
 
     // UI
     @ViewId(R.id.ui_setting_to_password)

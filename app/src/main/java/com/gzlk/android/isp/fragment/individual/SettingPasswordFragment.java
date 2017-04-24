@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
@@ -24,7 +24,7 @@ import com.hlk.hlklib.lib.view.ClearEditText;
  * <b>修改备注：</b><br />
  */
 
-public class SettingPasswordFragment extends BaseLayoutSupportFragment {
+public class SettingPasswordFragment extends BaseTransparentSupportFragment {
 
     @ViewId(R.id.ui_setting_password_old_container)
     private LinearLayout oldContainer;

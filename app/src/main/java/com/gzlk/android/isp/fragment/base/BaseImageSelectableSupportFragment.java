@@ -25,6 +25,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTaskPreparedListener;
 import com.gzlk.android.isp.task.CompressImageTask;
+import com.yanzhenjie.album.Album;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -52,6 +53,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     private static final String KEY_DIRECTLY_UPLOAD = "directly_upload";
     private static final String KEY_CACHEABLE = "is_cacheable";
     private static final String KEY_CACHED_IMAGES = "cached_images";
+    private static final String KEY_CHOOSED_IMAGES = "choosed_images";
     private static final String KEY_MAX_CACHED = "max_cached_size";
     /**
      * 通过系统相机拍摄的照片的路径
@@ -76,7 +78,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     /**
      * 压缩后需要上传的文件
      */
-    private String compressed = null;
+    //private String compressed = null;
 
     /**
      * 标记是否直接上传图片，默认直接上传
@@ -87,15 +89,14 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      */
     protected boolean isSupportCacheSelected = true;
 
-    private static final int DFT_MAX_IMAGE = 9;
     /**
      * 最大可选择的图片数量
      */
-    protected int maxCachedImage = DFT_MAX_IMAGE;
+    //protected int maxCachedImage = DFT_MAX_IMAGE;
     /**
-     * 已选择了的图片的缓存列表
+     * 已选择且已压缩了的图片缓存列表
      */
-    protected List<String> cachedImages = new ArrayList<>();
+    private ArrayList<String> cachedImages = new ArrayList<>();
 
     /**
      * 设置需要的图片的宽度尺寸
@@ -111,6 +112,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         mCompressedImageHeight = height;
     }
 
+    private int chooseImageByAlbum = -1;
+
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
@@ -119,9 +122,12 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         isChooseImageForCrop = bundle.getBoolean(KEY_FOR_CROP);
         isSupportDirectlyUpload = bundle.getBoolean(KEY_DIRECTLY_UPLOAD, true);
         isSupportCacheSelected = bundle.getBoolean(KEY_CACHEABLE, true);
-        maxCachedImage = bundle.getInt(KEY_MAX_CACHED, DFT_MAX_IMAGE);
+        //maxCachedImage = bundle.getInt(KEY_MAX_CACHED, DFT_MAX_IMAGE);
         String string = bundle.getString(KEY_CACHED_IMAGES, "[]");
         cachedImages = Json.gson().fromJson(string, new TypeToken<List<String>>() {
+        }.getType());
+        string = bundle.getString(KEY_CHOOSED_IMAGES, "[]");
+        choosingFroCompressImages = Json.gson().fromJson(string, new TypeToken<List<String>>() {
         }.getType());
     }
 
@@ -133,8 +139,9 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         bundle.putBoolean(KEY_FOR_CROP, isChooseImageForCrop);
         bundle.putBoolean(KEY_DIRECTLY_UPLOAD, isSupportDirectlyUpload);
         bundle.putBoolean(KEY_CACHEABLE, isSupportCacheSelected);
-        bundle.putInt(KEY_MAX_CACHED, maxCachedImage);
+        //bundle.putInt(KEY_MAX_CACHED, maxCachedImage);
         bundle.putString(KEY_CACHED_IMAGES, Json.gson().toJson(cachedImages));
+        bundle.putString(KEY_CHOOSED_IMAGES, Json.gson().toJson(choosingFroCompressImages));
     }
 
     @Override
@@ -143,34 +150,53 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         //hideImageHandlingDialog();
     }
 
+    /**
+     * 等待压缩的图片列表
+     */
+    private ArrayList<String> choosingFroCompressImages = new ArrayList<>();
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
-
                 case REQUEST_CAMERA:// 相机拍照返回了
                 case REQUEST_GALLERY:// 相册选择返回了
-                    if (null != data) {
-                        // 相机照相之后返回的有可能是相册的路径，此时需要获取相册路径
-                        cameraPicturePath = getGalleryResultedPath(data);
-                    }
-                    if (isChooseImageForCrop) {
-                        prepareCroppedImagePath();
-                        if (TextUtils.isEmpty(cameraPicturePath)) {
-                            ToastHelper.make(Activity()).showMsg("无效的照片，请从相机拍照或从相册中选取照片");
-                        } else {
-                            adjustWannaToImageSize();
-                            cropImageUri(Uri.fromFile(new File(cameraPicturePath)),
-                                    Uri.fromFile(new File(croppedImagePath)), REQUEST_CROP,
-                                    croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
-                        }
+                case REQUEST_PREVIEW:
+                    if (chooseImageByAlbum()) {
+                        ArrayList<String> images = Album.parseResult(data);
+                        choosingFroCompressImages.clear();
+                        choosingFroCompressImages.addAll(images);
+                        // 图片选择了
+                        onImageSelected();
                     } else {
-                        compressImage();
+                        if (null != data) {
+                            // 相机照相之后返回的有可能是相册的路径，此时需要获取相册路径
+                            cameraPicturePath = getGalleryResultedPath(data);
+                        }
+                        if (isChooseImageForCrop) {
+                            prepareCroppedImagePath();
+                            if (TextUtils.isEmpty(cameraPicturePath)) {
+                                ToastHelper.make(Activity()).showMsg("无效的照片，请从相机拍照或从相册中选取照片");
+                            } else {
+                                adjustWannaToImageSize();
+                                cropImageUri(Uri.fromFile(new File(cameraPicturePath)),
+                                        Uri.fromFile(new File(croppedImagePath)), REQUEST_CROP,
+                                        croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
+                            }
+                        } else {
+                            // 照片已选择了
+                            choosingFroCompressImages.clear();
+                            choosingFroCompressImages.add(cameraPicturePath);
+                            onImageSelected();
+                        }
                     }
                     break;
                 case REQUEST_CROP:
                     if (!TextUtils.isEmpty(croppedImagePath)) {
-                        compressImage();
+                        // 裁剪后的图片也需要压缩
+                        choosingFroCompressImages.clear();
+                        choosingFroCompressImages.add(croppedImagePath);
+                        onImageSelected();
                     } else {
                         // 操作无法继续：数据丢失
                         SimpleDialogHelper.init(Activity()).show("操作无法继续，数据丢失");
@@ -190,16 +216,22 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         }
     }
 
+    private void onImageSelected() {
+        if (null != mOnImageSelectedListener) {
+            mOnImageSelectedListener.onImageSelected(choosingFroCompressImages);
+        }
+    }
+
     /**
      * 压缩图片
      */
-    private void compressImage() {
+    protected void compressImage() {
         adjustWannaToImageSize();
         new CompressImageTask()
                 .setDebuggable(true)
                 .addOnTaskPreparedListener(taskPreparedListener)
                 .addOnCompressCompleteListener(compressCompleteListener)
-                .exec((isChooseImageForCrop ? croppedImagePath : cameraPicturePath),
+                .exec(Json.gson().toJson(choosingFroCompressImages),
                         Activity().app().getLocalImageDir(),
                         String.valueOf(mCompressedImageWidth),
                         String.valueOf(mCompressedImageHeight));
@@ -214,21 +246,31 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
 
     private CompressImageTask.OnCompressCompleteListener compressCompleteListener = new CompressImageTask.OnCompressCompleteListener() {
         @Override
-        public void onComplete(String compressedPath) {
-            compressed = compressedPath;
+        public void onComplete(ArrayList<String> compressedPath) {
+            cachedImages.clear();
+            cachedImages.addAll(compressedPath);
             if (isSupportDirectlyUpload) {
                 showImageHandlingDialog(R.string.ui_base_text_uploading);
             } else {
-                if (!cachedImages.contains(compressedPath)) {
-                    cachedImages.add(compressedPath);
-                }
-                if (null != mOnImageSelectedListener) {
-                    mOnImageSelectedListener.onImageSelected(compressedPath);
-                }
+                ToastHelper.make().showMsg("压缩完了，暂时没有下一步任务");
                 hideImageHandlingDialog();
             }
         }
     };
+
+    /**
+     * 已压缩后的本地或网络图片地址列表
+     */
+    protected ArrayList<String> getCachedImages() {
+        return cachedImages;
+    }
+
+    /**
+     * 已选择了的本地原始图片地址列表
+     */
+    protected ArrayList<String> getSelectedImages() {
+        return choosingFroCompressImages;
+    }
 
     /**
      * 删除指定的文件
@@ -429,13 +471,62 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     }
 
     /**
+     * 是否使用第三方相册功能
+     */
+    private boolean chooseImageByAlbum() {
+        if (chooseImageByAlbum < 0) {
+            chooseImageByAlbum = StringHelper.getInteger(R.integer.integer_choose_image_by_album);
+        }
+        return chooseImageByAlbum > 0;
+    }
+
+    private int maxSelectable = 0;
+
+    protected int getMaxSelectable() {
+        if (0 == maxSelectable) {
+            maxSelectable = StringHelper.getInteger(R.integer.integer_max_image_pick_size);
+        }
+        return maxSelectable;
+    }
+
+    /**
      * 打开系统相册选取图片
      */
     protected void startGalleryForResult() {
-        Intent imageIntent = new Intent();
-        imageIntent.setType("image/*");
-        imageIntent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(imageIntent, REQUEST_GALLERY);
+        if (chooseImageByAlbum()) {
+            if (isChooseImageForCrop) {
+                // 剪切照片时只能选择1张
+                maxSelectable = 1;
+            }
+            Album.album(this).requestCode(REQUEST_GALLERY)
+                    .toolBarColor(getColor(R.color.colorPrimary))
+                    .statusBarColor(getColor(R.color.colorPrimary))
+                    .title(getString(R.string.ui_base_text_choose_image, getMaxSelectable()))
+                    .checkedList(choosingFroCompressImages)
+                    .selectCount(getMaxSelectable()).columnCount(3).camera(true).start();
+        } else {
+            Intent imageIntent = new Intent();
+            imageIntent.setType("image/*");
+            imageIntent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(imageIntent, REQUEST_GALLERY);
+        }
+    }
+
+    /**
+     * 打开相册预览已选择了的照片列表
+     */
+    protected void startGalleryPreview(int position) {
+        if (chooseImageByAlbum()) {
+            Album.gallery(this).checkFunction(true)
+                    .requestCode(REQUEST_PREVIEW)
+                    .checkedList(choosingFroCompressImages)
+                    .toolBarColor(getColor(R.color.colorPrimary))
+                    .statusBarColor(getColor(R.color.colorPrimary))
+                    .currentPosition(position)
+                    .start();
+        } else {
+
+        }
     }
 
     /**
@@ -454,28 +545,32 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 打开系统相机拍照并获取返回的数据
      */
     private void startCameraForResult() {
-        if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            tryGrantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, GRANT_STORAGE, StringHelper.getString(R.string.ui_text_permission_storage_request), StringHelper.getString(R.string.ui_text_permission_storage_denied));
+        if (chooseImageByAlbum()) {
+            Album.camera(this).requestCode(REQUEST_CAMERA).start();
         } else {
-            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                if (!hasPermission(Manifest.permission.CAMERA)) {
-                    tryGrantPermission(Manifest.permission.CAMERA, GRANT_CAMERA, StringHelper.getString(R.string.ui_text_permission_camera_request), StringHelper.getString(R.string.ui_text_permission_camera_denied));
-                } else {
-                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    File picture = createImageFile();
-                    if (null != picture) {
-                        cameraPicturePath = picture.getAbsolutePath();
-                        // 存储相机照片的预定路径
-                        Uri uri = Uri.fromFile(picture);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                        startActivityForResult(intent, REQUEST_CAMERA);
-                    } else {
-                        ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_cannot_create_image_in_dcim);
-                    }
-                }
+            if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                tryGrantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, GRANT_STORAGE, StringHelper.getString(R.string.ui_text_permission_storage_request), StringHelper.getString(R.string.ui_text_permission_storage_denied));
             } else {
-                // 没有SD卡
-                ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_no_sdcard_exists);
+                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                    if (!hasPermission(Manifest.permission.CAMERA)) {
+                        tryGrantPermission(Manifest.permission.CAMERA, GRANT_CAMERA, StringHelper.getString(R.string.ui_text_permission_camera_request), StringHelper.getString(R.string.ui_text_permission_camera_denied));
+                    } else {
+                        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        File picture = createImageFile();
+                        if (null != picture) {
+                            cameraPicturePath = picture.getAbsolutePath();
+                            // 存储相机照片的预定路径
+                            Uri uri = Uri.fromFile(picture);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                            startActivityForResult(intent, REQUEST_CAMERA);
+                        } else {
+                            ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_cannot_create_image_in_dcim);
+                        }
+                    }
+                } else {
+                    // 没有SD卡
+                    ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_no_sdcard_exists);
+                }
             }
         }
     }
@@ -497,7 +592,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 打开图片选择菜单
      */
     public void openImageSelector() {
-        if (cachedImages.size() >= maxCachedImage) {
+        if (choosingFroCompressImages.size() >= getMaxSelectable()) {
             ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_image_cannot_attach_more);
             return;
         }
@@ -533,7 +628,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                 }
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true).show();
     }
 
     private OnImageSelectedListener mOnImageSelectedListener;
@@ -550,10 +645,10 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      */
     protected interface OnImageSelectedListener {
         /**
-         * 照片选择并且按照要求压缩完毕之后的回调接口
+         * 照片选择之后的回调接口
          *
-         * @param compressed 压缩完毕之后的图片路径
+         * @param selected 选择完毕之后的图片路径列表
          */
-        void onImageSelected(String compressed);
+        void onImageSelected(ArrayList<String> selected);
     }
 }

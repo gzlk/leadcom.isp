@@ -92,6 +92,9 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
      */
     public void setSupportLoadingMore(boolean loadingMore) {
         supportLoadingMore = loadingMore;
+        if (null != loadingMoreAdapter) {
+            loadingMoreAdapter.setSupportLoadingMore(supportLoadingMore);
+        }
     }
 
     /**
@@ -133,17 +136,20 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
         findFooterViews();
         footerView.setVisibility(GONE);
         if (adapter instanceof LoadingMoreAdapter) {
-            ((LoadingMoreAdapter) adapter).setFooterView(footerView);
-            ((LoadingMoreAdapter) adapter).setSupportLoadingMore(supportLoadingMore);
+            loadingMoreAdapter = (LoadingMoreAdapter) adapter;
+            loadingMoreAdapter.setFooterView(footerView);
+            loadingMoreAdapter.setSupportLoadingMore(supportLoadingMore);
         } else {
             LogHelper.log("LoadingMore", "You should extends your adapter of LoadMoreRecyclerView.LoadingMoreAdapter");
         }
         super.setAdapter(adapter);
     }
 
-    public static abstract class LoadingMoreAdapter<VH extends ViewHolder> extends RecyclerViewAdapter<VH> {
+    private LoadingMoreAdapter loadingMoreAdapter;
 
-        private int VT_FOOTER = 999;
+    public static abstract class LoadingMoreAdapter<VH extends ViewHolder, T> extends RecyclerViewAdapter<VH, T> {
+
+        private int VIEW_TYPE_FOOTER = 999;
         private View footView;
         private boolean supportLoadingMore = true;
 
@@ -155,52 +161,49 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
             supportLoadingMore = support;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-            if (viewType == VT_FOOTER) {
-                return footerViewHolder(footView);
+            if (viewType == VIEW_TYPE_FOOTER) {
+                VH holder = footerViewHolder(footView);
+                if (null == holder) {
+                    throw new IllegalArgumentException("no footer view holder presented.");
+                }
+                return holder;
             } else {
                 return super.onCreateViewHolder(parent, viewType);
             }
         }
 
-        @Override
-        public void onBindViewHolder(VH holder, int position) {
-            if (!supportLoadingMore) {
-                // 不支持加载更多时，直接绑定holder
-                onBindHolderOfView(holder, position);
-            } else {
-                if (position < getItemCount() - 1) {
-                    onBindHolderOfView(holder, position);
-                }
-            }
-        }
+//        @Override
+//        public void onBindViewHolder(VH holder, int position) {
+//            if (!supportLoadingMore) {
+//                // 不支持加载更多时，直接绑定holder
+//                onBindHolderOfView(holder, position, null);
+//            } else {
+//                //if (position < getItemCount() - 1) {
+//                //    if (position < super.getItemCount()) {
+//                super.onBindViewHolder(holder, position);
+//                //    } else {
+//                //        onBindHolderOfView(holder, position, null);
+//                //    }
+//                //}
+//            }
+//        }
 
         @Override
         public int getItemCount() {
-            return gotItemCount() + (supportLoadingMore ? 1 : 0);
+            return super.getItemCount() + (supportLoadingMore ? 1 : 0);
         }
 
         @Override
         public int getItemViewType(int position) {
             if (supportLoadingMore) {
                 if (position == getItemCount() - 1) {
-                    return VT_FOOTER;
+                    return VIEW_TYPE_FOOTER;
                 }
             }
             return gotItemViewType(position);
         }
-
-        /**
-         * 数据集中数据个数
-         */
-        public abstract int gotItemCount();
-
-        /**
-         * 绑定数据
-         */
-        public abstract void onBindHolderOfView(VH holder, int position);
 
         /**
          * view type

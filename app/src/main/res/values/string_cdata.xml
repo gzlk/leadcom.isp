@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="ui_base_text_permission_warning">
+        <![CDATA[App中集成了<font color="#ff4081">第三方定位插件</font>，需要使用以下相关基本权限：<br/>%s]]>
+    </string>
+    <string name="ui_grant_permission_gps">
+        <![CDATA[<font color="#3cbaff">定位</font>]]>
+    </string>
+    <string name="ui_grant_permission_phone_state">
+        <![CDATA[<font color="#3cbaff">设备信息</font>]]>
+    </string>
+
+    <!--存储设备相关权限提醒-->
+    <string name="ui_grant_permission_storage">
+        <![CDATA[<font color="#3cbaff">存储设备</font>]]>
+    </string>
+    <string name="ui_grant_permission_storage_warning">
+        <![CDATA[您需要允许访问<font color="#3cbaff">存储设备</font>以便App能够管理自身应用内的缓存信息。]]>
+    </string>
+    <string name="ui_grant_permission_storage_denied">
+        <![CDATA[抱歉，由于您禁止App访问<font color="#3cbaff">存储设备</font>，可能无法完美体验相关功能，敬请谅解。]]>
+    </string>
+
 
     <string name="ui_grant_permission_phone_call">
         <![CDATA[您需要允许app替您<font color="#0094b0">拨打电话</font>才能继续。]]>

@@ -1,17 +1,15 @@
 package com.gzlk.android.isp.task;
 
-import android.content.Intent;
-
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.etc.ImageCompress;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTaskPreparedListener;
-import com.gzlk.android.isp.listener.OnTaskProcessingListener;
 import com.hlk.hlklib.etc.Cryptography;
 import com.hlk.hlklib.tasks.AsyncedTask;
 
 import java.io.File;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -36,9 +34,13 @@ import java.util.Locale;
 
 public final class CompressImageTask extends AsyncedTask<String, Integer, Integer> {
 
-    private String compressedPath;
     private String errors;
     private boolean debuggable = false;
+
+    /**
+     * 已压缩了的图片列表
+     */
+    private ArrayList<String> compressed = new ArrayList<>();
 
     @Override
     protected void onPreExecute() {
@@ -50,23 +52,35 @@ public final class CompressImageTask extends AsyncedTask<String, Integer, Intege
 
     @Override
     protected Integer doInBackground(String... params) {
+        int ret = 0;
         if (params.length != 4) {
             errors = "Not enough parameters for compress image.";
-            return 1;
+            ret = 1;
         }
-        String local = params[0];
+        String json = params[0];
+        ArrayList<String> images = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
+        }.getType());
         String to = params[1];
         int toWidth = Integer.valueOf(params[2]);
         int toHeight = Integer.valueOf(params[3]);
 
-        File f = new File(local);
-        if (f.exists()) {
-            compressedPath = compressImage(local, to, toWidth, toHeight);
-            return StringHelper.isEmpty(errors) ? 0 : 3;
-        } else {
-            errors = "The image you wanna compress is not exist.";
-            return 2;
+        for (String image : images) {
+            File f = new File(image);
+            if (f.exists()) {
+                String compressed = compressImage(image, to, toWidth, toHeight);
+                if (StringHelper.isEmpty(errors) && ret == 0) {
+                    ret = 3;
+                }
+                // 压缩失败的图片也要加入列表，只是路径为空
+                this.compressed.add(compressed);
+            } else {
+                errors = "The image you wanna compress is not exist.";
+                ret = 2;
+                // 源文件不存在时，也加入一个空的路径，后续再预览的时候显示空白就行了
+                compressed.add("");
+            }
         }
+        return ret;
     }
 
     private static final String _PNG = "png";
@@ -89,7 +103,7 @@ public final class CompressImageTask extends AsyncedTask<String, Integer, Intege
      */
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
     private String compressImage(String from, String to, int toWidth, int toHeight) {
-        String compressedPath = null;
+        String compressedPath = "";
         String suffix = from.substring(from.lastIndexOf(".")).toLowerCase(Locale.getDefault());
         // 只上传 JPG/png 格式的图片
         if (imageSupported(suffix)) {
@@ -150,7 +164,7 @@ public final class CompressImageTask extends AsyncedTask<String, Integer, Intege
     @Override
     protected void onPostExecute(Integer result) {
         if (null != compressCompleteListener) {
-            compressCompleteListener.onComplete(compressedPath);
+            compressCompleteListener.onComplete(compressed);
         }
         super.onPostExecute(result);
     }
@@ -190,6 +204,6 @@ public final class CompressImageTask extends AsyncedTask<String, Integer, Intege
         /**
          * 图片压缩处理完毕
          */
-        void onComplete(String compressedPath);
+        void onComplete(ArrayList<String> compressed);
     }
 }

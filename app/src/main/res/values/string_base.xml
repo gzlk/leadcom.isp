@@ -10,12 +10,21 @@
     <string name="ui_base_text_nothing">没有更多内容</string>
     <string name="ui_base_text_press_again_to_exit">再按一次退出</string>
     <string name="ui_base_text_no_sdcard_exists">没有可用的存储设备</string>
+    <string name="ui_base_text_choose_image" formatted="false">请选择照片(至多%d张)</string>
     <string name="ui_base_text_cannot_create_image_in_dcim">无法在您的相册中创建照片</string>
     <string name="ui_base_text_image_cannot_attach_more">您不能再选择更多的照片了</string>
-    <string name="ui_base_text_compressing">正在压缩图片，请稍候&#8230;</string>
-    <string name="ui_base_text_uploading">正在上传图片，请稍候&#8230;</string>
+    <string name="ui_base_text_compressing">正在处理请稍候&#8230;</string>
+    <string name="ui_base_text_file_not_exists">文件不存在</string>
+    <string name="ui_base_text_dictionary_create_fail">无法创建本地文件夹</string>
+    <string name="ui_base_text_uploading">正在上传，请稍候&#8230;</string>
     <string name="ui_base_text_downloading">正在下载请稍候&#8230;</string>
-    <string name="ui_base_text_downloading_completed" formatted="false">已下载到：%s</string>
+    <string name="ui_base_text_downloading_fail" formatted="false">保存失败：%s</string>
+    <string name="ui_base_text_downloading_image_completed">已下载到本地相册</string>
+
+    <string name="ui_base_text_date_time_format">yyyy-MM-dd HH:mm:ss</string>
+
+    <string name="ui_base_text_today">今天</string>
+    <string name="ui_base_text_yesterday">昨天</string>
 
     <string name="ui_base_text_login">登录</string>
     <string name="ui_base_text_confirm">确定</string>
@@ -27,6 +36,7 @@
     <string name="ui_base_text_i_known">我知道了</string>
     <string name="ui_base_text_favorite">收藏</string>
     <string name="ui_base_text_delete">删除</string>
+    <string name="ui_base_text_deleted">已删除</string>
     <string name="ui_base_text_expand">展开</string>
     <string name="ui_base_text_collapse">收起</string>
     <string name="ui_base_text_save">保存</string>

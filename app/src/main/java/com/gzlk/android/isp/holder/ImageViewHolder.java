@@ -2,10 +2,13 @@ package com.gzlk.android.isp.holder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
 /**
@@ -26,6 +29,19 @@ public class ImageViewHolder extends BaseViewHolder {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageDisplayer = (ImageDisplayer) itemView;
+        imageDisplayer.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageDisplayer.addOnDeleteClickListener(new ImageDisplayer.OnDeleteClickListener() {
+            @Override
+            public void onDeleteClick(String url) {
+                if (null != dataHandlerBoundDataListener) {
+                    String string = (String) dataHandlerBoundDataListener.onHandlerBoundData(ImageViewHolder.this);
+                    log(format("try to delete %s, in position is: %s", url, string));
+                }
+                if (null != _outerDeleteClickListener) {
+                    _outerDeleteClickListener.onDeleteClick(url);
+                }
+            }
+        });
     }
 
     private boolean deleteable = false;
@@ -66,6 +82,13 @@ public class ImageViewHolder extends BaseViewHolder {
         itemView.setLayoutParams(params);
     }
 
+    @Click({R.id.ui_holder_view_image})
+    private void elementClick(View view) {
+        if (null != dataHandlerBoundDataListener) {
+            dataHandlerBoundDataListener.onHandlerBoundData(this);
+        }
+    }
+
     /**
      * 显示图片，支持以下uri方式：
      * <ul>
@@ -96,10 +119,13 @@ public class ImageViewHolder extends BaseViewHolder {
         imageDisplayer.addOnSelectorClickListener(l);
     }
 
+    private ImageDisplayer.OnDeleteClickListener _outerDeleteClickListener;
+
     /**
      * 添加删除事件回调
      */
     public void addOnDeleteClickListener(ImageDisplayer.OnDeleteClickListener l) {
-        imageDisplayer.addOnDeleteClickListener(l);
+        _outerDeleteClickListener = l;
+        //imageDisplayer.addOnDeleteClickListener(l);
     }
 }

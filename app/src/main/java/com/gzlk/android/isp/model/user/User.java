@@ -21,7 +21,7 @@ public class User extends Model {
     /**
      * 表内字段名称
      */
-    public static class Field extends Model.Field {
+    public static class Field {
         public static final String Name = "name";
         public static final String Sex = "sex";
         public static final String LoginId = "loginId";
@@ -79,7 +79,7 @@ public class User extends Model {
     @Column(Field.LastLoginTime)
     private String lastLoginTime;
     //创建时间
-    @Column(Field.CreateDate)
+    @Column(Model.Field.CreateDate)
     private String createDate;
     //验证码
     @Column(Field.Captcha)

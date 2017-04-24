@@ -16,7 +16,7 @@ import com.gzlk.android.isp.activity.BaseActivity;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseTransparentSupportFragment extends BaseLayoutSupportFragment {
+public abstract class BaseTransparentSupportFragment extends BaseLocationSupportFragment {
 
     private static final String PARAM_INITIALIZED = "bmf_initialized";
     /**
@@ -63,7 +63,7 @@ public abstract class BaseTransparentSupportFragment extends BaseLayoutSupportFr
     /**
      * 设置指定布局的顶部padding以便正常显示
      */
-    protected void tryPaddingContent(View view, boolean includeActionBar) {
+    public void tryPaddingContent(View view, boolean includeActionBar) {
         if (!isInitialized) {
             isInitialized = true;
             int padding = BaseActivity.getStatusHeight(Activity());

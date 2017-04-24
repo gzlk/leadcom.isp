@@ -20,10 +20,12 @@
             app:cv_corner_size="@dimen/ui_static_dp_30">
 
             <com.gzlk.android.isp.lib.view.ImageDisplayer
+                android:id="@+id/ui_holder_view_user_header"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:id_image_src="@mipmap/img_default_user_header"
-                app:id_image_type="oval" />
+                app:id_image_type="oval"
+                app:id_nullable_drawable="true" />
 
         </com.hlk.hlklib.lib.view.CorneredView>
 

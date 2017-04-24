@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_tool_image_merge_image_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:id_show_delete="false"
+        app:id_show_loading="false"
+        app:id_show_select="false" />
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_tool_image_merge_image_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        app:id_show_delete="false"
+        app:id_show_loading="false"
+        app:id_show_select="false" />
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_tool_image_merge_image_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        app:id_show_delete="false"
+        app:id_show_loading="false"
+        app:id_show_select="false" />
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_tool_image_merge_image_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:id_show_delete="false"
+        app:id_show_loading="false"
+        app:id_show_select="false" />
+
+</RelativeLayout>

@@ -11,10 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/ui_base_dimen_margin_padding"
         android:indeterminate="false"
+        android:max="100"
         android:visibility="invisible"
         app:mpb_progressBackgroundTint="@color/buttonDialogNormalColor"
         app:mpb_progressStyle="horizontal"
-        app:mpb_progressTint="@color/buttonActivityColor"
+        app:mpb_progressTint="@color/transparent_20"
         app:mpb_showProgressBackground="true"
         app:mpb_useIntrinsicPadding="true" />
 </LinearLayout>

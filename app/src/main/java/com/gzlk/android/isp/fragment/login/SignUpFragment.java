@@ -3,22 +3,15 @@ package com.gzlk.android.isp.fragment.login;
 import android.os.Bundle;
 import android.view.View;
 
-import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.system.SignUp;
-import com.gzlk.android.isp.api.system.Regist;
+import com.gzlk.android.isp.api.SystemRequest;
+import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.listener.OnHttpListener;
+import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
-import com.litesuits.http.request.JsonRequest;
-import com.litesuits.http.request.content.JsonBody;
-import com.litesuits.http.request.param.HttpMethods;
-import com.litesuits.http.request.param.HttpRichParamModel;
-import com.litesuits.http.response.Response;
 
 /**
  * <b>功能描述：</b>注册新账号页面<br />
@@ -86,29 +79,20 @@ public class SignUpFragment extends BaseVerifyFragment {
             ToastHelper.make().showMsg(R.string.ui_text_sign_up_password_value_incorrect);
             return;
         }
-        httpRequest(registRequest(name, password));
+        trySignUp(name, password);
     }
 
-    private JsonRequest<Regist> registRequest(String name, String password) {
-        SignUp param = new SignUp(verifyPhone, "", password, name);
-        String json = Json.gson(HttpRichParamModel.class).toJson(param, new TypeToken<SignUp>() {
-        }.getType());
-        JsonRequest<Regist> regist = new JsonRequest<>(param, Regist.class);
-        regist.setHttpListener(new OnHttpListener<Regist>() {
-
+    private void trySignUp(String name, String password) {
+        SystemRequest.request().setOnRequestListener(new OnRequestListener<User>() {
             @Override
-            public void onSucceed(Regist data, Response<Regist> response) {
-                super.onSucceed(data, response);
-                ToastHelper.make().showMsg(data.getMsg());
-                // 检测服务器返回的状态
-                if (data.success()) {
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(message);
                     // 转到登录
                     finishToSignIn();
-                } else {
-                    ToastHelper.make().showMsg(data.getMsg());
                 }
             }
-        }).setHttpBody(new JsonBody(json), HttpMethods.Post);
-        return regist;
+        }).signUp(verifyPhone, "", password, name);
     }
 }

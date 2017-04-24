@@ -20,7 +20,6 @@
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:scrollbars="vertical"
         android:singleLine="false"
-        android:text="@string/ui_text_temp_long"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ui_base_text_size_small" />
 
@@ -41,7 +40,8 @@
         android:layout_alignParentEnd="true"
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_base_text_expand"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/ui_moment_details_title_container"

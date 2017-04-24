@@ -3,7 +3,7 @@ package com.gzlk.android.isp.lib.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.etc.ImageCompress;
+import com.gzlk.android.isp.helper.HttpHelper;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
@@ -24,6 +27,10 @@ import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+
+import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <b>功能描述：</b>图片显示工具<br />
@@ -59,11 +66,10 @@ public class ImageDisplayer extends RelativeLayout {
 
             if (array.hasValue(R.styleable.ImageDisplayer_id_image_src)) {
                 srcDrawable = array.getResourceId(R.styleable.ImageDisplayer_id_image_src, 0);
-                if (0 < srcDrawable) {
-                    imageView.setImageResource(srcDrawable);
-                }
+                displayDrawable();
             }
             displayUrl = array.getString(R.styleable.ImageDisplayer_id_image_url);
+            defaultNullable = array.getBoolean(R.styleable.ImageDisplayer_id_nullable_drawable, true);
 
             String string = array.getString(R.styleable.ImageDisplayer_id_delete_icon);
             deleteIconTextView.setText(string);
@@ -79,6 +85,7 @@ public class ImageDisplayer extends RelativeLayout {
             selected = array.getBoolean(R.styleable.ImageDisplayer_id_selected, false);
             setSelected();
 
+            showLoading = array.getBoolean(R.styleable.ImageDisplayer_id_show_loading, true);
             imageSize = array.getDimensionPixelSize(R.styleable.ImageDisplayer_id_image_size, 0);
             if (imageSize > 0) {
                 imageWidth = imageSize;
@@ -113,13 +120,34 @@ public class ImageDisplayer extends RelativeLayout {
         onAttachedToWindow();
     }
 
+    // 显示用户设置的默认的drawable资源
+    private void displayDrawable() {
+        if (0 < srcDrawable) {
+            imageView.setImageResource(srcDrawable);
+        } else {
+            // 没有设置资源时显示空白
+            displayBlankImage();
+        }
+    }
+
+    private void displayBlankImage() {
+        if (defaultNullable) {
+            // 设置了默认显示空白时直接显示null
+            imageView.setImageDrawable(null);
+        } else {
+            // 未设置是显示系统默认的头像图片
+            imageView.setImageResource(R.mipmap.img_default_user_header);
+            //imageView.setImageResource(R.mipmap.img_image_loading_fail);
+        }
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (!TextUtils.isEmpty(displayUrl)) {
+        if (!isNullUrl()) {
             displayImage(displayUrl, imageWidth, imageHeight, showSelect, showDelete);
         } else {
-            imageView.setImageResource(0 < srcDrawable ? srcDrawable : R.mipmap.img_default_user_header);
+            displayDrawable();
         }
     }
 
@@ -133,11 +161,18 @@ public class ImageDisplayer extends RelativeLayout {
     }
 
     /**
+     * 清除image
+     */
+    public void clearImage() {
+        imageView.setImageDrawable(null);
+    }
+
+    /**
      * 图片的url地址
      */
     private String displayUrl;
     private int imageSize, imageWidth, imageHeight;
-    private boolean showDelete, showSelect, selected;
+    private boolean showDelete, showSelect, selected, showLoading, defaultNullable;
 
     /**
      * 设置是否已选中
@@ -151,6 +186,13 @@ public class ImageDisplayer extends RelativeLayout {
         if (showSelect) {
             selectContainer.setBackground(ContextCompat.getColor(getContext(), selected ? R.color.colorPrimary : R.color.textColorHintLight));
         }
+    }
+
+    /**
+     * 设置是否在url或res为空时drawable设置为null以便释放内存
+     */
+    public void setDefaultNullable(boolean nullable) {
+        defaultNullable = nullable;
     }
 
     /**
@@ -180,35 +222,115 @@ public class ImageDisplayer extends RelativeLayout {
         displayImage();
     }
 
-    private void displayImage() {
-        if (TextUtils.isEmpty(displayUrl) || displayUrl.length() < 5) {
-            imageView.setImageResource(R.mipmap.img_image_loading_fail);
-        } else {
-            String url = displayUrl;
-            if (!url.contains("://")) {
-                // 默认显示本地图片
-                url = "file://" + displayUrl;
-                //imageView.setImageResource(R.mipmap.img_image_loading_fail);
-            } //else {
-            // String url = LxbgApp.getInstance().gotFullDownloadUrl(image);
-            // http://
-            // drawable://  ex.: "drawable://" + R.drawable.image
-            // assets://image.png
-            // file:///mnt/sdcard/image.png  ex.: "file://" + uri(string)
-            // content://media/external/audio/albumart/13
+    /**
+     * 设置图像的缩放方式
+     */
+    public void setImageScaleType(ImageView.ScaleType scaleType) {
+        imageView.setScaleType(scaleType);
+    }
 
-            ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView),
-                    null, new ImageSize(imageWidth, imageHeight),
-                    mImageLoadingListener, mImageLoadingProgressListener);
-            //}
+    private boolean isNullUrl() {
+        return TextUtils.isEmpty(displayUrl) || displayUrl.length() < 5;
+    }
+
+    private static final String REGEX_HTTP = "^((http[s]{0,1})|ftp)://";
+
+    // 判断字符串是否是url，http/https/ftp开头的
+    private boolean isUrl(String http) {
+        Pattern pattern = Pattern.compile(REGEX_HTTP);
+        Matcher matcher = pattern.matcher(http);
+        return matcher.find();
+    }
+
+    private void displayImage() {
+        if (isNullUrl()) {
+            // 图片地址为空时显示默认的drawable
+            displayDrawable();
+        } else {
+            String local;
+            if (isUrl(displayUrl)) {
+                local = HttpHelper.helper().getLocalFilePath(displayUrl, App.IMAGE_DIR);
+            } else {
+                local = displayUrl;
+            }
+            // 查看本地缓存文件是否存在
+            File file = new File(local);
+            if (!file.exists()) {
+                // 文件不存在则尝试下载
+                downloadFile(displayUrl);
+            } else {
+                // 获取本地图片的宽高尺寸
+                BitmapFactory.Options options = ImageCompress.getBitmapOptions(local);
+                int[] size;
+                if (null != options) {
+                    // 缩放图片以适合屏幕
+                    size = gotScaledSize(new int[]{options.outWidth, options.outHeight});
+                } else {
+                    size = new int[]{imageWidth, imageHeight};
+                }
+                if (!local.contains("://")) {
+                    // 默认显示本地图片
+                    local = "file://" + local;
+                }
+                // String url = App.getInstance().gotFullDownloadUrl(image);
+                // http://
+                // drawable://  ex.: "drawable://" + R.drawable.image
+                // assets://image.png
+                // file:///mnt/sdcard/image.png  ex.: "file://" + uri(string)
+                // content://media/external/audio/albumart/13
+                ImageLoader.getInstance().displayImage(local, new ImageViewAware(imageView), null,
+                        new ImageSize(size[0], size[1]), mImageLoadingListener, mImageLoadingProgressListener);
+            }
         }
+    }
+
+    /**
+     * 根据图片的宽高缩放图片
+     */
+    private int[] gotScaledSize(int[] size) {
+        // 依最小边进行缩放
+        double scale;
+        if (imageWidth > imageHeight) {
+            scale = imageHeight * 1.0 / size[1];
+        } else {
+            scale = imageWidth * 1.0 / size[0];
+        }
+        // 如果原图比手机屏幕小则原图不用缩放
+        if (scale > 1) {
+            scale = 1.0;
+        }
+        size[0] = (int) (size[0] * scale);
+        size[1] = (int) (size[1] * scale);
+
+        return size;
+    }
+
+    private void downloadFile(final String http) {
+        HttpHelper.helper().addCallback(new HttpHelper.HttpHelperCallback() {
+
+            public void onSuccess(int current, int total, String currentPath) {
+                // 下载成功后再次尝试显示图片
+                displayImage();
+            }
+
+            public void onFailure(int current, int total) {
+                // 下载失败时直接ImageLoader来加载图片
+                ImageLoader.getInstance().displayImage(http, new ImageViewAware(imageView), null,
+                        new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
+            }
+
+        }, Integer.toHexString(hashCode()))
+                .setIgnoreExist(true).setLocalDirectory(App.IMAGE_DIR)
+                .addTask(http).download();
     }
 
     private ImageLoadingListener mImageLoadingListener = new ImageLoadingListener() {
 
         @Override
         public void onLoadingStarted(String imageUri, View view) {
-            progressBar.setVisibility(View.VISIBLE);
+            if (showLoading) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override

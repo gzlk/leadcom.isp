@@ -18,27 +18,39 @@ android {
                 cppFlags "-frtti -fexceptions"
             }
         }
+        resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
     }
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             zipAlignEnabled true  // 混淆后的zip优化
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         alpha {
             initWith release
+            signingConfig signingConfigs.release
             debuggable true
         }
         beta {
             initWith alpha
+            signingConfig signingConfigs.release
+            debuggable true
         }
         debug {
             initWith beta
+            signingConfig signingConfigs.release
+            debuggable true
         }
     }
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
         }
     }
 }
@@ -73,6 +85,8 @@ dependencies {
     compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.makeramen:roundedimageview:2.2.1'
+    compile 'com.yanzhenjie:album:1.0.5'
+    compile 'me.drakeet.multitype:multitype:2.5.0'
     // 横向、圆形progressbar
     compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
     testCompile 'junit:junit:4.12'

@@ -11,7 +11,10 @@ import android.view.View;
 
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+
+import java.lang.ref.SoftReference;
 
 /**
  * <b>功能：</b>RecyclerViewHolder基类<br />
@@ -21,7 +24,7 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
  */
 public class BaseViewHolder extends RecyclerView.ViewHolder {
 
-    private BaseFragment fragment;
+    private SoftReference<BaseFragment> fragment;
 
     /**
      * 当前 holder 的 tag 对象
@@ -30,7 +33,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
 
     public BaseViewHolder(View itemView, BaseFragment fragment) {
         super(itemView);
-        this.fragment = fragment;
+        this.fragment = new SoftReference<>(fragment);
     }
 
     protected boolean multiSelectable = false;
@@ -59,15 +62,15 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     protected String format(String format, Object... args) {
-        return fragment.format(format, args);
+        return StringHelper.format(format, args);
     }
 
     protected int getColor(int res) {
-        return fragment.getColor(res);
+        return fragment.get().getColor(res);
     }
 
     protected int getDimension(int res) {
-        return fragment.getDimension(res);
+        return fragment.get().getDimension(res);
     }
 
     protected void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey) {
@@ -83,19 +86,19 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     protected void openActivity(String fullClassName, String params, int requestCode, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
-        fragment.openActivity(fullClassName, params, requestCode, supportToolbar, supportBackKey, transparentStatusBar);
+        fragment.get().openActivity(fullClassName, params, requestCode, supportToolbar, supportBackKey, transparentStatusBar);
     }
 
     protected BaseFragment fragment() {
-        return this.fragment;
+        return this.fragment.get();
     }
 
     protected Handler Handler() {
-        return this.fragment.Handler();
+        return this.fragment.get().Handler();
     }
 
     protected Context getContext() {
-        return fragment.Activity();
+        return fragment.get().Activity();
     }
 
     public void setTag(Object tag) {
@@ -156,13 +159,13 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     /**
      * 获取当前正在处理的数据对象的回调
      */
-    protected OnHandlerBoundDataListener dataHandlerListener;
+    protected OnHandlerBoundDataListener dataHandlerBoundDataListener;
 
     /**
      * 添加数据处理回调
      */
     public void addOnHandlerBoundDataListener(OnHandlerBoundDataListener l) {
-        dataHandlerListener = l;
+        dataHandlerBoundDataListener = l;
     }
 
     /**

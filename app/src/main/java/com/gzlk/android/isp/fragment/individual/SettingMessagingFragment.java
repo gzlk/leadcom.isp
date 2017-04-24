@@ -1,12 +1,10 @@
 package com.gzlk.android.isp.fragment.individual;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.application.App;
-import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.ToggleableViewHolder;
@@ -23,7 +21,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class SettingMessagingFragment extends BaseLayoutSupportFragment {
+public class SettingMessagingFragment extends BaseTransparentSupportFragment {
 
     // UI
     @ViewId(R.id.ui_setting_messaging_sound)

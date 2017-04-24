@@ -11,4 +11,116 @@
     <string name="temp_json_moment_list">
 [\"https://img3.cache.netease.com/photo/0005/2017-04-17/CI7C0TEB00DE0005.png\",\"https://img2.cache.netease.com/photo/0005/2017-04-17/CI78TNFE00DE0005.jpg\",\"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-17/CI78TJC800DE0005.jpg\",\"https://img4.cache.netease.com/photo/0005/2017-04-17/CI78TOTU00DE0005.jpg\",\"https://img6.cache.netease.com/photo/0005/2017-04-17/CI78U34C00DE0005.jpg\",\"https://img5.cache.netease.com/photo/0005/2017-04-17/CI7AKM4A00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59K3C600DE0005.jpg\",\"https://img5.cache.netease.com/photo/0005/2017-04-16/CI59K2K500DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59K0TF00DE0005.jpg\",\"https://img2.cache.netease.com/photo/0005/2017-04-17/CI78TM7F00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JVDB00DE0005.jpg\",\"https://img2.cache.netease.com/photo/0005/2017-04-16/CI59JUQL00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JSTE00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JSLE00DE0005.jpg\",\"https://img5.cache.netease.com/photo/0005/2017-04-17/CI7A3AGH00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JRVJ00DE0005.jpg\",\"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JQML00DE0005.png\",\"https://img5.cache.netease.com/photo/0005/2017-04-16/CI59JPN200DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-17/CI78TKLN00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JOFO00DE0005.jpg\"]
     </string>
+    <string name="temp_json_moment_1">
+{
+	\"id\":\"1234567890\",
+	\"userId\":\"jiakjdiuqij\",
+	\"userName\":\"Leekwok\",
+	\"createDate\":\"2017-04-21 01:18:20\",
+	\"location\":\"山东省烟台市开发区衡山路1号207室\",
+	\"content\":\"clone在平时项目的开发中可能用的不是很频繁，但是区分深拷贝和浅拷贝会让我们对java内存结构和运行方式有更深的了解。至于彻底深拷贝，几乎是不可能实现的，原因已经在上一节中进行了说明\",
+	\"image\":[\"https://img3.cache.netease.com/photo/0005/2017-04-17/CI7C0TEB00DE0005.png\",\"https://img2.cache.netease.com/photo/0005/2017-04-17/CI78TNFE00DE0005.jpg\",\"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg\"]
+}
+    </string>
+    <string name="temp_json_moment_multi" formatted="false">
+[{
+    \"id\": \"1234567890\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-04-21 03:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"clone在平时项目的开发中可能用的不是很频繁，但是区分深拷贝和浅拷贝会让我们对java内存结构和运行方式有更深的了解。至于彻底深拷贝，几乎是不可能实现的，原因已经在上一节中进行了说明\",
+    \"image\": [
+        \"https://img6.cache.netease.com/photo/0001/2017-04-20/CIGG414400AN0001.jpg\",
+        \"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg\"
+    ]
+},
+{
+    \"id\": \"1234567891\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-04-21 01:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"【骄傲！#天舟一号飞船#发射升空！威武】4月20日19时41分，搭载天舟一号货运飞船的长征七号遥二运载火箭，在我国文昌航天发射场点火发射升空！加油，中国航天！\",
+    \"image\": [
+        \"https://img3.cache.netease.com/photo/0001/2017-04-20/CIGA5N5D00AN0001.jpg\",
+        \"https://img6.cache.netease.com/photo/0001/2017-04-20/CIG88ESU00AN0001.jpg\",
+        \"https://img3.cache.netease.com/photo/0001/2017-04-20/CIGA5NGA00AN0001.jpg\",
+		\"https://img6.cache.netease.com/photo/0001/2017-04-20/CIG93MBI00AN0001.jpg\",
+		\"https://img6.cache.netease.com/photo/0001/2017-04-20/CIGG414400AN0001.jpg\"
+    ]
+},{
+    \"id\": \"1234567892\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-04-20 01:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"中国高铁今日起首次跨省调价。从4月21日起，东南沿海的车票价格根据各班次的客流情况进行差异化调整，从此告别“一刀切”。\",
+    \"image\": []
+},{
+    \"id\": \"1234567893\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-04-19 01:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"据人民日报4月12日报道，中国铁路总公司相关部门负责人表示，价格低是东南沿海线路亏损的原因之一。东南沿海高铁长期执行国家1997年批复的高等级快速软座票价标准，明显低于同区段公路票价。该负责人介绍，宁波至厦门段，公路运行13.5小时，票价312元，高铁运行5.5小时，票价仅250元；厦门至深圳，公路运行8小时，票价372元，高铁运行3.5小时，票价仅150元。<br/>调价一方面可以提高铁路对市场的敏感度，另一方面可以使铁路行业的收入预期与经营环境有所改善。<br/>对于乘客来说，如果对价格比较敏感但对时间要求不高，可以避开高峰时段，降低出行成本。而对时间敏感的乘客，可以像选机票一样选择更合适也更贵的班次。\",
+    \"image\": [\"https://cms-bucket.nosdn.127.net/catchpic/8/8b/8b985ff21c0f32cdf88495ced59392a9.jpg\"]
+},{
+    \"id\": \"1234567894\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-04-18 01:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"\",
+    \"image\": [
+        \"https://img3.cache.netease.com/photo/0008/2017-04-20/CIE3F3242EI00008.550x.0.jpg\",
+        \"https://img3.cache.netease.com/photo/0008/2017-04-20/CIE3F1682EI00008.550x.0.jpg\",
+		\"https://img4.cache.netease.com/photo/0008/2017-04-20/CIE3EV602EI00008.550x.0.jpg\"
+    ]
+},{
+    \"id\": \"1234567895\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-03-21 01:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"今年5月,中国将在北京主办“一带一路”国际合作高峰论坛,共商合作大计,共建合作平台,共享合作成果,为解决当前世界和区域经济面临的问题寻找方案,为实现联动式发展注入新能量,让“一带一路”建设更好造福各国人民。\",
+    \"image\": [
+        \"https://img3.cache.netease.com/photo/0005/2017-04-17/CI78TJC800DE0005.jpg\",
+        \"https://img4.cache.netease.com/photo/0005/2017-04-17/CI78TOTU00DE0005.jpg\",
+        \"https://img6.cache.netease.com/photo/0005/2017-04-17/CI78U34C00DE0005.jpg\",
+		\"https://img5.cache.netease.com/photo/0005/2017-04-17/CI7AKM4A00DE0005.jpg\"
+    ]
+},{
+    \"id\": \"1234567896\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-02-21 01:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"\",
+    \"image\": [
+        \"https://img4.cache.netease.com/photo/0008/2017-04-16/CI5IJO435BD00008.jpg\"
+    ]
+},{
+    \"id\": \"1234567897\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-02-22 01:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"2003年11月，张越由北京市公安局副局长调至时任公安部部长周永康直接管辖的公安部二十六局（反邪教局）局长；2007年12月，张越调任京畿重地河北任省公安厅党委书记；2008年1月任河北省省长助理、省委政法委委员，省公安厅厅长、党委书记；2008年6月任河北省委政法委书记，省公安厅厅长、党委书记；2008年12月，张越进入河北省委常委班子，同时身兼省委政法委书记，省公安厅厅长、党委书记（2013年8月不再担任省公安厅厅长，2015年3月不再担任省公安厅党委书记），统揽公检法系统大权于一身。\",
+    \"image\": []
+},{
+    \"id\": \"1234567898\",
+    \"userId\": \"jiakjdiuqij\",
+    \"userName\": \"Leekwok\",
+    \"createDate\": \"2017-04-11 01:18:20\",
+    \"location\": \"山东省烟台市开发区衡山路1号207室\",
+    \"content\": \"clone在平时项目的开发中可能用的不是很频繁，但是区分深拷贝和浅拷贝会让我们对java内存结构和运行方式有更深的了解。至于彻底深拷贝，几乎是不可能实现的，原因已经在上一节中进行了说明\",
+    \"image\": [
+        \"https://img3.cache.netease.com/photo/0005/2017-04-17/CI7C0TEB00DE0005.png\",
+        \"https://img2.cache.netease.com/photo/0005/2017-04-17/CI78TNFE00DE0005.jpg\",
+        \"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg\"
+    ]
+}
+]
+    </string>
 </resources>

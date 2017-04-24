@@ -6,7 +6,6 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
@@ -35,8 +34,6 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
 
     private ItemAdapter itemAdapter;
 
-    // 提供给Adapter的数据源
-    private List<Item> items = new ArrayList<>();
     // 原始数据
     private List<String> data = new ArrayList<>();
 
@@ -97,7 +94,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
         }
     }
 
-    private class ItemAdapter extends RecyclerViewAdapter<TextViewHolder> implements RecycleAdapter<Item> {
+    private class ItemAdapter extends RecyclerViewAdapter<TextViewHolder, Item> implements RecycleAdapter<Item> {
 
         @Override
         public TextViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -113,59 +110,14 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
         }
 
         @Override
-        public void onBindViewHolder(TextViewHolder holder, int position) {
-            Item item = items.get(position);
+        public void onBindHolderOfView(TextViewHolder holder, int position, Item item) {
             holder.showContent(item.text, item.selected);
         }
 
         @Override
-        public int getItemCount() {
-            return items.size();
+        protected int comparator(Item item1, Item item2) {
+            return item1.text.compareTo(item2.text);
         }
-
-        @Override
-        public void clear() {
-            int size = items.size();
-            while (size > 0) {
-                remove(size - 1);
-                size = items.size();
-            }
-        }
-
-        @Override
-        public void remove(int position) {
-            items.remove(position);
-            notifyItemRemoved(position);
-        }
-
-        @Override
-        public void remove(Item item) {
-            int index = items.indexOf(item);
-            remove(index);
-        }
-
-        @Override
-        public void add(Item item) {
-            items.add(item);
-            notifyItemInserted(items.size() - 1);
-        }
-
-        @Override
-        public void add(Item item, int position) {
-            items.add(position, item);
-            notifyItemInserted(position);
-        }
-
-        @Override
-        public boolean exist(Item item) {
-            return false;
-        }
-
-        @Override
-        public boolean isFirstItemFullLine() {
-            return false;
-        }
-
     }
 
     private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
@@ -181,8 +133,8 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
     };
 
     private void resetClickStatus(int index) {
-        for (int i = 0, len = items.size(); i < len; i++) {
-            items.get(i).selected = (i == index);
+        for (int i = 0, len = itemAdapter.getItemCount(); i < len; i++) {
+            itemAdapter.get(i).selected = (i == index);
             itemAdapter.notifyItemChanged(i);
         }
     }

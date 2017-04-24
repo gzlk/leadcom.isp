@@ -1,30 +1,23 @@
 package com.gzlk.android.isp.fragment.login;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.system.SignIn;
-import com.gzlk.android.isp.api.system.Regist;
+import com.gzlk.android.isp.api.SystemRequest;
+import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
-import com.gzlk.android.isp.helper.PreferenceHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.listener.OnHttpListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
-import com.litesuits.http.data.TypeToken;
-import com.litesuits.http.request.JsonRequest;
-import com.litesuits.http.request.content.JsonBody;
-import com.litesuits.http.request.param.HttpMethods;
-import com.litesuits.http.request.param.HttpRichParamModel;
-import com.litesuits.http.response.Response;
 
 /**
  * <b>功能描述：</b>登录页面<br />
@@ -74,11 +67,16 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     @SuppressWarnings("ConstantConditions")
     @Override
     public void doingInResume() {
-        if (null != App.app().Me() && isAdded()) {
-            accountText.setValue(App.app().Me().getPhone());
-            signInButton.setEnabled(false);
-            signInButton.setText(R.string.ui_text_sign_in_still_processing);
-            delayRefreshLoading(5000, DELAY_TYPE_TIME_DELAY);
+        if (checkStoragePermission()) {
+            if (null != App.app().Me() && isAdded()) {
+                accountText.setValue(App.app().Me().getPhone());
+                signInButton.setEnabled(false);
+                signInButton.setText(R.string.ui_text_sign_in_still_processing);
+                delayRefreshLoading(2000, DELAY_TYPE_TIME_DELAY);
+            }
+        } else {
+            // 尝试获取相关基本的运行时权限
+            grantStoragePermission();
         }
         //log(String.format("screen on: %s, visible: %s, resumed: %s", isScreenOn(), isVisible(), isResumed()));
     }
@@ -108,7 +106,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     stillInSignIn = true;
                     signInButton.setEnabled(false);
                     // 开始登录
-                    httpRequest(loginParams(accountText.getValue(), passwordText.getValue()));
+                    signIn(accountText.getValue(), passwordText.getValue());
                 } else {
                     ToastHelper.make().showMsg(R.string.ui_text_sign_in_still_processing);
                 }
@@ -122,47 +120,102 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
         if (type == DELAY_TYPE_TIME_DELAY) {
-            finish(true);
+            if (!isAdded()) {
+                delayRefreshLoading(5000, DELAY_TYPE_TIME_DELAY);
+            } else {
+                finish(true);
+            }
         }
     }
 
-    private JsonRequest<Regist> loginParams(String account, String password) {
-        SignIn param = new SignIn(account, password, "");
-        String json = Json.gson(HttpRichParamModel.class).toJson(param, new TypeToken<SignIn>() {
-        }.getType());
-        JsonRequest<Regist> login = new JsonRequest<>(param, Regist.class);
-        login.setHttpListener(new OnHttpListener<Regist>() {
+    private void signIn(String account, String password) {
+        SystemRequest.request().setOnRequestListener(new OnRequestListener<User>() {
 
             @SuppressWarnings("ConstantConditions")
             @Override
-            public void onSucceed(Regist data, Response<Regist> response) {
-                super.onSucceed(data, response);
-                ToastHelper.make().showMsg(data.getMsg());
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
                 // 检测服务器返回的状态
-                if (data.success()) {
-                    new Dao<>(User.class).save(data.getData());
-                    PreferenceHelper.save(R.string.pf_last_login_user_id, data.getData().getId());
+                if (success) {
+                    new Dao<>(User.class).save(user);
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
-                    App.app().Me();
+                    App.app().Me(user);
                     // 打开主页面
                     finish(true);
                 } else {
+                    stillInSignIn = false;
                     signInButton.setEnabled(true);
-                    ToastHelper.make().showMsg(data.getMsg());
                 }
             }
-            @Override
-            public void onFailed() {
-                super.onFailed();
-                // 失败后可以重新登陆
-                signInButton.setEnabled(true);
-            }
-            @Override
-            public void onEnd(Response<Regist> response) {
-                super.onEnd(response);
-                stillInSignIn = false;
-            }
-        }).setHttpBody(new JsonBody(json), HttpMethods.Post);
-        return login;
+        }).signIn(account, password, "");
+    }
+
+//    /**
+//     * 检测基本权限要求
+//     */
+//    private boolean checkBasePermission() {
+//        basePermissions.clear();
+//        permissionRequest = "";
+//        // 存储设备
+//        if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) && needGrantPermission()) {
+//            permissionRequest = StringHelper.getString(R.string.ui_grant_permission_storage);
+//            basePermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//        }
+//        // 定位，在使用时获取好了
+////        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) && needGrantPermission()) {
+////            permissionRequest = permissionRequest + "、" + StringHelper.getString(R.string.ui_grant_permission_gps);
+////            basePermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+////        }
+//        // 电话设备，在使用时获取好了
+//        if (!hasPermission(Manifest.permission.READ_PHONE_STATE) && needGrantPermission()) {
+//            permissionRequest = permissionRequest + "、" + StringHelper.getString(R.string.ui_grant_permission_phone_state);
+//            basePermissions.add(Manifest.permission.READ_PHONE_STATE);
+//        }
+//
+//        return StringHelper.isEmpty(permissionRequest);
+//    }
+//
+//    private void grandBasePermissions() {
+//        if (!StringHelper.isEmpty(permissionRequest) && basePermissions.size() > 0) {
+//            String text = StringHelper.getString(R.string.ui_base_text_permission_warning, permissionRequest);
+//            // 提醒用户需要相关权限
+//            SimpleDialogHelper.init(Activity()).show(text, new DialogHelper.OnDialogConfirmListener() {
+//                @Override
+//                public boolean onConfirm() {
+//                    tryGrantPermissions(basePermissions.toArray(new String[basePermissions.size()]), GRANT_BASE, "");
+//                    return true;
+//                }
+//            });
+//        }
+//    }
+
+    private boolean checkStoragePermission() {
+        // 存储设备
+        return hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
+    private void grantStoragePermission() {
+        signInButton.setEnabled(false);
+        String text = StringHelper.getString(R.string.ui_grant_permission_storage_warning);
+        String denied = StringHelper.getString(R.string.ui_grant_permission_storage_denied);
+        tryGrantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, GRANT_STORAGE, text, denied);
+    }
+
+    /**
+     * 子类需要重载此方法以便处理权限申请成功之后的事情
+     */
+    @Override
+    public void permissionGranted(String[] permissions, int requestCode) {
+        if (requestCode == GRANT_STORAGE && permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            signInButton.setEnabled(true);
+        }
+    }
+
+    /**
+     * 子类需要重载此方法以便处理权限申请失败之后的事情
+     */
+    @Override
+    public void permissionGrantFailed(int requestCode) {
+        signInButton.setEnabled(true);
     }
 }

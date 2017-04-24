@@ -1,11 +1,17 @@
 package com.gzlk.android.isp.holder;
 
 import android.view.View;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.individual.QRCodeFragment;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
 /**
@@ -21,9 +27,18 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 
 public class IndividualHeaderViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_tool_individual_name)
+    private TextView nameTextView;
+    @ViewId(R.id.ui_tool_individual_additional)
+    private TextView additionalTextView;
+    @ViewId(R.id.ui_holder_view_user_header)
+    private ImageDisplayer userHeader;
+
     public IndividualHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        ((BaseTransparentSupportFragment) fragment).tryPaddingContent(itemView, true);
+
     }
 
     @Click({R.id.ui_tool_individual_header_to_2d_code})
@@ -34,5 +49,11 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
                 openActivity(QRCodeFragment.class.getName(), "", false, false, true);
                 break;
         }
+    }
+
+    public void showContent(User user) {
+        ((BaseTransparentSupportFragment) fragment()).tryPaddingContent(itemView, true);
+        nameTextView.setText(StringHelper.isEmpty(user.getName()) ? user.getLoginId() : user.getName());
+        //userHeader.displayImage("https://img3.cache.netease.com/photo/0005/2017-04-17/CI7C0TEB00DE0005.png", getDimension(R.dimen.ui_static_dp_60), false, false);
     }
 }

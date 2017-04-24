@@ -8,9 +8,8 @@
         android:id="@+id/ui_tool_image_view_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
         android:contentDescription="@string/app_name"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/img_default_user_header"
         app:riv_corner_radius="@dimen/ui_base_dimen_margin_padding" />
 
     <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar

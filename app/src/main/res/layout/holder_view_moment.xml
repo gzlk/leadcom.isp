@@ -3,37 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/ui_static_dp_3"
     android:orientation="horizontal"
-    android:padding="@dimen/ui_base_dimen_margin_padding">
+    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+    android:paddingStart="@dimen/ui_base_dimen_margin_padding">
 
-    <TextView
-        android:id="@+id/ui_holder_view_moment_date"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="05"
-        android:textSize="@dimen/ui_base_text_size_huge" />
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/ui_holder_view_moment_month"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="12月"
-        android:textSize="@dimen/ui_base_text_size_small" />
+        <TextView
+            android:id="@+id/ui_holder_view_moment_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ui_base_text_size_huge" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_moment_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ui_base_text_size_small" />
+    </LinearLayout>
 
     <com.hlk.hlklib.lib.view.CorneredView
         android:id="@+id/ui_holder_view_moment_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-        android:layout_weight="1"
-        android:minHeight="@dimen/ui_static_dp_80"
-        android:orientation="vertical"
-        android:padding="@dimen/ui_static_dp_1"
-        app:cv_active_border="@color/colorPrimary"
+        android:layout_weight="4"
+        android:minHeight="@dimen/ui_static_dp_40"
+        android:orientation="horizontal"
+        android:padding="@dimen/ui_static_dp_half"
+        app:cv_active_border="@color/textColorHintLightLight"
         app:cv_background="@android:color/white"
         app:cv_background_active="@color/buttonDialogActiveColor"
+        app:cv_background_type="fill"
         app:cv_normal_border="@android:color/white">
 
-        <include layout="@layout/holder_view_moment_content_today" />
+        <include layout="@layout/tool_view_moment_item__today" />
+
+        <include layout="@layout/tool_view_moment_item_content" />
     </com.hlk.hlklib.lib.view.CorneredView>
 </LinearLayout>

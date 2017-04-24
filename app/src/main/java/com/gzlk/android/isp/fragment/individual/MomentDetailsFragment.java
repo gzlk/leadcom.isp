@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.fragment.individual;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.method.ScrollingMovementMethod;
@@ -9,19 +10,30 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
-import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.user.moment.Moment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.hlk.hlklib.tasks.AsyncedTask;
 
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b><br />
@@ -34,7 +46,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class MomentDetailsFragment extends BaseDownloadingUploadingSupportFragment {
+public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
 
     private static final String PARAM_ID = "mdf_moment_id";
     private static final String PARAM_SELECTED = "mdf_moment_selected";
@@ -42,7 +54,11 @@ public class MomentDetailsFragment extends BaseDownloadingUploadingSupportFragme
     public static MomentDetailsFragment newInstance(String params) {
         MomentDetailsFragment mdf = new MomentDetailsFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ID, params);
+        String[] strings = splitParameters(params);
+        bundle.putString(PARAM_ID, strings[0]);
+        if (strings.length > 1) {
+            bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[1]));
+        }
         mdf.setArguments(bundle);
         return mdf;
     }
@@ -80,7 +96,7 @@ public class MomentDetailsFragment extends BaseDownloadingUploadingSupportFragme
     @ViewId(R.id.ui_moment_detail_content_text)
     private TextView detailContentTextView;
 
-    private List<String> images;
+    private ArrayList<String> images;
 
     @Override
     public int getLayout() {
@@ -92,13 +108,59 @@ public class MomentDetailsFragment extends BaseDownloadingUploadingSupportFragme
         tryPaddingContent(titleContainer, false);
         titleRightIcon.setText(R.string.ui_icon_more);
         if (null == images) {
-            String json = StringHelper.getString(R.string.temp_json_moment_list);
-            images = Json.gson().fromJson(json, new TypeToken<List<String>>() {
-            }.getType());
+            images = new ArrayList<>();
+            Moment moment = new Dao<>(Moment.class).query(queryId);
+            displayMomentDetails(moment);
         }
-        titleTextView.setText("动态详情");
         detailContentTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         initializeAdapter();
+    }
+
+    private void displayMomentDetails(Moment moment) {
+        if (null == moment) {
+            fetchingMoment();
+        } else {
+            images.addAll(moment.getImage());
+            titleTextView.setText(Utils.format(moment.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), "yyyy年m月d日HH:mm"));
+            toggleTextView.setText(moment.getContent());
+        }
+    }
+
+    /**
+     * 拉取远程服务器上的说说
+     */
+    private void fetchingMoment() {
+        MomentRequest.request().setOnRequestListener(new OnRequestListener<Moment>() {
+            @Override
+            public void onResponse(Moment moment, boolean success, String message) {
+                super.onResponse(moment, success, message);
+                if (success) {
+                    // 保存拉取回来的说说记录
+                    new Dao<>(Moment.class).save(moment);
+                    // 拉取回来之后立即显示
+                    displayMomentDetails(moment);
+                }
+            }
+        }).find(queryId);
+    }
+
+    private void deleteMoment() {
+        MomentRequest.request().setOnRequestListener(new OnRequestListener<Moment>() {
+            @Override
+            public void onResponse(Moment moment, boolean success, String message) {
+                super.onResponse(moment, success, message);
+                if (success) {
+                    // 本地已删除
+                    Dao<Moment> dao = new Dao<>(Moment.class);
+                    Moment deleted = dao.query(queryId);
+                    if (deleted != null) {
+                        deleted.setLocalDeleted(true);
+                        dao.save(deleted);
+                    }
+                    finish();
+                }
+            }
+        }).delete(queryId);
     }
 
     @Override
@@ -162,20 +224,99 @@ public class MomentDetailsFragment extends BaseDownloadingUploadingSupportFragme
             case R.id.ui_dialog_moment_details_button_privacy:
                 break;
             case R.id.ui_dialog_moment_details_button_favorite:
+                fetchingMoment();
                 break;
             case R.id.ui_dialog_moment_details_button_save:
                 // 保存单张图片到本地
                 save();
                 break;
             case R.id.ui_dialog_moment_details_button_delete:
+                deleteMoment();
                 break;
         }
     }
 
     @SuppressWarnings("ConstantConditions")
     private void save() {
-        String url = "http://10.141.130.17/app.zip";
-        downloadFile(url, App.app().getLocalFilePath(url, App.OTHER_DIR));
+        String url = images.get(selected);
+        String local = HttpHelper.helper().getLocalFilePath(url, App.IMAGE_DIR);
+        File file = new File(local);
+        if (file.exists()) {
+            new CopyTo().exec(url, local);
+        } else {
+            // 文件不存在则重新下载
+            downloadFile(url);
+        }
+    }
+
+    @Override
+    protected void onFileDownloadingComplete(String url, boolean success) {
+        super.onFileDownloadingComplete(url, success);
+        if (success) {
+            // 下载成功之后重新另存到外置SD卡公共Picture目录
+            save();
+        }
+    }
+
+    private class CopyTo extends AsyncedTask<String, Integer, Boolean> {
+
+        private String error = "";
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            String url = params[0];
+            String local = params[1];
+            String name = url.substring(url.lastIndexOf('/'));
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/" + App.CACHE_DIR;
+            try {
+                File f = new File(path);
+                if (!f.exists()) {
+                    if (f.mkdirs()) {
+
+                        File file = new File(local);
+                        if (file.exists()) {
+                            long totalLength = file.length();
+                            InputStream inputStream = new FileInputStream(local);
+                            String out = path + name;
+                            FileOutputStream fos = new FileOutputStream(out);
+                            byte[] buffer = new byte[4096];
+                            int handled = 0;
+                            int read;
+                            while ((read = inputStream.read(buffer)) != -1) {
+                                handled += read;
+                                fos.write(buffer, 0, read);
+                                publishProgress((int) (handled * 1.0 / totalLength * 100));
+                            }
+                            fos.close();
+                            inputStream.close();
+                            return true;
+                        } else {
+                            error = StringHelper.getString(R.string.ui_base_text_file_not_exists);
+                        }
+                    } else {
+                        error = StringHelper.getString(R.string.ui_base_text_dictionary_create_fail);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                error = e.getMessage();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result) {
+                ToastHelper.make().showMsg(R.string.ui_base_text_downloading_image_completed);
+            } else {
+                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_downloading_fail, error));
+            }
+        }
     }
 
     private void initializeAdapter() {
@@ -183,24 +324,16 @@ public class MomentDetailsFragment extends BaseDownloadingUploadingSupportFragme
             detailImageContent.addOnPageChangeListener(mOnPageChangeListener);
             mAdapter = new MomentDetailsAdapter();
             detailImageContent.setAdapter(mAdapter);
+            changedPosition(selected);
         }
+        detailImageContent.setCurrentItem(selected, true);
     }
 
-    private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.OnPageChangeListener() {
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-        }
+    private ViewPager.SimpleOnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
 
         @Override
         public void onPageSelected(int position) {
             changedPosition(position);
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-
         }
     };
 
@@ -209,6 +342,11 @@ public class MomentDetailsFragment extends BaseDownloadingUploadingSupportFragme
     }
 
     private MomentDetailsAdapter mAdapter;
+
+    @Override
+    protected void onDelayRefreshComplete(@DelayType int type) {
+
+    }
 
     private class MomentDetailsAdapter extends PagerAdapter {
 

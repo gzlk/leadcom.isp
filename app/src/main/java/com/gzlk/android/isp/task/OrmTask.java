@@ -5,6 +5,7 @@ import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnTaskProcessingListener;
 import com.gzlk.android.isp.listener.OnTaskPreparedListener;
+import com.gzlk.android.isp.model.Model;
 import com.hlk.hlklib.tasks.AsyncedTask;
 
 import java.lang.reflect.ParameterizedType;
@@ -16,7 +17,7 @@ import java.util.List;
  * <b>时间</b>：2016/06/09 14:15 <br />
  * <b>邮箱</b>：xiang.l.g@gmail.com <br />
  */
-public class OrmTask<E> extends AsyncedTask<Void, Integer, Void> {
+public class OrmTask<E extends Model> extends AsyncedTask<Void, Integer, Void> {
 
     /**
      * 当前表

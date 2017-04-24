@@ -125,6 +125,18 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
     }
 
     /**
+     * 一次申请多个权限
+     */
+    public void tryGrantPermissions(String[] permissions, int requestCode, String denied) {
+        warningPermissionDenied = denied;
+        if (Build.VERSION.SDK_INT >= 23) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            warningPermissionDenied();
+        }
+    }
+
+    /**
      * 检测当前app是否有某个相关运行时权限
      */
     public boolean hasPermission(String permission) {

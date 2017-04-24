@@ -96,7 +96,7 @@ public class BaseApplication extends Application {
     /**
      * 本地照片的缓存路径
      */
-    public static final String CACHE_DIR = "gzlkisp";
+    public static final String CACHE_DIR = "leadcom";
     /**
      * 本地数据库缓存目录
      */
@@ -174,7 +174,7 @@ public class BaseApplication extends Application {
         } else {
             //if (dir.equals(DB_DIR)) {
             // 缓存数据库和图像都存在内置app私有空间里
-            //    sb.append(gotCacheDir());
+            //    sb.add(gotCacheDir());
             //} else {
             sb.append(gotExternalCacheDir());
             //}

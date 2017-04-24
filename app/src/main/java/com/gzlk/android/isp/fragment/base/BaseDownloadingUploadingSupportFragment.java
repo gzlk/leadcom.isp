@@ -5,15 +5,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.listener.OnHttpListener;
+import com.gzlk.android.isp.helper.HttpHelper;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.litesuits.http.request.AbstractRequest;
-import com.litesuits.http.request.FileRequest;
-import com.litesuits.http.response.Response;
-
-import java.io.File;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
@@ -28,7 +21,7 @@ import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseDownloadingUploadingSupportFragment extends BaseNothingLoadingSupportFragment {
+public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransparentSupportFragment {
 
     /**
      * 进度框
@@ -100,47 +93,109 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseNothin
         }
     }
 
+    private void handleMaterialHorizontalProgressBar(int current, int total) {
+        if (null != materialHorizontalProgressBar) {
+            int per = (int) ((current * 1.0 / total) * 100);
+            materialHorizontalProgressBar.setProgress(per);
+        }
+    }
+
     /**
      * 下载文件到本地
      */
-    protected void downloadFile(String url, final String local) {
-        FileRequest fileRequest = new FileRequest(url, local);
-        fileRequest.setHttpListener(new OnHttpListener<File>(true, false) {
+    protected void downloadFile(final String url) {
+        HttpHelper.helper().addCallback(new HttpHelper.HttpHelperCallback() {
             @Override
-            public void onSucceed(File data, Response<File> response) {
-                super.onSucceed(data, response);
-                ToastHelper.make(Activity()).showMsg(StringHelper.getString(R.string.ui_base_text_downloading_completed, local));
+            public void onCancel(int current, int total) {
+                log(format("onCancel %d of %d", current, total));
+                handleMaterialHorizontalProgressBar(current, total);
             }
 
             @Override
-            public void onFailed() {
-                super.onFailed();
-            }
-
-            @Override
-            public void onStart(AbstractRequest<File> request) {
-                super.onStart(request);
+            public void onStart(int current, int total) {
                 showHorizontalProgress();
+                log(format("onStart %d of %d", current, total));
+                handleMaterialHorizontalProgressBar(current, total);
             }
 
             @Override
-            public void onLoading(AbstractRequest<File> request, long total, long len) {
-                super.onLoading(request, total, len);
-                log(format("loading %d/%d", len, total));
+            public void onProgressing(int current, int total, int currentHandled, int currentTotal) {
+                log(format("onProgressing %d of %d, handled %d of %d(%f)", current, total, currentHandled, currentTotal, (currentHandled * 1.0 / currentTotal)));
                 if (null != materialHorizontalProgressBar) {
-                    if (materialHorizontalProgressBar.getMax() != total) {
-                        materialHorizontalProgressBar.setMax((int) total);
-                    }
-                    materialHorizontalProgressBar.setProgress((int) len);
+                    handleMaterialHorizontalProgressBar(current, total);
+                    int per = (int) ((currentHandled * 1.0 / currentTotal) * 100);
+                    materialHorizontalProgressBar.setSecondaryProgress(per);
                 }
             }
 
             @Override
-            public void onEnd(Response<File> response) {
-                super.onEnd(response);
-                hideHorizontalProgress();
+            public void onSuccess(int current, int total, String currentPath) {
+                log(format("onSuccess %d of %d", current, total));
+                if (null != materialHorizontalProgressBar) {
+                    int per = (int) ((current * 1.0 / total) * 100);
+                    materialHorizontalProgressBar.setProgress(per);
+                }
+                onFileDownloadingComplete(url, true);
             }
-        });
-        httpRequest(fileRequest);
+
+            @Override
+            public void onFailure(int current, int total) {
+                log(format("onFailure %d of %d", current, total));
+                handleMaterialHorizontalProgressBar(current, total);
+                onFileDownloadingComplete(url, false);
+            }
+
+            @Override
+            public void onStop(int current, int total) {
+                log(format("onStop %d of %d", current, total));
+                hideHorizontalProgress();
+                handleMaterialHorizontalProgressBar(current, total);
+            }
+        }, Integer.toHexString(hashCode())).clearTask().addTask(url).setIgnoreExist(true).download();
+
+//        FileRequest fileRequest = new FileRequest(url, local);
+//        fileRequest.setHttpListener(new OnHttpListener<File>(true, false) {
+//            @Override
+//            public void onSucceed(File data, Response<File> response) {
+//                super.onSucceed(data, response);
+//                ToastHelper.make(Activity()).showMsg(StringHelper.getString(R.string.ui_base_text_downloading_completed, local));
+//            }
+//
+//            @Override
+//            public void onFailed() {
+//                super.onFailed();
+//            }
+//
+//            @Override
+//            public void onStart(AbstractRequest<File> request) {
+//                super.onStart(request);
+//                showHorizontalProgress();
+//            }
+//
+//            @Override
+//            public void onLoading(AbstractRequest<File> request, long total, long len) {
+//                super.onLoading(request, total, len);
+//                log(format("loading %d/%d", len, total));
+//                if (null != materialHorizontalProgressBar) {
+//                    if (materialHorizontalProgressBar.getMax() != total) {
+//                        materialHorizontalProgressBar.setMax((int) total);
+//                    }
+//                    materialHorizontalProgressBar.setProgress((int) len);
+//                }
+//            }
+//
+//            @Override
+//            public void onEnd(Response<File> response) {
+//                super.onEnd(response);
+//                hideHorizontalProgress();
+//            }
+//        });
+//        httpRequest(fileRequest);
+    }
+
+    /**
+     * 指定的文件已经下载完毕，子类需要重载此方法以获取结果
+     */
+    protected void onFileDownloadingComplete(String url, boolean success) {
     }
 }

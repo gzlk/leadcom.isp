@@ -76,7 +76,7 @@ public class TitleActivity extends BaseActivity {
             transparentStatusBar();
         }
         // 是否有默认的toolbar布局，否则需要自己加载toolbar布局
-        int layout = ((this instanceof MainActivity) || !isToolbarSupported) ? R.layout.activity_main : R.layout.activity_container;
+        int layout = ((this instanceof MainActivity) || !isToolbarSupported) ? R.layout.activity_no_toolbar : R.layout.activity_has_toolbar;
         setContentView(layout);
         tryBindViews();
         if (isToolbarSupported && null != mToolbar) {

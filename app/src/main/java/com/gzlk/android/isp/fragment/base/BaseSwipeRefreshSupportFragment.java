@@ -115,6 +115,10 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         layoutType = bundle.getInt(PARAM_TYPE, TYPE_LINEAR);
         gridSpanCount = bundle.getInt(PARAM_SPAN_COUNT, DFT_SPAN_COUNT);
         gridOrientation = bundle.getInt(PARAM_ORIENTATION, 0);
+        localPageNumber = bundle.getInt(PARAM_LOCAL_PAGE_NUM, 0);
+        localPageCount = bundle.getInt(PARAM_LOCAL_PAGE_TOTAL, 0);
+        remotePageNumber = bundle.getInt(PARAM_REMOTE_PAGE_NUM, 0);
+        remoteTotalPages = bundle.getInt(PARAM_REMOTE_PAGE_TOTAL, 0);
         super.getParamsFromBundle(bundle);
     }
 
@@ -123,6 +127,10 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         bundle.putInt(PARAM_TYPE, layoutType);
         bundle.putInt(PARAM_ORIENTATION, gridOrientation);
         bundle.putInt(PARAM_SPAN_COUNT, gridSpanCount);
+        bundle.putInt(PARAM_LOCAL_PAGE_NUM, localPageNumber);
+        bundle.putInt(PARAM_LOCAL_PAGE_TOTAL, localPageCount);
+        bundle.putInt(PARAM_REMOTE_PAGE_NUM, remotePageNumber);
+        bundle.putInt(PARAM_REMOTE_PAGE_TOTAL, remoteTotalPages);
         super.saveParamsToBundle(bundle);
     }
 
@@ -203,4 +211,29 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
             });
         }
     }
+
+    private static final String PARAM_LOCAL_PAGE_NUM = "bsrsf_local_page_nul";
+    private static final String PARAM_LOCAL_PAGE_TOTAL = "bsrsf_local_total_pages";
+    private static final String PARAM_REMOTE_PAGE_NUM = "bsrsf_remote_page_num";
+    private static final String PARAM_REMOTE_PAGE_TOTAL = "bsrsf_remote_total_pages";
+    /**
+     * 本地显示的页码
+     */
+    protected int localPageNumber = 0;
+    /**
+     * 本地页码数量
+     */
+    protected int localPageCount = 0;
+    /**
+     * 远程获取的页码
+     */
+    protected int remotePageNumber = 0;
+    /**
+     * 远程页码总数
+     */
+    protected int remoteTotalPages = 0;
+    /**
+     * 每页大小
+     */
+    protected static int PAGE_SIZE = 10;
 }

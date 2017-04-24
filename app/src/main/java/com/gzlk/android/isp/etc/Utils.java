@@ -44,16 +44,51 @@ public class Utils {
     public static final String FMT_HHMMSS = "yyyy/MM/dd HH:mm:ss";
     public static final String FMT_MMDD = "MM月dd号";
     public static final String FMT_YYYYMMDDHHMM = "yyyyMMddHHmm";
+    public static final String FMT_YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
+    public static final String FMT_YYYYBMMBDD = "yyyy-MM-dd";
 
-    public static String formatDate(Date date) {
+    public static String formatDateTime(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat(FMT_HHMMSS,
                 Locale.getDefault());
         return sdf.format(date);
     }
 
+    public static String formatDateOfNow(String fmt) {
+        SimpleDateFormat sdf = new SimpleDateFormat(fmt,
+                Locale.getDefault());
+        return sdf.format(new Date());
+    }
+
+    /**
+     * 将字符串格式的时间转换成需要的时间
+     *
+     * @param text       字符串时间内容
+     * @param textFormat 字符串时间格式
+     * @param toFormat   要转换成的时间format格式
+     */
+    public static String format(String text, String textFormat, String toFormat) {
+        SimpleDateFormat sdf = new SimpleDateFormat(textFormat, Locale.getDefault());
+        try {
+            return format(toFormat, sdf.parse(text));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "格式化错误";
+    }
+
     public static String format(String fmt, Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat(fmt, Locale.getDefault());
         return sdf.format(date);
+    }
+
+    public static Date parseDate(String fmt, String source) {
+        SimpleDateFormat sdf = new SimpleDateFormat(fmt, Locale.getDefault());
+        try {
+            return sdf.parse(source);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new Date();
     }
 
     public static String format(String fmt, long time) {

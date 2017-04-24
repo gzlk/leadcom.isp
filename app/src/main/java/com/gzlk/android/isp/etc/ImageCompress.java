@@ -135,6 +135,16 @@ public final class ImageCompress {
     private static final String fmt = "compressed \"%s\" in 1/%d(quality(%d), new file size: %d)";
 
     /**
+     * 获取本地图片的尺寸信息
+     */
+    public static BitmapFactory.Options getBitmapOptions(String path) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        return options;
+    }
+
+    /**
      * 循环压缩图片到指定效果
      */
     private static void compress(String fromPath, String toPath, int prepareToWidth, int prepareToHeight) throws IOException {
@@ -142,9 +152,7 @@ public final class ImageCompress {
         // 默认原始尺寸大小以及旋转的角度
         int sampleSize, quality = 50, degree = readPictureDegree(fromPath);
         // 原始尺寸获取
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(fromPath, options);
+        BitmapFactory.Options options = getBitmapOptions(fromPath);
 
         // 与当前屏幕分辨率对比，获取缩放率
         sampleSize = getSampleSize(prepareToWidth, prepareToHeight, options);
