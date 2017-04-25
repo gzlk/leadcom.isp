@@ -13,13 +13,31 @@
         android:gravity="center"
         android:text="@string/ui_main_individual_functions_1" />
 
-    <TextView
+    <RelativeLayout
         android:id="@+id/ui_tool_individual_main_functions_2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/ui_main_individual_functions_2" />
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/ui_tool_individual_main_functions_2_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/ui_main_individual_functions_2" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_tool_individual_main_functions_2_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ui_tool_individual_main_functions_2_text"
+            android:layout_marginBottom="@dimen/ui_static_dp_5"
+            android:layout_toEndOf="@+id/ui_tool_individual_main_functions_2_text"
+            android:rotation="90"
+            android:text="@string/ui_icon_right"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/ui_tool_individual_main_functions_3"

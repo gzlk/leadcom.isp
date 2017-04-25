@@ -36,11 +36,16 @@ public class SystemRequest extends Request<User> {
     static class Register extends Output<User> {
     }
 
-    private static final String SYSTEM = BaseApi.URL + "/system";
+    private static final String SYSTEM = "/system";
     private static final String SIGN_UP = SYSTEM + "/regist";
     private static final String SIGN_IN = SYSTEM + "/login";
     private static final String CAPTCHA = SYSTEM + "/getCaptchaTo";
     private static final String PASSWORD = SYSTEM + "/retsetPwd";
+
+    @Override
+    protected String url(String action) {
+        return null;
+    }
 
     @Override
     public SystemRequest setOnRequestListener(OnRequestListener<User> listener) {

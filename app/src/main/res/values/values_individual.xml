@@ -69,4 +69,15 @@
         <item>0|去评分||0</item>
         <item>1|帮助与反馈||0</item>
     </string-array>
+
+    <string name="ui_text_document_create_fragment_title">新建档案</string>
+    <string name="ui_text_document_create_content_hint">档案内容</string>
+    <string-array name="ui_individual_new_document">
+        <item>题名：||档案标题|||0</item>
+        <item>0|档案来源：|%s|0</item>
+        <item>1|发生时间：|%s|1</item>
+        <item>2|公开|0</item>
+    </string-array>
+    <string name="ui_text_document_picker_title">请选择：</string>
+    <string name="ui_text_document_create_title_invalid">标题不能为空</string>
 </resources>

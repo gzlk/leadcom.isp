@@ -23,6 +23,28 @@
 
     <string name="ui_base_text_date_time_format">yyyy-MM-dd HH:mm:ss</string>
 
+    <string-array name="ui_base_file_pick_types">
+        <item>jpg</item>
+        <item>bmp</item>
+        <item>png</item>
+        <item>jpeg</item>
+
+        <item>rar</item>
+        <item>zip</item>
+
+        <item>doc</item>
+        <item>docx</item>
+
+        <item>xls</item>
+        <item>xlsx</item>
+
+        <item>ppt</item>
+        <item>pptx</item>
+
+        <item>mp3</item>
+        <item>mp4</item>
+    </string-array>
+
     <string name="ui_base_text_today">今天</string>
     <string name="ui_base_text_yesterday">昨天</string>
 

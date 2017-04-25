@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:minHeight="@dimen/ui_base_dimen_button_height"
+    android:minHeight="@dimen/ui_base_dimen_simple_item_height"
     android:orientation="horizontal">
 
     <TextView

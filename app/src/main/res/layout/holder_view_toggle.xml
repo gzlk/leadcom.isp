@@ -4,14 +4,14 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:gravity="center_vertical"
-    android:minHeight="@dimen/ui_base_dimen_button_height"
-    android:orientation="horizontal"
-    android:padding="@dimen/ui_base_dimen_margin_padding">
+    android:minHeight="@dimen/ui_base_dimen_simple_item_height"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/ui_holder_view_toggle_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:layout_weight="1"
         android:ellipsize="end"
         android:maxLines="1"
@@ -20,5 +20,6 @@
     <com.hlk.hlklib.lib.view.ToggleButton
         android:id="@+id/ui_holder_view_toggle_button"
         android:layout_width="@dimen/ui_static_dp_55"
-        android:layout_height="@dimen/ui_static_dp_30" />
+        android:layout_height="@dimen/ui_static_dp_30"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding" />
 </LinearLayout>

@@ -11,6 +11,7 @@
     <string name="ui_icon_weixin">&#xe675;</string>
     <string name="ui_icon_eye">&#xe609;</string>
     <string name="ui_icon_clear">&#xe634;</string>
+    <string name="ui_icon_attachment">&#xe63f;</string>
     <string name="ui_icon_delete">&#xe602;</string>
     <string name="ui_icon_setting">&#xe601;</string>
     <string name="ui_icon_qr_code">&#xe63b;</string>
@@ -25,4 +26,14 @@
     <string name="ui_icon_main_activity">&#xe62e;</string>
     <string name="ui_icon_main_organize">&#xe684;</string>
     <string name="ui_icon_main_individual">&#xe899;</string>
+
+    <string name="ui_icon_attachment_unknown">&#xe615;</string>
+    <string name="ui_icon_attachment_pdf">&#xe68f;</string>
+    <string name="ui_icon_attachment_mp4">&#xe706;</string>
+    <string name="ui_icon_attachment_word">&#xe60d;</string>
+    <string name="ui_icon_attachment_excel">&#xe60b;</string>
+    <string name="ui_icon_attachment_powerpoint">&#xe695;</string>
+    <string name="ui_icon_attachment_picture">&#xe60a;</string>
+    <string name="ui_icon_attachment_rar">&#xe621;</string>
+    <string name="ui_icon_attachment_zip">&#xe623;</string>
 </resources>

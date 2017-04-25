@@ -47,50 +47,17 @@ public class MomentRequest extends Request<Moment> {
     static class MultiMoment extends Query<Moment> {
     }
 
-    private static final String MOMENT = BaseApi.URL + "/user/moment";
-    private static final String ADD = MOMENT + "/add";
-    private static final String DELETE = MOMENT + "/delete";
-    private static final String FIND = MOMENT + "/find";
-    private static final String LIST = MOMENT + "/list";
-    private static final String GROUPS = MOMENT + "/groList";
+    private static final String MOMENT = "/user/moment";
+    private static final String GROUPS = "/groList";
+
+    @Override
+    protected String url(String action) {
+        return MOMENT + action;
+    }
 
     private MomentRequest() {
         super();
     }
-//
-//    private JsonRequest<SingleMoment> getSingleRequest(String url, String jsonBody, HttpMethods methods) {
-//        return new JsonRequest<SingleMoment>(url, SingleMoment.class)
-//                .setHttpListener(new OnHttpListener<SingleMoment>() {
-//                    @Override
-//                    public void onSucceed(SingleMoment data, Response<SingleMoment> response) {
-//                        super.onSucceed(data, response);
-//                        if (!data.success()) {
-//                            ToastHelper.make().showMsg(data.getMsg());
-//                        }
-//                        if (null != onRequestListener) {
-//                            onRequestListener.onResponse(data.getData(), data.success());
-//                        }
-//                    }
-//                }).setHttpBody(new JsonBody(jsonBody), methods);
-//    }
-//
-//    private JsonRequest<MultiMoment> getMultiRequest(String url) {
-//        return new JsonRequest<MultiMoment>(url, MultiMoment.class)
-//                .setHttpListener(new OnHttpListener<MultiMoment>() {
-//                    @Override
-//                    public void onSucceed(MultiMoment data, Response<MultiMoment> response) {
-//                        super.onSucceed(data, response);
-//                        if (!data.success()) {
-//                            ToastHelper.make().showMsg(data.getMsg());
-//                        }
-//                        if (null != onRequestListListener) {
-//                            onRequestListListener.onResponse(data.getData().getList(),
-//                                    data.success(), data.getData().getTotalPages(), data.getData().getPageSize(),
-//                                    data.getData().getTotal(), data.getData().getPageNumber());
-//                        }
-//                    }
-//                });
-//    }
 
     @Override
     public MomentRequest setOnRequestListener(OnRequestListener<Moment> listener) {
@@ -122,7 +89,7 @@ public class MomentRequest extends Request<Moment> {
         }
         log(object.toString());
 
-        httpRequest(getRequest(SingleMoment.class, ADD, object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     private static final String QB_USER = "userId";
@@ -138,14 +105,14 @@ public class MomentRequest extends Request<Moment> {
      * 查询指定用户id的说说列表
      */
     public void list(@NonNull String userId) {
-        getRequestBy(LIST, QB_USER, MultiMoment.class, userId, "", HttpMethods.Get);
+        getRequestBy(url(LIST), QB_USER, MultiMoment.class, userId, "", HttpMethods.Get);
     }
 
     /**
      * 查找指定id的说说详情
      */
     public void find(@NonNull String momentId) {
-        getRequestBy(FIND, QB_MOMENT, MultiMoment.class, momentId, "", HttpMethods.Get);
+        getRequestBy(url(FIND), QB_MOMENT, MultiMoment.class, momentId, "", HttpMethods.Get);
     }
 
     /**
@@ -161,7 +128,7 @@ public class MomentRequest extends Request<Moment> {
         }
         log(object.toString());
 
-        httpRequest(getRequest(SingleMoment.class, DELETE, object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleMoment.class, url(DELETE), object.toString(), HttpMethods.Post));
 
     }
 
@@ -169,6 +136,6 @@ public class MomentRequest extends Request<Moment> {
      * 查找同一组别的用户发布的说说列表
      */
     public void groupList(@NonNull String userId) {
-        getRequestBy(FIND, QB_USER, MultiMoment.class, userId, "", HttpMethods.Get);
+        getRequestBy(url(FIND), QB_USER, MultiMoment.class, userId, "", HttpMethods.Get);
     }
 }

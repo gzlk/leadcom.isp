@@ -28,6 +28,37 @@ import java.lang.reflect.Type;
 
 public abstract class Request<T> {
 
+    private static final String URL = BaseApi.URL;
+    /**
+     * 新增
+     */
+    protected static final String ADD = "/add";
+    /**
+     * 删除
+     */
+    protected static final String DELETE = "/delete";
+    /**
+     * 更新
+     */
+    protected static final String UPDATE = "/update";
+    /**
+     * 单查找
+     */
+    protected static final String FIND = "/find";
+    /**
+     * 列表
+     */
+    protected static final String LIST = "/list";
+    /**
+     * 搜索
+     */
+    protected static final String SEARCH = "/search";
+
+    /**
+     * 组合url
+     */
+    protected abstract String url(String action);
+
     /**
      * http网络访问层
      */
@@ -60,38 +91,39 @@ public abstract class Request<T> {
     /**
      * 组合请求
      */
-    protected JsonRequest<Output<T>> getRequest(Type resultType, String url, String body, HttpMethods methods) {
-        return new JsonRequest<Output<T>>(url, resultType).setHttpListener(new OnHttpListener<Output<T>>() {
+    protected JsonRequest<Output<T>> getRequest(Type resultType, String action, String body, HttpMethods methods) {
+        return new JsonRequest<Output<T>>(StringHelper.format("%s%s", URL, action), resultType)
+                .setHttpListener(new OnHttpListener<Output<T>>() {
 
-            @Override
-            public void onSucceed(Output<T> data, Response<Output<T>> response) {
-                super.onSucceed(data, response);
-                if (data.success()) {
-                    if (data instanceof Query) {
-                        if (null != onRequestListListener) {
-                            Query<T> query = (Query<T>) data;
-                            Pagination<T> pagination = query.getData();
-                            onRequestListListener.onResponse(pagination.getList(), data.success(),
-                                    pagination.getTotalPages(), pagination.getPageSize(),
-                                    pagination.getTotal(), pagination.getPageNumber());
-                        }
-                    } else {
-                        if (null != onRequestListener) {
-                            onRequestListener.onResponse(data.getData(), data.success(), data.getMsg());
+                    @Override
+                    public void onSucceed(Output<T> data, Response<Output<T>> response) {
+                        super.onSucceed(data, response);
+                        if (data.success()) {
+                            if (data instanceof Query) {
+                                if (null != onRequestListListener) {
+                                    Query<T> query = (Query<T>) data;
+                                    Pagination<T> pagination = query.getData();
+                                    onRequestListListener.onResponse(pagination.getList(), data.success(),
+                                            pagination.getTotalPages(), pagination.getPageSize(),
+                                            pagination.getTotal(), pagination.getPageNumber());
+                                }
+                            } else {
+                                if (null != onRequestListener) {
+                                    onRequestListener.onResponse(data.getData(), data.success(), data.getMsg());
+                                }
+                            }
+                        } else {
+                            ToastHelper.make().showMsg(data.getMsg());
+                            fireFailedListenerEvents(data.getMsg());
                         }
                     }
-                } else {
-                    ToastHelper.make().showMsg(data.getMsg());
-                    fireFailedListenerEvents(data.getMsg());
-                }
-            }
 
-            @Override
-            public void onFailed() {
-                super.onFailed();
-                fireFailedListenerEvents("");
-            }
-        }).setHttpBody(new JsonBody(body), methods);
+                    @Override
+                    public void onFailed() {
+                        super.onFailed();
+                        fireFailedListenerEvents("");
+                    }
+                }).setHttpBody(new JsonBody(body), methods);
     }
 
     /**

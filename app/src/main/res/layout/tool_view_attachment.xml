@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/ui_base_dimen_simple_item_height"
+    android:orientation="horizontal">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/ui_static_dp_5"
+        android:layout_weight="1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""/>
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:id="@+id/ui_tool_attachment_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:gravity="center"
+        android:minWidth="@dimen/ui_static_dp_40"
+        android:paddingBottom="@dimen/ui_static_dp_3"
+        android:paddingTop="@dimen/ui_static_dp_3"
+        app:cv_active_border="@color/colorAccent"
+        app:cv_corner_size="@dimen/ui_static_dp_5"
+        app:cv_normal_border="@color/colorPrimary">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_icon_attachment"
+            android:textColor="@color/colorPrimary" />
+    </com.hlk.hlklib.lib.view.CorneredView>
+</LinearLayout>
