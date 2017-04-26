@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -39,7 +40,7 @@ public class DocumentViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_document_content_layout)
     private LinearLayout documentContentLayout;
     @ViewId(R.id.ui_holder_view_document_content_text)
-    private TextView documentContentText;
+    private ExpandableTextView documentContentText;
     // additional
     @ViewId(R.id.ui_tool_view_document_additional_read)
     private TextView readNumber;
@@ -60,5 +61,6 @@ public class DocumentViewHolder extends BaseViewHolder {
         createTime.setText(Utils.format(document.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
         documentTitle.setText(document.getTitle());
         documentContentText.setText(StringHelper.escapeFromHtml(document.getContent()));
+        documentContentText.makeExpandable();
     }
 }
