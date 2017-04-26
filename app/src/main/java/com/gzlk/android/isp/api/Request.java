@@ -70,6 +70,10 @@ public abstract class Request<T> {
         liteHttp.getConfig().setConnectTimeout(10000);
     }
 
+    protected String format(String fmt, Object... args) {
+        return StringHelper.format(fmt, args);
+    }
+
     protected void log(String log) {
         LogHelper.log(this.getClass().getSimpleName(), log);
     }

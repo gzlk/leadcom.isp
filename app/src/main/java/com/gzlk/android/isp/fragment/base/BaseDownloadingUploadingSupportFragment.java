@@ -112,14 +112,14 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             }
 
             @Override
-            public void onStart(int current, int total) {
+            public void onStart(int current, int total, String startedUrl) {
                 showHorizontalProgress();
                 log(format("onStart %d of %d", current, total));
                 handleMaterialHorizontalProgressBar(current, total);
             }
 
             @Override
-            public void onProgressing(int current, int total, int currentHandled, int currentTotal) {
+            public void onProgressing(int current, int total, int currentHandled, int currentTotal, String processingUrl) {
                 log(format("onProgressing %d of %d, handled %d of %d(%f)", current, total, currentHandled, currentTotal, (currentHandled * 1.0 / currentTotal)));
                 if (null != materialHorizontalProgressBar) {
                     handleMaterialHorizontalProgressBar(current, total);
@@ -129,7 +129,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             }
 
             @Override
-            public void onSuccess(int current, int total, String currentPath) {
+            public void onSuccess(int current, int total, String successUrl) {
                 log(format("onSuccess %d of %d", current, total));
                 if (null != materialHorizontalProgressBar) {
                     int per = (int) ((current * 1.0 / total) * 100);
@@ -139,7 +139,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             }
 
             @Override
-            public void onFailure(int current, int total) {
+            public void onFailure(int current, int total, String failureUrl) {
                 log(format("onFailure %d of %d", current, total));
                 handleMaterialHorizontalProgressBar(current, total);
                 onFileDownloadingComplete(url, false);

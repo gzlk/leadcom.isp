@@ -81,6 +81,9 @@ public class StringHelper {
      * 将文本中的空格、换行替换成html代码
      */
     public static String escapeToHtml(String text) {
+        if (isEmpty(text)) {
+            return text;
+        }
         // 先替换空格，再替换换行
         return replaceAll(replaceAll(text, " ", "&nbsp;"), "\n", "<br/>");
     }

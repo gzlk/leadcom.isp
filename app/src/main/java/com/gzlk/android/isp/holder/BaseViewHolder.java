@@ -33,7 +33,9 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
 
     public BaseViewHolder(View itemView, BaseFragment fragment) {
         super(itemView);
-        this.fragment = new SoftReference<>(fragment);
+        if (null != fragment) {
+            this.fragment = new SoftReference<>(fragment);
+        }
     }
 
     protected boolean multiSelectable = false;

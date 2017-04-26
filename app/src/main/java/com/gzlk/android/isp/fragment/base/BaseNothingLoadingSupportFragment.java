@@ -85,4 +85,13 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
         }
     }
 
+    public void showNothing(int res) {
+        setNothingText(res);
+        displayNothing(true);
+    }
+
+    public void showNothing(String text) {
+        setNothingText(text);
+        displayNothing(true);
+    }
 }

@@ -8,11 +8,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/ui_tool_swipe_refreshable_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/ui_tool_view_loading_more_layout"
+        layout="@layout/tool_view_loading_more_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:alpha="0"
+        android:animateLayoutChanges="true"
+        android:visibility="gone" />
 
     <include layout="@layout/tool_view_loading" />
 

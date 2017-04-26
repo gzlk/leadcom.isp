@@ -73,6 +73,11 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     }
 
     @Override
+    protected boolean onBackKeyPressed() {
+        return getDisplayedPage() == 3 && mFragments.get(3).onBackKeyEvent();
+    }
+
+    @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return false;
     }

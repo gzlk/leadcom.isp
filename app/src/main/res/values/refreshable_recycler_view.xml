@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hlklib_text_refreshable_recycler_view_loading_more">正在加载&#8230;</string>
-    <string name="hlklib_text_refreshable_recycler_view_loading_complete">已全部加载完毕</string>
+    <string name="hlklib_text_refreshable_recycler_view_loading_complete">后面没有了</string>
 </resources>

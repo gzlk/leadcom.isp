@@ -1,17 +1,25 @@
 package com.gzlk.android.isp.fragment.base;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.PreferenceHelper;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.hlk.hlklib.etc.Cryptography;
 import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomStaggeredGridLayoutManager;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 /**
  * <b>功能描述：</b>支持下拉刷新功能的fragment基类<br />
@@ -29,7 +37,14 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     @ViewId(R.id.ui_tool_swipe_refreshable_swipe_refresh_layout)
     public SwipeRefreshLayout mSwipeRefreshLayout;
     @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
-    public LoadingMoreSupportedRecyclerView mRecyclerView;
+    public RecyclerView mRecyclerView;
+
+    @ViewId(R.id.ui_tool_view_loading_more_layout)
+    public View mLoadingMoreLayout;
+    @ViewId(R.id.ui_tool_view_loading_more_progress)
+    public CircleProgressBar mLoadingMoreProgress;
+    @ViewId(R.id.ui_tool_view_loading_more_text)
+    public TextView mLoadingMoreTextView;
 
     /**
      * 是否自动初始化RecyclerView的LayoutManager
@@ -119,6 +134,8 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         localPageCount = bundle.getInt(PARAM_LOCAL_PAGE_TOTAL, 0);
         remotePageNumber = bundle.getInt(PARAM_REMOTE_PAGE_NUM, 0);
         remoteTotalPages = bundle.getInt(PARAM_REMOTE_PAGE_TOTAL, 0);
+        remotePageSize = bundle.getInt(PARAM_REMOTE_PAGE_SIZE, 0);
+        remoteTotalCount = bundle.getInt(PARAM_REMOTE_TOTAL_COUNT, 0);
         super.getParamsFromBundle(bundle);
     }
 
@@ -131,6 +148,8 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         bundle.putInt(PARAM_LOCAL_PAGE_TOTAL, localPageCount);
         bundle.putInt(PARAM_REMOTE_PAGE_NUM, remotePageNumber);
         bundle.putInt(PARAM_REMOTE_PAGE_TOTAL, remoteTotalPages);
+        bundle.putInt(PARAM_REMOTE_PAGE_SIZE, remotePageSize);
+        bundle.putInt(PARAM_REMOTE_TOTAL_COUNT, remoteTotalCount);
         super.saveParamsToBundle(bundle);
     }
 
@@ -140,13 +159,121 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
                     android.R.color.holo_red_light,
                     android.R.color.holo_orange_light,
                     android.R.color.holo_green_light);
-            //mSwipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
             mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
         }
         if (null != mRecyclerView) {
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            mRecyclerView.addOnLoadingMoreListener(loadingMoreListener);
+            mRecyclerView.addOnScrollListener(mOnScrollListener);
             registerForContextMenu(mRecyclerView);
+        }
+    }
+
+    private boolean forceToLoadingMore = false;
+    private boolean supportLoadingMore = true;
+
+    /**
+     * 设置是否支持加载更多
+     */
+    protected void setSupportLoadingMore(boolean support) {
+        supportLoadingMore = support;
+    }
+
+    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            // 如果用户设置了不需要加载更多，则此时直接不用处理后续的判断
+            if (!supportLoadingMore) {
+                return;
+            }
+            CustomLinearLayoutManager manager = (CustomLinearLayoutManager) recyclerView.getLayoutManager();
+            // 停止滚动时
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                // 获取最后一个完全显示 Item 的 position
+                int lastVisibleItem = manager.findLastCompletelyVisibleItemPosition();
+                int totalItemCount = manager.getItemCount();
+                // 判断是否滚动到底部，并且不在加载状态
+                if (lastVisibleItem == (totalItemCount - 1) && !forceToLoadingMore) {
+                    forceToLoadingMore = true;
+                    loadingText(R.string.hlklib_text_refreshable_recycler_view_loading_more);
+                    showView(mLoadingMoreProgress, true);
+                    showLoadingMoreLayout(true);
+                }
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+        }
+    };
+
+    private void loadingText(int res) {
+        if (null != mLoadingMoreTextView) {
+            mLoadingMoreTextView.setText(res);
+        }
+    }
+
+    /**
+     * 是否还需要继续加载更多
+     *
+     * @param complete true=已经加载完毕，false=还需要继续加载
+     */
+
+    public void isLoadingComplete(boolean complete) {
+        if (!complete) {
+            // 未加载完毕时暂时先隐藏加载UI，等下次在滚动到底部的时候显示
+            showLoadingMoreLayout(false);
+            delayToHideLoadingMoreLayout();
+        } else {
+            showView(mLoadingMoreProgress, false);
+            loadingText(R.string.hlklib_text_refreshable_recycler_view_loading_complete);
+            supportLoadingMore = false;
+            delayToHideLoadingMoreLayout();
+        }
+        forceToLoadingMore = false;
+    }
+
+    private void delayToHideLoadingMoreLayout() {
+        Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showLoadingMoreLayout(false);
+            }
+        }, 3000);
+    }
+
+    protected void showLoadingMoreLayout(final boolean shown) {
+        mLoadingMoreLayout.animate()
+                .alpha(shown ? 1 : 0)
+                .setDuration(duration())
+                .translationY(shown ? 0 : mLoadingMoreLayout.getHeight())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        if (!shown) {
+                            mLoadingMoreLayout.setVisibility(View.GONE);
+                        } else {
+                            // 显示UI动画完毕时触发加载更多事件
+                            onLoadingMore();
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        if (shown) {
+                            mLoadingMoreLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }).start();
+    }
+
+    private void showView(View view, boolean show) {
+        if (null != view) {
+            view.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -154,25 +281,11 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
 
         @Override
         public void onRefresh() {
+            // 下拉刷新的时候再次允许加载更多
+            supportLoadingMore = true;
             onSwipeRefreshing();
         }
     };
-
-    private LoadingMoreSupportedRecyclerView.OnLoadingMoreListener loadingMoreListener = new LoadingMoreSupportedRecyclerView.OnLoadingMoreListener() {
-        @Override
-        public void onLoadingMore() {
-            BaseSwipeRefreshSupportFragment.this.onLoadingMore();
-        }
-    };
-
-    /**
-     * 设置数据是否已加载完毕
-     */
-    protected void isLoadingComplete(boolean complete) {
-        if (null != mRecyclerView) {
-            mRecyclerView.isLoadingComplete(complete);
-        }
-    }
 
     /**
      * 下拉刷新
@@ -207,6 +320,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
                 @Override
                 public void run() {
                     mSwipeRefreshLayout.setRefreshing(true);
+                    //onSwipeRefreshing();
                 }
             });
         }
@@ -216,6 +330,8 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     private static final String PARAM_LOCAL_PAGE_TOTAL = "bsrsf_local_total_pages";
     private static final String PARAM_REMOTE_PAGE_NUM = "bsrsf_remote_page_num";
     private static final String PARAM_REMOTE_PAGE_TOTAL = "bsrsf_remote_total_pages";
+    private static final String PARAM_REMOTE_PAGE_SIZE = "bsrsf_remote_page_size";
+    private static final String PARAM_REMOTE_TOTAL_COUNT = "bsrsf_remote_total_count";
     /**
      * 本地显示的页码
      */
@@ -229,11 +345,46 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
      */
     protected int remotePageNumber = 0;
     /**
-     * 远程页码总数
+     * 远程页总数
      */
     protected int remoteTotalPages = 0;
     /**
+     * 远程页大小
+     */
+    protected int remotePageSize = 0;
+    /**
+     * 远程总条数
+     */
+    protected int remoteTotalCount = 0;
+    /**
      * 每页大小
      */
-    protected static int PAGE_SIZE = 10;
+    protected static int PAGE_SIZE = 6;
+
+    /**
+     * 默认刷新时间间隔
+     */
+    protected static final int REFRESHING_INTERVAL = 10 * 60 * 1000;
+
+    /**
+     * 页面刷新标志
+     */
+    protected String localPageTag = "";
+
+    /**
+     * 查看缓存中指定的页面是否可以自动刷新
+     */
+    protected boolean isNeedRefresh() {
+        if (StringHelper.isEmpty(localPageTag)) {
+            throw new IllegalArgumentException("no page refresh tag exists.");
+        }
+        String md5 = Cryptography.md5(localPageTag);
+        long timestamp = Utils.timestamp();
+        long value = Long.valueOf(PreferenceHelper.get(md5, "0"));
+        if ((value + REFRESHING_INTERVAL) < timestamp) {
+            PreferenceHelper.save(md5, String.valueOf(timestamp));
+            return true;
+        }
+        return false;
+    }
 }

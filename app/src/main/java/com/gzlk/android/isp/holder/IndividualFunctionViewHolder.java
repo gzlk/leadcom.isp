@@ -1,11 +1,13 @@
 package com.gzlk.android.isp.holder;
 
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.DocumentNewFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -26,7 +28,8 @@ public class IndividualFunctionViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_tool_individual_main_functions_1)
     private TextView textView1;
-    //@ViewId(R.id.ui_tool_individual_main_functions_2)
+    @ViewId(R.id.ui_tool_individual_main_functions_2)
+    private RelativeLayout function2;
     @ViewId(R.id.ui_tool_individual_main_functions_2_text)
     private TextView textView2;
     @ViewId(R.id.ui_tool_individual_main_functions_2_new)
@@ -42,8 +45,7 @@ public class IndividualFunctionViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_tool_individual_main_functions_1,
             R.id.ui_tool_individual_main_functions_2,
-            R.id.ui_tool_individual_main_functions_3,
-            R.id.ui_tool_individual_main_functions_2_new})
+            R.id.ui_tool_individual_main_functions_3})
     private void elementClick(View view) {
         int id = view.getId();
         switch (id) {
@@ -52,35 +54,11 @@ public class IndividualFunctionViewHolder extends BaseViewHolder {
                 break;
             case R.id.ui_tool_individual_main_functions_2:
                 changeFunction(1);
-                openActivity(DocumentNewFragment.class.getName(), "", true, true);
                 break;
             case R.id.ui_tool_individual_main_functions_3:
                 changeFunction(2);
                 break;
-            case R.id.ui_tool_individual_main_functions_2_new:
-                // 新建档案
-                tooltipCreateDocument();
-                break;
         }
-    }
-
-    private void tooltipCreateDocument() {
-//        Tooltip.make(getContext(),
-//                new Tooltip.Builder(101)
-//                        .anchor(textView2Icon, Tooltip.Gravity.BOTTOM)
-//                        .closePolicy(new Tooltip.ClosePolicy()
-//                                .insidePolicy(true, false)
-//                                .outsidePolicy(true, false), 3000)
-//                        .activateDelay(5000)
-//                        .showDelay(300)
-//                        .text(StringHelper.getString(R.string.ui_text_document_create_tooltip))
-//                        .maxWidth(500)
-//                        .withArrow(true)
-//                        .withOverlay(true)
-//                        //.typeface(mYourCustomFont)
-//                        .floatingAnimation(Tooltip.AnimationBuilder.DEFAULT)
-//                        .build()
-//        ).show();
     }
 
     private int selected = -1;
@@ -112,6 +90,14 @@ public class IndividualFunctionViewHolder extends BaseViewHolder {
             if (null != mOnFunctionChangeListener) {
                 mOnFunctionChangeListener.onChange(index);
             }
+        } else if (selected == 1) {
+            // 档案选中之后再点击的话，是打开新建菜单
+            fragment().showTipPopupWindow(textView2, StringHelper.getString(R.string.ui_text_document_create_fragment_title), new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openActivity(DocumentNewFragment.class.getName(), "", true, true);
+                }
+            });
         }
     }
 

@@ -30,7 +30,6 @@ import com.gzlk.android.isp.model.user.document.Document;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
-import com.hlk.hlklib.lib.view.CorneredView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,7 +100,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_text_document_create_title_invalid);
             return;
         }
-        String content = contentView.getValue();
+        String content = StringHelper.escapeToHtml(contentView.getValue());
         Utils.hidingInputBoard(contentView);
         createDocument(title, content);
     }
@@ -125,7 +124,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override
@@ -187,7 +186,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (null == mAdapter) {
             mAdapter = new FileAdapter();
-            mRecyclerView.setSupportLoadingMore(false);
+            setSupportLoadingMore(false);
             mRecyclerView.setAdapter(mAdapter);
         }
     }

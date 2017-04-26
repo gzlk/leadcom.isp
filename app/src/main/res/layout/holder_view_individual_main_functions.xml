@@ -22,7 +22,7 @@
         <TextView
             android:id="@+id/ui_tool_individual_main_functions_2_text"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text="@string/ui_main_individual_functions_2" />
@@ -32,11 +32,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/ui_tool_individual_main_functions_2_text"
-            android:layout_marginBottom="@dimen/ui_static_dp_5"
             android:layout_toEndOf="@+id/ui_tool_individual_main_functions_2_text"
             android:rotation="90"
-            android:text="@string/ui_icon_right"
-            android:visibility="gone" />
+            android:textSize="@dimen/ui_base_text_size_little"
+            android:text="@string/ui_icon_right" />
     </RelativeLayout>
 
     <TextView

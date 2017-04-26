@@ -70,6 +70,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         if (checkStoragePermission()) {
             if (null != App.app().Me() && isAdded()) {
                 accountText.setValue(App.app().Me().getPhone());
+                accountText.focusEnd();
                 signInButton.setEnabled(false);
                 signInButton.setText(R.string.ui_text_sign_in_still_processing);
                 delayRefreshLoading(2000, DELAY_TYPE_TIME_DELAY);

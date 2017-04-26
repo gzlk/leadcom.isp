@@ -167,7 +167,7 @@ public class HttpHelper {
                 FileRequest request = new FileRequest(url, local).setHttpListener(fileHttpListener);
                 http().executeAsync(request);
             } else {
-                notifySuccess(local);
+                notifySuccess(url);
                 handlingIndex++;
                 // 继续下载
                 downloading();
@@ -186,7 +186,7 @@ public class HttpHelper {
     private LiteHttp http() {
         LiteHttp liteHttp = LiteHttp.build(App.app()).create();
         // 10秒网络超时
-        liteHttp.getConfig().setDebugged(true).setConnectTimeout(10000);
+        liteHttp.getConfig().setConnectTimeout(10000);
         return liteHttp;
     }
 
@@ -266,7 +266,7 @@ public class HttpHelper {
         for (String key : callbacksKeys()) {
             HttpHelperCallback callback = callbacks.get(key).get();
             if (null != callback) {
-                callback.onStart(handlingIndex + 1, tasks.size());
+                callback.onStart(handlingIndex + 1, tasks.size(), handlingTask);
             }
         }
     }
@@ -275,16 +275,16 @@ public class HttpHelper {
         for (String key : callbacksKeys()) {
             HttpHelperCallback callback = callbacks.get(key).get();
             if (null != callback) {
-                callback.onProgressing(handlingIndex + 1, tasks.size(), currentHandled, currentTotal);
+                callback.onProgressing(handlingIndex + 1, tasks.size(), currentHandled, currentTotal, handlingTask);
             }
         }
     }
 
-    private void notifySuccess(String successPath) {
+    private void notifySuccess(String succeedTask) {
         for (String key : callbacksKeys()) {
             HttpHelperCallback callback = callbacks.get(key).get();
             if (null != callback) {
-                callback.onSuccess(handlingIndex + 1, tasks.size(), successPath);
+                callback.onSuccess(handlingIndex + 1, tasks.size(), succeedTask);
             }
         }
     }
@@ -293,7 +293,7 @@ public class HttpHelper {
         for (String key : callbacksKeys()) {
             HttpHelperCallback callback = callbacks.get(key).get();
             if (null != callback) {
-                callback.onFailure(handlingIndex + 1, tasks.size());
+                callback.onFailure(handlingIndex + 1, tasks.size(), handlingTask);
             }
         }
     }
@@ -343,7 +343,7 @@ public class HttpHelper {
         public void onCancel(int current, int total) {
         }
 
-        public void onStart(int current, int total) {
+        public void onStart(int current, int total, String startedUrl) {
         }
 
         /**
@@ -354,13 +354,13 @@ public class HttpHelper {
          * @param currentHandled 当前任务的进行进度
          * @param currentTotal   当前任务需要完成的总量
          */
-        public void onProgressing(int current, int total, int currentHandled, int currentTotal) {
+        public void onProgressing(int current, int total, int currentHandled, int currentTotal, String processingUrl) {
         }
 
-        public void onSuccess(int current, int total, String currentPath) {
+        public void onSuccess(int current, int total, String successUrl) {
         }
 
-        public void onFailure(int current, int total) {
+        public void onFailure(int current, int total, String failureUrl) {
         }
 
         public void onStop(int current, int total) {

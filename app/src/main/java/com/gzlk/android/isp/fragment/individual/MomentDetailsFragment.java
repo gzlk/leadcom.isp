@@ -271,31 +271,31 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
             try {
                 File f = new File(path);
                 if (!f.exists()) {
-                    if (f.mkdirs()) {
-
-                        File file = new File(local);
-                        if (file.exists()) {
-                            long totalLength = file.length();
-                            InputStream inputStream = new FileInputStream(local);
-                            String out = path + name;
-                            FileOutputStream fos = new FileOutputStream(out);
-                            byte[] buffer = new byte[4096];
-                            int handled = 0;
-                            int read;
-                            while ((read = inputStream.read(buffer)) != -1) {
-                                handled += read;
-                                fos.write(buffer, 0, read);
-                                publishProgress((int) (handled * 1.0 / totalLength * 100));
-                            }
-                            fos.close();
-                            inputStream.close();
-                            return true;
-                        } else {
-                            error = StringHelper.getString(R.string.ui_base_text_file_not_exists);
-                        }
-                    } else {
+                    if (!f.mkdirs()) {
                         error = StringHelper.getString(R.string.ui_base_text_dictionary_create_fail);
+                        return false;
                     }
+                }
+
+                File file = new File(local);
+                if (file.exists()) {
+                    long totalLength = file.length();
+                    InputStream inputStream = new FileInputStream(local);
+                    String out = path + name;
+                    FileOutputStream fos = new FileOutputStream(out);
+                    byte[] buffer = new byte[4096];
+                    int handled = 0;
+                    int read;
+                    while ((read = inputStream.read(buffer)) != -1) {
+                        handled += read;
+                        fos.write(buffer, 0, read);
+                        publishProgress((int) (handled * 1.0 / totalLength * 100));
+                    }
+                    fos.close();
+                    inputStream.close();
+                    return true;
+                } else {
+                    error = StringHelper.getString(R.string.ui_base_text_file_not_exists);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -333,6 +333,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
 
         @Override
         public void onPageSelected(int position) {
+            selected = position;
             changedPosition(position);
         }
     };

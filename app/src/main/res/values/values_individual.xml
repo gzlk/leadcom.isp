@@ -35,6 +35,7 @@
     <string name="ui_text_moment_details_delete_success">已删除</string>
 
     <string-array name="ui_individual_new_moment">
+        <item>||这一刻的心情&#8230;|||0</item>
         <item>0|谁可以看|%s</item>
     </string-array>
 

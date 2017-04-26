@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.activity;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 import com.gzlk.android.isp.fragment.main.MainFragment;
 
@@ -17,11 +18,21 @@ import com.gzlk.android.isp.fragment.main.MainFragment;
 
 public class MainActivity extends TitleActivity {
 
+    private MainFragment mainFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         supportPressAgainToExit = true;
         supportTransparentStatusBar = true;
         super.onCreate(savedInstanceState);
-        setMainFrameLayout(new MainFragment());
+        if (null == mainFragment) {
+            mainFragment = new MainFragment();
+        }
+        setMainFrameLayout(mainFragment);
+    }
+
+    @Override
+    protected boolean onBackKeyEvent(int keyCode, KeyEvent event) {
+        return mainFragment.onBackKeyEvent();
     }
 }

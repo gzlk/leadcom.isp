@@ -41,11 +41,24 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
         showContent(strings[0], strings[1], strings[2], strings[3], strings[4], Integer.valueOf(strings[5]));
     }
 
+    public void setMaximumLines(int maxLines) {
+        contentView.setMaxLines(maxLines);
+    }
+
+    public void setMinimumHeight(int height) {
+        contentView.setMinimumHeightLimit(height);
+    }
+
+    public void setMaximumHeight(int height) {
+        contentView.setMaximumHeightLimit(height);
+    }
+
     /**
      * 获取输入内容
      */
     public String getValue() {
-        return contentView.getValue();
+        String value = contentView.getValue();
+        return StringHelper.escapeToHtml(value);
     }
 
     public void showContent(String title, String value, String hint, String valueExtract, String valueVerify, int maxLength) {

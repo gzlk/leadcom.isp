@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.api.user;
 
+import android.support.annotation.NonNull;
+
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
@@ -78,5 +80,62 @@ public class DocumentRequest extends Request<Document> {
         log(object.toString());
 
         httpRequest(getRequest(SingleDocument.class, url(ADD), object.toString(), HttpMethods.Post));
+    }
+
+    public void delete(@NonNull String documentId) {
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("userDocId", documentId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        log(object.toString());
+
+        httpRequest(getRequest(SingleDocument.class, url(DELETE), object.toString(), HttpMethods.Post));
+
+    }
+
+    /**
+     * 更改档案的内容
+     */
+    public void update(String documentId, String title, String content, String type) {
+        //{_id,title,content,type,accessToken}
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", documentId);
+            object.put("title", title);
+            object.put("content", content);
+            object.put("type", type);
+            //object.put("accessToken", accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        log(object.toString());
+
+        httpRequest(getRequest(SingleDocument.class, url(DELETE), object.toString(), HttpMethods.Post));
+
+    }
+
+    /**
+     * 根据档案id查找档案详细属性
+     */
+    public void find(@NonNull String documentId) {
+        httpRequest(getRequest(SingleDocument.class, format("%s?userDocId=%s", url(FIND), documentId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查找指定用户的档案列表，返回一个结果集合
+     */
+    public void list(@NonNull String userId) {
+        httpRequest(getRequest(MultipleDocument.class, format("%s?userId=%s", url(LIST), userId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 根据档案的标题模糊查询，返回一个结果集合
+     */
+    public void search(String title) {
+        httpRequest(getRequest(MultipleDocument.class, format("%s?info=%s", url(SEARCH), title), "", HttpMethods.Get));
     }
 }

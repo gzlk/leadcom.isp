@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
@@ -18,10 +19,8 @@ import com.gzlk.android.isp.holder.AttachItemViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.ImageViewHolder;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
-import com.gzlk.android.isp.holder.TextViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
-import com.gzlk.android.isp.lib.view.LoadingMoreSupportedRecyclerView;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
@@ -126,7 +125,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void tryAddMoment() {
-        //httpRequest(newMoment());
+        String content = StringHelper.escapeToHtml(momentContent.getValue());
         MomentRequest.request().setOnRequestListener(new OnRequestListener<Moment>() {
             @Override
             public void onResponse(Moment moment, boolean success, String message) {
@@ -136,38 +135,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(App.app().UserId(), App.app().Me().getName(), address, momentContent.getValue(), getSelectedImages());
+        }).add(App.app().UserId(), App.app().Me().getName(), address, content, getSelectedImages());
     }
-
-//    private JsonRequest<SingleMoment> newMoment() {
-//        String[] images = new String[]{
-//                "https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg",
-//                "https://img6.cache.netease.com/photo/0001/2017-04-20/CIG93MBI00AN0001.jpg"};
-//        AddMoment param = new AddMoment(App.app().UserId(), App.app().Me().getName(), address,
-//                momentContent.getValue(), new ArrayList<>(Arrays.asList(images)));
-//        String json = Json.gson(HttpRichParamModel.class).toJson(param, new TypeToken<AddMoment>() {
-//        }.getType());
-//        log(json);
-//        JsonRequest<SingleMoment> add = new JsonRequest<>(param, SingleMoment.class);
-//        add.setHttpListener(new OnHttpListener<SingleMoment>() {
-//            @Override
-//            public void onSucceed(SingleMoment data, Response<SingleMoment> response) {
-//                super.onSucceed(data, response);
-//                new Dao<>(Moment.class).save(data.getData());
-//            }
-//
-//            @Override
-//            public void onFailed() {
-//                super.onFailed();
-//            }
-//
-//            @Override
-//            public void onEnd(Response<SingleMoment> response) {
-//                super.onEnd(response);
-//            }
-//        }).setHttpBody(new JsonBody(json), HttpMethods.Post);
-//        return add;
-//    }
 
     @Override
     protected void onFetchingLocationComplete(boolean success, BaiduLocation location) {
@@ -198,7 +167,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         if (null == privacyHolder) {
             privacyHolder = new SimpleClickableViewHolder(mRootView, MomentNewFragment.this);
             privacyHolder.addOnViewHolderClickListener(privacyListener);
-            privacyHolder.showContent(format(textItems[0], "公开"));
+            privacyHolder.showContent(format(textItems[1], "公开"));
         }
     }
 
@@ -209,7 +178,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
             // 添加图片选择
             addOnImageSelectedListener(albumImageSelectedListener);
             // 不需要下拉加载更多
-            mRecyclerView.setSupportLoadingMore(false);
+            setSupportLoadingMore(false);
             mRecyclerView.addItemDecoration(new SpacesItemDecoration());
             mAdapter = new ImageAdapter();
             mRecyclerView.setAdapter(mAdapter);
@@ -301,7 +270,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     private ImageAdapter mAdapter;
 
-    private class ImageAdapter extends LoadingMoreSupportedRecyclerView.LoadingMoreAdapter<BaseViewHolder, String> implements RecycleAdapter<String> {
+    private class ImageAdapter extends RecyclerViewAdapter<BaseViewHolder, String> implements RecycleAdapter<String> {
         private static final int VT_IMAGE = 0, VT_ATTACH = 1;
 
         private int width, height;
@@ -340,17 +309,12 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public int gotItemViewType(int position) {
+        public int getItemViewType(int position) {
             if (StringHelper.isEmpty(get(position))) {
                 return VT_ATTACH;
             } else {
                 return VT_IMAGE;
             }
-        }
-
-        @Override
-        public BaseViewHolder footerViewHolder(View itemView) {
-            return new TextViewHolder(itemView, MomentNewFragment.this);
         }
 
         @Override

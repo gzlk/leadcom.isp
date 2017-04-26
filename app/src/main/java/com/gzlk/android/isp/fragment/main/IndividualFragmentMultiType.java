@@ -6,27 +6,26 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
+import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.individual.MomentDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentNewFragment;
-import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.MomentViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
-import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.model.user.document.Document;
 import com.gzlk.android.isp.model.user.moment.Moment;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.IndividualFunctionalViewBinder;
+import com.gzlk.android.isp.multitype.binder.user.DocumentViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.MomentViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.UserHeaderViewBinder;
 import com.gzlk.android.isp.task.OrmTask;
@@ -51,6 +50,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
 
     private static final String PARAM_SHOWN = "title_bar_shown";
     private static final String PARAM_SELECTED = "function_selected";
+    private static final String PAGE_TAG = "ifmt_page_%d_";
     private boolean isTitleBarShown = false;
     private int selectedFunction = 0;
 
@@ -101,7 +101,9 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
     public void doingInResume() {
         // 这里不缓存选择了的图片，选择了一张图片之后就立即打开新发布窗口
         isSupportCacheSelected = false;
+        localPageTag = format(PAGE_TAG, selectedFunction);
         initializeAdapter();
+        autoRefreshing();
     }
 
     @Override
@@ -116,19 +118,47 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
 
     @Override
     protected void onSwipeRefreshing() {
-        refreshingComment();
+        performRefresh();
     }
 
     @Override
     protected void onLoadingMore() {
-        refreshingMore();
+        performLoadingLocalModels();
+    }
+
+    /**
+     * 尝试自动刷新
+     */
+    private void autoRefreshing() {
+        if (!isNeedRefresh()) {
+            return;
+        }
+        refreshing();
+        performRefresh();
+    }
+
+    private void performRefresh() {
+        switch (selectedFunction) {
+            case 0:
+                // 刷新动态列表
+                refreshingMoments();
+                break;
+            case 1:
+                // 刷新档案列表
+                refreshingDocuments();
+                break;
+            case 2:
+                // 刷新收藏列表
+                refreshingFavorites();
+                break;
+        }
     }
 
     /**
      * 拉取我的最新说说列表
      */
     @SuppressWarnings("ConstantConditions")
-    private void refreshingComment() {
+    private void refreshingMoments() {
         MomentRequest.request().setOnRequestListListener(new OnRequestListListener<Moment>() {
 
             @SuppressWarnings("unchecked")
@@ -136,11 +166,20 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
+                    remoteTotalPages = totalPages;
+                    remotePageNumber = pageNumber;
+                    remoteTotalCount = total;
+                    remotePageSize = pageSize;
                     if (list.size() > 0) {
+                        if (list.size() < remotePageSize) {
+                            // 如果这一页不满整页说明远程已经没有数据了
+                        }
                         new Dao<>(Moment.class).save(list);
-                        // 下拉刷新的时候需要清空已显示的记录列表
-                        adapter.update((List<Model>) (Object) list);
-                        appendListHeader();
+                        if (selectedFunction == 0) {
+                            // 下拉刷新的时候需要清空已显示的记录列表
+                            adapter.update((List<Model>) (Object) list);
+                        }
+                        //appendListHeader(true);
                     }
                 }
                 stopRefreshing();
@@ -149,25 +188,77 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
     }
 
     /**
+     * 拉取我的档案列表
+     */
+    @SuppressWarnings("ConstantConditions")
+    private void refreshingDocuments() {
+        DocumentRequest.request().setOnRequestListListener(new OnRequestListListener<Document>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onResponse(List<Document> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (list.size() > 0) {
+                        new Dao<>(Document.class).save(list);
+                        if (selectedFunction == 1) {
+                            adapter.update((List<Model>) (Object) list);
+                        }
+                        //appendListHeader(false);
+                    }
+                }
+                stopRefreshing();
+            }
+        }).list(App.app().UserId());
+    }
+
+    private void refreshingFavorites() {
+        stopRefreshing();
+    }
+
+    private void adjustLoadingMorePages(int loadedCount) {
+        if (loadedCount >= PAGE_SIZE) {
+            // 取出了一整页则对应的本地页码增1，下次会获取下一页
+            localPageNumber++;
+            // 还未加载完，下次还要继续加载下一页
+            isLoadingComplete(false);
+        } else {
+            // 没有更多了
+            isLoadingComplete(true);
+        }
+    }
+
+    /**
+     * 加载本地缓存
+     */
+    private void performLoadingLocalModels() {
+        switch (selectedFunction) {
+            case 0:
+                // 加载更多的动态列表
+                loadingLocalMoment();
+                break;
+            case 1:
+                // 加载更多的档案列表
+                loadingLocalDocuments();
+                break;
+            case 2:
+                break;
+        }
+    }
+
+    /**
      * 加载更多
      */
-    @SuppressWarnings({"ConstantConditions", "unchecked"})
-    private void refreshingMore() {
+    private void loadingLocalMoment() {
         new OrmTask<Moment>().addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Moment>() {
+            @SuppressWarnings("unchecked")
             @Override
             public void onExecuted(boolean modified, List<Moment> result) {
                 if (null != result) {
-                    if (result.size() >= PAGE_SIZE) {
-                        // 取出了一整页则对应的本地页码增1，下次会获取下一页
-                        localPageNumber++;
-                        // 还未加载完，下次还要继续加载下一页
-                        isLoadingComplete(false);
-                    } else {
-                        // 没有更多了
-                        isLoadingComplete(true);
+                    adjustLoadingMorePages(result.size());
+                    //resetToday();
+                    if (selectedFunction == 0) {
+                        adapter.add((List<Model>) (Object) result, false);
                     }
-                    resetToday();
-                    adapter.add((List<Model>) (Object) result, false);
                 }
             }
         }).addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Moment>() {
@@ -176,13 +267,46 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 return false;
             }
 
+            @SuppressWarnings("ConstantConditions")
             @Override
             public List<Moment> executing(OrmTask<Moment> task) {
-                QueryBuilder<Moment> builder = new QueryBuilder<>(Moment.class);
-                builder.whereEquals(Model.Field.UserId, App.app().UserId())
+                QueryBuilder<Moment> builder = new QueryBuilder<>(Moment.class)
+                        .whereEquals(Model.Field.UserId, App.app().UserId())
                         .appendOrderDescBy(Model.Field.CreateDate)
                         .limit(localPageNumber, PAGE_SIZE);
                 return new Dao<>(Moment.class).query(builder);
+            }
+        }).exec();
+    }
+
+    private void loadingLocalDocuments() {
+        new OrmTask<Document>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Document>() {
+            @Override
+            public boolean isModifiable() {
+                return false;
+            }
+
+            @SuppressWarnings("ConstantConditions")
+            @Override
+            public List<Document> executing(OrmTask<Document> task) {
+                QueryBuilder<Document> builder = new QueryBuilder<>(Document.class)
+                        .whereEquals(Model.Field.UserId, App.app().UserId())
+                        .appendOrderDescBy(Model.Field.CreateDate)
+                        .limit(localPageNumber, PAGE_SIZE);
+                return new Dao<>(Document.class).query(builder);
+            }
+        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Document>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onExecuted(boolean modified, List<Document> result) {
+                if (null != result) {
+                    adjustLoadingMorePages(result.size());
+                    if (selectedFunction == 1) {
+                        adapter.add((List<Model>) (Object) result, false);
+                    }
+                } else {
+                    isLoadingComplete(true);
+                }
             }
         }).exec();
     }
@@ -218,10 +342,13 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         return today;
     }
 
-    private void appendListHeader() {
+    @SuppressWarnings("ConstantConditions")
+    private void appendListHeader(boolean needToday) {
         adapter.add(App.app().Me(), 0);
         adapter.add(functions(), 1);
-        adapter.add(today(), 2);
+        if (needToday) {
+            adapter.add(today(), 2);
+        }
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
@@ -236,13 +363,16 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             adapter.register(User.class, new UserHeaderViewBinder().setFragment(this));
             adapter.register(Model.class, new IndividualFunctionalViewBinder(functionChangeListener).setFragment(this));
             adapter.register(Moment.class, new MomentViewBinder(boundDataListener).addOnGotPositionListener(gotPositionListener).setFragment(this));
+            adapter.register(Document.class, new DocumentViewBinder().setFragment(this));
             mRecyclerView.setAdapter(adapter);
-            appendListHeader();
+            appendListHeader(selectedFunction == 0);
+            // 自动加载本地缓存中的记录
+            performLoadingLocalModels();
 //            String json = getString(R.string.temp_json_moment_multi);
-//            list<Moment> moments = Json.gson().fromJson(json, new TypeToken<list<Moment>>() {
+//            ArrayList<Moment> moments = Json.gson().fromJson(json, new TypeToken<ArrayList<Moment>>() {
 //            }.getType());
 //            new Dao<>(Moment.class).save(moments);
-//            adapter.add((list<Model>) (Object) moments, false);
+//            adapter.add((ArrayList<Model>) (Object) moments, false);
         }
     }
 
@@ -282,13 +412,32 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         }
     };
 
+    private void resetList() {
+        int size = adapter.getItemCount();
+        while (size > 2) {
+            adapter.remove(size - 1);
+            size = adapter.getItemCount();
+        }
+        if (selectedFunction == 0) {
+            adapter.add(today());
+        }
+    }
+
     private IndividualFunctionViewHolder.OnFunctionChangeListener functionChangeListener = new IndividualFunctionViewHolder.OnFunctionChangeListener() {
         @Override
         public void onChange(int index) {
             if (selectedFunction != index) {
+                // 重置本地页码
+                localPageNumber = 0;
                 selectedFunction = index;
+                localPageTag = format(PAGE_TAG, selectedFunction);
+                resetList();
+                // 重新加载本地缓存记录
+                performLoadingLocalModels();
+                // 尝试从服务器上拉取新纪录
+                autoRefreshing();
                 // 拉取不同类型的数据并显示
-                ToastHelper.make().showMsg(StringHelper.getStringArray(R.array.ui_individual_functions)[selectedFunction].replaceAll("\\d\\|", ""));
+                //ToastHelper.make().showMsg(StringHelper.getStringArray(R.array.ui_individual_functions)[selectedFunction].replaceAll("\\d\\|", ""));
             }
         }
     };
@@ -303,23 +452,6 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
             }
             return null;
-        }
-    };
-
-    private OnViewHolderClickListener momentHolderClickListener = new OnViewHolderClickListener() {
-        @Override
-        public void onClick(int index) {
-            switch (index) {
-                case 0:
-                case 1:
-                    break;
-                case 2:
-                    openImageSelector();
-                    break;
-                default:
-                    openActivity(MomentDetailsFragment.class.getName(), "", false, false, true);
-                    break;
-            }
         }
     };
 

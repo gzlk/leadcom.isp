@@ -67,8 +67,10 @@ public class ContainerActivity extends TitleActivity {
 
     @Override
     protected boolean onBackKeyEvent(int keyCode, KeyEvent event) {
-        if (isBackKeySupported) {
-            return null != mFragment && mFragment.onBackKeyEvent();
+        if (null != mFragment) {
+            if (mFragment.onBackKeyEvent()) {
+                return true;
+            }
         }
         return super.onBackKeyEvent(keyCode, event);
     }

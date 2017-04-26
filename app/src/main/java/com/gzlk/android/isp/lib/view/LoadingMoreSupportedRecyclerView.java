@@ -12,6 +12,11 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.holder.FooterViewHolder;
+import com.gzlk.android.isp.model.Footer;
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
+import com.gzlk.android.isp.multitype.binder.FooterViewBinder;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
@@ -126,20 +131,16 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
     }
 
     private void findFooterViews() {
-        loadingTextView = (TextView) footerView.findViewById(R.id.ui_refreshable_recycler_view_footer_text);
-        loadingProgress = (CircleProgressBar) footerView.findViewById(R.id.ui_refreshable_recycler_view_footer_progress);
+        loadingTextView = (TextView) footerView.findViewById(R.id.ui_tool_view_loading_more_text);
+        loadingProgress = (CircleProgressBar) footerView.findViewById(R.id.ui_tool_view_loading_more_progress);
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
-        footerView = LayoutInflater.from(getContext()).inflate(R.layout.hlklib_refreshable_recycler_view_loading_more_item, this, false);
+        footerView = LayoutInflater.from(getContext()).inflate(R.layout.tool_view_loading_more_item, this, false);
         findFooterViews();
         footerView.setVisibility(GONE);
-        if (adapter instanceof LoadingMoreAdapter) {
-            loadingMoreAdapter = (LoadingMoreAdapter) adapter;
-            loadingMoreAdapter.setFooterView(footerView);
-            loadingMoreAdapter.setSupportLoadingMore(supportLoadingMore);
-        } else {
+        if (!(adapter instanceof LoadingMoreAdapter)) {
             LogHelper.log("LoadingMore", "You should extends your adapter of LoadMoreRecyclerView.LoadingMoreAdapter");
         }
         super.setAdapter(adapter);
@@ -147,32 +148,38 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
 
     private LoadingMoreAdapter loadingMoreAdapter;
 
-    public static abstract class LoadingMoreAdapter<VH extends ViewHolder, T> extends RecyclerViewAdapter<VH, T> {
+    public abstract static class LoadingMoreAdapter<VH extends ViewHolder, T extends Model> extends BaseMultiTypeAdapter<T> {
 
         private int VIEW_TYPE_FOOTER = 999;
         private View footView;
         private boolean supportLoadingMore = true;
+        private FooterViewBinder footerViewBinder = new FooterViewBinder();
 
-        final void setFooterView(View view) {
-            footView = view;
+        public LoadingMoreAdapter() {
+            super();
+            register(Footer.class, footerViewBinder);
         }
 
+        //        final void setFooterView(View view) {
+//            footView = view;
+//        }
+//
         final void setSupportLoadingMore(boolean support) {
             supportLoadingMore = support;
         }
 
-        @Override
-        public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-            if (viewType == VIEW_TYPE_FOOTER) {
-                VH holder = footerViewHolder(footView);
-                if (null == holder) {
-                    throw new IllegalArgumentException("no footer view holder presented.");
-                }
-                return holder;
-            } else {
-                return super.onCreateViewHolder(parent, viewType);
-            }
-        }
+//        @Override
+//        public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+//            if (viewType == VIEW_TYPE_FOOTER) {
+//                VH holder = footerViewHolder(footView);
+//                if (null == holder) {
+//                    throw new IllegalArgumentException("no footer view holder presented.");
+//                }
+//                return holder;
+//            } else {
+//                return super.onCreateViewHolder(parent, viewType);
+//            }
+//        }
 
 //        @Override
 //        public void onBindViewHolder(VH holder, int position) {
@@ -190,35 +197,35 @@ public class LoadingMoreSupportedRecyclerView extends RecyclerView {
 //            }
 //        }
 
-        @Override
-        public int getItemCount() {
-            return super.getItemCount() + (supportLoadingMore ? 1 : 0);
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if (supportLoadingMore) {
-                if (position == getItemCount() - 1) {
-                    return VIEW_TYPE_FOOTER;
-                }
-            }
-            return gotItemViewType(position);
-        }
+//        @Override
+//        public int getItemCount() {
+//            return super.getItemCount() + (supportLoadingMore ? 1 : 0);
+//        }
+//
+//        @Override
+//        public int getItemViewType(int position) {
+//            if (supportLoadingMore) {
+//                if (position == getItemCount() - 1) {
+//                    return VIEW_TYPE_FOOTER;
+//                }
+//            }
+//            return gotItemViewType(position);
+//        }
 
         /**
          * view type
          */
-        public abstract int gotItemViewType(int position);
+//        public abstract int gotItemViewType(int position);
 
         /**
          * 创建foot view holder
          */
-        public abstract VH footerViewHolder(View itemView);
+//        public abstract VH footerViewHolder(View itemView);
 
         /**
          * 创建ViewHolder
          */
-        public abstract VH onCreateViewHolder(View itemView, int viewType);
+//        public abstract VH onCreateViewHolder(View itemView, int viewType);
     }
 
     private OnLoadingMoreListener mOnLoadingMoreListener;

@@ -156,5 +156,4 @@ public abstract class BaseTitleSupportFragment extends BaseFragment {
     public void setRightTitleClickListener(OnTitleButtonClickListener l) {
         ((TitleActivity) Activity()).setRightTitleClickListener(l);
     }
-
 }
