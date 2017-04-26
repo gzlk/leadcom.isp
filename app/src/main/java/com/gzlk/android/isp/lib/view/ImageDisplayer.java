@@ -249,14 +249,21 @@ public class ImageDisplayer extends RelativeLayout {
         if (isNullUrl()) {
             // 图片地址为空时显示默认的drawable
             displayDrawable();
-        } else if (imageWidth < 500 || imageHeight < 500) {
-            // 如果是显示小尺寸的图片则直接用ImageLoader就可以了
-            ImageLoader.getInstance().displayImage(displayUrl, new ImageViewAware(imageView), null,
-                    new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
         } else {
-            // 显示大图
-            ImageLoader.getInstance().displayImage(displayUrl, new ImageViewAware(imageView), App.app().getLargeOption(),
-                    new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
+            String url = displayUrl;
+            if (!url.contains("://")) {
+                // 默认显示本地图片
+                url = "file://" + url;
+            }
+            if (imageWidth < 500 || imageHeight < 500) {
+                // 如果是显示小尺寸的图片则直接用ImageLoader就可以了
+                ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView), null,
+                        new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
+            } else {
+                // 显示大图
+                ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView), App.app().getLargeOption(),
+                        new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
+            }
         }
     }
 

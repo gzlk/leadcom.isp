@@ -68,7 +68,7 @@ public class MomentViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_tool_horizontal_progressbar)
     private MaterialProgressBar progressBar;
 
-    private String today, yesterday, todayId;
+    private String today, yesterday, todayId, fmt;
 
     private int imagesSize, multiImageSize, imageMargin;
 
@@ -88,6 +88,7 @@ public class MomentViewHolder extends BaseViewHolder {
         image2.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
         image3.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
         image4.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
+        fmt = StringHelper.getString(R.string.ui_base_text_date_time_format);
     }
 
     private void resizeImage(ImageDisplayer image, int width, int height) {
@@ -102,8 +103,6 @@ public class MomentViewHolder extends BaseViewHolder {
         todayContent.setVisibility(View.VISIBLE);
         momentContent.setVisibility(View.GONE);
     }
-
-    private static final String FMT_TIME = "yyyy-MM-dd HH:mm:ss";
 
     private long dayBegin(boolean today, boolean end, long time) {
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -131,8 +130,8 @@ public class MomentViewHolder extends BaseViewHolder {
                 previous = gotPositionListener.previous(getAdapterPosition());
             }
             if (null != previous) {
-                long preDate = Utils.parseDate(FMT_TIME, previous.getCreateDate()).getTime();
-                long createDate = Utils.parseDate(FMT_TIME, moment.getCreateDate()).getTime();
+                long preDate = Utils.parseDate(fmt, previous.getCreateDate()).getTime();
+                long createDate = Utils.parseDate(fmt, moment.getCreateDate()).getTime();
                 long todayBegin = dayBegin(true, false, 0);
                 long yesterday = dayBegin(false, false, 0);
                 showTime(preDate, createDate, dayBegin(true, true, createDate), yesterday, todayBegin);
@@ -162,7 +161,7 @@ public class MomentViewHolder extends BaseViewHolder {
     }
 
     private void showMoment(Moment moment) {
-        momentTextView.setText(moment.getContent());
+        momentTextView.setText(StringHelper.escapeFromHtml(moment.getContent()));
         int size = null == moment.getImage() ? 0 : moment.getImage().size();
         momentImageCount.setText(getContext().getString(R.string.ui_text_moment_item_image_count, size));
         momentImageCount.setVisibility(size <= 0 ? View.GONE : View.VISIBLE);
