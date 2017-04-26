@@ -17,6 +17,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.helper.HttpHelper;
+import com.gzlk.android.isp.helper.LogHelper;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
@@ -24,6 +25,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -219,7 +221,7 @@ public class ImageDisplayer extends RelativeLayout {
         showDelete = deletable;
         showSelect = selectable;
         displayUrl = url;
-        displayImage();
+        displayImage2();
     }
 
     /**
@@ -242,10 +244,30 @@ public class ImageDisplayer extends RelativeLayout {
         return matcher.find();
     }
 
+    @SuppressWarnings("ConstantConditions")
+    private void displayImage2() {
+        if (isNullUrl()) {
+            // 图片地址为空时显示默认的drawable
+            displayDrawable();
+        } else if (imageWidth < 500 || imageHeight < 500) {
+            // 如果是显示小尺寸的图片则直接用ImageLoader就可以了
+            ImageLoader.getInstance().displayImage(displayUrl, new ImageViewAware(imageView), null,
+                    new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
+        } else {
+            // 显示大图
+            ImageLoader.getInstance().displayImage(displayUrl, new ImageViewAware(imageView), App.app().getLargeOption(),
+                    new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
+        }
+    }
+
     private void displayImage() {
         if (isNullUrl()) {
             // 图片地址为空时显示默认的drawable
             displayDrawable();
+        } else if (imageWidth < 500 || imageHeight < 500) {
+            // 如果是显示小尺寸的图片则直接用ImageLoader就可以了
+            ImageLoader.getInstance().displayImage(displayUrl, new ImageViewAware(imageView), null,
+                    new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
         } else {
             String local;
             if (isUrl(displayUrl)) {
@@ -268,18 +290,27 @@ public class ImageDisplayer extends RelativeLayout {
                 } else {
                     size = new int[]{imageWidth, imageHeight};
                 }
-                if (!local.contains("://")) {
-                    // 默认显示本地图片
-                    local = "file://" + local;
-                }
-                // String url = App.getInstance().gotFullDownloadUrl(image);
+                //if (!local.contains("://")) {
+                // 默认显示本地图片
+                //    local = "file://" + local;
+                //}
+                //String imageUrl = Scheme.FILE.wrap(imagePath);
+                // 图片来源于Content provider
+                //String contentprividerUrl = "content://media/external/audio/albumart/13";
+                // 图片来源于assets
+                //String assetsUrl = Scheme.ASSETS.wrap("image.png");
+                // 图片来源于
+                //String drawableUrl = Scheme.DRAWABLE.wrap("R.drawable.image");
+                // String url =
                 // http://
                 // drawable://  ex.: "drawable://" + R.drawable.image
                 // assets://image.png
                 // file:///mnt/sdcard/image.png  ex.: "file://" + uri(string)
                 // content://media/external/audio/albumart/13
-                ImageLoader.getInstance().displayImage(local, new ImageViewAware(imageView), null,
-                        new ImageSize(size[0], size[1]), mImageLoadingListener, mImageLoadingProgressListener);
+                ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(local),
+                        new ImageViewAware(imageView), null,
+                        new ImageSize(size[0], size[1]),
+                        mImageLoadingListener, mImageLoadingProgressListener);
             }
         }
     }
@@ -308,12 +339,16 @@ public class ImageDisplayer extends RelativeLayout {
     private void downloadFile(final String http) {
         HttpHelper.helper().addCallback(new HttpHelper.HttpHelperCallback() {
 
-            public void onSuccess(int current, int total, String currentPath) {
-                // 下载成功后再次尝试显示图片
-                displayImage();
+            public void onSuccess(int current, int total, String successUrl) {
+                if (successUrl.equals(displayUrl)) {
+                    LogHelper.log("ImageDisplayer", "download success: " + displayUrl);
+                    // 下载成功后再次尝试显示图片
+                    displayImage2();
+                }
             }
 
-            public void onFailure(int current, int total) {
+            public void onFailure(int current, int total, String failureUrl) {
+                LogHelper.log("ImageDisplayer", "download failure: " + displayUrl);
                 // 下载失败时直接ImageLoader来加载图片
                 ImageLoader.getInstance().displayImage(http, new ImageViewAware(imageView), null,
                         new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
