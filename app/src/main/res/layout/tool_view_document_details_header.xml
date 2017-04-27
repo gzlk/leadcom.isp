@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+    android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/ui_tool_view_document_details_header_title"
+        layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
+    <include
+        android:id="@+id/ui_tool_view_document_details_header_source"
+        layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
+    <include
+        android:id="@+id/ui_tool_view_document_details_header_time"
+        layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
+    <include
+        android:id="@+id/ui_tool_view_document_details_header_privacy"
+        layout="@layout/holder_view_simple_clickable" />
+
+</com.hlk.hlklib.lib.view.CorneredView>

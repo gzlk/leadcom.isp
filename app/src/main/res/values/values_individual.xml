@@ -72,13 +72,25 @@
     </string-array>
 
     <string name="ui_text_document_create_fragment_title">新建档案</string>
+    <string name="ui_text_document_create_fragment_title_edit">修改档案</string>
+    <string name="ui_text_document_edit_not_exist">您要修改的档案不存在，要开始新建一个吗？</string>
     <string name="ui_text_document_create_content_hint">档案内容</string>
     <string-array name="ui_individual_new_document">
-        <item>题名：||档案标题|||0</item>
+        <item>题名：|%s|档案标题|||0</item>
         <item>0|档案来源：|%s|0</item>
         <item>1|发生时间：|%s|1</item>
         <item>2|公开|0</item>
     </string-array>
     <string name="ui_text_document_picker_title">请选择：</string>
     <string name="ui_text_document_create_title_invalid">标题不能为空</string>
+
+    <string name="ui_text_document_details_fragment_title">档案内容</string>
+    <string name="ui_text_document_details_not_exists">档案不存在</string>
+    <string name="ui_text_document_details_delete">删除档案将会一同删除其下所有附件、评论等相关信息，您确定要继续吗？</string>
+    <string-array name="ui_document_details_item">
+        <item>0|题名：|%s|1</item>
+        <item>1|档案来源：|%s|0</item>
+        <item>2|发生时间：|%s|1</item>
+        <item>3|公开|%s|0</item>
+    </string-array>
 </resources>

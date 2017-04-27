@@ -362,8 +362,8 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             adapter = new IndividualAdapter();
             adapter.register(User.class, new UserHeaderViewBinder().setFragment(this));
             adapter.register(Model.class, new IndividualFunctionalViewBinder(functionChangeListener).setFragment(this));
-            adapter.register(Moment.class, new MomentViewBinder(boundDataListener).addOnGotPositionListener(gotPositionListener).setFragment(this));
-            adapter.register(Document.class, new DocumentViewBinder().setFragment(this));
+            adapter.register(Moment.class, new MomentViewBinder(boundMomentDataListener).addOnGotPositionListener(gotPositionListener).setFragment(this));
+            adapter.register(Document.class, new DocumentViewBinder(boundDocumentListener).setFragment(this));
             mRecyclerView.setAdapter(adapter);
             appendListHeader(selectedFunction == 0);
             // 自动加载本地缓存中的记录
@@ -455,11 +455,19 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         }
     };
 
-    private BaseViewHolder.OnHandlerBoundDataListener<Model> boundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+    private BaseViewHolder.OnHandlerBoundDataListener<Model> boundMomentDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
         @Override
         public Moment onHandlerBoundData(BaseViewHolder holder) {
             Model model = adapter.get(holder.getAdapterPosition());
             return (model instanceof Moment) ? ((Moment) model) : null;
+        }
+    };
+
+    private BaseViewHolder.OnHandlerBoundDataListener<Model> boundDocumentListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+        @Override
+        public Document onHandlerBoundData(BaseViewHolder holder) {
+            Model model = adapter.get(holder.getAdapterPosition());
+            return (model instanceof Document) ? ((Document) model) : null;
         }
     };
 

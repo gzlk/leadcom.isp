@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.fragment.individual;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,6 +18,8 @@ import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.AttachmentViewHolder;
@@ -38,7 +41,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * <b>功能描述：</b>个人新增档案<br />
+ * <b>功能描述：</b>个人新增或编辑档案<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/04/25 09:50 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -49,6 +52,14 @@ import java.util.List;
  */
 
 public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
+
+    public static DocumentNewFragment newInstance(String params) {
+        DocumentNewFragment dnf = new DocumentNewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, params);
+        dnf.setArguments(bundle);
+        return dnf;
+    }
 
     // UI
     @ViewId(R.id.ui_document_individual_title)
@@ -82,7 +93,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_text_document_create_fragment_title);
+        setCustomTitle(StringHelper.isEmpty(mQueryId) ? R.string.ui_text_document_create_fragment_title : R.string.ui_text_document_create_fragment_title_edit);
         setRightText(R.string.ui_base_text_save);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
@@ -91,7 +102,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
                 tryCreateDocument();
             }
         });
-        initializeHolders();
+        fetchingDocument();
     }
 
     private void tryCreateDocument() {
@@ -102,7 +113,11 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
         }
         String content = StringHelper.escapeToHtml(contentView.getValue());
         Utils.hidingInputBoard(contentView);
-        createDocument(title, content);
+        if (StringHelper.isEmpty(mQueryId)) {
+            createDocument(title, content);
+        } else {
+            editDocument(title, content);
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -120,6 +135,19 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).add(title, content, Document.Type.TEXT, App.app().UserId(), App.app().Me().getName(), App.app().UserToken());
+    }
+
+    private void editDocument(String title, String content) {
+        DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
+            @Override
+            public void onResponse(Document document, boolean success, String message) {
+                super.onResponse(document, success, message);
+                if (success && null != message) {
+                    new Dao<>(Document.class).save(document);
+                    finish();
+                }
+            }
+        }).update(mQueryId, title, content, Document.Type.TEXT);
     }
 
     @Override
@@ -147,27 +175,89 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    private void initializeHolders() {
+    private void fetchingDocument() {
+        if (StringHelper.isEmpty(mQueryId)) {
+            initializeHolders(null);
+        } else {
+            Document document = !StringHelper.isEmpty(mQueryId) ? new Dao<>(Document.class).query(mQueryId) : null;
+            if (null == document) {
+                // 本地查找不到档案时，从服务器上拉取
+                fetchingRemoteDocument();
+            } else {
+                initializeHolders(document);
+            }
+        }
+    }
+
+    private void fetchingRemoteDocument() {
+        DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
+            @Override
+            public void onResponse(Document document, boolean success, String message) {
+                super.onResponse(document, success, message);
+                if (success && null != document) {
+                    new Dao<>(Document.class).save(document);
+                    initializeHolders(document);
+                } else {
+                    warningEditBlank();
+                }
+            }
+        }).find(mQueryId);
+    }
+
+    private void warningEditBlank() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_text_document_edit_not_exist, R.string.ui_base_text_yes, R.string.ui_base_text_no_need, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                // 新建档案
+                mQueryId = "";
+                initializeHolders(null);
+                return true;
+            }
+        }, new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                // 取消时返回上一页
+                finish();
+            }
+        });
+    }
+
+    private String create_date = "";
+
+    private void initializeHolders(Document document) {
+        create_date = null == document ? "" : document.getCreateDate();
         if (null == strings) {
             strings = StringHelper.getStringArray(R.array.ui_individual_new_document);
         }
+        // 标题
         if (null == titleHolder) {
             titleHolder = new SimpleInputableViewHolder(titleInputView, this);
         }
-        titleHolder.showContent(strings[0]);
+        titleHolder.showContent(format(strings[0], (null == document ? "" : document.getTitle())));
+        titleHolder.focusEnd();
+
+        // 来源，应该不可以更改
         if (null == sourceHolder) {
             sourceHolder = new SimpleClickableViewHolder(sourceView, this);
         }
-        sourceHolder.showContent(strings[1]);
+        sourceHolder.showContent(format(strings[1], (null == document ? "" : document.getUserName())));
+
+        // 时间
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
             timeHolder.addOnViewHolderClickListener(viewHolderClickListener);
         }
-        showCreateDate(new Date());
+        showCreateDate(null == document ? new Date() : Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), document.getCreateDate()));
+
+        // 隐私
         if (null == privacyHolder) {
             privacyHolder = new ToggleableViewHolder(mRootView, this);
         }
         privacyHolder.showContent(strings[3]);
+
+        // 内容
+        contentView.setValue(null == document ? "" : StringHelper.escapeFromHtml(document.getContent()));
+
         if (null == filePickerDialog) {
             properties = new DialogProperties();
             // 选择文件
@@ -266,7 +356,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void showCreateDate(Date date) {
-        timeHolder.showContent(StringHelper.format(strings[2], Utils.format("yyyy年MM月dd日", date)));
+        timeHolder.showContent(StringHelper.format(strings[2], Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs), date)));
     }
 
     private void openDatePicker() {
@@ -283,7 +373,13 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
                 .setContentSize(getFontDimension(R.dimen.ui_static_sp_20))
                 .setOutSideCancelable(false)
                 .isCenterLabel(true).isDialog(false).build();
-        tpv.setDate(Calendar.getInstance());
+        if (StringHelper.isEmpty(create_date)) {
+            tpv.setDate(Calendar.getInstance());
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), create_date));
+            tpv.setDate(calendar);
+        }
         tpv.show();
     }
 

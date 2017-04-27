@@ -45,6 +45,10 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
         contentView.setMaxLines(maxLines);
     }
 
+    public void focusEnd() {
+        contentView.focusEnd();
+    }
+
     public void setMinimumHeight(int height) {
         contentView.setMinimumHeightLimit(height);
     }

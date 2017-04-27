@@ -79,6 +79,15 @@ public class Dao<E> {
         }
     }
 
+    public void delete(String id) {
+        if (null != orm) {
+            E e = query(id);
+            if (null != e) {
+                delete(e);
+            }
+        }
+    }
+
     public void delete(E entity) {
         if (null != orm) {
             orm.delete(entity);

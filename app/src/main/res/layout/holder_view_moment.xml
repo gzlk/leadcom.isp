@@ -26,23 +26,40 @@
             android:textSize="@dimen/ui_base_text_size_small" />
     </LinearLayout>
 
-    <com.hlk.hlklib.lib.view.CorneredView
-        android:id="@+id/ui_holder_view_moment_content"
+    <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-        android:layout_weight="4"
-        android:minHeight="@dimen/ui_static_dp_40"
-        android:orientation="horizontal"
-        android:padding="@dimen/ui_static_dp_half"
-        app:cv_active_border="@color/textColorHintLightLight"
-        app:cv_background="@android:color/white"
-        app:cv_background_active="@color/buttonDialogActiveColor"
-        app:cv_background_type="fill"
-        app:cv_normal_border="@android:color/white">
+        android:layout_weight="4">
 
-        <include layout="@layout/tool_view_moment_item__today" />
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:id="@+id/ui_holder_view_moment_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/ui_static_dp_40"
+            android:orientation="horizontal"
+            android:padding="@dimen/ui_static_dp_half"
+            app:cv_background="@android:color/white"
+            app:cv_background_active="@android:color/white"
+            app:cv_background_type="fill"
+            app:cv_border_size="@dimen/ui_static_dp_zero">
 
-        <include layout="@layout/tool_view_moment_item_content" />
-    </com.hlk.hlklib.lib.view.CorneredView>
+            <include layout="@layout/tool_view_moment_item__today" />
+
+            <include layout="@layout/tool_view_moment_item_content" />
+        </com.hlk.hlklib.lib.view.CorneredView>
+
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:id="@+id/ui_holder_view_moment_content_clicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ui_holder_view_moment_content"
+            android:layout_alignTop="@+id/ui_holder_view_moment_content"
+            app:cv_active_border="@color/colorPrimary"
+            app:cv_background="@android:color/transparent"
+            app:cv_background_active="@color/transparent_20"
+            app:cv_background_type="fill"
+            app:cv_normal_border="@android:color/white" />
+    </RelativeLayout>
+
 </LinearLayout>

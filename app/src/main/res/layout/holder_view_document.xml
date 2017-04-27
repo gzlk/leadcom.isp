@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_document_content_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
     android:orientation="vertical"
+    app:cv_background="@android:color/white"
+    app:cv_background_active="@color/textColorHintLightLight"
+    app:cv_background_type="fill"
     app:cv_border_size="@dimen/ui_static_dp_zero">
 
     <include layout="@layout/tool_view_document_user_header" />

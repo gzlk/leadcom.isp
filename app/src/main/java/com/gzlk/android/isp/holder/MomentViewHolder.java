@@ -240,7 +240,7 @@ public class MomentViewHolder extends BaseViewHolder {
         return null;
     }
 
-    @Click({R.id.ui_holder_view_moment_content})
+    @Click({R.id.ui_holder_view_moment_content_clicker})
     private void viewClick(View view) {
         Moment moment = getFromAdapter();
         if (null != moment) {

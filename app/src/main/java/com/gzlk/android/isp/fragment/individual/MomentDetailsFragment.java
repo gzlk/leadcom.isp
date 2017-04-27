@@ -48,14 +48,13 @@ import java.util.ArrayList;
 
 public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
 
-    private static final String PARAM_ID = "mdf_moment_id";
     private static final String PARAM_SELECTED = "mdf_moment_selected";
 
     public static MomentDetailsFragment newInstance(String params) {
         MomentDetailsFragment mdf = new MomentDetailsFragment();
         Bundle bundle = new Bundle();
         String[] strings = splitParameters(params);
-        bundle.putString(PARAM_ID, strings[0]);
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
         if (strings.length > 1) {
             bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[1]));
         }
@@ -64,20 +63,17 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private int selected;
-    private String queryId;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         selected = bundle.getInt(PARAM_SELECTED, 0);
-        queryId = bundle.getString(PARAM_ID, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_SELECTED, selected);
-        bundle.putString(PARAM_ID, queryId);
     }
 
     // UI
@@ -109,7 +105,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
         titleRightIcon.setText(R.string.ui_icon_more);
         if (null == images) {
             images = new ArrayList<>();
-            Moment moment = new Dao<>(Moment.class).query(queryId);
+            Moment moment = new Dao<>(Moment.class).query(mQueryId);
             displayMomentDetails(moment);
         }
         detailContentTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -141,7 +137,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
                     displayMomentDetails(moment);
                 }
             }
-        }).find(queryId);
+        }).find(mQueryId);
     }
 
     private void deleteMoment() {
@@ -152,7 +148,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
                 if (success) {
                     // 本地已删除
                     Dao<Moment> dao = new Dao<>(Moment.class);
-                    Moment deleted = dao.query(queryId);
+                    Moment deleted = dao.query(mQueryId);
                     if (deleted != null) {
                         deleted.setLocalDeleted(true);
                         dao.save(deleted);
@@ -160,7 +156,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
                     finish();
                 }
             }
-        }).delete(queryId);
+        }).delete(mQueryId);
     }
 
     @Override

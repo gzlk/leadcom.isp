@@ -19,19 +19,26 @@ import com.gzlk.android.isp.activity.BaseActivity;
 public abstract class BaseTransparentSupportFragment extends BaseLocationSupportFragment {
 
     private static final String PARAM_INITIALIZED = "bmf_initialized";
+    protected static final String PARAM_QUERY_ID = "btsf_param_query";
     /**
      * fragment是否已经初始化了，为false时，需要设置顶部的padding
      */
     private boolean isInitialized = false;
+    /**
+     * 基本queryId
+     */
+    protected String mQueryId;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         isInitialized = bundle.getBoolean(PARAM_INITIALIZED, false);
+        mQueryId = bundle.getString(PARAM_QUERY_ID, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         bundle.putBoolean(PARAM_INITIALIZED, isInitialized);
+        bundle.putString(PARAM_QUERY_ID, mQueryId);
     }
 
     /**

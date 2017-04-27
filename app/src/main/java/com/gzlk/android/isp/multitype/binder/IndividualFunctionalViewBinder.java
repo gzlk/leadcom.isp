@@ -42,6 +42,8 @@ public class IndividualFunctionalViewBinder extends BaseViewBinder<Model, Indivi
     @Override
     public IndividualFunctionViewHolder onCreateViewHolder(@NonNull View itemView) {
         IndividualFunctionViewHolder holder = new IndividualFunctionViewHolder(itemView, fragment.get());
+        // 初始化选中第一个
+        holder.setSelected(0);
         holder.addOnFunctionChangeListener(listener.get());
         return holder;
     }

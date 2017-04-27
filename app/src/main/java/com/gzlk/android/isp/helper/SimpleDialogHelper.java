@@ -93,7 +93,7 @@ public class SimpleDialogHelper {
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
                 TextView textView = (TextView) dialogView.findViewById(R.id.ui_custom_dialog_text);
-                // 显示htnl富文本
+                // 显示html富文本
                 textView.setText(Html.fromHtml(text));
             }
         }).setConfirmText(confirmText)

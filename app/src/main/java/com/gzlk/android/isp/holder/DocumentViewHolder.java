@@ -7,10 +7,13 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.individual.DocumentDetailsFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.document.Document;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -62,5 +65,15 @@ public class DocumentViewHolder extends BaseViewHolder {
         documentTitle.setText(document.getTitle());
         documentContentText.setText(StringHelper.escapeFromHtml(document.getContent()));
         documentContentText.makeExpandable();
+    }
+
+    @Click({R.id.ui_holder_view_document_content_container})
+    private void elementClick(View view) {
+        if (null != dataHandlerBoundDataListener) {
+            Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
+            if (null != object && object instanceof Document) {
+                openActivity(DocumentDetailsFragment.class.getName(), ((Document) object).getId(), true, false);
+            }
+        }
     }
 }
