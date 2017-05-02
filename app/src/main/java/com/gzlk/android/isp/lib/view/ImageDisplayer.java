@@ -3,7 +3,6 @@ package com.gzlk.android.isp.lib.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -15,9 +14,6 @@ import android.widget.RelativeLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
-import com.gzlk.android.isp.etc.ImageCompress;
-import com.gzlk.android.isp.helper.HttpHelper;
-import com.gzlk.android.isp.helper.LogHelper;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
@@ -25,12 +21,10 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
-import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 
-import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -96,12 +90,14 @@ public class ImageDisplayer extends RelativeLayout {
                 imageWidth = array.getDimensionPixelOffset(R.styleable.ImageDisplayer_id_image_width, 0);
                 imageHeight = array.getDimensionPixelOffset(R.styleable.ImageDisplayer_id_image_height, 0);
             }
+            largeImageSupport = array.getBoolean(R.styleable.ImageDisplayer_id_is_large_image, false);
         } finally {
             array.recycle();
         }
     }
 
     private int srcDrawable = 0;
+    private boolean largeImageSupport;
     private RoundedImageView imageView;
     private CircleProgressBar progressBar;
     private CorneredView selectContainer, deleteContainer;
@@ -159,7 +155,7 @@ public class ImageDisplayer extends RelativeLayout {
         imageView.setImageDrawable(null);
         super.onDetachedFromWindow();
         // 释放图片时gc一下
-        //System.gc();
+        System.gc();
     }
 
     /**
@@ -255,115 +251,16 @@ public class ImageDisplayer extends RelativeLayout {
                 // 默认显示本地图片
                 url = "file://" + url;
             }
-            if (imageWidth < 500 || imageHeight < 500) {
-                // 如果是显示小尺寸的图片则直接用ImageLoader就可以了
-                ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView), null,
-                        new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
-            } else {
-                // 显示大图
-                ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView), App.app().getLargeOption(),
-                        new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
-            }
-        }
-    }
-
-    private void displayImage() {
-        if (isNullUrl()) {
-            // 图片地址为空时显示默认的drawable
-            displayDrawable();
-        } else if (imageWidth < 500 || imageHeight < 500) {
-            // 如果是显示小尺寸的图片则直接用ImageLoader就可以了
-            ImageLoader.getInstance().displayImage(displayUrl, new ImageViewAware(imageView), null,
+            ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView), largeImageSupport ? App.app().getLargeOption() : null,
                     new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
-        } else {
-            String local;
-            if (isUrl(displayUrl)) {
-                local = HttpHelper.helper().getLocalFilePath(displayUrl, App.IMAGE_DIR);
-            } else {
-                local = displayUrl;
-            }
-            // 查看本地缓存文件是否存在
-            File file = new File(local);
-            if (!file.exists()) {
-                // 文件不存在则尝试下载
-                downloadFile(displayUrl);
-            } else {
-                // 获取本地图片的宽高尺寸
-                BitmapFactory.Options options = ImageCompress.getBitmapOptions(local);
-                int[] size;
-                if (null != options) {
-                    // 缩放图片以适合屏幕
-                    size = gotScaledSize(new int[]{options.outWidth, options.outHeight});
-                } else {
-                    size = new int[]{imageWidth, imageHeight};
-                }
-                //if (!local.contains("://")) {
-                // 默认显示本地图片
-                //    local = "file://" + local;
-                //}
-                //String imageUrl = Scheme.FILE.wrap(imagePath);
-                // 图片来源于Content provider
-                //String contentprividerUrl = "content://media/external/audio/albumart/13";
-                // 图片来源于assets
-                //String assetsUrl = Scheme.ASSETS.wrap("image.png");
-                // 图片来源于
-                //String drawableUrl = Scheme.DRAWABLE.wrap("R.drawable.image");
-                // String url =
-                // http://
-                // drawable://  ex.: "drawable://" + R.drawable.image
-                // assets://image.png
-                // file:///mnt/sdcard/image.png  ex.: "file://" + uri(string)
-                // content://media/external/audio/albumart/13
-                ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(local),
-                        new ImageViewAware(imageView), null,
-                        new ImageSize(size[0], size[1]),
-                        mImageLoadingListener, mImageLoadingProgressListener);
-            }
         }
     }
 
     /**
-     * 根据图片的宽高缩放图片
+     * 设置大图预览模式
      */
-    private int[] gotScaledSize(int[] size) {
-        // 依最小边进行缩放
-        double scale;
-        if (imageWidth > imageHeight) {
-            scale = imageHeight * 1.0 / size[1];
-        } else {
-            scale = imageWidth * 1.0 / size[0];
-        }
-        // 如果原图比手机屏幕小则原图不用缩放
-        if (scale > 1) {
-            scale = 1.0;
-        }
-        size[0] = (int) (size[0] * scale);
-        size[1] = (int) (size[1] * scale);
-
-        return size;
-    }
-
-    private void downloadFile(final String http) {
-        HttpHelper.helper().addCallback(new HttpHelper.HttpHelperCallback() {
-
-            public void onSuccess(int current, int total, String successUrl) {
-                if (successUrl.equals(displayUrl)) {
-                    LogHelper.log("ImageDisplayer", "download success: " + displayUrl);
-                    // 下载成功后再次尝试显示图片
-                    displayImage2();
-                }
-            }
-
-            public void onFailure(int current, int total, String failureUrl) {
-                LogHelper.log("ImageDisplayer", "download failure: " + displayUrl);
-                // 下载失败时直接ImageLoader来加载图片
-                ImageLoader.getInstance().displayImage(http, new ImageViewAware(imageView), null,
-                        new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
-            }
-
-        }, Integer.toHexString(hashCode()))
-                .setIgnoreExist(true).setLocalDirectory(App.IMAGE_DIR)
-                .addTask(http).download();
+    public void setLargeImageSupport(boolean largeSupport) {
+        largeImageSupport = largeSupport;
     }
 
     private ImageLoadingListener mImageLoadingListener = new ImageLoadingListener() {

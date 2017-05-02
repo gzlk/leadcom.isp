@@ -32,5 +32,7 @@
         <attr name="id_show_loading" format="boolean" />
         <!--是否在资源或url都未设置的情况下显示空白-->
         <attr name="id_nullable_drawable" format="boolean" />
+        <!--是否显示的大图-->
+        <attr name="id_is_large_image" format="boolean" />
     </declare-styleable>
 </resources>
