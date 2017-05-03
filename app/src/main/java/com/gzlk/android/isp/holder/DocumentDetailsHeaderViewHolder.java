@@ -6,6 +6,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -31,6 +32,8 @@ public class DocumentDetailsHeaderViewHolder extends BaseViewHolder {
     private View timeView;
     @ViewId(R.id.ui_tool_view_document_details_header_privacy)
     private View privacyView;
+    @ViewId(R.id.ui_holder_view_document_details_content)
+    private ExpandableTextView contentView;
 
     // holder
     private SimpleClickableViewHolder titleHolder;
@@ -70,5 +73,7 @@ public class DocumentDetailsHeaderViewHolder extends BaseViewHolder {
         sourceHolder.showContent(format(items[1], document.getUserName()));
         timeHolder.showContent(format(items[2], Utils.format(document.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
         privacyHolder.showContent(format(items[3], ""));
+        contentView.setText(StringHelper.escapeFromHtml(document.getContent()));
+        contentView.makeExpandable();
     }
 }

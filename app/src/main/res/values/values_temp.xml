@@ -124,4 +124,48 @@
 }
 ]
     </string>
+    <string name="temp_json_document_comment_multiple">
+[
+    {
+        \"id\": \"1234567890\",
+        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"userId\": \"58fe2e0f2f57354690490ba8\",
+        \"userName\": \"哈哈\",
+        \"createDate\": \"2017-05-01 23:20:20\",
+        \"content\": \"这份档案不错，有用得着的地方！\"
+    },
+    {
+        \"id\": \"1234567891\",
+        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"userId\": \"58fe2e0f2f57354690490ba8\",
+        \"userName\": \"嘿嘿\",
+        \"createDate\": \"2017-05-01 23:20:21\",
+        \"content\": \"可以哦\"
+    },
+    {
+        \"id\": \"1234567892\",
+        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"userId\": \"58fe2e0f2f57354690490ba8\",
+        \"userName\": \"呵呵\",
+        \"createDate\": \"2017-05-01 23:20:22\",
+        \"content\": \"Verify nice, good job.\"
+    },
+    {
+        \"id\": \"1234567893\",
+        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"userId\": \"58fe2e0f2f57354690490ba8\",
+        \"userName\": \"嘻嘻\",
+        \"createDate\": \"2017-05-01 23:20:23\",
+        \"content\": \"这份档案不错，有用得着的地方！里面还是有很多值得思考的地方。\"
+    },
+    {
+        \"id\": \"1234567894\",
+        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"userId\": \"58fe2e0f2f57354690490ba8\",
+        \"userName\": \"咔咔\",
+        \"createDate\": \"2017-05-01 23:20:24\",
+        \"content\": \"厉害，超牛！\"
+    }
+]
+    </string>
 </resources>

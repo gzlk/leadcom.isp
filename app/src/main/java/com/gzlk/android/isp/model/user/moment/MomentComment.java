@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.model.user.moment;
 
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Table;
 
 /**
  * <b>功能描述：</b>个人动态的评论<br />
@@ -13,6 +14,7 @@ import com.litesuits.orm.db.annotation.Column;
  * <b>修改备注：</b><br />
  */
 
+@Table(Moment.Table.COMMENT)
 public class MomentComment extends MomentLike {
 
     //内容

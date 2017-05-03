@@ -72,7 +72,7 @@ public class DocumentViewHolder extends BaseViewHolder {
         if (null != dataHandlerBoundDataListener) {
             Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != object && object instanceof Document) {
-                openActivity(DocumentDetailsFragment.class.getName(), ((Document) object).getId(), true, false);
+                openActivity(DocumentDetailsFragment.class.getName(), ((Document) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
             }
         }
     }

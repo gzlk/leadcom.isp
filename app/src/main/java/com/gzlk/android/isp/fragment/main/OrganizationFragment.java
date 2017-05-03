@@ -54,6 +54,11 @@ public class OrganizationFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    protected String getLocalPageTag() {
+        return null;
+    }
+
+    @Override
     protected void destroyView() {
 
     }

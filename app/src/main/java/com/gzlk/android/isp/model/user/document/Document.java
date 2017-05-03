@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model.user.document;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.moment.Moment;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Table;
 
 
 /**
@@ -16,7 +17,27 @@ import com.litesuits.orm.db.annotation.Column;
  * <b>修改备注：</b><br />
  */
 
+@Table(Document.Table.DOCUMENT)
 public class Document extends Model {
+
+    static class Table {
+        /**
+         * 个人档案表
+         */
+        static final String DOCUMENT = "document";
+        /**
+         * 个人档案统计表
+         */
+        static final String ADDITIONAL = "documentAdditional";
+        /**
+         * 个人档案评论表
+         */
+        static final String COMMENT = "documentComment";
+        /**
+         * 个人档案点赞表
+         */
+        static final String LIKE = "documentLke";
+    }
 
     public static class Field {
         public static final String Title = "title";

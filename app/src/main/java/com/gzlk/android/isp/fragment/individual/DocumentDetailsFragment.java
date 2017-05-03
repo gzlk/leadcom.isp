@@ -2,24 +2,34 @@ package com.gzlk.android.isp.fragment.individual;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.user.DocCommentRequest;
 import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.application.App;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseChatInputSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
+import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.gzlk.android.isp.model.user.document.DocumentComment;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
+import com.gzlk.android.isp.multitype.binder.user.DocumentCommentViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.DocumentDetailsHeaderViewBinder;
+import com.gzlk.android.isp.task.OrmTask;
+import com.litesuits.orm.db.assit.QueryBuilder;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>档案详情页<br />
@@ -32,7 +42,9 @@ import com.gzlk.android.isp.multitype.binder.user.DocumentDetailsHeaderViewBinde
  * <b>修改备注：</b><br />
  */
 
-public class DocumentDetailsFragment extends BaseSwipeRefreshSupportFragment {
+public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
+
+    private static final String TAG = "document_%s";
 
     public static DocumentDetailsFragment newInstance(String params) {
         DocumentDetailsFragment ddf = new DocumentDetailsFragment();
@@ -50,7 +62,15 @@ public class DocumentDetailsFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    public int getLayout() {
+        return R.layout.fragment_chatable;
+    }
+
+    @Override
     public void doingInResume() {
+        showAppend = false;
+        showRecorder = false;
+        super.doingInResume();
         if (StringHelper.isEmpty(mQueryId)) {
             closeWithWarning(R.string.ui_text_document_details_not_exists);
         } else {
@@ -76,27 +96,39 @@ public class DocumentDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-
+        remotePageNumber = 1;
+        fetchingRemote();
     }
 
     @Override
     protected void onLoadingMore() {
+        loadingLocalCache();
+    }
 
+    @Override
+    protected String getLocalPageTag() {
+        return format(TAG, mQueryId);
     }
 
     private void initializeAdapter() {
         if (null == mAdapter) {
+            addOnInputCompleteListener(onInputCompleteListener);
             mAdapter = new DocumentDetailsAdapter();
             mAdapter.register(Document.class, new DocumentDetailsHeaderViewBinder().setFragment(this));
+            mAdapter.register(DocumentComment.class, new DocumentCommentViewBinder().setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
+            loadingDocument();
         }
+    }
+
+    private void loadingDocument() {
         Document document = new Dao<>(Document.class).query(mQueryId);
         if (null == document) {
             // 档案不存在则从服务器上拉取
             fetchingDocument();
         } else {
-            resetRightTitleButton(document);
             mAdapter.update(document);
+            resetRightTitleButton(document);
         }
     }
 
@@ -111,6 +143,77 @@ public class DocumentDetailsFragment extends BaseSwipeRefreshSupportFragment {
                 }
             });
         }
+        loadingLocalCache();
+    }
+
+    // 尝试拉取远程资源
+    private void tryFetchingRemote() {
+        if (isNeedRefresh()) {
+            refreshing();
+            fetchingRemote();
+        } else {
+            stopRefreshing();
+        }
+    }
+
+    private void fetchingRemote() {
+        DocCommentRequest.request().setOnRequestListListener(new OnRequestListListener<DocumentComment>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onResponse(List<DocumentComment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    remotePageSize = pageSize;
+                    remoteTotalPages = totalPages;
+                    remoteTotalCount = total;
+                    remotePageNumber = pageNumber;
+                    if (list.size() >= remotePageSize) {
+                        // 如果取满了一页，则下次需要拉取下一页
+                        remotePageNumber += 1;
+                    }
+                    if (list.size() > 0) {
+                        new Dao<>(DocumentComment.class).save(list);
+                        mAdapter.update((List<Model>) (Object) list);
+                    }
+                }
+                stopRefreshing();
+                smoothScrollToBottom(mAdapter.getItemCount() - 1);
+            }
+        }).list(mQueryId, PAGE_SIZE, remotePageNumber);
+    }
+
+    // 加载本地缓存
+    private void loadingLocalCache() {
+        new OrmTask<DocumentComment>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<DocumentComment>() {
+            @Override
+            public boolean isModifiable() {
+                return false;
+            }
+
+            @Override
+            public List<DocumentComment> executing(OrmTask<DocumentComment> task) {
+                // 分页查找
+                QueryBuilder<DocumentComment> builder = new QueryBuilder<>(DocumentComment.class)
+                        .whereEquals(DocumentComment.Field.UserDocumentId, mQueryId)
+                        .orderBy(Model.Field.CreateDate)
+                        .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
+                return new Dao<>(DocumentComment.class).query(builder);
+            }
+        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<DocumentComment>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onExecuted(boolean modified, List<DocumentComment> result) {
+                if (null != result) {
+                    if (result.size() >= PAGE_SIZE) {
+                        // 取满一页后下一次需要取下一页
+                        localPageNumber++;
+                    }
+                    mAdapter.update((List<Model>) (Object) result);
+                    fetchingRemote();
+                    isLoadingComplete(result.size() < PAGE_SIZE);
+                }
+            }
+        }).exec();
     }
 
     private void openEditSelector() {
@@ -163,11 +266,36 @@ public class DocumentDetailsFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(document, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(message);
-                    new Dao<>(Document.class).delete(mQueryId);
+                    Dao<Document> dao = new Dao<>(Document.class);
+                    Document doc = dao.query(mQueryId);
+                    if (null != doc) {
+                        doc.setLocalDeleted(true);
+                        dao.save(doc);
+                    }
+                    // 返回成功
                     finish();
                 }
             }
         }).delete(mQueryId);
+    }
+
+    public DocumentComment getFromPosition(int position) {
+        return (DocumentComment) mAdapter.get(position);
+    }
+
+    public void deleteComment(final int position) {
+        final DocumentComment cmt = getFromPosition(position);
+        DocCommentRequest.request().setOnRequestListener(new OnRequestListener<DocumentComment>() {
+            @Override
+            public void onResponse(DocumentComment comment, boolean success, String message) {
+                super.onResponse(comment, success, message);
+                if (success) {
+                    // 删除成功之后本地评论也删除
+                    new Dao<>(DocumentComment.class).delete(cmt);
+                    mAdapter.remove(position);
+                }
+            }
+        }).delete(mQueryId, cmt.getId());
     }
 
     private void fetchingDocument() {
@@ -184,6 +312,31 @@ public class DocumentDetailsFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).find(mQueryId);
+    }
+
+    private OnInputCompleteListener onInputCompleteListener = new OnInputCompleteListener() {
+        @Override
+        public void onInputComplete(String text, int length, int type) {
+            tryComment(text);
+        }
+    };
+
+    @SuppressWarnings("ConstantConditions")
+    private void tryComment(String text) {
+        DocCommentRequest.request().setOnRequestListener(new OnRequestListener<DocumentComment>() {
+            @Override
+            public void onResponse(DocumentComment comment, boolean success, String message) {
+                super.onResponse(comment, success, message);
+                if (success) {
+                    if (null != comment && !StringHelper.isEmpty(comment.getId())) {
+                        new Dao<>(DocumentComment.class).save(comment);
+                        mAdapter.update(comment);
+                    }
+                    refreshing();
+                    fetchingRemote();
+                }
+            }
+        }).add(mQueryId, text, App.app().UserId(), App.app().Me().getName());
     }
 
     private class DocumentDetailsAdapter extends BaseMultiTypeAdapter<Model> {

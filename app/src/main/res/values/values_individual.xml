@@ -87,10 +87,32 @@
     <string name="ui_text_document_details_fragment_title">档案内容</string>
     <string name="ui_text_document_details_not_exists">档案不存在</string>
     <string name="ui_text_document_details_delete">删除档案将会一同删除其下所有附件、评论等相关信息，您确定要继续吗？</string>
+    <string name="ui_text_document_comment_content" formatted="false"><![CDATA[<font color="#3cbaff">%s</font>：%s]]></string>
     <string-array name="ui_document_details_item">
         <item>0|题名：|%s|1</item>
         <item>1|档案来源：|%s|0</item>
         <item>2|发生时间：|%s|1</item>
         <item>3|公开|%s|0</item>
     </string-array>
+
+    <string-array name="ui_text_my_setting_items">
+        <item>0</item>
+        <item>1|动态|%s|0</item>
+        <item>2|性别|%s|1</item>
+        <item>3|生日|%s|1</item>
+        <item>4|身份证|%s|1</item>
+        <item>5|单位|%s|1</item>
+        <item>6|职务|%s|1</item>
+        <item>7|注册时间|%s|1</item>
+        <item>8|手机号码|%s|1</item>
+    </string-array>
+
+    <string name="ui_text_modify_phone_number_fragment_title">更换手机号</string>
+    <string name="ui_text_modify_phone_number_86" formatted="false">+86%s</string>
+    <string name="ui_text_modify_phone_number_input_hint">请填写手机号码</string>
+    <string name="ui_text_modify_phone_number_input_warning" formatted="false">更换手机后，下次可以直接使用新手机号登录，当前手机号：%s</string>
+    <string name="ui_text_modify_phone_number_verify_warning" formatted="false">
+        <![CDATA[<b>确认手机号码</b><br/>我们将发送验证码短信到这个号码：<br/>+86%s]]>
+    </string>
+    <string name="ui_text_modify_phone_confirm_fragment_title">填写验证码</string>
 </resources>

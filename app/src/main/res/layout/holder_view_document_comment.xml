@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_document_comment_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/ui_static_dp_2"
+    app:cv_active_border="@color/textColorHintLightLight"
+    app:cv_background="@android:color/white"
+    app:cv_background_active="@color/textColorHintLightLight"
+    app:cv_background_type="fill"
+    app:cv_normal_border="@android:color/white">
+
+    <com.gzlk.android.isp.lib.view.ExpandableTextView
+        android:id="@+id/ui_holder_view_document_comment_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/ui_base_text_size_small"
+        app:lessText="@string/ui_base_text_collapse"
+        app:moreText="@string/ui_base_text_expand" />
+
+</com.hlk.hlklib.lib.view.CorneredView>

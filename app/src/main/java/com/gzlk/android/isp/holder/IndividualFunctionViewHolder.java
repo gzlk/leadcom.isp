@@ -92,7 +92,7 @@ public class IndividualFunctionViewHolder extends BaseViewHolder {
             }
         } else if (selected == 1) {
             // 档案选中之后再点击的话，是打开新建菜单
-            fragment().showTipPopupWindow(textView2, StringHelper.getString(R.string.ui_text_document_create_fragment_title), new View.OnClickListener() {
+            fragment().showTooltip(textView2, StringHelper.getString(R.string.ui_text_document_create_fragment_title), new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openActivity(DocumentNewFragment.class.getName(), "", true, true);

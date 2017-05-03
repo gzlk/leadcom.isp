@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.model.user.moment;
 
-import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -14,7 +13,7 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Model.Table.MOMENT_ADDITIONAL)
+@Table(Moment.Table.ADDITIONAL)
 public class MomentAdditional extends SubMoment {
 
     public static class Field {

@@ -156,55 +156,53 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     private ArrayList<String> choosingFroCompressImages = new ArrayList<>();
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CAMERA:// 相机拍照返回了
-                case REQUEST_GALLERY:// 相册选择返回了
-                case REQUEST_PREVIEW:
-                    if (chooseImageByAlbum()) {
-                        ArrayList<String> images = Album.parseResult(data);
-                        choosingFroCompressImages.clear();
-                        choosingFroCompressImages.addAll(images);
-                        // 图片选择了
-                        onImageSelected();
-                    } else {
-                        if (null != data) {
-                            // 相机照相之后返回的有可能是相册的路径，此时需要获取相册路径
-                            cameraPicturePath = getGalleryResultedPath(data);
-                        }
-                        if (isChooseImageForCrop) {
-                            prepareCroppedImagePath();
-                            if (TextUtils.isEmpty(cameraPicturePath)) {
-                                ToastHelper.make(Activity()).showMsg("无效的照片，请从相机拍照或从相册中选取照片");
-                            } else {
-                                adjustWannaToImageSize();
-                                cropImageUri(Uri.fromFile(new File(cameraPicturePath)),
-                                        Uri.fromFile(new File(croppedImagePath)), REQUEST_CROP,
-                                        croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
-                            }
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CAMERA:// 相机拍照返回了
+            case REQUEST_GALLERY:// 相册选择返回了
+            case REQUEST_PREVIEW:
+                if (chooseImageByAlbum()) {
+                    ArrayList<String> images = Album.parseResult(data);
+                    choosingFroCompressImages.clear();
+                    choosingFroCompressImages.addAll(images);
+                    // 图片选择了
+                    onImageSelected();
+                } else {
+                    if (null != data) {
+                        // 相机照相之后返回的有可能是相册的路径，此时需要获取相册路径
+                        cameraPicturePath = getGalleryResultedPath(data);
+                    }
+                    if (isChooseImageForCrop) {
+                        prepareCroppedImagePath();
+                        if (TextUtils.isEmpty(cameraPicturePath)) {
+                            ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_invalid_camera_path);
                         } else {
-                            // 照片已选择了
-                            choosingFroCompressImages.clear();
-                            choosingFroCompressImages.add(cameraPicturePath);
-                            onImageSelected();
+                            adjustWannaToImageSize();
+                            cropImageUri(Uri.fromFile(new File(cameraPicturePath)),
+                                    Uri.fromFile(new File(croppedImagePath)), REQUEST_CROP,
+                                    croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
                         }
-                    }
-                    break;
-                case REQUEST_CROP:
-                    if (!TextUtils.isEmpty(croppedImagePath)) {
-                        // 裁剪后的图片也需要压缩
-                        choosingFroCompressImages.clear();
-                        choosingFroCompressImages.add(croppedImagePath);
-                        onImageSelected();
                     } else {
-                        // 操作无法继续：数据丢失
-                        SimpleDialogHelper.init(Activity()).show("操作无法继续，数据丢失");
+                        // 照片已选择了
+                        choosingFroCompressImages.clear();
+                        choosingFroCompressImages.add(cameraPicturePath);
+                        onImageSelected();
                     }
-                    break;
-            }
+                }
+                break;
+            case REQUEST_CROP:
+                if (!TextUtils.isEmpty(croppedImagePath)) {
+                    // 裁剪后的图片也需要压缩
+                    choosingFroCompressImages.clear();
+                    choosingFroCompressImages.add(croppedImagePath);
+                    onImageSelected();
+                } else {
+                    // 操作无法继续：数据丢失
+                    SimpleDialogHelper.init(Activity()).show(R.string.ui_base_text_invalid_crop_path);
+                }
+                break;
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, data);
     }
 
     private void adjustWannaToImageSize() {

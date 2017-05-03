@@ -102,6 +102,11 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    protected String getLocalPageTag() {
+        return null;
+    }
+
+    @Override
     public void doingInResume() {
         setLeftIcon(0);
         setLeftText(R.string.ui_base_text_cancel);

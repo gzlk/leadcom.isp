@@ -175,6 +175,11 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
+    @Override
+    protected String getLocalPageTag() {
+        return null;
+    }
+
     private void fetchingDocument() {
         if (StringHelper.isEmpty(mQueryId)) {
             initializeHolders(null);

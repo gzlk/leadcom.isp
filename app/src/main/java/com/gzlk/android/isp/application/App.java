@@ -7,6 +7,7 @@ import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
+import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -50,6 +51,7 @@ public class App extends BaseActivityManagedApplication {
     public void onCreate() {
         super.onCreate();
         if (shouldInit()) {
+            EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();
             initializeDatabase();
         }

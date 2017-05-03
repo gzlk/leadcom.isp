@@ -1,14 +1,11 @@
 package com.gzlk.android.isp.model.user.moment;
 
-import com.google.gson.JsonArray;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <b>功能描述：</b>个人动态<br />
@@ -21,8 +18,27 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-@Table(Model.Table.MOMENT)
+@Table(Moment.Table.MOMENT)
 public class Moment extends Model {
+
+    static class Table {
+        /**
+         * 个人说说
+         */
+        static final String MOMENT = "moment";
+        /**
+         * 说说统计信息表
+         */
+        static final String ADDITIONAL = "momentAdditional";
+        /**
+         * 说说评论表
+         */
+        static final String COMMENT = "momentComment";
+        /**
+         * 说说点赞表
+         */
+        static final String LIKE = "momentLike";
+    }
 
     public static class Field {
         public static final String Location = "location";

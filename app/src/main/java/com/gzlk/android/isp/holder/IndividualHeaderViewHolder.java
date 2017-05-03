@@ -4,8 +4,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.gzlk.android.isp.fragment.individual.UserInformationFragment;
 import com.gzlk.android.isp.fragment.individual.QRCodeFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
@@ -38,6 +40,13 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         ((BaseTransparentSupportFragment) fragment).tryPaddingContent(itemView, true);
+        userHeader.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @SuppressWarnings("ConstantConditions")
+            @Override
+            public void onImageClick(String url) {
+                openActivity(UserInformationFragment.class.getName(), App.app().UserId(), false, false, true);
+            }
+        });
 
     }
 
@@ -54,6 +63,6 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
     public void showContent(User user) {
         ((BaseTransparentSupportFragment) fragment()).tryPaddingContent(itemView, true);
         nameTextView.setText(StringHelper.isEmpty(user.getName()) ? user.getLoginId() : user.getName());
-        //userHeader.displayImage("https://img3.cache.netease.com/photo/0005/2017-04-17/CI7C0TEB00DE0005.png", getDimension(R.dimen.ui_static_dp_60), false, false);
+        userHeader.displayImage("https://img3.cache.netease.com/photo/0001/2017-04-20/CIGA5N5D00AN0001.jpg", getDimension(R.dimen.ui_static_dp_60), false, false);
     }
 }

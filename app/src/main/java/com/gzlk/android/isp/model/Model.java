@@ -29,14 +29,6 @@ public class Model extends BaseModel {
          */
         public static final String USER = "user";
         /**
-         * 个人动态表
-         */
-        public static final String MOMENT = "moment";
-        /**
-         * 个人动态额外信息
-         */
-        public static final String MOMENT_ADDITIONAL = "momentAdditional";
-        /**
          * 用户隐私设置
          */
         public static final String PRIVACY = "privacy";

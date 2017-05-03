@@ -25,11 +25,20 @@ public abstract class BaseVerifyFragment extends BaseLayoutSupportFragment {
      * 忘记密码时的验证
      */
     public static final int VT_PASSWORD = 1;
+    /**
+     * 修改手机号码时的验证
+     */
+    public static final int VT_MODIFY_PHONE = 2;
 
     protected static final String PARAM_VERIFY_TYPE = "pvf_type";
     protected static final String PARAM_VERIFY_PHONE = "pvf_phone";
     protected static final String PARAM_VERIFY_CODE = "pvf_code";
+    private static final String PARAM_VERIFY_CODE_RECEIVED = "pvf_received_code";
 
+    /**
+     * 用户接收到的验证码，如果为空则说明用户没有权限直接读取SMS内容
+     */
+    protected String receivedVerifyCode = "";
     /**
      * 当前验证方式
      */
@@ -48,6 +57,7 @@ public abstract class BaseVerifyFragment extends BaseLayoutSupportFragment {
         verifyType = bundle.getInt(PARAM_VERIFY_TYPE, VT_SIGN_UP);
         verifyPhone = bundle.getString(PARAM_VERIFY_PHONE, "");
         verifyCode = bundle.getString(PARAM_VERIFY_CODE, "");
+        receivedVerifyCode = bundle.getString(PARAM_VERIFY_CODE_RECEIVED, "");
     }
 
     @Override
@@ -55,6 +65,6 @@ public abstract class BaseVerifyFragment extends BaseLayoutSupportFragment {
         bundle.putInt(PARAM_VERIFY_TYPE, verifyType);
         bundle.putString(PARAM_VERIFY_PHONE, verifyPhone);
         bundle.putString(PARAM_VERIFY_CODE, verifyCode);
+        bundle.putString(PARAM_VERIFY_CODE_RECEIVED, receivedVerifyCode);
     }
-
 }

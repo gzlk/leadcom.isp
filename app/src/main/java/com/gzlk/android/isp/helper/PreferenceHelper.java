@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.gzlk.android.isp.application.App;
+import com.hlk.hlklib.etc.Cryptography;
 
 /**
  * 简单的配置数据
@@ -26,7 +27,7 @@ public class PreferenceHelper {
      */
     @SuppressWarnings("ConstantConditions")
     public static void save(String key, String value) {
-        SharedPreferences.Editor editor = App.app().getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = App.app().getSharedPreferences(name(), Context.MODE_PRIVATE).edit();
         try {
             editor.putString(key, value);
         } finally {
@@ -55,11 +56,16 @@ public class PreferenceHelper {
         return get(key, null);
     }
 
+    @SuppressWarnings("ConstantConditions")
+    private static String name() {
+        return SHARED_NAME;//StringHelper.format("%s_%s", SHARED_NAME, Cryptography.md5(App.app().UserId()));
+    }
+
     /**
      * 从Preference中获取字符串值
      */
     @SuppressWarnings("ConstantConditions")
     public static String get(String key, String defaultValue) {
-        return App.app().getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE).getString(key, defaultValue);
+        return App.app().getSharedPreferences(name(), Context.MODE_PRIVATE).getString(key, defaultValue);
     }
 }

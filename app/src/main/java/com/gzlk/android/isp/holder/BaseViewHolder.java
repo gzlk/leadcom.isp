@@ -76,7 +76,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     protected void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey) {
-        openActivity(fullClassName, params, BaseFragment.RESULT_NONE, supportToolbar, supportBackKey);
+        openActivity(fullClassName, params, BaseFragment.RESULT_BASE_REQUEST, supportToolbar, supportBackKey);
     }
 
     protected void openActivity(String fullClassName, String params, int requestCode, boolean supportToolbar, boolean supportBackKey) {
@@ -84,7 +84,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     protected void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
-        openActivity(fullClassName, params, BaseFragment.RESULT_NONE, supportToolbar, supportBackKey, transparentStatusBar);
+        openActivity(fullClassName, params, BaseFragment.RESULT_BASE_REQUEST, supportToolbar, supportBackKey, transparentStatusBar);
     }
 
     protected void openActivity(String fullClassName, String params, int requestCode, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {

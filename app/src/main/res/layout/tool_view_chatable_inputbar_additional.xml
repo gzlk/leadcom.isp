@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:translationZ="@dimen/ui_base_translationZ">
+
+    <com.hlk.hlklib.lib.emoji.EmojiBoard
+        android:id="@+id/ui_tool_chatable_emoji_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:emojiLineSize="7"
+        app:emojiPageLines="4" />
+
+    <include
+        android:id="@+id/ui_tool_chatable_recorder_layout"
+        layout="@layout/tool_view_chatable_inputbar_voice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+</RelativeLayout>

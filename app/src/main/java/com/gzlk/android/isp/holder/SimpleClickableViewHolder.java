@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Model;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -44,6 +45,10 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
         int right = itemView.getPaddingRight();
         int bottom = itemView.getPaddingBottom();
         itemView.setPadding(need ? right : 0, top, right, bottom);
+    }
+
+    public void showContent(Model model) {
+        showContent(model.getId());
     }
 
     public void showContent(String string) {

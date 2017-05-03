@@ -16,6 +16,7 @@
     <string name="ui_icon_clear">&#xe634;</string>
     <string name="ui_icon_attachment">&#xe63f;</string>
     <string name="ui_icon_delete">&#xe602;</string>
+    <string name="ui_icon_edit">&#xe624;</string>
     <string name="ui_icon_setting">&#xe601;</string>
     <string name="ui_icon_qr_code">&#xe63b;</string>
     <string name="ui_icon_right">&#xe6f2;</string>
@@ -23,6 +24,12 @@
     <string name="ui_icon_choose">&#xe605;</string>
     <string name="ui_icon_more">&#xe608;</string>
     <string name="ui_icon_camera">&#xe64b;</string>
+    <string name="ui_icon_camera_hollow">&#xe69a;</string>
+    <string name="ui_icon_recorder">&#xe60c;</string>
+    <string name="ui_icon_keyboard">&#xe644;</string>
+    <string name="ui_icon_emoji">&#xe643;</string>
+    <string name="ui_icon_append">&#xe61e;</string>
+    <string name="ui_icon_vertical_bar">&#xe6a9;</string>
     <string name="ui_icon_caution_oval">&#xe747;</string>
     <string name="ui_icon_caution_triangle">&#xe640;</string>
     <string name="ui_icon_main_home">&#xe607;</string>

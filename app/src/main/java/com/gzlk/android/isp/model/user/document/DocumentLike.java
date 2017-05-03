@@ -2,6 +2,7 @@ package com.gzlk.android.isp.model.user.document;
 
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Table;
 
 /**
  * <b>功能描述：</b>个人档案的点赞<br />
@@ -14,6 +15,7 @@ import com.litesuits.orm.db.annotation.Column;
  * <b>修改备注：</b><br />
  */
 
+@Table(Document.Table.LIKE)
 public class DocumentLike extends SubDocument {
 
     @Column(Model.Field.UserId)

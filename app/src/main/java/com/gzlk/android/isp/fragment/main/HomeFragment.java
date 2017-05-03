@@ -61,6 +61,11 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    protected String getLocalPageTag() {
+        return null;
+    }
+
+    @Override
     public void doingInResume() {
         // 设置选择图片不剪切
         isChooseImageForCrop = false;

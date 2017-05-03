@@ -100,7 +100,6 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
         if (DEBUG) {
             log("onCreate");
         }
-        mLayout = getLayout();
         if (null == savedInstanceState) {
             Bundle b = getArguments();
             if (null != b) {
@@ -109,6 +108,7 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
         } else {
             getParamsFromBundle(savedInstanceState);
         }
+        mLayout = getLayout();
     }
 
     @Override

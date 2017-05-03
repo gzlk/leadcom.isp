@@ -288,6 +288,20 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     };
 
     /**
+     * 列表滚动到最后一条记录
+     */
+    public void smoothScrollToBottom(final int position) {
+        if (null != mRecyclerView) {
+            Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mRecyclerView.smoothScrollToPosition(position);
+                }
+            }, 100);
+        }
+    }
+
+    /**
      * 下拉刷新
      */
     protected abstract void onSwipeRefreshing();
@@ -316,13 +330,15 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
      */
     protected void refreshing() {
         if (null != mSwipeRefreshLayout) {
-            Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                    //onSwipeRefreshing();
-                }
-            });
+            if (!mSwipeRefreshLayout.isRefreshing()) {
+                Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                        //onSwipeRefreshing();
+                    }
+                });
+            }
         }
     }
 
@@ -359,26 +375,26 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     /**
      * 每页大小
      */
-    protected static int PAGE_SIZE = 6;
+    protected static int PAGE_SIZE = 10;
 
     /**
-     * 默认刷新时间间隔
+     * 默认刷新时间间隔，10分钟
      */
     protected static final int REFRESHING_INTERVAL = 10 * 60 * 1000;
 
     /**
-     * 页面刷新标志
+     * 本地页码缓存标记
      */
-    protected String localPageTag = "";
+    protected abstract String getLocalPageTag();
 
     /**
      * 查看缓存中指定的页面是否可以自动刷新
      */
     protected boolean isNeedRefresh() {
-        if (StringHelper.isEmpty(localPageTag)) {
+        if (StringHelper.isEmpty(getLocalPageTag())) {
             throw new IllegalArgumentException("no page refresh tag exists.");
         }
-        String md5 = Cryptography.md5(localPageTag);
+        String md5 = Cryptography.md5(getLocalPageTag());
         long timestamp = Utils.timestamp();
         long value = Long.valueOf(PreferenceHelper.get(md5, "0"));
         if ((value + REFRESHING_INTERVAL) < timestamp) {

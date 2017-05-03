@@ -21,6 +21,9 @@
         <![CDATA[抱歉，由于您禁止App访问<font color="#3cbaff">存储设备</font>，可能无法完美体验相关功能，敬请谅解。]]>
     </string>
 
+    <string name="ui_grant_permission_device" formatted="false">
+        <![CDATA[我们无法控制您的<font color="#0094b0">%s</font>设备，可能权限被禁用。您可以在相关<font color="#ff7109">安全管家类软件</font>中或者<font color="#ff7109">系统安全设置</font>里打开%s权限再继续。]]>
+    </string>
 
     <string name="ui_grant_permission_phone_call">
         <![CDATA[您需要允许app替您<font color="#0094b0">拨打电话</font>才能继续。]]>

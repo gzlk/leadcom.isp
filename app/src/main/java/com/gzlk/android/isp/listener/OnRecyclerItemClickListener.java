@@ -18,7 +18,7 @@ import android.view.View;
  * <b>修改备注：</b><br />
  */
 
-public abstract class OnRecyclerItemClickListener<VH extends RecyclerView.ViewHolder> implements RecyclerView.OnItemTouchListener {
+public class OnRecyclerItemClickListener<VH extends RecyclerView.ViewHolder> extends RecyclerView.SimpleOnItemTouchListener {
 
     private GestureDetectorCompat mGestureDetectorCompat;
     private RecyclerView mRecyclerView;
@@ -42,12 +42,14 @@ public abstract class OnRecyclerItemClickListener<VH extends RecyclerView.ViewHo
     /**
      * RecyclerView item 的点击事件
      */
-    public abstract void onItemClick(VH holder);
+    public void onItemClick(VH holder) {
+    }
 
     /**
      * RecyclerView item 的长按事件
      */
-    public abstract void onItemLongPress(VH holder);
+    public void onItemLongPress(VH holder) {
+    }
 
     private class ItemTouchHelperGestureListener extends GestureDetector.SimpleOnGestureListener {
 

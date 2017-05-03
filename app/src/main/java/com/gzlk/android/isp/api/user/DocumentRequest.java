@@ -7,6 +7,7 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -99,6 +100,7 @@ public class DocumentRequest extends Request<Document> {
     /**
      * 更改档案的内容
      */
+    @SuppressWarnings("ConstantConditions")
     public void update(String documentId, String title, String content, String type) {
         //{_id,title,content,type,accessToken}
 
@@ -108,7 +110,7 @@ public class DocumentRequest extends Request<Document> {
             object.put("title", title);
             object.put("content", content);
             object.put("type", type);
-            //object.put("accessToken", accessToken);
+            object.put("accessToken", App.app().UserToken());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -128,8 +130,8 @@ public class DocumentRequest extends Request<Document> {
     /**
      * 查找指定用户的档案列表，返回一个结果集合
      */
-    public void list(@NonNull String userId) {
-        httpRequest(getRequest(MultipleDocument.class, format("%s?userId=%s", url(LIST), userId), "", HttpMethods.Get));
+    public void list(@NonNull String userId, int pageSize, int pageNumber) {
+        httpRequest(getRequest(MultipleDocument.class, format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), userId, pageSize, pageNumber), "", HttpMethods.Get));
     }
 
     /**

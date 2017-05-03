@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.gzlk.android.isp.task.OrmTask;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.lang.ref.SoftReference;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +103,6 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
     public void doingInResume() {
         // 这里不缓存选择了的图片，选择了一张图片之后就立即打开新发布窗口
         isSupportCacheSelected = false;
-        localPageTag = format(PAGE_TAG, selectedFunction);
         initializeAdapter();
         autoRefreshing();
     }
@@ -126,6 +127,11 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         performLoadingLocalModels();
     }
 
+    @Override
+    protected String getLocalPageTag() {
+        return format(PAGE_TAG, selectedFunction);
+    }
+
     /**
      * 尝试自动刷新
      */
@@ -141,11 +147,11 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         switch (selectedFunction) {
             case 0:
                 // 刷新动态列表
-                refreshingMoments();
+                refreshingRemoteMoments();
                 break;
             case 1:
                 // 刷新档案列表
-                refreshingDocuments();
+                refreshingRemoteDocuments(true);
                 break;
             case 2:
                 // 刷新收藏列表
@@ -158,7 +164,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
      * 拉取我的最新说说列表
      */
     @SuppressWarnings("ConstantConditions")
-    private void refreshingMoments() {
+    private void refreshingRemoteMoments() {
         MomentRequest.request().setOnRequestListListener(new OnRequestListListener<Moment>() {
 
             @SuppressWarnings("unchecked")
@@ -171,15 +177,16 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                     remoteTotalCount = total;
                     remotePageSize = pageSize;
                     if (list.size() > 0) {
-                        if (list.size() < remotePageSize) {
-                            // 如果这一页不满整页说明远程已经没有数据了
-                        }
                         new Dao<>(Moment.class).save(list);
                         if (selectedFunction == 0) {
+                            remotePageSize = pageSize;
+                            // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
+                            remotePageNumber = pageNumber + (list.size() >= pageSize ? 1 : 0);
+                            remoteTotalCount = total;
+                            remoteTotalPages = totalPages;
                             // 下拉刷新的时候需要清空已显示的记录列表
                             adapter.update((List<Model>) (Object) list);
                         }
-                        //appendListHeader(true);
                     }
                 }
                 stopRefreshing();
@@ -191,7 +198,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
      * 拉取我的档案列表
      */
     @SuppressWarnings("ConstantConditions")
-    private void refreshingDocuments() {
+    private void refreshingRemoteDocuments(boolean refreshing) {
         DocumentRequest.request().setOnRequestListListener(new OnRequestListListener<Document>() {
             @SuppressWarnings("unchecked")
             @Override
@@ -201,14 +208,18 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                     if (list.size() > 0) {
                         new Dao<>(Document.class).save(list);
                         if (selectedFunction == 1) {
+                            remotePageSize = pageSize;
+                            // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
+                            remotePageNumber = pageNumber + (list.size() >= pageSize ? 1 : 0);
+                            remoteTotalCount = total;
+                            remoteTotalPages = totalPages;
                             adapter.update((List<Model>) (Object) list);
                         }
-                        //appendListHeader(false);
                     }
                 }
                 stopRefreshing();
             }
-        }).list(App.app().UserId());
+        }).list(App.app().UserId(), PAGE_SIZE, refreshing ? 1 : remotePageNumber);// 如果是拉取，则总是从第一页开始，否则是拉取下一页
     }
 
     private void refreshingFavorites() {
@@ -239,6 +250,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             case 1:
                 // 加载更多的档案列表
                 loadingLocalDocuments();
+                refreshingRemoteDocuments(false);
                 break;
             case 2:
                 break;
@@ -273,7 +285,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 QueryBuilder<Moment> builder = new QueryBuilder<>(Moment.class)
                         .whereEquals(Model.Field.UserId, App.app().UserId())
                         .appendOrderDescBy(Model.Field.CreateDate)
-                        .limit(localPageNumber, PAGE_SIZE);
+                        .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
                 return new Dao<>(Moment.class).query(builder);
             }
         }).exec();
@@ -292,7 +304,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 QueryBuilder<Document> builder = new QueryBuilder<>(Document.class)
                         .whereEquals(Model.Field.UserId, App.app().UserId())
                         .appendOrderDescBy(Model.Field.CreateDate)
-                        .limit(localPageNumber, PAGE_SIZE);
+                        .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
                 return new Dao<>(Document.class).query(builder);
             }
         }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Document>() {
@@ -423,6 +435,16 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         }
     }
 
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_CHANGE) {
+            // 上层返回的有更改的
+            resetList();
+            performLoadingLocalModels();
+            performRefresh();
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
     private IndividualFunctionViewHolder.OnFunctionChangeListener functionChangeListener = new IndividualFunctionViewHolder.OnFunctionChangeListener() {
         @Override
         public void onChange(int index) {
@@ -430,7 +452,6 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 // 重置本地页码
                 localPageNumber = 0;
                 selectedFunction = index;
-                localPageTag = format(PAGE_TAG, selectedFunction);
                 resetList();
                 // 重新加载本地缓存记录
                 performLoadingLocalModels();

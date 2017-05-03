@@ -8,9 +8,12 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.user.UserRequest;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.TimeCounter;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.receiver.SmsReceiver;
 import com.hlk.hlklib.lib.inject.Click;
@@ -32,11 +35,6 @@ import com.hlk.hlklib.lib.view.CorneredEditText;
 
 public class CodeVerifyFragment extends BaseVerifyFragment {
 
-    private static final String PARAM_VERIFY_CODE = "srf_verify_code";
-    /**
-     * 用户接收到的验证码，如果为空则说明用户没有权限直接读取SMS内容
-     */
-    protected String receivedVerifyCode = "";
 
     public static CodeVerifyFragment newInstance(String params) {
         CodeVerifyFragment cvf = new CodeVerifyFragment();
@@ -48,19 +46,9 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
         return cvf;
     }
 
-    @Override
-    protected void getParamsFromBundle(Bundle bundle) {
-        super.getParamsFromBundle(bundle);
-        receivedVerifyCode = bundle.getString(PARAM_VERIFY_CODE, "");
-    }
-
-    @Override
-    protected void saveParamsToBundle(Bundle bundle) {
-        super.saveParamsToBundle(bundle);
-        bundle.putString(PARAM_VERIFY_CODE, receivedVerifyCode);
-    }
-
     // UI
+    @ViewId(R.id.ui_modify_phone_confirm_number)
+    private TextView phoneTextView;
     @ViewId(R.id.ui_verify_code_code)
     private ClearEditText verifyCode;
     @ViewId(R.id.ui_verify_code_to_resend)
@@ -76,7 +64,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_verify_code;
+        return verifyType == VT_MODIFY_PHONE ? R.layout.fragment_modify_phone_confirm : R.layout.fragment_verify_code;
     }
 
     @Override
@@ -88,8 +76,13 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_text_verify_code_fragment_title);
-        setLeftText(verifyType == VT_SIGN_UP ? R.string.ui_text_verify_code_fragment_title_left_text_sign_up : R.string.ui_text_verify_code_fragment_title_left_text_reset_password);
+        setCustomTitle(verifyType == VT_MODIFY_PHONE ? R.string.ui_text_modify_phone_confirm_fragment_title : R.string.ui_text_verify_code_fragment_title);
+        if (verifyType != VT_MODIFY_PHONE) {
+            setLeftText(verifyType == VT_SIGN_UP ? R.string.ui_text_verify_code_fragment_title_left_text_sign_up : R.string.ui_text_verify_code_fragment_title_left_text_reset_password);
+        }
+        if (null != phoneTextView) {
+            phoneTextView.setText(StringHelper.getString(R.string.ui_text_modify_phone_number_86, verifyPhone));
+        }
         //startTimeCounter();
         verifyCode.addOnValueVerifyingListener(valueVerifyingListener);
     }
@@ -192,11 +185,35 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                     return;
                 }
                 super.verifyCode = code;
-                String clazz = verifyType == VT_PASSWORD ? ResetPasswordFragment.class.getName() : SignUpFragment.class.getName();
-                String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, code);
-                openActivity(clazz, params, true, true);
+                if (verifyType == VT_MODIFY_PHONE) {
+                    // 更改手机号码时验证手机号码
+                    tryModifyMyPhoneNumber();
+                } else {
+                    String clazz = verifyType == VT_PASSWORD ? ResetPasswordFragment.class.getName() : SignUpFragment.class.getName();
+                    String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, code);
+                    openActivity(clazz, params, true, true);
+                }
                 break;
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void tryModifyMyPhoneNumber() {
+        UserRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    if (null != user && !StringHelper.isEmpty(user.getId())) {
+                        App.app().Me().setPhone(user.getPhone());
+                        new Dao<>(User.class).save(App.app().Me());
+                        resultSucceededActivity();
+                    } else {
+                        ToastHelper.make().showMsg(message);
+                    }
+                }
+            }
+        }).update(App.app().UserId(), UserRequest.TYPE_PHONE, verifyPhone);
     }
 
     @Override

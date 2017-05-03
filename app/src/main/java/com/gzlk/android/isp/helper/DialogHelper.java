@@ -231,7 +231,7 @@ public class DialogHelper {
                 } else {
                     dismiss();
                 }
-            } else {
+            } else if (id == R.id.ui_dialog_button_cancel) {
                 // 取消按钮时
                 if (null != cancelListener) {
                     cancelListener.onCancel();
