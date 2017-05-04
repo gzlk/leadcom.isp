@@ -16,6 +16,7 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.PopupTooltipHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.hlk.hlklib.etc.Utility;
 
@@ -47,6 +48,23 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
     public Handler Handler() {
         return mHandler;
+    }
+
+    /**
+     * 当前设备屏幕宽度像素
+     */
+    protected int mScreenWidth;
+    /**
+     * 当前设备屏幕高度像素
+     */
+    protected int mScreenHeight;
+
+    public int getScreenWidth() {
+        return mScreenWidth;
+    }
+
+    public int getScreenHeight() {
+        return mScreenHeight;
     }
 
     /**
@@ -148,6 +166,11 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     protected String getResultedData(Intent data) {
         if (null == data) return null;
         return data.getStringExtra(RESULT_STRING);
+    }
+
+    protected void closeWithWarning(int text) {
+        ToastHelper.make().showMsg(text);
+        finish();
     }
 
     /**

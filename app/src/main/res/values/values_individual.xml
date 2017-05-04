@@ -95,6 +95,9 @@
         <item>3|公开|%s|0</item>
     </string-array>
 
+    <string name="ui_text_collection_details_not_exists">收藏的内容不存在</string>
+    <string name="ui_text_collection_details_create_at" formatted="false">收藏于%s</string>
+
     <string-array name="ui_text_my_setting_items">
         <item>0</item>
         <item>1|动态|%s|0</item>

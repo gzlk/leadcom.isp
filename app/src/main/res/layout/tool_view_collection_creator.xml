@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+    android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+    android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_holder_view_collection_header"
+        android:layout_width="@dimen/ui_static_dp_30"
+        android:layout_height="@dimen/ui_static_dp_30"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        app:id_image_src="@mipmap/img_default_user_header"
+        app:id_image_type="oval" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_collection_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:text="@string/app_name"
+        android:textSize="@dimen/ui_base_text_size_small" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_collection_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/textColorHintDark"
+        android:textSize="@dimen/ui_base_text_size_little" />
+</LinearLayout>

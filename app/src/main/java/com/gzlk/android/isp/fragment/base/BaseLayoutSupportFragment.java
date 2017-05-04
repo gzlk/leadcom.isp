@@ -237,29 +237,12 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
     }
 
     /**
-     * 当前设备屏幕宽度像素
-     */
-    protected int mScreenWidth;
-    /**
-     * 当前设备屏幕高度像素
-     */
-    protected int mScreenHeight;
-
-    /**
      * 获取当前设备的屏幕尺寸
      */
     private void getScreenSize() {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         mScreenWidth = dm.widthPixels;
         mScreenHeight = dm.heightPixels;
-    }
-
-    public int getScreenWidth() {
-        return mScreenWidth;
-    }
-
-    public int getScreenHeight() {
-        return mScreenHeight;
     }
 
     /**

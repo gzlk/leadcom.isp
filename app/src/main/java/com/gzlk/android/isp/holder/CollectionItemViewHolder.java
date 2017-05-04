@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.holder;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -8,6 +9,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.individual.CollectionDetailsFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
@@ -16,6 +18,7 @@ import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.io.File;
@@ -40,6 +43,8 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     private TextView creatorName;
     @ViewId(R.id.ui_holder_view_collection_time)
     private TextView createTime;
+    @ViewId(R.id.ui_holder_view_collection_content_cover)
+    private CorneredView convertView;
 
     @ViewId(R.id.ui_tool_view_collection_content_text)
     private ExpandableTextView textContent;
@@ -82,7 +87,14 @@ public class CollectionItemViewHolder extends BaseViewHolder {
                 textContent.makeExpandable();
                 break;
             case Collection.Type.IMAGE:
-                imageContent.displayImage(content, getDimension(R.dimen.ui_static_dp_120), getDimension(R.dimen.ui_static_dp_80), false, false);
+                int width = showLargeImage ? fragment().getScreenWidth() : getDimension(R.dimen.ui_static_dp_120);
+                int height = showLargeImage ? fragment().getScreenHeight() : getDimension(R.dimen.ui_static_dp_80);
+                if (!showLargeImage) {
+                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageContent.getLayoutParams();
+                    params.width = width;
+                    params.height = height;
+                }
+                imageContent.displayImage(content, width, height, false, false);
                 break;
             case Collection.Type.ATTACHMENT:
                 String name = content.substring(content.lastIndexOf('/') + 1);
@@ -99,7 +111,21 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         }
     }
 
+    private boolean showLargeImage = false;
+
+    public void setShowLargeImage(boolean largeImage) {
+        showLargeImage = largeImage;
+        convertView.setVisibility(showLargeImage ? View.GONE : View.INVISIBLE);
+        createTime.setVisibility(showLargeImage ? View.GONE : View.VISIBLE);
+    }
+
     @Click({R.id.ui_holder_view_collection_content_cover})
     private void click(View view) {
+        if (null != dataHandlerBoundDataListener) {
+            Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
+            if (null != object && object instanceof Collection) {
+                openActivity(CollectionDetailsFragment.class.getName(), ((Collection) object).getId(), true, false);
+            }
+        }
     }
 }

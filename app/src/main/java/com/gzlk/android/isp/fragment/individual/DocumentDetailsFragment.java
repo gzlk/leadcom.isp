@@ -79,11 +79,6 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
         }
     }
 
-    private void closeWithWarning(int text) {
-        ToastHelper.make().showMsg(text);
-        finish();
-    }
-
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return true;

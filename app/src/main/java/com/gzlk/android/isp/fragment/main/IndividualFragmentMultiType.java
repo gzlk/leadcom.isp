@@ -556,7 +556,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
 
     private BaseViewHolder.OnHandlerBoundDataListener<Model> boundCollectionListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
         @Override
-        public Model onHandlerBoundData(BaseViewHolder holder) {
+        public Collection onHandlerBoundData(BaseViewHolder holder) {
             Model model = adapter.get(holder.getAdapterPosition());
             return (model instanceof Collection) ? ((Collection) model) : null;
         }
