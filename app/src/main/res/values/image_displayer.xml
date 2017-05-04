@@ -34,5 +34,9 @@
         <attr name="id_nullable_drawable" format="boolean" />
         <!--是否显示的大图-->
         <attr name="id_is_large_image" format="boolean" />
+        <attr name="id_image_scale_type">
+            <enum name="normalType" value="0" />
+            <enum name="centerCrop" value="1" />
+        </attr>
     </declare-styleable>
 </resources>

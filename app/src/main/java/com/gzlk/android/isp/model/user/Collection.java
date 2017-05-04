@@ -55,7 +55,7 @@ public class Collection extends Model {
     private String userId;
     //原作者ID
     @Column(Document.Field.Creator)
-    private String creator;
+    private String creatorId;
     //原作者名称
     @Column(Document.Field.CreatorName)
     private String creatorName;
@@ -90,12 +90,12 @@ public class Collection extends Model {
         this.userId = userId;
     }
 
-    public String getCreator() {
-        return creator;
+    public String getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
     }
 
     public String getCreatorName() {

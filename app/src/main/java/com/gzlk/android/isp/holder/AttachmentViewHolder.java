@@ -58,7 +58,7 @@ public class AttachmentViewHolder extends BaseViewHolder {
         }
     }
 
-    private int getFileExtension(String ext) {
+    public static int getFileExtension(String ext) {
         int res = R.string.ui_icon_attachment_unknown;
         ext = ext.toLowerCase(Locale.getDefault());
         if (ext.contains("doc")) {

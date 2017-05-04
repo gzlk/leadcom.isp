@@ -1,170 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ui_text_temp_long">
-        （原标题：李克强为啥要全面推开医联体建设）
-看病难、看病贵，特别是基层群众看病难、看病贵一直是这些年影响百姓改革获得感的重要因素，如何从根本上将广大群众从对医疗服务的不满意中解脱出来，为广大患者提供更加满意的医疗卫生服务，始终是本届政府的重要工作内容。在4月12日的国务院常务会议上，医疗问题再次得到总理的关注，会议部署推进医联体建设工作，以深化体制机制改革为群众提供优质便利的医疗服务。会议指出：建设和发展医联体，是贯彻以人民为中心的发展思想、落实《政府工作报告》部署的重点任务，是深化医疗医保医药联动改革、合理配置资源、使基层群众享受优质便利医疗服务的重要举措。
-早在2013年，李克强总理就在全国医改工作电视电话会议上做出重要批示,“医改事关民生福祉，也是民心所向”,要求各地方、各有关部门一定要把基本医疗卫生制度作为公共产品向全民提供，办好人民满意的医疗卫生事业。在2015年，李克强在洛阳考察河南科技大学第一附属医院新区医院时说，健康是幸福的基础，生命是平等的，无论是城镇居民、职工还是农民，人人都应享有医保服务。
-从总理一次次的讲话中，我们不难体会出本届政府对于解决群众看病难的坚定信念，而将看病问题上升到了生命权的高度，更体现出总理对全面均衡地发展我国卫生事业的殷切期待。
-虽然说与欧美国家还存在医疗技术方面的差距，但是我们国家这些年来在医疗卫生领域中取得的成绩举世瞩目，在一些局部地区，医疗服务甚至完全可以与最发达的国家看齐，在检查化验、就诊时效性方面，更是走在了很多欧美国家的前面，与他们动不动就排队到几个月之后不同，我们的迅捷程度是这些国家无法比拟的。
-但为什么人们的就医体验依然得不到改善，始终给中国的医疗服务贴着“难”和“贵”的标签呢？
+　　（原标题：李克强为啥要全面推开医联体建设）<br/>看病难、看病贵，特别是基层群众看病难、看病贵一直是这些年影响百姓改革获得感的重要因素，如何从根本上将广大群众从对医疗服务的不满意中解脱出来，为广大患者提供更加满意的医疗卫生服务，始终是本届政府的重要工作内容。在4月12日的国务院常务会议上，医疗问题再次得到总理的关注，会议部署推进医联体建设工作，以深化体制机制改革为群众提供优质便利的医疗服务。会议指出：建设和发展医联体，是贯彻以人民为中心的发展思想、落实《政府工作报告》部署的重点任务，是深化医疗医保医药联动改革、合理配置资源、使基层群众享受优质便利医疗服务的重要举措。
+<br/>早在2013年，李克强总理就在全国医改工作电视电话会议上做出重要批示,“医改事关民生福祉，也是民心所向”,要求各地方、各有关部门一定要把基本医疗卫生制度作为公共产品向全民提供，办好人民满意的医疗卫生事业。在2015年，李克强在洛阳考察河南科技大学第一附属医院新区医院时说，健康是幸福的基础，生命是平等的，无论是城镇居民、职工还是农民，人人都应享有医保服务。
+<br/>从总理一次次的讲话中，我们不难体会出本届政府对于解决群众看病难的坚定信念，而将看病问题上升到了生命权的高度，更体现出总理对全面均衡地发展我国卫生事业的殷切期待。
+<br/>虽然说与欧美国家还存在医疗技术方面的差距，但是我们国家这些年来在医疗卫生领域中取得的成绩举世瞩目，在一些局部地区，医疗服务甚至完全可以与最发达的国家看齐，在检查化验、就诊时效性方面，更是走在了很多欧美国家的前面，与他们动不动就排队到几个月之后不同，我们的迅捷程度是这些国家无法比拟的。
+<br/>但为什么人们的就医体验依然得不到改善，始终给中国的医疗服务贴着“难”和“贵”的标签呢？
     </string>
     <string name="temp_number_value">123</string>
-    <string name="temp_json_moment_list">
-[\"https://img3.cache.netease.com/photo/0005/2017-04-17/CI7C0TEB00DE0005.png\",\"https://img2.cache.netease.com/photo/0005/2017-04-17/CI78TNFE00DE0005.jpg\",\"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-17/CI78TJC800DE0005.jpg\",\"https://img4.cache.netease.com/photo/0005/2017-04-17/CI78TOTU00DE0005.jpg\",\"https://img6.cache.netease.com/photo/0005/2017-04-17/CI78U34C00DE0005.jpg\",\"https://img5.cache.netease.com/photo/0005/2017-04-17/CI7AKM4A00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59K3C600DE0005.jpg\",\"https://img5.cache.netease.com/photo/0005/2017-04-16/CI59K2K500DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59K0TF00DE0005.jpg\",\"https://img2.cache.netease.com/photo/0005/2017-04-17/CI78TM7F00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JVDB00DE0005.jpg\",\"https://img2.cache.netease.com/photo/0005/2017-04-16/CI59JUQL00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JSTE00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JSLE00DE0005.jpg\",\"https://img5.cache.netease.com/photo/0005/2017-04-17/CI7A3AGH00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JRVJ00DE0005.jpg\",\"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JQML00DE0005.png\",\"https://img5.cache.netease.com/photo/0005/2017-04-16/CI59JPN200DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-17/CI78TKLN00DE0005.jpg\",\"https://img3.cache.netease.com/photo/0005/2017-04-16/CI59JOFO00DE0005.jpg\"]
-    </string>
-    <string name="temp_json_moment_1">
-{
-	\"id\":\"1234567890\",
-	\"userId\":\"jiakjdiuqij\",
-	\"userName\":\"Leekwok\",
-	\"createDate\":\"2017-04-21 01:18:20\",
-	\"location\":\"山东省烟台市开发区衡山路1号207室\",
-	\"content\":\"clone在平时项目的开发中可能用的不是很频繁，但是区分深拷贝和浅拷贝会让我们对java内存结构和运行方式有更深的了解。至于彻底深拷贝，几乎是不可能实现的，原因已经在上一节中进行了说明\",
-	\"image\":[\"https://img3.cache.netease.com/photo/0005/2017-04-17/CI7C0TEB00DE0005.png\",\"https://img2.cache.netease.com/photo/0005/2017-04-17/CI78TNFE00DE0005.jpg\",\"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg\"]
-}
-    </string>
-    <string name="temp_json_moment_multi" formatted="false">
-[{
-    \"id\": \"1234567890\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-04-21 03:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"clone在平时项目的开发中可能用的不是很频繁，但是区分深拷贝和浅拷贝会让我们对java内存结构和运行方式有更深的了解。至于彻底深拷贝，几乎是不可能实现的，原因已经在上一节中进行了说明\",
-    \"image\": [
-        \"https://img6.cache.netease.com/photo/0001/2017-04-20/CIGG414400AN0001.jpg\",
-        \"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg\"
-    ]
-},
-{
-    \"id\": \"1234567891\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-04-21 01:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"【骄傲！#天舟一号飞船#发射升空！威武】4月20日19时41分，搭载天舟一号货运飞船的长征七号遥二运载火箭，在我国文昌航天发射场点火发射升空！加油，中国航天！\",
-    \"image\": [
-        \"https://img3.cache.netease.com/photo/0001/2017-04-20/CIGA5N5D00AN0001.jpg\",
-        \"https://img6.cache.netease.com/photo/0001/2017-04-20/CIG88ESU00AN0001.jpg\",
-        \"https://img3.cache.netease.com/photo/0001/2017-04-20/CIGA5NGA00AN0001.jpg\",
-		\"https://img6.cache.netease.com/photo/0001/2017-04-20/CIG93MBI00AN0001.jpg\",
-		\"https://img6.cache.netease.com/photo/0001/2017-04-20/CIGG414400AN0001.jpg\"
-    ]
-},{
-    \"id\": \"1234567892\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-04-20 01:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"中国高铁今日起首次跨省调价。从4月21日起，东南沿海的车票价格根据各班次的客流情况进行差异化调整，从此告别“一刀切”。\",
-    \"image\": []
-},{
-    \"id\": \"1234567893\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-04-19 01:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"据人民日报4月12日报道，中国铁路总公司相关部门负责人表示，价格低是东南沿海线路亏损的原因之一。东南沿海高铁长期执行国家1997年批复的高等级快速软座票价标准，明显低于同区段公路票价。该负责人介绍，宁波至厦门段，公路运行13.5小时，票价312元，高铁运行5.5小时，票价仅250元；厦门至深圳，公路运行8小时，票价372元，高铁运行3.5小时，票价仅150元。<br/>调价一方面可以提高铁路对市场的敏感度，另一方面可以使铁路行业的收入预期与经营环境有所改善。<br/>对于乘客来说，如果对价格比较敏感但对时间要求不高，可以避开高峰时段，降低出行成本。而对时间敏感的乘客，可以像选机票一样选择更合适也更贵的班次。\",
-    \"image\": [\"https://cms-bucket.nosdn.127.net/catchpic/8/8b/8b985ff21c0f32cdf88495ced59392a9.jpg\"]
-},{
-    \"id\": \"1234567894\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-04-18 01:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"\",
-    \"image\": [
-        \"https://img3.cache.netease.com/photo/0008/2017-04-20/CIE3F3242EI00008.550x.0.jpg\",
-        \"https://img3.cache.netease.com/photo/0008/2017-04-20/CIE3F1682EI00008.550x.0.jpg\",
-		\"https://img4.cache.netease.com/photo/0008/2017-04-20/CIE3EV602EI00008.550x.0.jpg\"
-    ]
-},{
-    \"id\": \"1234567895\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-03-21 01:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"今年5月,中国将在北京主办“一带一路”国际合作高峰论坛,共商合作大计,共建合作平台,共享合作成果,为解决当前世界和区域经济面临的问题寻找方案,为实现联动式发展注入新能量,让“一带一路”建设更好造福各国人民。\",
-    \"image\": [
-        \"https://img3.cache.netease.com/photo/0005/2017-04-17/CI78TJC800DE0005.jpg\",
-        \"https://img4.cache.netease.com/photo/0005/2017-04-17/CI78TOTU00DE0005.jpg\",
-        \"https://img6.cache.netease.com/photo/0005/2017-04-17/CI78U34C00DE0005.jpg\",
-		\"https://img5.cache.netease.com/photo/0005/2017-04-17/CI7AKM4A00DE0005.jpg\"
-    ]
-},{
-    \"id\": \"1234567896\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-02-21 01:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"\",
-    \"image\": [
-        \"https://img4.cache.netease.com/photo/0008/2017-04-16/CI5IJO435BD00008.jpg\"
-    ]
-},{
-    \"id\": \"1234567897\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-02-22 01:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"2003年11月，张越由北京市公安局副局长调至时任公安部部长周永康直接管辖的公安部二十六局（反邪教局）局长；2007年12月，张越调任京畿重地河北任省公安厅党委书记；2008年1月任河北省省长助理、省委政法委委员，省公安厅厅长、党委书记；2008年6月任河北省委政法委书记，省公安厅厅长、党委书记；2008年12月，张越进入河北省委常委班子，同时身兼省委政法委书记，省公安厅厅长、党委书记（2013年8月不再担任省公安厅厅长，2015年3月不再担任省公安厅党委书记），统揽公检法系统大权于一身。\",
-    \"image\": []
-},{
-    \"id\": \"1234567898\",
-    \"userId\": \"jiakjdiuqij\",
-    \"userName\": \"Leekwok\",
-    \"createDate\": \"2017-04-11 01:18:20\",
-    \"location\": \"山东省烟台市开发区衡山路1号207室\",
-    \"content\": \"clone在平时项目的开发中可能用的不是很频繁，但是区分深拷贝和浅拷贝会让我们对java内存结构和运行方式有更深的了解。至于彻底深拷贝，几乎是不可能实现的，原因已经在上一节中进行了说明\",
-    \"image\": [
-        \"https://img3.cache.netease.com/photo/0005/2017-04-17/CI7C0TEB00DE0005.png\",
-        \"https://img2.cache.netease.com/photo/0005/2017-04-17/CI78TNFE00DE0005.jpg\",
-        \"https://img6.cache.netease.com/photo/0005/2017-04-16/CI59JMD900DE0005.jpg\"
-    ]
-}
-]
-    </string>
-    <string name="temp_json_document_comment_multiple">
+    <string name="temp_json">
 [
     {
-        \"id\": \"1234567890\",
-        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"lastModifiedDate\": null,
+        \"creatorId\": \"58fe2e0f2f57354690490ba8\",
+        \"creatorName\": \"哈哈\",
+        \"id\": \"590aabd72f573513e816c1f2\",
+        \"type\": \"1\",
         \"userId\": \"58fe2e0f2f57354690490ba8\",
-        \"userName\": \"哈哈\",
-        \"createDate\": \"2017-05-01 23:20:20\",
-        \"content\": \"这份档案不错，有用得着的地方！\"
+        \"content\": \"看病难、看病贵，特别是基层群众看病难、看病贵一直是这些年影响百姓改革获得感的重要因素，如何从根本上将广大群众从对医疗服务的不满意中解脱出来，为广大患者提供更加满意的医疗卫生服务，始终是本届政府的重要工作内容。在4月12日的国务院常务会议上，医疗问题再次得到总理的关注，会议部署推进医联体建设工作，以深化体制机制改革为群众提供优质便利的医疗服务。会议指出：建设和发展医联体，是贯彻以人民为中心的发展思想、落实《政府工作报告》部署的重点任务，是深化医疗医保医药联动改革、合理配置资源、使基层群众享受优质便利医疗服务的重要举措。<br/>早在2013年，李克强总理就在全国医改工作电视电话会议上做出重要批示,“医改事关民生福祉，也是民心所向”,要求各地方、各有关部门一定要把基本医疗卫生制度作为公共产品向全民提供，办好人民满意的医疗卫生事业。在2015年，李克强在洛阳考察河南科技大学第一附属医院新区医院时说，健康是幸福的基础，生命是平等的，无论是城镇居民、职工还是农民，人人都应享有医保服务。<br/>从总理一次次的讲话中，我们不难体会出本届政府对于解决群众看病难的坚定信念，而将看病问题上升到了生命权的高度，更体现出总理对全面均衡地发展我国卫生事业的殷切期待。<br/>虽然说与欧美国家还存在医疗技术方面的差距，但是我们国家这些年来在医疗卫生领域中取得的成绩举世瞩目，在一些局部地区，医疗服务甚至完全可以与最发达的国家看齐，在检查化验、就诊时效性方面，更是走在了很多欧美国家的前面，与他们动不动就排队到几个月之后不同，我们的迅捷程度是这些国家无法比拟的。<br/>但为什么人们的就医体验依然得不到改善，始终给中国的医疗服务贴着“难”和“贵”的标签呢？\",
+        \"createDate\": \"2017-05-03 12:19:35\"
     },
     {
-        \"id\": \"1234567891\",
-        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"lastModifiedDate\": null,
+        \"creatorId\": \"58fe2e0f2f57354690490ba8\",
+        \"creatorName\": \"哈哈\",
+        \"id\": \"590aabd72f573513e816c1f3\",
+        \"type\": \"4\",
         \"userId\": \"58fe2e0f2f57354690490ba8\",
-        \"userName\": \"嘿嘿\",
-        \"createDate\": \"2017-05-01 23:20:21\",
-        \"content\": \"可以哦\"
+        \"content\": \"/storage/emulated/0/DCIM/Camera/20170422_134736.rar\",
+        \"createDate\": \"2017-05-04 10:19:35\"
     },
     {
-        \"id\": \"1234567892\",
-        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"lastModifiedDate\": null,
+        \"creatorId\": \"58fe2e0f2f57354690490ba8\",
+        \"creatorName\": \"哈哈\",
+        \"id\": \"590aabd72f573513e816c1f4\",
+        \"type\": \"4\",
         \"userId\": \"58fe2e0f2f57354690490ba8\",
-        \"userName\": \"呵呵\",
-        \"createDate\": \"2017-05-01 23:20:22\",
-        \"content\": \"Verify nice, good job.\"
+        \"content\": \"/storage/emulated/0/DCIM/Camera/历康平台需求文档.doc\",
+        \"createDate\": \"2017-05-02 12:19:35\"
     },
     {
-        \"id\": \"1234567893\",
-        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"lastModifiedDate\": null,
+        \"creatorId\": \"58fe2e0f2f57354690490ba8\",
+        \"creatorName\": \"哈哈\",
+        \"id\": \"590aabd72f573513e816c1f5\",
+        \"type\": \"4\",
         \"userId\": \"58fe2e0f2f57354690490ba8\",
-        \"userName\": \"嘻嘻\",
-        \"createDate\": \"2017-05-01 23:20:23\",
-        \"content\": \"这份档案不错，有用得着的地方！里面还是有很多值得思考的地方。\"
+        \"content\": \"/storage/emulated/0/DCIM/Camera/历康平台需求文档.xls\",
+        \"createDate\": \"2017-03-04 12:19:35\"
     },
     {
-        \"id\": \"1234567894\",
-        \"userDocId\": \"5900d3c22f57354690490bab\",
+        \"lastModifiedDate\": null,
+        \"creatorId\": \"58fe2e0f2f57354690490ba8\",
+        \"creatorName\": \"哈哈\",
+        \"id\": \"590aabd72f573513e816c1f6\",
+        \"type\": \"4\",
         \"userId\": \"58fe2e0f2f57354690490ba8\",
-        \"userName\": \"咔咔\",
-        \"createDate\": \"2017-05-01 23:20:24\",
-        \"content\": \"厉害，超牛！\"
+        \"content\": \"/storage/emulated/0/DCIM/Camera/20170422_134736.jpg\",
+        \"createDate\": \"2016-05-04 12:19:35\"
+    },
+    {
+        \"lastModifiedDate\": null,
+        \"creatorId\": \"58fe2e0f2f57354690490ba8\",
+        \"creatorName\": \"哈哈\",
+        \"id\": \"590aabd72f573513e816c1f7\",
+        \"type\": \"1\",
+        \"userId\": \"58fe2e0f2f57354690490ba8\",
+        \"content\": \"/storage/emulated/0/DCIM/Camera/20170422_134736.jpg\",
+        \"createDate\": \"2017-05-04 12:19:35\"
     }
 ]
     </string>

@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -43,20 +44,18 @@ public class Utils {
     public static final String FMT_YMD3 = "yyyy年MM月dd日";
     public static final String FMT_YMDHM = "yyyy年MM月dd日 HH:mm";
     public static final String FMT_HHMMSS = "yyyy/MM/dd HH:mm:ss";
-    public static final String FMT_MMDD = "MM月dd号";
+    public static final String FMT_MMDD = "MM月dd日";
     public static final String FMT_YYYYMMDDHHMM = "yyyyMMddHHmm";
     public static final String FMT_YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
-    public static final String FMT_YYYYBMMBDD = "yyyy-MM-dd";
 
     public static String formatDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(FMT_HHMMSS,
+        SimpleDateFormat sdf = new SimpleDateFormat(FMT_YYYYMMDDHHMMSS,
                 Locale.getDefault());
         return sdf.format(date);
     }
 
     public static String formatDateOfNow(String fmt) {
-        SimpleDateFormat sdf = new SimpleDateFormat(fmt,
-                Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(fmt, Locale.getDefault());
         return sdf.format(new Date());
     }
 
@@ -97,6 +96,10 @@ public class Utils {
     }
 
     public static String format(long time) {
+        if (time < 1000000000000L) {
+            // if timestamp given in seconds, convert to millis
+            time *= 1000;
+        }
         long h = time / HOUR;
         long m = time % HOUR / MINUTE;
         long s = time % MINUTE / SECOND;
@@ -196,38 +199,53 @@ public class Utils {
     private static final long SECOND = 1000;
     private static final long MINUTE = 60 * SECOND;
     private static final long HOUR = 60 * MINUTE;
-    /**
-     * 一天的毫秒数
-     */
     private static final long DAY = HOUR * 24;
-    /**
-     * 二天的毫秒数
-     */
-    private static final long TWO_DAYS = HOUR * 48;
 
-    // private static final long MONTH = DAY * 30;
+    public static String formatTimeAgo(String fmt, String time) {
+        return formatTimeAgo(parseDate(fmt, time));
+    }
 
-    /**
-     * 获取指定时间与当前时间相比较的时间 <br>
-     * 如果是在同一天内则显示时间<br>
-     * 前一天显示昨天，再前一天显示前天，其余显示日期
-     */
-    @SuppressWarnings("deprecation")
-    public static String formatDateBetweenNow(Date date) {
-        Date d = new Date();
-        long now = d.getTime();
-        Date today = new Date(d.getYear(), d.getMonth(), d.getDay());
-        long today0 = today.getTime();
-        long then = date.getTime();
-        if (then > (now + MINUTE * 2))
-            return "->\u795e\u5947\u7684\u672a\u6765";
-        if (then > today0)
-            return format("HH:mm", date);
-        if (then > today0 - DAY)
-            return "\u6628\u5929";// yesterday
-        if (then > today0 - DAY * 2)
-            return "\u524d\u5929";// the day before yesterday
-        return format("yyyy-MM-dd", date);
+    public static String formatTimeAgo(Date date) {
+        return formatTimeAgo(date.getTime());
+    }
+
+    public static String formatTimeAgo(long time) {
+        if (time < 1000000000000L) {
+            // if timestamp given in seconds, convert to millis
+            time *= 1000;
+        }
+        long now = System.currentTimeMillis();
+        if (time > now || time <= 0) {
+            return null;
+        }
+        final long diff = now - time;
+        if (diff < MINUTE) {
+            return "刚刚";
+        } else if (diff < 30 * MINUTE) {
+            return diff / MINUTE + "分钟前";
+        } else if (diff < 59 * MINUTE) {
+            return "半小时前";
+        } else if (diff < DAY) {
+            return diff / HOUR + "小时前";
+        } else if (diff < 2 * DAY) {
+            return "昨天";
+        } else if (diff < 3 * DAY) {
+            return "前天";
+        }
+        Calendar year = Calendar.getInstance();
+        year.set(Calendar.MONTH, Calendar.JANUARY);
+        year.set(Calendar.DAY_OF_YEAR, 1);
+        year.set(Calendar.HOUR_OF_DAY, 0);
+        year.set(Calendar.MINUTE, 0);
+        year.set(Calendar.SECOND, 0);
+        year.set(Calendar.MILLISECOND, 1);
+        long yearBeginning = year.getTimeInMillis();
+        if (diff < yearBeginning) {
+            // 今年的话，则格式化成 xx月xx日
+            return format(FMT_MMDD, time);
+        }
+        // 去年以及以前的都格式化成 xxxx年xx月xx日
+        return format(FMT_YMD3, time);
     }
 
     private static final String[] digitalUnits = new String[]{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "DB", "NB"};
@@ -236,7 +254,7 @@ public class Utils {
      * 格式化显示文件大小
      */
     public static String formatSize(long size) {
-        if (size <= 0) return "0";
+        if (size <= 0) return "0B";
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + digitalUnits[digitGroups];
     }
@@ -282,47 +300,6 @@ public class Utils {
     public static void showInputBoard(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(view, 0);
-    }
-
-    /**
-     * 关闭数据库连接
-     */
-    public static void clearDBHelpers() {
-//        ChatDBHelper.getInstance().close();
-//        DeptDBHelper.getInstance().close();
-//        UserDBHelper.getInstance().close();
-//        SettingDBHelper.getInstance().close();
-    }
-
-    /**
-     * @param time 时间戳
-     * @return 获取指定时间与当前时间相比较的时间 <br>
-     * <p>
-     * 如果在一分钟内，则显示”刚刚“
-     * 如果在一分和60分之间，则显示”x分种前“
-     * 如果在一小时和24小时之间，则显示”x小时前“
-     * 如果在24小时和48小时之前，则显示昨天
-     * 如果超过48小时，则显示”x天前“
-     */
-    public static String formatDateBetweenNowLikeWeChat(long time) {
-        long currentTime = System.currentTimeMillis();
-        long intervalTime = currentTime - time;
-        if (intervalTime < MINUTE) {
-            int second = (int) (intervalTime / SECOND);
-            return "刚刚";
-        } else if (intervalTime >= MINUTE && intervalTime < HOUR) {
-            int minutes = (int) (intervalTime / (MINUTE));
-            return minutes + "分钟前";
-        } else if (intervalTime >= HOUR && intervalTime < DAY) {
-            int hour = (int) (intervalTime / (HOUR));
-            return hour + "小时前";
-        } else if (intervalTime >= DAY && intervalTime < TWO_DAYS) {
-            return "昨天";
-        } else if (intervalTime >= TWO_DAYS) {
-            long days = intervalTime / DAY;
-            return days + "天前";
-        }
-        return "";
     }
 
     /**

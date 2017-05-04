@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
@@ -20,9 +21,12 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.moment.Moment;
+import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -87,12 +91,11 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     private TextView titleCountTextView;
     @ViewId(R.id.ui_moment_details_image_content)
     private ViewPager detailImageContent;
-    @ViewId(R.id.ui_moment_detail_content_toggle)
-    private TextView toggleTextView;
     @ViewId(R.id.ui_moment_detail_content_text)
-    private TextView detailContentTextView;
+    private ExpandableTextView detailContentTextView;
 
     private ArrayList<String> images;
+    private String momentUser, momentName;
 
     @Override
     public int getLayout() {
@@ -116,9 +119,12 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
         if (null == moment) {
             fetchingMoment();
         } else {
+            momentUser = moment.getUserId();
+            momentName = moment.getUserName();
             images.addAll(moment.getImage());
             titleTextView.setText(Utils.format(moment.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), "yyyy年m月d日HH:mm"));
-            toggleTextView.setText(moment.getContent());
+            detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), moment.getContent(), true));
+            detailContentTextView.makeExpandable();
         }
     }
 
@@ -220,7 +226,8 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
             case R.id.ui_dialog_moment_details_button_privacy:
                 break;
             case R.id.ui_dialog_moment_details_button_favorite:
-                fetchingMoment();
+                // 收藏单张图片
+                tryCollection();
                 break;
             case R.id.ui_dialog_moment_details_button_save:
                 // 保存单张图片到本地
@@ -230,6 +237,24 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
                 deleteMoment();
                 break;
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void tryCollection() {
+        // 收藏当前显示的图片
+        String url = images.get(selected);
+        CollectionRequest.request().setOnRequestListener(new OnRequestListener<Collection>() {
+            @Override
+            public void onResponse(Collection collection, boolean success, String message) {
+                super.onResponse(collection, success, message);
+                if (success) {
+                    if (null != collection && !StringHelper.isEmpty(collection.getId())) {
+                        new Dao<>(Collection.class).save(collection);
+                    }
+                    ToastHelper.make().showMsg(message);
+                }
+            }
+        }).add(Collection.Type.IMAGE, url, App.app().UserId(), momentUser, momentName);
     }
 
     @SuppressWarnings("ConstantConditions")

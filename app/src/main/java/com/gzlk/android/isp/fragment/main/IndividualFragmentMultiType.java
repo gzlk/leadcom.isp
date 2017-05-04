@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
+import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
@@ -21,11 +23,13 @@ import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.gzlk.android.isp.model.user.moment.Moment;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.IndividualFunctionalViewBinder;
+import com.gzlk.android.isp.multitype.binder.user.CollectionViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.DocumentViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.MomentViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.UserHeaderViewBinder;
@@ -33,7 +37,6 @@ import com.gzlk.android.isp.task.OrmTask;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.lang.ref.SoftReference;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +107,9 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         // 这里不缓存选择了的图片，选择了一张图片之后就立即打开新发布窗口
         isSupportCacheSelected = false;
         initializeAdapter();
-        autoRefreshing();
+        //autoRefreshing();
+        // 先加载本地缓存
+        performLoadingLocalModels();
     }
 
     @Override
@@ -139,8 +144,11 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         if (!isNeedRefresh()) {
             return;
         }
-        refreshing();
-        performRefresh();
+        if (remotePageNumber < remoteTotalPages) {
+            // 远程刷新的页码小于总页码时才刷新
+            refreshing();
+            performRefresh();
+        }
     }
 
     private void performRefresh() {
@@ -179,12 +187,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                     if (list.size() > 0) {
                         new Dao<>(Moment.class).save(list);
                         if (selectedFunction == 0) {
-                            remotePageSize = pageSize;
-                            // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
-                            remotePageNumber = pageNumber + (list.size() >= pageSize ? 1 : 0);
-                            remoteTotalCount = total;
-                            remoteTotalPages = totalPages;
-                            // 下拉刷新的时候需要清空已显示的记录列表
+                            adjustRemotePages(list.size(), pageSize, pageNumber, total, totalPages);
                             adapter.update((List<Model>) (Object) list);
                         }
                     }
@@ -208,11 +211,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                     if (list.size() > 0) {
                         new Dao<>(Document.class).save(list);
                         if (selectedFunction == 1) {
-                            remotePageSize = pageSize;
-                            // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
-                            remotePageNumber = pageNumber + (list.size() >= pageSize ? 1 : 0);
-                            remoteTotalCount = total;
-                            remoteTotalPages = totalPages;
+                            adjustRemotePages(list.size(), pageSize, pageNumber, total, totalPages);
                             adapter.update((List<Model>) (Object) list);
                         }
                     }
@@ -222,8 +221,33 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         }).list(App.app().UserId(), PAGE_SIZE, refreshing ? 1 : remotePageNumber);// 如果是拉取，则总是从第一页开始，否则是拉取下一页
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void refreshingFavorites() {
-        stopRefreshing();
+        CollectionRequest.request().setOnRequestListListener(new OnRequestListListener<Collection>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onResponse(List<Collection> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (list.size() > 0) {
+                        new Dao<>(Collection.class).save(list);
+                        if (selectedFunction == 2) {
+                            adjustRemotePages(list.size(), pageSize, pageNumber, total, totalPages);
+                            adapter.update((List<Model>) (Object) list);
+                        }
+                    }
+                }
+                stopRefreshing();
+            }
+        }).list(App.app().UserId(), PAGE_SIZE, remotePageNumber);
+    }
+
+    private void adjustRemotePages(int fetchedCount, int pageSize, int pageNumber, int total, int totalPages) {
+        remotePageSize = pageSize;
+        // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
+        remotePageNumber = pageNumber + (fetchedCount >= pageSize ? 1 : 0);
+        remoteTotalCount = total;
+        remoteTotalPages = totalPages;
     }
 
     private void adjustLoadingMorePages(int loadedCount) {
@@ -250,9 +274,11 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             case 1:
                 // 加载更多的档案列表
                 loadingLocalDocuments();
-                refreshingRemoteDocuments(false);
+                //refreshingRemoteDocuments(false);
                 break;
             case 2:
+                // 加载本地我的收藏列表
+                loadingLocalCollection();
                 break;
         }
     }
@@ -261,19 +287,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
      * 加载更多
      */
     private void loadingLocalMoment() {
-        new OrmTask<Moment>().addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Moment>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onExecuted(boolean modified, List<Moment> result) {
-                if (null != result) {
-                    adjustLoadingMorePages(result.size());
-                    //resetToday();
-                    if (selectedFunction == 0) {
-                        adapter.add((List<Model>) (Object) result, false);
-                    }
-                }
-            }
-        }).addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Moment>() {
+        new OrmTask<Moment>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Moment>() {
             @Override
             public boolean isModifiable() {
                 return false;
@@ -287,6 +301,20 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                         .appendOrderDescBy(Model.Field.CreateDate)
                         .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
                 return new Dao<>(Moment.class).query(builder);
+            }
+        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Moment>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onExecuted(boolean modified, List<Moment> result) {
+                if (null != result && result.size() > 0) {
+                    adjustLoadingMorePages(result.size());
+                    if (selectedFunction == 0) {
+                        adapter.add((List<Model>) (Object) result, false);
+                    }
+                } else {
+                    isLoadingComplete(true);
+                }
+                autoRefreshing();
             }
         }).exec();
     }
@@ -311,7 +339,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             @SuppressWarnings("unchecked")
             @Override
             public void onExecuted(boolean modified, List<Document> result) {
-                if (null != result) {
+                if (null != result && result.size() > 0) {
                     adjustLoadingMorePages(result.size());
                     if (selectedFunction == 1) {
                         adapter.add((List<Model>) (Object) result, false);
@@ -319,6 +347,44 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 } else {
                     isLoadingComplete(true);
                 }
+                autoRefreshing();
+            }
+        }).exec();
+    }
+
+    private void loadingLocalCollection() {
+        new OrmTask<Collection>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Collection>() {
+            @Override
+            public boolean isModifiable() {
+                return false;
+            }
+
+            @SuppressWarnings("ConstantConditions")
+            @Override
+            public List<Collection> executing(OrmTask<Collection> task) {
+                QueryBuilder<Collection> builder = new QueryBuilder<>(Collection.class)
+                        .whereEquals(Model.Field.UserId, App.app().UserId())
+                        .appendOrderDescBy(Model.Field.CreateDate)
+                        .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
+                return new Dao<>(Collection.class).query(builder);
+            }
+        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Collection>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onExecuted(boolean modified, List<Collection> result) {
+                if (null != result && result.size() > 0) {
+                    adjustLoadingMorePages(result.size());
+                    if (selectedFunction == 2) {
+                        adapter.add((List<Model>) (Object) result, false);
+                    }
+                } else {
+                    isLoadingComplete(true);
+                }
+                String json = getString(R.string.temp_json);
+                ArrayList<Collection> temp = Json.gson().fromJson(json, new TypeToken<ArrayList<Collection>>() {
+                }.getType());
+                adapter.add((ArrayList<Model>) (Object) temp, false);
+                autoRefreshing();
             }
         }).exec();
     }
@@ -376,15 +442,11 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             adapter.register(Model.class, new IndividualFunctionalViewBinder(functionChangeListener).setFragment(this));
             adapter.register(Moment.class, new MomentViewBinder(boundMomentDataListener).addOnGotPositionListener(gotPositionListener).setFragment(this));
             adapter.register(Document.class, new DocumentViewBinder(boundDocumentListener).setFragment(this));
+            adapter.register(Collection.class, new CollectionViewBinder(boundCollectionListener).setFragment(this));
             mRecyclerView.setAdapter(adapter);
             appendListHeader(selectedFunction == 0);
             // 自动加载本地缓存中的记录
             performLoadingLocalModels();
-//            String json = getString(R.string.temp_json_moment_multi);
-//            ArrayList<Moment> moments = Json.gson().fromJson(json, new TypeToken<ArrayList<Moment>>() {
-//            }.getType());
-//            new Dao<>(Moment.class).save(moments);
-//            adapter.add((ArrayList<Model>) (Object) moments, false);
         }
     }
 
@@ -489,6 +551,14 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         public Document onHandlerBoundData(BaseViewHolder holder) {
             Model model = adapter.get(holder.getAdapterPosition());
             return (model instanceof Document) ? ((Document) model) : null;
+        }
+    };
+
+    private BaseViewHolder.OnHandlerBoundDataListener<Model> boundCollectionListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+        @Override
+        public Model onHandlerBoundData(BaseViewHolder holder) {
+            Model model = adapter.get(holder.getAdapterPosition());
+            return (model instanceof Collection) ? ((Collection) model) : null;
         }
     };
 

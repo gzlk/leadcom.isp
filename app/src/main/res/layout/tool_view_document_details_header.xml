@@ -48,6 +48,7 @@
             android:id="@+id/ui_holder_view_document_details_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/ui_static_dp_5"
             android:textColor="@color/textColorHintDark"
             android:textSize="@dimen/ui_base_text_size_small"
             app:lessText="@string/ui_base_text_collapse"

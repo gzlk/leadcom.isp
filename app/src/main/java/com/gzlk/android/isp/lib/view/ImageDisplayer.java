@@ -91,12 +91,13 @@ public class ImageDisplayer extends RelativeLayout {
                 imageHeight = array.getDimensionPixelOffset(R.styleable.ImageDisplayer_id_image_height, 0);
             }
             largeImageSupport = array.getBoolean(R.styleable.ImageDisplayer_id_is_large_image, false);
+            scaleType = array.getInt(R.styleable.ImageDisplayer_id_image_scale_type, 0);
         } finally {
             array.recycle();
         }
     }
 
-    private int srcDrawable = 0;
+    private int srcDrawable = 0, scaleType;
     private boolean largeImageSupport;
     private RoundedImageView imageView;
     private CircleProgressBar progressBar;
@@ -112,6 +113,9 @@ public class ImageDisplayer extends RelativeLayout {
         selectContainer = (CorneredView) view.findViewById(R.id.ui_tool_image_view_select_container);
         selectIconTextView = (CustomTextView) view.findViewById(R.id.ui_tool_image_view_select_icon);
 
+        if (scaleType > 0) {
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
         imageView.setOnClickListener(onClickListener);
         deleteContainer.setOnClickListener(onClickListener);
         selectContainer.setOnClickListener(onClickListener);

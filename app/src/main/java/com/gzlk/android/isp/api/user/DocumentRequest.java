@@ -131,7 +131,9 @@ public class DocumentRequest extends Request<Document> {
      * 查找指定用户的档案列表，返回一个结果集合
      */
     public void list(@NonNull String userId, int pageSize, int pageNumber) {
-        httpRequest(getRequest(MultipleDocument.class, format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), userId, pageSize, pageNumber), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleDocument.class,
+                format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), userId, pageSize, pageNumber),
+                "", HttpMethods.Get));
     }
 
     /**
