@@ -130,11 +130,13 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
     @SuppressWarnings("ConstantConditions")
     private void resetRightTitleButton(@NonNull Document document) {
         if (document.getUserId().equals(App.app().UserId())) {
-            setRightIcon(R.string.ui_icon_more);
+            //setRightIcon(R.string.ui_icon_more);
+            setRightText(R.string.ui_base_text_edit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
-                    openEditSelector();
+                    //openEditSelector();
+                    openActivity(DocumentNewFragment.class.getName(), mQueryId, true, true);
                 }
             });
         }

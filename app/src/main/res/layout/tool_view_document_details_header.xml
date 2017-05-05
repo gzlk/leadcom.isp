@@ -33,7 +33,8 @@
 
         <include
             android:id="@+id/ui_tool_view_document_details_header_privacy"
-            layout="@layout/holder_view_simple_clickable" />
+            layout="@layout/holder_view_simple_clickable"
+            android:visibility="gone" />
 
 
     </com.hlk.hlklib.lib.view.CorneredView>
