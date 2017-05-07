@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_organization_top_channel_1">架构</string>
+    <string name="ui_organization_top_channel_2">成员</string>
+    <string name="ui_organization_top_channel_3">档案</string>
+    <string name="ui_organization_top_channel_4">活跃度</string>
+
+    <string-array name="ui_organization_structure_items">
+        <item>0|已关注：|%s|0</item>
+        <item>1|可能感兴趣的：|%s|1</item>
+        <item>2|活动小组(目前有%d个下级小组)||0</item>
+        <item>3||%s|0</item>
+    </string-array>
+    <string name="ui_organization_squad_add_text">增加活动组</string>
+</resources>

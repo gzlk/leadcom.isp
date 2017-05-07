@@ -15,14 +15,21 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改备注：</b><br />
  */
 
-@Table(Model.Table.USER)
+@Table(User.Table.USER)
 public class User extends Model {
+
+    public static class Table {
+        public static final String USER = "user";
+        /**
+         * 用户隐私设置
+         */
+        public static final String PRIVACY = "privacy";
+    }
 
     /**
      * 表内字段名称
      */
     public static class Field {
-        public static final String Name = "name";
         public static final String Sex = "sex";
         public static final String LoginId = "loginId";
         public static final String QQ = "qq";
@@ -36,11 +43,10 @@ public class User extends Model {
         public static final String LastModifiedTime = "lastModifiedTime";
         public static final String LastLoginTime = "lastLoginTime";
         public static final String Captcha = "captcha";
-        public static final String AccessToken = "accessToken";
     }
 
     //用户姓名
-    @Column(Field.Name)
+    @Column(Model.Field.Name)
     private String name;
     //性别
     @Column(Field.Sex)
@@ -85,7 +91,7 @@ public class User extends Model {
     @Column(Field.Captcha)
     private String captcha;
     //访问令牌：用于移动端访问的唯标志
-    @Column(Field.AccessToken)
+    @Column(Model.Field.AccessToken)
     private String accessToken;
 
     public String getName() {

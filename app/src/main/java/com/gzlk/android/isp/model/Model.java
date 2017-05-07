@@ -1,14 +1,10 @@
 package com.gzlk.android.isp.model;
 
-import android.text.TextUtils;
-
 import com.gzlk.android.isp.helper.StringHelper;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.NotNull;
 import com.litesuits.orm.db.annotation.PrimaryKey;
 import com.litesuits.orm.db.enums.AssignType;
-
-import java.io.Serializable;
 
 /**
  * <b>功能描述：</b>所有mode基类<br />
@@ -23,26 +19,20 @@ import java.io.Serializable;
 
 public class Model extends BaseModel {
 
-    public static class Table {
-        /**
-         * 用户表
-         */
-        public static final String USER = "user";
-        /**
-         * 用户隐私设置
-         */
-        public static final String PRIVACY = "privacy";
-    }
-
     /**
      * 字段名
      */
     public static class Field {
         public static final String Id = "id";
         public static final String CreateDate = "createDate";
+        public static final String Name = "name";
         public static final String UserId = "userId";
         public static final String UserName = "userName";
         public static final String LocalDeleted = "localDeleted";
+        public static final String CreatorId = "creatorId";
+        public static final String CreatorName = "creatorName";
+        public static final String UUID="uuid";
+        public static final String AccessToken="accessToken";
     }
 
     @PrimaryKey(AssignType.BY_MYSELF)

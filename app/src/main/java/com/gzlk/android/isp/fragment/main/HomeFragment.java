@@ -6,11 +6,14 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
+import com.gzlk.android.isp.fragment.home.ArchiveFragment;
+import com.gzlk.android.isp.fragment.home.MomentFragment;
+import com.gzlk.android.isp.fragment.home.SeminarFragment;
 import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
-import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
@@ -25,25 +28,29 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class HomeFragment extends BaseSwipeRefreshSupportFragment {
+public class HomeFragment extends BaseViewPagerSupportFragment {
 
+    // 顶部固定选项
     @ViewId(R.id.ui_tool_home_top_channel_container)
     private RelativeLayout topChannelView;
+    @ViewId(R.id.ui_tool_home_top_channel_1)
+    private TextView topChannel1;
+    @ViewId(R.id.ui_tool_home_top_channel_2)
+    private TextView topChannel2;
+    @ViewId(R.id.ui_tool_home_top_channel_3)
+    private TextView topChannel3;
+    @ViewId(R.id.ui_tool_home_top_channel_4)
+    private TextView topChannel4;
 
+    // 全部选项
     @ViewId(R.id.ui_tool_home_top_channel_full_container)
     private LinearLayout fullChannelView;
     @ViewId(R.id.ui_tool_home_top_channel_full_background)
     private LinearLayout fullChannelBackground;
 
-    HorizontalRecyclerViewHolder topChannelHolder;
+    HorizontalRecyclerViewHolder fullHolder;
 
-    private String[] channel = new String[]{"0|会议1", "1|会议2", "2|会议3", "3|会议4", "4|会议5", "5|会议6", "6|会议7"};
-    private String[] fullChannel = new String[]{"0|推荐选项1", "1|推荐选项2", "2|推荐选项3", "3|推荐选项4", "4|推荐选项5", "5|推荐选项6", "6|推荐选项7"};
-
-    @Override
-    protected void onDelayRefreshComplete(@DelayType int type) {
-
-    }
+    private String[] fullChannel = new String[]{"0|推荐1", "1|推荐2", "2|推荐3", "3|推荐4", "4|推荐5", "5|推荐6", "6|推荐7", "7|推荐8"};
 
     @Override
     public int getLayout() {
@@ -51,27 +58,28 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    protected void onSwipeRefreshing() {
-
-    }
-
-    @Override
-    protected void onLoadingMore() {
-
-    }
-
-    @Override
-    protected String getLocalPageTag() {
-        return null;
-    }
-
-    @Override
     public void doingInResume() {
-        // 设置选择图片不剪切
-        isChooseImageForCrop = false;
         tryPaddingContent(true);
-        displayNothing(true);
         initializeHolder();
+        super.doingInResume();
+    }
+
+    @Override
+    protected void initializeFragments() {
+        mFragments.add(new SeminarFragment());
+        mFragments.add(new com.gzlk.android.isp.fragment.home.ActivityFragment());
+        mFragments.add(new ArchiveFragment());
+        mFragments.add(new MomentFragment());
+    }
+
+    @Override
+    protected void viewPagerSelectionChanged(int position) {
+        int color1 = getColor(R.color.textColorHintDark);
+        int color2 = getColor(R.color.colorPrimary);
+        topChannel1.setTextColor(position == 0 ? color2 : color1);
+        topChannel2.setTextColor(position == 1 ? color2 : color1);
+        topChannel3.setTextColor(position == 2 ? color2 : color1);
+        topChannel4.setTextColor(position == 3 ? color2 : color1);
     }
 
     @Override
@@ -84,16 +92,33 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    @Click({R.id.ui_tool_home_top_channel_button, R.id.ui_tool_home_top_channel_full_title_button})
+    @Click({R.id.ui_tool_home_top_channel_button,
+            R.id.ui_tool_home_top_channel_full_title_button,
+            R.id.ui_tool_home_top_channel_1, R.id.ui_tool_home_top_channel_2,
+            R.id.ui_tool_home_top_channel_3, R.id.ui_tool_home_top_channel_4
+    })
     private void elementClick(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.ui_tool_home_top_channel_button:
                 // 打开全部栏目
-                openFullChannel();
+                showFullChannel(true);
                 break;
             case R.id.ui_tool_home_top_channel_full_title_button:
-                closeFullChannel();
+                // 隐藏全部栏目
+                showFullChannel(false);
+                break;
+            case R.id.ui_tool_home_top_channel_1:
+                setDisplayPage(0);
+                break;
+            case R.id.ui_tool_home_top_channel_2:
+                setDisplayPage(1);
+                break;
+            case R.id.ui_tool_home_top_channel_3:
+                setDisplayPage(2);
+                break;
+            case R.id.ui_tool_home_top_channel_4:
+                setDisplayPage(3);
                 break;
         }
     }
@@ -126,62 +151,40 @@ public class HomeFragment extends BaseSwipeRefreshSupportFragment {
                 }).start();
     }
 
-    private void openFullChannel() {
+    private void showFullChannel(final boolean shown) {
         fullChannelView.animate()
-                .translationY(0)
+                .translationY(shown ? 0 : -fullChannelView.getHeight())
                 .setDuration(getInteger(R.integer.integer_default_animate_duration))
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        fullChannelView.setVisibility(View.VISIBLE);
+                        if (shown) {
+                            fullChannelView.setVisibility(View.VISIBLE);
+                        }
                     }
-                })
-                .start();
-        showFullChannelBackground(true);
-    }
 
-    private void closeFullChannel() {
-        fullChannelView.animate()
-                .translationY(-fullChannelView.getHeight())
-                .setDuration(getInteger(R.integer.integer_default_animate_duration))
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        fullChannelView.setVisibility(View.GONE);
+                        if (!shown) {
+                            fullChannelView.setVisibility(View.GONE);
+                        }
                     }
                 })
                 .start();
-        showFullChannelBackground(false);
+        showFullChannelBackground(shown);
     }
 
     private void initializeHolder() {
-        if (null == topChannelHolder) {
-            topChannelHolder = new HorizontalRecyclerViewHolder(topChannelView, HomeFragment.this);
-            topChannelHolder.addOnViewHolderClickListener(viewHolderClickListener);
-            topChannelHolder.displaySelectedEffect(true);
-            topChannelHolder.setDataSources(channel);
-        }
         if (fullChannelView.getVisibility() == View.GONE) {
             // 初始化全部选项的位置
             fullChannelView.animate().translationY(-fullChannelView.getHeight()).setDuration(10).start();
         }
-    }
-
-    private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
-        @Override
-        public void onClick(int index) {
-            //openImageSelector();
-            switch (index) {
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-            }
+        if (null == fullHolder) {
+            fullHolder = new HorizontalRecyclerViewHolder(fullChannelView, this, false);
+            fullHolder.setItemDecoration(true);
+            fullHolder.setDataSources(fullChannel);
         }
-    };
+    }
 }

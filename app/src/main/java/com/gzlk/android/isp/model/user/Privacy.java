@@ -15,7 +15,7 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Model.Table.PRIVACY)
+@Table(User.Table.PRIVACY)
 public class Privacy extends Model {
 
     /**

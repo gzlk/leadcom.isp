@@ -1,10 +1,10 @@
 package com.gzlk.android.isp.holder;
 
 import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
@@ -23,7 +23,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 public class TextViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_text_item_container)
-    private LinearLayout container;
+    private CardView container;
     @ViewId(R.id.ui_holder_view_text_item_text)
     private TextView text;
 
