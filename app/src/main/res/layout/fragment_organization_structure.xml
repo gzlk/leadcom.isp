@@ -1,66 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/ui_organization_structure_concerned_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/color_facd98"
-        android:clipChildren="false">
+    <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/ui_organization_structure_concerned_list"
-            android:layout_width="@dimen/ui_static_dp_120"
-            android:layout_height="@dimen/ui_static_dp_120"
-            android:layout_centerInParent="true"
-            android:clipChildren="false"
-            android:clipToPadding="true" />
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-        android:background="@drawable/ui_background_login_item"
-        android:orientation="vertical">
-
-        <include
-            android:id="@+id/ui_organization_structure_concerned"
-            layout="@layout/holder_view_simple_clickable_gravity_left" />
-
-        <include layout="@layout/tool_view_half_line_horizontal" />
-
-        <include
-            android:id="@+id/ui_organization_structure_interesting"
-            layout="@layout/holder_view_simple_clickable_gravity_left" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-        android:background="@drawable/ui_background_login_item"
-        android:orientation="vertical">
-
-        <include
-            android:id="@+id/ui_organization_structure_squad_title"
-            layout="@layout/holder_view_simple_clickable_gravity_left" />
-
-        <include layout="@layout/tool_view_half_line_horizontal" />
-
-        <include
-            android:id="@+id/ui_organization_structure_squad_none"
-            layout="@layout/holder_view_simple_clickable_gravity_left" />
-
-        <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
-
-        <include layout="@layout/tool_view_half_line_horizontal" />
-
-        <include layout="@layout/holder_view_squrd_add" />
-    </LinearLayout>
-</LinearLayout>
+    <include layout="@layout/popup_dialog_squad_add" />
+</RelativeLayout>

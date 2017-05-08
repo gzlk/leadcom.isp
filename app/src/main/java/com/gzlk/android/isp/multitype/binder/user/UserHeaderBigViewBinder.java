@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.holder.IndividualHeaderBigViewHolder;
+import com.gzlk.android.isp.holder.UserHeaderBigViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
@@ -22,7 +22,7 @@ import java.lang.ref.SoftReference;
  * <b>修改备注：</b><br />
  */
 
-public class UserHeaderBigViewBinder extends BaseViewBinder<User, IndividualHeaderBigViewHolder> {
+public class UserHeaderBigViewBinder extends BaseViewBinder<User, UserHeaderBigViewHolder> {
 
     private SoftReference<OnViewHolderClickListener> click;
 
@@ -37,14 +37,14 @@ public class UserHeaderBigViewBinder extends BaseViewBinder<User, IndividualHead
     }
 
     @Override
-    public IndividualHeaderBigViewHolder onCreateViewHolder(@NonNull View itemView) {
-        IndividualHeaderBigViewHolder holder = new IndividualHeaderBigViewHolder(itemView, fragment.get());
+    public UserHeaderBigViewHolder onCreateViewHolder(@NonNull View itemView) {
+        UserHeaderBigViewHolder holder = new UserHeaderBigViewHolder(itemView, fragment.get());
         holder.addOnViewHolderClickListener(click.get());
         return holder;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull IndividualHeaderBigViewHolder holder, @NonNull User item) {
+    protected void onBindViewHolder(@NonNull UserHeaderBigViewHolder holder, @NonNull User item) {
         holder.showContent(item);
     }
 }

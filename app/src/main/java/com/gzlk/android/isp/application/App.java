@@ -3,6 +3,7 @@ package com.gzlk.android.isp.application;
 import android.graphics.Bitmap;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
@@ -154,8 +155,14 @@ public class App extends BaseActivityManagedApplication {
     public User Me() {
         if (null == me) {
             initializeDatabase();
+
         }
+        LogHelper.log("APP", "access token: " + (null == me ? "" : me.getAccessToken()));
         return me;
+    }
+
+    public void saveMe() {
+        new Dao<>(User.class).save(me);
     }
 
     /**
@@ -167,6 +174,7 @@ public class App extends BaseActivityManagedApplication {
         _userToken = me.getAccessToken();
         PreferenceHelper.save(R.string.pf_last_login_user_id, me.getId());
         initializeDatabase();
+        saveMe();
     }
 
     @Override

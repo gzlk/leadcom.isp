@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.ListItem;
 import com.gzlk.android.isp.model.Model;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -26,11 +27,13 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 public class SimpleClickableViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_simple_clickable_title)
-    private TextView titleTextView;
+    public TextView titleTextView;
     @ViewId(R.id.ui_holder_view_simple_clickable_value)
-    private TextView valueTextView;
+    public TextView valueTextView;
+    @ViewId(R.id.ui_holder_view_simple_clickable_value_icon)
+    public CustomTextView valueIcon;
     @ViewId(R.id.ui_holder_view_simple_clickable_right_icon)
-    private CustomTextView rightIcon;
+    public CustomTextView rightIcon;
 
     public SimpleClickableViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -60,16 +63,33 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
         }
     }
 
+    public void showContent(ListItem item) {
+        showContent(item.getIndex(), item.getTitle(), item.getValue());
+        rightIcon.setVisibility(item.isIconVisible() ? View.VISIBLE : View.GONE);
+    }
+
     public void showContent(int index, String title, String value) {
         this.index = index;
         titleTextView.setText(title);
-        valueTextView.setText(value);
+        if (value.length() > 2 && value.charAt(0) == '0' && value.charAt(1) == 'x') {
+            valueTextView.setText(null);
+            Integer i = Integer.decode(value);
+            if (null != valueIcon) {
+                valueIcon.setText(String.valueOf((char) i.intValue()));
+                valueIcon.setVisibility(View.VISIBLE);
+            }
+        } else {
+            valueTextView.setText(value);
+            if (null != valueIcon) {
+                valueIcon.setVisibility(View.GONE);
+            }
+        }
     }
 
     private int index;
 
     @Click({R.id.ui_holder_view_simple_clickable})
-    private void click(View view) {
+    public void click(View view) {
         if (null != mOnViewHolderClickListener) {
             int pos = getAdapterPosition();
             mOnViewHolderClickListener.onClick(pos < 0 ? index : pos);

@@ -8,6 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/ui_main_tool_bar_container"
+        android:layout_alignTop="@+id/ui_main_tool_bar_container"
         android:animateLayoutChanges="true"
         android:background="@color/colorPrimary" />
 

@@ -1,22 +1,32 @@
 package com.gzlk.android.isp.fragment.organization;
 
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.view.MotionEvent;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.OrganizationStructureConcernedViewHolder;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
-import com.gzlk.android.isp.view.OrganizationConcerned;
+import com.gzlk.android.isp.holder.SquadAddViewHolder;
+import com.gzlk.android.isp.holder.TextViewHolder;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.ListItem;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CorneredView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>组织架构<br />
@@ -29,27 +39,42 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class StructureFragment extends BaseTransparentSupportFragment {
+public class StructureFragment extends BaseSwipeRefreshSupportFragment {
+
+    private static final String PARAM_SELECTED_ = "sf_selected_index";
 
     // View
-    @ViewId(R.id.ui_organization_structure_concerned_container)
-    private RelativeLayout viewPagerContainer;
-    @ViewId(R.id.ui_organization_structure_concerned_list)
-    private ViewPager viewPager;
-    @ViewId(R.id.ui_organization_structure_concerned)
-    private View concernedView;
-    @ViewId(R.id.ui_organization_structure_interesting)
-    private View interestedView;
-    @ViewId(R.id.ui_organization_structure_squad_title)
-    private View squadTitleView;
-    @ViewId(R.id.ui_organization_structure_squad_none)
-    private View squadNoneView;
+    @ViewId(R.id.ui_popup_squad_add_layout_background)
+    private View popupBackground;
+    @ViewId(R.id.ui_popup_squad_add_container)
+    private CorneredView popupContainer;
+    @ViewId(R.id.ui_popup_squad_add_input)
+    private ClearEditText popupName;
 
     // Holder
-    private SimpleClickableViewHolder concernedHolder, interestedHolder, squadTitleHolder, noneHolder;
+    private OrganizationStructureConcernedViewHolder concernedViewHolder;
 
-    private DepthAdapter mAdapter;
     private String[] items;
+    private StructureAdapter mAdapter;
+    private int selectedIndex = 0;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        selectedIndex = bundle.getInt(PARAM_SELECTED_, 0);
+        if (null != concernedViewHolder) {
+            concernedViewHolder.setSelected(selectedIndex);
+        }
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        if (null != concernedViewHolder) {
+            selectedIndex = concernedViewHolder.getSelected();
+        }
+        bundle.putInt(PARAM_SELECTED_, selectedIndex);
+    }
 
     @Override
     public int getLayout() {
@@ -57,9 +82,28 @@ public class StructureFragment extends BaseTransparentSupportFragment {
     }
 
     @Override
+    protected void onSwipeRefreshing() {
+
+    }
+
+    @Override
+    protected void onLoadingMore() {
+
+    }
+
+    @Override
+    protected String getLocalPageTag() {
+        return null;
+    }
+
+    @Override
     public void doingInResume() {
+        enableSwipe(false);
+        setSupportLoadingMore(false);
+        if (null == items) {
+            items = StringHelper.getStringArray(R.array.ui_organization_structure_items);
+        }
         initializeAdapter();
-        initializeHolders();
     }
 
     @Override
@@ -72,124 +116,200 @@ public class StructureFragment extends BaseTransparentSupportFragment {
 
     }
 
-    private void initializeHolders() {
-        if (null == items) {
-            items = StringHelper.getStringArray(R.array.ui_organization_structure_items);
-        }
-        if (null == concernedHolder) {
-            concernedHolder = new SimpleClickableViewHolder(concernedView, this);
-        }
-        concernedHolder.showContent(format(items[0], ""));
-        if (null == interestedHolder) {
-            interestedHolder = new SimpleClickableViewHolder(interestedView, this);
-        }
-        interestedHolder.showContent(format(items[1], ""));
-        if (null == squadTitleHolder) {
-            squadTitleHolder = new SimpleClickableViewHolder(squadTitleView, this);
-        }
-        squadTitleHolder.showContent(format(items[2], 0));
-        if (null == noneHolder) {
-            noneHolder = new SimpleClickableViewHolder(squadNoneView, this);
-        }
-        noneHolder.showContent(format(items[3], "目前没有下级小组"));
-    }
-
-    @Click({R.id.ui_holder_view_squad_add_container})
-    private void elementClick(View view) {
-        switch (view.getId()) {
-            case R.id.ui_holder_view_squad_add_container:
-                // 添加小组
-                ToastHelper.make().showMsg("添加小组");
-                break;
-        }
-    }
-
     private void initializeAdapter() {
         if (null == mAdapter) {
-            viewPagerContainer.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (viewPager.getCurrentItem() > 0 || viewPager.getCurrentItem() < mAdapter.getCount() - 1) {
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        return viewPager.dispatchTouchEvent(event);
-                    } else {
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        return viewPager.dispatchTouchEvent(event);
-                    }
-                }
-            });
-            mAdapter = new DepthAdapter();
-            viewPager.setOffscreenPageLimit(5);
-            viewPager.setPageTransformer(true, new DepthTransformer());
-            viewPager.setPageMargin(-getDimension(R.dimen.ui_static_dp_40));
-            viewPager.setAdapter(mAdapter);
+            mAdapter = new StructureAdapter();
+            mRecyclerView.setAdapter(mAdapter);
         }
+        initializeItems();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private class DepthTransformer implements ViewPager.PageTransformer {
-        private static final float MIN_SCALE = 0.8f;
-        private final int margin = getDimension(R.dimen.ui_static_dp_25);
-
-        @Override
-        public void transformPage(View page, float position) {
-            float scaleFactor;
-            if (position < -1) {//看不到的一页 *
-                scaleFactor = (1 - MIN_SCALE) * (0 - position);
-                page.setScaleX(1 - scaleFactor);
-                page.setScaleY(1 - scaleFactor);
-                page.setTranslationZ(1 - scaleFactor);
-                //page.setTranslationX(margin);
-            } else if (position <= 1) {
-                if (position < 0) {//滑出的页 0.0 ~ -1 *
-                    scaleFactor = (1 - MIN_SCALE) * (0 - position);
-                    page.setScaleX(1 - scaleFactor);
-                    page.setScaleY(1 - scaleFactor);
-                    page.setTranslationZ(1 - scaleFactor);
-                    //float marg = margin * (0 - position);
-                    //page.setTranslationX(marg);
-                } else {//滑进的页 1 ~ 0.0 *
-                    scaleFactor = (1 - MIN_SCALE) * (1 - position);
-                    page.setScaleX(MIN_SCALE + scaleFactor);
-                    page.setScaleY(MIN_SCALE + scaleFactor);
-                    page.setTranslationZ(MIN_SCALE + scaleFactor);
-                    //float marg = -(margin * (1 - position));
-                    //page.setTranslationX(marg);
+    private void initializeItems() {
+        for (String string : items) {
+            String text = "";
+            if (string.contains("%s")) {
+                if (string.startsWith("6|")) {
+                    if (squads.size() < 1) {
+                        continue;
+                    } else {
+                        for (String squad : squads) {
+                            ListItem item = new ListItem(format(string, squad));
+                            item.setId(squad);
+                            if (mAdapter.exist(item)) {
+                                mAdapter.update(item);
+                            } else {
+                                mAdapter.add(item, mAdapter.getItemCount() - 1);
+                            }
+                        }
+                    }
+                } else {
+                    text = format(string, "");
                 }
-            } else {//看不到的另一页 *
-                scaleFactor = (1 - MIN_SCALE) * (1 - position);
-                page.setScaleX(MIN_SCALE + scaleFactor);
-                page.setScaleY(MIN_SCALE + scaleFactor);
-                page.setTranslationZ(MIN_SCALE + scaleFactor);
-                //page.setTranslationX(-margin);
+            } else if (string.contains("%d")) {
+                text = format(string, squads.size());
+            } else {
+                text = string;
+            }
+            if (!StringHelper.isEmpty(text)) {
+                ListItem item = new ListItem(text);
+                mAdapter.update(item);
             }
         }
     }
 
-    private class DepthAdapter extends PagerAdapter {
+    private List<String> squads = new ArrayList<>();
+
+    public void addSquad(String name) {
+        squads.add(name);
+        initializeItems();
+    }
+
+    @Override
+    protected void onDelayRefreshComplete(@DelayType int type) {
+
+    }
+
+    @Click({R.id.ui_popup_squad_add_layout_background, R.id.ui_dialog_button_confirm})
+    private void elementClick(View view) {
+        switch (view.getId()) {
+            case R.id.ui_popup_squad_add_layout_background:
+                showSquadAddPopup(false);
+                break;
+            case R.id.ui_dialog_button_confirm:
+                String value = popupName.getValue();
+                if (StringHelper.isEmpty(value)) {
+                    ToastHelper.make().showMsg("输入不符合要求");
+                    return;
+                }
+                Utils.hidingInputBoard(popupName);
+                addSquad(value);
+                popupName.setValue("");
+                showSquadAddPopup(false);
+                break;
+        }
+    }
+
+    public void showSquadAddPopup(final boolean shown) {
+        popupBackground.animate().setDuration(duration())
+                .alpha(shown ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (!shown) {
+                    popupBackground.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                if (shown) {
+                    popupBackground.setVisibility(View.VISIBLE);
+                }
+            }
+        }).withStartAction(new Runnable() {
+            @Override
+            public void run() {
+                showSquadAddInputLayout(shown);
+            }
+        }).start();
+    }
+
+    private void showSquadAddInputLayout(final boolean shown) {
+        popupContainer.animate().setDuration(duration())
+                .alpha(shown ? 1 : 0).translationY(shown ? 0 : popupContainer.getHeight())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        if (!shown) {
+                            popupContainer.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        if (shown) {
+                            popupContainer.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }).start();
+    }
+
+    private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            if (index > 5 && index < mAdapter.getItemCount()) {
+                openActivity(SquadContactFragment.class.getName(), "", true, false);
+            }
+        }
+    };
+
+    private class StructureAdapter extends RecyclerViewAdapter<BaseViewHolder, ListItem> {
+
+        private static final int VT_HEAD = 0, VT_DIVIDER = 1, VT_CLICK = 2, VT_FOOTER = 3;
 
         @Override
-        public int getCount() {
-            return 10;
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            BaseFragment fragment = StructureFragment.this;
+            switch (viewType) {
+                case VT_HEAD:
+                    if (null == concernedViewHolder) {
+                        concernedViewHolder = new OrganizationStructureConcernedViewHolder(itemView, fragment);
+                    }
+                    return concernedViewHolder;
+                case VT_DIVIDER:
+                    return new TextViewHolder(itemView, fragment);
+                case VT_FOOTER:
+                    return new SquadAddViewHolder(itemView, fragment);
+                default:
+                    SimpleClickableViewHolder holder = new SimpleClickableViewHolder(itemView, fragment);
+                    holder.addOnViewHolderClickListener(holderClickListener);
+                    return holder;
+            }
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
+        public int itemLayout(int viewType) {
+            switch (viewType) {
+                case VT_HEAD:
+                    return R.layout.holder_view_organization_concerned;
+                case VT_DIVIDER:
+                    return R.layout.tool_view_divider_big;
+                case VT_FOOTER:
+                    return R.layout.holder_view_squad_add_layout;
+                default:
+                    return R.layout.holder_view_simple_clickable_gravity_left;
+            }
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            OrganizationConcerned concerned = new OrganizationConcerned(viewPager.getContext());
-            concerned.showContent(position);
-            container.addView(concerned);
-            return concerned;
+        public int getItemViewType(int position) {
+            if (position == getItemCount() - 1) {
+                return VT_FOOTER;
+            }
+            switch (position) {
+                case 0:
+                    return VT_HEAD;
+                case 1:
+                case 4:
+                    return VT_DIVIDER;
+                default:
+                    return VT_CLICK;
+            }
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            OrganizationConcerned concerned = (OrganizationConcerned) object;
-            container.removeView(concerned);
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable ListItem item) {
+            if (holder instanceof SimpleClickableViewHolder) {
+                ((SimpleClickableViewHolder) holder).showContent(item);
+            }
+        }
+
+        @Override
+        protected int comparator(ListItem item1, ListItem item2) {
+            return 0;
         }
     }
 }

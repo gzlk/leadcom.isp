@@ -6,10 +6,33 @@
     <string name="ui_organization_top_channel_4">活跃度</string>
 
     <string-array name="ui_organization_structure_items">
-        <item>0|已关注：|%s|0</item>
-        <item>1|可能感兴趣的：|%s|1</item>
-        <item>2|活动小组(目前有%d个下级小组)||0</item>
-        <item>3||%s|0</item>
+        <item>0|||</item>
+        <item>1|||</item>
+        <item>2|已关注：|%s|0</item>
+        <item>3|可能感兴趣的：|%s|1</item>
+        <item>4|||</item>
+        <item>5|活动小组(目前有%d个下级小组)||0</item>
+        <item>6||%s|1</item>
+        <item>7|||</item>
     </string-array>
-    <string name="ui_organization_squad_add_text">增加活动组</string>
+    
+    <string-array name="ui_organization_details_items">
+        <item>0|||</item>
+        <item>1|群成员|%d人|1</item>
+        <item>2|群名称|%s|1</item>
+        <item>3|群二维码|0xe63b|1</item>
+        <item>4|群管理权转让||1</item>
+        <item>5|置顶群组||0</item>
+        <item>6|消息免打扰||0</item>
+        <item>7|聊天文件||1</item>
+        <item>8|查看聊天内容||1</item>
+        <item>9|清空聊天记录||0</item>
+    </string-array>
+    
+    <string name="ui_organization_squad_add_title">名称：</string>
+    <string name="ui_organization_squad_add_hint">小组名称(不能以下划线开头和结尾)</string>
+    <string name="ui_organization_squad_add_text">添加加活动小组</string>
+
+    <string name="ui_squad_contact_menu_1">组织通讯录</string>
+    <string name="ui_squad_contact_menu_2">手机通讯录</string>
 </resources>

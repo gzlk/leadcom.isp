@@ -23,11 +23,13 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.ListItem;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.SimpleClickableViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.UserHeaderBigViewBinder;
+import com.gzlk.android.isp.multitype.binder.user.UserSimpleMomentViewBinder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -171,6 +173,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.addItemDecoration(new SpacesItemDecoration());
             mAdapter = new MyAdapter();
             mAdapter.register(User.class, new UserHeaderBigViewBinder(onViewHolderClickListener).setFragment(this));
+            mAdapter.register(ListItem.class, new UserSimpleMomentViewBinder().setFragment(this));
             mAdapter.register(Model.class, new SimpleClickableViewBinder(onViewHolderClickListener).setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
             titleBackground.setAlpha(0);
@@ -223,7 +226,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
             rightTextView.setText(null);
         }
         // 动态
-        mAdapter.add(new Model() {{
+        mAdapter.add(new ListItem(format(items[1], "")) {{
             setId(format(items[1], ""));
         }});
         // 性别

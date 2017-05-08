@@ -10,6 +10,7 @@
     app:cardElevation="@dimen/ui_static_dp_5">
 
     <LinearLayout
+        android:id="@+id/ui_tool_organization_concerned_pager_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

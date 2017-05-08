@@ -25,18 +25,20 @@ import com.hlk.hlklib.lib.view.CustomTextView;
  * <b>修改备注：</b><br />
  */
 
-public class IndividualHeaderBigViewHolder extends BaseViewHolder {
+public class UserHeaderBigViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_user_name)
     private TextView nameTextView;
     @ViewId(R.id.ui_holder_view_user_name_icon)
     private CustomTextView nameIcon;
+    @ViewId(R.id.ui_holder_view_user_phone)
+    private TextView phoneTextView;
     @ViewId(R.id.ui_holder_view_user_header)
     private ImageDisplayer headerImage;
     @ViewId(R.id.ui_holder_view_user_header_icon)
     private CustomTextView headerIcon;
 
-    public IndividualHeaderBigViewHolder(View itemView, final BaseFragment fragment) {
+    public UserHeaderBigViewHolder(View itemView, final BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         ((BaseTransparentSupportFragment) fragment).tryPaddingContent(itemView, false);
@@ -53,6 +55,7 @@ public class IndividualHeaderBigViewHolder extends BaseViewHolder {
         headerImage.displayImage(user.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_100), false, false);
         nameIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
         headerIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
+        phoneTextView.setText(user.getPhone());
     }
 
     @Click({R.id.ui_holder_view_user_header_icon,

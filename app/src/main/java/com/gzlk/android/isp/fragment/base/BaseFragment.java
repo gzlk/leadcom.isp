@@ -9,13 +9,14 @@ import android.view.View;
 import android.widget.PopupWindow;
 
 import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.ContainerActivity;
 import com.gzlk.android.isp.activity.LoginActivity;
 import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.PopupTooltipHelper;
+import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.hlk.hlklib.etc.Utility;
@@ -121,6 +122,13 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public int getFontDimension(int res) {
         return Utility.ConvertPx(getDimension(res));
+    }
+
+    /**
+     * 获取默认的动画时间长度
+     */
+    public int duration() {
+        return getInteger(R.integer.integer_default_animate_duration);
     }
 
     /**
@@ -341,13 +349,19 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
     public void showTooltip(View anchorView, String text, View.OnClickListener onClickListener) {
         if (!dismissPopupWindow()) {
-            mCurPopupWindow = PopupTooltipHelper.showTooltip(anchorView, text, onClickListener);
+            mCurPopupWindow = TooltipHelper.showTooltip(anchorView, text, onClickListener);
         }
     }
+//
+//    public void showTooltip(View anchorView, View.OnClickListener onClickListener) {
+//        if (!dismissPopupWindow()) {
+//            mCurPopupWindow = TooltipHelper.showTooltip(anchorView, onClickListener);
+//        }
+//    }
 
-    public void showTooltip(View anchorView, View.OnClickListener onClickListener) {
+    public void showTooltip(View anchorView, int viewId, boolean belowAnchor,int arrowType, View.OnClickListener clickListener) {
         if (!dismissPopupWindow()) {
-            mCurPopupWindow = PopupTooltipHelper.showTooltip(anchorView, onClickListener);
+            mCurPopupWindow = TooltipHelper.showTooltip(anchorView, viewId, belowAnchor, arrowType, clickListener);
         }
     }
 }

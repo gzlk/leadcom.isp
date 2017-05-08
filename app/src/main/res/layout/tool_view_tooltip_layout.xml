@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/ui_static_dp_5"
+    android:layout_marginStart="@dimen/ui_static_dp_5"
     android:orientation="vertical">
 
     <ImageView
@@ -10,6 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:alpha="0.7"
         android:contentDescription="@string/hlklib_default_image_content_description"
         android:src="@drawable/popup_window_arrow_up" />
@@ -27,18 +31,25 @@
         app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size">
 
         <TextView
-            android:id="@+id/ui_tool_view_tooltip_text"
+            android:id="@+id/ui_tool_popup_menu_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="@dimen/ui_static_dp_5"
             android:text="@string/app_name"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/ui_base_text_size_small" />
+            android:textSize="@dimen/ui_base_text_size_small"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/ui_tool_view_tooltip_menu_edit"
-            layout="@layout/tool_view_popup_document_comment" />
+            layout="@layout/tool_view_popup_tooltip_document_comment"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/ui_tool_view_tooltip_menu_squad_contact"
+            layout="@layout/tool_view_popup_tooltip_squad_contact"
+            android:visibility="gone" />
     </com.hlk.hlklib.lib.view.CorneredView>
 
     <ImageView
@@ -46,6 +57,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:alpha="0.7"
         android:contentDescription="@string/hlklib_default_image_content_description"
         android:rotation="180"

@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal">
 
     <com.hlk.hlklib.lib.view.CorneredView
         android:id="@+id/ui_holder_view_simple_clickable"

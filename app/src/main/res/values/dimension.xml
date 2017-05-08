@@ -25,6 +25,7 @@
     <dimen name="ui_static_dp_26">26dp</dimen>
     <dimen name="ui_static_dp_28">28dp</dimen>
     <dimen name="ui_static_dp_30">30dp</dimen>
+    <dimen name="ui_static_dp_33">33dp</dimen>
     <dimen name="ui_static_dp_35">35dp</dimen>
     <dimen name="ui_static_dp_40">40dp</dimen>
     <dimen name="ui_static_dp_45">45dp</dimen>

@@ -138,7 +138,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 super.onResponse(user, success, message);
                 // 检测服务器返回的状态
                 if (success) {
-                    new Dao<>(User.class).save(user);
+                    //new Dao<>(User.class).save(user);
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
                     App.app().Me(user);
                     // 打开主页面

@@ -8,6 +8,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.DocumentDetailsFragment;
 import com.gzlk.android.isp.helper.ClipboardHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.model.user.document.DocumentComment;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
@@ -40,7 +41,7 @@ public class DocumentCommentViewHolder extends BaseViewHolder {
             @Override
             public boolean onLongClick(View v) {
                 container.setNormalColor(getColor(R.color.textColorHintLightLight));
-                fragment.showTooltip(v, onClickListener);
+                fragment.showTooltip(v, R.id.ui_tool_view_tooltip_menu_edit, false, TooltipHelper.TYPE_CENTER, onClickListener);
                 return true;
             }
         });
@@ -52,11 +53,11 @@ public class DocumentCommentViewHolder extends BaseViewHolder {
             container.setNormalColor(Color.WHITE);
             log("clicked: " + v);
             switch (v.getId()) {
-                case R.id.ui_tool_popup_document_comment_copy:
+                case R.id.ui_tool_popup_menu_document_comment_copy:
                     DocumentComment comment = ((DocumentDetailsFragment) fragment()).getFromPosition(getAdapterPosition());
                     ClipboardHelper.copyToClipboard(v.getContext(), comment.getContent());
                     break;
-                case R.id.ui_tool_popup_document_comment_delete:
+                case R.id.ui_tool_popup_menu_document_comment_delete:
                     // 删除本条评论
                     ((DocumentDetailsFragment) fragment()).deleteComment(getAdapterPosition());
                     break;

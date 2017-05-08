@@ -206,7 +206,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                 if (success) {
                     if (null != user && !StringHelper.isEmpty(user.getId())) {
                         App.app().Me().setPhone(user.getPhone());
-                        new Dao<>(User.class).save(App.app().Me());
+                        App.app().saveMe();
                         resultSucceededActivity();
                     } else {
                         ToastHelper.make().showMsg(message);

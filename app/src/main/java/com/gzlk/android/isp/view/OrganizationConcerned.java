@@ -5,12 +5,14 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.organization.Group;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -43,8 +45,16 @@ public class OrganizationConcerned extends FrameLayout {
     private void init() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.tool_view_organziation_concerned_pager, this);
         ViewUtility.bind(this, view);
+        imageDisplayer.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(String url) {
+                container.performClick();
+            }
+        });
     }
 
+    @ViewId(R.id.ui_tool_organization_concerned_pager_container)
+    private LinearLayout container;
     @ViewId(R.id.ui_tool_organization_concerned_pager_logo)
     private ImageDisplayer imageDisplayer;
     @ViewId(R.id.ui_tool_organization_concerned_pager_name)
@@ -64,5 +74,22 @@ public class OrganizationConcerned extends FrameLayout {
 
     public int getPosition() {
         return position;
+    }
+
+    @Click({R.id.ui_tool_organization_concerned_pager_container})
+    private void click(View view) {
+        if (null != onClickListener) {
+            onClickListener.onClick(position);
+        }
+    }
+
+    private OnContainerClickListener onClickListener;
+
+    public void setOnContainerClickListener(OnContainerClickListener l) {
+        onClickListener = l;
+    }
+
+    public interface OnContainerClickListener {
+        void onClick(int position);
     }
 }

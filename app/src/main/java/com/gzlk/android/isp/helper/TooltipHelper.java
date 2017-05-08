@@ -3,17 +3,13 @@ package com.gzlk.android.isp.helper;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.hlk.hlklib.lib.view.CorneredView;
 
 /**
  * <b>功能描述：</b><br />
@@ -26,32 +22,57 @@ import com.hlk.hlklib.lib.view.CorneredView;
  * <b>修改备注：</b><br />
  */
 
-public class PopupTooltipHelper {
+public class TooltipHelper {
 
-    public static PopupWindow showTooltip(final View anchorView, View.OnClickListener onClickListener) {
+    public static final int TYPE_LEFT = -1;
+    public static final int TYPE_CENTER = 0;
+    public static final int TYPE_RIGHT = 1;
+
+    private static final int[] events = new int[]{
+            R.id.ui_tool_popup_menu_text,
+            R.id.ui_tool_popup_menu_document_comment_copy,
+            R.id.ui_tool_popup_menu_document_comment_delete,
+            R.id.ui_tool_popup_menu_squad_contact_organization,
+            R.id.ui_tool_popup_menu_squad_contact_phone
+    };
+
+    public static PopupWindow showTooltip(final View anchorView, int viewLayout, boolean belowAnchor, int arrowType, View.OnClickListener onClickListener) {
         final View contentView = LayoutInflater.from(anchorView.getContext()).inflate(R.layout.tool_view_tooltip_layout, null);
-        checkView(true, contentView);
+        visibleView(viewLayout, contentView);
         contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        return make(contentView, false, anchorView, onClickListener);
+        return make(contentView, belowAnchor, arrowType, anchorView, onClickListener);
     }
 
     public static PopupWindow showTooltip(final View anchorView, String text, final View.OnClickListener onClickListener) {
         final View contentView = LayoutInflater.from(anchorView.getContext()).inflate(R.layout.tool_view_tooltip_layout, null);
-        checkView(false, contentView);
-        TextView textView = (TextView) contentView.findViewById(R.id.ui_tool_view_tooltip_text);
+        visibleView(R.id.ui_tool_popup_menu_text, contentView);
+        TextView textView = (TextView) contentView.findViewById(R.id.ui_tool_popup_menu_text);
         textView.setText(text);
         contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        return make(contentView, true, anchorView, onClickListener);
+        return make(contentView, true, TYPE_CENTER, anchorView, onClickListener);
     }
 
-    private static void checkView(boolean showMenu, View contentView) {
-        TextView textView = (TextView) contentView.findViewById(R.id.ui_tool_view_tooltip_text);
-        textView.setVisibility(showMenu ? View.GONE : View.VISIBLE);
-        View view = contentView.findViewById(R.id.ui_tool_view_tooltip_menu_edit);
-        view.setVisibility(showMenu ? View.VISIBLE : View.GONE);
+    private static void visibleView(int resId, View contentView) {
+        View view = contentView.findViewById(resId);
+        view.setVisibility(View.VISIBLE);
     }
 
-    private static void adjustElement(final PopupWindow popupWindow, boolean showBelow, View contentView, final View.OnClickListener onClickListener) {
+    private static void adjustElement(boolean belowAnchor, int arrowType, View contentView) {
+        // 上下箭头的位置
+        View upArrow = contentView.findViewById(R.id.ui_tool_view_tooltip_up_arrow);
+        View downArrow = contentView.findViewById(R.id.ui_tool_view_tooltip_down_arrow);
+        upArrow.setVisibility(belowAnchor ? View.VISIBLE : View.GONE);
+        downArrow.setVisibility(belowAnchor ? View.GONE : View.VISIBLE);
+        adjustArrow(upArrow, arrowType);
+        adjustArrow(downArrow, arrowType);
+    }
+
+    private static void adjustArrow(View arrow, int arrowType) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) arrow.getLayoutParams();
+        params.gravity = (arrowType < 0 ? Gravity.START : (arrowType == 0 ? Gravity.CENTER : Gravity.END));
+    }
+
+    private static void adjustEvents(final PopupWindow popupWindow, View contentView, final View.OnClickListener onClickListener) {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,25 +83,24 @@ public class PopupTooltipHelper {
             }
         };
         contentView.setOnClickListener(clickListener);
-        View copy = contentView.findViewById(R.id.ui_tool_popup_document_comment_copy);
-        copy.setOnClickListener(clickListener);
-        View delete = contentView.findViewById(R.id.ui_tool_popup_document_comment_delete);
-        delete.setOnClickListener(clickListener);
+        for (int i : events) {
+            View view = contentView.findViewById(i);
+            if (null != view) {
+                view.setOnClickListener(clickListener);
+            }
+        }
 
-        // 上下箭头的位置
-        View upArrow = contentView.findViewById(R.id.ui_tool_view_tooltip_up_arrow);
-        View downArrow = contentView.findViewById(R.id.ui_tool_view_tooltip_down_arrow);
-        upArrow.setVisibility(showBelow ? View.VISIBLE : View.GONE);
-        downArrow.setVisibility(showBelow ? View.GONE : View.VISIBLE);
     }
 
-    private static PopupWindow make(View contentView, boolean below, View anchorView, final View.OnClickListener onClickListener) {
+    private static PopupWindow make(View contentView, boolean belowAnchor, int arrowType, View anchorView, final View.OnClickListener onClickListener) {
         // 创建PopupWindow时候指定高宽时showAsDropDown能够自适应
         // 如果设置为wrap_content,showAsDropDown会认为下面空间一直很充足（我以认为这个Google的bug）
         // 备注如果PopupWindow里面有ListView,ScrollView时，一定要动态设置PopupWindow的大小
         final PopupWindow popupWindow = new PopupWindow(contentView, contentView.getMeasuredWidth(), contentView.getMeasuredHeight());
 
-        adjustElement(popupWindow, below, contentView, onClickListener);
+        adjustEvents(popupWindow, contentView, onClickListener);
+
+        adjustElement(belowAnchor, arrowType, contentView);
 
         // 如果不设置PopupWindow的背景，有些版本就会出现一个问题：无论是点击外部区域还是Back键都无法dismiss弹框
         popupWindow.setBackgroundDrawable(new ColorDrawable());
@@ -99,7 +119,7 @@ public class PopupTooltipHelper {
         int[] location = new int[2];
         anchorView.getLocationOnScreen(location);
         int x = location[0] + ((anchorView.getWidth() / 2) * (location[0] > 0 ? -1 : 1)) - (location[0] > 0 ? 0 : (contentView.getWidth() / 2));
-        int y = location[1] + (anchorView.getHeight() * (below ? 1 : -1));
+        int y = location[1] + (anchorView.getHeight() * (belowAnchor ? 1 : -1));
         // 显示在点击控件的正中间
         popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, x, y);
         return popupWindow;

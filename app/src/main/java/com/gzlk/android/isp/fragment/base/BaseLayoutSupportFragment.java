@@ -51,13 +51,6 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
     }
 
     /**
-     * 获取默认的动画时间长度
-     */
-    public int duration() {
-        return getInteger(R.integer.integer_default_animate_duration);
-    }
-
-    /**
      * 获取fragment的layout
      */
     public abstract int getLayout();

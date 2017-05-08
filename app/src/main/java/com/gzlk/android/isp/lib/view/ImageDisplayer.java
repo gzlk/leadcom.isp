@@ -146,7 +146,7 @@ public class ImageDisplayer extends RelativeLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (!isNullUrl()) {
+        if (!isNullUrl() && !isInEditMode()) {
             displayImage(displayUrl, imageWidth, imageHeight, showSelect, showDelete);
         } else {
             displayDrawable();
@@ -218,10 +218,19 @@ public class ImageDisplayer extends RelativeLayout {
     public void displayImage(String url, int width, int height, boolean selectable, boolean deletable) {
         imageWidth = width;
         imageHeight = height;
+        calculateSize();
         showDelete = deletable;
         showSelect = selectable;
         displayUrl = url;
         displayImage2();
+    }
+
+    private void calculateSize() {
+        if (imageWidth <= 0 || imageHeight <= 0) {
+            this.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            imageWidth = getMeasuredWidth();
+            imageHeight = getMeasuredHeight();
+        }
     }
 
     /**

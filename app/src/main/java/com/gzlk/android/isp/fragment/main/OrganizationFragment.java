@@ -5,8 +5,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.organization.ArchiveFragment;
 import com.gzlk.android.isp.fragment.organization.LivenessFragment;

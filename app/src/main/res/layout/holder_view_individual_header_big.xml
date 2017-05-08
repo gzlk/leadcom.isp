@@ -6,7 +6,7 @@
     android:background="@drawable/ui_background_individual_header"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingTop="?attr/actionBarSize">
+    android:paddingTop="@dimen/ui_static_dp_20">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -58,10 +58,21 @@
             android:layout_marginStart="@dimen/ui_static_dp_5"
             android:layout_toEndOf="@+id/ui_holder_view_user_name"
             android:text="@string/ui_icon_edit"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_user_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ui_holder_view_user_name"
+            android:layout_marginTop="@dimen/ui_static_dp_3"
+            android:gravity="center_horizontal"
+            android:text="@string/app_name"
             android:textColor="@android:color/white" />
     </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ui_base_dimen_button_height" />
+        android:layout_height="@dimen/ui_static_dp_20" />
 </LinearLayout>
