@@ -49,7 +49,7 @@ public class User extends Model {
         public static final String Captcha = "captcha";
         public static final String Spell = "spell";
     }
-
+    //用户id(同时也是网易云的accid)
     //用户姓名
     @Column(Model.Field.Name)
     private String name;
@@ -71,7 +71,7 @@ public class User extends Model {
     //邮箱
     @Column(Field.Email)
     private String email;
-    //密码
+    //密码(同时也是网易云的token)
     @Column(Field.Password)
     private String password;
     //生日

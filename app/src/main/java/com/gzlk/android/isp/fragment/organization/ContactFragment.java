@@ -3,6 +3,7 @@ package com.gzlk.android.isp.fragment.organization;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
@@ -24,6 +25,7 @@ import com.gzlk.android.isp.holder.SearchableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.user.User;
+import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +33,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * <b>功能描述：</b>小组通讯录<br />
+ * <b>功能描述：</b>通讯录(包括小组通讯录和组织通讯录)<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/09 00:25 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -41,16 +43,56 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class SquadContactFragment extends BaseSwipeRefreshSupportFragment {
+public class ContactFragment extends BaseSwipeRefreshSupportFragment {
+
+    private static final String PARAM_TYPE = "_cf_type_";
+    /**
+     * 打开的是小组的通讯录
+     */
+    public static final int TYPE_SQUAD = 1;
+    /**
+     * 打开的是组织的通讯录
+     */
+    public static final int TYPE_ORG = 2;
+
+    public static ContactFragment newInstance(String params) {
+        ContactFragment cf = new ContactFragment();
+        String[] strings = splitParameters(params);
+        Bundle bundle = new Bundle();
+        bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
+        bundle.putString(PARAM_QUERY_ID, strings[1]);
+        return cf;
+    }
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        showType = bundle.getInt(PARAM_TYPE, TYPE_ORG);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putInt(PARAM_TYPE, showType);
+    }
+
+    // view
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private View searchView;
+    @ViewId(R.id.ui_tool_view_phone_contact_container)
+    private View phoneContactView;
 
     // holder
     private SearchableViewHolder searchableViewHolder;
     private ArrayList<User> users;
     private ContactAdapter mAdapter;
 
+    // 默认显示组织的联系人列表
+    private int showType = TYPE_ORG;
+
     @Override
     public int getLayout() {
-        return R.layout.fragment_squad_contact;
+        return R.layout.fragment_contact;
     }
 
     @Override
@@ -60,19 +102,28 @@ public class SquadContactFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        setRightIcon(R.string.ui_icon_add);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                showTooltip(((TitleActivity) Activity()).getRightButton(), R.id.ui_tool_view_tooltip_menu_squad_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupMenuClickHandle(v);
-                    }
-                });
-            }
-        });
+        searchView.setVisibility(showType == TYPE_SQUAD ? View.VISIBLE : View.GONE);
+        phoneContactView.setVisibility(showType == TYPE_ORG ? View.VISIBLE : View.GONE);
+        initializeTitleEvent();
         initializeHolders();
+    }
+
+    // 小组联系人列表时，需要处理标题栏
+    private void initializeTitleEvent() {
+        if (showType == TYPE_SQUAD) {
+            setRightIcon(R.string.ui_icon_add);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    showTooltip(((TitleActivity) Activity()).getRightButton(), R.id.ui_tool_view_tooltip_menu_squad_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupMenuClickHandle(v);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private void popupMenuClickHandle(View view) {
@@ -81,7 +132,7 @@ public class SquadContactFragment extends BaseSwipeRefreshSupportFragment {
                 ToastHelper.make().showMsg("组织通讯录");
                 break;
             case R.id.ui_tool_popup_menu_squad_contact_phone:
-                ToastHelper.make().showMsg("手机通讯录");
+                openActivity(PhoneContactFragment.class.getName(), "", true, false);
                 break;
         }
     }
@@ -234,7 +285,7 @@ public class SquadContactFragment extends BaseSwipeRefreshSupportFragment {
         public ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             int layout = R.layout.holder_view_organization_contact;
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(layout, viewGroup, false);
-            ContactViewHolder holder = new ContactViewHolder(view, SquadContactFragment.this);
+            ContactViewHolder holder = new ContactViewHolder(view, ContactFragment.this);
             holder.setOnUserDeleteListener(onUserDeleteListener);
             return holder;
         }

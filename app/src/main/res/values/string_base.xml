@@ -66,6 +66,8 @@
     <string name="ui_base_text_confirm">确定</string>
     <string name="ui_base_text_commit">提交</string>
     <string name="ui_base_text_ok">好</string>
+    <string name="ui_base_text_add">添加</string>
+    <string name="ui_base_text_added">已添加</string>
     <string name="ui_base_text_yes">是的</string>
     <string name="ui_base_text_no_need">不用了</string>
     <string name="ui_base_text_cancel">取消</string>
@@ -79,6 +81,7 @@
     <string name="ui_base_text_copy">复制</string>
     <string name="ui_base_text_delete">删除</string>
     <string name="ui_base_text_deleted">已删除</string>
+    <string name="ui_base_text_remove">移除</string>
     <string name="ui_base_text_expand">展开</string>
     <string name="ui_base_text_collapse">收起</string>
     <string name="ui_base_text_save">保存</string>

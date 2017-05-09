@@ -8,4 +8,5 @@
     <integer name="integer_name_max_length">4</integer>
     <integer name="integer_choose_image_by_album">1</integer>
     <integer name="integer_max_image_pick_size">9</integer>
+    <integer name="integer_max_squad_name_size">10</integer>
 </resources>

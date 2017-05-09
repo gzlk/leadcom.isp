@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/ui_base_dimen_button_height"
+    android:background="@android:color/white"
+    android:paddingEnd="@dimen/ui_static_dp_zero"
+    android:paddingStart="@dimen/ui_base_dimen_margin_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ui_holder_view_phone_contact_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name" />
+
+            <TextView
+                android:id="@+id/ui_holder_view_phone_contact_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_holder_view_phone_contact_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_40"
+            android:gravity="center"
+            android:minWidth="@dimen/ui_static_dp_60"
+            android:paddingBottom="@dimen/ui_static_dp_5"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+            android:paddingTop="@dimen/ui_static_dp_5"
+            android:text="@string/ui_base_text_add"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ui_base_text_size_small"
+            app:active_color="@color/colorAccent"
+            app:background_type="fill"
+            app:corner_size="@dimen/ui_static_dp_15"
+            app:normal_color="@color/colorPrimary" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_alignParentBottom="true"
+        android:background="@color/textColorHintLightLight" />
+</RelativeLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_tool_view_phone_contact_container"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/ui_base_dimen_button_height"
+    android:background="@android:color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    app:cv_background="@android:color/white"
+    app:cv_background_active="@color/buttonDialogActiveColor"
+    app:cv_background_type="fill"
+    app:cv_border_size="@dimen/ui_static_dp_zero">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:layout_width="@dimen/ui_static_dp_30"
+        android:layout_height="@dimen/ui_static_dp_30"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:gravity="center"
+        android:text="@string/ui_icon_contact"
+        android:textColor="@android:color/white"
+        app:ctv_oval_background_color="@color/color_3eb135" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_squad_contact_menu_2" />
+
+</com.hlk.hlklib.lib.view.CorneredView>

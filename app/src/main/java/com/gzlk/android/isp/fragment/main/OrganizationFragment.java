@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.organization.ArchiveFragment;
+import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.LivenessFragment;
 import com.gzlk.android.isp.fragment.organization.MemberFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
@@ -56,7 +57,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         mFragments.add(new StructureFragment());
-        mFragments.add(new MemberFragment());
+        mFragments.add(ContactFragment.newInstance(format("%d,", ContactFragment.TYPE_ORG)));
         mFragments.add(new ArchiveFragment());
         mFragments.add(new LivenessFragment());
     }

@@ -9,4 +9,12 @@
     <!--录音-->
     <string name="ui_text_permission_voice_recorder_allowed">请重新开始录音</string>
     <string name="ui_text_permission_voice_recorder_denied">无法使用录音设备，请确认是否启用了权限限制</string>
+
+    <!--联系人-->
+    <string name="ui_text_permission_contact_request">
+        <![CDATA[您需要允许app读取或使用您的<font color="#0094b0">联系人</font>功能才能继续。]]>
+    </string>
+    <string name="ui_text_permission_contact_denied">
+        <![CDATA[很抱歉，app无法读取您的<font color="#0094b0">联系人</font>。]]>
+    </string>
 </resources>

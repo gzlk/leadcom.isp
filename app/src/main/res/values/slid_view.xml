@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SlidView">
+        <attr name="normalBackground" format="color" />
+        <attr name="activeBackground" format="color" />
+        <attr name="textFontSize" format="dimension" />
+        <attr name="normalTextColor" format="color" />
+        <attr name="activeTextColor" format="color" />
+        <attr name="selectedColor" format="color" />
+    </declare-styleable>
+</resources>

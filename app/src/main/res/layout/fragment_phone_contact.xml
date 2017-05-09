@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/holder_view_searchable" />
+
+    <include layout="@layout/tool_view_horizontal_progressbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <include
+            layout="@layout/tool_view_recycler_view_none_swipe_refreshable"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.gzlk.android.isp.lib.view.SlidView
+            android:id="@+id/ui_phone_contact_slid_view"
+            android:layout_width="@dimen/ui_static_dp_30"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true" />
+
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:id="@+id/ui_phone_contact_center_text_container"
+            android:layout_width="@dimen/ui_static_dp_80"
+            android:layout_height="@dimen/ui_static_dp_80"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            app:cv_background="@color/transparent_40"
+            app:cv_border_size="@dimen/ui_static_dp_zero"
+            app:cv_corner_size="@dimen/ui_static_dp_45">
+
+            <TextView
+                android:id="@+id/ui_phone_contact_center_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/ui_static_sp_50" />
+        </com.hlk.hlklib.lib.view.CorneredView>
+    </RelativeLayout>
+</LinearLayout>

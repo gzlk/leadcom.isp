@@ -241,7 +241,7 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             if (index > 5 && index < mAdapter.getItemCount()) {
-                openActivity(SquadContactFragment.class.getName(), "", true, false);
+                openActivity(ContactFragment.class.getName(), format("%d,", ContactFragment.TYPE_SQUAD), true, false);
             }
         }
     };
