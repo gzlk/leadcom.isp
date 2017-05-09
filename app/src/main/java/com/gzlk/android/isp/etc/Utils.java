@@ -3,8 +3,11 @@ package com.gzlk.android.isp.etc;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import com.github.promeg.pinyinhelper.Pinyin;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
@@ -314,5 +317,19 @@ public class Utils {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    /**
+     * 将汉字转换成拼音
+     */
+    public static String transformPinyin(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return "";
+        }
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            buffer.append(Pinyin.toPinyin(text.charAt(i)));
+        }
+        return buffer.toString();
     }
 }

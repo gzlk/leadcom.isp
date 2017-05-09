@@ -1,7 +1,11 @@
 package com.gzlk.android.isp.model.user;
 
+import android.text.TextUtils;
+
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
@@ -43,6 +47,7 @@ public class User extends Model {
         public static final String LastModifiedTime = "lastModifiedTime";
         public static final String LastLoginTime = "lastLoginTime";
         public static final String Captcha = "captcha";
+        public static final String Spell = "spell";
     }
 
     //用户姓名
@@ -93,6 +98,9 @@ public class User extends Model {
     //访问令牌：用于移动端访问的唯标志
     @Column(Model.Field.AccessToken)
     private String accessToken;
+    // 拼音
+    @Column(Field.Spell)
+    private String spell;
 
     public String getName() {
         return name;
@@ -100,6 +108,7 @@ public class User extends Model {
 
     public void setName(String name) {
         this.name = name;
+        setSpell(Utils.transformPinyin(name));
     }
 
     public String getSex() {
@@ -220,5 +229,20 @@ public class User extends Model {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getSpell() {
+        if (TextUtils.isEmpty(spell)) {
+            spell = Utils.transformPinyin(name);
+        }
+        return spell;
+    }
+
+    public void setSpell(String spell) {
+        if (TextUtils.isEmpty(spell)) {
+            this.spell = Utils.transformPinyin(name);
+        } else {
+            this.spell = spell;
+        }
     }
 }

@@ -245,6 +245,9 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     }
 
     protected void showLoadingMoreLayout(final boolean shown) {
+        if (null == mLoadingMoreLayout) {
+            return;
+        }
         mLoadingMoreLayout.animate()
                 .alpha(shown ? 1 : 0)
                 .setDuration(duration())

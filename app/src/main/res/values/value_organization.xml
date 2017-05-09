@@ -35,4 +35,5 @@
 
     <string name="ui_squad_contact_menu_1">组织通讯录</string>
     <string name="ui_squad_contact_menu_2">手机通讯录</string>
+    <string name="ui_squad_contact_set_to_admin">设为管理员</string>
 </resources>
