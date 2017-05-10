@@ -18,7 +18,16 @@ android {
                 cppFlags "-frtti -fexceptions"
             }
         }
+        ndk {
+            // 设置支持的SO库架构(网易云信)
+            abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
+        }
+        manifestPlaceholders = [APP_PKG_NAME: applicationId]
         resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
+        resValue "string", "netease_nim_app_key", "3c9e1b9e424ccd215d6a828602d20407"
+    }
+    productFlavors {
+        leadcom {}
     }
     buildTypes {
         release {
@@ -33,12 +42,12 @@ android {
             debuggable true
         }
         beta {
-            initWith alpha
+            initWith release
             signingConfig signingConfigs.release
             debuggable true
         }
         debug {
-            initWith beta
+            initWith release
             signingConfig signingConfigs.release
             debuggable true
         }
@@ -109,5 +118,18 @@ dependencies {
     compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
     // 圆形progressbar
     compile 'com.daimajia.numberprogressbar:library:1.2@aar'
+
+    // 添加网易云信依赖。注意，版本号必须一致。
+    // 基础功能 (必需)
+    compile 'com.netease.nimlib:basesdk:3.6.0'
+    // 音视频需要
+    //compile 'com.netease.nimlib:avchat:3.6.0'
+    // 聊天室需要
+    compile 'com.netease.nimlib:chatroom:3.6.0'
+    // 实时会话服务需要
+    //compile 'com.netease.nimlib:rts:3.6.0'
+    // 全文检索服务需要
+    //compile 'com.netease.nimlib:lucene:3.6.0'
+
     testCompile 'junit:junit:4.12'
 }
