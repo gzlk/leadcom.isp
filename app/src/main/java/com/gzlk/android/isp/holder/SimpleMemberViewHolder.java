@@ -3,7 +3,7 @@ package com.gzlk.android.isp.holder;
 import android.view.View;
 
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.model.ListItem;
+import com.gzlk.android.isp.model.SimpleClickableItem;
 
 /**
  * <b>功能描述：</b><br />
@@ -23,7 +23,7 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
     }
 
     @Override
-    public void showContent(ListItem item) {
+    public void showContent(SimpleClickableItem item) {
         super.showContent(item);
     }
 }

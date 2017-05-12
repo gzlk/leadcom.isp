@@ -6,10 +6,12 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
@@ -49,7 +51,6 @@ public class ContactViewHolder extends BaseViewHolder {
         return swipeLayout;
     }
 
-    @SuppressWarnings("ConstantConditions")
     public void showContent(User user, String searching) {
         String text = user.getName();
         if (!StringHelper.isEmpty(searching)) {
@@ -57,7 +58,21 @@ public class ContactViewHolder extends BaseViewHolder {
         }
         nameView.setText(Html.fromHtml(text));
         phoneView.setText(user.getPhone());
-        myselfView.setVisibility(user.getId().equals(App.app().Me().getId()) ? View.VISIBLE : View.GONE);
+        myselfView.setVisibility(user.getId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
+    }
+
+    public void showContent(Member member, String searchingText) {
+        String text = member.getUserName();
+        if (!StringHelper.isEmpty(searchingText)) {
+            text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
+        }
+        nameView.setText(Html.fromHtml(text));
+        text = member.getPhone();
+        if (!StringHelper.isEmpty(searchingText)) {
+            text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
+        }
+        phoneView.setText(Html.fromHtml(text));
+        myselfView.setVisibility(member.getUserId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_tool_view_contact_delete})

@@ -5,6 +5,7 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.document.DocumentLike;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -61,12 +62,12 @@ public class DocLikeRequest extends Request<DocumentLike> {
     /**
      * 为某个档案点赞
      */
-    public void add(String documentId, String userId) {
+    public void add(String documentId) {
         //{userDocId,userId}
         JSONObject object = new JSONObject();
         try {
             object.put("userDocId", documentId)
-                    .put("userId", userId);
+                    .put("userId", Cache.cache().userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -76,11 +77,11 @@ public class DocLikeRequest extends Request<DocumentLike> {
     /**
      * 取消某个档案的赞
      */
-    public void delete(String documentId, String userId) {
+    public void delete(String documentId) {
         JSONObject object = new JSONObject();
         try {
             object.put("userDocId", documentId)
-                    .put("userId", userId);
+                    .put("userId", Cache.cache().userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -97,7 +98,7 @@ public class DocLikeRequest extends Request<DocumentLike> {
     /**
      * 判断用户是否已点赞
      */
-    public void isExist(String documentId, String userId) {
-        httpRequest(getRequest(SingleLike.class, format("%s?userDocId=%s&userId=%s", url("/isExist"), documentId, userId), "", HttpMethods.Get));
+    public void isExist(String documentId) {
+        httpRequest(getRequest(SingleLike.class, format("%s?userDocId=%s&userId=%s", url("/isExist"), documentId, Cache.cache().userId), "", HttpMethods.Get));
     }
 }

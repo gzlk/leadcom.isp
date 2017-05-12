@@ -9,11 +9,10 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.TimeCounter;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.receiver.SmsReceiver;
 import com.hlk.hlklib.lib.inject.Click;
@@ -205,15 +204,15 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                 super.onResponse(user, success, message);
                 if (success) {
                     if (null != user && !StringHelper.isEmpty(user.getId())) {
-                        App.app().Me().setPhone(user.getPhone());
-                        App.app().saveMe();
+                        Cache.cache().me.setPhone(user.getPhone());
+                        Cache.cache().saveCurrentUser();
                         resultSucceededActivity();
                     } else {
                         ToastHelper.make().showMsg(message);
                     }
                 }
             }
-        }).update(App.app().UserId(), UserRequest.TYPE_PHONE, verifyPhone);
+        }).update(UserRequest.TYPE_PHONE, verifyPhone);
     }
 
     @Override

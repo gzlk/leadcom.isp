@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.holder.UserSimpleMomentViewHolder;
-import com.gzlk.android.isp.model.ListItem;
+import com.gzlk.android.isp.model.SimpleClickableItem;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 
 /**
@@ -19,7 +19,7 @@ import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
  * <b>修改备注：</b><br />
  */
 
-public class UserSimpleMomentViewBinder extends BaseViewBinder<ListItem, UserSimpleMomentViewHolder> {
+public class UserSimpleMomentViewBinder extends BaseViewBinder<SimpleClickableItem, UserSimpleMomentViewHolder> {
     @Override
     protected int itemLayout() {
         return R.layout.holder_view_user_simple_moment;
@@ -31,7 +31,7 @@ public class UserSimpleMomentViewBinder extends BaseViewBinder<ListItem, UserSim
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull UserSimpleMomentViewHolder holder, @NonNull ListItem item) {
+    protected void onBindViewHolder(@NonNull UserSimpleMomentViewHolder holder, @NonNull SimpleClickableItem item) {
         holder.showContent(item);
     }
 }

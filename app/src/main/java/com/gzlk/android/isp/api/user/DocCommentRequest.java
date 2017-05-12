@@ -7,6 +7,7 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.document.DocumentComment;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -63,14 +64,14 @@ public class DocCommentRequest extends Request<DocumentComment> {
     /**
      * 新增档案的评论
      */
-    public void add(String documentId, String content, String userId, String userName) {
+    public void add(String documentId, String content) {
         //{userDocId,content,userId,userName}
         JSONObject object = new JSONObject();
         try {
             object.put("userDocId", documentId)
                     .put("content", checkNull(content))
-                    .put("userId", userId)
-                    .put("userName", checkNull(userName));
+                    .put("userId", Cache.cache().userId)
+                    .put("userName", checkNull(Cache.cache().userName));
         } catch (JSONException e) {
             e.printStackTrace();
         }

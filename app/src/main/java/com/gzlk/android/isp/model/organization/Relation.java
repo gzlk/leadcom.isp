@@ -14,12 +14,12 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Group.Table.RELATION)
+@Table(Organization.Table.RELATION)
 public class Relation extends Model {
 
-    @Column(Group.Field.RoleId)
+    @Column(Organization.Field.RoleId)
     private String roleId;
-    @Column(Group.Field.PermissionId)
+    @Column(Organization.Field.PermissionId)
     private String permissionId;
 
     public String getRoleId() {

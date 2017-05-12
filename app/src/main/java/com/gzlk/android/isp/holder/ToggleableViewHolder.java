@@ -6,7 +6,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.model.ListItem;
+import com.gzlk.android.isp.model.SimpleClickableItem;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.ToggleButton;
@@ -55,7 +55,7 @@ public class ToggleableViewHolder extends BaseViewHolder {
         showContent(texts[1], (!StringHelper.isEmpty(texts[2]) && texts[2].equals("1")));
     }
 
-    public void showContent(ListItem item) {
+    public void showContent(SimpleClickableItem item) {
         index = item.getIndex();
         showContent(item.getTitle(), !StringHelper.isEmpty(item.getValue()) && item.getValue().equals("1"));
     }

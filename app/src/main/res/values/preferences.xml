@@ -2,6 +2,7 @@
 <resources>
 
     <string name="pf_last_login_user_id">200000</string>
+    <string name="pf_last_login_user_token">200001</string>
 
     <string name="pf_static_keyboard_height">300000</string>
 </resources>

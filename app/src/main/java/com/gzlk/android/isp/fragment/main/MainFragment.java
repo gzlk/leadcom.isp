@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,8 +39,14 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private View toolBarBackground;
     @ViewId(R.id.ui_ui_custom_title_text)
     private TextView toolBarTitleText;
+    // 个人的设置按钮
     @ViewId(R.id.ui_ui_custom_title_right_icon_1)
-    private CustomTextView rightIcon;
+    private CustomTextView rightSettingIcon;
+    @ViewId(R.id.ui_ui_custom_title_right_icon_2_container)
+    private RelativeLayout rightChatIconContainer;
+    @ViewId(R.id.ui_ui_custom_title_right_icon_2_flag)
+    private LinearLayout rightChatIconFlag;
+
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
     private CustomTextView iconView1;
     @ViewId(R.id.ui_tool_main_bottom_icon_2)
@@ -149,6 +156,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 setDisplayPage(3);
                 break;
             case R.id.ui_ui_custom_title_right_icon_1:
+                // 打开个人设置
                 openActivity(SettingFragment.class.getName(), "", true, false);
                 break;
         }
@@ -182,7 +190,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     }
 
     private void displayRightIcon(final boolean show) {
-        rightIcon.animate().alpha(show ? 1 : 0)
+        rightSettingIcon.animate().alpha(show ? 1 : 0)
                 .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setListener(new AnimatorListenerAdapter() {
@@ -190,7 +198,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         if (!show) {
-                            rightIcon.setVisibility(View.GONE);
+                            rightSettingIcon.setVisibility(View.GONE);
                         }
                     }
 
@@ -198,7 +206,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                     public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         if (show) {
-                            rightIcon.setVisibility(View.VISIBLE);
+                            rightSettingIcon.setVisibility(View.VISIBLE);
                         }
                     }
                 }).start();

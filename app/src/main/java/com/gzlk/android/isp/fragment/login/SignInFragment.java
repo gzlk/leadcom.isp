@@ -8,11 +8,10 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -64,12 +63,11 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
 //        return Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn();
 //    }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void doingInResume() {
         if (checkStoragePermission()) {
-            if (null != App.app().Me() && isAdded()) {
-                accountText.setValue(App.app().Me().getPhone());
+            if (null != Cache.cache().me && isAdded()) {
+                accountText.setValue(Cache.cache().me.getPhone());
                 accountText.focusEnd();
                 signInButton.setEnabled(false);
                 signInButton.setText(R.string.ui_text_sign_in_still_processing);
@@ -132,15 +130,13 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     private void signIn(String account, String password) {
         SystemRequest.request().setOnRequestListener(new OnRequestListener<User>() {
 
-            @SuppressWarnings("ConstantConditions")
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 // 检测服务器返回的状态
                 if (success) {
-                    //new Dao<>(User.class).save(user);
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
-                    App.app().Me(user);
+                    Cache.cache().setCurrentUser(user);;
                     // 打开主页面
                     finish(true);
                 } else {

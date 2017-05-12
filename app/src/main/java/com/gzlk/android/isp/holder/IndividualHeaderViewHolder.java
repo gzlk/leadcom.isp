@@ -4,11 +4,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
-import com.gzlk.android.isp.fragment.individual.UserInformationFragment;
 import com.gzlk.android.isp.fragment.individual.QRCodeFragment;
+import com.gzlk.android.isp.fragment.individual.UserInformationFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.user.User;
@@ -41,10 +41,10 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
         ((BaseTransparentSupportFragment) fragment).tryPaddingContent(itemView, true);
         userHeader.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
-            @SuppressWarnings("ConstantConditions")
+
             @Override
             public void onImageClick(String url) {
-                openActivity(UserInformationFragment.class.getName(), App.app().UserId(), false, false, true);
+                openActivity(UserInformationFragment.class.getName(), Cache.cache().userId, false, false, true);
             }
         });
 

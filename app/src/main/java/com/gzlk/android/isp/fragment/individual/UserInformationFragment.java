@@ -13,7 +13,7 @@ import com.bigkoo.pickerview.TimePickerView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -23,8 +23,8 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.ListItem;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.SimpleClickableItem;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.SimpleClickableViewBinder;
@@ -134,7 +134,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     @SuppressWarnings("ConstantConditions")
     private void toEdit() {
         User user = (User) mAdapter.get(0);
-        if (user.getId().equals(App.app().UserId())) {
+        if (user.getId().equals(Cache.cache().userId)) {
             user.setLocalDeleted(!user.isLocalDeleted());
             mAdapter.notifyItemChanged(0);
         }
@@ -173,7 +173,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.addItemDecoration(new SpacesItemDecoration());
             mAdapter = new MyAdapter();
             mAdapter.register(User.class, new UserHeaderBigViewBinder(onViewHolderClickListener).setFragment(this));
-            mAdapter.register(ListItem.class, new UserSimpleMomentViewBinder().setFragment(this));
+            mAdapter.register(SimpleClickableItem.class, new UserSimpleMomentViewBinder().setFragment(this));
             mAdapter.register(Model.class, new SimpleClickableViewBinder(onViewHolderClickListener).setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
             titleBackground.setAlpha(0);
@@ -220,13 +220,13 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     @SuppressWarnings("ConstantConditions")
     private void checkUser(final User user) {
         mAdapter.add(user);
-        if (user.getId().equals(App.app().UserId())) {
+        if (user.getId().equals(Cache.cache().userId)) {
             rightTextView.setText(R.string.ui_base_text_edit);
         } else {
             rightTextView.setText(null);
         }
         // 动态
-        mAdapter.add(new ListItem(format(items[1], "")) {{
+        mAdapter.add(new SimpleClickableItem(format(items[1], "")) {{
             setId(format(items[1], ""));
         }});
         // 性别
@@ -319,7 +319,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case REQUEST_PHONE_CONFIRM:
                 // 手机号码修改成功了
-                mAdapter.get(8).setId(format(items[8], App.app().Me().getPhone()));
+                mAdapter.get(8).setId(format(items[8], Cache.cache().me.getPhone()));
                 mAdapter.notifyItemChanged(8);
                 break;
             case REQUEST_ID:
@@ -401,7 +401,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
                     resetUserInformation(type, value, user);
                 }
             }
-        }).update(mQueryId, type, value);
+        }).update(type, value);
     }
 
     @SuppressWarnings("ConstantConditions")

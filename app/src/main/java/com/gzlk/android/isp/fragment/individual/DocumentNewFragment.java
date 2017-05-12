@@ -15,7 +15,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.api.user.DocumentRequest;
-import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -134,7 +133,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(title, content, Document.Type.TEXT, App.app().UserId(), App.app().Me().getName(), App.app().UserToken());
+        }).add(title, content, Document.Type.TEXT);
     }
 
     private void editDocument(String title, String content) {

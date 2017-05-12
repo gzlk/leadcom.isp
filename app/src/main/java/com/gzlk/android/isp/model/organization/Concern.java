@@ -14,15 +14,15 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Group.Table.CONCERN)
+@Table(Organization.Table.CONCERN)
 public class Concern extends Model {
     @Column(Field.UserId)
     private String userId;        //用户ID
-    @Column(Group.Field.GroupId)
+    @Column(Organization.Field.GroupId)
     private String groupId;        //关注组织ID
-    @Column(Group.Field.GroupName)
+    @Column(Organization.Field.GroupName)
     private String groupName;    //关注组织名称
-    @Column(Group.Field.GroupLogo)
+    @Column(Organization.Field.GroupLogo)
     private String groupLogo;    //关注组织LOGO
 
     public String getUserId() {

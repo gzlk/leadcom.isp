@@ -13,14 +13,14 @@ import java.io.Serializable;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseApi implements Serializable {
+abstract class BaseApi implements Serializable {
 
     /**
      * 所有网络调用的网址前缀
      */
-    public static final String URL = "http://113.108.144.2:8044";
+    static final String URL = "http://10.141.130.17:8888";//"http://113.108.144.2:8044";
     /**
      * 网络调用成功时的状态码
      */
-    protected static final String SUCCEED = "000000";
+    static final String SUCCEED = "000000";
 }

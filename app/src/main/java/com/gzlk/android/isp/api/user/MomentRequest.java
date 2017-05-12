@@ -2,12 +2,12 @@ package com.gzlk.android.isp.api.user;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.BaseApi;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.moment.Moment;
 import com.litesuits.http.request.param.HttpMethods;
@@ -74,12 +74,12 @@ public class MomentRequest extends Request<Moment> {
     /**
      * 添加Moment
      */
-    public void add(@NonNull String userId, String userName, String location, String content, ArrayList<String> image) {
+    public void add(String location, String content, ArrayList<String> image) {
 
         JSONObject object = new JSONObject();
         try {
-            object.put("userId", userId)
-                    .put("userName", checkNull(userName))
+            object.put("userId", Cache.cache().userId)
+                    .put("userName", checkNull(Cache.cache().userName))
                     .put("location", checkNull(location))
                     .put("content", checkNull(content));
             JSONArray array = new JSONArray(image);
@@ -135,7 +135,7 @@ public class MomentRequest extends Request<Moment> {
     /**
      * 查找同一组别的用户发布的说说列表
      */
-    public void groupList(@NonNull String userId) {
-        getRequestBy(url(FIND), QB_USER, MultiMoment.class, userId, "", HttpMethods.Get);
+    public void groupList(@NonNull String groupId) {
+        getRequestBy(url(FIND), QB_USER, MultiMoment.class, groupId, "", HttpMethods.Get);
     }
 }

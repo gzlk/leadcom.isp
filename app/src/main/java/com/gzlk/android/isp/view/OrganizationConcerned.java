@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
-import com.gzlk.android.isp.model.organization.Group;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -60,9 +60,9 @@ public class OrganizationConcerned extends FrameLayout {
     @ViewId(R.id.ui_tool_organization_concerned_pager_name)
     private TextView textView;
 
-    public void showOrganization(Group group) {
-        imageDisplayer.displayImage(group.getLogo(), getResources().getDimensionPixelSize(R.dimen.ui_static_dp_80), false, false);
-        textView.setText(group.getName());
+    public void showOrganization(Organization organization) {
+        imageDisplayer.displayImage(organization.getLogo(), getResources().getDimensionPixelSize(R.dimen.ui_static_dp_80), false, false);
+        textView.setText(organization.getName());
     }
 
     private int position;

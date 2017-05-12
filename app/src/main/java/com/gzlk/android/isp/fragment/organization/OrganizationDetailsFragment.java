@@ -15,7 +15,7 @@ import com.gzlk.android.isp.holder.UserHeaderBigViewHolder;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.SimpleMemberViewHolder;
 import com.gzlk.android.isp.holder.ToggleableViewHolder;
-import com.gzlk.android.isp.model.ListItem;
+import com.gzlk.android.isp.model.SimpleClickableItem;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
@@ -120,13 +120,13 @@ public class OrganizationDetailsFragment extends BaseSwipeRefreshSupportFragment
                     text = string;
                     break;
             }
-            ListItem item = new ListItem(text);
+            SimpleClickableItem item = new SimpleClickableItem(text);
             mAdapter.update(item);
             index++;
         }
     }
 
-    private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, ListItem> {
+    private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, SimpleClickableItem> {
 
         private static final int VT_HEADER = 0, VT_MEMBER = 1, VT_TOGGLE = 2, VT_NORMAL = 3;
 
@@ -175,7 +175,7 @@ public class OrganizationDetailsFragment extends BaseSwipeRefreshSupportFragment
         }
 
         @Override
-        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable ListItem item) {
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable SimpleClickableItem item) {
             if (holder instanceof SimpleClickableViewHolder) {
                 ((SimpleClickableViewHolder) holder).showContent(item);
             } else if (holder instanceof ToggleableViewHolder) {
@@ -184,7 +184,7 @@ public class OrganizationDetailsFragment extends BaseSwipeRefreshSupportFragment
         }
 
         @Override
-        protected int comparator(ListItem item1, ListItem item2) {
+        protected int comparator(SimpleClickableItem item1, SimpleClickableItem item2) {
             return 0;
         }
     }

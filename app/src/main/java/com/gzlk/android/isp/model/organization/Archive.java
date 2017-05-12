@@ -32,7 +32,7 @@ public class Archive extends Model {
         public static final String GroupArchiveId = "groupArchiveId";
     }
 
-    @Column(Group.Field.GroupId)
+    @Column(Organization.Field.GroupId)
     private String groupId;            //群体ID
     @Column(Document.Field.Title)
     private String title;              //档案名称

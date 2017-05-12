@@ -7,7 +7,7 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.Collection;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -60,18 +60,17 @@ public class CollectionRequest extends Request<Collection> {
         return this;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    public void add(@NonNull String type, String content, @NonNull String userId, @NonNull String creatorId, String creatorName) {
+    public void add(@NonNull String type, String content, @NonNull String creatorId, String creatorName) {
         //{type,content,userId,creatorId,creatorName,accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("type", type)
                     .put("content", checkNull(content))
-                    .put("userId", userId)
+                    .put("userId", Cache.cache().userId)
                     .put("creatorId", checkNull(creatorId))
                     .put("creatorName", checkNull(creatorName))
-                    .put("accessToken", App.app().UserToken());
+                    .put("accessToken", Cache.cache().userToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -109,9 +108,9 @@ public class CollectionRequest extends Request<Collection> {
         httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(FIND), collectionId), "", HttpMethods.Get));
     }
 
-    public void list(String userId, int pageSize, int pageNumber) {
+    public void list(int pageSize, int pageNumber) {
         httpRequest(getRequest(MultipleCollection.class,
-                format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), userId, pageSize, pageNumber), "", HttpMethods.Get));
+                format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), Cache.cache().userId, pageSize, pageNumber), "", HttpMethods.Get));
     }
 
     public void search(String userId, String info) {

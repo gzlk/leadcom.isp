@@ -14,7 +14,7 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Group.Table.ROLE)
+@Table(Organization.Table.ROLE)
 public class Role extends Permission {
 
     @Column(Model.Field.Name)

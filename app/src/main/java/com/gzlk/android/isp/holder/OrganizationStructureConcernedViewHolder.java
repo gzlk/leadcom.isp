@@ -8,13 +8,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationDetailsFragment;
+import com.gzlk.android.isp.lib.view.WrapContentViewPager;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.view.OrganizationConcerned;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>组织机构中已关注组织列表（画廊模式）<br />
@@ -32,8 +39,10 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
     // View
     @ViewId(R.id.ui_organization_structure_concerned_container)
     private RelativeLayout viewPagerContainer;
+    @ViewId(R.id.ui_organization_structure_concerned_blank)
+    private TextView blankTextView;
     @ViewId(R.id.ui_organization_structure_concerned_list)
-    private ViewPager viewPager;
+    private WrapContentViewPager viewPager;
 
     private DepthAdapter mAdapter;
 
@@ -63,6 +72,13 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
             viewPager.setPageMargin(-getDimension(R.dimen.ui_static_dp_40));
             viewPager.setAdapter(mAdapter);
         }
+    }
+
+    private ViewPager.OnPageChangeListener onPageChangeListener;
+
+    public void setPageChangeListener(ViewPager.OnPageChangeListener listener) {
+        onPageChangeListener = listener;
+        viewPager.addOnPageChangeListener(onPageChangeListener);
     }
 
     public void setSelected(int selected) {
@@ -113,11 +129,57 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
         }
     }
 
+    private List<Organization> organizations = new ArrayList<>();
+
+    /**
+     * 尝试加载本地群列表
+     */
+    public void loadingLocal() {
+        List<Organization> temp = new Dao<>(Organization.class).query();
+        if (null != temp && temp.size() > 0) {
+            add(temp);
+        }
+    }
+
+    /**
+     * 获取index处的组织详细信息
+     */
+    public Organization get(int position) {
+        if (position >= 0 && position < organizations.size()) {
+            return organizations.get(position);
+        }
+        return null;
+    }
+
+    private boolean firstInitialize = true;
+
+    public void add(List<Organization> list) {
+        blankTextView.setVisibility(View.GONE);
+        for (Organization organization : list) {
+            if (!organizations.contains(organization)) {
+                organizations.add(organization);
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+        // 第一次加载时自动触发pageChange事件
+        if (firstInitialize) {
+            if (null != onPageChangeListener) {
+                firstInitialize = false;
+                viewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onPageChangeListener.onPageSelected(viewPager.getCurrentItem());
+                    }
+                });
+            }
+        }
+    }
+
     private class DepthAdapter extends PagerAdapter {
 
         @Override
         public int getCount() {
-            return 10;
+            return organizations.size();
         }
 
         @Override
@@ -129,7 +191,7 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
         public Object instantiateItem(ViewGroup container, int position) {
             OrganizationConcerned concerned = new OrganizationConcerned(viewPager.getContext());
             concerned.setOnContainerClickListener(containerClickListener);
-            concerned.showContent(position);
+            concerned.showOrganization(organizations.get(position));
             container.addView(concerned);
             return concerned;
         }

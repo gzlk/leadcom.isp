@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.model.organization;
 
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
@@ -15,11 +17,11 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Group.Table.MEMBER)
+@Table(Organization.Table.MEMBER)
 public class Member extends Model {
-    @Column(Group.Field.GroupId)
+    @Column(Organization.Field.GroupId)
     private String groupId;        //群体ID
-    @Column(Group.Field.SquadId)
+    @Column(Organization.Field.SquadId)
     private String squadId;        //小组ID
     @Column(Field.UserId)
     private String userId;           //用户ID
@@ -27,12 +29,14 @@ public class Member extends Model {
     private String userName;       //用户姓名
     @Column(User.Field.Phone)
     private String phone;          //用户手机
-    @Column(Group.Field.RoleId)
+    @Column(Organization.Field.RoleId)
     private String roleId;         //角色ID
-    @Column(Group.Field.RoleName)
+    @Column(Organization.Field.RoleName)
     private String roleName;       //角色名称
     @Column(Field.CreateDate)
     private String createDate;     //加入时间
+    @Column(User.Field.Spell)
+    private String spell;           // 名字的拼音
 
     public String getGroupId() {
         return groupId;
@@ -64,6 +68,7 @@ public class Member extends Model {
 
     public void setUserName(String userName) {
         this.userName = userName;
+        spell = Utils.transformPinyin(this.userName);
     }
 
     public String getPhone() {
@@ -96,5 +101,16 @@ public class Member extends Model {
 
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
+    }
+
+    public String getSpell() {
+        if (StringHelper.isEmpty(spell)) {
+            spell = Utils.transformPinyin(userName);
+        }
+        return spell;
+    }
+
+    public void setSpell(String spell) {
+        this.spell = spell;
     }
 }

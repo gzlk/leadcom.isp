@@ -14,7 +14,7 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Group.Table.INVITATION)
+@Table(Organization.Table.INVITATION)
 public class Invitation extends Model {
 
     public static class Field {
@@ -28,9 +28,9 @@ public class Invitation extends Model {
         public static final String State = "state";
     }
 
-    @Column(Group.Field.GroupId)
+    @Column(Organization.Field.GroupId)
     private String groupId;
-    @Column(Group.Field.GroupName)
+    @Column(Organization.Field.GroupName)
     private String groupName;
     //邀请人ID和姓名
     @Column(Field.InviterId)

@@ -3,7 +3,7 @@ package com.gzlk.android.isp.fragment.individual;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.login.BaseVerifyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -51,7 +51,7 @@ public class ModifyPhoneFragment extends BaseVerifyFragment {
                 tryVerifyPhone();
             }
         });
-        warningTextView.setText(StringHelper.getString(R.string.ui_text_modify_phone_number_input_warning, App.app().Me().getPhone()));
+        warningTextView.setText(StringHelper.getString(R.string.ui_text_modify_phone_number_input_warning, Cache.cache().me.getPhone()));
     }
 
     @Override

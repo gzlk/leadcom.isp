@@ -6,8 +6,9 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.model.ListItem;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.SimpleClickableItem;
+import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -51,7 +52,13 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Model model) {
-        showContent(model.getId());
+        if (model instanceof Squad) {
+            showContent((Squad) model);
+        } else if (model instanceof SimpleClickableItem) {
+            showContent((SimpleClickableItem) model);
+        } else {
+            showContent(model.getId());
+        }
     }
 
     public void showContent(String string) {
@@ -63,7 +70,12 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
         }
     }
 
-    public void showContent(ListItem item) {
+    public void showContent(Squad squad) {
+        // 貌似只显示小组的名称
+        showContent(0, "", squad.getName());
+    }
+
+    public void showContent(SimpleClickableItem item) {
         showContent(item.getIndex(), item.getTitle(), item.getValue());
         rightIcon.setVisibility(item.isIconVisible() ? View.VISIBLE : View.GONE);
     }

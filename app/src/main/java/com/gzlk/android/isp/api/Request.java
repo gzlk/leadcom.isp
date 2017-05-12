@@ -67,7 +67,7 @@ public abstract class Request<T> {
     public Request() {
         liteHttp = LiteHttp.build(App.app()).create();
         // 10秒网络超时
-        liteHttp.getConfig().setConnectTimeout(10000);
+        liteHttp.getConfig().setConnectTimeout(5000);
     }
 
     protected String format(String fmt, Object... args) {
@@ -95,7 +95,7 @@ public abstract class Request<T> {
     /**
      * 组合请求
      */
-    protected JsonRequest<Output<T>> getRequest(Type resultType, String action, String body, HttpMethods methods) {
+    protected JsonRequest<Output<T>> getRequest(Type resultType, final String action, String body, HttpMethods methods) {
         return new JsonRequest<Output<T>>(StringHelper.format("%s%s", URL, action), resultType)
                 .setHttpListener(new OnHttpListener<Output<T>>() {
 
@@ -117,6 +117,7 @@ public abstract class Request<T> {
                                 }
                             }
                         } else {
+                            log(format("url: %s, response failed %s", action, data.getMsg()));
                             ToastHelper.make().showMsg(data.getMsg());
                             fireFailedListenerEvents(data.getMsg());
                         }

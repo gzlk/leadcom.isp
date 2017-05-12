@@ -5,6 +5,7 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -65,24 +66,23 @@ public class UserRequest extends Request<User> {
     public static final int TYPE_BIRTHDAY = 6;
 
     /**
-     * 更改用户的信息
+     * 更改我的信息
      *
-     * @param userId 用户id
-     * @param type   要修改的属性index
-     *               <ul>
-     *               <li>TYPE_NAME: 修改昵称</li>
-     *               <li>TYPE_PHONE: 修改电话</li>
-     *               <li>TYPE_EMAIL: 修改email</li>
-     *               <li>TYPE_PASSWORD: 修改密码</li>
-     *               <li>TYPE_SEX: 修改性别</li>
-     *               </ul>
-     * @param value  修改的值
+     * @param type  要修改的属性index
+     *              <ul>
+     *              <li>TYPE_NAME: 修改昵称</li>
+     *              <li>TYPE_PHONE: 修改电话</li>
+     *              <li>TYPE_EMAIL: 修改email</li>
+     *              <li>TYPE_PASSWORD: 修改密码</li>
+     *              <li>TYPE_SEX: 修改性别</li>
+     *              </ul>
+     * @param value 修改的值
      */
-    public void update(String userId, int type, String value) {
+    public void update(int type, String value) {
         //{_id,name,phone,email,password,sex,accessToken}
         JSONObject object = new JSONObject();
         try {
-            object.put("_id", userId);
+            object.put("_id", Cache.cache().userId);
             switch (type) {
                 case TYPE_BIRTHDAY:
                     object.put("brithday", value);
@@ -109,6 +109,9 @@ public class UserRequest extends Request<User> {
         httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 拉取某个用户的基本信息
+     */
     public void find(String userId) {
         httpRequest(getRequest(SingleUser.class, format("%s?userId=%s", url(FIND), userId), "", HttpMethods.Get));
     }

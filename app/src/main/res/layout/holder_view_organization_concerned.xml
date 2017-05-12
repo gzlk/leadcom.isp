@@ -5,12 +5,20 @@
     android:layout_height="wrap_content"
     android:clipChildren="false">
 
-    <android.support.v4.view.ViewPager
+    <TextView
+        android:id="@+id/ui_organization_structure_concerned_blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/ui_organization_structure_no_group_exist" />
+
+    <com.gzlk.android.isp.lib.view.WrapContentViewPager
         android:id="@+id/ui_organization_structure_concerned_list"
         android:layout_width="@dimen/ui_static_dp_120"
-        android:layout_height="@dimen/ui_static_dp_120"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:clipChildren="false"
-        android:clipToPadding="true" />
+        android:clipToPadding="true"
+        android:minHeight="@dimen/ui_static_dp_100" />
 
 </RelativeLayout>

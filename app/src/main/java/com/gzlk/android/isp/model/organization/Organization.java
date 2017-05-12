@@ -14,11 +14,11 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Group.Table.GROUP)
-public class Group extends Model {
+@Table(Organization.Table.GROUP)
+public class Organization extends Model {
 
     public static class Table {
-        public static final String GROUP = "group";
+        public static final String GROUP = "organization";
         public static final String SQUAD = "squad";
         public static final String INVITATION = "invitation";
         public static final String ROLE = "role";
@@ -26,6 +26,7 @@ public class Group extends Model {
         public static final String PERMISSION = "permission";
         public static final String MEMBER = "member";
         public static final String CONCERN = "concern";
+        public static final String JOIN = "joinGroup";
     }
 
     public static class Field {

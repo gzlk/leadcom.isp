@@ -14,14 +14,14 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Group.Table.SQUAD)
+@Table(Organization.Table.SQUAD)
 public class Squad extends Model {
 
     public static class Field {
         public static final String Introduce = "introduce";
     }
 
-    @Column(Group.Field.GroupId)
+    @Column(Organization.Field.GroupId)
     private String groupId;        //所属群ID
     @Column(Model.Field.Name)
     private String name;           //小组名称
@@ -33,7 +33,7 @@ public class Squad extends Model {
     private String creatorId;      //创建者ID
     @Column(Model.Field.CreatorName)
     private String creatorName;    //创建者姓名
-    @Column(Group.Field.MemberNumber)
+    @Column(Organization.Field.MemberNumber)
     private String memberNum;      //成员数
     @Column(Model.Field.AccessToken)
     private String accessToken;    //更改此记录的用户的令牌环

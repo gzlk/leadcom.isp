@@ -14,7 +14,7 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Group.Table.PERMISSION)
+@Table(Organization.Table.PERMISSION)
 public class Permission extends Model {
 
     public static class Field {

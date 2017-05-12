@@ -7,7 +7,7 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -64,7 +64,7 @@ public class DocumentRequest extends Request<Document> {
     /**
      * 添加档案
      */
-    public void add(String title, String content, String type, String userId, String userName, String accessToken) {
+    public void add(String title, String content, String type) {
         //title,content,type,userId,userName,accessToken
 
         JSONObject object = new JSONObject();
@@ -72,9 +72,9 @@ public class DocumentRequest extends Request<Document> {
             object.put("title", title)
                     .put("content", checkNull(content))
                     .put("type", checkNull(type))
-                    .put("userId", userId)
-                    .put("userName", checkNull(userName))
-                    .put("accessToken", accessToken);
+                    .put("userId", Cache.cache().userId)
+                    .put("userName", checkNull(Cache.cache().userName))
+                    .put("accessToken", Cache.cache().userToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -110,7 +110,7 @@ public class DocumentRequest extends Request<Document> {
             object.put("title", title);
             object.put("content", content);
             object.put("type", type);
-            object.put("accessToken", App.app().UserToken());
+            object.put("accessToken", Cache.cache().userToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -130,9 +130,9 @@ public class DocumentRequest extends Request<Document> {
     /**
      * 查找指定用户的档案列表，返回一个结果集合
      */
-    public void list(@NonNull String userId, int pageSize, int pageNumber) {
+    public void list(int pageSize, int pageNumber) {
         httpRequest(getRequest(MultipleDocument.class,
-                format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), userId, pageSize, pageNumber),
+                format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), Cache.cache().userId, pageSize, pageNumber),
                 "", HttpMethods.Get));
     }
 

@@ -2,7 +2,6 @@ package com.gzlk.android.isp.fragment.individual;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
@@ -10,7 +9,7 @@ import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.api.user.DocCommentRequest;
 import com.gzlk.android.isp.api.user.DocumentRequest;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseChatInputSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -127,9 +126,8 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void resetRightTitleButton(@NonNull Document document) {
-        if (document.getUserId().equals(App.app().UserId())) {
+        if (document.getUserId().equals(Cache.cache().userId)) {
             //setRightIcon(R.string.ui_icon_more);
             setRightText(R.string.ui_base_text_edit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
@@ -333,7 +331,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
                     fetchingRemote();
                 }
             }
-        }).add(mQueryId, text, App.app().UserId(), App.app().Me().getName());
+        }).add(mQueryId, text);
     }
 
     private class DocumentDetailsAdapter extends BaseMultiTypeAdapter<Model> {

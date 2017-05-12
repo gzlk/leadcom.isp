@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ui_tool_title_bar_container"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize">
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary">
 
     <include layout="@layout/tool_view_activity_normal_title_text" />
 
@@ -20,13 +22,45 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-            android:alpha="0"
             android:animateLayoutChanges="true"
             android:gravity="center"
             android:text="@string/ui_icon_setting"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/ui_base_text_size_big"
-            android:visibility="gone" />
+            android:textSize="@dimen/ui_base_text_size_big" />
+
+        <RelativeLayout
+            android:id="@+id/ui_ui_custom_title_right_icon_2_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_ui_custom_title_right_icon_2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:animateLayoutChanges="true"
+                android:gravity="center"
+                android:text="@string/ui_icon_chat"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/ui_base_text_size_big" />
+
+            <LinearLayout
+                android:id="@+id/ui_ui_custom_title_right_icon_2_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/ui_ui_custom_title_right_icon_2"
+                android:layout_marginTop="@dimen/ui_static_dp_20"
+                android:background="@drawable/ui_background_oval_primary"
+                android:padding="@dimen/ui_static_dp_half">
+
+                <LinearLayout
+                    android:layout_width="@dimen/ui_static_dp_5"
+                    android:layout_height="@dimen/ui_static_dp_5"
+                    android:background="@drawable/ui_background_oval_white" />
+            </LinearLayout>
+
+        </RelativeLayout>
 
         <include layout="@layout/tool_view_activity_main_title_right_bar" />
     </LinearLayout>

@@ -254,7 +254,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).add(Collection.Type.IMAGE, url, App.app().UserId(), momentUser, momentName);
+        }).add(Collection.Type.IMAGE, url, momentUser, momentName);
     }
 
     @SuppressWarnings("ConstantConditions")

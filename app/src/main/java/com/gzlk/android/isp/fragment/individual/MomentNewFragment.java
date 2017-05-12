@@ -11,7 +11,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
-import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -140,7 +139,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(App.app().UserId(), App.app().Me().getName(), address, content, getSelectedImages());
+        }).add(address, content, getSelectedImages());
     }
 
     @Override

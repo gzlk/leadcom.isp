@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.model.organization;
 
-import com.gzlk.android.isp.model.user.document.DocumentAdditional;
 import com.gzlk.android.isp.model.user.moment.MomentAdditional;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
@@ -18,7 +17,7 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Archive.Table.ADDITIONAL)
 public class ArchiveAdditional extends SubArchive {
 
-    @Column(Group.Field.GroupId)
+    @Column(Organization.Field.GroupId)
     private String groupId;     //组织ID
     @Column(MomentAdditional.Field.ReadNum)
     private String readNum;     //阅读次数

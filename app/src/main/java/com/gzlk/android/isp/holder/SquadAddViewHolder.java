@@ -54,14 +54,14 @@ public class SquadAddViewHolder extends BaseViewHolder {
                 ((StructureFragment) fragment()).showSquadAddPopup(true);
                 break;
             case R.id.ui_holder_view_squad_add_editor_confirm:
-                String value = editorName.getValue();
-                if (StringHelper.isEmpty(value)) {
-                    ToastHelper.make().showMsg("输入不符合要求");
-                    return;
-                }
-                ((StructureFragment) fragment()).addSquad(value);
-                editorName.setValue("");
-                showEditor(false);
+//                String value = editorName.getValue();
+//                if (StringHelper.isEmpty(value)) {
+//                    ToastHelper.make().showMsg("输入不符合要求");
+//                    return;
+//                }
+//                ((StructureFragment) fragment()).addSquad(value, "");
+//                editorName.setValue("");
+//                showEditor(false);
                 break;
         }
     }

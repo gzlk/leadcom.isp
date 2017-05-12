@@ -13,13 +13,13 @@ import com.gzlk.android.isp.helper.StringHelper;
  * <b>修改备注：</b><br />
  */
 
-public class ListItem extends Model {
+public class SimpleClickableItem extends Model {
     private int index;
     private String title;
     private String value;
     private boolean iconVisible;
 
-    public ListItem(String text) {
+    public SimpleClickableItem(String text) {
         String[] strings = text.split("\\|", -1);
         setId(strings[0]);
         index = Integer.valueOf(strings[0]);

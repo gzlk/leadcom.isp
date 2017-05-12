@@ -11,7 +11,7 @@ import com.gzlk.android.isp.api.listener.OnRequestListListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
-import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.MomentNewFragment;
@@ -194,7 +194,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
                 stopRefreshing();
             }
-        }).list(App.app().UserId());
+        }).list(Cache.cache().userId);
     }
 
     /**
@@ -218,7 +218,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
                 stopRefreshing();
             }
-        }).list(App.app().UserId(), PAGE_SIZE, refreshing ? 1 : remotePageNumber);// 如果是拉取，则总是从第一页开始，否则是拉取下一页
+        }).list(PAGE_SIZE, refreshing ? 1 : remotePageNumber);// 如果是拉取，则总是从第一页开始，否则是拉取下一页
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -239,7 +239,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
                 stopRefreshing();
             }
-        }).list(App.app().UserId(), PAGE_SIZE, remotePageNumber);
+        }).list(PAGE_SIZE, remotePageNumber);
     }
 
     private void adjustRemotePages(int fetchedCount, int pageSize, int pageNumber, int total, int totalPages) {
@@ -297,7 +297,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             @Override
             public List<Moment> executing(OrmTask<Moment> task) {
                 QueryBuilder<Moment> builder = new QueryBuilder<>(Moment.class)
-                        .whereEquals(Model.Field.UserId, App.app().UserId())
+                        .whereEquals(Model.Field.UserId, Cache.cache().userId)
                         .appendOrderDescBy(Model.Field.CreateDate)
                         .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
                 return new Dao<>(Moment.class).query(builder);
@@ -330,7 +330,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             @Override
             public List<Document> executing(OrmTask<Document> task) {
                 QueryBuilder<Document> builder = new QueryBuilder<>(Document.class)
-                        .whereEquals(Model.Field.UserId, App.app().UserId())
+                        .whereEquals(Model.Field.UserId, Cache.cache().userId)
                         .appendOrderDescBy(Model.Field.CreateDate)
                         .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
                 return new Dao<>(Document.class).query(builder);
@@ -363,7 +363,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             @Override
             public List<Collection> executing(OrmTask<Collection> task) {
                 QueryBuilder<Collection> builder = new QueryBuilder<>(Collection.class)
-                        .whereEquals(Model.Field.UserId, App.app().UserId())
+                        .whereEquals(Model.Field.UserId, Cache.cache().userId)
                         .appendOrderDescBy(Model.Field.CreateDate)
                         .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
                 return new Dao<>(Collection.class).query(builder);
@@ -420,16 +420,14 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         return today;
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void appendListHeader(boolean needToday) {
-        adapter.add(App.app().Me(), 0);
+        adapter.add(Cache.cache().me, 0);
         adapter.add(functions(), 1);
         if (needToday) {
             adapter.add(today(), 2);
         }
     }
 
-    @SuppressWarnings({"ConstantConditions", "unchecked"})
     private void initializeAdapter() {
         if (null == adapter) {
             // 这里不需要直接上传，只需要把选择的图片传递给新建动态页面即可，上传在那里实现

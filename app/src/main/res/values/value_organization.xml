@@ -15,6 +15,7 @@
         <item>6||%s|1</item>
         <item>7|||</item>
     </string-array>
+    <string name="ui_organization_structure_no_group_exist">您没有加入任何组织</string>
     
     <string-array name="ui_organization_details_items">
         <item>0|||</item>
@@ -31,6 +32,7 @@
     
     <string name="ui_organization_squad_add_title">名称：</string>
     <string name="ui_organization_squad_add_hint">小组名称(不能以下划线开头和结尾)</string>
+    <string name="ui_organization_squad_add_name_invalid">小组名称不符合要求</string>
     <string name="ui_organization_squad_add_introduction_hint">简介(50个字以内)</string>
     <string name="ui_organization_squad_add_text">添加加活动小组</string>
 

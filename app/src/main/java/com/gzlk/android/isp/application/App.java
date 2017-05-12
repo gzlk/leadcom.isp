@@ -3,6 +3,7 @@ package com.gzlk.android.isp.application;
 import android.graphics.Bitmap;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -30,7 +31,7 @@ import java.io.File;
  * <b>修改备注：</b><br />
  */
 
-public class App extends BaseActivityManagedApplication {
+public class App extends NimApplication {
 
     /**
      * 获取全局Application实例
@@ -114,75 +115,24 @@ public class App extends BaseActivityManagedApplication {
      * 初始化本地缓存数据库
      */
     private void initializeDatabase() {
-        if (null == _userId) {
-            _userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
+        if (null == Cache.cache().userId) {
+            Cache.cache().userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
         }
-        if (!StringHelper.isEmpty(_userId)) {
-            initializeLiteOrm(_userId);
-            if (null == me || !_userId.equals(me.getId())) {
-                me = new Dao<>(User.class).query(_userId);
+        if (!StringHelper.isEmpty(Cache.cache().userId)) {
+            // 初始化个性化数据库
+            initializeLiteOrm(Cache.cache().userId);
+            // 查询个性化数据库中的个人信息
+            if (null == Cache.cache().me || !Cache.cache().userId.equals(Cache.cache().me.getId())) {
+                Cache.cache().setCurrentUser(new Dao<>(User.class).query(Cache.cache().userId));
             }
+            //initializeNim();
         }
-    }
-
-    private String _userId, _userToken;
-
-    /**
-     * 当前登录用户的user id
-     */
-    public String UserId() {
-        if (StringHelper.isEmpty(_userId)) {
-            initializeDatabase();
-        }
-        return _userId;
-    }
-
-    /**
-     * 当前登陆用户的accessToken
-     */
-    public String UserToken() {
-        if (StringHelper.isEmpty(_userToken)) {
-            initializeDatabase();
-        }
-        return _userToken;
-    }
-
-    private User me = null;
-
-    /**
-     * 当前登录的用户的信息
-     */
-    public User Me() {
-        if (null == me) {
-            initializeDatabase();
-
-        }
-        LogHelper.log("APP", "access token: " + (null == me ? "" : me.getAccessToken()));
-        return me;
-    }
-
-    public void saveMe() {
-        new Dao<>(User.class).save(me);
-    }
-
-    /**
-     * 重设当前登录用户
-     */
-    public void Me(User user) {
-        me = user;
-        _userId = me.getId();
-        _userToken = me.getAccessToken();
-        PreferenceHelper.save(R.string.pf_last_login_user_id, me.getId());
-        initializeDatabase();
-        saveMe();
     }
 
     @Override
     public void logout() {
         // 清空当前登录的用户信息
-        me = null;
-        _userId = null;
-        _userToken = null;
+        Cache.cache().clear();
         super.logout();
     }
 }

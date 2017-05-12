@@ -13,19 +13,27 @@ import android.view.ViewGroup;
 
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
-import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.TitleActivity;
+import com.gzlk.android.isp.api.listener.OnRequestListListener;
+import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.org.MemberRequest;
+import com.gzlk.android.isp.api.org.OrgRequest;
+import com.gzlk.android.isp.api.org.SquadRequest;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.ContactViewHolder;
 import com.gzlk.android.isp.holder.SearchableViewHolder;
-import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
-import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.organization.Member;
+import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +55,10 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_TYPE = "_cf_type_";
     /**
+     * 没有查询任何数据
+     */
+    public static final int TYPE_NONE = 0;
+    /**
      * 打开的是小组的通讯录
      */
     public static final int TYPE_SQUAD = 1;
@@ -55,19 +67,24 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
      */
     public static final int TYPE_ORG = 2;
 
+    /**
+     * 新建一个实例
+     * param: 0=type,1=groupId,2=squadId
+     */
     public static ContactFragment newInstance(String params) {
         ContactFragment cf = new ContactFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
         bundle.putString(PARAM_QUERY_ID, strings[1]);
+        cf.setArguments(bundle);
         return cf;
     }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        showType = bundle.getInt(PARAM_TYPE, TYPE_ORG);
+        showType = bundle.getInt(PARAM_TYPE, TYPE_NONE);
     }
 
     @Override
@@ -84,7 +101,7 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
 
     // holder
     private SearchableViewHolder searchableViewHolder;
-    private ArrayList<User> users;
+    private ArrayList<Member> members = new ArrayList<>();
     private ContactAdapter mAdapter;
 
     // 默认显示组织的联系人列表
@@ -139,7 +156,8 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return true;
+        // 小组才显示标题栏，组织通讯录不需要
+        return showType == TYPE_SQUAD;
     }
 
     @Override
@@ -163,17 +181,6 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void initializeHolders() {
-        if (null == users) {
-            users = Json.gson().fromJson(StringHelper.getString(R.string.temp_json_user), new TypeToken<ArrayList<User>>() {
-            }.getType());
-            Collections.sort(users, new UserComparator());
-//            Collections.sort(users, new Comparator<User>() {
-//                @Override
-//                public int compare(User ua, User ub) {
-//                    return ua.getSpell().compareTo(ub.getSpell());
-//                }
-//            });
-        }
         if (null == searchableViewHolder) {
             searchableViewHolder = new SearchableViewHolder(mRootView, this);
             searchableViewHolder.setOnSearchingListener(searchingListener);
@@ -189,12 +196,118 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.setAdapter(mAdapter);
             searchingListener.onSearching("");
         }
+        loadingQueryItem();
     }
 
-    private class UserComparator implements Comparator<User> {
+    /**
+     * 加载查询的对象
+     */
+    private void loadingQueryItem() {
+        switch (showType) {
+            case TYPE_ORG:
+                loadingOrganization();
+                break;
+            case TYPE_SQUAD:
+                loadingSquad();
+                break;
+        }
+    }
+
+    private void loadingOrganization() {
+        Organization organization = new Dao<>(Organization.class).query(mQueryId);
+        if (null == organization) {
+            fetchingRemoteOrganization();
+        } else {
+            loadingLocalMembers(organization.getId(), "");
+        }
+    }
+
+    private void loadingSquad() {
+        Squad squad = new Dao<>(Squad.class).query(mQueryId);
+        if (null == squad) {
+            fetchingRemoteSquad();
+        } else {
+            setCustomTitle(squad.getName());
+            loadingLocalMembers(squad.getGroupId(), squad.getId());
+        }
+    }
+
+    private void fetchingRemoteOrganization() {
+        if (StringHelper.isEmpty(mQueryId)) return;
+        displayLoading(true);
+        OrgRequest.request().setOnRequestListener(new OnRequestListener<Organization>() {
+            @Override
+            public void onResponse(Organization organization, boolean success, String message) {
+                super.onResponse(organization, success, message);
+                if (success) {
+                    if (null != organization && !StringHelper.isEmpty(organization.getId())) {
+                        new Dao<>(Organization.class).save(organization);
+                        loadingLocalMembers(organization.getId(), "");
+                    }
+                }
+            }
+        }).find(mQueryId);
+    }
+
+    private void fetchingRemoteSquad() {
+        SquadRequest.request().setOnRequestListener(new OnRequestListener<Squad>() {
+            @Override
+            public void onResponse(Squad squad, boolean success, String message) {
+                super.onResponse(squad, success, message);
+                if (success) {
+                    if (null != squad && !StringHelper.isEmpty(squad.getId())) {
+                        new Dao<>(Squad.class).save(squad);
+                        setCustomTitle(squad.getName());
+                        loadingLocalMembers(squad.getGroupId(), squad.getId());
+                    }
+                }
+            }
+        }).find(mQueryId);
+    }
+
+    private void loadingLocalMembers(String groupId, String squadId) {
+        QueryBuilder<Member> query = new QueryBuilder<>(Member.class).whereEquals(Organization.Field.GroupId, groupId);
+        if (!StringHelper.isEmpty(squadId)) {
+            query = query.whereAppendAnd().whereEquals(Organization.Field.SquadId, squadId);
+        }
+        query = query.orderBy(Model.Field.CreateDate);
+        List<Member> temp = new Dao<>(Member.class).query(query);
+        if (null != temp && temp.size() > 0) {
+            members.addAll(temp);
+        }
+        mAdapter.addAll(members);
+        // 拉取远程成员列表
+        fetchingRemoteMembers(groupId, squadId);
+    }
+
+    private void fetchingRemoteMembers(String groupId, String squadId) {
+        MemberRequest.request().setOnRequestListListener(new OnRequestListListener<Member>() {
+            @Override
+            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (null != list && list.size() > 0) {
+                        new Dao<>(Member.class).save(list);
+                        for (Member member : list) {
+                            if (!members.contains(member)) {
+                                members.add(member);
+                            }
+                        }
+                        Collections.sort(members, new MemberComparator());
+                        searchingListener.onSearching("");
+                    }
+                }
+            }
+        }).list(groupId, squadId);
+    }
+
+    /**
+     * 根据加入时间排序
+     */
+    private class MemberComparator implements Comparator<Member> {
         @Override
-        public int compare(User u1, User u2) {
-            return u1.getSpell().compareTo(u2.getSpell());
+        public int compare(Member u1, Member u2) {
+            return u1.getCreateDate().compareTo(u2.getCreateDate());
         }
     }
 
@@ -203,19 +316,24 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onSearching(String text) {
             if (!StringHelper.isEmpty(text)) {
-                searchingText = text;
-                mAdapter.clear();
-                for (User user : users) {
-                    if (user.getName().contains(text)) {
-                        mAdapter.add(user);
-                    }
-                }
+                searching(text);
             } else {
                 searchingText = "";
-                mAdapter.addAll(users);
+                mAdapter.addAll(members);
             }
         }
     };
+
+    private void searching(String text) {
+        searchingText = text;
+        mAdapter.clear();
+        for (Member member : members) {
+            // 根据姓名和手机号码模糊查询
+            if (member.getUserName().contains(text) || member.getPhone().contains(text)) {
+                mAdapter.add(member);
+            }
+        }
+    }
 
     private ContactViewHolder.OnUserDeleteListener onUserDeleteListener = new ContactViewHolder.OnUserDeleteListener() {
         @Override
@@ -226,7 +344,7 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
 
     private class ContactAdapter extends RecyclerSwipeAdapter<ContactViewHolder> {
 
-        private ArrayList<User> list = new ArrayList<>();
+        private ArrayList<Member> list = new ArrayList<>();
 
         private void delete(ContactViewHolder holder) {
             mItemManger.removeShownLayouts(holder.getSwipeLayout());
@@ -235,17 +353,19 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
             mItemManger.closeAllItems();
         }
 
-        private void addAll(List<User> all) {
-            for (User user : all) {
-                add(user);
+        private void addAll(List<Member> all) {
+            if (null == all || all.size() < 1) return;
+
+            for (Member member : all) {
+                add(member);
             }
-            Collections.sort(mAdapter.list, new UserComparator());
+            Collections.sort(mAdapter.list, new MemberComparator());
             notifyItemRangeChanged(0, list.size());
         }
 
-        private void add(User user) {
-            if (list.indexOf(user) < 0) {
-                list.add(user);
+        private void add(Member member) {
+            if (list.indexOf(member) < 0) {
+                list.add(member);
                 notifyItemChanged(list.size() - 1);
             }
         }
@@ -264,8 +384,8 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
             notifyItemRemoved(index);
         }
 
-        private void delete(User user) {
-            int index = list.indexOf(user);
+        private void delete(Member member) {
+            int index = list.indexOf(member);
             if (index >= 0) {
                 remove(index);
             }
@@ -273,8 +393,8 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
 
         private int getFirstCharCount(char chr) {
             int ret = 0;
-            for (User user : list) {
-                if (user.getSpell().charAt(0) == chr) {
+            for (Member member : list) {
+                if (member.getSpell().charAt(0) == chr) {
                     ret++;
                 }
             }
@@ -350,7 +470,7 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
             for (int i = 0; i < childCount; i++) {
                 View view = parent.getChildAt(i);
                 int position = parent.getChildAdapterPosition(view);
-                //String textLine = users.get(position).getSpell().substring(0, 1);
+                //String textLine = members.get(position).getSpell().substring(0, 1);
                 //textLine = format(FMT, textLine, getFirstCharCount(textLine.charAt(0)));
                 if (isFirstInGroup(position)) {
                     float top = view.getTop() - topHeight;
@@ -377,7 +497,7 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
             drawBackground(c, left, top, right, bottom);
             drawText(c, position, padding, bottom - (topHeight - textHeight) / 2 - baseLine);
             //c.drawRect(left, 0, right, topHeight, paint);//绘制红色矩形
-            //String text = users.get(position).getSpell().substring(0, 1);
+            //String text = members.get(position).getSpell().substring(0, 1);
             //text = format(FMT, text, getFirstCharCount(text.charAt(0)));
             //c.drawText(text, 30, topHeight - 30, textPaint);//绘制文本
         }
