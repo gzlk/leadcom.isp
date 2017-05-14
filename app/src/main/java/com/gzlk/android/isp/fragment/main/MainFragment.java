@@ -2,6 +2,8 @@ package com.gzlk.android.isp.fragment.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.LinearLayout;
@@ -12,6 +14,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -32,6 +35,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
      * 新建MainFragment的时候传入的参数，以此当作初始化显示的页面（也即ViewPager当前显示的页面的index），int型
      */
     public static final String PARAM_SELECTED = "mf_param1";
+    private static final String PARAM_OLD_TITLE = "mf_old_title";
 
     @ViewId(R.id.ui_main_tool_bar_container)
     private RelativeLayout toolBar;
@@ -46,6 +50,9 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private RelativeLayout rightChatIconContainer;
     @ViewId(R.id.ui_ui_custom_title_right_icon_2_flag)
     private LinearLayout rightChatIconFlag;
+    // 最右侧菜单栏的按钮，平时隐藏
+    @ViewId(R.id.ui_ui_custom_title_right_container)
+    private View rightIconContainer;
 
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
     private CustomTextView iconView1;
@@ -64,6 +71,20 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     @ViewId(R.id.ui_tool_main_bottom_text_4)
     private TextView textView4;
 
+    private String oldTitleText = "";
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        oldTitleText = bundle.getString(PARAM_OLD_TITLE, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_OLD_TITLE, oldTitleText);
+    }
+
     @Override
     public int getLayout() {
         return R.layout.fragment_main;
@@ -75,7 +96,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         super.doingInResume();
         setLeftIcon(R.string.ui_icon_query);
         setLeftText(0);
-        setRightIcon(R.string.ui_icon_chat);
+        rightIconContainer.setVisibility(View.GONE);
         ((IndividualFragmentMultiType) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
     }
 
@@ -96,6 +117,21 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             mFragments.add(new ActivityFragment());
             mFragments.add(new OrganizationFragment());
             mFragments.add(new IndividualFragmentMultiType());
+            ((OrganizationFragment) mFragments.get(2)).mainFragment = this;
+        }
+    }
+
+    public void setTitleText(String text) {
+        if (StringHelper.isEmpty(oldTitleText)) {
+            oldTitleText = toolBarTitleText.getText().toString();
+        }
+        toolBarTitleText.setText(text);
+    }
+
+    public void restoreTitleText() {
+        if (!StringHelper.isEmpty(oldTitleText)) {
+            toolBarTitleText.setText(oldTitleText);
+            oldTitleText = "";
         }
     }
 
@@ -115,6 +151,13 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
         iconView4.setTextColor(position == 3 ? color2 : color1);
         textView4.setTextColor(position == 3 ? color2 : color1);
+
+        if (position != 2) {
+            restoreTitleText();
+            showRightIcon(false);
+        } else {
+            ((OrganizationFragment) mFragments.get(2)).needChangeTitle();
+        }
 
         boolean needHandleTitleBar = true;
         for (int i = 0, len = mFragments.size(); i < len; i++) {
@@ -139,8 +182,10 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
     @Click({R.id.ui_tool_main_bottom_clickable_1, R.id.ui_tool_main_bottom_clickable_2,
             R.id.ui_tool_main_bottom_clickable_3, R.id.ui_tool_main_bottom_clickable_4,
-            R.id.ui_ui_custom_title_right_icon_1})
+            R.id.ui_ui_custom_title_right_icon_1, R.id.ui_ui_custom_title_right_icon_2_container,
+            R.id.ui_ui_custom_title_left_container, R.id.ui_ui_custom_title_right_container})
     private void elementClick(View view) {
+        log(view.toString());
         int id = view.getId();
         switch (id) {
             case R.id.ui_tool_main_bottom_clickable_1:
@@ -159,6 +204,16 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 // 打开个人设置
                 openActivity(SettingFragment.class.getName(), "", true, false);
                 break;
+            case R.id.ui_ui_custom_title_right_icon_2_container:
+                // 打开消息页面
+                break;
+            case R.id.ui_ui_custom_title_left_container:
+                // 搜索
+                break;
+            case R.id.ui_ui_custom_title_right_container:
+                // + 号的点击
+                ((OrganizationFragment) mFragments.get(2)).rightIconClick();
+                break;
         }
     }
 
@@ -171,6 +226,53 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 transparentTitleBar(true);
                 break;
         }
+    }
+
+    public void showRightIcon(final boolean shown) {
+        if (shown && rightIconContainer.getVisibility() == View.VISIBLE) return;
+        if (!shown && rightIconContainer.getVisibility() == View.GONE) return;
+        //rightIconContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
+        rightIconContainer.animate().setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (!shown) {
+                    rightIconContainer.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                if (shown) {
+                    rightIconContainer.setVisibility(View.VISIBLE);
+                }
+            }
+        }).alpha(shown ? 1 : 0)
+                .translationX(shown ? 0 : rightIconContainer.getWidth())
+                .setDuration(duration())
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+        translationChatIcon(shown);
+    }
+
+    private void translationChatIcon(final boolean shown) {
+        final int width = rightChatIconContainer.getWidth();
+        rightChatIconContainer.animate().setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                rightChatIconContainer.setTranslationX(0);
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+            }
+        }).setDuration(duration())
+                .translationXBy(shown ? 0 : width)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
     }
 
     private void transparentTitleBar(boolean transparent) {

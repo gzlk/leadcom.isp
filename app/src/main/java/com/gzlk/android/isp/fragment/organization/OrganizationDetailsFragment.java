@@ -30,7 +30,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class OrganizationDetailsFragment extends BaseSwipeRefreshSupportFragment {
+public class OrganizationDetailsFragment extends BaseOrganizationFragment {
 
     // View
     @ViewId(R.id.ui_transparent_title_container)

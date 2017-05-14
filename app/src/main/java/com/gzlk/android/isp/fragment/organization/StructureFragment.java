@@ -9,13 +9,9 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
-import com.gzlk.android.isp.api.org.OrgRequest;
-import com.gzlk.android.isp.api.org.SquadRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -25,8 +21,8 @@ import com.gzlk.android.isp.holder.SquadAddViewHolder;
 import com.gzlk.android.isp.holder.TextViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.SimpleClickableItem;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
@@ -50,9 +46,10 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class StructureFragment extends BaseSwipeRefreshSupportFragment {
+public class StructureFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_SELECTED_ = "sf_selected_index";
+    private static final String PARAM_INITIALIZED = "sf_initialized";
 
     // View
     @ViewId(R.id.ui_popup_squad_add_layout_background)
@@ -70,10 +67,25 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
     private String[] items;
     private StructureAdapter mAdapter;
     private int selectedIndex = -1;
+    // 是否第一次初始化，此时需要隐藏添加小组的输入框
+    private boolean initialized = false;
+
+    public MainFragment mainFragment;
+
+    public interface OnOrganizationChangedListener {
+        void onChanged(Organization item);
+    }
+
+    private OnOrganizationChangedListener organizationChangedListener;
+
+    public void setOnOrganizationChangedListener(OnOrganizationChangedListener l) {
+        organizationChangedListener = l;
+    }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
+        initialized = bundle.getBoolean(PARAM_INITIALIZED, false);
         selectedIndex = bundle.getInt(PARAM_SELECTED_, -1);
         if (null != concernedViewHolder && selectedIndex >= 0) {
             concernedViewHolder.setSelected(selectedIndex);
@@ -83,10 +95,19 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_INITIALIZED, initialized);
         if (null != concernedViewHolder) {
             selectedIndex = concernedViewHolder.getSelected();
         }
         bundle.putInt(PARAM_SELECTED_, selectedIndex);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+//        if(!initialized){
+//
+//        }
     }
 
     @Override
@@ -97,7 +118,7 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void onSwipeRefreshing() {
         // 刷新我加入的组织列表
-        fetchingJoinedOrg();
+        fetchingJoinedRemoteOrganizations();
     }
 
     @Override
@@ -129,21 +150,15 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    private void fetchingJoinedOrg() {
-        OrgRequest.request().setOnRequestListListener(new OnRequestListListener<Organization>() {
-            @Override
-            public void onResponse(List<Organization> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list && list.size() > 0) {
-                        new Dao<>(Organization.class).save(list);
-                        concernedViewHolder.add(list);
-                    } else {
-                        ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
-                    }
-                }
-            }
-        }).list();
+    @Override
+    protected void onFetchingJoinedRemoteOrganizationsComplete(List<Organization> list) {
+        if (null != list && list.size() > 0) {
+            concernedViewHolder.add(list);
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
+        }
+        stopRefreshing();
+        setSupportLoadingMore(false);
     }
 
     private void initializeAdapter() {
@@ -152,7 +167,7 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.setAdapter(mAdapter);
         }
         initializeItems();
-        fetchingJoinedOrg();
+        fetchingJoinedRemoteOrganizations();
     }
 
     private void initializeItems() {
@@ -188,29 +203,6 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
 
     private List<Squad> squads = new ArrayList<>();
 
-    private void addSquad(String name, String introduction) {
-        Organization organization = concernedViewHolder.get(selectedIndex);
-        final String id = organization.getId();
-        SquadRequest.request().setOnRequestListener(new OnRequestListener<Squad>() {
-            @Override
-            public void onResponse(Squad squad, boolean success, String message) {
-                super.onResponse(squad, success, message);
-                if (success) {
-                    if (null != squad && !StringHelper.isEmpty(squad.getId())) {
-                        new Dao<>(Squad.class).save(squad);
-                        if (!squads.contains(squad)) {
-                            squads.add(squad);
-                        }
-                        initializeItems();
-                    }
-                }
-                // 重新拉取小组列表
-                fetchingGroupSquads(id);
-
-            }
-        }).add(id, name, introduction);
-    }
-
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
@@ -230,12 +222,30 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 Utils.hidingInputBoard(popupName);
                 String introduction = popupIntroducing.getValue();
-                addSquad(value, introduction);
+                addNewSquad(value, introduction);
                 popupName.setValue("");
                 popupIntroducing.setValue("");
                 showSquadAddPopup(false);
                 break;
         }
+    }
+
+    private void addNewSquad(String name, String introduction) {
+        Organization organization = concernedViewHolder.get(selectedIndex);
+        final String id = organization.getId();
+        addNewSquadToOrganization(id, name, introduction);
+    }
+
+    @Override
+    protected void onAddNewSquadToOrganizationComplete(Squad squad) {
+        if (null != squad && !StringHelper.isEmpty(squad.getId())) {
+            if (!squads.contains(squad)) {
+                squads.add(squad);
+            }
+            initializeItems();
+        }
+        // 重新拉取小组列表
+        changeSelectedGroup();
     }
 
     public void showSquadAddPopup(final boolean shown) {
@@ -320,9 +330,13 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    private void changeSelectedGroup() {
+    public void changeSelectedGroup() {
+        if (selectedIndex < 0) return;
         Organization organization = concernedViewHolder.get(selectedIndex);
         // 更改标题栏上的文字和icon
+        if (null != organizationChangedListener) {
+            organizationChangedListener.onChanged(organization);
+        }
         // 本组织下的小组列表
         fetchingGroupSquads(organization.getId());
     }
@@ -341,24 +355,21 @@ public class StructureFragment extends BaseSwipeRefreshSupportFragment {
             sortSquads();
             initializeItems();
         }
-        SquadRequest.request().setOnRequestListListener(new OnRequestListListener<Squad>() {
-            @Override
-            public void onResponse(List<Squad> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list && list.size() > 0) {
-                        new Dao<>(Squad.class).save(list);
-                        for (Squad squad : list) {
-                            if (!squads.contains(squad)) {
-                                squads.add(squad);
-                            }
-                        }
-                        sortSquads();
-                        initializeItems();
-                    }
+        // 拉取远程的小组列表
+        fetchingRemoteSquads(groupId);
+    }
+
+    @Override
+    protected void onFetchingRemoteSquadsComplete(List<Squad> list) {
+        if (null != list && list.size() > 0) {
+            for (Squad squad : list) {
+                if (!squads.contains(squad)) {
+                    squads.add(squad);
                 }
             }
-        }).list(groupId);
+            sortSquads();
+            initializeItems();
+        }
     }
 
     private void sortSquads() {

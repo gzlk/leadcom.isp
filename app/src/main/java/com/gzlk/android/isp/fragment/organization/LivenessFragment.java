@@ -1,6 +1,8 @@
 package com.gzlk.android.isp.fragment.organization;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 
 /**
@@ -14,10 +16,25 @@ import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
  * <b>修改备注：</b><br />
  */
 
-public class LivenessFragment extends BaseTransparentSupportFragment {
+public class LivenessFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public int getLayout() {
         return R.layout.fragment_organization_liveness;
+    }
+
+    @Override
+    protected void onSwipeRefreshing() {
+
+    }
+
+    @Override
+    protected void onLoadingMore() {
+
+    }
+
+    @Override
+    protected String getLocalPageTag() {
+        return null;
     }
 
     @Override
@@ -32,6 +49,11 @@ public class LivenessFragment extends BaseTransparentSupportFragment {
 
     @Override
     protected void destroyView() {
+
+    }
+
+    @Override
+    protected void onDelayRefreshComplete(@DelayType int type) {
 
     }
 }

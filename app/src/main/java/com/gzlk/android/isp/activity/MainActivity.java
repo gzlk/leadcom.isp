@@ -24,6 +24,7 @@ public class MainActivity extends TitleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         supportPressAgainToExit = true;
         supportTransparentStatusBar = true;
+        isToolbarSupported = false;
         super.onCreate(savedInstanceState);
         if (null == mainFragment) {
             mainFragment = new MainFragment();

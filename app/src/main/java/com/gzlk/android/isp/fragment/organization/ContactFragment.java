@@ -15,25 +15,16 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.TitleActivity;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
-import com.gzlk.android.isp.api.org.MemberRequest;
-import com.gzlk.android.isp.api.org.OrgRequest;
-import com.gzlk.android.isp.api.org.SquadRequest;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.ContactViewHolder;
 import com.gzlk.android.isp.holder.SearchableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +42,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ContactFragment extends BaseSwipeRefreshSupportFragment {
+public class ContactFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_TYPE = "_cf_type_";
     /**
@@ -117,6 +108,16 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
+    public void setNewQueryId(String queryId) {
+        if (!StringHelper.isEmpty(mQueryId) && mQueryId.equals(queryId)) {
+            return;
+        }
+        mQueryId = queryId;
+        members.clear();
+        mAdapter.clear();
+        loadingQueryItem();
+    }
+
     @Override
     public void doingInResume() {
         searchView.setVisibility(showType == TYPE_SQUAD ? View.VISIBLE : View.GONE);
@@ -144,12 +145,16 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void popupMenuClickHandle(View view) {
+        // 找到当前打开的小组
+        Squad squad = new Dao<>(Squad.class).query(mQueryId);
         switch (view.getId()) {
             case R.id.ui_tool_popup_menu_squad_contact_organization:
-                ToastHelper.make().showMsg("组织通讯录");
+                // 打开组织通讯录并尝试将里面的用户邀请到小组
+                openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", squad.getGroupId(), squad.getId()), true, false);
                 break;
             case R.id.ui_tool_popup_menu_squad_contact_phone:
-                openActivity(PhoneContactFragment.class.getName(), "", true, false);
+                // 打开手机通讯录，并尝试将用户拉进小组
+                openActivity(PhoneContactFragment.class.getName(), format("%s,%s", squad.getGroupId(), squad.getId()), true, false);
                 break;
         }
     }
@@ -216,8 +221,15 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
     private void loadingOrganization() {
         Organization organization = new Dao<>(Organization.class).query(mQueryId);
         if (null == organization) {
-            fetchingRemoteOrganization();
+            fetchingRemoteOrganization(mQueryId);
         } else {
+            loadingLocalMembers(organization.getId(), "");
+        }
+    }
+
+    @Override
+    protected void onFetchingRemoteOrganizationComplete(Organization organization) {
+        if (null != organization && !StringHelper.isEmpty(organization.getId())) {
             loadingLocalMembers(organization.getId(), "");
         }
     }
@@ -225,80 +237,42 @@ public class ContactFragment extends BaseSwipeRefreshSupportFragment {
     private void loadingSquad() {
         Squad squad = new Dao<>(Squad.class).query(mQueryId);
         if (null == squad) {
-            fetchingRemoteSquad();
+            fetchingRemoteSquad(mSquadId);
         } else {
             setCustomTitle(squad.getName());
             loadingLocalMembers(squad.getGroupId(), squad.getId());
         }
     }
 
-    private void fetchingRemoteOrganization() {
-        if (StringHelper.isEmpty(mQueryId)) return;
-        displayLoading(true);
-        OrgRequest.request().setOnRequestListener(new OnRequestListener<Organization>() {
-            @Override
-            public void onResponse(Organization organization, boolean success, String message) {
-                super.onResponse(organization, success, message);
-                if (success) {
-                    if (null != organization && !StringHelper.isEmpty(organization.getId())) {
-                        new Dao<>(Organization.class).save(organization);
-                        loadingLocalMembers(organization.getId(), "");
-                    }
-                }
-            }
-        }).find(mQueryId);
-    }
-
-    private void fetchingRemoteSquad() {
-        SquadRequest.request().setOnRequestListener(new OnRequestListener<Squad>() {
-            @Override
-            public void onResponse(Squad squad, boolean success, String message) {
-                super.onResponse(squad, success, message);
-                if (success) {
-                    if (null != squad && !StringHelper.isEmpty(squad.getId())) {
-                        new Dao<>(Squad.class).save(squad);
-                        setCustomTitle(squad.getName());
-                        loadingLocalMembers(squad.getGroupId(), squad.getId());
-                    }
-                }
-            }
-        }).find(mQueryId);
-    }
-
-    private void loadingLocalMembers(String groupId, String squadId) {
-        QueryBuilder<Member> query = new QueryBuilder<>(Member.class).whereEquals(Organization.Field.GroupId, groupId);
-        if (!StringHelper.isEmpty(squadId)) {
-            query = query.whereAppendAnd().whereEquals(Organization.Field.SquadId, squadId);
+    @Override
+    protected void onFetchingRemoteSquadComplete(Squad squad) {
+        if (null != squad && !StringHelper.isEmpty(squad.getId())) {
+            setCustomTitle(squad.getName());
+            loadingLocalMembers(squad.getGroupId(), squad.getId());
         }
-        query = query.orderBy(Model.Field.CreateDate);
-        List<Member> temp = new Dao<>(Member.class).query(query);
-        if (null != temp && temp.size() > 0) {
-            members.addAll(temp);
+    }
+
+    @Override
+    protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
+        if (null != list && list.size() > 0) {
+            members.addAll(list);
         }
         mAdapter.addAll(members);
         // 拉取远程成员列表
-        fetchingRemoteMembers(groupId, squadId);
+        fetchingRemoteMembers(organizationId, squadId);
     }
 
-    private void fetchingRemoteMembers(String groupId, String squadId) {
-        MemberRequest.request().setOnRequestListListener(new OnRequestListListener<Member>() {
-            @Override
-            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list && list.size() > 0) {
-                        new Dao<>(Member.class).save(list);
-                        for (Member member : list) {
-                            if (!members.contains(member)) {
-                                members.add(member);
-                            }
-                        }
-                        Collections.sort(members, new MemberComparator());
-                        searchingListener.onSearching("");
-                    }
+    @Override
+    protected void onFetchingRemoteMembersComplete(List<Member> list) {
+        if (null != list && list.size() > 0) {
+            for (Member member : list) {
+                if (!members.contains(member)) {
+                    members.add(member);
                 }
             }
-        }).list(groupId, squadId);
+            Collections.sort(members, new MemberComparator());
+            searchingListener.onSearching("");
+        }
     }
 
     /**

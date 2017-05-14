@@ -17,6 +17,7 @@ import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredButton;
 
 /**
  * <b>功能描述：</b>联系人<br />
@@ -41,6 +42,10 @@ public class ContactViewHolder extends BaseViewHolder {
     private TextView phoneView;
     @ViewId(R.id.ui_holder_view_contact_myself)
     private TextView myselfView;
+    @ViewId(R.id.ui_holder_view_contact_button)
+    private CorneredButton button;
+
+    private boolean buttonVisible = false;
 
     public ContactViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -72,15 +77,39 @@ public class ContactViewHolder extends BaseViewHolder {
             text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
         }
         phoneView.setText(Html.fromHtml(text));
-        myselfView.setVisibility(member.getUserId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
+        boolean isMe = member.getUserId().equals(Cache.cache().userId);
+        myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
+        button.setVisibility(buttonVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
     }
 
-    @Click({R.id.ui_tool_view_contact_delete})
+    /**
+     * 是否显示“添加”按钮
+     */
+    public void showButton(boolean shown) {
+        buttonVisible = shown;
+    }
+
+    @Click({R.id.ui_holder_view_contact_layout,
+            R.id.ui_tool_view_contact_delete,
+            R.id.ui_holder_view_contact_button})
     private void click(View view) {
-        if (view.getId() == R.id.ui_tool_view_contact_delete) {
-            if (null != onUserDeleteListener) {
-                onUserDeleteListener.onDelete(ContactViewHolder.this);
-            }
+        switch (view.getId()) {
+            case R.id.ui_holder_view_contact_layout:
+                // 点击了整个item view，打开用户详情页
+                if (null != mOnViewHolderClickListener) {
+                    mOnViewHolderClickListener.onClick(getAdapterPosition());
+                }
+                break;
+            case R.id.ui_tool_view_contact_delete:
+                if (null != onUserDeleteListener) {
+                    onUserDeleteListener.onDelete(ContactViewHolder.this);
+                }
+                break;
+            case R.id.ui_holder_view_contact_button:
+                if (null != dataHandlerBoundDataListener) {
+                    dataHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
+                }
+                break;
         }
     }
 

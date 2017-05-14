@@ -21,6 +21,8 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -160,6 +162,12 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
                 organizations.add(organization);
             }
         }
+        Collections.sort(organizations, new Comparator<Organization>() {
+            @Override
+            public int compare(Organization o1, Organization o2) {
+                return o1.getCreateDate().compareTo(o2.getCreateDate());
+            }
+        });
         mAdapter.notifyDataSetChanged();
         // 第一次加载时自动触发pageChange事件
         if (firstInitialize) {

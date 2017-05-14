@@ -29,13 +29,9 @@ import java.lang.reflect.Type;
  */
 
 public class MemberRequest extends Request<Member> {
-    private static MemberRequest request;
 
     public static MemberRequest request() {
-        if (null == request) {
-            request = new MemberRequest();
-        }
-        return request;
+        return new MemberRequest();
     }
 
     static class SingleMember extends Output<Member> {
@@ -72,14 +68,6 @@ public class MemberRequest extends Request<Member> {
 
     private String url(String path, String action) {
         return path + action;
-    }
-
-    private String invite(String action) {
-        return INVITE + action;
-    }
-
-    private String join(String action) {
-        return JOIN + action;
     }
 
     @Override

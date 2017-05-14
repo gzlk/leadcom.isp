@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,9 +19,12 @@ import android.widget.TextView;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.application.App;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.PhoneContactViewHolder;
 import com.gzlk.android.isp.holder.SearchableViewHolder;
 import com.gzlk.android.isp.lib.view.SlidView;
@@ -28,6 +32,8 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Contact;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.organization.Member;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
@@ -48,7 +54,17 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class PhoneContactFragment extends BaseSwipeRefreshSupportFragment {
+public class PhoneContactFragment extends BaseOrganizationFragment {
+
+    public static PhoneContactFragment newInstance(String params) {
+        PhoneContactFragment pcf = new PhoneContactFragment();
+        String[] strings = splitParameters(params);
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        bundle.putString(PARAM_SQUAD_ID, strings[1]);
+        pcf.setArguments(bundle);
+        return pcf;
+    }
 
     @ViewId(R.id.ui_phone_contact_slid_view)
     private SlidView slidView;
@@ -75,7 +91,9 @@ public class PhoneContactFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_squad_contact_menu_2);
-        new Dao<>(Contact.class).clear();
+        if (BuildConfig.DEBUG) {
+            new Dao<>(Contact.class).clear();
+        }
         tryReadPhoneContact();
     }
 
@@ -222,9 +240,48 @@ public class PhoneContactFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            // 添加指定index的联系人到小组
+            // 添加指定index的联系人到小组或组织
+            if (!StringHelper.isEmpty(mSquadId)) {
+                // 添加到小组
+                ToastHelper.make().showMsg("暂时无法添加成员到小组（api不支持）");
+            } else {
+                // 加载组织信息
+                loadingOrganization();
+            }
         }
     };
+
+    private void loadingOrganization() {
+        Organization org = new Dao<>(Organization.class).query(mQueryId);
+        if (null == org) {
+            fetchingRemoteOrganization(mQueryId);
+        } else {
+            addPhoneContactToOrganization(org);
+        }
+    }
+
+    @Override
+    protected void onFetchingRemoteOrganizationComplete(Organization organization) {
+        if (null != organization && !StringHelper.isEmpty(organization.getId())) {
+            addPhoneContactToOrganization(organization);
+        }
+    }
+
+    private void addPhoneContactToOrganization(Organization org) {
+        String message = StringHelper.getString(R.string.ui_phone_contact_invite_user_to_organization, Cache.cache().userName, org.getName());
+        MemberRequest.request().setOnRequestListener(new OnRequestListener<Member>() {
+            @Override
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
+                if (success) {
+                    if (null != member && !StringHelper.isEmpty(member.getId())) {
+                        new Dao<>(Member.class).save(member);
+                    }
+                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
+                }
+            }
+        }).invite(org.getId(), org.getName(), Cache.cache().userId, Cache.cache().userName, message);
+    }
 
     private class ContactAdapter extends RecyclerViewAdapter<PhoneContactViewHolder, Contact> {
 
@@ -382,8 +439,14 @@ public class PhoneContactFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            materialHorizontalProgressBar.setMax(values[1]);
-            materialHorizontalProgressBar.setProgress(values[0]);
+            if (materialHorizontalProgressBar.getMax() != values[2]) {
+                materialHorizontalProgressBar.setMax(values[2]);
+            }
+            if (values[0] == 0) {
+                materialHorizontalProgressBar.setSecondaryProgress(values[1]);
+            } else if (values[0] == 1) {
+                materialHorizontalProgressBar.setProgress(values[1]);
+            }
         }
 
         // 读取手机联系人
@@ -396,7 +459,7 @@ public class PhoneContactFragment extends BaseSwipeRefreshSupportFragment {
                 if (null != cursor) {
                     try {
                         int index = 0, max = cursor.getCount();
-                        publishProgress(index, max);
+                        publishProgress(0, index, max);
                         while (cursor.moveToNext()) {
                             String name = cursor.getString(cursor.getColumnIndex(FIELDS[0]));
                             String phone = cursor.getString(cursor.getColumnIndex(FIELDS[1]));
@@ -408,7 +471,10 @@ public class PhoneContactFragment extends BaseSwipeRefreshSupportFragment {
                                 contacts.add(new String[]{name, phone});
                             }
                             index++;
-                            publishProgress(index, max);
+                            if (BuildConfig.DEBUG) {
+                                Thread.sleep(5);
+                            }
+                            publishProgress(0, index, max);
                         }
                     } finally {
                         cursor.close();
@@ -422,7 +488,7 @@ public class PhoneContactFragment extends BaseSwipeRefreshSupportFragment {
         // 处理联系人和本地缓存关系
         private void handleContact() {
             int index = 0, max = contacts.size();
-            publishProgress(index, max);
+            publishProgress(1, index, max);
             try {
                 Dao<Contact> dao = new Dao<>(Contact.class);
                 for (String[] strings : contacts) {
@@ -438,7 +504,7 @@ public class PhoneContactFragment extends BaseSwipeRefreshSupportFragment {
                         Thread.sleep(5);
                     }
                     index++;
-                    publishProgress(index, max);
+                    publishProgress(1, index, max);
                 }
             } catch (Exception ignore) {
                 ignore.printStackTrace();

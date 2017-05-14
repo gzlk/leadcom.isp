@@ -9,8 +9,9 @@ import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.organization.ArchiveFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.LivenessFragment;
-import com.gzlk.android.isp.fragment.organization.MemberFragment;
+import com.gzlk.android.isp.fragment.organization.PhoneContactFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
@@ -27,6 +28,20 @@ import com.hlk.hlklib.lib.inject.ViewId;
 
 public class OrganizationFragment extends BaseViewPagerSupportFragment {
 
+    private static final String PARAM_SELECTED_ORG = "selected_org_id";
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        selectedOrganizationId = bundle.getString(PARAM_SELECTED_ORG, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_SELECTED_ORG, selectedOrganizationId);
+    }
+
     @ViewId(R.id.ui_organization_top_channel_layout)
     private View channelLayout;
     @ViewId(R.id.ui_tool_organization_top_channel_1)
@@ -38,14 +53,12 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     @ViewId(R.id.ui_tool_organization_top_channel_4)
     private TextView channel4;
 
+    private String selectedOrganizationId;
+    public MainFragment mainFragment;
+
     @Override
     public int getLayout() {
         return R.layout.fragment_main_organization;
-    }
-
-    @Override
-    protected void getParamsFromBundle(Bundle bundle) {
-
     }
 
     @Override
@@ -56,10 +69,27 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
 
     @Override
     protected void initializeFragments() {
-        mFragments.add(new StructureFragment());
-        mFragments.add(ContactFragment.newInstance(format("%d,", ContactFragment.TYPE_ORG)));
-        mFragments.add(new ArchiveFragment());
-        mFragments.add(new LivenessFragment());
+        if (mFragments.size() < 1) {
+            mFragments.add(new StructureFragment());
+            mFragments.add(ContactFragment.newInstance(format("%d,", ContactFragment.TYPE_ORG)));
+            mFragments.add(new ArchiveFragment());
+            mFragments.add(new LivenessFragment());
+            ((StructureFragment) mFragments.get(0)).mainFragment = mainFragment;
+            ((StructureFragment) mFragments.get(0)).setOnOrganizationChangedListener(organizationChangedListener);
+        }
+    }
+
+    private StructureFragment.OnOrganizationChangedListener organizationChangedListener = new StructureFragment.OnOrganizationChangedListener() {
+        @Override
+        public void onChanged(Organization item) {
+            selectedOrganizationId = item.getId();
+            mainFragment.setTitleText(item.getName());
+            ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
+        }
+    };
+
+    public void needChangeTitle() {
+        ((StructureFragment) mFragments.get(0)).changeSelectedGroup();
     }
 
     @Override
@@ -71,6 +101,8 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         channel2.setTextColor(position == 1 ? color2 : color1);
         channel3.setTextColor(position == 2 ? color2 : color1);
         channel4.setTextColor(position == 3 ? color2 : color1);
+
+        mainFragment.showRightIcon(position == 1 || position == 2);
     }
 
     @Click({R.id.ui_tool_organization_top_channel_1, R.id.ui_tool_organization_top_channel_2,
@@ -92,14 +124,18 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         }
     }
 
-    @Override
-    protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+    public void rightIconClick() {
+        if (getDisplayedPage() == 1) {
+            // 打开手机通讯录加人到组织
+            openActivity(PhoneContactFragment.class.getName(), format("%s,", selectedOrganizationId), true, false);
+        } else if (getDisplayedPage() == 2) {
+            // 打开弹出菜单新建或管理组织档案
+        }
     }
 
     @Override
-    protected void saveParamsToBundle(Bundle bundle) {
-
+    protected boolean shouldSetDefaultTitleEvents() {
+        return false;
     }
 
     @Override
