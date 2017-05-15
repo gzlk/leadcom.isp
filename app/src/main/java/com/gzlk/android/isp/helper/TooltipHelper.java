@@ -33,7 +33,9 @@ public class TooltipHelper {
             R.id.ui_tool_popup_menu_document_comment_copy,
             R.id.ui_tool_popup_menu_document_comment_delete,
             R.id.ui_tool_popup_menu_squad_contact_organization,
-            R.id.ui_tool_popup_menu_squad_contact_phone
+            R.id.ui_tool_popup_menu_squad_contact_phone,
+            R.id.ui_tool_popup_menu_organization_document_new,
+            R.id.ui_tool_popup_menu_organization_document_manage
     };
 
     public static PopupWindow showTooltip(final View anchorView, int viewLayout, boolean belowAnchor, int arrowType, View.OnClickListener onClickListener) {

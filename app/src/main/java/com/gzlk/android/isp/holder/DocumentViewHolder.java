@@ -12,6 +12,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.organization.Archive;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -64,6 +65,14 @@ public class DocumentViewHolder extends BaseViewHolder {
         createTime.setText(Utils.format(document.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
         documentTitle.setText(document.getTitle());
         documentContentText.setText(StringHelper.escapeFromHtml(document.getContent()));
+        documentContentText.makeExpandable();
+    }
+
+    public void showContent(Archive archive){
+        userName.setText(archive.getUserName());
+        createTime.setText(Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
+        documentTitle.setText(archive.getTitle());
+        documentContentText.setText(StringHelper.escapeFromHtml(archive.getContent()));
         documentContentText.makeExpandable();
     }
 

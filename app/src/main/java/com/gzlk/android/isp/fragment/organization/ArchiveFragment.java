@@ -1,12 +1,10 @@
 package com.gzlk.android.isp.fragment.organization;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 
 /**
- * <b>功能描述：</b>组织档案<br />
+ * <b>功能描述：</b>组织档案列表<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/05 10:39 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -16,7 +14,8 @@ import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchiveFragment extends BaseOrganizationFragment {
+
     @Override
     public int getLayout() {
         return R.layout.fragment_organization_document;
@@ -55,5 +54,15 @@ public class ArchiveFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
+    }
+
+    /**
+     * 设置新的组织id并查找该组织的档案列表
+     */
+    public void setNewQueryId(String queryId) {
+        if (!StringHelper.isEmpty(mQueryId) && mQueryId.equals(queryId)) {
+            return;
+        }
+        mQueryId = queryId;
     }
 }

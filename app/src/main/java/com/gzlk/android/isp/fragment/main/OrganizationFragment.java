@@ -11,6 +11,7 @@ import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.LivenessFragment;
 import com.gzlk.android.isp.fragment.organization.PhoneContactFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
+import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -85,6 +86,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             selectedOrganizationId = item.getId();
             mainFragment.setTitleText(item.getName());
             ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
+            ((ArchiveFragment) mFragments.get(2)).setNewQueryId(item.getId());
         }
     };
 
@@ -124,14 +126,29 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         }
     }
 
-    public void rightIconClick() {
+    public void rightIconClick(View view) {
         if (getDisplayedPage() == 1) {
             // 打开手机通讯录加人到组织
-            openActivity(PhoneContactFragment.class.getName(), format("%s,", selectedOrganizationId), true, false);
+            ((ContactFragment) mFragments.get(1)).addMemberToOrganizationFromPhoneContact(view);
         } else if (getDisplayedPage() == 2) {
             // 打开弹出菜单新建或管理组织档案
+            showTooltip(view, R.id.ui_tool_view_tooltip_menu_organization_document, true, TooltipHelper.TYPE_RIGHT, onClickListener);
         }
     }
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.ui_tool_popup_menu_organization_document_new:
+                    // 新建组织档案
+                    break;
+                case R.id.ui_tool_popup_menu_organization_document_manage:
+                    // 管理组织档案
+                    break;
+            }
+        }
+    };
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {

@@ -159,6 +159,14 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
     }
 
+    /**
+     * 打开手机通讯录并添加成员到当前组织
+     */
+    public void addMemberToOrganizationFromPhoneContact(View view) {
+        if (showType != TYPE_ORG) return;
+        openActivity(PhoneContactFragment.class.getName(), format("%s,", mQueryId), true, false);
+    }
+
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         // 小组才显示标题栏，组织通讯录不需要

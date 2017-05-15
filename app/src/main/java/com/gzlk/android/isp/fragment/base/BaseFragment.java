@@ -359,7 +359,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 //        }
 //    }
 
-    public void showTooltip(View anchorView, int viewId, boolean belowAnchor,int arrowType, View.OnClickListener clickListener) {
+    public void showTooltip(View anchorView, int viewId, boolean belowAnchor, int arrowType, View.OnClickListener clickListener) {
         if (!dismissPopupWindow()) {
             mCurPopupWindow = TooltipHelper.showTooltip(anchorView, viewId, belowAnchor, arrowType, clickListener);
         }

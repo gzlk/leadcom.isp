@@ -45,5 +45,6 @@
     <string name="ui_phone_contact_invite_user_to_organization" formatted="false">【%s】正在邀请您加入『%s』</string>
     <string name="ui_phone_contact_invite_success">邀请已发出，请等待对方确认后会有消息提醒</string>
 
-
+    <string name="ui_organization_document_new">新建档案</string>
+    <string name="ui_organization_document_management">管理档案</string>
 </resources>

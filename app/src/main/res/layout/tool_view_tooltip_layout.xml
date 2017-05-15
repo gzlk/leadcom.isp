@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-            android:alpha="0.7"
+            android:alpha="0.8"
             android:contentDescription="@string/hlklib_default_image_content_description"
             android:src="@drawable/popup_window_arrow_up" />
 
@@ -29,8 +29,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
-            app:cv_background="@color/transparent_70"
-            app:cv_background_active="@color/transparent_70"
+            app:cv_background="@color/transparent_80"
+            app:cv_background_active="@color/transparent_80"
             app:cv_background_type="fill"
             app:cv_border_size="@dimen/ui_static_dp_zero"
             app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size">
@@ -46,15 +46,11 @@
                 android:textSize="@dimen/ui_base_text_size_small"
                 android:visibility="gone" />
 
-            <include
-                android:id="@+id/ui_tool_view_tooltip_menu_edit"
-                layout="@layout/tool_view_popup_tooltip_document_comment"
-                android:visibility="gone" />
+            <include layout="@layout/tool_view_popup_tooltip_document_comment" />
 
-            <include
-                android:id="@+id/ui_tool_view_tooltip_menu_squad_contact"
-                layout="@layout/tool_view_popup_tooltip_squad_contact"
-                android:visibility="gone" />
+            <include layout="@layout/tool_view_popup_tooltip_squad_contact" />
+
+            <include layout="@layout/tool_view_popup_tooltip_org_document_management" />
         </com.hlk.hlklib.lib.view.CorneredView>
 
         <ImageView
@@ -64,7 +60,7 @@
             android:layout_gravity="center"
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-            android:alpha="0.7"
+            android:alpha="0.8"
             android:contentDescription="@string/hlklib_default_image_content_description"
             android:rotation="180"
             android:src="@drawable/popup_window_arrow_up" />

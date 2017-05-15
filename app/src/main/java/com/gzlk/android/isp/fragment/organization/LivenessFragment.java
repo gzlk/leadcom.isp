@@ -1,9 +1,7 @@
 package com.gzlk.android.isp.fragment.organization;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 
 /**
  * <b>功能描述：</b>组织活跃度<br />
@@ -17,6 +15,7 @@ import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
  */
 
 public class LivenessFragment extends BaseSwipeRefreshSupportFragment {
+
     @Override
     public int getLayout() {
         return R.layout.fragment_organization_liveness;

@@ -212,7 +212,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 break;
             case R.id.ui_ui_custom_title_right_container:
                 // + 号的点击
-                ((OrganizationFragment) mFragments.get(2)).rightIconClick();
+                ((OrganizationFragment) mFragments.get(2)).rightIconClick(view);
                 break;
         }
     }

@@ -68,6 +68,8 @@
     <string name="ui_base_text_ok">好</string>
     <string name="ui_base_text_add">添加</string>
     <string name="ui_base_text_added">已添加</string>
+    <string name="ui_base_text_new">新建</string>
+    <string name="ui_base_text_management">管理</string>
     <string name="ui_base_text_yes">是的</string>
     <string name="ui_base_text_no_need">不用了</string>
     <string name="ui_base_text_cancel">取消</string>
