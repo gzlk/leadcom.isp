@@ -11,52 +11,44 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        app:cv_background="@android:color/transparent"
         app:cv_border_size="@dimen/ui_static_dp_zero">
 
         <include
-            android:id="@+id/ui_document_individual_title"
+            android:id="@+id/ui_document_new_title"
             layout="@layout/holder_view_simple_inputable" />
 
-        <include layout="@layout/tool_view_half_line_horizontal" />
+        <include
+            android:id="@+id/ui_document_new_source"
+            layout="@layout/holder_view_simple_inputable" />
 
         <include
-            android:id="@+id/ui_document_individual_source"
-            layout="@layout/holder_view_simple_clickable"
-            android:visibility="gone" />
-
-        <include
-            layout="@layout/tool_view_half_line_horizontal"
-            android:visibility="gone" />
-
-        <include
-            android:id="@+id/ui_document_individual_time"
+            android:id="@+id/ui_document_new_time"
             layout="@layout/holder_view_simple_clickable" />
 
-        <include layout="@layout/tool_view_half_line_horizontal" />
-
-        <include layout="@layout/holder_view_toggle" />
+        <include
+            android:id="@+id/ui_document_new_security"
+            layout="@layout/holder_view_simple_clickable" />
 
     </com.hlk.hlklib.lib.view.CorneredView>
 
-    <include layout="@layout/tool_view_half_line_horizontal" />
-
     <com.hlk.hlklib.lib.view.ClearEditText
-        android:id="@+id/ui_document_individual_content"
+        android:id="@+id/ui_document_new_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+        android:visibility="gone"
         app:cet_edit_hint="@string/ui_text_document_create_content_hint"
         app:cet_edit_max_lines="5"
         app:cet_edit_maximum_height="@dimen/ui_static_dp_150"
         app:cet_edit_minimum_height="@dimen/ui_static_dp_100"
         app:cet_edit_padding="@dimen/ui_static_dp_5" />
 
-    <include layout="@layout/tool_view_half_line_horizontal" />
+    <include layout="@layout/tool_view_divider_big" />
 
     <include layout="@layout/tool_view_attachment" />
 
     <LinearLayout
-        android:id="@+id/ui_document_individual_attachments_layout"
+        android:id="@+id/ui_document_new_attachments_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

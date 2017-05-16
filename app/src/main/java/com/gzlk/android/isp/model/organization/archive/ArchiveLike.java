@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.model.organization;
+package com.gzlk.android.isp.model.organization.archive;
 
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;

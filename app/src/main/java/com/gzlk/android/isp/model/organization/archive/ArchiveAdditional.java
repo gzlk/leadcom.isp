@@ -1,5 +1,6 @@
-package com.gzlk.android.isp.model.organization;
+package com.gzlk.android.isp.model.organization.archive;
 
+import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.moment.MomentAdditional;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;

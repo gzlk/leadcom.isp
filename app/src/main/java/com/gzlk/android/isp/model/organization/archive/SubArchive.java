@@ -1,5 +1,6 @@
-package com.gzlk.android.isp.model.organization;
+package com.gzlk.android.isp.model.organization.archive;
 
+import com.gzlk.android.isp.model.BaseArchive;
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
 
@@ -16,7 +17,7 @@ import com.litesuits.orm.db.annotation.Column;
 
 public class SubArchive extends Model {
 
-    @Column(Archive.Field.GroupArchiveId)
+    @Column(BaseArchive.Field.GroupArchiveId)
     private String groDocId;    //组织档案ID
     @Column(Field.CreateDate)
     private String createDate;  //点赞日期

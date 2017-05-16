@@ -1,7 +1,12 @@
 package com.gzlk.android.isp.fragment.organization;
 
+import android.view.View;
+
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.individual.DocumentNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.TooltipHelper;
+import com.gzlk.android.isp.model.BaseArchive;
 
 /**
  * <b>功能描述：</b>组织档案列表<br />
@@ -65,4 +70,23 @@ public class ArchiveFragment extends BaseOrganizationFragment {
         }
         mQueryId = queryId;
     }
+
+    public void openTooltipMenu(View view) {
+        showTooltip(view, R.id.ui_tool_view_tooltip_menu_organization_document, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+    }
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.ui_tool_popup_menu_organization_document_new:
+                    // 新建组织档案
+                    openActivity(DocumentNewFragment.class.getName(), format("%d,,%s", BaseArchive.Type.ORGANIZATION, mQueryId), true, true);
+                    break;
+                case R.id.ui_tool_popup_menu_organization_document_manage:
+                    // 管理组织档案
+                    break;
+            }
+        }
+    };
 }

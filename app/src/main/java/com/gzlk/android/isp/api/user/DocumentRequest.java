@@ -11,8 +11,11 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.litesuits.http.request.param.HttpMethods;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>个人档案相关api<br />
@@ -36,10 +39,10 @@ public class DocumentRequest extends Request<Document> {
         return request;
     }
 
-    static class SingleDocument extends Output<Document> {
+    private static class SingleDocument extends Output<Document> {
     }
 
-    static class MultipleDocument extends Query<Document> {
+    private static class MultipleDocument extends Query<Document> {
     }
 
     @Override
@@ -62,16 +65,29 @@ public class DocumentRequest extends Request<Document> {
     private static final String DOC = "/user/userDoc";
 
     /**
-     * 添加档案
+     * 新增个人档案
+     *
+     * @param type       档案类型(1.普通,2.个人,3.活动)
+     * @param title      档案标题
+     * @param content    档案内容(html)
+     * @param markdown   档案内容(markdown)
+     * @param image      图片地址(json数组)
+     * @param attach     附件地址(json数组)
+     * @param attachName 附件名(json数组)
      */
-    public void add(String title, String content, String type) {
-        //title,content,type,userId,userName,accessToken
+    public void add(@NonNull String type, @NonNull String title, String content, String markdown,
+                    ArrayList<String> image, ArrayList<String> attach, ArrayList<String> attachName) {
+        // {title,type,content,markdown,[image],[attach],[attachName],userId,userName,accessToken}
 
         JSONObject object = new JSONObject();
         try {
-            object.put("title", title)
+            object.put("type", type)
+                    .put("title", title)
                     .put("content", checkNull(content))
-                    .put("type", checkNull(type))
+                    .put("markdown", checkNull(markdown))
+                    .put("image", new JSONArray(image))
+                    .put("attach", new JSONArray(attach))
+                    .put("attachName", new JSONArray(attachName))
                     .put("userId", Cache.cache().userId)
                     .put("userName", checkNull(Cache.cache().userName))
                     .put("accessToken", Cache.cache().userToken);
@@ -100,17 +116,21 @@ public class DocumentRequest extends Request<Document> {
     /**
      * 更改档案的内容
      */
-    @SuppressWarnings("ConstantConditions")
-    public void update(String documentId, String title, String content, String type) {
-        //{_id,title,content,type,accessToken}
+    public void update(String archiveId, @NonNull String type, @NonNull String title, String content, String markdown,
+                       ArrayList<String> image, ArrayList<String> attach, ArrayList<String> attachName) {
+        // {_id,type,title,content,markdown,[image],[attach],[attachName],accessToken}
 
         JSONObject object = new JSONObject();
         try {
-            object.put("_id", documentId);
-            object.put("title", title);
-            object.put("content", content);
-            object.put("type", type);
-            object.put("accessToken", Cache.cache().userToken);
+            object.put("_id", archiveId)
+                    .put("type", type)
+                    .put("title", title)
+                    .put("content", checkNull(content))
+                    .put("markdown", checkNull(markdown))
+                    .put("image", new JSONArray(image))
+                    .put("attach", new JSONArray(attach))
+                    .put("attachName", new JSONArray(attachName))
+                    .put("accessToken", Cache.cache().userToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }

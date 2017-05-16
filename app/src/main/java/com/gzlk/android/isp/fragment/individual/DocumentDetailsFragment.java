@@ -18,6 +18,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
+import com.gzlk.android.isp.model.BaseArchive;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.document.Document;
@@ -134,7 +135,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
                 @Override
                 public void onClick() {
                     //openEditSelector();
-                    openActivity(DocumentNewFragment.class.getName(), mQueryId, true, true);
+                    openActivity(DocumentNewFragment.class.getName(), format("%d,%s", BaseArchive.Type.INDIVIDUAL, mQueryId), true, true);
                 }
             });
         }
@@ -233,7 +234,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
                 int id = view.getId();
                 switch (id) {
                     case R.id.ui_dialog_button_editor_to_change:
-                        openActivity(DocumentNewFragment.class.getName(), mQueryId, true, true);
+                        openActivity(DocumentNewFragment.class.getName(), format("%d,%s", BaseArchive.Type.INDIVIDUAL, mQueryId), true, true);
                         break;
                     case R.id.ui_dialog_button_editor_to_delete:
                         warningDeleteDocument();

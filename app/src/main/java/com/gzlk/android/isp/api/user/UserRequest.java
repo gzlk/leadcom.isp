@@ -24,13 +24,9 @@ import org.json.JSONObject;
  */
 
 public class UserRequest extends Request<User> {
-    private static UserRequest request;
 
     public static UserRequest request() {
-        if (null == request) {
-            request = new UserRequest();
-        }
-        return request;
+        return new UserRequest();
     }
 
     static class SingleUser extends Output<User> {

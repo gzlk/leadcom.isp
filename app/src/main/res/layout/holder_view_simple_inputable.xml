@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
     android:background="@android:color/white"
     android:gravity="center_vertical"
     android:minHeight="@dimen/ui_base_dimen_simple_item_height">
@@ -22,6 +23,7 @@
         app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
         app:cet_edit_hint="@string/app_name"
         app:cet_edit_icon_clear="@string/ui_icon_clear"
-        app:cet_edit_normal_border="@android:color/white" />
+        app:cet_edit_normal_border="@android:color/white"
+        app:cet_edit_padding="@dimen/ui_static_dp_5" />
 
 </LinearLayout>

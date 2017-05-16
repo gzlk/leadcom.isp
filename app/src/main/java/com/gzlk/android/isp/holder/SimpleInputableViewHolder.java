@@ -33,6 +33,10 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
+    /**
+     * 显示内容
+     * 标题，内容，hint，内容过滤，内容验证，最大长度
+     */
     public void showContent(String string) {
         String[] strings = string.split("\\|");
         if (strings.length < 6) {

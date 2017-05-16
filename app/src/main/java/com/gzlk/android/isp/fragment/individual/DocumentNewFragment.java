@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.individual;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.org.ArchiveRequest;
 import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -27,7 +29,9 @@ import com.gzlk.android.isp.holder.SimpleInputableViewHolder;
 import com.gzlk.android.isp.holder.ToggleableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.BaseArchive;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.organization.archive.Archive;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -52,35 +56,66 @@ import java.util.List;
 
 public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
 
+    private static final String PARAM_TYPE = "dnf_type";
+    private static final String PARAM_GROUP = "dnf_group";
+    private static final String PARAM_PRIVACY = "dnf_privacy";
+
     public static DocumentNewFragment newInstance(String params) {
         DocumentNewFragment dnf = new DocumentNewFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
+        bundle.putString(PARAM_QUERY_ID, strings[1]);
+        if (strings.length > 2) {
+            // 要发布到的组织id
+            bundle.putString(PARAM_GROUP, strings[2]);
+        }
         dnf.setArguments(bundle);
         return dnf;
     }
 
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        archiveType = bundle.getInt(PARAM_TYPE, BaseArchive.Type.INDIVIDUAL);
+        archiveGroup = bundle.getString(PARAM_GROUP, "");
+        privacy = bundle.getString(PARAM_PRIVACY, "{}");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putInt(PARAM_TYPE, archiveType);
+        bundle.putString(PARAM_GROUP, archiveGroup);
+        bundle.putString(PARAM_PRIVACY, privacy);
+    }
+
     // UI
-    @ViewId(R.id.ui_document_individual_title)
+    @ViewId(R.id.ui_document_new_title)
     private View titleInputView;
-    @ViewId(R.id.ui_document_individual_source)
+    @ViewId(R.id.ui_document_new_source)
     private View sourceView;
-    @ViewId(R.id.ui_document_individual_time)
+    @ViewId(R.id.ui_document_new_time)
     private View timeView;
-    @ViewId(R.id.ui_document_individual_content)
+    @ViewId(R.id.ui_document_new_security)
+    private View securityView;
+    @ViewId(R.id.ui_document_new_content)
     private ClearEditText contentView;
-    @ViewId(R.id.ui_document_individual_attachments_layout)
+    @ViewId(R.id.ui_document_new_attachments_layout)
     private LinearLayout attachmentLayout;
 
     // holder
     private SimpleInputableViewHolder titleHolder;
-    private SimpleClickableViewHolder sourceHolder;
+    private SimpleInputableViewHolder sourceHolder;
     private SimpleClickableViewHolder timeHolder;
-    private ToggleableViewHolder privacyHolder;
+    private SimpleClickableViewHolder securityHolder;
 
     // data
     private String[] strings;
     private FileAdapter mAdapter;
+    private int archiveType;
+    private String archiveGroup;
+    private String privacy;
     // 文件选择
     private FilePickerDialog filePickerDialog;
     DialogProperties properties;
@@ -88,6 +123,17 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
+    }
+
+    private static final int REQUEST_SECURITY = RESULT_BASE_REQUEST + 10;
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_SECURITY) {
+            // 隐私设置返回了
+            privacy = getResultedData(data);
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     @Override
@@ -111,7 +157,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         String content = StringHelper.escapeToHtml(contentView.getValue());
-        Utils.hidingInputBoard(contentView);
+        Utils.hidingInputBoard(titleInputView);
         if (StringHelper.isEmpty(mQueryId)) {
             createDocument(title, content);
         } else {
@@ -119,24 +165,55 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void createDocument(String title, String content) {
+        if (archiveType == BaseArchive.Type.INDIVIDUAL) {
+            createIndividualDocument(title, content);
+        } else {
+            createOrganizationArchive(title, content);
+        }
+    }
+
+    private void createIndividualDocument(String title, String content) {
         DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
             @Override
             public void onResponse(Document document, boolean success, String message) {
                 super.onResponse(document, success, message);
                 if (success) {
-                    if (null != document) {
+                    if (null != document && !StringHelper.isEmpty(document.getId())) {
                         new Dao<>(Document.class).save(document);
                     }
                     ToastHelper.make().showMsg(message);
                     finish();
                 }
             }
-        }).add(title, content, Document.Type.TEXT);
+        }).add(Document.Type.TEXT, title, content, "", null, null, null);
+    }
+
+    private void createOrganizationArchive(String title, String content) {
+        ArchiveRequest.request().setOnRequestListener(new OnRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    if (null != archive && !StringHelper.isEmpty(archive.getId())) {
+                        new Dao<>(Archive.class).save(archive);
+                    }
+                    ToastHelper.make().showMsg(message);
+                    finish();
+                }
+            }
+        }).add(archiveGroup, sourceHolder.getValue(), "1", title, content, "", null, null, null);
     }
 
     private void editDocument(String title, String content) {
+        if (archiveType == BaseArchive.Type.INDIVIDUAL) {
+            editIndividualDocument(title, content);
+        } else {
+            editOrganizationArchive(title, content);
+        }
+    }
+
+    private void editIndividualDocument(String title, String content) {
         DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
             @Override
             public void onResponse(Document document, boolean success, String message) {
@@ -146,7 +223,16 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, title, content, Document.Type.TEXT);
+        }).update(mQueryId, Document.Type.TEXT, title, content, "", null, null, null);
+    }
+
+    private void editOrganizationArchive(String title, String content) {
+        ArchiveRequest.request().setOnRequestListener(new OnRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+            }
+        }).update(mQueryId, title, content, "", null, null, null);
     }
 
     @Override
@@ -242,7 +328,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
 
         // 来源，应该不可以更改
         if (null == sourceHolder) {
-            sourceHolder = new SimpleClickableViewHolder(sourceView, this);
+            sourceHolder = new SimpleInputableViewHolder(sourceView, this);
         }
         sourceHolder.showContent(format(strings[1], (null == document ? "" : document.getUserName())));
 
@@ -254,10 +340,11 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
         showCreateDate(null == document ? new Date() : Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), document.getCreateDate()));
 
         // 隐私
-        if (null == privacyHolder) {
-            privacyHolder = new ToggleableViewHolder(mRootView, this);
+        if (null == securityHolder) {
+            securityHolder = new SimpleClickableViewHolder(securityView, this);
+            securityHolder.addOnViewHolderClickListener(viewHolderClickListener);
         }
-        privacyHolder.showContent(strings[3]);
+        securityHolder.showContent(format(strings[3], "选择公开范围"));
 
         // 内容
         contentView.setValue(null == document ? "" : StringHelper.escapeFromHtml(document.getContent()));
@@ -323,6 +410,10 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
                 case 1:
                     // 选择日期
                     openDatePicker();
+                    break;
+                case 2:
+                    // 隐私设置
+                    openActivity(SecuritySettingFragment.class.getName(), "", true, false);
                     break;
             }
         }

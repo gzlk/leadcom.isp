@@ -53,6 +53,10 @@ public abstract class Request<T> {
      * 搜索
      */
     protected static final String SEARCH = "/search";
+    /**
+     * 保存
+     */
+    protected static final String SAVE = "/save";
 
     /**
      * 组合url

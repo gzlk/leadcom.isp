@@ -8,6 +8,8 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
+import java.util.ArrayList;
+
 /**
  * <b>功能描述：</b>用户信息<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -48,7 +50,10 @@ public class User extends Model {
         public static final String LastLoginTime = "lastLoginTime";
         public static final String Captcha = "captcha";
         public static final String Spell = "spell";
+        public static final String JoinedActs="joinedActs";
+        public static final String CreatedActs="createdActs";
     }
+
     //用户id(同时也是网易云的accid)
     //用户姓名
     @Column(Model.Field.Name)
@@ -101,6 +106,13 @@ public class User extends Model {
     // 拼音
     @Column(Field.Spell)
     private String spell;
+
+    //加入的活动id列表，格式[id1,id2,id3]
+    @Column(Field.JoinedActs)
+    private ArrayList<String> joinedActs;
+    //发起的活动id列表，格式[id1,id2,id3]
+    @Column(Field.CreatedActs)
+    private ArrayList<String> createdActs;
 
     public String getName() {
         return name;
@@ -244,5 +256,21 @@ public class User extends Model {
         } else {
             this.spell = spell;
         }
+    }
+
+    public ArrayList<String> getJoinedActs() {
+        return joinedActs;
+    }
+
+    public void setJoinedActs(ArrayList<String> joinedActs) {
+        this.joinedActs = joinedActs;
+    }
+
+    public ArrayList<String> getCreatedActs() {
+        return createdActs;
+    }
+
+    public void setCreatedActs(ArrayList<String> createdActs) {
+        this.createdActs = createdActs;
     }
 }
