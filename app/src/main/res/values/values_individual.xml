@@ -76,13 +76,21 @@
     <string name="ui_text_document_edit_not_exist">您要修改的档案不存在，要开始新建一个吗？</string>
     <string name="ui_text_document_create_content_hint">档案内容</string>
     <string-array name="ui_individual_new_document">
-        <item>题名：|%s|档案标题|||0</item>
-        <item>0|档案来源：|%s|0</item>
+        <item>题名：|%s|档案标题|||30</item>
+        <item>档案来源：|%s|来源|||10</item>
         <item>1|发生时间：|%s|1</item>
-        <item>2|公开|0</item>
+        <item>2|公开|%s|1</item>
     </string-array>
     <string name="ui_text_document_picker_title">请选择：</string>
     <string name="ui_text_document_create_title_invalid">标题不能为空</string>
+
+    <string-array name="ui_security_setting_items">
+        <item>0|公开|所有朋友可见|1</item>
+        <item>1|私密|仅自己可见|0</item>
+        <item>2|指定部分人|选中朋友可见|0</item>
+    </string-array>
+    <string name="ui_security_fragment_title">选择公开范围</string>
+    <string name="ui_security_select_from_contact">从通讯录选择</string>
 
     <string name="ui_text_document_details_fragment_title">档案内容</string>
     <string name="ui_text_document_details_not_exists">档案不存在</string>

@@ -73,10 +73,10 @@ repositories {
         dirs 'libs'
     }
 }
-//configurations.all {
-//    resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
-//    resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
-//}
+configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
+    resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
+}
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //compile(name: 'hlklib-1.0.6.3-SNAPSHOT-release', ext: 'aar')
@@ -93,7 +93,7 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.google.code.gson:gson:2.8.0'
     compile('com.github.hsiangleekwok:hlklib:1.0.6.3-SNAPSHOT') {
-//        changing = true;
+        changing = true;
     }
     // 滑动删除
     //compile(name: 'android-swipelayout-library-release', ext: 'aar')
