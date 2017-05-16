@@ -6,10 +6,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.user.UserRequest;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
+import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
@@ -116,7 +120,18 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
     }
 
     private void editPassword(String old, String newOne) {
-        ToastHelper.make().showMsg(R.string.ui_text_edit_password_success);
-        finish();
+        UserRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    if (null != user && !StringHelper.isEmpty(user.getId())) {
+                        Cache.cache().setCurrentUser(user);
+                    }
+                    ToastHelper.make().showMsg(R.string.ui_text_edit_password_success);
+                    finish();
+                }
+            }
+        }).update(UserRequest.TYPE_PASSWORD, newOne);
     }
 }
