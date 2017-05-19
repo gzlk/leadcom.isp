@@ -88,7 +88,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
         icon.setText(R.string.ui_icon_confirm);
         icon.setVisibility(View.VISIBLE);
         icon.setTextColor(getColor(user.isLocalDeleted() ? R.color.colorPrimary : R.color.textColorHintLightLight));
-        textView.setText("测试员");
+        textView.setText(user.getName());
         textView.setTextColor(getColor(R.color.textColor));
         descriptionView.setVisibility(View.GONE);
     }

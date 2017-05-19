@@ -4,6 +4,13 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 
 import com.gzlk.android.isp.fragment.main.MainFragment;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -26,6 +33,7 @@ public class MainActivity extends TitleActivity {
         supportTransparentStatusBar = true;
         isToolbarSupported = false;
         super.onCreate(savedInstanceState);
+        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, true);
         if (null == mainFragment) {
             mainFragment = new MainFragment();
         }
@@ -36,4 +44,22 @@ public class MainActivity extends TitleActivity {
     protected boolean onBackKeyEvent(int keyCode, KeyEvent event) {
         return mainFragment.onBackKeyEvent();
     }
+
+    @Override
+    protected void onDestroy() {
+        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
+        super.onDestroy();
+    }
+
+    Observer<List<IMMessage>> incomingMessageObserver = new Observer<List<IMMessage>>() {
+        @Override
+        public void onEvent(List<IMMessage> messages) {
+            // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
+            for (IMMessage msg : messages) {
+                if (msg.getMsgType() == MsgTypeEnum.custom) {
+
+                }
+            }
+        }
+    };
 }

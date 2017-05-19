@@ -26,7 +26,6 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.AttachmentViewHolder;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.SimpleInputableViewHolder;
-import com.gzlk.android.isp.holder.ToggleableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.BaseArchive;
@@ -36,6 +35,8 @@ import com.gzlk.android.isp.model.user.document.Document;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +61,9 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_GROUP = "dnf_group";
     private static final String PARAM_PRIVACY = "dnf_privacy";
 
+    private static final String PARAM_TITLE = "dnf_title";
+    private static final String PARAM_SOURCE = "dnf_source";
+
     public static DocumentNewFragment newInstance(String params) {
         DocumentNewFragment dnf = new DocumentNewFragment();
         String[] strings = splitParameters(params);
@@ -80,6 +84,8 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
         archiveType = bundle.getInt(PARAM_TYPE, BaseArchive.Type.INDIVIDUAL);
         archiveGroup = bundle.getString(PARAM_GROUP, "");
         privacy = bundle.getString(PARAM_PRIVACY, "{}");
+        title = bundle.getString(PARAM_TITLE, "");
+        source = bundle.getString(PARAM_SOURCE, "");
     }
 
     @Override
@@ -88,6 +94,10 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putInt(PARAM_TYPE, archiveType);
         bundle.putString(PARAM_GROUP, archiveGroup);
         bundle.putString(PARAM_PRIVACY, privacy);
+        title = titleHolder.getValue();
+        bundle.putString(PARAM_TITLE, title);
+        source = sourceHolder.getValue();
+        bundle.putString(PARAM_SOURCE, source);
     }
 
     // UI
@@ -115,7 +125,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     private FileAdapter mAdapter;
     private int archiveType;
     private String archiveGroup;
-    private String privacy;
+    private String privacy, title, source;
     // 文件选择
     private FilePickerDialog filePickerDialog;
     DialogProperties properties;
@@ -143,7 +153,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                ToastHelper.make().showMsg("暂时无法上传附件");
+                //ToastHelper.make().showMsg("暂时无法上传附件");
                 tryCreateDocument();
             }
         });
@@ -323,14 +333,20 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
         if (null == titleHolder) {
             titleHolder = new SimpleInputableViewHolder(titleInputView, this);
         }
-        titleHolder.showContent(format(strings[0], (null == document ? "" : document.getTitle())));
+        if (StringHelper.isEmpty(title)) {
+            title = null == document ? "" : document.getTitle();
+        }
+        titleHolder.showContent(format(strings[0], title));
         titleHolder.focusEnd();
 
         // 来源，应该不可以更改
         if (null == sourceHolder) {
             sourceHolder = new SimpleInputableViewHolder(sourceView, this);
         }
-        sourceHolder.showContent(format(strings[1], (null == document ? "" : document.getUserName())));
+        if (StringHelper.isEmpty(source)) {
+            source = null == document ? "" : document.getSource();
+        }
+        sourceHolder.showContent(format(strings[1], source));
 
         // 时间
         if (null == timeHolder) {
@@ -344,7 +360,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
             securityHolder = new SimpleClickableViewHolder(securityView, this);
             securityHolder.addOnViewHolderClickListener(viewHolderClickListener);
         }
-        securityHolder.showContent(format(strings[3], "选择公开范围"));
+        securityHolder.showContent(format(strings[3], getPrivacy()));
 
         // 内容
         contentView.setValue(null == document ? "" : StringHelper.escapeFromHtml(document.getContent()));
@@ -370,6 +386,30 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
             setSupportLoadingMore(false);
             mRecyclerView.setAdapter(mAdapter);
         }
+    }
+
+    private String getPrivacy() {
+        if (!StringHelper.isEmpty(privacy)) {
+            try {
+                JSONObject object = new JSONObject(privacy);
+                if (object.has("status")) {
+                    int state = object.getInt("status");
+                    switch (state) {
+                        case 1:
+                            return StringHelper.getString(R.string.ui_base_text_public);
+                        case 2:
+                            return StringHelper.getString(R.string.ui_base_text_private);
+                        case 3:
+                            return StringHelper.getString(R.string.ui_security_force_to_user, object.get("userName"));
+                        case 4:
+                            return StringHelper.getString(R.string.ui_security_force_to_group, object.getString("groupName"));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return StringHelper.getString(R.string.ui_security_fragment_title);
     }
 
     private int itemHeight = 0;
@@ -413,7 +453,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case 2:
                     // 隐私设置
-                    openActivity(SecuritySettingFragment.class.getName(), "", true, false);
+                    openActivity(SecuritySettingFragment.class.getName(), String.valueOf(archiveType), REQUEST_SECURITY, true, false);
                     break;
             }
         }
@@ -461,7 +501,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
             public void onTimeSelect(Date date, View v) {
                 showCreateDate(date);
             }
-        }).setType(TimePickerView.Type.YEAR_MONTH_DAY)
+        }).setType(new boolean[]{true, true, true, false, false, false})
                 .setTitleBgColor(getColor(R.color.colorPrimary))
                 .setSubmitColor(Color.WHITE)
                 .setCancelColor(Color.WHITE)

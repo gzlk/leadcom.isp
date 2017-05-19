@@ -1,7 +1,5 @@
 package com.gzlk.android.isp.model.user.document;
 
-import com.gzlk.android.isp.model.Model;
-import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
@@ -18,34 +16,4 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Document.Table.LIKE)
 public class DocumentLike extends SubDocument {
 
-    @Column(Model.Field.UserId)
-    private String userId;      //用户ID
-    @Column(Model.Field.UserName)
-    private String userName;    //用户名称
-    @Column(Model.Field.CreateDate)
-    private String createDate;  //点赞日期
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
-    }
 }

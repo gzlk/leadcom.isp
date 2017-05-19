@@ -91,6 +91,8 @@
     <string name="ui_base_text_verify_code">验证码</string>
     <string name="ui_base_text_messaging_opened">已开启</string>
     <string name="ui_base_text_messaging_closed">已关闭</string>
+    <string name="ui_base_text_public">公开</string>
+    <string name="ui_base_text_private">私密</string>
 
     <string name="ui_base_text_record_voice">录音</string>
 </resources>

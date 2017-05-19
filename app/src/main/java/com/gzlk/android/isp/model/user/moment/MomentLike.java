@@ -1,7 +1,5 @@
 package com.gzlk.android.isp.model.user.moment;
 
-import com.gzlk.android.isp.model.Model;
-import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
@@ -18,38 +16,15 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Moment.Table.LIKE)
 public class MomentLike extends SubMoment {
 
-    //用户姓名
-    @Column(Model.Field.UserId)
-    private String userId;
     //姓名
-    @Column(Model.Field.UserName)
-    private String userName;
-    //创建时间
-    @Column(Model.Field.CreateDate)
-    private String createDate;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
-    }
-
+//    @Column(Model.Field.UserName)
+//    private String userName;
+//
+//    public String getUserName() {
+//        return userName;
+//    }
+//
+//    public void setUserName(String userName) {
+//        this.userName = userName;
+//    }
 }

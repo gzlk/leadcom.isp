@@ -90,6 +90,8 @@
         <item>2|指定部分人|选中朋友可见|0</item>
     </string-array>
     <string name="ui_security_fragment_title">选择公开范围</string>
+    <string name="ui_security_force_to_user" formatted="false">只对[%s]公开</string>
+    <string name="ui_security_force_to_group" formatted="false">只对组织[%s]公开</string>
     <string name="ui_security_select_from_contact">从通讯录选择</string>
 
     <string name="ui_text_document_details_fragment_title">档案内容</string>

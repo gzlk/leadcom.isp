@@ -81,6 +81,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     private StructureFragment.OnOrganizationChangedListener organizationChangedListener = new StructureFragment.OnOrganizationChangedListener() {
         @Override
         public void onChanged(Organization item) {
+            if (null == item) return;
             selectedOrganizationId = item.getId();
             mainFragment.setTitleText(item.getName());
             ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());

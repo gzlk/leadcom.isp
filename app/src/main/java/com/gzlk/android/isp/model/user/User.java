@@ -27,6 +27,10 @@ public class User extends Model {
     public static class Table {
         public static final String USER = "user";
         /**
+         * 个人收藏表
+         */
+        public static final String COLLECTION = "collection";
+        /**
          * 用户隐私设置
          */
         public static final String PRIVACY = "privacy";
@@ -50,8 +54,8 @@ public class User extends Model {
         public static final String LastLoginTime = "lastLoginTime";
         public static final String Captcha = "captcha";
         public static final String Spell = "spell";
-        public static final String JoinedActs="joinedActs";
-        public static final String CreatedActs="createdActs";
+        public static final String JoinedActs = "joinedActs";
+        public static final String CreatedActs = "createdActs";
     }
 
     //用户id(同时也是网易云的accid)
@@ -100,9 +104,7 @@ public class User extends Model {
     //验证码
     @Column(Field.Captcha)
     private String captcha;
-    //访问令牌：用于移动端访问的唯标志
-    @Column(Model.Field.AccessToken)
-    private String accessToken;
+
     // 拼音
     @Column(Field.Spell)
     private String spell;
@@ -233,14 +235,6 @@ public class User extends Model {
 
     public void setCaptcha(String captcha) {
         this.captcha = captcha;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
     }
 
     public String getSpell() {

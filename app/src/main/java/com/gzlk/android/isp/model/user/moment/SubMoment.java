@@ -21,9 +21,23 @@ public class SubMoment extends Model {
         public static final String MomentId = "momentId";
     }
 
+    //用户姓名
+    @Column(Model.Field.UserId)
+    private String userId;
     //动态ID
     @Column(Field.MomentId)
     private String momentId;
+    //创建时间
+    @Column(Model.Field.CreateDate)
+    private String createDate;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getMomentId() {
         return momentId;
@@ -31,5 +45,13 @@ public class SubMoment extends Model {
 
     public void setMomentId(String momentId) {
         this.momentId = momentId;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 }

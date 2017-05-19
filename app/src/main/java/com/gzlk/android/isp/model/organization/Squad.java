@@ -17,26 +17,26 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Organization.Table.SQUAD)
 public class Squad extends Model {
 
-    public static class Field {
-        public static final String Introduce = "introduce";
-    }
-
     @Column(Organization.Field.GroupId)
     private String groupId;        //所属群ID
+
     @Column(Model.Field.Name)
     private String name;           //小组名称
-    @Column(Field.Introduce)
+
+    @Column(Organization.Field.Introduction)
     private String intro;          //介绍
+
     @Column(Model.Field.CreateDate)
     private String createDate;     //创建时间
+
     @Column(Model.Field.CreatorId)
     private String creatorId;      //创建者ID
+
     @Column(Model.Field.CreatorName)
     private String creatorName;    //创建者姓名
+
     @Column(Organization.Field.MemberNumber)
     private String memberNum;      //成员数
-    @Column(Model.Field.AccessToken)
-    private String accessToken;    //更改此记录的用户的令牌环
 
     public String getGroupId() {
         return groupId;
@@ -92,13 +92,5 @@ public class Squad extends Model {
 
     public void setMemberNum(String memberNum) {
         this.memberNum = memberNum;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
     }
 }

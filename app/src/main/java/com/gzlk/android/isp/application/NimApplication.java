@@ -6,11 +6,20 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.NIMMessageActivity;
+import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.nim.NimMessageParser;
 import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
+import com.netease.nimlib.sdk.StatusCode;
+import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
+import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
@@ -27,33 +36,33 @@ import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 public class NimApplication extends BaseActivityManagedApplication {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
     /**
      * 初始化网易云
      */
     protected void initializeNim() {
         // SDK初始化（启动后台服务，若已经存在用户登录信息， SDK 将完成自动登录）
         NIMClient.init(this, loginInfo(), options());
+        // 注册自定义网易云消息解析器，必须在主进程中。
+        if (shouldInit()) {
+            NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
+            handleUserOnlineStatus();
+        }
     }
 
     // 如果返回值为 null，则全部使用默认参数。
     private SDKOptions options() {
         SDKOptions options = new SDKOptions();
-
+        //options.appKey = StringHelper.getString(R.string.netease_nim_app_key);
         // 如果将新消息通知提醒托管给 SDK 完成，需要添加以下配置。否则无需设置。
         StatusBarNotificationConfig config = new StatusBarNotificationConfig();
-        //config.notificationEntrance = WelcomeActivity.class; // 点击通知栏跳转到该Activity
-        //config.notificationSmallIconId = R.drawable.ic_stat_notify_msg;
+        config.notificationEntrance = NIMMessageActivity.class; // 点击通知栏跳转到该Activity
+        config.notificationSmallIconId = R.mipmap.ic_launcher;
         // 呼吸灯配置
         config.ledARGB = Color.GREEN;
         config.ledOnMs = 1000;
         config.ledOffMs = 1500;
         // 通知铃声的uri字符串
-        config.notificationSound = "android.resource://com.netease.nim.demo/raw/msg";
+        config.notificationSound = "android.resource://com.leadcom.android.isp/raw/msg";
         options.statusBarNotificationConfig = config;
 
         // 配置保存图片，文件，log 等数据的目录
@@ -104,13 +113,25 @@ public class NimApplication extends BaseActivityManagedApplication {
     }
 
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
-    private LoginInfo loginInfo() {
-        String account = PreferenceHelper.get(R.string.pf_last_login_user_id, "");
-        String token = PreferenceHelper.get(R.string.pf_last_login_user_token, "");
+    public LoginInfo loginInfo() {
+        String account = "xfeiffer";//PreferenceHelper.get(R.string.pf_last_login_user_id, "");//
+        String token = "111111";//PreferenceHelper.get(R.string.pf_last_login_user_token, "");//
         if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
             return new LoginInfo(account, token);
         } else {
             return null;
         }
+    }
+
+    private void handleUserOnlineStatus() {
+        NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(new Observer<StatusCode>() {
+            public void onEvent(StatusCode status) {
+                LogHelper.log("tag", "User status changed to: " + status);
+                if (status.wontAutoLogin()) {
+                    // 被踢出、账号被禁用、密码错误等情况，自动登录失败，需要返回到登录界面进行重新登录操作
+                    ToastHelper.make(NimApplication.this).showMsg("您的账号已被迫下线，请重新登录");
+                }
+            }
+        }, true);
     }
 }

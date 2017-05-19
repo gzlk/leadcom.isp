@@ -36,6 +36,7 @@ public class Organization extends Model {
         public static final String UpperName = "upperName";
         public static final String Nature = "nature";
         public static final String Logo = "logo";
+        public static final String Introduction = "introduction";
         public static final String MemberNumber = "memberNum";
         public static final String Verified = "verified";
         public static final String RoleId = "roleId";
@@ -43,6 +44,7 @@ public class Organization extends Model {
         public static final String SquadId = "squadId";
         public static final String PermissionId = "permissionId";
         public static final String GroupLogo = "groupLogo";
+        public static final String ModifyDate = "modifyDate";
     }
 
     @Column(Model.Field.Name)
@@ -55,8 +57,12 @@ public class Organization extends Model {
     private String nature;         //组织性质
     @Column(Field.Logo)
     private String logo;           //组织LOGO
+    @Column(Field.Introduction)
+    private String intro;          //组织描述
     @Column(Model.Field.CreateDate)
     private String createDate;     //创建时间
+    @Column(Field.ModifyDate)
+    private String modifyDate;       //最后修改时间
     @Column(Model.Field.CreatorId)
     private String creatorId;      //创建者ID
     @Column(Model.Field.CreatorName)
@@ -106,12 +112,28 @@ public class Organization extends Model {
         this.logo = logo;
     }
 
+    public String getIntro() {
+        return intro;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
+    }
+
     public String getCreateDate() {
         return createDate;
     }
 
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
+    }
+
+    public String getModifyDate() {
+        return modifyDate;
+    }
+
+    public void setModifyDate(String modifyDate) {
+        this.modifyDate = modifyDate;
     }
 
     public String getCreatorId() {

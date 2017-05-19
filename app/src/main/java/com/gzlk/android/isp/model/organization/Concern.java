@@ -5,7 +5,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
- * <b>功能描述：</b>关注<br />
+ * <b>功能描述：</b>关注的组织<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/07 09:46 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -16,12 +16,16 @@ import com.litesuits.orm.db.annotation.Table;
  */
 @Table(Organization.Table.CONCERN)
 public class Concern extends Model {
+
     @Column(Field.UserId)
     private String userId;        //用户ID
+
     @Column(Organization.Field.GroupId)
     private String groupId;        //关注组织ID
+
     @Column(Organization.Field.GroupName)
     private String groupName;    //关注组织名称
+
     @Column(Organization.Field.GroupLogo)
     private String groupLogo;    //关注组织LOGO
 

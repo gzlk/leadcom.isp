@@ -24,9 +24,6 @@ public class MomentAdditional extends SubMoment {
         public static final String CollectionNum = "colNum";
     }
 
-    //动态发起者用户ID
-    @Column(Model.Field.UserId)
-    private String userId;
     //阅读次数
     @Column(Field.ReadNum)
     private String readNum;
@@ -39,17 +36,6 @@ public class MomentAdditional extends SubMoment {
     //收藏次数
     @Column(Field.CollectionNum)
     private String colNum;
-    //创建时间
-    @Column(Model.Field.CreateDate)
-    private String createDate;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getReadNum() {
         return readNum;
@@ -81,13 +67,5 @@ public class MomentAdditional extends SubMoment {
 
     public void setColNum(String colNum) {
         this.colNum = colNum;
-    }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
     }
 }

@@ -24,6 +24,10 @@
         <item name="colorPrimaryDark">@color/color_b9b9c8</item>
     </style>
 
+    <style name="AppTheme.Transparent" parent="AppTheme">
+        <item name="android:windowBackground">@color/transparent_00</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

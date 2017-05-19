@@ -27,6 +27,7 @@ public class ArchiveSecurity extends Model {
         this.text = strings[1];
         description = strings[2];
         selected = !StringHelper.isEmpty(strings[3]) && strings[3].equals("1");
+        setLocalDeleted(selected);
     }
 
     public int getIndex() {

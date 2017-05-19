@@ -20,9 +20,23 @@ public class SubDocument extends Model {
         public static final String UserDocumentId = "userDocId";
     }
 
+    @Column(Model.Field.UserId)
+    private String userId;      //用户ID
+
     //组织档案的ID
     @Column(Field.UserDocumentId)
     private String userDocId;
+
+    @Column(Model.Field.CreateDate)
+    private String createDate;  //点赞日期
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getUserDocId() {
         return userDocId;
@@ -30,5 +44,13 @@ public class SubDocument extends Model {
 
     public void setUserDocId(String userDocId) {
         this.userDocId = userDocId;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 }

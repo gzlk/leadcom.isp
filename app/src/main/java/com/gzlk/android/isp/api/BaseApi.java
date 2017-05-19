@@ -18,7 +18,7 @@ abstract class BaseApi implements Serializable {
     /**
      * 所有网络调用的网址前缀
      */
-    static final String URL = "http://10.141.130.17:8888";//"http://113.108.144.2:8044";//
+    static final String URL = "http://113.108.144.2:8044";//"http://10.141.130.17:8888";//
     /**
      * 网络调用成功时的状态码
      */

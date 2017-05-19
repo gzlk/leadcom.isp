@@ -20,7 +20,7 @@ import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
-import com.gzlk.android.isp.api.org.MemberRequest;
+import com.gzlk.android.isp.api.org.GroupInviteRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -32,7 +32,7 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Contact;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.organization.Member;
+import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -245,11 +245,14 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 // 添加到小组
                 ToastHelper.make().showMsg("暂时无法添加成员到小组（api不支持）");
             } else {
+                // 当前选择的用户
+                selectedUser = index;
                 // 加载组织信息
                 loadingOrganization();
             }
         }
     };
+    private int selectedUser = -1;
 
     private void loadingOrganization() {
         Organization org = new Dao<>(Organization.class).query(mQueryId);
@@ -268,19 +271,24 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     }
 
     private void addPhoneContactToOrganization(Organization org) {
+        if (selectedUser < 0) {
+            ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_not_select_user);
+            return;
+        }
+        Contact contact = mAdapter.get(selectedUser);
         String message = StringHelper.getString(R.string.ui_phone_contact_invite_user_to_organization, Cache.cache().userName, org.getName());
-        MemberRequest.request().setOnRequestListener(new OnRequestListener<Member>() {
+        GroupInviteRequest.request().setOnRequestListener(new OnRequestListener<Invitation>() {
             @Override
-            public void onResponse(Member member, boolean success, String message) {
+            public void onResponse(Invitation member, boolean success, String message) {
                 super.onResponse(member, success, message);
                 if (success) {
                     if (null != member && !StringHelper.isEmpty(member.getId())) {
-                        new Dao<>(Member.class).save(member);
+                        new Dao<>(Invitation.class).save(member);
                     }
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
-        }).invite(org.getId(), org.getName(), Cache.cache().userId, Cache.cache().userName, message);
+        }).invite(org.getId(), org.getName(), "", contact.getName(), message);
     }
 
     private class ContactAdapter extends RecyclerViewAdapter<PhoneContactViewHolder, Contact> {

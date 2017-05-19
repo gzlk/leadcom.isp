@@ -24,7 +24,9 @@ android {
         }
         manifestPlaceholders = [APP_PKG_NAME: applicationId]
         resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
-        resValue "string", "netease_nim_app_key", "3c9e1b9e424ccd215d6a828602d20407"
+        // 测试（leadcom）：3c9e1b9e424ccd215d6a828602d20407
+        // 测试：3da0be9ec7ac70fea20f94a8fa8c84ce
+        resValue "string", "netease_nim_app_key", "3da0be9ec7ac70fea20f94a8fa8c84ce"//"3c9e1b9e424ccd215d6a828602d20407"//
     }
     productFlavors {
         leadcom {}
@@ -103,7 +105,7 @@ dependencies {
     // TinyPinyin核心包，约80KB
     compile 'com.github.promeg:tinypinyin:2.0.3'
     // 时间选择器
-    compile 'com.contrarywind:Android-PickerView:3.2.4'
+    compile 'com.contrarywind:Android-PickerView:3.2.5'
     // 圆形progressbar
     compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
     // 图片加载器
@@ -121,15 +123,15 @@ dependencies {
 
     // 添加网易云信依赖。注意，版本号必须一致。
     // 基础功能 (必需)
-    compile 'com.netease.nimlib:basesdk:3.6.0'
+    compile 'com.netease.nimlib:basesdk:3.7.0'
     // 音视频需要
-    //compile 'com.netease.nimlib:avchat:3.6.0'
+    //compile 'com.netease.nimlib:avchat:3.7.0'
     // 聊天室需要
-    compile 'com.netease.nimlib:chatroom:3.6.0'
+    //compile 'com.netease.nimlib:chatroom:3.7.0'
     // 实时会话服务需要
-    //compile 'com.netease.nimlib:rts:3.6.0'
+    //compile 'com.netease.nimlib:rts:3.7.0'
     // 全文检索服务需要
-    //compile 'com.netease.nimlib:lucene:3.6.0'
+    //compile 'com.netease.nimlib:lucene:3.7.0'
 
     testCompile 'junit:junit:4.12'
 }

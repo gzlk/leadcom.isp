@@ -19,22 +19,31 @@ import com.litesuits.orm.db.annotation.Table;
  */
 @Table(Organization.Table.MEMBER)
 public class Member extends Model {
+
     @Column(Organization.Field.GroupId)
     private String groupId;        //群体ID
+
     @Column(Organization.Field.SquadId)
     private String squadId;        //小组ID
+
     @Column(Field.UserId)
     private String userId;           //用户ID
+
     @Column(Field.UserName)
     private String userName;       //用户姓名
+
     @Column(User.Field.Phone)
     private String phone;          //用户手机
+
     @Column(Organization.Field.RoleId)
     private String roleId;         //角色ID
+
     @Column(Organization.Field.RoleName)
     private String roleName;       //角色名称
+
     @Column(Field.CreateDate)
     private String createDate;     //加入时间
+
     @Column(User.Field.Spell)
     private String spell;           // 名字的拼音
 

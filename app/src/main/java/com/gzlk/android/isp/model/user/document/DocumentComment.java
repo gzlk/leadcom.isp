@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.user.document;
 
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.moment.Moment;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
@@ -16,11 +17,21 @@ import com.litesuits.orm.db.annotation.Table;
  */
 
 @Table(Document.Table.COMMENT)
-public class DocumentComment extends DocumentLike {
+public class DocumentComment extends SubDocument {
 
+    @Column(Model.Field.UserName)
+    private String userName;    //用户名称
     //组织档案内容
     @Column(Moment.Field.Content)
     private String content;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getContent() {
         return content;

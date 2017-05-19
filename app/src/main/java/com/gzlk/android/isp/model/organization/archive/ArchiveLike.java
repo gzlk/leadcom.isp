@@ -16,6 +16,7 @@ import com.litesuits.orm.db.annotation.Table;
  */
 @Table(Archive.Table.LIKE)
 public class ArchiveLike extends SubArchive {
+
     @Column(Model.Field.UserId)
     private String userId;      //用户ID
 

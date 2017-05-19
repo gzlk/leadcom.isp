@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.individual;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -12,6 +13,7 @@ import com.gzlk.android.isp.holder.ArchiveSecurityViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.ArchiveSecurity;
+import com.gzlk.android.isp.model.BaseArchive;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Member;
@@ -36,6 +38,14 @@ import java.util.List;
  */
 
 public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
+
+    public static SecuritySettingFragment newInstance(String params) {
+        SecuritySettingFragment ssf = new SecuritySettingFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, params);
+        ssf.setArguments(bundle);
+        return ssf;
+    }
 
     private String[] items;
     private SecurityAdapter mAdapter;
@@ -70,16 +80,20 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
                 if (model.isLocalDeleted()) {
                     if (i <= 1) {
                         // 1=公开，2=不公开
-                        object.put("status", String.valueOf(i + 1));
+                        object.put("status", (i + 1));
+                    } else if (i == 2) {
+                        continue;
                     } else {
                         if (model instanceof User) {
                             // 对某人公开
-                            object.put("status", "3");
+                            object.put("status", 3);
                             object.put("userId", model.getId());
+                            object.put("userName", ((User) model).getName());
                         } else if (model instanceof Organization) {
                             // 对某个群体公开
-                            object.put("status", "4");
+                            object.put("status", 4);
                             object.put("groupId", model.getId());
+                            object.put("groupName", ((Organization) model).getName());
                         }
                     }
                     break;
@@ -140,10 +154,16 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
                 size = mAdapter.getItemCount();
             }
         } else {
+            int index = 0, type = Integer.valueOf(mQueryId);
             // 没有基本选项时添加基本选项
             for (String string : items) {
+                if (type == BaseArchive.Type.INDIVIDUAL && index > 1) {
+                    // 个人档案只有公开和私密两种
+                    break;
+                }
                 ArchiveSecurity security = new ArchiveSecurity(string);
                 mAdapter.add(security);
+                index++;
             }
         }
     }
@@ -157,6 +177,7 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
             ArchiveSecurity security = (ArchiveSecurity) mAdapter.get(i);
             security.setSelected(security.getIndex() == index);
+            security.setLocalDeleted(security.isSelected());
             mAdapter.notifyItemChanged(i);
         }
         if (index == 2) {
@@ -181,9 +202,12 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
         // 测试用户
         mAdapter.add(new User() {{
             setId("9999");
+            setName("测试员");
         }});
         // 从通讯录选择
-        mAdapter.add(new Model());
+        mAdapter.add(new Model() {{
+            setId("00");
+        }});
     }
 
     private List<String> getMyOrganizations() {
@@ -217,7 +241,9 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
             if (index <= 2) {
                 resetSingleSelect(index);
             } else {
+                // 单选
                 resetExtraSelected(index);
+                // 多选
 //                Model model = mAdapter.get(index);
 //                model.setLocalDeleted(!model.isLocalDeleted());
 //                mAdapter.notifyItemChanged(index);

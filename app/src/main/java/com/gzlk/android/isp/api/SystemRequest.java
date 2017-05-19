@@ -121,8 +121,6 @@ public class SystemRequest extends Request<User> {
         }
         log(object.toString());
 
-        httpRequest(getRequest(Register.class,
-                StringHelper.format("%s?loginId=%s&password=%s&phone=%s&captcha=%s", PASSWORD, loginId, password, phone, captcha),
-                object.toString(), HttpMethods.Get));
+        httpRequest(getRequest(Register.class, PASSWORD, object.toString(), HttpMethods.Post));
     }
 }

@@ -8,7 +8,9 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -17,6 +19,11 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.StatusCode;
+import com.netease.nimlib.sdk.auth.AuthService;
+import com.netease.nimlib.sdk.auth.LoginInfo;
 
 /**
  * <b>功能描述：</b>登录页面<br />
@@ -58,11 +65,6 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         return R.layout.fragment_sign_in;
     }
 
-//    private boolean isScreenOn() {
-//        PowerManager pm = (PowerManager) Activity().getSystemService(Context.POWER_SERVICE);
-//        return Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn();
-//    }
-
     @Override
     public void doingInResume() {
         if (checkStoragePermission()) {
@@ -71,13 +73,45 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 accountText.focusEnd();
                 signInButton.setEnabled(false);
                 signInButton.setText(R.string.ui_text_sign_in_still_processing);
-                delayRefreshLoading(2000, DELAY_TYPE_TIME_DELAY);
+                // 如果网易云需要重新登录
+                StatusCode code = NIMClient.getStatus();
+                if (code.shouldReLogin() || code.wontAutoLogin()) {
+                    doLogin();
+                } else {
+                    delayRefreshLoading(2000, DELAY_TYPE_TIME_DELAY);
+                }
             }
         } else {
             // 尝试获取相关基本的运行时权限
             grantStoragePermission();
         }
-        //log(String.format("screen on: %s, visible: %s, resumed: %s", isScreenOn(), isVisible(), isResumed()));
+    }
+
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    private void doLogin() {
+        LoginInfo info = App.app().loginInfo();//new LoginInfo("xfeiffer","123456");//
+        NIMClient.getService(AuthService.class).login(info).setCallback(new RequestCallback<LoginInfo>() {
+            @Override
+            public void onSuccess(LoginInfo loginInfo) {
+                ToastHelper.make().showMsg("登录成功");
+                // 打开主页面
+                finish(true);
+            }
+
+            @Override
+            public void onFailed(int i) {
+                ToastHelper.make().showMsg("登录失败：" + i);
+                stillInSignIn = false;
+                signInButton.setEnabled(true);
+            }
+
+            @Override
+            public void onException(Throwable throwable) {
+                ToastHelper.make().showMsg("登录异常：" + throwable.getMessage());
+                stillInSignIn = false;
+                signInButton.setEnabled(true);
+            }
+        });
     }
 
     @Override
@@ -101,6 +135,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
             } else if (TextUtils.isEmpty(passwordText.getValue())) {
                 ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_password_value_incorrect);
             } else {
+                Utils.hidingInputBoard(accountText);
                 if (!stillInSignIn) {
                     stillInSignIn = true;
                     signInButton.setEnabled(false);
@@ -136,9 +171,8 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 // 检测服务器返回的状态
                 if (success) {
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
-                    Cache.cache().setCurrentUser(user);;
-                    // 打开主页面
-                    finish(true);
+                    Cache.cache().setCurrentUser(user);
+                    doLogin();
                 } else {
                     stillInSignIn = false;
                     signInButton.setEnabled(true);

@@ -4,12 +4,15 @@ import android.graphics.Bitmap;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.crash.AppCrashHandler;
+import com.gzlk.android.isp.crash.storage.StorageUtil;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.auth.AuthService;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -52,7 +55,10 @@ public class App extends NimApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        AppCrashHandler.getInstance(this);
+        initializeNim();
         if (shouldInit()) {
+            StorageUtil.init(this, null);
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();
             initializeDatabase();
@@ -125,7 +131,6 @@ public class App extends NimApplication {
             if (null == Cache.cache().me || !Cache.cache().userId.equals(Cache.cache().me.getId())) {
                 Cache.cache().setCurrentUser(new Dao<>(User.class).query(Cache.cache().userId));
             }
-            //initializeNim();
         }
     }
 
@@ -133,6 +138,8 @@ public class App extends NimApplication {
     public void logout() {
         // 清空当前登录的用户信息
         Cache.cache().clear();
+        // 同时退出网易云
+        NIMClient.getService(AuthService.class).logout();
         super.logout();
     }
 }

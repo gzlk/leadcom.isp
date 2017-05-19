@@ -29,7 +29,6 @@ public class Archive extends BaseArchive {
     @Column(Organization.Field.GroupId)
     private String groupId;            //群体ID
 
-
     public String getGroupId() {
         return groupId;
     }

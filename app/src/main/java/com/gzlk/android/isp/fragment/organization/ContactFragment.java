@@ -16,6 +16,7 @@ import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.TitleActivity;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.ContactViewHolder;
 import com.gzlk.android.isp.holder.SearchableViewHolder;
@@ -164,6 +165,10 @@ public class ContactFragment extends BaseOrganizationFragment {
      */
     public void addMemberToOrganizationFromPhoneContact(View view) {
         if (showType != TYPE_ORG) return;
+        if(StringHelper.isEmpty(mQueryId)){
+            ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
+            return;
+        }
         openActivity(PhoneContactFragment.class.getName(), format("%s,", mQueryId), true, false);
     }
 

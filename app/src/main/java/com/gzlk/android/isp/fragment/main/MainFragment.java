@@ -2,7 +2,6 @@ package com.gzlk.android.isp.fragment.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -39,6 +38,10 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
     @ViewId(R.id.ui_main_tool_bar_container)
     private RelativeLayout toolBar;
+    @ViewId(R.id.ui_ui_custom_title_left_icon)
+    private CustomTextView leftIcon;
+    @ViewId(R.id.ui_ui_custom_title_left_text)
+    private TextView leftText;
     @ViewId(R.id.ui_main_tool_bar_background)
     private View toolBarBackground;
     @ViewId(R.id.ui_ui_custom_title_text)
@@ -94,8 +97,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     public void doingInResume() {
         Activity().setRootViewPadding(toolBar, true);
         super.doingInResume();
-        setLeftIcon(R.string.ui_icon_query);
-        setLeftText(0);
+        leftIcon.setText(R.string.ui_icon_query);
+        leftText.setText(null);
         rightIconContainer.setVisibility(View.GONE);
         ((IndividualFragmentMultiType) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
     }

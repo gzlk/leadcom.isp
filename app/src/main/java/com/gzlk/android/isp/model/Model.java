@@ -31,14 +31,17 @@ public class Model extends BaseModel {
         public static final String LocalDeleted = "localDeleted";
         public static final String CreatorId = "creatorId";
         public static final String CreatorName = "creatorName";
-        public static final String UUID="uuid";
-        public static final String AccessToken="accessToken";
+        public static final String UUID = "uuid";
+        public static final String AccessToken = "accessToken";
     }
 
     @PrimaryKey(AssignType.BY_MYSELF)
     @NotNull
     @Column(Field.Id)
     private String id;
+
+    @Column(Model.Field.AccessToken)
+    private String accessToken;        //用户令牌
 
     @Column(Field.LocalDeleted)
     private boolean localDeleted;
@@ -51,6 +54,13 @@ public class Model extends BaseModel {
         this.id = id;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
     /**
      * 本地是否已删除
      */

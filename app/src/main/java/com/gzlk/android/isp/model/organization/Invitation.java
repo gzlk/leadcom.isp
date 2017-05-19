@@ -5,7 +5,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
- * <b>功能描述：</b>群邀请<br />
+ * <b>功能描述：</b>邀请用户加入组织<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/07 09:04 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -23,7 +23,7 @@ public class Invitation extends Model {
         public static final String InviteeId = "inviteeId";
         public static final String InviteeName = "inviteeName";
         public static final String AllowSee = "allowSeeInviterBaseInfo";
-        public static final String HandleTime = "handleTime";
+        public static final String HandleDate = "handleDime";
         public static final String Message = "message";
         public static final String State = "state";
     }
@@ -37,11 +37,13 @@ public class Invitation extends Model {
     private String inviterId;
     @Column(Field.InviterName)
     private String inviterName;
+
     //被邀请人ID和姓名
     @Column(Field.InviteeId)
     private String inviteeId;
     @Column(Field.InviteeName)
     private String inviteeName;
+
     //邀请时间
     @Column(Model.Field.CreateDate)
     private String createDate;
@@ -49,7 +51,7 @@ public class Invitation extends Model {
     @Column(Field.AllowSee)
     private String allowSeeInviterBaseInfo;
     //处理时间
-    @Column(Field.HandleTime)
+    @Column(Field.HandleDate)
     private String handleTime;
     //留言
     @Column(Field.Message)
@@ -60,8 +62,6 @@ public class Invitation extends Model {
     //uuid是作为联结业务流消息和显示消息的字段，可被视为是Message表的外键
     @Column(Model.Field.UUID)
     private String uuid;
-    @Column(Model.Field.AccessToken)
-    private String accessToken;
 
     public String getGroupId() {
         return groupId;
@@ -157,13 +157,5 @@ public class Invitation extends Model {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
     }
 }

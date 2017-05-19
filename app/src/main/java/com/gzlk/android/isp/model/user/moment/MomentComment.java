@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.user.moment;
 
+import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -15,11 +16,21 @@ import com.litesuits.orm.db.annotation.Table;
  */
 
 @Table(Moment.Table.COMMENT)
-public class MomentComment extends MomentLike {
+public class MomentComment extends SubMoment {
 
+    @Column(Model.Field.UserName)
+    private String userName;       //评论人名称
     //内容
     @Column(Moment.Field.Content)
     private String content;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getContent() {
         return content;

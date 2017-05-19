@@ -5,7 +5,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
- * <b>功能描述：</b>加入组织<br />
+ * <b>功能描述：</b>加入组织的申请<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/10 09:40 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -17,10 +17,10 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Organization.Table.JOIN)
 public class JoinGroup extends Model {
     static class Field {
-        public static final String AppUserId = "appUserId";
-        public static final String AppUsrName = "appUserName";
-        public static final String HandleUserId = "handleUserId";
-        public static final String HandleUserName = "handleUserName";
+        public static final String AppUserId = "applicantId";
+        public static final String AppUsrName = "applicantName";
+        public static final String HandleUserId = "handlerId";
+        public static final String HandleUserName = "handlerName";
         public static final String AllowSeeAppInfo = "allowSeeApplicantBaseInfo";
     }
 
@@ -31,23 +31,23 @@ public class JoinGroup extends Model {
     private String groupName;
     //申请人
     @Column(Field.AppUserId)
-    private String appUserId;
+    private String applicantId;
     @Column(Field.AppUsrName)
-    private String appUserName;
+    private String applicantName;
     //申请处理人
     @Column(Field.HandleUserId)
-    private String handleUserId;
+    private String handlerId;
     @Column(Field.HandleUserName)
-    private String handleUserName;
+    private String handlerName;
     //申请时间
     @Column(Model.Field.CreateDate)
-    private String createTime;
+    private String createDate;
     //是否允许查看申请人信息
     @Column(Field.AllowSeeAppInfo)
     private String allowSeeApplicantBaseInfo;
     //处理时间
-    @Column(Invitation.Field.HandleTime)
-    private String handleTime;
+    @Column(Invitation.Field.HandleDate)
+    private String handleDate;
     //申请附加消息
     @Column(Invitation.Field.Message)
     private String msg;
@@ -57,9 +57,6 @@ public class JoinGroup extends Model {
     //uuid 文本消息和申请流程消息公用一个uuid
     @Column(Model.Field.UUID)
     private String uuid;
-    //访问令牌：用于移动端访问的唯标志
-    @Column(Model.Field.AccessToken)
-    private String accessToken;
 
     public String getGroupId() {
         return groupId;
@@ -77,44 +74,44 @@ public class JoinGroup extends Model {
         this.groupName = groupName;
     }
 
-    public String getAppUserId() {
-        return appUserId;
+    public String getApplicantId() {
+        return applicantId;
     }
 
-    public void setAppUserId(String appUserId) {
-        this.appUserId = appUserId;
+    public void setApplicantId(String applicantId) {
+        this.applicantId = applicantId;
     }
 
-    public String getAppUserName() {
-        return appUserName;
+    public String getApplicantName() {
+        return applicantName;
     }
 
-    public void setAppUserName(String appUserName) {
-        this.appUserName = appUserName;
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
     }
 
-    public String getHandleUserId() {
-        return handleUserId;
+    public String getHandlerId() {
+        return handlerId;
     }
 
-    public void setHandleUserId(String handleUserId) {
-        this.handleUserId = handleUserId;
+    public void setHandlerId(String handlerId) {
+        this.handlerId = handlerId;
     }
 
-    public String getHandleUserName() {
-        return handleUserName;
+    public String getHandlerName() {
+        return handlerName;
     }
 
-    public void setHandleUserName(String handleUserName) {
-        this.handleUserName = handleUserName;
+    public void setHandlerName(String handlerName) {
+        this.handlerName = handlerName;
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public String getCreateDate() {
+        return createDate;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 
     public String getAllowSeeApplicantBaseInfo() {
@@ -125,12 +122,12 @@ public class JoinGroup extends Model {
         this.allowSeeApplicantBaseInfo = allowSeeApplicantBaseInfo;
     }
 
-    public String getHandleTime() {
-        return handleTime;
+    public String getHandleDate() {
+        return handleDate;
     }
 
-    public void setHandleTime(String handleTime) {
-        this.handleTime = handleTime;
+    public void setHandleDate(String handleDate) {
+        this.handleDate = handleDate;
     }
 
     public String getMsg() {
@@ -155,13 +152,5 @@ public class JoinGroup extends Model {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
     }
 }

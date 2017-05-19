@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.view.WindowManager;
 
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.LogHelper;
+
+import static com.gzlk.android.isp.fragment.base.BaseFragment.RESULT_BASE_REQUEST;
 
 /**
  * <b>功能描述：</b>Activity 基类<br />
@@ -149,5 +152,67 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void log(String string) {
         LogHelper.log(getClass().getSimpleName(), string);
+    }
+
+
+    /**
+     * 启动容器Activity(此时打开的新Activity不需要返回确认)
+     *
+     * @param fullClassName  fragment的类全名
+     * @param params         参数列表
+     * @param supportToolbar 是否支持toolbar
+     * @param supportBackKey 是否要处理backKey事件
+     */
+    public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey) {
+        openActivity(fullClassName, params, RESULT_BASE_REQUEST, supportToolbar, supportBackKey);
+    }
+
+    /**
+     * 启动容器Activity
+     *
+     * @param fullClassName  fragment的类全名
+     * @param params         参数列表
+     * @param requestCode    请求码
+     * @param supportToolbar 是否支持toolbar
+     * @param supportBackKey 是否要处理backKey事件
+     */
+    public void openActivity(String fullClassName, String params, int requestCode, boolean supportToolbar, boolean supportBackKey) {
+        openActivity(fullClassName, params, requestCode, supportToolbar, supportBackKey, false);
+    }
+
+    /**
+     * 启动容器Activity(此时打开的新Activity不需要返回确认)
+     *
+     * @param fullClassName        fragment的类全名
+     * @param params               参数列表
+     * @param supportToolbar       是否支持toolbar
+     * @param supportBackKey       是否要处理backKey事件
+     * @param transparentStatusBar 是否需要状态栏透明化
+     */
+    public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
+        openActivity(fullClassName, params, RESULT_BASE_REQUEST, supportToolbar, supportBackKey, transparentStatusBar);
+    }
+
+    /**
+     * 启动容器Activity
+     *
+     * @param fullClassName        fragment的类全名
+     * @param params               参数列表
+     * @param requestCode          请求码
+     * @param supportToolbar       是否支持toolbar
+     * @param supportBackKey       是否要处理backKey事件
+     * @param transparentStatusBar 是否需要状态栏透明化
+     */
+    public void openActivity(String fullClassName, String params, int requestCode, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
+        Intent intent = new Intent(this, ContainerActivity.class);
+        Bundle b = new Bundle();
+        b.putInt(ContainerActivity.REQUEST_CODE, requestCode);
+        b.putString(ContainerActivity.REQUEST_CLASS, fullClassName);
+        b.putString(ContainerActivity.REQUEST_PARAMS, params);
+        b.putBoolean(ContainerActivity.REQUEST_TOOL_BAR, supportToolbar);
+        b.putBoolean(ContainerActivity.REQUEST_BACK_KEY, supportBackKey);
+        b.putBoolean(ContainerActivity.REQUEST_TRANSPARENT_STATUS_BAR, transparentStatusBar);
+        intent.putExtra(ContainerActivity.EXTRA_BUNDLE, b);
+        startActivityForResult(intent, requestCode);
     }
 }

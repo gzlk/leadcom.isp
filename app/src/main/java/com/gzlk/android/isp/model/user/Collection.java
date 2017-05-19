@@ -4,6 +4,7 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.gzlk.android.isp.model.user.moment.Moment;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Table;
 
 /**
  * <b>功能描述：</b>个人收藏<br />
@@ -15,7 +16,7 @@ import com.litesuits.orm.db.annotation.Column;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-
+@Table(User.Table.COLLECTION)
 public class Collection extends Model {
 
     /**

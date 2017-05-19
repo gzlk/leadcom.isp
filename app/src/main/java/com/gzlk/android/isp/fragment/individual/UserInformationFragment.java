@@ -350,7 +350,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
             public void onTimeSelect(Date date, View v) {
                 tryEditUserInfo(UserRequest.TYPE_BIRTHDAY, Utils.format(StringHelper.getString(R.string.ui_base_text_date_format), date));
             }
-        }).setType(TimePickerView.Type.YEAR_MONTH_DAY)
+        }).setType(new boolean[]{true, true, true, false, false, false})
                 .setTitleBgColor(getColor(R.color.colorPrimary))
                 .setSubmitColor(Color.WHITE)
                 .setCancelColor(Color.WHITE)

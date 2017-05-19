@@ -19,6 +19,7 @@ public class Relation extends Model {
 
     @Column(Organization.Field.RoleId)
     private String roleId;
+
     @Column(Organization.Field.PermissionId)
     private String permissionId;
 
