@@ -3,14 +3,20 @@ package com.gzlk.android.isp.api.user;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.http.request.param.HttpMethods;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>用户相关api集合<br />
@@ -43,14 +49,14 @@ public class UserRequest extends Request<User> {
     }
 
     @Override
-    public UserRequest setOnRequestListener(OnRequestListener<User> listener) {
-        onRequestListener = listener;
+    public UserRequest setOnSingleRequestListener(OnSingleRequestListener<User> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public UserRequest setOnRequestListListener(OnRequestListListener<User> listListener) {
-        onRequestListListener = listListener;
+    public UserRequest setOnMultipleRequestListener(OnMultipleRequestListener<User> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
@@ -105,10 +111,65 @@ public class UserRequest extends Request<User> {
         httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    private void findInCache(String userId) {
+        User user = new Dao<>(User.class).query(userId);
+        if (null == user) {
+            httpRequest(getRequest(SingleUser.class, format("%s?userId=%s", url(FIND), userId), "", HttpMethods.Get));
+        } else {
+            if (null != onSingleRequestListener) {
+                onSingleRequestListener.onResponse(user, true, "");
+            }
+        }
+    }
+
     /**
      * 拉取某个用户的基本信息
      */
     public void find(String userId) {
-        httpRequest(getRequest(SingleUser.class, format("%s?userId=%s", url(FIND), userId), "", HttpMethods.Get));
+        findInCache(userId);
+    }
+
+    private void findInCache(String loginId, String phone, String name) {
+        QueryBuilder<User> builder = new QueryBuilder<>(User.class);
+        if (StringHelper.isEmpty(loginId)) {
+            builder.where(User.Field.LoginId + " IS NOT NULL ");
+        } else {
+            builder.where(User.Field.LoginId + " like ?", "%" + loginId + "%");
+        }
+        builder.whereAppendAnd();
+        if (StringHelper.isEmpty(phone)) {
+            builder.whereAppend(User.Field.Phone + " IS NOT NULL ");
+        } else {
+            builder.whereAppend(User.Field.Phone + " like ?", "%" + phone + "%");
+        }
+        builder.whereAppendAnd();
+        if (StringHelper.isEmpty(name)) {
+            builder.whereAppend(Model.Field.Name + " IS NOT NULL ");
+        } else {
+            builder.whereAppend(Model.Field.Name + " like ?", "%" + name + "%");
+        }
+        List<User> users = new Dao<>(User.class).query(builder);
+        if (null == users || users.size() < 1) {
+            String params = format("?pageSize=%d&pageNumber=%d&loginId=%s&name=%s&phone=%s", PAGE_SIZE, 1, loginId, name, phone);
+            httpRequest(getRequest(MultipleUser.class, format("%s%s", url(LIST), params), "", HttpMethods.Get));
+        } else {
+            if (null != onMultipleRequestListener) {
+                onMultipleRequestListener.onResponse(users, true, 1, PAGE_SIZE, users.size(), 1);
+            }
+        }
+    }
+
+    /**
+     * 查找用户(所有参数都可以匹配模糊查询)
+     *
+     * @param loginId 用户的登录id
+     * @param phone   用户注册的手机号
+     * @param name    用户真实姓名
+     */
+    public void list(String loginId, String phone, String name) {
+        findInCache(loginId, phone, name);
+        // pageSize,pageNumber,loginId,name,phone
+//        String params = format("?pageSize=%d&pageNumber=%d&loginId=%s&name=%s&phone=%s", PAGE_SIZE, 1, loginId, name, phone);
+//        httpRequest(getRequest(SingleUser.class, format("%s%s", url(LIST), params), "", HttpMethods.Get));
     }
 }

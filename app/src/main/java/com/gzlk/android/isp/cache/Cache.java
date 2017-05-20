@@ -34,7 +34,8 @@ public class Cache {
     public void clear() {
         userId = null;
         userName = null;
-        userToken = null;
+        nimToken = null;
+        accessToken = null;
         me = null;
     }
 
@@ -49,13 +50,17 @@ public class Cache {
         if (null != me && !StringHelper.isEmpty(me.getId())) {
             saveCurrentUser();
             userId = me.getId();
-            userToken = me.getPassword();
+            nimToken = me.getPassword();
             userName = me.getName();
+            accessToken = me.getAccessToken();
             // 保存网易云登录的账户和令牌
             PreferenceHelper.save(R.string.pf_last_login_user_id, me.getId());
             PreferenceHelper.save(R.string.pf_last_login_user_token, me.getPassword());
         }
     }
 
-    public String userId, userToken, userName;
+    /**
+     * 当前登录用户的id、姓名、网易云信登录的token、api服务器的accessToken
+     */
+    public String userId, nimToken, accessToken, userName;
 }

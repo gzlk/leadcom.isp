@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -120,7 +120,7 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
     }
 
     private void editPassword(String old, String newOne) {
-        UserRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);

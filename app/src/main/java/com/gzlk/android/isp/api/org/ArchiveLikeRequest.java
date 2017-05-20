@@ -3,8 +3,8 @@ package com.gzlk.android.isp.api.org;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.archive.ArchiveLike;
 import com.litesuits.http.request.param.HttpMethods;
@@ -40,14 +40,14 @@ public class ArchiveLikeRequest extends Request<ArchiveLike> {
     }
 
     @Override
-    public ArchiveLikeRequest setOnRequestListener(OnRequestListener<ArchiveLike> listener) {
-        onRequestListener = listener;
+    public ArchiveLikeRequest setOnSingleRequestListener(OnSingleRequestListener<ArchiveLike> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public ArchiveLikeRequest setOnRequestListListener(OnRequestListListener<ArchiveLike> listListener) {
-        onRequestListListener = listListener;
+    public ArchiveLikeRequest setOnMultipleRequestListener(OnMultipleRequestListener<ArchiveLike> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
@@ -59,7 +59,7 @@ public class ArchiveLikeRequest extends Request<ArchiveLike> {
         JSONObject object = new JSONObject();
         try {
             object.put("groDocId", archiveId)
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -75,7 +75,7 @@ public class ArchiveLikeRequest extends Request<ArchiveLike> {
         JSONObject object = new JSONObject();
         try {
             object.put("groDocId", archiveId)
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }

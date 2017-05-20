@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api;
 
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -27,6 +27,11 @@ import java.lang.reflect.Type;
  */
 
 public abstract class Request<T> {
+
+    /**
+     * 默认多页查询时页大小
+     */
+    public static final int PAGE_SIZE = 10;
 
     private static final String URL = BaseApi.URL;
     /**
@@ -108,16 +113,16 @@ public abstract class Request<T> {
                         super.onSucceed(data, response);
                         if (data.success()) {
                             if (data instanceof Query) {
-                                if (null != onRequestListListener) {
+                                if (null != onMultipleRequestListener) {
                                     Query<T> query = (Query<T>) data;
                                     Pagination<T> pagination = query.getData();
-                                    onRequestListListener.onResponse(pagination.getList(), data.success(),
+                                    onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
                                             pagination.getTotalPages(), pagination.getPageSize(),
                                             pagination.getTotal(), pagination.getPageNumber());
                                 }
                             } else {
-                                if (null != onRequestListener) {
-                                    onRequestListener.onResponse(data.getData(), data.success(), data.getMsg());
+                                if (null != onSingleRequestListener) {
+                                    onSingleRequestListener.onResponse(data.getData(), data.success(), data.getMsg());
                                 }
                             }
                         } else {
@@ -139,26 +144,26 @@ public abstract class Request<T> {
      * 通知失败
      */
     private void fireFailedListenerEvents(String message) {
-        if (null != onRequestListener) {
-            onRequestListener.onResponse(null, false, message);
+        if (null != onSingleRequestListener) {
+            onSingleRequestListener.onResponse(null, false, message);
         }
-        if (null != onRequestListListener) {
-            onRequestListListener.onResponse(null, false, 0, 0, 0, 0);
+        if (null != onMultipleRequestListener) {
+            onMultipleRequestListener.onResponse(null, false, 0, 0, 0, 0);
         }
     }
 
-    protected OnRequestListener<T> onRequestListener;
+    protected OnSingleRequestListener<T> onSingleRequestListener;
 
     /**
      * 设置网络调用成功之后的回调
      */
-    public abstract Request<T> setOnRequestListener(OnRequestListener<T> listener);
+    public abstract Request<T> setOnSingleRequestListener(OnSingleRequestListener<T> listener);
 
-    protected OnRequestListListener<T> onRequestListListener;
+    protected OnMultipleRequestListener<T> onMultipleRequestListener;
 
     /**
      * 添加请求列表时的处理回调
      */
-    public abstract Request<T> setOnRequestListListener(OnRequestListListener<T> listListener);
+    public abstract Request<T> setOnMultipleRequestListener(OnMultipleRequestListener<T> listListener);
 
 }

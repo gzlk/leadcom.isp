@@ -3,8 +3,8 @@ package com.gzlk.android.isp.api.org;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.organization.Member;
 import com.litesuits.http.request.param.HttpMethods;
@@ -26,10 +26,10 @@ public class MemberRequest extends Request<Member> {
         return new MemberRequest();
     }
 
-    static class SingleMember extends Output<Member> {
+    private static class SingleMember extends Output<Member> {
     }
 
-    static class MultipleMember extends Query<Member> {
+    private static class MultipleMember extends Query<Member> {
     }
 
     // 成员
@@ -41,14 +41,14 @@ public class MemberRequest extends Request<Member> {
     }
 
     @Override
-    public MemberRequest setOnRequestListener(OnRequestListener<Member> listener) {
-        onRequestListener = listener;
+    public MemberRequest setOnSingleRequestListener(OnSingleRequestListener<Member> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public MemberRequest setOnRequestListListener(OnRequestListListener<Member> listListener) {
-        onRequestListListener = listListener;
+    public MemberRequest setOnMultipleRequestListener(OnMultipleRequestListener<Member> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 

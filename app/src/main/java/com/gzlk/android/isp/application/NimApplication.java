@@ -6,7 +6,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.activity.NIMMessageActivity;
+import com.gzlk.android.isp.activity.WelcomeActivity;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -36,6 +36,9 @@ import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 public class NimApplication extends BaseActivityManagedApplication {
 
+    // 是否用测试的 app key
+    private static boolean isForTest = false;
+
     /**
      * 初始化网易云
      */
@@ -45,17 +48,17 @@ public class NimApplication extends BaseActivityManagedApplication {
         // 注册自定义网易云消息解析器，必须在主进程中。
         if (shouldInit()) {
             NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
-            handleUserOnlineStatus();
+            //handleUserOnlineStatus();
         }
     }
 
     // 如果返回值为 null，则全部使用默认参数。
     private SDKOptions options() {
         SDKOptions options = new SDKOptions();
-        //options.appKey = StringHelper.getString(R.string.netease_nim_app_key);
+        options.appKey = StringHelper.getString(isForTest ? R.string.netease_nim_app_key_test : R.string.netease_nim_app_key);
         // 如果将新消息通知提醒托管给 SDK 完成，需要添加以下配置。否则无需设置。
         StatusBarNotificationConfig config = new StatusBarNotificationConfig();
-        config.notificationEntrance = NIMMessageActivity.class; // 点击通知栏跳转到该Activity
+        config.notificationEntrance = WelcomeActivity.class; // 点击通知栏跳转到该Activity
         config.notificationSmallIconId = R.mipmap.ic_launcher;
         // 呼吸灯配置
         config.ledARGB = Color.GREEN;
@@ -114,8 +117,8 @@ public class NimApplication extends BaseActivityManagedApplication {
 
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
     public LoginInfo loginInfo() {
-        String account = "xfeiffer";//PreferenceHelper.get(R.string.pf_last_login_user_id, "");//
-        String token = "111111";//PreferenceHelper.get(R.string.pf_last_login_user_token, "");//
+        String account = isForTest ? "xfeiffer" : PreferenceHelper.get(R.string.pf_last_login_user_id, "");
+        String token = isForTest ? "111111" : PreferenceHelper.get(R.string.pf_last_login_user_token, "");
         if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
             return new LoginInfo(account, token);
         } else {
@@ -130,6 +133,8 @@ public class NimApplication extends BaseActivityManagedApplication {
                 if (status.wontAutoLogin()) {
                     // 被踢出、账号被禁用、密码错误等情况，自动登录失败，需要返回到登录界面进行重新登录操作
                     ToastHelper.make(NimApplication.this).showMsg("您的账号已被迫下线，请重新登录");
+                } else if (status.shouldReLogin()) {
+                    ToastHelper.make().showMsg("登录信息已超时，请重新登录");
                 }
             }
         }, true);

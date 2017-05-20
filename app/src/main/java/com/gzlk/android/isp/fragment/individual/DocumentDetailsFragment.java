@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.DocCommentRequest;
 import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.cache.Cache;
@@ -153,7 +153,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void fetchingRemote() {
-        DocCommentRequest.request().setOnRequestListListener(new OnRequestListListener<DocumentComment>() {
+        DocCommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<DocumentComment>() {
             @SuppressWarnings("unchecked")
             @Override
             public void onResponse(List<DocumentComment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -256,7 +256,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void deleteDocument() {
-        DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
+        DocumentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Document>() {
             @Override
             public void onResponse(Document document, boolean success, String message) {
                 super.onResponse(document, success, message);
@@ -281,7 +281,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
 
     public void deleteComment(final int position) {
         final DocumentComment cmt = getFromPosition(position);
-        DocCommentRequest.request().setOnRequestListener(new OnRequestListener<DocumentComment>() {
+        DocCommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<DocumentComment>() {
             @Override
             public void onResponse(DocumentComment comment, boolean success, String message) {
                 super.onResponse(comment, success, message);
@@ -295,7 +295,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void fetchingDocument() {
-        DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
+        DocumentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Document>() {
             @Override
             public void onResponse(Document document, boolean success, String message) {
                 super.onResponse(document, success, message);
@@ -319,7 +319,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void tryComment(String text) {
-        DocCommentRequest.request().setOnRequestListener(new OnRequestListener<DocumentComment>() {
+        DocCommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<DocumentComment>() {
             @Override
             public void onResponse(DocumentComment comment, boolean success, String message) {
                 super.onResponse(comment, success, message);

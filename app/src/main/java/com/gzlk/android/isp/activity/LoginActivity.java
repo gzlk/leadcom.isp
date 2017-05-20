@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 
@@ -18,6 +20,12 @@ import com.gzlk.android.isp.fragment.login.SignInFragment;
  */
 
 public class LoginActivity extends TitleActivity {
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

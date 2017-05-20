@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.moment.Moment;
@@ -60,14 +60,14 @@ public class MomentRequest extends Request<Moment> {
     }
 
     @Override
-    public MomentRequest setOnRequestListener(OnRequestListener<Moment> listener) {
-        onRequestListener = listener;
+    public MomentRequest setOnSingleRequestListener(OnSingleRequestListener<Moment> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public MomentRequest setOnRequestListListener(OnRequestListListener<Moment> listListener) {
-        onRequestListListener = listListener;
+    public MomentRequest setOnMultipleRequestListener(OnMultipleRequestListener<Moment> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 

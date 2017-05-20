@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.Privacy;
 import com.litesuits.http.request.param.HttpMethods;
@@ -39,14 +39,14 @@ public class PrivacyRequest extends Request<Privacy> {
     }
 
     @Override
-    public PrivacyRequest setOnRequestListener(OnRequestListener<Privacy> listener) {
-        onRequestListener = listener;
+    public PrivacyRequest setOnSingleRequestListener(OnSingleRequestListener<Privacy> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public PrivacyRequest setOnRequestListListener(OnRequestListListener<Privacy> listListener) {
-        onRequestListListener = listListener;
+    public PrivacyRequest setOnMultipleRequestListener(OnMultipleRequestListener<Privacy> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
@@ -64,7 +64,7 @@ public class PrivacyRequest extends Request<Privacy> {
 
         JSONObject object = new JSONObject();
         try {
-            object.put("accessToken", Cache.cache().userToken)
+            object.put("accessToken", Cache.cache().accessToken)
                     .put("status", status)
                     .put("source", source)
                     .put("groupId", checkNull(groupId))
@@ -82,6 +82,6 @@ public class PrivacyRequest extends Request<Privacy> {
      */
     public void list() {
         // accessToken:""
-        httpRequest(getRequest(MultiplePrivacy.class, format("%s?accessToken=%s", url(LIST), Cache.cache().userToken), "", HttpMethods.Get));
+        httpRequest(getRequest(MultiplePrivacy.class, format("%s?accessToken=%s", url(LIST), Cache.cache().accessToken), "", HttpMethods.Get));
     }
 }

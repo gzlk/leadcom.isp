@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.document.Document;
 import com.litesuits.http.request.param.HttpMethods;
@@ -51,14 +51,14 @@ public class DocumentRequest extends Request<Document> {
     }
 
     @Override
-    public DocumentRequest setOnRequestListener(OnRequestListener<Document> listener) {
-        onRequestListener = listener;
+    public DocumentRequest setOnSingleRequestListener(OnSingleRequestListener<Document> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public DocumentRequest setOnRequestListListener(OnRequestListListener<Document> listListener) {
-        onRequestListListener = listListener;
+    public DocumentRequest setOnMultipleRequestListener(OnMultipleRequestListener<Document> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
@@ -90,7 +90,7 @@ public class DocumentRequest extends Request<Document> {
                     .put("attachName", new JSONArray(attachName))
                     .put("userId", Cache.cache().userId)
                     .put("userName", checkNull(Cache.cache().userName))
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -130,7 +130,7 @@ public class DocumentRequest extends Request<Document> {
                     .put("image", new JSONArray(image))
                     .put("attach", new JSONArray(attach))
                     .put("attachName", new JSONArray(attachName))
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }

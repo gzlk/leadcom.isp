@@ -9,7 +9,7 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -130,7 +130,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     @SuppressWarnings("ConstantConditions")
     private void tryAddMoment() {
         String content = StringHelper.escapeToHtml(momentContent.getValue());
-        MomentRequest.request().setOnRequestListener(new OnRequestListener<Moment>() {
+        MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
             @Override
             public void onResponse(Moment moment, boolean success, String message) {
                 super.onResponse(moment, success, message);

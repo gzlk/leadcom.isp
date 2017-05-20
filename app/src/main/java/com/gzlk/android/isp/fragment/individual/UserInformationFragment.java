@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
@@ -198,7 +198,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingRemoteUser() {
-        UserRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
@@ -393,7 +393,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void tryEditUserInfo(final int type, final String value) {
-        UserRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);

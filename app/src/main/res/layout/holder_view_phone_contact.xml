@@ -44,7 +44,7 @@
             android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
             android:paddingStart="@dimen/ui_base_dimen_margin_padding"
             android:paddingTop="@dimen/ui_static_dp_5"
-            android:text="@string/ui_base_text_add"
+            android:text="@string/ui_phone_contact_invite"
             android:textColor="@android:color/white"
             android:textSize="@dimen/ui_base_text_size_small"
             app:active_color="@color/colorAccent"

@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.Collection;
 import com.litesuits.http.request.param.HttpMethods;
@@ -49,14 +49,14 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     @Override
-    public CollectionRequest setOnRequestListener(OnRequestListener<Collection> listener) {
-        onRequestListener = listener;
+    public CollectionRequest setOnSingleRequestListener(OnSingleRequestListener<Collection> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public CollectionRequest setOnRequestListListener(OnRequestListListener<Collection> listListener) {
-        onRequestListListener = listListener;
+    public CollectionRequest setOnMultipleRequestListener(OnMultipleRequestListener<Collection> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
@@ -70,7 +70,7 @@ public class CollectionRequest extends Request<Collection> {
                     .put("userId", Cache.cache().userId)
                     .put("creatorId", checkNull(creatorId))
                     .put("creatorName", checkNull(creatorName))
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }

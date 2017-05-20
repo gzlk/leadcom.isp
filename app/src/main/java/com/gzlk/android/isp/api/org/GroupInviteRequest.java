@@ -2,8 +2,8 @@ package com.gzlk.android.isp.api.org;
 
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.litesuits.http.request.param.HttpMethods;
@@ -30,11 +30,11 @@ public class GroupInviteRequest extends Request<Invitation> {
         return new GroupInviteRequest();
     }
 
-    static class SingleInvite extends Output<Invitation> {
+    private static class SingleInvite extends Output<Invitation> {
     }
 
     // 邀请成员
-    private static final String INVITE = "/group/groInv/";
+    private static final String INVITE = "/group/groInv";
 
     /**
      * 同意
@@ -51,14 +51,14 @@ public class GroupInviteRequest extends Request<Invitation> {
     }
 
     @Override
-    public GroupInviteRequest setOnRequestListener(OnRequestListener<Invitation> listener) {
-        onRequestListener = listener;
+    public GroupInviteRequest setOnSingleRequestListener(OnSingleRequestListener<Invitation> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public GroupInviteRequest setOnRequestListListener(OnRequestListListener<Invitation> listListener) {
-        onRequestListListener = listListener;
+    public GroupInviteRequest setOnMultipleRequestListener(OnMultipleRequestListener<Invitation> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
@@ -80,7 +80,7 @@ public class GroupInviteRequest extends Request<Invitation> {
                     .put("inviteeId", inviteeId)
                     .put("inviteeName", inviteeName)
                     .put("msg", checkNull(message))
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -114,7 +114,7 @@ public class GroupInviteRequest extends Request<Invitation> {
         try {
             object.put("uuid", uuid)
                     .put("msg", checkNull(message))
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }

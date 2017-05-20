@@ -3,8 +3,8 @@ package com.gzlk.android.isp.api.org;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.archive.ArchiveComment;
 import com.litesuits.http.request.param.HttpMethods;
@@ -39,14 +39,14 @@ public class ArchiveCommentRequest extends Request<ArchiveComment> {
     }
 
     @Override
-    public ArchiveCommentRequest setOnRequestListener(OnRequestListener<ArchiveComment> listener) {
-        onRequestListener = listener;
+    public ArchiveCommentRequest setOnSingleRequestListener(OnSingleRequestListener<ArchiveComment> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public ArchiveCommentRequest setOnRequestListListener(OnRequestListListener<ArchiveComment> listListener) {
-        onRequestListListener = listListener;
+    public ArchiveCommentRequest setOnMultipleRequestListener(OnMultipleRequestListener<ArchiveComment> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 

@@ -2,8 +2,8 @@ package com.gzlk.android.isp.api;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.http.request.param.HttpMethods;
@@ -48,14 +48,14 @@ public class SystemRequest extends Request<User> {
     }
 
     @Override
-    public SystemRequest setOnRequestListener(OnRequestListener<User> listener) {
-        onRequestListener = listener;
+    public SystemRequest setOnSingleRequestListener(OnSingleRequestListener<User> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public SystemRequest setOnRequestListListener(OnRequestListListener<User> listListener) {
-        onRequestListListener = listListener;
+    public SystemRequest setOnMultipleRequestListener(OnMultipleRequestListener<User> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 

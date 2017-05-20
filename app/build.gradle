@@ -26,7 +26,8 @@ android {
         resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
         // 测试（leadcom）：3c9e1b9e424ccd215d6a828602d20407
         // 测试：3da0be9ec7ac70fea20f94a8fa8c84ce
-        resValue "string", "netease_nim_app_key", "3da0be9ec7ac70fea20f94a8fa8c84ce"//"3c9e1b9e424ccd215d6a828602d20407"//
+        resValue "string", "netease_nim_app_key", "3c9e1b9e424ccd215d6a828602d20407"
+        resValue "string", "netease_nim_app_key_test", "3da0be9ec7ac70fea20f94a8fa8c84ce"
     }
     productFlavors {
         leadcom {}

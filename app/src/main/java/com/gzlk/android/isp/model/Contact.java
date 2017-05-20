@@ -20,14 +20,33 @@ import com.litesuits.orm.db.annotation.Table;
 @Table("phoneContact")
 public class Contact extends Model {
 
+    @Column(Field.UserId)
+    private String userId;
+
     @Column(Field.Name)
     private String name;
+
     @Column(User.Field.Phone)
     private String phone;
+
     @Column(User.Field.Spell)
     private String spell;
+
+    // 是否已邀请
     @Column("invited")
     private boolean invited;
+
+    // 是否已是组织成员
+    @Column("isMember")
+    private boolean isMember;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getName() {
         return name;
@@ -64,5 +83,13 @@ public class Contact extends Model {
 
     public void setInvited(boolean invited) {
         this.invited = invited;
+    }
+
+    public boolean isMember() {
+        return isMember;
+    }
+
+    public void setMember(boolean member) {
+        isMember = member;
     }
 }

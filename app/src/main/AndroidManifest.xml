@@ -82,7 +82,7 @@
 
         <!--网易云通知栏点击之后的消息处理Activity-->
         <activity
-            android:name=".activity.NIMMessageActivity"
+            android:name=".activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"

@@ -2,8 +2,8 @@ package com.gzlk.android.isp.fragment.organization;
 
 import android.os.Bundle;
 
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.api.org.SquadRequest;
@@ -51,7 +51,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 查询当前用户加入的组织列表
      */
     protected void fetchingJoinedRemoteOrganizations() {
-        OrgRequest.request().setOnRequestListListener(new OnRequestListListener<Organization>() {
+        OrgRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Organization>() {
             @Override
             public void onResponse(List<Organization> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
@@ -76,7 +76,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      */
     protected void fetchingRemoteOrganization(final String organizationId) {
         if (StringHelper.isEmpty(organizationId)) return;
-        OrgRequest.request().setOnRequestListener(new OnRequestListener<Organization>() {
+        OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
             @Override
             public void onResponse(Organization organization, boolean success, String message) {
                 super.onResponse(organization, success, message);
@@ -100,7 +100,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 查询指定组织下属的小组列表
      */
     protected void fetchingRemoteSquads(String organizationId) {
-        SquadRequest.request().setOnRequestListListener(new OnRequestListListener<Squad>() {
+        SquadRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Squad>() {
             @Override
             public void onResponse(List<Squad> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
@@ -124,7 +124,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 添加小组到指定的组织
      */
     protected void addNewSquadToOrganization(String orgId, String squadName, final String squadIntroduction) {
-        SquadRequest.request().setOnRequestListener(new OnRequestListener<Squad>() {
+        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
             @Override
             public void onResponse(Squad squad, boolean success, String message) {
                 super.onResponse(squad, success, message);
@@ -149,7 +149,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      */
     protected void fetchingRemoteSquad(final String squadId) {
         if (StringHelper.isEmpty(squadId)) return;
-        SquadRequest.request().setOnRequestListener(new OnRequestListener<Squad>() {
+        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
             @Override
             public void onResponse(Squad squad, boolean success, String message) {
                 super.onResponse(squad, success, message);
@@ -173,7 +173,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 查询指定组织或小组的成员列表。查询小组时，必须要指定组织id
      */
     protected void fetchingRemoteMembers(String organizationId, String squadId) {
-        MemberRequest.request().setOnRequestListListener(new OnRequestListListener<Member>() {
+        MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
             @Override
             public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
@@ -193,10 +193,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
     protected void onFetchingRemoteMembersComplete(List<Member> list) {
     }
 
-    /**
-     * 查询本地成员列表，按照成员名字排序
-     */
-    protected void loadingLocalMembers(String organizationId, String squadId) {
+    private QueryBuilder<Member> memberBuilder(String organizationId, String squadId) {
         QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
                 .whereEquals(Organization.Field.GroupId, organizationId);
         if (StringHelper.isEmpty(squadId)) {
@@ -204,7 +201,28 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
         } else {
             query = query.whereAppendAnd().whereEquals(Organization.Field.SquadId, squadId);
         }
-        query = query.orderBy(Model.Field.UserName);
+        return query;
+    }
+
+    /**
+     * 判断用户id是否为组织成员或小组成员
+     */
+    protected boolean isMember(String userId, String organizationId, String squadId) {
+
+        if (StringHelper.isEmpty(userId)) return false;
+
+        QueryBuilder<Member> query = memberBuilder(organizationId, squadId)
+                .whereAppendAnd().whereAppend(Model.Field.UserId, userId);
+        List<Member> members = new Dao<>(Member.class).query(query);
+        return null != members && members.size() > 0;
+    }
+
+    /**
+     * 查询本地成员列表，按照成员名字排序
+     */
+    protected void loadingLocalMembers(String organizationId, String squadId) {
+        QueryBuilder<Member> query = memberBuilder(organizationId, squadId)
+                .orderBy(Model.Field.UserName);
         onLoadingLocalMembersComplete(organizationId, squadId, new Dao<>(Member.class).query(query));
     }
 

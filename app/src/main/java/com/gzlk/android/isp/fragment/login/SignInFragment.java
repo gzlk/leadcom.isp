@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.SystemRequest;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
@@ -75,11 +75,11 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 signInButton.setText(R.string.ui_text_sign_in_still_processing);
                 // 如果网易云需要重新登录
                 StatusCode code = NIMClient.getStatus();
-                if (code.shouldReLogin() || code.wontAutoLogin()) {
-                    doLogin();
-                } else {
-                    delayRefreshLoading(2000, DELAY_TYPE_TIME_DELAY);
-                }
+                //if (code.shouldReLogin() || code.wontAutoLogin()) {
+                //    doLogin();
+                //} else {
+                    delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
+                //}
             }
         } else {
             // 尝试获取相关基本的运行时权限
@@ -89,7 +89,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
 
     @SuppressWarnings({"unchecked", "ConstantConditions"})
     private void doLogin() {
-        LoginInfo info = App.app().loginInfo();//new LoginInfo("xfeiffer","123456");//
+        LoginInfo info = App.app().loginInfo();
         NIMClient.getService(AuthService.class).login(info).setCallback(new RequestCallback<LoginInfo>() {
             @Override
             public void onSuccess(LoginInfo loginInfo) {
@@ -163,7 +163,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private void signIn(String account, String password) {
-        SystemRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
 
             @Override
             public void onResponse(User user, boolean success, String message) {
@@ -172,7 +172,8 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 if (success) {
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
                     Cache.cache().setCurrentUser(user);
-                    doLogin();
+                    //doLogin();
+                    finish(true);
                 } else {
                     stillInSignIn = false;
                     signInButton.setEnabled(true);

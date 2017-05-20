@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.archive.Archive;
 import com.litesuits.http.request.param.HttpMethods;
@@ -59,14 +59,14 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     @Override
-    public ArchiveRequest setOnRequestListener(OnRequestListener<Archive> listener) {
-        onRequestListener = listener;
+    public ArchiveRequest setOnSingleRequestListener(OnSingleRequestListener<Archive> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public ArchiveRequest setOnRequestListListener(OnRequestListListener<Archive> listListener) {
-        onRequestListListener = listListener;
+    public ArchiveRequest setOnMultipleRequestListener(OnMultipleRequestListener<Archive> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
@@ -100,7 +100,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("attachName", new JSONArray(attachName))
                     .put("userId", Cache.cache().userId)
                     .put("userName", checkNull(Cache.cache().userName))
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -239,7 +239,7 @@ public class ArchiveRequest extends Request<Archive> {
         try {
             object.put("id", archiveId)
                     .put("msg", message)
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }

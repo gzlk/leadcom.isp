@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
@@ -132,7 +132,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
      * 拉取远程服务器上的说说
      */
     private void fetchingMoment() {
-        MomentRequest.request().setOnRequestListener(new OnRequestListener<Moment>() {
+        MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
             @Override
             public void onResponse(Moment moment, boolean success, String message) {
                 super.onResponse(moment, success, message);
@@ -147,7 +147,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private void deleteMoment() {
-        MomentRequest.request().setOnRequestListener(new OnRequestListener<Moment>() {
+        MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
             @Override
             public void onResponse(Moment moment, boolean success, String message) {
                 super.onResponse(moment, success, message);
@@ -243,7 +243,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     private void tryCollection() {
         // 收藏当前显示的图片
         String url = images.get(selected);
-        CollectionRequest.request().setOnRequestListener(new OnRequestListener<Collection>() {
+        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
             @Override
             public void onResponse(Collection collection, boolean success, String message) {
                 super.onResponse(collection, success, message);

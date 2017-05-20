@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.SystemRequest;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.user.User;
@@ -83,7 +83,7 @@ public class SignUpFragment extends BaseVerifyFragment {
     }
 
     private void trySignUp(String name, String password) {
-        SystemRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);

@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model;
 import com.gzlk.android.isp.application.App;
 import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.assit.WhereBuilder;
 
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class Dao<E> {
         }
     }
 
-    public void delete(QueryBuilder<E> where) {
+    public void delete(WhereBuilder where) {
         if (null != orm) {
             orm.delete(where);
         }

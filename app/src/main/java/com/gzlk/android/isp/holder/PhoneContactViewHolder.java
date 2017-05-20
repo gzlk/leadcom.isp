@@ -46,8 +46,13 @@ public class PhoneContactViewHolder extends BaseViewHolder {
         }
         nameView.setText(Html.fromHtml(text));
         phoneView.setText(contact.getPhone());
-        button.setEnabled(!contact.isInvited());
-        button.setText(StringHelper.getString(contact.isInvited() ? R.string.ui_base_text_added : R.string.ui_base_text_add));
+        if (contact.isMember()) {
+            button.setEnabled(false);
+            button.setText(R.string.ui_phone_contact_invited);
+        } else {
+            button.setEnabled(!contact.isInvited());
+            button.setText(StringHelper.getString(contact.isInvited() ? R.string.ui_phone_contact_inviting : R.string.ui_phone_contact_invite));
+        }
     }
 
     @Click({R.id.ui_holder_view_phone_contact_button})

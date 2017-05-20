@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.SystemRequest;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.TimeCounter;
@@ -198,7 +198,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void tryModifyMyPhoneNumber() {
-        UserRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
@@ -299,7 +299,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
 
     // 请求验证码
     private void requestVerifyCode() {
-        SystemRequest.request().setOnRequestListener(new OnRequestListener<User>() {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);

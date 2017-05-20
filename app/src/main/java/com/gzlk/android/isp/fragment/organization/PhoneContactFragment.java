@@ -19,8 +19,10 @@ import android.widget.TextView;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.GroupInviteRequest;
+import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -29,11 +31,15 @@ import com.gzlk.android.isp.holder.PhoneContactViewHolder;
 import com.gzlk.android.isp.holder.SearchableViewHolder;
 import com.gzlk.android.isp.lib.view.SlidView;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.manager.group.MemberManager;
+import com.gzlk.android.isp.manager.listener.SingleManageListener;
 import com.gzlk.android.isp.model.Contact;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Invitation;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
@@ -192,17 +198,38 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         QueryBuilder<Contact> query = new QueryBuilder<>(Contact.class);
         if (!StringHelper.isEmpty(searchingText)) {
             String like = "%" + searchingText + "%";
-            query = query.where(Model.Field.Name + " LIKE ?", (Object[]) new String[]{like});
+            query = query.where(Model.Field.Name + " LIKE ?", like);
         }
         query = query.orderBy(Model.Field.Name);
         List<Contact> contacts = new Dao<>(Contact.class).query(query);
         if (null != contacts) {
             for (Contact contact : contacts) {
+                // 检索此用户是否已被邀请
+                contact.setInvited(invited(contact.getPhone()));
+                contact.setMember(isMember(contact.getUserId(), mQueryId, ""));
                 mAdapter.add(contact);
                 slidView.add(contact.getSpell());
             }
             mAdapter.sort();
         }
+    }
+
+    private User getUser(String phone) {
+        List<User> users = new Dao<>(User.class).query(User.Field.Phone, phone);
+        return (null == users || users.size() < 1) ? null : users.get(0);
+    }
+
+    private boolean invited(String phone) {
+        User user = getUser(phone);
+        if (null != user) {
+            QueryBuilder<Invitation> builder = new QueryBuilder<>(Invitation.class)
+                    .whereEquals(Organization.Field.GroupId, mQueryId)
+                    .whereAppendAnd()
+                    .whereEquals(Invitation.Field.InviteeId, user.getId());
+            List<Invitation> list = new Dao<>(Invitation.class).query(builder);
+            return null != list && list.size() > 0;
+        }
+        return false;
     }
 
     private SlidView.OnSlidChangedListener onSlidChangedListener = new SlidView.OnSlidChangedListener() {
@@ -270,25 +297,70 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
     }
 
-    private void addPhoneContactToOrganization(Organization org) {
+    private void addPhoneContactToOrganization(final Organization org) {
         if (selectedUser < 0) {
             ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_not_select_user);
             return;
         }
         Contact contact = mAdapter.get(selectedUser);
+        if (!StringHelper.isEmpty(contact.getUserId())) {
+            fetchingUserById(org, contact.getUserId(), contact.getName());
+        } else {
+            fetchingUserByPhone(org, contact.getPhone(), contact.getName());
+        }
+    }
+
+    private void fetchingUserById(final Organization org, String userId, final String name) {
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    if (null != user && !StringHelper.isEmpty(user.getId())) {
+                        new Dao<>(User.class).save(user);
+                        invite(org, user.getId(), user.getName());
+                    } else {
+                        ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_phone_contact_invite_failed_not_exist, name));
+                    }
+                }
+            }
+        }).find(userId);
+    }
+
+    private void fetchingUserByPhone(final Organization org, String phone, final String name) {
+        UserRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<User>() {
+            @Override
+            public void onResponse(List<User> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (null != list && list.size() > 0) {
+                        new Dao<>(User.class).save(list);
+                        User user = list.get(0);
+                        invite(org, user.getId(), user.getName());
+                    } else {
+                        ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_phone_contact_invite_failed_not_exist, name));
+                    }
+                }
+            }
+        }).list("", phone, "");
+    }
+
+    private void invite(Organization org, String userId, String userName) {
         String message = StringHelper.getString(R.string.ui_phone_contact_invite_user_to_organization, Cache.cache().userName, org.getName());
-        GroupInviteRequest.request().setOnRequestListener(new OnRequestListener<Invitation>() {
+        GroupInviteRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation member, boolean success, String message) {
                 super.onResponse(member, success, message);
                 if (success) {
                     if (null != member && !StringHelper.isEmpty(member.getId())) {
                         new Dao<>(Invitation.class).save(member);
+                        mAdapter.get(selectedUser).setInvited(true);
+                        mAdapter.notifyItemChanged(selectedUser);
                     }
-                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
+                    ToastHelper.make().showMsg(message);//R.string.ui_phone_contact_invite_success);
                 }
             }
-        }).invite(org.getId(), org.getName(), "", contact.getName(), message);
+        }).invite(org.getId(), org.getName(), userId, userName, message);
     }
 
     private class ContactAdapter extends RecyclerViewAdapter<PhoneContactViewHolder, Contact> {
@@ -493,16 +565,26 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             }
         }
 
+        private String getUserId(String phone, Dao<User> dao) {
+            List<User> list = dao.query(User.Field.Phone, phone);
+            if (null != list && list.size() > 0) {
+                return list.get(0).getId();
+            }
+            return null;
+        }
+
         // 处理联系人和本地缓存关系
         private void handleContact() {
             int index = 0, max = contacts.size();
             publishProgress(1, index, max);
             try {
                 Dao<Contact> dao = new Dao<>(Contact.class);
+                Dao<User> udao = new Dao<>(User.class);
                 for (String[] strings : contacts) {
                     String name = strings[0];
                     String phone = strings[1];
                     Contact contact = new Contact();
+                    contact.setUserId(getUserId(phone, udao));
                     contact.setName(name);
                     contact.setPhone(phone);
                     contact.setInvited(false);

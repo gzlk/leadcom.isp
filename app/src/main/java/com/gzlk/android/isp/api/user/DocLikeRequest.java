@@ -3,8 +3,8 @@ package com.gzlk.android.isp.api.user;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.document.DocumentLike;
 import com.litesuits.http.request.param.HttpMethods;
@@ -48,14 +48,14 @@ public class DocLikeRequest extends Request<DocumentLike> {
     }
 
     @Override
-    public DocLikeRequest setOnRequestListener(OnRequestListener<DocumentLike> listener) {
-        onRequestListener = listener;
+    public DocLikeRequest setOnSingleRequestListener(OnSingleRequestListener<DocumentLike> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public DocLikeRequest setOnRequestListListener(OnRequestListListener<DocumentLike> listListener) {
-        onRequestListListener = listListener;
+    public DocLikeRequest setOnMultipleRequestListener(OnMultipleRequestListener<DocumentLike> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 

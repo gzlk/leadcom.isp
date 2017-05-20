@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.document.DocumentComment;
 import com.litesuits.http.request.param.HttpMethods;
@@ -50,14 +50,14 @@ public class DocCommentRequest extends Request<DocumentComment> {
     }
 
     @Override
-    public DocCommentRequest setOnRequestListener(OnRequestListener<DocumentComment> listener) {
-        onRequestListener = listener;
+    public DocCommentRequest setOnSingleRequestListener(OnSingleRequestListener<DocumentComment> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public DocCommentRequest setOnRequestListListener(OnRequestListListener<DocumentComment> listListener) {
-        onRequestListListener = listListener;
+    public DocCommentRequest setOnMultipleRequestListener(OnMultipleRequestListener<DocumentComment> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 

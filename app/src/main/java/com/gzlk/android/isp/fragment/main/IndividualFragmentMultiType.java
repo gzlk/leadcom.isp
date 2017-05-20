@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
@@ -173,7 +173,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
      */
     @SuppressWarnings("ConstantConditions")
     private void refreshingRemoteMoments() {
-        MomentRequest.request().setOnRequestListListener(new OnRequestListListener<Moment>() {
+        MomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Moment>() {
 
             @SuppressWarnings("unchecked")
             @Override
@@ -202,7 +202,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
      */
     @SuppressWarnings("ConstantConditions")
     private void refreshingRemoteDocuments(boolean refreshing) {
-        DocumentRequest.request().setOnRequestListListener(new OnRequestListListener<Document>() {
+        DocumentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Document>() {
             @SuppressWarnings("unchecked")
             @Override
             public void onResponse(List<Document> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -223,7 +223,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
 
     @SuppressWarnings("ConstantConditions")
     private void refreshingFavorites() {
-        CollectionRequest.request().setOnRequestListListener(new OnRequestListListener<Collection>() {
+        CollectionRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Collection>() {
             @SuppressWarnings("unchecked")
             @Override
             public void onResponse(List<Collection> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {

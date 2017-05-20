@@ -14,7 +14,7 @@ import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.ArchiveRequest;
 import com.gzlk.android.isp.api.user.DocumentRequest;
 import com.gzlk.android.isp.etc.Utils;
@@ -184,7 +184,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void createIndividualDocument(String title, String content) {
-        DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
+        DocumentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Document>() {
             @Override
             public void onResponse(Document document, boolean success, String message) {
                 super.onResponse(document, success, message);
@@ -200,7 +200,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void createOrganizationArchive(String title, String content) {
-        ArchiveRequest.request().setOnRequestListener(new OnRequestListener<Archive>() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
@@ -224,7 +224,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void editIndividualDocument(String title, String content) {
-        DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
+        DocumentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Document>() {
             @Override
             public void onResponse(Document document, boolean success, String message) {
                 super.onResponse(document, success, message);
@@ -237,7 +237,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void editOrganizationArchive(String title, String content) {
-        ArchiveRequest.request().setOnRequestListener(new OnRequestListener<Archive>() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
@@ -290,7 +290,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingRemoteDocument() {
-        DocumentRequest.request().setOnRequestListener(new OnRequestListener<Document>() {
+        DocumentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Document>() {
             @Override
             public void onResponse(Document document, boolean success, String message) {
                 super.onResponse(document, success, message);

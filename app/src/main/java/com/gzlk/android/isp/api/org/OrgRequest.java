@@ -3,8 +3,8 @@ package com.gzlk.android.isp.api.org;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.http.request.param.HttpMethods;
@@ -24,13 +24,9 @@ import org.json.JSONObject;
  */
 
 public class OrgRequest extends Request<Organization> {
-    private static OrgRequest request;
 
     public static OrgRequest request() {
-        if (null == request) {
-            request = new OrgRequest();
-        }
-        return request;
+        return new OrgRequest();
     }
 
     static class SingleGroup extends Output<Organization> {
@@ -41,7 +37,7 @@ public class OrgRequest extends Request<Organization> {
 
     private static final String ORG = "/group/group";
     private static final String SEARCH_ALL = "/searchAll";
-    private static final String FIND_UPPER = "//findUpGroup";
+    private static final String FIND_UPPER = "/findUpGroup";
 
     @Override
     protected String url(String action) {
@@ -49,27 +45,26 @@ public class OrgRequest extends Request<Organization> {
     }
 
     @Override
-    public OrgRequest setOnRequestListener(OnRequestListener<Organization> listener) {
-        onRequestListener = listener;
+    public OrgRequest setOnSingleRequestListener(OnSingleRequestListener<Organization> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public OrgRequest setOnRequestListListener(OnRequestListListener<Organization> listListener) {
-        onRequestListListener = listListener;
+    public OrgRequest setOnMultipleRequestListener(OnMultipleRequestListener<Organization> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
     @SuppressWarnings("ConstantConditions")
     public void add(String groupName, String groupLogo) {
-        //{name,logo,creatorId,creatorName}
+        //{name,logo,accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("name", groupName)
                     .put("logo", checkNull(groupLogo))
-                    .put("creatorId", Cache.cache().userId)
-                    .put("creatorName", checkNull(Cache.cache().userName));
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -78,12 +73,15 @@ public class OrgRequest extends Request<Organization> {
         httpRequest(getRequest(SingleGroup.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
-    public void update(String groupId, String groupName, String groupLogo) {
+    public void update(String groupId, String groupName, String groupLogo, String introduction) {
+        //{_id,name,logo,intro,accessToken}
         JSONObject object = new JSONObject();
         try {
             object.put("_id", groupId)
                     .put("name", groupName)
-                    .put("logo", checkNull(groupLogo));
+                    .put("logo", checkNull(groupLogo))
+                    .put("intro", checkNull(introduction))
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -112,7 +110,7 @@ public class OrgRequest extends Request<Organization> {
      * 默认查询当前用户授权范围内的组织列表
      */
     public void list() {
-        httpRequest(getRequest(MultipleGroup.class, format("%s?userId=%s", url(LIST), Cache.cache().userId), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleGroup.class, format("%s?accessToken=%s", url(LIST), Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     /**
@@ -126,7 +124,7 @@ public class OrgRequest extends Request<Organization> {
      * 在已参加组织中搜索组织名称
      */
     public void search(String groupName) {
-        httpRequest(getRequest(MultipleGroup.class, format("%s?info=%s&userId=%s", url(SEARCH), groupName, Cache.cache().userId), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleGroup.class, format("%s?info=%s&accessToken=%s", url(SEARCH), groupName, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     /**

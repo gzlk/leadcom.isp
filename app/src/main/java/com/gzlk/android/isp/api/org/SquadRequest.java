@@ -3,8 +3,8 @@ package com.gzlk.android.isp.api.org;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.listener.OnRequestListListener;
-import com.gzlk.android.isp.api.listener.OnRequestListener;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.litesuits.http.request.param.HttpMethods;
@@ -47,27 +47,25 @@ public class SquadRequest extends Request<Squad> {
     }
 
     @Override
-    public SquadRequest setOnRequestListener(OnRequestListener<Squad> listener) {
-        onRequestListener = listener;
+    public SquadRequest setOnSingleRequestListener(OnSingleRequestListener<Squad> listener) {
+        onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public SquadRequest setOnRequestListListener(OnRequestListListener<Squad> listListener) {
-        onRequestListListener = listListener;
+    public SquadRequest setOnMultipleRequestListener(OnMultipleRequestListener<Squad> listListener) {
+        onMultipleRequestListener = listListener;
         return this;
     }
 
     public void add(String groupId, String squadName, String squadIntroduction) {
-        //{groupId,name,intro,creatorId,creatorName,accessToken}
+        //{groupId,name,intro,accessToken}
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", groupId)
                     .put("name", squadName)
                     .put("intro", checkNull(squadIntroduction))
-                    .put("creatorId", Cache.cache().userId)
-                    .put("creatorName", checkNull(Cache.cache().userName))
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -95,13 +93,13 @@ public class SquadRequest extends Request<Squad> {
             object.put("squadId", squadId)
                     .put("name", squadName)
                     .put("intro", checkNull(squadIntroduction))
-                    .put("accessToken", Cache.cache().userToken);
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         log(object.toString());
 
-        httpRequest(getRequest(SingleSquad.class, url(DELETE), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleSquad.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public void find(String squadId) {
