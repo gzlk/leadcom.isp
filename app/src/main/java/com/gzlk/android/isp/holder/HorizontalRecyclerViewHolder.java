@@ -5,6 +5,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
@@ -39,6 +40,8 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
 
     private ItemAdapter itemAdapter;
 
+    private int spanCount = 4;
+
     // 原始数据
     private List<String> data = new ArrayList<>();
 
@@ -59,7 +62,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
                 recyclerView.setLayoutManager(llm);
             } else {
                 // 瀑布流
-                StaggeredGridLayoutManager cglm = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+                CustomStaggeredGridLayoutManager cglm = new CustomStaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(cglm);
             }
         }
@@ -85,6 +88,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
      * 设置列数（仅仅在瀑布模型下有效）
      */
     public void setSpanCount(int spanCount) {
+        this.spanCount = spanCount;
         RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
         if (lm instanceof StaggeredGridLayoutManager) {
             ((StaggeredGridLayoutManager) recyclerView.getLayoutManager()).setSpanCount(spanCount);
@@ -144,6 +148,14 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
 
     private class ItemAdapter extends RecyclerViewAdapter<TextViewHolder, Item> implements RecycleAdapter<Item> {
 
+        private void resizeWidth(View itemView) {
+            int dimen = getDimension(R.dimen.ui_base_border_size_normal);
+            int width = (fragment().getScreenWidth() - (dimen * spanCount)) / spanCount;
+            ViewGroup.LayoutParams params = itemView.getLayoutParams();
+            params.width = width;
+            itemView.setLayoutParams(params);
+        }
+
         @Override
         public TextViewHolder onCreateViewHolder(View itemView, int viewType) {
             TextViewHolder holder = new TextViewHolder(itemView, fragment());
@@ -160,6 +172,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
         @Override
         public void onBindHolderOfView(TextViewHolder holder, int position, Item item) {
             holder.showContent(item.text, item.selected);
+            resizeWidth(holder.itemView);
         }
 
         @Override
@@ -196,7 +209,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
 
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int dimen = getDimension(R.dimen.ui_static_dp_1);
+            int dimen = getDimension(R.dimen.ui_base_border_size_normal);
             int position = parent.getChildAdapterPosition(view);
             outRect.top = 0;
             outRect.left = 0;
