@@ -67,7 +67,7 @@ public class DocumentViewHolder extends BaseViewHolder {
         documentContentText.makeExpandable();
     }
 
-    public void showContent(Archive archive){
+    public void showContent(Archive archive) {
         userName.setText(archive.getUserName());
         createTime.setText(Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
         documentTitle.setText(archive.getTitle());
@@ -82,6 +82,8 @@ public class DocumentViewHolder extends BaseViewHolder {
             if (null != object && object instanceof Document) {
                 openActivity(DocumentDetailsFragment.class.getName(), ((Document) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
             }
+        } else if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(getAdapterPosition());
         }
     }
 }

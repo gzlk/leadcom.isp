@@ -665,4 +665,68 @@
     }
 ]
     </string>
+    <string name="temp_group_archive">
+ [
+        {
+            \"image\": [
+                \"https://img3.cache.netease.com/photo/0001/2017-05-20/CKTEHKNG00AP0001.jpg\",
+                \"https://img5.cache.netease.com/photo/0001/2017-05-20/CKTEHKUD00AP0001.jpg\",
+                \"https://img3.cache.netease.com/photo/0001/2017-05-20/CKTEHLO400AP0001.jpg\",
+                \"https://img5.cache.netease.com/photo/0001/2017-05-20/CKT7FDV56VVV0001.jpg\",
+                \"https://img4.cache.netease.com/photo/0001/2017-05-20/CKSAF0CP00AP0001.jpg\"
+            ],
+            \"lastModifiedDate\": null,
+            \"groupId\": \"5911f5192f573513e816c1f1\",
+            \"source\": \"历康\",
+            \"accessToken\": null,
+            \"title\": \"测试组织档案\",
+            \"type\": \"1\",
+            \"userName\": \"少年不知愁\",
+            \"userId\": \"58f4c1492f5735666cc3d9c5\",
+            \"content\": \"\",
+            \"headPhoto\": null,
+            \"markdown\": \"\",
+            \"attachName\": [],
+            \"attach\": [],
+            \"id\": \"591cfdbf7a33a026447ab7de\",
+            \"createDate\": \"2017-05-18 09:49:51\"
+        },
+        {
+            \"image\": [],
+            \"lastModifiedDate\": null,
+            \"groupId\": \"5911f5192f573513e816c1f1\",
+            \"source\": \"历康\",
+            \"accessToken\": null,
+            \"title\": \"测试组织档案\",
+            \"type\": \"1\",
+            \"userName\": \"少年不知愁\",
+            \"userId\": \"58f4c1492f5735666cc3d9c5\",
+            \"content\": \"\",
+            \"headPhoto\": null,
+            \"markdown\": \"\",
+            \"attachName\": [],
+            \"attach\": [],
+            \"id\": \"591cfc552f5735241864c3e6\",
+            \"createDate\": \"2017-05-18 09:43:49\"
+        },
+        {
+            \"image\": [],
+            \"lastModifiedDate\": null,
+            \"groupId\": \"5911f5192f573513e816c1f1\",
+            \"source\": \"历康\",
+            \"accessToken\": null,
+            \"title\": \"测试组织档案\",
+            \"type\": \"1\",
+            \"userName\": \"少年不知愁\",
+            \"userId\": \"58f4c1492f5735666cc3d9c5\",
+            \"content\": \"\",
+            \"headPhoto\": null,
+            \"markdown\": \"\",
+            \"attachName\": [],
+            \"attach\": [],
+            \"id\": \"591cfdbe7a33a026447ab7dc\",
+            \"createDate\": \"2017-05-18 09:42:40\"
+        }
+    ]
+    </string>
 </resources>

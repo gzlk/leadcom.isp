@@ -8,6 +8,7 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.archive.Archive;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -155,11 +156,21 @@ public class ArchiveRequest extends Request<Archive> {
         httpRequest(getRequest(SingleArchive.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    private void findInCache(String archiveId) {
+        Archive archive = new Dao<>(Archive.class).query(archiveId);
+        if (null != archive) {
+            fireOnSingleRequestListener(archive);
+        } else {
+            // 调用网络数据
+            httpRequest(getRequest(SingleArchive.class, format("%s?groDocId=%s", url(FIND), archiveId), "", HttpMethods.Get));
+        }
+    }
+
     /**
      * 查询单份组织档案
      */
     public void find(String archiveId) {
-        httpRequest(getRequest(SingleArchive.class, format("%s?groDocId=%s", url(FIND), archiveId), "", HttpMethods.Get));
+        findInCache(archiveId);
     }
 
     /**

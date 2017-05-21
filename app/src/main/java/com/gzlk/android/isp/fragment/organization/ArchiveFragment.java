@@ -1,12 +1,21 @@
 package com.gzlk.android.isp.fragment.organization;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.individual.DocumentNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
+import com.gzlk.android.isp.holder.DocumentViewHolder;
+import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.BaseArchive;
+import com.gzlk.android.isp.model.organization.archive.Archive;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>组织档案列表<br />
@@ -21,29 +30,31 @@ import com.gzlk.android.isp.model.BaseArchive;
 
 public class ArchiveFragment extends BaseOrganizationFragment {
 
-    @Override
-    public int getLayout() {
-        return R.layout.fragment_organization_document;
-    }
+    private ArchiveAdapter mAdapter;
 
     @Override
     protected void onSwipeRefreshing() {
-
+        stopRefreshing();
     }
 
     @Override
     protected void onLoadingMore() {
-
+        isLoadingComplete(true);
     }
 
     @Override
     protected String getLocalPageTag() {
-        return null;
+        if (StringHelper.isEmpty(mQueryId)) return null;
+        return format("af_grp_archive_%s", mQueryId);
     }
 
     @Override
     public void doingInResume() {
-
+        if (!StringHelper.isEmpty(mQueryId)) {
+            //if (isNeedRefresh()) {
+                loadingArchive();
+            //}
+        }
     }
 
     @Override
@@ -69,8 +80,12 @@ public class ArchiveFragment extends BaseOrganizationFragment {
             return;
         }
         mQueryId = queryId;
+        loadingArchive();
     }
 
+    /**
+     * 打开新建、管理菜单
+     */
     public void openTooltipMenu(View view) {
         showTooltip(view, R.id.ui_tool_view_tooltip_menu_organization_document, true, TooltipHelper.TYPE_RIGHT, onClickListener);
     }
@@ -89,4 +104,57 @@ public class ArchiveFragment extends BaseOrganizationFragment {
             }
         }
     };
+
+    private void loadingArchive() {
+        initializeAdapter();
+        String json = StringHelper.getString(R.string.temp_group_archive);
+        List<Archive> temp = Json.gson().fromJson(json, new TypeToken<List<Archive>>() {
+        }.getType());
+        if (null != temp) {
+            mAdapter.add(temp, false);
+        }
+    }
+
+    private void initializeAdapter() {
+        if (null == mAdapter) {
+            mAdapter = new ArchiveAdapter();
+        }
+        if (null != mRecyclerView) {
+            mRecyclerView.setAdapter(mAdapter);
+        }
+    }
+
+    private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            // 打开组织档案详情，一个webview框架
+            Archive archive = mAdapter.get(index);
+            openActivity(ArchiveDetailsFragment.class.getName(), archive.getId(), true, false);
+        }
+    };
+
+    private class ArchiveAdapter extends RecyclerViewAdapter<DocumentViewHolder, Archive> {
+
+        @Override
+        public DocumentViewHolder onCreateViewHolder(View itemView, int viewType) {
+            DocumentViewHolder holder = new DocumentViewHolder(itemView, ArchiveFragment.this);
+            holder.addOnViewHolderClickListener(viewHolderClickListener);
+            return holder;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_document;
+        }
+
+        @Override
+        public void onBindHolderOfView(DocumentViewHolder holder, int position, @Nullable Archive item) {
+            holder.showContent(item);
+        }
+
+        @Override
+        protected int comparator(Archive item1, Archive item2) {
+            return 0;
+        }
+    }
 }

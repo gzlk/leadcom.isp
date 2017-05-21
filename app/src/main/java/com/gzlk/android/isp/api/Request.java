@@ -14,6 +14,7 @@ import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>所有网络请求的基类<br />
@@ -154,12 +155,24 @@ public abstract class Request<T> {
 
     protected OnSingleRequestListener<T> onSingleRequestListener;
 
+    protected void fireOnSingleRequestListener(T t) {
+        if (null != onSingleRequestListener) {
+            onSingleRequestListener.onResponse(t, true, "");
+        }
+    }
+
     /**
      * 设置网络调用成功之后的回调
      */
     public abstract Request<T> setOnSingleRequestListener(OnSingleRequestListener<T> listener);
 
     protected OnMultipleRequestListener<T> onMultipleRequestListener;
+
+    protected void fireOnMultipleRequestListener(List<T> list) {
+        if (null != onMultipleRequestListener) {
+            onMultipleRequestListener.onResponse(list, true, 1, 1, list.size(), 1);
+        }
+    }
 
     /**
      * 添加请求列表时的处理回调
