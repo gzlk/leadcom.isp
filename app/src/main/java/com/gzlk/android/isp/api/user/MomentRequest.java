@@ -9,7 +9,7 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.model.user.moment.Moment;
+import com.gzlk.android.isp.model.user.Moment;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -75,13 +75,12 @@ public class MomentRequest extends Request<Moment> {
      * 添加Moment
      */
     public void add(String location, String content, ArrayList<String> image) {
-
+        // {location,content,[image],accessToken}
         JSONObject object = new JSONObject();
         try {
-            object.put("userId", Cache.cache().userId)
-                    .put("userName", checkNull(Cache.cache().userName))
-                    .put("location", checkNull(location))
-                    .put("content", checkNull(content));
+            object.put("location", checkNull(location))
+                    .put("content", checkNull(content))
+                    .put("accessToken", Cache.cache().accessToken);
             JSONArray array = new JSONArray(image);
             object.put("image", array);
         } catch (JSONException e) {
@@ -92,20 +91,18 @@ public class MomentRequest extends Request<Moment> {
         httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
-    private static final String QB_USER = "userId";
+    private static final String QB_TOKEN = "accessToken";
     private static final String QB_MOMENT = "momentId";
 
     private void getRequestBy(String baseUrl, String queryBy, Type resultType, String queryId, String body, HttpMethods methods) {
-        httpRequest(getRequest(resultType,
-                StringHelper.format("%s?%s=%s", baseUrl, queryBy, queryId),
-                body, methods));
+        httpRequest(getRequest(resultType, StringHelper.format("%s?%s=%s", baseUrl, queryBy, queryId), body, methods));
     }
 
     /**
      * 查询指定用户id的说说列表
      */
-    public void list(@NonNull String userId) {
-        getRequestBy(url(LIST), QB_USER, MultiMoment.class, userId, "", HttpMethods.Get);
+    public void list(String accessToken) {
+        getRequestBy(url(LIST), QB_TOKEN, MultiMoment.class, accessToken, "", HttpMethods.Get);
     }
 
     /**
@@ -119,23 +116,13 @@ public class MomentRequest extends Request<Moment> {
      * 删除一条说说，需要POST
      */
     public void delete(@NonNull String momentId) {
-
-        JSONObject object = new JSONObject();
-        try {
-            object.put(QB_MOMENT, momentId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleMoment.class, url(DELETE), object.toString(), HttpMethods.Post));
-
+        getRequestBy(url(DELETE), QB_MOMENT, SingleMoment.class, momentId, "", HttpMethods.Post);
     }
 
     /**
      * 查找同一组别的用户发布的说说列表
      */
-    public void groupList(@NonNull String groupId) {
-        getRequestBy(url(FIND), QB_USER, MultiMoment.class, groupId, "", HttpMethods.Get);
+    public void groupList(@NonNull String accessToken) {
+        getRequestBy(url(GROUPS), QB_TOKEN, MultiMoment.class, accessToken, "", HttpMethods.Get);
     }
 }

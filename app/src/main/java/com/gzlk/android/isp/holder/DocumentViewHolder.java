@@ -11,8 +11,8 @@ import com.gzlk.android.isp.fragment.individual.DocumentDetailsFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
-import com.gzlk.android.isp.model.organization.archive.Archive;
-import com.gzlk.android.isp.model.user.document.Document;
+import com.gzlk.android.isp.model.organization.GroupArchive;
+import com.gzlk.android.isp.model.user.UserArchive;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -59,19 +59,19 @@ public class DocumentViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
-    public void showContent(Document document) {
-        userName.setText(document.getUserName());
-        createTime.setText(Utils.format(document.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
-        documentTitle.setText(document.getTitle());
-        documentContentText.setText(StringHelper.escapeFromHtml(document.getContent()));
+    public void showContent(UserArchive userArchive) {
+        userName.setText(userArchive.getUserName());
+        createTime.setText(Utils.format(userArchive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
+        documentTitle.setText(userArchive.getTitle());
+        documentContentText.setText(StringHelper.escapeFromHtml(userArchive.getContent()));
         documentContentText.makeExpandable();
     }
 
-    public void showContent(Archive archive) {
-        userName.setText(archive.getUserName());
-        createTime.setText(Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
-        documentTitle.setText(archive.getTitle());
-        documentContentText.setText(StringHelper.escapeFromHtml(archive.getContent()));
+    public void showContent(GroupArchive groupArchive) {
+        userName.setText(groupArchive.getUserName());
+        createTime.setText(Utils.format(groupArchive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
+        documentTitle.setText(groupArchive.getTitle());
+        documentContentText.setText(StringHelper.escapeFromHtml(groupArchive.getContent()));
         documentContentText.makeExpandable();
     }
 
@@ -79,8 +79,8 @@ public class DocumentViewHolder extends BaseViewHolder {
     private void elementClick(View view) {
         if (null != dataHandlerBoundDataListener) {
             Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
-            if (null != object && object instanceof Document) {
-                openActivity(DocumentDetailsFragment.class.getName(), ((Document) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
+            if (null != object && object instanceof UserArchive) {
+                openActivity(DocumentDetailsFragment.class.getName(), ((UserArchive) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
             }
         } else if (null != mOnViewHolderClickListener) {
             mOnViewHolderClickListener.onClick(getAdapterPosition());

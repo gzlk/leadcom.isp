@@ -12,8 +12,8 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.ArchiveSecurityViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.ArchiveSecurity;
-import com.gzlk.android.isp.model.BaseArchive;
+import com.gzlk.android.isp.model.archive.Security;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Member;
@@ -157,11 +157,11 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
             int index = 0, type = Integer.valueOf(mQueryId);
             // 没有基本选项时添加基本选项
             for (String string : items) {
-                if (type == BaseArchive.Type.INDIVIDUAL && index > 1) {
+                if (type == Archive.Type.INDIVIDUAL && index > 1) {
                     // 个人档案只有公开和私密两种
                     break;
                 }
-                ArchiveSecurity security = new ArchiveSecurity(string);
+                Security security = new Security(string);
                 mAdapter.add(security);
                 index++;
             }
@@ -175,7 +175,7 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
             resetStaticItems();
         }
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
-            ArchiveSecurity security = (ArchiveSecurity) mAdapter.get(i);
+            Security security = (Security) mAdapter.get(i);
             security.setSelected(security.getIndex() == index);
             security.setLocalDeleted(security.isSelected());
             mAdapter.notifyItemChanged(i);

@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
@@ -63,23 +62,14 @@ public class OrganizationConcerned extends FrameLayout {
     public void showOrganization(Organization organization) {
         imageDisplayer.displayImage(organization.getLogo(), getResources().getDimensionPixelSize(R.dimen.ui_static_dp_80), false, false);
         textView.setText(organization.getName());
-    }
-
-    private int position;
-
-    public void showContent(int position) {
-        this.position = position;
-        textView.setText(StringHelper.format("测试%d", position));
-    }
-
-    public int getPosition() {
-        return position;
+        container.setTag(R.id.hlklib_ids_custom_view_click_tag, organization.getId());
     }
 
     @Click({R.id.ui_tool_organization_concerned_pager_container})
     private void click(View view) {
         if (null != onClickListener) {
-            onClickListener.onClick(position);
+            String id = (String) container.getTag(R.id.hlklib_ids_custom_view_click_tag);
+            onClickListener.onClick(id);
         }
     }
 
@@ -90,6 +80,6 @@ public class OrganizationConcerned extends FrameLayout {
     }
 
     public interface OnContainerClickListener {
-        void onClick(int position);
+        void onClick(String id);
     }
 }

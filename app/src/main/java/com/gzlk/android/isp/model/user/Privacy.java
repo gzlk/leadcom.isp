@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.model.user;
 
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.user.document.Document;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -40,10 +40,10 @@ public class Privacy extends Model {
     @Column(Field.UserId)
     private String userId;
     //隐私设置类型  1.公开  2.不公开 3.对某些人公开
-    @Column(Document.Field.Type)
+    @Column(Archive.Field.Type)
     private String type;
     //最后修改时间
-    @Column(Document.Field.LastModifiedDate)
+    @Column(Archive.Field.LastModifiedDate)
     private String lastModifiedDate;
 
     public String getUserId() {

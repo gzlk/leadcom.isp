@@ -285,7 +285,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         @Override
         public void onRefresh() {
             // 下拉刷新的时候再次允许加载更多
-            supportLoadingMore = true;
+            //supportLoadingMore = true;
             onSwipeRefreshing();
         }
     };

@@ -9,7 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
-import com.gzlk.android.isp.api.user.DocumentRequest;
+import com.gzlk.android.isp.api.archive.UserArchiveRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
@@ -25,8 +25,8 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.User;
-import com.gzlk.android.isp.model.user.document.Document;
-import com.gzlk.android.isp.model.user.moment.Moment;
+import com.gzlk.android.isp.model.user.UserArchive;
+import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.IndividualFunctionalViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.CollectionViewBinder;
@@ -185,6 +185,9 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                     remoteTotalCount = total;
                     remotePageSize = pageSize;
                     if (list.size() > 0) {
+                        for (Moment moment : list) {
+                            moment.resetAdditional(moment.getAddition());
+                        }
                         new Dao<>(Moment.class).save(list);
                         if (selectedFunction == 0) {
                             adjustRemotePages(list.size(), pageSize, pageNumber, total, totalPages);
@@ -194,7 +197,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
                 stopRefreshing();
             }
-        }).list(Cache.cache().userId);
+        }).list(Cache.cache().accessToken);
     }
 
     /**
@@ -202,14 +205,17 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
      */
     @SuppressWarnings("ConstantConditions")
     private void refreshingRemoteDocuments(boolean refreshing) {
-        DocumentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Document>() {
+        UserArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<UserArchive>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onResponse(List<Document> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<UserArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     if (list.size() > 0) {
-                        new Dao<>(Document.class).save(list);
+                        for (UserArchive archive : list) {
+                            archive.resetAdditional(archive.getAddition());
+                        }
+                        new Dao<>(UserArchive.class).save(list);
                         if (selectedFunction == 1) {
                             adjustRemotePages(list.size(), pageSize, pageNumber, total, totalPages);
                             adapter.update((List<Model>) (Object) list);
@@ -266,6 +272,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
      * 加载本地缓存
      */
     private void performLoadingLocalModels() {
+        resetList();
         switch (selectedFunction) {
             case 0:
                 // 加载更多的动态列表
@@ -306,10 +313,10 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             @SuppressWarnings("unchecked")
             @Override
             public void onExecuted(boolean modified, List<Moment> result) {
-                if (null != result && result.size() > 0) {
+                if (null != result) {
                     adjustLoadingMorePages(result.size());
-                    if (selectedFunction == 0) {
-                        adapter.add((List<Model>) (Object) result, false);
+                    if (selectedFunction == 0 && result.size() > 0) {
+                        adapter.update((List<Model>) (Object) result);
                     }
                 } else {
                     isLoadingComplete(true);
@@ -320,7 +327,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
     }
 
     private void loadingLocalDocuments() {
-        new OrmTask<Document>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Document>() {
+        new OrmTask<UserArchive>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<UserArchive>() {
             @Override
             public boolean isModifiable() {
                 return false;
@@ -328,20 +335,20 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
 
             @SuppressWarnings("ConstantConditions")
             @Override
-            public List<Document> executing(OrmTask<Document> task) {
-                QueryBuilder<Document> builder = new QueryBuilder<>(Document.class)
+            public List<UserArchive> executing(OrmTask<UserArchive> task) {
+                QueryBuilder<UserArchive> builder = new QueryBuilder<>(UserArchive.class)
                         .whereEquals(Model.Field.UserId, Cache.cache().userId)
                         .appendOrderDescBy(Model.Field.CreateDate)
                         .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
-                return new Dao<>(Document.class).query(builder);
+                return new Dao<>(UserArchive.class).query(builder);
             }
-        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Document>() {
+        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<UserArchive>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onExecuted(boolean modified, List<Document> result) {
-                if (null != result && result.size() > 0) {
+            public void onExecuted(boolean modified, List<UserArchive> result) {
+                if (null != result) {
                     adjustLoadingMorePages(result.size());
-                    if (selectedFunction == 1) {
+                    if (selectedFunction == 1 && result.size() > 0) {
                         adapter.add((List<Model>) (Object) result, false);
                     }
                 } else {
@@ -372,9 +379,9 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             @SuppressWarnings("unchecked")
             @Override
             public void onExecuted(boolean modified, List<Collection> result) {
-                if (null != result && result.size() > 0) {
+                if (null != result) {
                     adjustLoadingMorePages(result.size());
-                    if (selectedFunction == 2) {
+                    if (selectedFunction == 2 && result.size() > 0) {
                         adapter.add((List<Model>) (Object) result, false);
                     }
                 } else {
@@ -439,7 +446,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             adapter.register(User.class, new UserHeaderViewBinder().setFragment(this));
             adapter.register(Model.class, new IndividualFunctionalViewBinder(functionChangeListener).setFragment(this));
             adapter.register(Moment.class, new MomentViewBinder(boundMomentDataListener).addOnGotPositionListener(gotPositionListener).setFragment(this));
-            adapter.register(Document.class, new DocumentViewBinder(boundDocumentListener).setFragment(this));
+            adapter.register(UserArchive.class, new DocumentViewBinder(boundDocumentListener).setFragment(this));
             adapter.register(Collection.class, new CollectionViewBinder(boundCollectionListener).setFragment(this));
             mRecyclerView.setAdapter(adapter);
             appendListHeader(selectedFunction == 0);
@@ -546,9 +553,9 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
 
     private BaseViewHolder.OnHandlerBoundDataListener<Model> boundDocumentListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
         @Override
-        public Document onHandlerBoundData(BaseViewHolder holder) {
+        public UserArchive onHandlerBoundData(BaseViewHolder holder) {
             Model model = adapter.get(holder.getAdapterPosition());
-            return (model instanceof Document) ? ((Document) model) : null;
+            return (model instanceof UserArchive) ? ((UserArchive) model) : null;
         }
     };
 

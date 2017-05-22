@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.holder.DocumentCommentViewHolder;
-import com.gzlk.android.isp.model.user.document.DocumentComment;
+import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 
 /**
@@ -19,7 +19,7 @@ import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentCommentViewBinder extends BaseViewBinder<DocumentComment, DocumentCommentViewHolder> {
+public class DocumentCommentViewBinder extends BaseViewBinder<Comment, DocumentCommentViewHolder> {
     @Override
     protected int itemLayout() {
         return R.layout.holder_view_document_comment;
@@ -31,7 +31,7 @@ public class DocumentCommentViewBinder extends BaseViewBinder<DocumentComment, D
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull DocumentCommentViewHolder holder, @NonNull DocumentComment item) {
+    protected void onBindViewHolder(@NonNull DocumentCommentViewHolder holder, @NonNull Comment item) {
         holder.showContent(item);
     }
 }

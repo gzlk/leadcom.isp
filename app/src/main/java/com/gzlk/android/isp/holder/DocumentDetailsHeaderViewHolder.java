@@ -7,7 +7,7 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
-import com.gzlk.android.isp.model.user.document.Document;
+import com.gzlk.android.isp.model.user.UserArchive;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -68,12 +68,12 @@ public class DocumentDetailsHeaderViewHolder extends BaseViewHolder {
         }
     }
 
-    public void showContent(Document document) {
-        titleHolder.showContent(format(items[0], document.getTitle()));
-        sourceHolder.showContent(format(items[1], document.getUserName()));
-        timeHolder.showContent(format(items[2], Utils.format(document.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
+    public void showContent(UserArchive userArchive) {
+        titleHolder.showContent(format(items[0], userArchive.getTitle()));
+        sourceHolder.showContent(format(items[1], userArchive.getUserName()));
+        timeHolder.showContent(format(items[2], Utils.format(userArchive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
         privacyHolder.showContent(format(items[3], ""));
-        contentView.setText(StringHelper.escapeFromHtml(document.getContent()));
+        contentView.setText(StringHelper.escapeFromHtml(userArchive.getContent()));
         contentView.makeExpandable();
     }
 }

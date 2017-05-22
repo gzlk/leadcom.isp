@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
@@ -65,6 +66,10 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     private View titleBackground;
     @ViewId(R.id.ui_ui_custom_title_text)
     private TextView titleTextView;
+    @ViewId(R.id.ui_ui_custom_title_right_icon_1)
+    private CustomTextView rightIcon1;
+    @ViewId(R.id.ui_ui_custom_title_right_icon_2_container)
+    private RelativeLayout rightIcon2;
     @ViewId(R.id.ui_ui_custom_title_right_text)
     private TextView rightTextView;
     @ViewId(R.id.ui_ui_custom_title_right_icon)
@@ -81,6 +86,8 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     @SuppressWarnings("ConstantConditions")
     @Override
     public void doingInResume() {
+        rightIcon1.setVisibility(View.GONE);
+        rightIcon2.setVisibility(View.GONE);
         setSupportLoadingMore(false);
         initializeItems();
         titleTextView.setText(null);
@@ -260,7 +267,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         }});
     }
 
-    private static final int REQUEST_PHONE = RESULT_BASE_REQUEST + 10;
+    private static final int REQUEST_PHONE = ACTIVITY_BASE_REQUEST + 10;
     private static final int REQUEST_PHONE_CONFIRM = REQUEST_PHONE + 1;
     private static final int REQUEST_ID = REQUEST_PHONE + 2;
     private static final int REQUEST_COMPANY = REQUEST_PHONE + 3;

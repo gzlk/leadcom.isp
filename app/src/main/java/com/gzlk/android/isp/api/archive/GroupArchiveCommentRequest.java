@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.api.org;
+package com.gzlk.android.isp.api.archive;
 
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
@@ -6,7 +6,7 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.model.organization.archive.ArchiveComment;
+import com.gzlk.android.isp.model.archive.Comment;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;
@@ -23,12 +23,12 @@ import org.json.JSONObject;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveCommentRequest extends Request<ArchiveComment> {
+public class GroupArchiveCommentRequest extends Request<Comment> {
 
-    private static class SingleComment extends Output<ArchiveComment> {
+    private static class SingleComment extends Output<Comment> {
     }
 
-    private static class MultipleComment extends Query<ArchiveComment> {
+    private static class MultipleComment extends Query<Comment> {
     }
 
     private static final String CMT = "/group/groDocCmt";
@@ -39,13 +39,13 @@ public class ArchiveCommentRequest extends Request<ArchiveComment> {
     }
 
     @Override
-    public ArchiveCommentRequest setOnSingleRequestListener(OnSingleRequestListener<ArchiveComment> listener) {
+    public GroupArchiveCommentRequest setOnSingleRequestListener(OnSingleRequestListener<Comment> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public ArchiveCommentRequest setOnMultipleRequestListener(OnMultipleRequestListener<ArchiveComment> listListener) {
+    public GroupArchiveCommentRequest setOnMultipleRequestListener(OnMultipleRequestListener<Comment> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }
@@ -75,17 +75,8 @@ public class ArchiveCommentRequest extends Request<ArchiveComment> {
      */
     public void delete(String archiveId, String commentId) {
         //groDocId,groDocCmtId
-
-        JSONObject object = new JSONObject();
-        try {
-            object.put("groDocId", archiveId)
-                    .put("groDocCmtId", commentId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleComment.class, url(DELETE), object.toString(), HttpMethods.Post));
+        String params = format("groDocId=%s&groDocCmtId=%s", archiveId, commentId);
+        httpRequest(getRequest(SingleComment.class, format("%s?%s", url(DELETE), params), "", HttpMethods.Post));
     }
 
     /**

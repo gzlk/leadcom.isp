@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.api.org;
+package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
@@ -9,7 +9,7 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.organization.archive.Archive;
+import com.gzlk.android.isp.model.organization.GroupArchive;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -29,25 +29,16 @@ import java.util.ArrayList;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveRequest extends Request<Archive> {
+public class GroupArchiveRequest extends Request<GroupArchive> {
 
-    public static ArchiveRequest request() {
-        return new ArchiveRequest();
+    public static GroupArchiveRequest request() {
+        return new GroupArchiveRequest();
     }
 
-    /**
-     * 用户档案
-     */
-    public static final int USER = 0;
-    /**
-     * 组织档案
-     */
-    public static final int GROUP = 1;
-
-    static class SingleArchive extends Output<Archive> {
+    private static class SingleArchive extends Output<GroupArchive> {
     }
 
-    static class MultipleArchive extends Query<Archive> {
+    private static class MultipleArchive extends Query<GroupArchive> {
     }
 
     private static final String DOC = "/group/groDoc";
@@ -60,13 +51,13 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     @Override
-    public ArchiveRequest setOnSingleRequestListener(OnSingleRequestListener<Archive> listener) {
+    public GroupArchiveRequest setOnSingleRequestListener(OnSingleRequestListener<GroupArchive> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public ArchiveRequest setOnMultipleRequestListener(OnMultipleRequestListener<Archive> listListener) {
+    public GroupArchiveRequest setOnMultipleRequestListener(OnMultipleRequestListener<GroupArchive> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }
@@ -114,15 +105,7 @@ public class ArchiveRequest extends Request<Archive> {
      * 删除组织档案（待审核和已审核）
      */
     public void delete(String archiveId) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("groDocId", archiveId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleArchive.class, url(DELETE), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleArchive.class, format("%s?groDocId=%s", url(DELETE), archiveId), "", HttpMethods.Post));
     }
 
     /**
@@ -157,9 +140,9 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     private void findInCache(String archiveId) {
-        Archive archive = new Dao<>(Archive.class).query(archiveId);
-        if (null != archive) {
-            fireOnSingleRequestListener(archive);
+        GroupArchive groupArchive = new Dao<>(GroupArchive.class).query(archiveId);
+        if (null != groupArchive) {
+            fireOnSingleRequestListener(groupArchive);
         } else {
             // 调用网络数据
             httpRequest(getRequest(SingleArchive.class, format("%s?groDocId=%s", url(FIND), archiveId), "", HttpMethods.Get));

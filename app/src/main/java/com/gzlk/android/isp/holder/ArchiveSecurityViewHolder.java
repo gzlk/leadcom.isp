@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.model.ArchiveSecurity;
+import com.gzlk.android.isp.model.archive.Security;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Member;
@@ -52,8 +52,8 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Model model) {
-        if (model instanceof ArchiveSecurity) {
-            showContent((ArchiveSecurity) model);
+        if (model instanceof Security) {
+            showContent((Security) model);
         } else if (model instanceof Organization) {
             showContent((Organization) model);
         } else if (model instanceof User) {
@@ -72,7 +72,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
         descriptionView.setVisibility(View.GONE);
     }
 
-    public void showContent(ArchiveSecurity security) {
+    public void showContent(Security security) {
         root.setPadding(padding, 0, 0, 0);
         icon.setText(R.string.ui_icon_choose);
         icon.setVisibility(View.VISIBLE);

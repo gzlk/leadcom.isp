@@ -7,7 +7,9 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -56,6 +58,16 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         nameIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
         headerIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
         phoneTextView.setText(user.getPhone());
+    }
+
+    public void showContent(Organization org) {
+        String text = null != org && !StringHelper.isEmpty(org.getName()) ? org.getName() : StringHelper.getString(R.string.ui_base_text_not_set);
+        nameTextView.setText(text);
+        text = null != org && !StringHelper.isEmpty(org.getLogo()) ? org.getLogo() : "";
+        headerImage.displayImage(text, getDimension(R.dimen.ui_static_dp_100), false, false);
+        nameIcon.setVisibility(null != org && org.isLocalDeleted() ? View.VISIBLE : View.GONE);
+        headerIcon.setVisibility(null != org && org.isLocalDeleted() ? View.VISIBLE : View.GONE);
+        phoneTextView.setVisibility(View.GONE);
     }
 
     @Click({R.id.ui_holder_view_user_header_icon,

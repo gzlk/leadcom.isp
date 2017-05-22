@@ -7,7 +7,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.MomentViewHolder;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.user.moment.Moment;
+import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 
 import java.lang.ref.SoftReference;

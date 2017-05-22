@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
@@ -50,8 +49,8 @@ public class User extends Model {
         public static final String Birthday = "birthday";
         public static final String IsAuth = "isAuth";
         public static final String HeadPhoto = "headPhoto";
-        public static final String LastModifiedTime = "lastModifiedTime";
-        public static final String LastLoginTime = "lastLoginTime";
+        public static final String LastModifiedDate = "lastModifiedDate";
+        public static final String LastLoginDate = "lastLoginDate";
         public static final String Captcha = "captcha";
         public static final String Spell = "spell";
         public static final String JoinedActs = "joinedActs";
@@ -93,11 +92,11 @@ public class User extends Model {
     @Column(Field.HeadPhoto)
     private String headPhoto;
     //最后修改时间
-    @Column(Field.LastModifiedTime)
-    private String lastModifiedTime;
+    @Column(Field.LastModifiedDate)
+    private String lastModifiedDate;
     //最后登录时间
-    @Column(Field.LastLoginTime)
-    private String lastLoginTime;
+    @Column(Field.LastLoginDate)
+    private String lastLoginDate;
     //创建时间
     @Column(Model.Field.CreateDate)
     private String createDate;
@@ -205,20 +204,20 @@ public class User extends Model {
         this.headPhoto = headPhoto;
     }
 
-    public String getLastModifiedTime() {
-        return lastModifiedTime;
+    public String getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
-    public void setLastModifiedTime(String lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+    public void setLastModifiedDate(String lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
-    public String getLastLoginTime() {
-        return lastLoginTime;
+    public String getLastLoginDate() {
+        return lastLoginDate;
     }
 
-    public void setLastLoginTime(String lastLoginTime) {
-        this.lastLoginTime = lastLoginTime;
+    public void setLastLoginDate(String lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
     }
 
     public String getCreateDate() {

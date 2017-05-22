@@ -25,7 +25,7 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 import com.gzlk.android.isp.model.BaiduLocation;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.user.moment.Moment;
+import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
@@ -135,7 +135,10 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(Moment moment, boolean success, String message) {
                 super.onResponse(moment, success, message);
                 if (success) {
-                    new Dao<>(Moment.class).save(moment);
+                    if (null != moment) {
+                        moment.resetAdditional(moment.getAddition());
+                        new Dao<>(Moment.class).save(moment);
+                    }
                     finish();
                 }
             }

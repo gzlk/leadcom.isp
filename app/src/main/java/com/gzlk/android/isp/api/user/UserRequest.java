@@ -81,10 +81,10 @@ public class UserRequest extends Request<User> {
      * @param value 修改的值
      */
     public void update(int type, String value) {
-        //{_id,name,phone,email,password,sex,accessToken}
+        // {name,phone,email,password,sex,accessToken}
         JSONObject object = new JSONObject();
         try {
-            object.put("_id", Cache.cache().userId);
+            object.put("accessToken", Cache.cache().accessToken);
             switch (type) {
                 case TYPE_BIRTHDAY:
                     object.put("brithday", value);

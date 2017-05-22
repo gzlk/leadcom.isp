@@ -7,8 +7,8 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.user.DocCommentRequest;
-import com.gzlk.android.isp.api.user.DocumentRequest;
+import com.gzlk.android.isp.api.archive.UserArchiveCommentRequest;
+import com.gzlk.android.isp.api.archive.UserArchiveRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseChatInputSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -18,11 +18,11 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
-import com.gzlk.android.isp.model.BaseArchive;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.user.document.Document;
-import com.gzlk.android.isp.model.user.document.DocumentComment;
+import com.gzlk.android.isp.model.archive.Comment;
+import com.gzlk.android.isp.model.user.UserArchive;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.user.DocumentCommentViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.DocumentDetailsHeaderViewBinder;
@@ -109,33 +109,33 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
         if (null == mAdapter) {
             addOnInputCompleteListener(onInputCompleteListener);
             mAdapter = new DocumentDetailsAdapter();
-            mAdapter.register(Document.class, new DocumentDetailsHeaderViewBinder().setFragment(this));
-            mAdapter.register(DocumentComment.class, new DocumentCommentViewBinder().setFragment(this));
+            mAdapter.register(UserArchive.class, new DocumentDetailsHeaderViewBinder().setFragment(this));
+            mAdapter.register(Comment.class, new DocumentCommentViewBinder().setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
             loadingDocument();
         }
     }
 
     private void loadingDocument() {
-        Document document = new Dao<>(Document.class).query(mQueryId);
-        if (null == document) {
+        UserArchive userArchive = new Dao<>(UserArchive.class).query(mQueryId);
+        if (null == userArchive) {
             // 档案不存在则从服务器上拉取
             fetchingDocument();
         } else {
-            mAdapter.update(document);
-            resetRightTitleButton(document);
+            mAdapter.update(userArchive);
+            resetRightTitleButton(userArchive);
         }
     }
 
-    private void resetRightTitleButton(@NonNull Document document) {
-        if (document.getUserId().equals(Cache.cache().userId)) {
+    private void resetRightTitleButton(@NonNull UserArchive userArchive) {
+        if (userArchive.getUserId().equals(Cache.cache().userId)) {
             //setRightIcon(R.string.ui_icon_more);
             setRightText(R.string.ui_base_text_edit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
                     //openEditSelector();
-                    openActivity(DocumentNewFragment.class.getName(), format("%d,%s", BaseArchive.Type.INDIVIDUAL, mQueryId), true, true);
+                    openActivity(DocumentNewFragment.class.getName(), format("%d,%s", Archive.Type.INDIVIDUAL, mQueryId), true, true);
                 }
             });
         }
@@ -153,10 +153,10 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void fetchingRemote() {
-        DocCommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<DocumentComment>() {
+        UserArchiveCommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onResponse(List<DocumentComment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Comment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     remotePageSize = pageSize;
@@ -168,7 +168,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
                         remotePageNumber += 1;
                     }
                     if (list.size() > 0) {
-                        new Dao<>(DocumentComment.class).save(list);
+                        new Dao<>(Comment.class).save(list);
                         mAdapter.update((List<Model>) (Object) list);
                     }
                 }
@@ -180,25 +180,25 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
 
     // 加载本地缓存
     private void loadingLocalCache() {
-        new OrmTask<DocumentComment>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<DocumentComment>() {
+        new OrmTask<Comment>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Comment>() {
             @Override
             public boolean isModifiable() {
                 return false;
             }
 
             @Override
-            public List<DocumentComment> executing(OrmTask<DocumentComment> task) {
+            public List<Comment> executing(OrmTask<Comment> task) {
                 // 分页查找
-                QueryBuilder<DocumentComment> builder = new QueryBuilder<>(DocumentComment.class)
-                        .whereEquals(DocumentComment.Field.UserDocumentId, mQueryId)
+                QueryBuilder<Comment> builder = new QueryBuilder<>(Comment.class)
+                        .whereEquals(Archive.Field.UserArchiveId, mQueryId)
                         .orderBy(Model.Field.CreateDate)
                         .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
-                return new Dao<>(DocumentComment.class).query(builder);
+                return new Dao<>(Comment.class).query(builder);
             }
-        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<DocumentComment>() {
+        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Comment>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onExecuted(boolean modified, List<DocumentComment> result) {
+            public void onExecuted(boolean modified, List<Comment> result) {
                 if (null != result) {
                     if (result.size() >= PAGE_SIZE) {
                         // 取满一页后下一次需要取下一页
@@ -234,7 +234,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
                 int id = view.getId();
                 switch (id) {
                     case R.id.ui_dialog_button_editor_to_change:
-                        openActivity(DocumentNewFragment.class.getName(), format("%d,%s", BaseArchive.Type.INDIVIDUAL, mQueryId), true, true);
+                        openActivity(DocumentNewFragment.class.getName(), format("%d,%s", Archive.Type.INDIVIDUAL, mQueryId), true, true);
                         break;
                     case R.id.ui_dialog_button_editor_to_delete:
                         warningDeleteDocument();
@@ -256,14 +256,14 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void deleteDocument() {
-        DocumentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Document>() {
+        UserArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<UserArchive>() {
             @Override
-            public void onResponse(Document document, boolean success, String message) {
-                super.onResponse(document, success, message);
+            public void onResponse(UserArchive userArchive, boolean success, String message) {
+                super.onResponse(userArchive, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(message);
-                    Dao<Document> dao = new Dao<>(Document.class);
-                    Document doc = dao.query(mQueryId);
+                    Dao<UserArchive> dao = new Dao<>(UserArchive.class);
+                    UserArchive doc = dao.query(mQueryId);
                     if (null != doc) {
                         doc.setLocalDeleted(true);
                         dao.save(doc);
@@ -275,19 +275,19 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
         }).delete(mQueryId);
     }
 
-    public DocumentComment getFromPosition(int position) {
-        return (DocumentComment) mAdapter.get(position);
+    public Comment getFromPosition(int position) {
+        return (Comment) mAdapter.get(position);
     }
 
     public void deleteComment(final int position) {
-        final DocumentComment cmt = getFromPosition(position);
-        DocCommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<DocumentComment>() {
+        final Comment cmt = getFromPosition(position);
+        UserArchiveCommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
-            public void onResponse(DocumentComment comment, boolean success, String message) {
+            public void onResponse(Comment comment, boolean success, String message) {
                 super.onResponse(comment, success, message);
                 if (success) {
                     // 删除成功之后本地评论也删除
-                    new Dao<>(DocumentComment.class).delete(cmt);
+                    new Dao<>(Comment.class).delete(cmt);
                     mAdapter.remove(position);
                 }
             }
@@ -295,14 +295,14 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void fetchingDocument() {
-        DocumentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Document>() {
+        UserArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<UserArchive>() {
             @Override
-            public void onResponse(Document document, boolean success, String message) {
-                super.onResponse(document, success, message);
+            public void onResponse(UserArchive userArchive, boolean success, String message) {
+                super.onResponse(userArchive, success, message);
                 if (success && null != message) {
-                    new Dao<>(Document.class).save(document);
-                    mAdapter.update(document);
-                    resetRightTitleButton(document);
+                    new Dao<>(UserArchive.class).save(userArchive);
+                    mAdapter.update(userArchive);
+                    resetRightTitleButton(userArchive);
                 } else {
                     closeWithWarning(R.string.ui_text_document_details_not_exists);
                 }
@@ -319,13 +319,13 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void tryComment(String text) {
-        DocCommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<DocumentComment>() {
+        UserArchiveCommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
-            public void onResponse(DocumentComment comment, boolean success, String message) {
+            public void onResponse(Comment comment, boolean success, String message) {
                 super.onResponse(comment, success, message);
                 if (success) {
                     if (null != comment && !StringHelper.isEmpty(comment.getId())) {
-                        new Dao<>(DocumentComment.class).save(comment);
+                        new Dao<>(Comment.class).save(comment);
                         mAdapter.update(comment);
                     }
                     refreshing();
@@ -338,9 +338,9 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
     private class DocumentDetailsAdapter extends BaseMultiTypeAdapter<Model> {
         @Override
         protected int comparator(Model item1, Model item2) {
-            if (item1 instanceof DocumentComment && item2 instanceof DocumentComment) {
+            if (item1 instanceof Comment && item2 instanceof Comment) {
                 // 按照创建时间倒序排序
-                int compared = ((DocumentComment) item1).getCreateDate().compareTo(((DocumentComment) item2).getCreateDate());
+                int compared = ((Comment) item1).getCreateDate().compareTo(((Comment) item2).getCreateDate());
                 return compared == 0 ? 0 : -compared;
             }
             return 0;

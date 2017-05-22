@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.api.org;
+package com.gzlk.android.isp.api.archive;
 
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
@@ -6,7 +6,7 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.model.organization.archive.ArchiveLike;
+import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;
@@ -23,7 +23,11 @@ import org.json.JSONObject;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveLikeRequest extends Request<ArchiveLike> {
+public class GroupArchiveLikeRequest extends Request<ArchiveLike> {
+
+    public static GroupArchiveLikeRequest request() {
+        return new GroupArchiveLikeRequest();
+    }
 
     private static class SingleLike extends Output<ArchiveLike> {
     }
@@ -40,13 +44,13 @@ public class ArchiveLikeRequest extends Request<ArchiveLike> {
     }
 
     @Override
-    public ArchiveLikeRequest setOnSingleRequestListener(OnSingleRequestListener<ArchiveLike> listener) {
+    public GroupArchiveLikeRequest setOnSingleRequestListener(OnSingleRequestListener<ArchiveLike> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public ArchiveLikeRequest setOnMultipleRequestListener(OnMultipleRequestListener<ArchiveLike> listListener) {
+    public GroupArchiveLikeRequest setOnMultipleRequestListener(OnMultipleRequestListener<ArchiveLike> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }
@@ -72,16 +76,8 @@ public class ArchiveLikeRequest extends Request<ArchiveLike> {
      * 取消赞
      */
     public void unlike(String archiveId) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("groDocId", archiveId)
-                    .put("accessToken", Cache.cache().accessToken);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleLike.class, url(DELETE), object.toString(), HttpMethods.Post));
+        String params = format("groDocId=%s&accessToken=%s", archiveId, Cache.cache().accessToken);
+        httpRequest(getRequest(SingleLike.class, format("%s?%s", url(DELETE), params), "", HttpMethods.Post));
     }
 
     /**

@@ -10,7 +10,7 @@ import com.gzlk.android.isp.helper.ClipboardHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
-import com.gzlk.android.isp.model.user.document.DocumentComment;
+import com.gzlk.android.isp.model.archive.Comment;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -54,7 +54,7 @@ public class DocumentCommentViewHolder extends BaseViewHolder {
             log("clicked: " + v);
             switch (v.getId()) {
                 case R.id.ui_tool_popup_menu_document_comment_copy:
-                    DocumentComment comment = ((DocumentDetailsFragment) fragment()).getFromPosition(getAdapterPosition());
+                    Comment comment = ((DocumentDetailsFragment) fragment()).getFromPosition(getAdapterPosition());
                     ClipboardHelper.copyToClipboard(v.getContext(), comment.getContent());
                     break;
                 case R.id.ui_tool_popup_menu_document_comment_delete:
@@ -65,7 +65,7 @@ public class DocumentCommentViewHolder extends BaseViewHolder {
         }
     };
 
-    public void showContent(DocumentComment comment) {
+    public void showContent(Comment comment) {
         String content = StringHelper.getString(R.string.ui_text_document_comment_content, comment.getUserName(), comment.getContent());
         contentTextView.setText(EmojiUtility.getEmojiString(itemView.getContext(), content, true));
     }

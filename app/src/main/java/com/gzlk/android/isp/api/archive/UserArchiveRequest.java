@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.api.user;
+package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
@@ -8,7 +8,7 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.model.user.document.Document;
+import com.gzlk.android.isp.model.user.UserArchive;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -28,21 +28,16 @@ import java.util.ArrayList;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentRequest extends Request<Document> {
+public class UserArchiveRequest extends Request<UserArchive> {
 
-    private static DocumentRequest request;
-
-    public static DocumentRequest request() {
-        if (null == request) {
-            request = new DocumentRequest();
-        }
-        return request;
+    public static UserArchiveRequest request() {
+        return new UserArchiveRequest();
     }
 
-    private static class SingleDocument extends Output<Document> {
+    private static class SingleDocument extends Output<UserArchive> {
     }
 
-    private static class MultipleDocument extends Query<Document> {
+    private static class MultipleDocument extends Query<UserArchive> {
     }
 
     @Override
@@ -51,13 +46,13 @@ public class DocumentRequest extends Request<Document> {
     }
 
     @Override
-    public DocumentRequest setOnSingleRequestListener(OnSingleRequestListener<Document> listener) {
+    public UserArchiveRequest setOnSingleRequestListener(OnSingleRequestListener<UserArchive> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public DocumentRequest setOnMultipleRequestListener(OnMultipleRequestListener<Document> listListener) {
+    public UserArchiveRequest setOnMultipleRequestListener(OnMultipleRequestListener<UserArchive> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }
@@ -88,8 +83,6 @@ public class DocumentRequest extends Request<Document> {
                     .put("image", new JSONArray(image))
                     .put("attach", new JSONArray(attach))
                     .put("attachName", new JSONArray(attachName))
-                    .put("userId", Cache.cache().userId)
-                    .put("userName", checkNull(Cache.cache().userName))
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -100,17 +93,7 @@ public class DocumentRequest extends Request<Document> {
     }
 
     public void delete(@NonNull String documentId) {
-
-        JSONObject object = new JSONObject();
-        try {
-            object.put("userDocId", documentId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleDocument.class, url(DELETE), object.toString(), HttpMethods.Post));
-
+        httpRequest(getRequest(SingleDocument.class, format("%s?userDocId=%s", url(DELETE), documentId), "", HttpMethods.Post));
     }
 
     /**
@@ -151,8 +134,10 @@ public class DocumentRequest extends Request<Document> {
      * 查找指定用户的档案列表，返回一个结果集合
      */
     public void list(int pageSize, int pageNumber) {
+        // abstrSize,abstrRow,pageSize,pageNumber,accessToken
         httpRequest(getRequest(MultipleDocument.class,
-                format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), Cache.cache().userId, pageSize, pageNumber),
+                format("%s?abstrSize=100&abstrRow=5&pageSize=%d&pageNumber=%d&accessToken=%s",
+                        url(LIST), pageSize, pageNumber, Cache.cache().accessToken),
                 "", HttpMethods.Get));
     }
 

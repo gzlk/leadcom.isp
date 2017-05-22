@@ -25,7 +25,7 @@ import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.Collection;
-import com.gzlk.android.isp.model.user.moment.Moment;
+import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -156,8 +156,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
                     Dao<Moment> dao = new Dao<>(Moment.class);
                     Moment deleted = dao.query(mQueryId);
                     if (deleted != null) {
-                        deleted.setLocalDeleted(true);
-                        dao.save(deleted);
+                        dao.delete(deleted);
                     }
                     finish();
                 }

@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.api.user;
+package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
@@ -8,7 +8,7 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.model.user.document.DocumentComment;
+import com.gzlk.android.isp.model.archive.Comment;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;
@@ -25,21 +25,16 @@ import org.json.JSONObject;
  * <b>修改备注：</b><br />
  */
 
-public class DocCommentRequest extends Request<DocumentComment> {
+public class UserArchiveCommentRequest extends Request<Comment> {
 
-    private static DocCommentRequest request;
-
-    public static DocCommentRequest request() {
-        if (null == request) {
-            request = new DocCommentRequest();
-        }
-        return request;
+    public static UserArchiveCommentRequest request() {
+        return new UserArchiveCommentRequest();
     }
 
-    static class SingleComment extends Output<DocumentComment> {
+    private static class SingleComment extends Output<Comment> {
     }
 
-    static class MultiComment extends Query<DocumentComment> {
+    private static class MultiComment extends Query<Comment> {
     }
 
     private static final String DOC_CMT = "/user/userDocCmt";
@@ -50,13 +45,13 @@ public class DocCommentRequest extends Request<DocumentComment> {
     }
 
     @Override
-    public DocCommentRequest setOnSingleRequestListener(OnSingleRequestListener<DocumentComment> listener) {
+    public UserArchiveCommentRequest setOnSingleRequestListener(OnSingleRequestListener<Comment> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public DocCommentRequest setOnMultipleRequestListener(OnMultipleRequestListener<DocumentComment> listListener) {
+    public UserArchiveCommentRequest setOnMultipleRequestListener(OnMultipleRequestListener<Comment> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }
@@ -65,13 +60,12 @@ public class DocCommentRequest extends Request<DocumentComment> {
      * 新增档案的评论
      */
     public void add(String documentId, String content) {
-        //{userDocId,content,userId,userName}
+        // {userDocId,content,accessToken}
         JSONObject object = new JSONObject();
         try {
             object.put("userDocId", documentId)
                     .put("content", checkNull(content))
-                    .put("userId", Cache.cache().userId)
-                    .put("userName", checkNull(Cache.cache().userName));
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -83,14 +77,8 @@ public class DocCommentRequest extends Request<DocumentComment> {
      */
     public void delete(String documentId, String commentId) {
         //userDocId,userDocCmtId
-        JSONObject object = new JSONObject();
-        try {
-            object.put("userDocId", documentId)
-                    .put("userDocCmtId", commentId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        httpRequest(getRequest(SingleComment.class, url(DELETE), object.toString(), HttpMethods.Post));
+        String params = format("userDocId=%s&userDocCmtId=%s", documentId, commentId);
+        httpRequest(getRequest(SingleComment.class, format("%s?%s", url(DELETE), params), "", HttpMethods.Post));
     }
 
     /**

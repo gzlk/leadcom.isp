@@ -1,8 +1,7 @@
 package com.gzlk.android.isp.model.user;
 
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.user.document.Document;
-import com.gzlk.android.isp.model.user.moment.Moment;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -46,25 +45,25 @@ public class Collection extends Model {
     }
 
     //收藏的类型(1->文本, 2->图片, 3->语音, 4->附件, 5->链接)
-    @Column(Document.Field.Type)
+    @Column(Archive.Field.Type)
     private String type;
     //收藏的内容(文本,图片,语音,附件,链接)
-    @Column(Moment.Field.Content)
+    @Column(Archive.Field.Content)
     private String content;
     //收藏人ID
     @Column(Field.UserId)
     private String userId;
     //原作者ID
-    @Column(Document.Field.Creator)
+    @Column(Archive.Field.CreatorId)
     private String creatorId;
     //原作者名称
-    @Column(Document.Field.CreatorName)
+    @Column(Archive.Field.CreatorName)
     private String creatorName;
     //创建日期
     @Column(Field.CreateDate)
     private String createDate;
     //修改日期
-    @Column(Document.Field.LastModifiedDate)
+    @Column(Archive.Field.LastModifiedDate)
     private String lastModifiedDate;
 
     public String getType() {

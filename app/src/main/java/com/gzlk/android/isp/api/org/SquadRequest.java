@@ -33,10 +33,10 @@ public class SquadRequest extends Request<Squad> {
         return request;
     }
 
-    static class SingleSquad extends Output<Squad> {
+    private static class SingleSquad extends Output<Squad> {
     }
 
-    static class MultipleSquad extends Query<Squad> {
+    private static class MultipleSquad extends Query<Squad> {
     }
 
     private static final String SQUAD = "/group/groSquad";
@@ -75,15 +75,7 @@ public class SquadRequest extends Request<Squad> {
     }
 
     public void delete(String squadId) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("squadId", squadId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleSquad.class, url(DELETE), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleSquad.class, format("%s?squadId=%s", url(DELETE), squadId), "", HttpMethods.Post));
     }
 
     public void update(String squadId, String squadName, String squadIntroduction) {

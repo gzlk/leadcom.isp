@@ -213,8 +213,8 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
 
     private OrganizationConcerned.OnContainerClickListener containerClickListener = new OrganizationConcerned.OnContainerClickListener() {
         @Override
-        public void onClick(int position) {
-            openActivity(OrganizationDetailsFragment.class.getName(), String.valueOf(position), false, false, true);
+        public void onClick(String id) {
+            openActivity(OrganizationDetailsFragment.class.getName(), id, false, false, true);
         }
     };
 }

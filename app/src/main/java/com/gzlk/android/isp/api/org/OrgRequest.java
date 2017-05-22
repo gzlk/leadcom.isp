@@ -78,7 +78,7 @@ public class OrgRequest extends Request<Organization> {
         JSONObject object = new JSONObject();
         try {
             object.put("_id", groupId)
-                    .put("name", groupName)
+                    .put("name", checkNull(groupName))
                     .put("logo", checkNull(groupLogo))
                     .put("intro", checkNull(introduction))
                     .put("accessToken", Cache.cache().accessToken);
@@ -91,15 +91,7 @@ public class OrgRequest extends Request<Organization> {
     }
 
     public void delete(String groupId) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("groupId", groupId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleGroup.class, url(DELETE), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleGroup.class, format("%s?groupId=%s", url(DELETE), groupId), "", HttpMethods.Post));
     }
 
     public void find(String groupId) {

@@ -61,13 +61,12 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     public void add(@NonNull String type, String content, @NonNull String creatorId, String creatorName) {
-        //{type,content,userId,creatorId,creatorName,accessToken}
+        // {type,content,creatorId,creatorName,accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("type", type)
                     .put("content", checkNull(content))
-                    .put("userId", Cache.cache().userId)
                     .put("creatorId", checkNull(creatorId))
                     .put("creatorName", checkNull(creatorName))
                     .put("accessToken", Cache.cache().accessToken);
@@ -80,22 +79,16 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     public void delete(String collectionId) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("colId", collectionId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleCollection.class, url(DELETE), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Post));
     }
 
     public void update(String collectionId, String content) {
+        // {_id,content,accessToken}
         JSONObject object = new JSONObject();
         try {
             object.put("_id", collectionId)
-                    .put("content", content);
+                    .put("content", content)
+                    .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -110,10 +103,10 @@ public class CollectionRequest extends Request<Collection> {
 
     public void list(int pageSize, int pageNumber) {
         httpRequest(getRequest(MultipleCollection.class,
-                format("%s?userId=%s&pageSize=%d&pageNumber=%d", url(LIST), Cache.cache().userId, pageSize, pageNumber), "", HttpMethods.Get));
+                format("%s?pageSize=%d&pageNumber=%d&accessToken=%s", url(LIST), pageSize, pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
-    public void search(String userId, String info) {
-        httpRequest(getRequest(MultipleCollection.class, format("%s?userId=%s&info=%s", url(SEARCH), userId, info), "", HttpMethods.Get));
+    public void search(String accessToken, String info) {
+        httpRequest(getRequest(MultipleCollection.class, format("%s?info=%s&accessToken=%s", url(SEARCH), accessToken, info), "", HttpMethods.Get));
     }
 }

@@ -1,6 +1,7 @@
-package com.gzlk.android.isp.model;
+package com.gzlk.android.isp.model.archive;
 
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Model;
 
 /**
  * <b>功能描述：</b>档案隐私选项<br />
@@ -13,14 +14,14 @@ import com.gzlk.android.isp.helper.StringHelper;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveSecurity extends Model {
+public class Security extends Model {
 
     private int index;
     private String text;
     private String description;
     private boolean selected;
 
-    public ArchiveSecurity(String text) {
+    public Security(String text) {
         String[] strings = text.split("\\|", -1);
         index = Integer.valueOf(strings[0]);
         setId(String.valueOf(index));

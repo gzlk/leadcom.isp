@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.fragment.organization;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -7,15 +9,21 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.OrgRequest;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.UserHeaderBigViewHolder;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.SimpleMemberViewHolder;
 import com.gzlk.android.isp.holder.ToggleableViewHolder;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.SimpleClickableItem;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
@@ -31,6 +39,14 @@ import com.hlk.hlklib.lib.inject.ViewId;
  */
 
 public class OrganizationDetailsFragment extends BaseOrganizationFragment {
+
+    public static OrganizationDetailsFragment newInstance(String params) {
+        OrganizationDetailsFragment odf = new OrganizationDetailsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, params);
+        odf.setArguments(bundle);
+        return odf;
+    }
 
     // View
     @ViewId(R.id.ui_transparent_title_container)
@@ -48,7 +64,6 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
 
     @Override
     public void doingInResume() {
-        enableSwipe(false);
         setSupportLoadingMore(false);
         tryPaddingContent(titleContainer, false);
         titleTextView.setText(null);
@@ -72,7 +87,7 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-
+        fetchingRemoteOrganization(mQueryId);
     }
 
     @Override
@@ -101,8 +116,11 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
         if (null == mAdapter) {
             mAdapter = new DetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            updateAdapter();
         }
-        updateAdapter();
+        if (null == org) {
+            fetchingOrganization();
+        }
     }
 
     private void updateAdapter() {
@@ -111,10 +129,15 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
             String text;
             switch (index) {
                 case 1:
-                    text = format(string, 12);
+                    int num = 0;
+                    if (null != org && !StringHelper.isEmpty(org.getMemberNum())) {
+                        num = Integer.valueOf(org.getMemberNum());
+                    }
+                    text = format(string, num);
                     break;
                 case 2:
-                    text = format(string, "未知");
+                    text = null != org && !StringHelper.isEmpty(org.getName()) ? org.getName() : StringHelper.getString(R.string.ui_base_text_not_set);
+                    text = format(string, text);
                     break;
                 default:
                     text = string;
@@ -122,8 +145,76 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
             }
             SimpleClickableItem item = new SimpleClickableItem(text);
             mAdapter.update(item);
+            mAdapter.notifyItemChanged(index);
             index++;
         }
+        stopRefreshing();
+    }
+
+    Organization org;
+
+    private void fetchingOrganization() {
+        org = new Dao<>(Organization.class).query(mQueryId);
+        if (null == org) {
+            fetchingRemoteOrganization(mQueryId);
+        } else {
+            updateAdapter();
+        }
+    }
+
+    @Override
+    protected void onFetchingRemoteOrganizationComplete(Organization organization) {
+        super.onFetchingRemoteOrganizationComplete(organization);
+        if (null == organization) {
+            closeWithWarning(R.string.ui_organization_details_not_exists);
+        } else {
+            org = organization;
+            updateAdapter();
+        }
+    }
+
+    private static final int REQUEST_NAME = ACTIVITY_BASE_REQUEST + 10;
+    private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            switch (index) {
+                case 2:
+                    // 创建者是当前登录的用户时，可以 修改群名称
+                    if (null != org && org.getCreatorId().equals(Cache.cache().userId)) {
+                        String name = StringHelper.isEmpty(org.getName()) ? "" : org.getName();
+                        openActivity(BasePopupInputSupportFragment.class.getName(),
+                                StringHelper.getString(R.string.ui_popup_input_name, name), REQUEST_NAME, true, false);
+                    }
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_NAME) {
+            String result = getResultedData(data);
+            tryEditOrgInfo(result, org.getLogo(), org.getIntro());
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
+    private void tryEditOrgInfo(String name, String logo, String introduction) {
+        OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
+            @Override
+            public void onResponse(Organization organization, boolean success, String message) {
+                super.onResponse(organization, success, message);
+                if (success) {
+                    if (null != organization && !StringHelper.isEmpty(organization.getId())) {
+                        new Dao<>(Organization.class).save(organization);
+                        org = organization;
+                        updateAdapter();
+                    } else {
+                        fetchingRemoteOrganization(mQueryId);
+                    }
+                }
+            }
+        }).update(org.getId(), name, logo, introduction);
     }
 
     private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, SimpleClickableItem> {
@@ -135,13 +226,18 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
             BaseFragment fragment = OrganizationDetailsFragment.this;
             switch (viewType) {
                 case VT_HEADER:
-                    return new UserHeaderBigViewHolder(itemView, fragment);
+                    UserHeaderBigViewHolder uhbvh = new UserHeaderBigViewHolder(itemView, fragment);
+                    //tryPaddingContent(itemView, false);
+                    uhbvh.addOnViewHolderClickListener(viewHolderClickListener);
+                    return uhbvh;
                 case VT_MEMBER:
                     return new SimpleMemberViewHolder(itemView, fragment);
                 case VT_TOGGLE:
                     return new ToggleableViewHolder(itemView, fragment);
                 default:
-                    return new SimpleClickableViewHolder(itemView, fragment);
+                    SimpleClickableViewHolder scvh = new SimpleClickableViewHolder(itemView, fragment);
+                    scvh.addOnViewHolderClickListener(viewHolderClickListener);
+                    return scvh;
             }
         }
 
@@ -180,6 +276,8 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
                 ((SimpleClickableViewHolder) holder).showContent(item);
             } else if (holder instanceof ToggleableViewHolder) {
                 ((ToggleableViewHolder) holder).showContent(item);
+            } else if (holder instanceof UserHeaderBigViewHolder) {
+                ((UserHeaderBigViewHolder) holder).showContent(org);
             }
         }
 

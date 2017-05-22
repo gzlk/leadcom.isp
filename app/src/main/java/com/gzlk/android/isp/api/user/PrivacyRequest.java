@@ -67,6 +67,7 @@ public class PrivacyRequest extends Request<Privacy> {
             object.put("accessToken", Cache.cache().accessToken)
                     .put("status", status)
                     .put("source", source)
+                    .put("sourceId", sourceId)
                     .put("groupId", checkNull(groupId))
                     .put("userId", checkNull(userId));
         } catch (JSONException e) {

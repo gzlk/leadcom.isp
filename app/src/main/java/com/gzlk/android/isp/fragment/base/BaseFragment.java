@@ -232,27 +232,27 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 需求新打开的Activity返回结果
      */
-    public static final int RESULT_BASE_REQUEST = 10000;
+    public static final int ACTIVITY_BASE_REQUEST = 10000;
     /**
      * 需求照相机
      */
-    public static final int REQUEST_CAMERA = RESULT_BASE_REQUEST + 1;
+    public static final int REQUEST_CAMERA = ACTIVITY_BASE_REQUEST + 1;
     /**
      * 需求相册
      */
-    public static final int REQUEST_GALLERY = RESULT_BASE_REQUEST + 2;
+    public static final int REQUEST_GALLERY = ACTIVITY_BASE_REQUEST + 2;
     /**
      * 第三方相册预览
      */
-    public static final int REQUEST_PREVIEW = RESULT_BASE_REQUEST + 3;
+    public static final int REQUEST_PREVIEW = ACTIVITY_BASE_REQUEST + 3;
     /**
      * 需求剪切照片
      */
-    public static final int REQUEST_CROP = RESULT_BASE_REQUEST + 4;
+    public static final int REQUEST_CROP = ACTIVITY_BASE_REQUEST + 4;
     /**
      * 有更改
      */
-    public static final int REQUEST_CHANGE = RESULT_BASE_REQUEST + 100;
+    public static final int REQUEST_CHANGE = ACTIVITY_BASE_REQUEST + 100;
 
     /**
      * 启动容器Activity(此时打开的新Activity不需要返回确认)
@@ -263,7 +263,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * @param supportBackKey 是否要处理backKey事件
      */
     public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey) {
-        openActivity(fullClassName, params, RESULT_BASE_REQUEST, supportToolbar, supportBackKey);
+        openActivity(fullClassName, params, ACTIVITY_BASE_REQUEST, supportToolbar, supportBackKey);
     }
 
     /**
@@ -289,7 +289,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * @param transparentStatusBar 是否需要状态栏透明化
      */
     public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
-        openActivity(fullClassName, params, RESULT_BASE_REQUEST, supportToolbar, supportBackKey, transparentStatusBar);
+        openActivity(fullClassName, params, ACTIVITY_BASE_REQUEST, supportToolbar, supportBackKey, transparentStatusBar);
     }
 
     /**
