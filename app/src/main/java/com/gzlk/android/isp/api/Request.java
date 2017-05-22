@@ -64,6 +64,10 @@ public abstract class Request<T> {
      */
     protected static final String SAVE = "/save";
 
+    private static final int ABSTR_SIZE = 100;
+    private static final int ABSTR_ROW = 5;
+    protected static final String SUMMARY = format("abstrSize=%d&abstrRow=%d", ABSTR_SIZE, ABSTR_ROW);
+
     /**
      * 组合url
      */
@@ -80,8 +84,12 @@ public abstract class Request<T> {
         liteHttp.getConfig().setConnectTimeout(5000);
     }
 
-    protected String format(String fmt, Object... args) {
+    protected static String format(String fmt, Object... args) {
         return StringHelper.format(fmt, args);
+    }
+
+    protected static boolean isEmpty(String text) {
+        return StringHelper.isEmpty(text);
     }
 
     protected void log(String log) {
@@ -92,7 +100,7 @@ public abstract class Request<T> {
      * 检测给定值是否为null，是则返回""字符串，而不是null
      */
     protected String checkNull(String value) {
-        return StringHelper.isEmpty(value) ? "" : value;
+        return isEmpty(value) ? "" : value;
     }
 
     /**
@@ -105,12 +113,17 @@ public abstract class Request<T> {
     /**
      * 组合请求
      */
-    protected JsonRequest<Output<T>> getRequest(Type resultType, final String action, String body, HttpMethods methods) {
-        return new JsonRequest<Output<T>>(StringHelper.format("%s%s", URL, action), resultType)
-                .setHttpListener(new OnHttpListener<Output<T>>() {
+    protected JsonRequest<Api<T>> getRequest(Type resultType, final String action, String body, HttpMethods methods) {
+        String fullUrl = format("%s%s", URL, action);
+        log(format("url(%s): ", methods, fullUrl));
+        if (!isEmpty(body)) {
+            log("body: " + body);
+        }
+        return new JsonRequest<Api<T>>(fullUrl, resultType)
+                .setHttpListener(new OnHttpListener<Api<T>>() {
 
                     @Override
-                    public void onSucceed(Output<T> data, Response<Output<T>> response) {
+                    public void onSucceed(Api<T> data, Response<Api<T>> response) {
                         super.onSucceed(data, response);
                         if (data.success()) {
                             if (data instanceof Query) {
@@ -121,9 +134,15 @@ public abstract class Request<T> {
                                             pagination.getTotalPages(), pagination.getPageSize(),
                                             pagination.getTotal(), pagination.getPageNumber());
                                 }
-                            } else {
+                            } else if (data instanceof Special) {
+                                if (null != onMultipleRequestListener) {
+                                    Special<T> special = (Special<T>) data;
+                                    onMultipleRequestListener.onResponse(special.getData(), data.success(),
+                                            1, PAGE_SIZE, special.getData().size(), 1);
+                                }
+                            } else if (data instanceof Output) {
                                 if (null != onSingleRequestListener) {
-                                    onSingleRequestListener.onResponse(data.getData(), data.success(), data.getMsg());
+                                    onSingleRequestListener.onResponse(((Output<T>) data).getData(), data.success(), data.getMsg());
                                 }
                             }
                         } else {

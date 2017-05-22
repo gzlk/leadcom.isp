@@ -6,14 +6,18 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.archive.GroupArchiveRequest;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.ArchiveViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.GroupArchive;
+import com.gzlk.android.isp.model.organization.Organization;
 
 import java.util.List;
 
@@ -34,7 +38,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        stopRefreshing();
+        fetchingRemoteArchives();
     }
 
     @Override
@@ -52,7 +56,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     public void doingInResume() {
         if (!StringHelper.isEmpty(mQueryId)) {
             //if (isNeedRefresh()) {
-                loadingArchive();
+            loadingLocalArchive();
             //}
         }
     }
@@ -80,7 +84,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
             return;
         }
         mQueryId = queryId;
-        loadingArchive();
+        loadingLocalArchive();
     }
 
     /**
@@ -105,11 +109,33 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         }
     };
 
-    private void loadingArchive() {
+    private void fetchingRemoteArchives() {
+        GroupArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<GroupArchive>() {
+            @Override
+            public void onResponse(List<GroupArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (null != list) {
+                        for (GroupArchive archive : list) {
+                            archive.resetAdditional(archive.getAddition());
+                        }
+                        dao.save(list);
+                        mAdapter.add(list, false);
+                    }
+                }
+                stopRefreshing();
+            }
+        }).list(mQueryId, remotePageNumber);
+    }
+
+    private Dao<GroupArchive> dao;
+
+    private void loadingLocalArchive() {
         initializeAdapter();
-        String json = StringHelper.getString(R.string.temp_group_archive);
-        List<GroupArchive> temp = Json.gson().fromJson(json, new TypeToken<List<GroupArchive>>() {
-        }.getType());
+        if (null == dao) {
+            dao = new Dao<>(GroupArchive.class);
+        }
+        List<GroupArchive> temp = dao.query(Organization.Field.GroupId, mQueryId);
         if (null != temp) {
             mAdapter.add(temp, false);
         }

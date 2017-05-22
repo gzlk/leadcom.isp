@@ -46,11 +46,6 @@ public class ArchiveDetailsWebViewFragment extends BaseTransparentSupportFragmen
     }
 
     @Override
-    protected void getParamsFromBundle(Bundle bundle) {
-
-    }
-
-    @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_text_document_details_fragment_title);
         if (StringHelper.isEmpty(mQueryId)) {
@@ -67,11 +62,6 @@ public class ArchiveDetailsWebViewFragment extends BaseTransparentSupportFragmen
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return true;
-    }
-
-    @Override
-    protected void saveParamsToBundle(Bundle bundle) {
-
     }
 
     @Override

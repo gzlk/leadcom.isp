@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
+import com.gzlk.android.isp.api.Special;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
@@ -39,6 +40,9 @@ public class GroupArchiveRequest extends Request<GroupArchive> {
     }
 
     private static class MultipleArchive extends Query<GroupArchive> {
+    }
+
+    private static class SpecialArchive extends Special<GroupArchive> {
     }
 
     private static final String DOC = "/group/groDoc";
@@ -160,16 +164,13 @@ public class GroupArchiveRequest extends Request<GroupArchive> {
      * 查询组织档案列表
      *
      * @param organizationId 组织id
-     * @param summarySize    摘要字数限制
-     * @param summaryRow     摘要行数限制
-     * @param pageSize       页大小
      * @param pageNumber     页码
      */
-    public void list(String organizationId, int summarySize, int summaryRow, int pageSize, int pageNumber) {
+    public void list(String organizationId, int pageNumber) {
         //groupId,abstrSize,abstrRow,pageSize,pageNumber
-        String param = format("?groupId=%s&abstrSize=%d&abstrRow=%d&pageSize=%d&pageNumber=%d",
-                organizationId, summarySize, summaryRow, pageSize, pageNumber);
-        httpRequest(getRequest(MultipleArchive.class, format("%s%s", url(LIST), param), "", HttpMethods.Get));
+        String param = format("?groupId=%s&%s&pageSize=%d&pageNumber=%d",
+                organizationId, SUMMARY, PAGE_SIZE, pageNumber);
+        httpRequest(getRequest(SpecialArchive.class, format("%s%s", url(LIST), param), "", HttpMethods.Get));
     }
 
     /**

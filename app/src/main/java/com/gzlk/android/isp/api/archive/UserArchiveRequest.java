@@ -133,11 +133,11 @@ public class UserArchiveRequest extends Request<UserArchive> {
     /**
      * 查找指定用户的档案列表，返回一个结果集合
      */
-    public void list(int pageSize, int pageNumber) {
+    public void list(int pageNumber) {
         // abstrSize,abstrRow,pageSize,pageNumber,accessToken
         httpRequest(getRequest(MultipleDocument.class,
-                format("%s?abstrSize=100&abstrRow=5&pageSize=%d&pageNumber=%d&accessToken=%s",
-                        url(LIST), pageSize, pageNumber, Cache.cache().accessToken),
+                format("%s?%s&pageSize=%d&pageNumber=%d&accessToken=%s",
+                        url(LIST), SUMMARY, PAGE_SIZE, pageNumber, Cache.cache().accessToken),
                 "", HttpMethods.Get));
     }
 

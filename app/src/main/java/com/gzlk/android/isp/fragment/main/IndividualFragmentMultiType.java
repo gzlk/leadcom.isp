@@ -224,7 +224,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
                 stopRefreshing();
             }
-        }).list(PAGE_SIZE, refreshing ? 1 : remotePageNumber);// 如果是拉取，则总是从第一页开始，否则是拉取下一页
+        }).list(refreshing ? 1 : remotePageNumber);// 如果是拉取，则总是从第一页开始，否则是拉取下一页
     }
 
     @SuppressWarnings("ConstantConditions")
