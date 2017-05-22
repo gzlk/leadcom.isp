@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.DocumentViewHolder;
+import com.gzlk.android.isp.holder.ArchiveViewHolder;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.UserArchive;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
@@ -23,7 +23,7 @@ import java.lang.ref.SoftReference;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentViewBinder extends BaseViewBinder<UserArchive, DocumentViewHolder> {
+public class DocumentViewBinder extends BaseViewBinder<UserArchive, ArchiveViewHolder> {
 
     private SoftReference<BaseViewHolder.OnHandlerBoundDataListener<Model>> click;
 
@@ -38,14 +38,14 @@ public class DocumentViewBinder extends BaseViewBinder<UserArchive, DocumentView
     }
 
     @Override
-    public DocumentViewHolder onCreateViewHolder(@NonNull View itemView) {
-        DocumentViewHolder holder=new DocumentViewHolder(itemView,fragment.get());
+    public ArchiveViewHolder onCreateViewHolder(@NonNull View itemView) {
+        ArchiveViewHolder holder=new ArchiveViewHolder(itemView,fragment.get());
         holder.addOnHandlerBoundDataListener(click.get());
         return holder;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull DocumentViewHolder holder, @NonNull UserArchive item) {
+    protected void onBindViewHolder(@NonNull ArchiveViewHolder holder, @NonNull UserArchive item) {
         holder.showContent(item);
     }
 }

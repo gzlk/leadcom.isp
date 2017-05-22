@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.individual.DocumentDetailsFragment;
+import com.gzlk.android.isp.fragment.individual.ArchiveDetailsFragment;
 import com.gzlk.android.isp.helper.ClipboardHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
@@ -17,7 +17,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredView;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>评论ViewHolder<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/01 22:22 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -27,14 +27,14 @@ import com.hlk.hlklib.lib.view.CorneredView;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentCommentViewHolder extends BaseViewHolder {
+public class ArchiveCommentViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_document_comment_container)
     private CorneredView container;
     @ViewId(R.id.ui_holder_view_document_comment_content)
     private ExpandableTextView contentTextView;
 
-    public DocumentCommentViewHolder(final View itemView, final BaseFragment fragment) {
+    public ArchiveCommentViewHolder(final View itemView, final BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         container.setOnLongClickListener(new View.OnLongClickListener() {
@@ -54,12 +54,12 @@ public class DocumentCommentViewHolder extends BaseViewHolder {
             log("clicked: " + v);
             switch (v.getId()) {
                 case R.id.ui_tool_popup_menu_document_comment_copy:
-                    Comment comment = ((DocumentDetailsFragment) fragment()).getFromPosition(getAdapterPosition());
+                    Comment comment = ((ArchiveDetailsFragment) fragment()).getFromPosition(getAdapterPosition());
                     ClipboardHelper.copyToClipboard(v.getContext(), comment.getContent());
                     break;
                 case R.id.ui_tool_popup_menu_document_comment_delete:
                     // 删除本条评论
-                    ((DocumentDetailsFragment) fragment()).deleteComment(getAdapterPosition());
+                    ((ArchiveDetailsFragment) fragment()).deleteComment(getAdapterPosition());
                     break;
             }
         }

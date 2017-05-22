@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.holder.DocumentCommentViewHolder;
+import com.gzlk.android.isp.holder.ArchiveCommentViewHolder;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 
@@ -19,19 +19,19 @@ import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentCommentViewBinder extends BaseViewBinder<Comment, DocumentCommentViewHolder> {
+public class DocumentCommentViewBinder extends BaseViewBinder<Comment, ArchiveCommentViewHolder> {
     @Override
     protected int itemLayout() {
         return R.layout.holder_view_document_comment;
     }
 
     @Override
-    public DocumentCommentViewHolder onCreateViewHolder(@NonNull View itemView) {
-        return new DocumentCommentViewHolder(itemView, fragment.get());
+    public ArchiveCommentViewHolder onCreateViewHolder(@NonNull View itemView) {
+        return new ArchiveCommentViewHolder(itemView, fragment.get());
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull DocumentCommentViewHolder holder, @NonNull Comment item) {
+    protected void onBindViewHolder(@NonNull ArchiveCommentViewHolder holder, @NonNull Comment item) {
         holder.showContent(item);
     }
 }

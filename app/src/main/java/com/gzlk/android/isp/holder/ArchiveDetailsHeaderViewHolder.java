@@ -22,7 +22,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentDetailsHeaderViewHolder extends BaseViewHolder {
+public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_tool_view_document_details_header_title)
     private View titleView;
@@ -40,11 +40,12 @@ public class DocumentDetailsHeaderViewHolder extends BaseViewHolder {
     private SimpleClickableViewHolder sourceHolder;
     private SimpleClickableViewHolder timeHolder;
     private SimpleClickableViewHolder privacyHolder;
+    private ArchiveAdditionalViewHolder additionalViewHolder;
 
     // items
     private String[] items;
 
-    public DocumentDetailsHeaderViewHolder(View itemView, BaseFragment fragment) {
+    public ArchiveDetailsHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         initializeHolders();
@@ -66,6 +67,9 @@ public class DocumentDetailsHeaderViewHolder extends BaseViewHolder {
         if (null == privacyHolder) {
             privacyHolder = new SimpleClickableViewHolder(privacyView, fragment());
         }
+        if (null == additionalViewHolder) {
+            additionalViewHolder = new ArchiveAdditionalViewHolder(itemView, fragment());
+        }
     }
 
     public void showContent(UserArchive userArchive) {
@@ -75,5 +79,6 @@ public class DocumentDetailsHeaderViewHolder extends BaseViewHolder {
         privacyHolder.showContent(format(items[3], ""));
         contentView.setText(StringHelper.escapeFromHtml(userArchive.getContent()));
         contentView.makeExpandable();
+        additionalViewHolder.showContent(userArchive);
     }
 }

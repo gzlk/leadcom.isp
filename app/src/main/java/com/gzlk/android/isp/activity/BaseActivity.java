@@ -14,7 +14,7 @@ import android.view.WindowManager;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.LogHelper;
 
-import static com.gzlk.android.isp.fragment.base.BaseFragment.RESULT_BASE_REQUEST;
+import static com.gzlk.android.isp.fragment.base.BaseFragment.ACTIVITY_BASE_REQUEST;
 
 /**
  * <b>功能描述：</b>Activity 基类<br />
@@ -164,7 +164,7 @@ public class BaseActivity extends AppCompatActivity {
      * @param supportBackKey 是否要处理backKey事件
      */
     public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey) {
-        openActivity(fullClassName, params, RESULT_BASE_REQUEST, supportToolbar, supportBackKey);
+        openActivity(fullClassName, params, ACTIVITY_BASE_REQUEST, supportToolbar, supportBackKey);
     }
 
     /**
@@ -190,7 +190,7 @@ public class BaseActivity extends AppCompatActivity {
      * @param transparentStatusBar 是否需要状态栏透明化
      */
     public void openActivity(String fullClassName, String params, boolean supportToolbar, boolean supportBackKey, boolean transparentStatusBar) {
-        openActivity(fullClassName, params, RESULT_BASE_REQUEST, supportToolbar, supportBackKey, transparentStatusBar);
+        openActivity(fullClassName, params, ACTIVITY_BASE_REQUEST, supportToolbar, supportBackKey, transparentStatusBar);
     }
 
     /**

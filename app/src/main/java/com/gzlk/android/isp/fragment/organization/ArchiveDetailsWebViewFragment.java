@@ -8,7 +8,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.archive.GroupArchiveRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
-import com.gzlk.android.isp.fragment.individual.DocumentNewFragment;
+import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -26,10 +26,10 @@ import com.gzlk.android.isp.model.organization.GroupArchive;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveDetailsFragment extends BaseTransparentSupportFragment {
+public class ArchiveDetailsWebViewFragment extends BaseTransparentSupportFragment {
 
-    public static ArchiveDetailsFragment newInstance(String params) {
-        ArchiveDetailsFragment adf = new ArchiveDetailsFragment();
+    public static ArchiveDetailsWebViewFragment newInstance(String params) {
+        ArchiveDetailsWebViewFragment adf = new ArchiveDetailsWebViewFragment();
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, params);
         isLoaded = false;
@@ -108,7 +108,7 @@ public class ArchiveDetailsFragment extends BaseTransparentSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                openActivity(DocumentNewFragment.class.getName(), format("%d,%s", Archive.Type.ORGANIZATION, mQueryId), true, true);
+                openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.ORGANIZATION, mQueryId), true, true);
             }
         });
     }

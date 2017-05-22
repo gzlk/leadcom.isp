@@ -6,10 +6,10 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.fragment.individual.DocumentNewFragment;
+import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
-import com.gzlk.android.isp.holder.DocumentViewHolder;
+import com.gzlk.android.isp.holder.ArchiveViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -28,7 +28,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveFragment extends BaseOrganizationFragment {
+public class ArchivesFragment extends BaseOrganizationFragment {
 
     private ArchiveAdapter mAdapter;
 
@@ -96,7 +96,7 @@ public class ArchiveFragment extends BaseOrganizationFragment {
             switch (v.getId()) {
                 case R.id.ui_tool_popup_menu_organization_document_new:
                     // 新建组织档案
-                    openActivity(DocumentNewFragment.class.getName(), format("%d,,%s", Archive.Type.ORGANIZATION, mQueryId), true, true);
+                    openActivity(ArchiveNewFragment.class.getName(), format("%d,,%s", Archive.Type.ORGANIZATION, mQueryId), true, true);
                     break;
                 case R.id.ui_tool_popup_menu_organization_document_manage:
                     // 管理组织档案
@@ -129,15 +129,15 @@ public class ArchiveFragment extends BaseOrganizationFragment {
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
             GroupArchive groupArchive = mAdapter.get(index);
-            openActivity(ArchiveDetailsFragment.class.getName(), groupArchive.getId(), true, false);
+            openActivity(ArchiveDetailsWebViewFragment.class.getName(), groupArchive.getId(), true, false);
         }
     };
 
-    private class ArchiveAdapter extends RecyclerViewAdapter<DocumentViewHolder, GroupArchive> {
+    private class ArchiveAdapter extends RecyclerViewAdapter<ArchiveViewHolder, GroupArchive> {
 
         @Override
-        public DocumentViewHolder onCreateViewHolder(View itemView, int viewType) {
-            DocumentViewHolder holder = new DocumentViewHolder(itemView, ArchiveFragment.this);
+        public ArchiveViewHolder onCreateViewHolder(View itemView, int viewType) {
+            ArchiveViewHolder holder = new ArchiveViewHolder(itemView, ArchivesFragment.this);
             holder.addOnViewHolderClickListener(viewHolderClickListener);
             return holder;
         }
@@ -148,7 +148,7 @@ public class ArchiveFragment extends BaseOrganizationFragment {
         }
 
         @Override
-        public void onBindHolderOfView(DocumentViewHolder holder, int position, @Nullable GroupArchive item) {
+        public void onBindHolderOfView(ArchiveViewHolder holder, int position, @Nullable GroupArchive item) {
             holder.showContent(item);
         }
 

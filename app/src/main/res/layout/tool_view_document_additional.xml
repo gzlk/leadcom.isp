@@ -6,6 +6,7 @@
     android:padding="@dimen/ui_static_dp_5">
 
     <LinearLayout
+        android:id="@+id/ui_tool_view_document_additional_read_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -29,6 +30,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ui_tool_view_document_additional_like_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -53,6 +55,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ui_tool_view_document_additional_comment_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -77,6 +80,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ui_tool_view_document_additional_favorite_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

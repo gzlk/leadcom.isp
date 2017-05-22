@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.individual.DocumentNewFragment;
+import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.hlk.hlklib.lib.inject.Click;
@@ -97,7 +97,7 @@ public class IndividualFunctionViewHolder extends BaseViewHolder {
                 @Override
                 public void onClick(View v) {
                     // 新建个人档案
-                    openActivity(DocumentNewFragment.class.getName(), format("%d,", Archive.Type.INDIVIDUAL), true, true);
+                    openActivity(ArchiveNewFragment.class.getName(), format("%d,", Archive.Type.INDIVIDUAL), true, true);
                 }
             });
         }

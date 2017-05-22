@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
-import com.gzlk.android.isp.fragment.organization.ArchiveFragment;
+import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.LivenessFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
@@ -71,7 +71,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         if (mFragments.size() < 1) {
             mFragments.add(new StructureFragment());
             mFragments.add(ContactFragment.newInstance(format("%d,", ContactFragment.TYPE_ORG)));
-            mFragments.add(new ArchiveFragment());
+            mFragments.add(new ArchivesFragment());
             mFragments.add(new LivenessFragment());
             ((StructureFragment) mFragments.get(0)).mainFragment = mainFragment;
             ((StructureFragment) mFragments.get(0)).setOnOrganizationChangedListener(organizationChangedListener);
@@ -85,7 +85,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             selectedOrganizationId = item.getId();
             mainFragment.setTitleText(item.getName());
             ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
-            ((ArchiveFragment) mFragments.get(2)).setNewQueryId(item.getId());
+            ((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
         }
     };
 
@@ -131,7 +131,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             ((ContactFragment) mFragments.get(1)).addMemberToOrganizationFromPhoneContact(view);
         } else if (getDisplayedPage() == 2) {
             // 打开弹出菜单新建或管理组织档案
-            ((ArchiveFragment) mFragments.get(2)).openTooltipMenu(view);
+            ((ArchivesFragment) mFragments.get(2)).openTooltipMenu(view);
         }
     }
 

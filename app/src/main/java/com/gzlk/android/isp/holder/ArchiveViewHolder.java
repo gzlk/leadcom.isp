@@ -7,10 +7,11 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.individual.DocumentDetailsFragment;
+import com.gzlk.android.isp.fragment.individual.ArchiveDetailsFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.GroupArchive;
 import com.gzlk.android.isp.model.user.UserArchive;
 import com.hlk.hlklib.lib.inject.Click;
@@ -28,7 +29,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentViewHolder extends BaseViewHolder {
+public class ArchiveViewHolder extends BaseViewHolder {
 
     // header
     @ViewId(R.id.ui_tool_view_document_user_header_image)
@@ -44,35 +45,30 @@ public class DocumentViewHolder extends BaseViewHolder {
     private LinearLayout documentContentLayout;
     @ViewId(R.id.ui_holder_view_document_content_text)
     private ExpandableTextView documentContentText;
-    // additional
-    @ViewId(R.id.ui_tool_view_document_additional_read)
-    private TextView readNumber;
-    @ViewId(R.id.ui_tool_view_document_additional_like)
-    private TextView likeNumber;
-    @ViewId(R.id.ui_tool_view_document_additional_comment)
-    private TextView commentNumber;
-    @ViewId(R.id.ui_tool_view_document_additional_favorite)
-    private TextView favoriteNumber;
 
-    public DocumentViewHolder(View itemView, BaseFragment fragment) {
+    private ArchiveAdditionalViewHolder additionalViewHolder;
+
+    public ArchiveViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        additionalViewHolder = new ArchiveAdditionalViewHolder(itemView, fragment);
     }
 
     public void showContent(UserArchive userArchive) {
-        userName.setText(userArchive.getUserName());
-        createTime.setText(Utils.format(userArchive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
-        documentTitle.setText(userArchive.getTitle());
-        documentContentText.setText(StringHelper.escapeFromHtml(userArchive.getContent()));
-        documentContentText.makeExpandable();
+        showArchiveContent(userArchive);
     }
 
     public void showContent(GroupArchive groupArchive) {
-        userName.setText(groupArchive.getUserName());
-        createTime.setText(Utils.format(groupArchive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
-        documentTitle.setText(groupArchive.getTitle());
-        documentContentText.setText(StringHelper.escapeFromHtml(groupArchive.getContent()));
+        showArchiveContent(groupArchive);
+    }
+
+    private void showArchiveContent(Archive archive) {
+        userName.setText(archive.getUserName());
+        createTime.setText(Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
+        documentTitle.setText(archive.getTitle());
+        documentContentText.setText(StringHelper.escapeFromHtml(archive.getContent()));
         documentContentText.makeExpandable();
+        additionalViewHolder.showContent(archive);
     }
 
     @Click({R.id.ui_holder_view_document_content_container})
@@ -80,7 +76,7 @@ public class DocumentViewHolder extends BaseViewHolder {
         if (null != dataHandlerBoundDataListener) {
             Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != object && object instanceof UserArchive) {
-                openActivity(DocumentDetailsFragment.class.getName(), ((UserArchive) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
+                openActivity(ArchiveDetailsFragment.class.getName(), ((UserArchive) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
             }
         } else if (null != mOnViewHolderClickListener) {
             mOnViewHolderClickListener.onClick(getAdapterPosition());

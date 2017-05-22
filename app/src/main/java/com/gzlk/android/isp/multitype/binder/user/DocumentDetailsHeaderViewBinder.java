@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.holder.DocumentDetailsHeaderViewHolder;
+import com.gzlk.android.isp.holder.ArchiveDetailsHeaderViewHolder;
 import com.gzlk.android.isp.model.user.UserArchive;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 
@@ -19,7 +19,7 @@ import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentDetailsHeaderViewBinder extends BaseViewBinder<UserArchive, DocumentDetailsHeaderViewHolder> {
+public class DocumentDetailsHeaderViewBinder extends BaseViewBinder<UserArchive, ArchiveDetailsHeaderViewHolder> {
 
     @Override
     protected int itemLayout() {
@@ -27,12 +27,12 @@ public class DocumentDetailsHeaderViewBinder extends BaseViewBinder<UserArchive,
     }
 
     @Override
-    public DocumentDetailsHeaderViewHolder onCreateViewHolder(@NonNull View itemView) {
-        return new DocumentDetailsHeaderViewHolder(itemView, fragment.get());
+    public ArchiveDetailsHeaderViewHolder onCreateViewHolder(@NonNull View itemView) {
+        return new ArchiveDetailsHeaderViewHolder(itemView, fragment.get());
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull DocumentDetailsHeaderViewHolder holder, @NonNull UserArchive item) {
+    protected void onBindViewHolder(@NonNull ArchiveDetailsHeaderViewHolder holder, @NonNull UserArchive item) {
         holder.showContent(item);
     }
 }

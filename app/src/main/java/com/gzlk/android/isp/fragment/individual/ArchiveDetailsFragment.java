@@ -42,12 +42,12 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
+public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 
     private static final String TAG = "document_%s";
 
-    public static DocumentDetailsFragment newInstance(String params) {
-        DocumentDetailsFragment ddf = new DocumentDetailsFragment();
+    public static ArchiveDetailsFragment newInstance(String params) {
+        ArchiveDetailsFragment ddf = new ArchiveDetailsFragment();
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, params);
         ddf.setArguments(bundle);
@@ -135,7 +135,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
                 @Override
                 public void onClick() {
                     //openEditSelector();
-                    openActivity(DocumentNewFragment.class.getName(), format("%d,%s", Archive.Type.INDIVIDUAL, mQueryId), true, true);
+                    openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.INDIVIDUAL, mQueryId), true, true);
                 }
             });
         }
@@ -234,7 +234,7 @@ public class DocumentDetailsFragment extends BaseChatInputSupportFragment {
                 int id = view.getId();
                 switch (id) {
                     case R.id.ui_dialog_button_editor_to_change:
-                        openActivity(DocumentNewFragment.class.getName(), format("%d,%s", Archive.Type.INDIVIDUAL, mQueryId), true, true);
+                        openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.INDIVIDUAL, mQueryId), true, true);
                         break;
                     case R.id.ui_dialog_button_editor_to_delete:
                         warningDeleteDocument();

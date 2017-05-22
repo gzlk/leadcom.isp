@@ -55,7 +55,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_TYPE = "dnf_type";
     private static final String PARAM_GROUP = "dnf_group";
@@ -64,8 +64,8 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_TITLE = "dnf_title";
     private static final String PARAM_SOURCE = "dnf_source";
 
-    public static DocumentNewFragment newInstance(String params) {
-        DocumentNewFragment dnf = new DocumentNewFragment();
+    public static ArchiveNewFragment newInstance(String params) {
+        ArchiveNewFragment dnf = new ArchiveNewFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
@@ -531,7 +531,7 @@ public class DocumentNewFragment extends BaseSwipeRefreshSupportFragment {
     private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, String> {
         @Override
         public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
-            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, DocumentNewFragment.this);
+            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveNewFragment.this);
             holder.addOnViewHolderClickListener(attachmentViewHolderClickListener);
             return holder;
         }
