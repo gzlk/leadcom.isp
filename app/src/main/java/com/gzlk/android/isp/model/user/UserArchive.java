@@ -18,17 +18,4 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Archive.Table.USER_ARCHIVE)
 public class UserArchive extends Archive {
 
-    /**
-     * 个人档案类型
-     */
-    public static class Type {
-        /**
-         * 文本
-         */
-        public static final String TEXT = "1";
-        /**
-         * 连接引用
-         */
-        public static final String LINK = "2";
-    }
 }

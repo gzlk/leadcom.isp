@@ -9,6 +9,8 @@ import android.os.StatFs;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.gzlk.android.isp.application.App;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -66,7 +68,7 @@ class ExternalStorage {
 
     private void loadStorageState(Context context) {
         String externalPath = Environment.getExternalStorageDirectory().getPath();
-        this.sdkStorageRoot = externalPath + "/" + context.getPackageName() + "/";
+        this.sdkStorageRoot = externalPath + "/" + App.CACHE_DIR + "/";
     }
 
 	private void createSubFolders() {

@@ -7,7 +7,7 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
-import com.gzlk.android.isp.model.user.UserArchive;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -72,7 +72,7 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
         }
     }
 
-    public void showContent(UserArchive userArchive) {
+    public void showContent(Archive userArchive) {
         titleHolder.showContent(format(items[0], userArchive.getTitle()));
         sourceHolder.showContent(format(items[1], userArchive.getUserName()));
         timeHolder.showContent(format(items[2], Utils.format(userArchive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));

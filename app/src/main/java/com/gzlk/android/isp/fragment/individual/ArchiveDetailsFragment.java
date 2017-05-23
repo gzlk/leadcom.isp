@@ -5,10 +5,10 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.archive.ArchiveRequest;
+import com.gzlk.android.isp.api.archive.CommentRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.archive.UserArchiveCommentRequest;
-import com.gzlk.android.isp.api.archive.UserArchiveRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseChatInputSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -18,11 +18,10 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
-import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
-import com.gzlk.android.isp.model.user.UserArchive;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.user.DocumentCommentViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.DocumentDetailsHeaderViewBinder;
@@ -109,7 +108,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         if (null == mAdapter) {
             addOnInputCompleteListener(onInputCompleteListener);
             mAdapter = new DocumentDetailsAdapter();
-            mAdapter.register(UserArchive.class, new DocumentDetailsHeaderViewBinder().setFragment(this));
+            mAdapter.register(Archive.class, new DocumentDetailsHeaderViewBinder().setFragment(this));
             mAdapter.register(Comment.class, new DocumentCommentViewBinder().setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
             loadingDocument();
@@ -117,7 +116,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void loadingDocument() {
-        UserArchive userArchive = new Dao<>(UserArchive.class).query(mQueryId);
+        Archive userArchive = new Dao<>(Archive.class).query(mQueryId);
         if (null == userArchive) {
             // 档案不存在则从服务器上拉取
             fetchingDocument();
@@ -127,7 +126,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         }
     }
 
-    private void resetRightTitleButton(@NonNull UserArchive userArchive) {
+    private void resetRightTitleButton(@NonNull Archive userArchive) {
         if (userArchive.getUserId().equals(Cache.cache().userId)) {
             //setRightIcon(R.string.ui_icon_more);
             setRightText(R.string.ui_base_text_edit);
@@ -135,7 +134,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 @Override
                 public void onClick() {
                     //openEditSelector();
-                    openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.INDIVIDUAL, mQueryId), true, true);
+                    openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.USER, mQueryId), true, true);
                 }
             });
         }
@@ -153,7 +152,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void fetchingRemote() {
-        UserArchiveCommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
+        CommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
             @SuppressWarnings("unchecked")
             @Override
             public void onResponse(List<Comment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -168,14 +167,13 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                         remotePageNumber += 1;
                     }
                     if (list.size() > 0) {
-                        new Dao<>(Comment.class).save(list);
                         mAdapter.update((List<Model>) (Object) list);
                     }
                 }
                 stopRefreshing();
                 smoothScrollToBottom(mAdapter.getItemCount() - 1);
             }
-        }).list(mQueryId, PAGE_SIZE, remotePageNumber);
+        }).list(Comment.Type.USER, mQueryId, remotePageNumber);
     }
 
     // 加载本地缓存
@@ -234,7 +232,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 int id = view.getId();
                 switch (id) {
                     case R.id.ui_dialog_button_editor_to_change:
-                        openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.INDIVIDUAL, mQueryId), true, true);
+                        openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.USER, mQueryId), true, true);
                         break;
                     case R.id.ui_dialog_button_editor_to_delete:
                         warningDeleteDocument();
@@ -256,14 +254,14 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void deleteDocument() {
-        UserArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<UserArchive>() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(UserArchive userArchive, boolean success, String message) {
+            public void onResponse(Archive userArchive, boolean success, String message) {
                 super.onResponse(userArchive, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(message);
-                    Dao<UserArchive> dao = new Dao<>(UserArchive.class);
-                    UserArchive doc = dao.query(mQueryId);
+                    Dao<Archive> dao = new Dao<>(Archive.class);
+                    Archive doc = dao.query(mQueryId);
                     if (null != doc) {
                         doc.setLocalDeleted(true);
                         dao.save(doc);
@@ -272,7 +270,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     finish();
                 }
             }
-        }).delete(mQueryId);
+        }).delete(Archive.Type.USER, mQueryId);
     }
 
     public Comment getFromPosition(int position) {
@@ -281,7 +279,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 
     public void deleteComment(final int position) {
         final Comment cmt = getFromPosition(position);
-        UserArchiveCommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
+        CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
                 super.onResponse(comment, success, message);
@@ -291,23 +289,23 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     mAdapter.remove(position);
                 }
             }
-        }).delete(mQueryId, cmt.getId());
+        }).delete(Comment.Type.USER, mQueryId, cmt.getId());
     }
 
     private void fetchingDocument() {
-        UserArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<UserArchive>() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(UserArchive userArchive, boolean success, String message) {
+            public void onResponse(Archive userArchive, boolean success, String message) {
                 super.onResponse(userArchive, success, message);
                 if (success && null != message) {
-                    new Dao<>(UserArchive.class).save(userArchive);
+                    new Dao<>(Archive.class).save(userArchive);
                     mAdapter.update(userArchive);
                     resetRightTitleButton(userArchive);
                 } else {
                     closeWithWarning(R.string.ui_text_document_details_not_exists);
                 }
             }
-        }).find(mQueryId);
+        }).find(Archive.Type.USER, mQueryId, true);
     }
 
     private OnInputCompleteListener onInputCompleteListener = new OnInputCompleteListener() {
@@ -319,7 +317,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void tryComment(String text) {
-        UserArchiveCommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
+        CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
                 super.onResponse(comment, success, message);
@@ -332,7 +330,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     fetchingRemote();
                 }
             }
-        }).add(mQueryId, text);
+        }).add(Comment.Type.USER, mQueryId, text);
     }
 
     private class DocumentDetailsAdapter extends BaseMultiTypeAdapter<Model> {

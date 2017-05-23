@@ -24,13 +24,9 @@ import org.json.JSONObject;
  */
 
 public class SquadRequest extends Request<Squad> {
-    private static SquadRequest request;
 
     public static SquadRequest request() {
-        if (null == request) {
-            request = new SquadRequest();
-        }
-        return request;
+        return new SquadRequest();
     }
 
     private static class SingleSquad extends Output<Squad> {
@@ -44,6 +40,11 @@ public class SquadRequest extends Request<Squad> {
     @Override
     protected String url(String action) {
         return SQUAD + action;
+    }
+
+    @Override
+    protected Class<Squad> getType() {
+        return Squad.class;
     }
 
     @Override

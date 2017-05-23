@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.http.request.param.HttpMethods;
@@ -24,27 +25,29 @@ import org.json.JSONObject;
 
 public class SystemRequest extends Request<User> {
 
-    private static SystemRequest request;
-
     public static SystemRequest request() {
-        if (null == request) {
-            request = new SystemRequest();
-        }
-        return request;
+        return new SystemRequest();
     }
 
-    static class Register extends Output<User> {
+    private static class Register extends Output<User> {
     }
 
     private static final String SYSTEM = "/system";
     private static final String SIGN_UP = SYSTEM + "/regist";
     private static final String SIGN_IN = SYSTEM + "/login";
+    private static final String SYNC = SYSTEM + "/sync";
     private static final String CAPTCHA = SYSTEM + "/getCaptchaTo";
     private static final String PASSWORD = SYSTEM + "/retsetPwd";
+    private static final String INVITE_REGISTER = SYSTEM + "/sms/invToReg";
 
     @Override
     protected String url(String action) {
         return null;
+    }
+
+    @Override
+    protected Class<User> getType() {
+        return User.class;
     }
 
     @Override
@@ -96,6 +99,13 @@ public class SystemRequest extends Request<User> {
     }
 
     /**
+     * 同步用户信息
+     */
+    public void sync() {
+        httpRequest(getRequest(Register.class, format("%s?accessToken=%s", SYNC, Cache.cache().accessToken), "", HttpMethods.Post));
+    }
+
+    /**
      * 获取验证码
      *
      * @param phone         手机号码
@@ -110,6 +120,7 @@ public class SystemRequest extends Request<User> {
      * 重置密码
      */
     public void resetPassword(String loginId, @NonNull String phone, @NonNull String captcha, @NonNull String password) {
+        // {loginId:"",password:"",phone:"",captcha:""}
         JSONObject object = new JSONObject();
         try {
             object.put("phone", phone)
@@ -122,5 +133,22 @@ public class SystemRequest extends Request<User> {
         log(object.toString());
 
         httpRequest(getRequest(Register.class, PASSWORD, object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 邀请手机通讯录好友注册
+     */
+    public void inviteRegister(@NonNull String phone, @NonNull String groupId) {
+        // {phone:"",accessToken:"",groupId:""}
+        JSONObject object = new JSONObject();
+        try {
+            object.put("phone", phone)
+                    .put("groupId", groupId)
+                    .put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(Register.class, INVITE_REGISTER, object.toString(), HttpMethods.Post));
     }
 }

@@ -1,0 +1,152 @@
+package com.gzlk.android.isp.api.archive;
+
+import android.support.annotation.NonNull;
+
+import com.gzlk.android.isp.api.Output;
+import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.Request;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.archive.Comment;
+import com.litesuits.http.request.param.HttpMethods;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * <b>功能描述：</b>评论相关api<br />
+ * <b>创建作者：</b>Hsiang Leekwok <br />
+ * <b>创建时间：</b>2017/05/01 20:50 <br />
+ * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
+ * <b>最新版本：</b>Version: 1.0.0 <br />
+ * <b>修改时间：</b>2017/05/01 20:50 <br />
+ * <b>修改人员：</b><br />
+ * <b>修改备注：</b><br />
+ */
+
+public class CommentRequest extends Request<Comment> {
+
+    public static CommentRequest request() {
+        return new CommentRequest();
+    }
+
+    private static class SingleComment extends Output<Comment> {
+    }
+
+    private static class MultiComment extends Query<Comment> {
+    }
+
+    private static final String USER = "/user/userDocCmt";
+    private static final String GROUP = "/group/groDocCmt";
+    private static final String MOMENT = "/user/momentCmt";
+
+    @Override
+    protected String url(String action) {
+        return USER + action;
+    }
+
+    private String url(int type, String action) {
+        String api = USER;
+        switch (type) {
+            case Comment.Type.GROUP:
+                api = GROUP;
+                break;
+            case Comment.Type.MOMENT:
+                api = MOMENT;
+                break;
+        }
+        return format("%s%s", api, action);
+    }
+
+    static String getArchiveId(int type) {
+        switch (type) {
+            case Comment.Type.GROUP:
+                return "groDocId";
+            case Comment.Type.MOMENT:
+                return "momentId";
+            default:
+                return "userDocId";
+        }
+    }
+
+    private static String getCommentId(int type) {
+        switch (type) {
+            case Comment.Type.GROUP:
+                return "groDocCmtId";
+            case Comment.Type.MOMENT:
+                return "momentCmtId";
+            default:
+                return "userDocCmtId";
+        }
+    }
+
+    @Override
+    protected Class<Comment> getType() {
+        return Comment.class;
+    }
+
+    @Override
+    public CommentRequest setOnSingleRequestListener(OnSingleRequestListener<Comment> listener) {
+        onSingleRequestListener = listener;
+        return this;
+    }
+
+    @Override
+    public CommentRequest setOnMultipleRequestListener(OnMultipleRequestListener<Comment> listListener) {
+        onMultipleRequestListener = listListener;
+        return this;
+    }
+
+    /**
+     * 新增档案的评论
+     */
+    public void add(int type, String archiveId, String content) {
+        // {userDocId,content,accessToken}
+        // {groDocId,content,accessToken}
+        // {momentId,content,accessToken}
+        JSONObject object = new JSONObject();
+        try {
+            object.put(getArchiveId(type), archiveId)
+                    .put("content", checkNull(content))
+                    .put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleComment.class, url(type, ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 删除评论
+     */
+    public void delete(int type, String archiveId, String commentId) {
+        // userDocId,userDocCmtId
+        // groDocId,groDocCmtId
+        // momentId,momentCmtId
+        String params = format("%s=%s&%s=%s", getArchiveId(type), archiveId, getCommentId(type), commentId);
+        httpRequest(getRequest(SingleComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Post));
+    }
+
+    /**
+     * 查询单个档案的单个评论
+     */
+    public void find(int type, @NonNull String commentId) {
+        // userDocCmtId
+        // groDocCmtId
+        // momentCmtId
+        httpRequest(getRequest(SingleComment.class, format("%s?%s=%s", url(type, FIND), getCommentId(type), commentId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查找档案的评论列表
+     */
+    public void list(int type, @NonNull String archiveId, int pageNumber) {
+        // userDocId,pageSize,pageNumber
+        // groDocId
+        // momentId
+        httpRequest(getRequest(MultiComment.class,
+                format("%s?%s=%s&pageSize=%d&pageNumber=%d",
+                        url(type, LIST), getArchiveId(type), archiveId, PAGE_SIZE, pageNumber),
+                "", HttpMethods.Get));
+    }
+}

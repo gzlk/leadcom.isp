@@ -14,9 +14,8 @@ import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.archive.GroupArchiveRequest;
-import com.gzlk.android.isp.api.archive.UserArchiveRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -29,9 +28,6 @@ import com.gzlk.android.isp.holder.SimpleInputableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
-import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.organization.GroupArchive;
-import com.gzlk.android.isp.model.user.UserArchive;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -81,7 +77,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        archiveType = bundle.getInt(PARAM_TYPE, Archive.Type.INDIVIDUAL);
+        archiveType = bundle.getInt(PARAM_TYPE, Archive.Type.USER);
         archiveGroup = bundle.getString(PARAM_GROUP, "");
         privacy = bundle.getString(PARAM_PRIVACY, "{}");
         title = bundle.getString(PARAM_TITLE, "");
@@ -157,7 +153,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                 tryCreateDocument();
             }
         });
-        fetchingDocument();
+        loadingArchive();
     }
 
     private void tryCreateDocument() {
@@ -176,75 +172,71 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void createDocument(String title, String content) {
-        if (archiveType == Archive.Type.INDIVIDUAL) {
-            createIndividualDocument(title, content);
+        if (archiveType == Archive.Type.USER) {
+            createUserArchive(title, content);
         } else {
             createOrganizationArchive(title, content);
         }
     }
 
-    private void createIndividualDocument(String title, String content) {
-        UserArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<UserArchive>() {
+    private void createUserArchive(String title, String content) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(UserArchive userArchive, boolean success, String message) {
-                super.onResponse(userArchive, success, message);
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
                 if (success) {
-                    if (null != userArchive && !StringHelper.isEmpty(userArchive.getId())) {
-                        userArchive.resetAdditional(userArchive.getAddition());
-                        new Dao<>(UserArchive.class).save(userArchive);
-                    }
                     ToastHelper.make().showMsg(message);
                     finish();
                 }
             }
-        }).add(UserArchive.Type.TEXT, title, content, "", null, null, null);
+        }).add(Archive.ArchiveContentType.TEXT, title, content, null, null, null, null);
     }
 
     private void createOrganizationArchive(String title, String content) {
-        GroupArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<GroupArchive>() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(GroupArchive groupArchive, boolean success, String message) {
-                super.onResponse(groupArchive, success, message);
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
                 if (success) {
-                    if (null != groupArchive && !StringHelper.isEmpty(groupArchive.getId())) {
-                        groupArchive.resetAdditional(groupArchive.getAddition());
-                        new Dao<>(GroupArchive.class).save(groupArchive);
-                    }
                     ToastHelper.make().showMsg(message);
                     finish();
                 }
             }
-        }).add(archiveGroup, sourceHolder.getValue(), "1", title, content, "", null, null, null);
+        }).add(archiveGroup, sourceHolder.getValue(), Archive.ArchiveContentType.TEXT, title, content, null, null, null, null);
     }
 
     private void editDocument(String title, String content) {
-        if (archiveType == Archive.Type.INDIVIDUAL) {
-            editIndividualDocument(title, content);
+        if (archiveType == Archive.Type.USER) {
+            editUserArchive(title, content);
         } else {
             editOrganizationArchive(title, content);
         }
     }
 
-    private void editIndividualDocument(String title, String content) {
-        UserArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<UserArchive>() {
+    private void editUserArchive(String title, String content) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(UserArchive userArchive, boolean success, String message) {
-                super.onResponse(userArchive, success, message);
-                if (success && null != message) {
-                    new Dao<>(UserArchive.class).save(userArchive);
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(message);
                     finish();
                 }
             }
-        }).update(mQueryId, UserArchive.Type.TEXT, title, content, "", null, null, null);
+        }).update(mQueryId, Archive.Type.USER, title, content, "", null, null, null);
     }
 
     private void editOrganizationArchive(String title, String content) {
-        GroupArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<GroupArchive>() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(GroupArchive groupArchive, boolean success, String message) {
-                super.onResponse(groupArchive, success, message);
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(message);
+                    finish();
+                }
             }
-        }).update(mQueryId, title, content, "", null, null, null);
+        }).update(mQueryId, Archive.Type.GROUP, title, content, "", null, null, null);
     }
 
     @Override
@@ -277,33 +269,29 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
-    private void fetchingDocument() {
+    private void loadingArchive() {
         if (StringHelper.isEmpty(mQueryId)) {
+            // 空的queryId表示要新建档案
             initializeHolders(null);
         } else {
-            UserArchive userArchive = !StringHelper.isEmpty(mQueryId) ? new Dao<>(UserArchive.class).query(mQueryId) : null;
-            if (null == userArchive) {
-                // 本地查找不到档案时，从服务器上拉取
-                fetchingRemoteDocument();
-            } else {
-                initializeHolders(userArchive);
-            }
+            fetchingArchive();
         }
     }
 
-    private void fetchingRemoteDocument() {
-        UserArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<UserArchive>() {
+    private void fetchingArchive() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(UserArchive userArchive, boolean success, String message) {
-                super.onResponse(userArchive, success, message);
-                if (success && null != userArchive) {
-                    new Dao<>(UserArchive.class).save(userArchive);
-                    initializeHolders(userArchive);
-                } else {
-                    warningEditBlank();
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    if (null != archive) {
+                        initializeHolders(archive);
+                    } else {
+                        warningEditBlank();
+                    }
                 }
             }
-        }).find(mQueryId);
+        }).find(archiveType, mQueryId, true);
     }
 
     private void warningEditBlank() {
@@ -326,8 +314,8 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
 
     private String create_date = "";
 
-    private void initializeHolders(UserArchive userArchive) {
-        create_date = null == userArchive ? "" : userArchive.getCreateDate();
+    private void initializeHolders(Archive archive) {
+        create_date = null == archive ? "" : archive.getCreateDate();
         if (null == strings) {
             strings = StringHelper.getStringArray(R.array.ui_individual_new_document);
         }
@@ -336,7 +324,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             titleHolder = new SimpleInputableViewHolder(titleInputView, this);
         }
         if (StringHelper.isEmpty(title)) {
-            title = null == userArchive ? "" : userArchive.getTitle();
+            title = null == archive ? "" : archive.getTitle();
         }
         titleHolder.showContent(format(strings[0], title));
         titleHolder.focusEnd();
@@ -346,7 +334,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             sourceHolder = new SimpleInputableViewHolder(sourceView, this);
         }
         if (StringHelper.isEmpty(source)) {
-            source = null == userArchive ? "" : userArchive.getSource();
+            source = null == archive ? "" : archive.getSource();
         }
         sourceHolder.showContent(format(strings[1], source));
 
@@ -355,7 +343,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
             timeHolder.addOnViewHolderClickListener(viewHolderClickListener);
         }
-        showCreateDate(null == userArchive ? new Date() : Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), userArchive.getCreateDate()));
+        showCreateDate(null == archive ? new Date() : Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), archive.getCreateDate()));
 
         // 隐私
         if (null == securityHolder) {
@@ -365,7 +353,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         securityHolder.showContent(format(strings[3], getPrivacy()));
 
         // 内容
-        contentView.setValue(null == userArchive ? "" : StringHelper.escapeFromHtml(userArchive.getContent()));
+        contentView.setValue(null == archive ? "" : StringHelper.escapeFromHtml(archive.getContent()));
 
         if (null == filePickerDialog) {
             properties = new DialogProperties();

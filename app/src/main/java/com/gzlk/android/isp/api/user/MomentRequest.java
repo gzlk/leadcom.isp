@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>提供说说、动态相关api的集合<br />
@@ -32,19 +33,14 @@ import java.util.ArrayList;
 
 public class MomentRequest extends Request<Moment> {
 
-    private static MomentRequest request;
-
     public static MomentRequest request() {
-        if (null == request) {
-            request = new MomentRequest();
-        }
-        return request;
+        return new MomentRequest();
     }
 
-    static class SingleMoment extends Output<Moment> {
+    private static class SingleMoment extends Output<Moment> {
     }
 
-    static class MultiMoment extends Query<Moment> {
+    private static class MultiMoment extends Query<Moment> {
     }
 
     private static final String MOMENT = "/user/moment";
@@ -60,6 +56,11 @@ public class MomentRequest extends Request<Moment> {
     }
 
     @Override
+    protected Class<Moment> getType() {
+        return Moment.class;
+    }
+
+    @Override
     public MomentRequest setOnSingleRequestListener(OnSingleRequestListener<Moment> listener) {
         onSingleRequestListener = listener;
         return this;
@@ -69,6 +70,24 @@ public class MomentRequest extends Request<Moment> {
     public MomentRequest setOnMultipleRequestListener(OnMultipleRequestListener<Moment> listListener) {
         onMultipleRequestListener = listListener;
         return this;
+    }
+
+    @Override
+    protected void save(List<Moment> list) {
+        if (null != list && list.size() > 0) {
+            for (Moment moment : list) {
+                moment.resetAdditional(moment.getAddition());
+            }
+        }
+        super.save(list);
+    }
+
+    @Override
+    protected void save(Moment moment) {
+        if (null != moment) {
+            moment.resetAdditional(moment.getAddition());
+        }
+        super.save(moment);
     }
 
     /**

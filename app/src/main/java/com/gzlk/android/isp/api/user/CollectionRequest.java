@@ -26,19 +26,15 @@ import org.json.JSONObject;
  */
 
 public class CollectionRequest extends Request<Collection> {
-    private static CollectionRequest request;
 
     public static CollectionRequest request() {
-        if (null == request) {
-            request = new CollectionRequest();
-        }
-        return request;
+        return new CollectionRequest();
     }
 
-    static class SingleCollection extends Output<Collection> {
+    private static class SingleCollection extends Output<Collection> {
     }
 
-    static class MultipleCollection extends Query<Collection> {
+    private static class MultipleCollection extends Query<Collection> {
     }
 
     private static final String COL = "/user/userCol";
@@ -46,6 +42,11 @@ public class CollectionRequest extends Request<Collection> {
     @Override
     protected String url(String action) {
         return COL + action;
+    }
+
+    @Override
+    protected Class<Collection> getType() {
+        return Collection.class;
     }
 
     @Override
@@ -79,6 +80,7 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     public void delete(String collectionId) {
+        // colId
         httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Post));
     }
 
@@ -98,15 +100,18 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     public void find(String collectionId) {
+        // colId
         httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(FIND), collectionId), "", HttpMethods.Get));
     }
 
-    public void list(int pageSize, int pageNumber) {
+    public void list(String accessToken, int pageNumber) {
+        // accessToken
         httpRequest(getRequest(MultipleCollection.class,
-                format("%s?pageSize=%d&pageNumber=%d&accessToken=%s", url(LIST), pageSize, pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
+                format("%s?pageSize=%d&pageNumber=%d&accessToken=%s", url(LIST), PAGE_SIZE, pageNumber, accessToken), "", HttpMethods.Get));
     }
 
     public void search(String accessToken, String info) {
+        // info,accessToken
         httpRequest(getRequest(MultipleCollection.class, format("%s?info=%s&accessToken=%s", url(SEARCH), accessToken, info), "", HttpMethods.Get));
     }
 }

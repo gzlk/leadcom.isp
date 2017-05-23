@@ -199,6 +199,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         Iterator<T> iterator = innerList.iterator();
         int index = 0;
         while (iterator.hasNext()) {
+            // 移除旧列表里不在list中的记录
             T t = iterator.next();
             if (list.indexOf(t) < 0) {
                 iterator.remove();
@@ -206,7 +207,9 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
             }
             index++;
         }
-        add(list, false);
+        for (T t : list) {
+            update(t);
+        }
     }
 
     @Override

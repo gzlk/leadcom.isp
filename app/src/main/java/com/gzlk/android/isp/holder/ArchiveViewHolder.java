@@ -12,8 +12,6 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.archive.Archive;
-import com.gzlk.android.isp.model.organization.GroupArchive;
-import com.gzlk.android.isp.model.user.UserArchive;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -54,15 +52,7 @@ public class ArchiveViewHolder extends BaseViewHolder {
         additionalViewHolder = new ArchiveAdditionalViewHolder(itemView, fragment);
     }
 
-    public void showContent(UserArchive userArchive) {
-        showArchiveContent(userArchive);
-    }
-
-    public void showContent(GroupArchive groupArchive) {
-        showArchiveContent(groupArchive);
-    }
-
-    private void showArchiveContent(Archive archive) {
+    public void showContent(Archive archive) {
         userName.setText(archive.getUserName());
         createTime.setText(Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
         documentTitle.setText(archive.getTitle());
@@ -75,8 +65,8 @@ public class ArchiveViewHolder extends BaseViewHolder {
     private void elementClick(View view) {
         if (null != dataHandlerBoundDataListener) {
             Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
-            if (null != object && object instanceof UserArchive) {
-                openActivity(ArchiveDetailsFragment.class.getName(), ((UserArchive) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
+            if (null != object && object instanceof Archive) {
+                openActivity(ArchiveDetailsFragment.class.getName(), ((Archive) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
             }
         } else if (null != mOnViewHolderClickListener) {
             mOnViewHolderClickListener.onClick(getAdapterPosition());

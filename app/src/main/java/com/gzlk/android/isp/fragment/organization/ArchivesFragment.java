@@ -3,20 +3,17 @@ package com.gzlk.android.isp.fragment.organization;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.archive.GroupArchiveRequest;
+import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.ArchiveViewHolder;
-import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.Archive;
-import com.gzlk.android.isp.model.organization.GroupArchive;
 import com.gzlk.android.isp.model.organization.Organization;
 
 import java.util.List;
@@ -55,9 +52,10 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     @Override
     public void doingInResume() {
         if (!StringHelper.isEmpty(mQueryId)) {
-            //if (isNeedRefresh()) {
+            if (isNeedRefresh()) {
+                fetchingRemoteArchives();
+            }
             loadingLocalArchive();
-            //}
         }
     }
 
@@ -100,7 +98,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
             switch (v.getId()) {
                 case R.id.ui_tool_popup_menu_organization_document_new:
                     // 新建组织档案
-                    openActivity(ArchiveNewFragment.class.getName(), format("%d,,%s", Archive.Type.ORGANIZATION, mQueryId), true, true);
+                    openActivity(ArchiveNewFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), true, true);
                     break;
                 case R.id.ui_tool_popup_menu_organization_document_manage:
                     // 管理组织档案
@@ -110,17 +108,14 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     };
 
     private void fetchingRemoteArchives() {
-        GroupArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<GroupArchive>() {
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
-            public void onResponse(List<GroupArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     if (null != list) {
-                        for (GroupArchive archive : list) {
-                            archive.resetAdditional(archive.getAddition());
-                        }
-                        dao.save(list);
-                        mAdapter.add(list, false);
+                        mAdapter.update(list);
+                        mAdapter.sort();
                     }
                 }
                 stopRefreshing();
@@ -128,16 +123,17 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         }).list(mQueryId, remotePageNumber);
     }
 
-    private Dao<GroupArchive> dao;
+    private Dao<Archive> dao;
 
     private void loadingLocalArchive() {
         initializeAdapter();
         if (null == dao) {
-            dao = new Dao<>(GroupArchive.class);
+            dao = new Dao<>(Archive.class);
         }
-        List<GroupArchive> temp = dao.query(Organization.Field.GroupId, mQueryId);
+        List<Archive> temp = dao.query(Organization.Field.GroupId, mQueryId);
         if (null != temp) {
-            mAdapter.add(temp, false);
+            mAdapter.update(temp);
+            mAdapter.sort();
         }
     }
 
@@ -154,12 +150,12 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
-            GroupArchive groupArchive = mAdapter.get(index);
+            Archive groupArchive = mAdapter.get(index);
             openActivity(ArchiveDetailsWebViewFragment.class.getName(), groupArchive.getId(), true, false);
         }
     };
 
-    private class ArchiveAdapter extends RecyclerViewAdapter<ArchiveViewHolder, GroupArchive> {
+    private class ArchiveAdapter extends RecyclerViewAdapter<ArchiveViewHolder, Archive> {
 
         @Override
         public ArchiveViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -174,13 +170,13 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         }
 
         @Override
-        public void onBindHolderOfView(ArchiveViewHolder holder, int position, @Nullable GroupArchive item) {
+        public void onBindHolderOfView(ArchiveViewHolder holder, int position, @Nullable Archive item) {
             holder.showContent(item);
         }
 
         @Override
-        protected int comparator(GroupArchive item1, GroupArchive item2) {
-            return 0;
+        protected int comparator(Archive item1, Archive item2) {
+            return -item1.getCreateDate().compareTo(item2.getCreateDate());
         }
     }
 }

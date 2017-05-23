@@ -1,7 +1,6 @@
 package com.gzlk.android.isp.model.organization;
 
 import com.gzlk.android.isp.model.archive.Archive;
-import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
@@ -17,16 +16,5 @@ import com.litesuits.orm.db.annotation.Table;
 
 @Table(Archive.Table.GROUP_ARCHIVE)
 public class GroupArchive extends Archive {
-
-    @Column(Organization.Field.GroupId)
-    private String groupId;            //群体ID
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
 
 }

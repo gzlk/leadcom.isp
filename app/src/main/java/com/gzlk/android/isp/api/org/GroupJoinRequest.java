@@ -26,7 +26,7 @@ import java.lang.reflect.Type;
 
 public class GroupJoinRequest extends Request<JoinGroup> {
 
-    static class SingleJoin extends Output<JoinGroup> {
+    private static class SingleJoin extends Output<JoinGroup> {
     }
 
     // 主动加入组织
@@ -35,6 +35,11 @@ public class GroupJoinRequest extends Request<JoinGroup> {
     @Override
     protected String url(String action) {
         return format("%s%s", JOIN, action);
+    }
+
+    @Override
+    protected Class<JoinGroup> getType() {
+        return JoinGroup.class;
     }
 
     @Override

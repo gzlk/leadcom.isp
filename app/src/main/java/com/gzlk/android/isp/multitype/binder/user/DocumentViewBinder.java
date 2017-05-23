@@ -7,7 +7,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.ArchiveViewHolder;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.user.UserArchive;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 
 import java.lang.ref.SoftReference;
@@ -23,7 +23,7 @@ import java.lang.ref.SoftReference;
  * <b>修改备注：</b><br />
  */
 
-public class DocumentViewBinder extends BaseViewBinder<UserArchive, ArchiveViewHolder> {
+public class DocumentViewBinder extends BaseViewBinder<Archive, ArchiveViewHolder> {
 
     private SoftReference<BaseViewHolder.OnHandlerBoundDataListener<Model>> click;
 
@@ -45,7 +45,7 @@ public class DocumentViewBinder extends BaseViewBinder<UserArchive, ArchiveViewH
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull ArchiveViewHolder holder, @NonNull UserArchive item) {
+    protected void onBindViewHolder(@NonNull ArchiveViewHolder holder, @NonNull Archive item) {
         holder.showContent(item);
     }
 }

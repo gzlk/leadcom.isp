@@ -35,10 +35,10 @@ public class UserRequest extends Request<User> {
         return new UserRequest();
     }
 
-    static class SingleUser extends Output<User> {
+    private static class SingleUser extends Output<User> {
     }
 
-    static class MultipleUser extends Query<User> {
+    private static class MultipleUser extends Query<User> {
     }
 
     private static final String USER = "/user/user";
@@ -46,6 +46,11 @@ public class UserRequest extends Request<User> {
     @Override
     protected String url(String action) {
         return USER + action;
+    }
+
+    @Override
+    protected Class<User> getType() {
+        return User.class;
     }
 
     @Override

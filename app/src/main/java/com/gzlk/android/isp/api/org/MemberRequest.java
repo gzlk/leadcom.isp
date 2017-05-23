@@ -41,6 +41,11 @@ public class MemberRequest extends Request<Member> {
     }
 
     @Override
+    protected Class<Member> getType() {
+        return Member.class;
+    }
+
+    @Override
     public MemberRequest setOnSingleRequestListener(OnSingleRequestListener<Member> listener) {
         onSingleRequestListener = listener;
         return this;

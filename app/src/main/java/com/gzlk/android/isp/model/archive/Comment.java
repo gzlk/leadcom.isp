@@ -18,6 +18,24 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Archive.Table.COMMENT)
 public class Comment extends ArchiveInfo {
 
+    /**
+     * 评论类别
+     */
+    public static class Type {
+        /**
+         * 用户档案评论
+         */
+        public static final int USER = 1;
+        /**
+         * 组织档案评论
+         */
+        public static final int GROUP = 2;
+        /**
+         * 用户说说评论
+         */
+        public static final int MOMENT = 3;
+    }
+
     @Column(Archive.Field.Content)
     private String content;     //组织档案内容
     @Column(Model.Field.UserId)

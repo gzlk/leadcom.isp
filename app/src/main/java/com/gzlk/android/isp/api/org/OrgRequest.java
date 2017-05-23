@@ -29,10 +29,10 @@ public class OrgRequest extends Request<Organization> {
         return new OrgRequest();
     }
 
-    static class SingleGroup extends Output<Organization> {
+    private static class SingleGroup extends Output<Organization> {
     }
 
-    static class MultipleGroup extends Query<Organization> {
+    private static class MultipleGroup extends Query<Organization> {
     }
 
     private static final String ORG = "/group/group";
@@ -42,6 +42,11 @@ public class OrgRequest extends Request<Organization> {
     @Override
     protected String url(String action) {
         return ORG + action;
+    }
+
+    @Override
+    protected Class<Organization> getType() {
+        return Organization.class;
     }
 
     @Override

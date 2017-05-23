@@ -115,7 +115,7 @@ public class ToastHelper {
         iconView.setText(icon);
         iconView.setVisibility(null == icon ? View.GONE : View.VISIBLE);
         Toast toast = new Toast(context);
-        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(view);
         toast.show();
         LogHelper.log(TAG, msg);

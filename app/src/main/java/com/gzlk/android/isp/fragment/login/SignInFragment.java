@@ -73,12 +73,13 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 accountText.focusEnd();
                 signInButton.setEnabled(false);
                 signInButton.setText(R.string.ui_text_sign_in_still_processing);
+                // 同步用户信息，如果同步失败则需要重新登录
+                syncUserInfo();
                 // 如果网易云需要重新登录
-                StatusCode code = NIMClient.getStatus();
+                //StatusCode code = NIMClient.getStatus();
                 //if (code.shouldReLogin() || code.wontAutoLogin()) {
                 //    doLogin();
                 //} else {
-                    delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
                 //}
             }
         } else {
@@ -139,6 +140,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 if (!stillInSignIn) {
                     stillInSignIn = true;
                     signInButton.setEnabled(false);
+                    signInButton.setText(R.string.ui_text_sign_in_still_processing);
                     // 开始登录
                     signIn(accountText.getValue(), passwordText.getValue());
                 } else {
@@ -155,11 +157,38 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     protected void onDelayRefreshComplete(@DelayType int type) {
         if (type == DELAY_TYPE_TIME_DELAY) {
             if (!isAdded()) {
-                delayRefreshLoading(5000, DELAY_TYPE_TIME_DELAY);
+                delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
             } else {
                 finish(true);
             }
         }
+    }
+
+    /**
+     * 需要重新登录
+     */
+    private void needToReLogin() {
+        stillInSignIn = false;
+        signInButton.setEnabled(true);
+        signInButton.setText(R.string.ui_base_text_login);
+    }
+
+    private void syncUserInfo() {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    Cache.cache().setCurrentUser(user);
+                    //doLogin();
+                    delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
+                    //finish(true);
+                } else {
+                    ToastHelper.make().showMsg(message);
+                    needToReLogin();
+                }
+            }
+        }).sync();
     }
 
     private void signIn(String account, String password) {

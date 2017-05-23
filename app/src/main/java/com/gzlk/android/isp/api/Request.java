@@ -7,6 +7,9 @@ import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnHttpListener;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.user.Moment;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.JsonBody;
@@ -82,6 +85,7 @@ public abstract class Request<T> {
         liteHttp = LiteHttp.build(App.app()).create();
         // 10秒网络超时
         liteHttp.getConfig().setConnectTimeout(5000);
+        initializeDao();
     }
 
     protected static String format(String fmt, Object... args) {
@@ -110,12 +114,36 @@ public abstract class Request<T> {
         liteHttp.executeAsync(request);
     }
 
+    protected Dao<T> dao;
+
+    protected abstract Class<T> getType();
+
+    private void initializeDao() {
+        if (null == dao) {
+            dao = new Dao<>(getType());
+        }
+    }
+
+    protected void save(T t) {
+        if (null != t) {
+            initializeDao();
+            dao.save(t);
+        }
+    }
+
+    protected void save(List<T> list) {
+        if (null != list && list.size() > 0) {
+            initializeDao();
+            dao.save(list);
+        }
+    }
+
     /**
      * 组合请求
      */
-    protected JsonRequest<Api<T>> getRequest(Type resultType, final String action, String body, HttpMethods methods) {
+    protected JsonRequest<Api<T>> getRequest(Type resultType, String action, String body, HttpMethods methods) {
         String fullUrl = format("%s%s", URL, action);
-        log(format("url(%s): ", methods, fullUrl));
+        log(format("url(%s): %s", methods, fullUrl));
         if (!isEmpty(body)) {
             log("body: " + body);
         }
@@ -130,6 +158,7 @@ public abstract class Request<T> {
                                 if (null != onMultipleRequestListener) {
                                     Query<T> query = (Query<T>) data;
                                     Pagination<T> pagination = query.getData();
+                                    save(pagination.getList());
                                     onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
                                             pagination.getTotalPages(), pagination.getPageSize(),
                                             pagination.getTotal(), pagination.getPageNumber());
@@ -137,16 +166,19 @@ public abstract class Request<T> {
                             } else if (data instanceof Special) {
                                 if (null != onMultipleRequestListener) {
                                     Special<T> special = (Special<T>) data;
+                                    save(special.getData());
                                     onMultipleRequestListener.onResponse(special.getData(), data.success(),
                                             1, PAGE_SIZE, special.getData().size(), 1);
                                 }
                             } else if (data instanceof Output) {
+                                Output<T> output = (Output<T>) data;
+                                save(output.getData());
                                 if (null != onSingleRequestListener) {
                                     onSingleRequestListener.onResponse(((Output<T>) data).getData(), data.success(), data.getMsg());
                                 }
                             }
                         } else {
-                            log(format("url: %s, response failed %s", action, data.getMsg()));
+                            log(format("response fail %s", data.getMsg()));
                             ToastHelper.make().showMsg(data.getMsg());
                             fireFailedListenerEvents(data.getMsg());
                         }

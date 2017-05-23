@@ -157,7 +157,7 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
             int index = 0, type = Integer.valueOf(mQueryId);
             // 没有基本选项时添加基本选项
             for (String string : items) {
-                if (type == Archive.Type.INDIVIDUAL && index > 1) {
+                if (type == Archive.Type.USER && index > 1) {
                     // 个人档案只有公开和私密两种
                     break;
                 }

@@ -1,9 +1,11 @@
 package com.gzlk.android.isp.model.archive;
 
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
+import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
 
@@ -17,13 +19,17 @@ import java.util.ArrayList;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-
+@Table(Archive.Table.ARCHIVE)
 public class Archive extends Additional {
 
     /**
      * 档案相关的表
      */
     public static class Table {
+        /**
+         * 档案
+         */
+        public static final String ARCHIVE = "archive";
         /**
          * 用户档案
          */
@@ -75,18 +81,52 @@ public class Archive extends Additional {
         /**
          * 个人
          */
-        public static final int INDIVIDUAL = 0;
+        public static final int USER = 0;
         /**
          * 组织、活动
          */
-        public static final int ORGANIZATION = 1;
+        public static final int GROUP = 1;
     }
+
+    /**
+     * 档案内容类型
+     */
+    public static class ArchiveContentType {
+        /**
+         * 文本
+         */
+        public static final String TEXT = "1";
+        /**
+         * 连接引用
+         */
+        public static final String LINK = "2";
+        /**
+         * 个人
+         */
+        public static final String INDIVIDUAL = "3";
+        /**
+         * 活动
+         */
+        public static final String ACTIVITY = "4";
+    }
+
+    @Column(Organization.Field.GroupId)
+    private String groupId;            //群ID
 
     @Column(Field.Source)
     private String source;             //档案来源
 
+    /**
+     * 档案类型
+     * <p>
+     *     个人档案时：(1.普通个人档案,2.个人转到组织的档案)
+     * </p>
+     * <p>
+     *     组织档案时：(1.普通组织档案,2.个人转到组织的档案,3.活动存档)
+     * </p>
+     */
     @Column(Field.Type)
-    private String type;               //档案类型(1.文本,2.引用链接,3.个人,4.活动)
+    private String type;               //档案类型
 
     @Column(Field.Title)
     private String title;              //档案名称
@@ -123,6 +163,14 @@ public class Archive extends Additional {
 
     @Ignore
     private Additional addition;     //档案附加信息
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
 
     public String getTitle() {
         return title;

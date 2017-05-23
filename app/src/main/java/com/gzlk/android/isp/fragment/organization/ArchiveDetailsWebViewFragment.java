@@ -4,16 +4,14 @@ import android.os.Bundle;
 import android.webkit.WebView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.archive.GroupArchiveRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
-import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.organization.GroupArchive;
 
 /**
  * <b>功能描述：</b>档案详情，通过WebView打开网页<br />
@@ -71,25 +69,21 @@ public class ArchiveDetailsWebViewFragment extends BaseTransparentSupportFragmen
 
     private void loadingArchive() {
         if (!isLoaded) {
-            GroupArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<GroupArchive>() {
+            ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
                 @Override
-                public void onResponse(GroupArchive groupArchive, boolean success, String message) {
-                    super.onResponse(groupArchive, success, message);
+                public void onResponse(Archive archive, boolean success, String message) {
+                    super.onResponse(archive, success, message);
                     if (success) {
-                        if (null != groupArchive && !StringHelper.isEmpty(groupArchive.getId())) {
+                        if (null != archive && !StringHelper.isEmpty(archive.getId())) {
                             isLoaded = true;
-                            // 网络数据返回的结果，需要保持到缓存中
-                            if (!StringHelper.isEmpty(message)) {
-                                new Dao<>(GroupArchive.class).save(groupArchive);
-                            }
-                            if (Cache.cache().userId.equals(groupArchive.getUserId())) {
+                            if (Cache.cache().userId.equals(archive.getUserId())) {
                                 // 创建者可以编辑
                                 initailizeRightTitle();
                             }
                         }
                     }
                 }
-            }).find(mQueryId);
+            }).find(Archive.Type.GROUP, mQueryId, true);
         }
     }
 
@@ -98,7 +92,7 @@ public class ArchiveDetailsWebViewFragment extends BaseTransparentSupportFragmen
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.ORGANIZATION, mQueryId), true, true);
+                openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, mQueryId), true, true);
             }
         });
     }

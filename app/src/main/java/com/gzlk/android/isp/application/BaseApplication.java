@@ -144,7 +144,7 @@ public class BaseApplication extends Application {
         try {
             // 获取外置SD卡中的缓存目录
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                path = getExternalCacheDir().toString();
+                path = Environment.getExternalStorageDirectory().getPath();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -179,7 +179,7 @@ public class BaseApplication extends Application {
             sb.append(gotExternalCacheDir());
             //}
         }
-        sb.append("/").append(dir).append("/");
+        sb.append("/").append(CACHE_DIR).append("/").append(dir).append("/");
         createDirs(sb.toString());
         return sb.toString();
     }

@@ -39,6 +39,11 @@ public class PrivacyRequest extends Request<Privacy> {
     }
 
     @Override
+    protected Class<Privacy> getType() {
+        return Privacy.class;
+    }
+
+    @Override
     public PrivacyRequest setOnSingleRequestListener(OnSingleRequestListener<Privacy> listener) {
         onSingleRequestListener = listener;
         return this;

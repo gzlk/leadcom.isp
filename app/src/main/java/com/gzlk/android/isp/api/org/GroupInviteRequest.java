@@ -51,6 +51,11 @@ public class GroupInviteRequest extends Request<Invitation> {
     }
 
     @Override
+    protected Class<Invitation> getType() {
+        return Invitation.class;
+    }
+
+    @Override
     public GroupInviteRequest setOnSingleRequestListener(OnSingleRequestListener<Invitation> listener) {
         onSingleRequestListener = listener;
         return this;
