@@ -127,7 +127,6 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleArchive.class, url(ADD), object.toString(), HttpMethods.Post));
     }
@@ -166,7 +165,6 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleArchive.class, group(ADD), object.toString(), HttpMethods.Post));
     }
@@ -218,7 +216,6 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleArchive.class, url(type, UPDATE), object.toString(), HttpMethods.Post));
 

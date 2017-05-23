@@ -74,7 +74,6 @@ public class CollectionRequest extends Request<Collection> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }

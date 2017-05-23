@@ -79,7 +79,7 @@ public abstract class Request<T> {
     /**
      * http网络访问层
      */
-    private LiteHttp liteHttp;
+    protected LiteHttp liteHttp;
 
     public Request() {
         liteHttp = LiteHttp.build(App.app()).create();
@@ -195,7 +195,7 @@ public abstract class Request<T> {
     /**
      * 通知失败
      */
-    private void fireFailedListenerEvents(String message) {
+    protected void fireFailedListenerEvents(String message) {
         if (null != onSingleRequestListener) {
             onSingleRequestListener.onResponse(null, false, message);
         }

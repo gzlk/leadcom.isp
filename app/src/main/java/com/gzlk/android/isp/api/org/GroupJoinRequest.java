@@ -70,7 +70,6 @@ public class GroupJoinRequest extends Request<JoinGroup> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleJoin.class, url(ADD), object.toString(), HttpMethods.Post));
     }
@@ -104,7 +103,6 @@ public class GroupJoinRequest extends Request<JoinGroup> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
         httpRequest(getRequest(resultType, url(action), object.toString(), HttpMethods.Post));
     }
 }

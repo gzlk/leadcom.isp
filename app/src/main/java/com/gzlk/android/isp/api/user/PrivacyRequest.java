@@ -78,7 +78,6 @@ public class PrivacyRequest extends Request<Privacy> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SinglePrivacy.class, url(ADD), object.toString(), HttpMethods.Post));
     }

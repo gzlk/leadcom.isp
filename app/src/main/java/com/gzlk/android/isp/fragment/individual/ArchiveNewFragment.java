@@ -131,11 +131,9 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    private static final int REQUEST_SECURITY = ACTIVITY_BASE_REQUEST + 10;
-
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQUEST_SECURITY) {
+        if (requestCode == PrivacyFragment.REQUEST_SECURITY) {
             // 隐私设置返回了
             privacy = getResultedData(data);
         }
@@ -443,7 +441,8 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case 2:
                     // 隐私设置
-                    openActivity(SecuritySettingFragment.class.getName(), String.valueOf(archiveType), REQUEST_SECURITY, true, false);
+                    openActivity(PrivacyFragment.class.getName(),
+                            String.valueOf(archiveType), PrivacyFragment.REQUEST_SECURITY, true, false);
                     break;
             }
         }

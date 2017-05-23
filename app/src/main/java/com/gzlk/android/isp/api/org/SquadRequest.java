@@ -70,7 +70,6 @@ public class SquadRequest extends Request<Squad> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleSquad.class, url(ADD), object.toString(), HttpMethods.Post));
     }
@@ -90,7 +89,6 @@ public class SquadRequest extends Request<Squad> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleSquad.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }

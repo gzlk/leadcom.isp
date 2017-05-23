@@ -89,7 +89,6 @@ public class GroupInviteRequest extends Request<Invitation> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleInvite.class, url(ADD), object.toString(), HttpMethods.Post));
     }

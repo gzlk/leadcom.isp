@@ -1,7 +1,6 @@
 package com.gzlk.android.isp.fragment.base;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -50,11 +49,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     private static final String KEY_FOR_CROP = "is_for_crop";
     private static final String KEY_CROPPED_PATH = "cropped_path";
     private static final String KEY_CAMERA_PATH = "camera_path";
-    private static final String KEY_DIRECTLY_UPLOAD = "directly_upload";
     private static final String KEY_CACHEABLE = "is_cacheable";
-    private static final String KEY_CACHED_IMAGES = "cached_images";
     private static final String KEY_CHOOSED_IMAGES = "choosed_images";
-    private static final String KEY_MAX_CACHED = "max_cached_size";
     /**
      * 通过系统相机拍摄的照片的路径
      */
@@ -81,10 +77,6 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     //private String compressed = null;
 
     /**
-     * 标记是否直接上传图片，默认直接上传
-     */
-    protected boolean isSupportDirectlyUpload = true;
-    /**
      * 是否缓存已选择了的图片列表
      */
     protected boolean isSupportCacheSelected = true;
@@ -93,10 +85,6 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 最大可选择的图片数量
      */
     //protected int maxCachedImage = DFT_MAX_IMAGE;
-    /**
-     * 已选择且已压缩了的图片缓存列表
-     */
-    private ArrayList<String> cachedImages = new ArrayList<>();
 
     /**
      * 设置需要的图片的宽度尺寸
@@ -120,14 +108,9 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         croppedImagePath = bundle.getString(KEY_CROPPED_PATH);
         cameraPicturePath = bundle.getString(KEY_CAMERA_PATH);
         isChooseImageForCrop = bundle.getBoolean(KEY_FOR_CROP);
-        isSupportDirectlyUpload = bundle.getBoolean(KEY_DIRECTLY_UPLOAD, true);
         isSupportCacheSelected = bundle.getBoolean(KEY_CACHEABLE, true);
-        //maxCachedImage = bundle.getInt(KEY_MAX_CACHED, DFT_MAX_IMAGE);
-        String string = bundle.getString(KEY_CACHED_IMAGES, "[]");
-        cachedImages = Json.gson().fromJson(string, new TypeToken<List<String>>() {
-        }.getType());
-        string = bundle.getString(KEY_CHOOSED_IMAGES, "[]");
-        choosingFroCompressImages = Json.gson().fromJson(string, new TypeToken<List<String>>() {
+        String string = bundle.getString(KEY_CHOOSED_IMAGES, "[]");
+        waitingFroCompressImages = Json.gson().fromJson(string, new TypeToken<List<String>>() {
         }.getType());
     }
 
@@ -137,11 +120,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         bundle.putString(KEY_CROPPED_PATH, croppedImagePath);
         bundle.putString(KEY_CAMERA_PATH, cameraPicturePath);
         bundle.putBoolean(KEY_FOR_CROP, isChooseImageForCrop);
-        bundle.putBoolean(KEY_DIRECTLY_UPLOAD, isSupportDirectlyUpload);
         bundle.putBoolean(KEY_CACHEABLE, isSupportCacheSelected);
-        //bundle.putInt(KEY_MAX_CACHED, maxCachedImage);
-        bundle.putString(KEY_CACHED_IMAGES, Json.gson().toJson(cachedImages));
-        bundle.putString(KEY_CHOOSED_IMAGES, Json.gson().toJson(choosingFroCompressImages));
+        bundle.putString(KEY_CHOOSED_IMAGES, Json.gson().toJson(waitingFroCompressImages));
     }
 
     @Override
@@ -153,7 +133,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     /**
      * 等待压缩的图片列表
      */
-    private ArrayList<String> choosingFroCompressImages = new ArrayList<>();
+    private ArrayList<String> waitingFroCompressImages = new ArrayList<>();
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
@@ -163,8 +143,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
             case REQUEST_PREVIEW:
                 if (chooseImageByAlbum()) {
                     ArrayList<String> images = Album.parseResult(data);
-                    choosingFroCompressImages.clear();
-                    choosingFroCompressImages.addAll(images);
+                    waitingFroCompressImages.clear();
+                    waitingFroCompressImages.addAll(images);
                     // 图片选择了
                     onImageSelected();
                 } else {
@@ -184,8 +164,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                         }
                     } else {
                         // 照片已选择了
-                        choosingFroCompressImages.clear();
-                        choosingFroCompressImages.add(cameraPicturePath);
+                        waitingFroCompressImages.clear();
+                        waitingFroCompressImages.add(cameraPicturePath);
                         onImageSelected();
                     }
                 }
@@ -193,8 +173,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
             case REQUEST_CROP:
                 if (!TextUtils.isEmpty(croppedImagePath)) {
                     // 裁剪后的图片也需要压缩
-                    choosingFroCompressImages.clear();
-                    choosingFroCompressImages.add(croppedImagePath);
+                    waitingFroCompressImages.clear();
+                    waitingFroCompressImages.add(croppedImagePath);
                     onImageSelected();
                 } else {
                     // 操作无法继续：数据丢失
@@ -216,7 +196,13 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
 
     private void onImageSelected() {
         if (null != mOnImageSelectedListener) {
-            mOnImageSelectedListener.onImageSelected(choosingFroCompressImages);
+            mOnImageSelectedListener.onImageSelected(waitingFroCompressImages);
+        }
+    }
+
+    private void onImageCompressed() {
+        if (null != mOnImageCompressedListener) {
+            mOnImageCompressedListener.onCompressed(getWaitingForUploadFiles());
         }
     }
 
@@ -229,7 +215,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                 .setDebuggable(true)
                 .addOnTaskPreparedListener(taskPreparedListener)
                 .addOnCompressCompleteListener(compressCompleteListener)
-                .exec(Json.gson().toJson(choosingFroCompressImages),
+                .exec(Json.gson().toJson(waitingFroCompressImages),
                         Activity().app().getLocalImageDir(),
                         String.valueOf(mCompressedImageWidth),
                         String.valueOf(mCompressedImageHeight));
@@ -245,10 +231,12 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     private CompressImageTask.OnCompressCompleteListener compressCompleteListener = new CompressImageTask.OnCompressCompleteListener() {
         @Override
         public void onComplete(ArrayList<String> compressedPath) {
-            cachedImages.clear();
-            cachedImages.addAll(compressedPath);
+            getWaitingForUploadFiles().clear();
+            getWaitingForUploadFiles().addAll(compressedPath);
+            onImageCompressed();
             if (isSupportDirectlyUpload) {
                 showImageHandlingDialog(R.string.ui_base_text_uploading);
+                uploadImages();
             } else {
                 ToastHelper.make().showMsg("压缩完了，暂时没有下一步任务");
                 hideImageHandlingDialog();
@@ -257,17 +245,10 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     };
 
     /**
-     * 已压缩后的本地或网络图片地址列表
-     */
-    protected ArrayList<String> getCachedImages() {
-        return cachedImages;
-    }
-
-    /**
      * 已选择了的本地原始图片地址列表
      */
     protected ArrayList<String> getSelectedImages() {
-        return choosingFroCompressImages;
+        return waitingFroCompressImages;
     }
 
     /**
@@ -478,15 +459,6 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         return chooseImageByAlbum > 0;
     }
 
-    private int maxSelectable = 0;
-
-    protected int getMaxSelectable() {
-        if (0 == maxSelectable) {
-            maxSelectable = StringHelper.getInteger(R.integer.integer_max_image_pick_size);
-        }
-        return maxSelectable;
-    }
-
     /**
      * 打开系统相册选取图片
      */
@@ -500,7 +472,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                     .toolBarColor(getColor(R.color.colorPrimary))
                     .statusBarColor(getColor(R.color.colorPrimary))
                     .title(getString(R.string.ui_base_text_choose_image, getMaxSelectable()))
-                    .checkedList(choosingFroCompressImages)
+                    .checkedList(waitingFroCompressImages)
                     .selectCount(getMaxSelectable()).columnCount(3).camera(true).start();
         } else {
             Intent imageIntent = new Intent();
@@ -517,7 +489,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         if (chooseImageByAlbum()) {
             Album.gallery(this).checkFunction(true)
                     .requestCode(REQUEST_PREVIEW)
-                    .checkedList(choosingFroCompressImages)
+                    .checkedList(waitingFroCompressImages)
                     .toolBarColor(getColor(R.color.colorPrimary))
                     .statusBarColor(getColor(R.color.colorPrimary))
                     .currentPosition(position)
@@ -590,7 +562,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 打开图片选择菜单
      */
     public void openImageSelector() {
-        if (choosingFroCompressImages.size() >= getMaxSelectable()) {
+        if (waitingFroCompressImages.size() >= getMaxSelectable()) {
             ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_image_cannot_attach_more);
             return;
         }
@@ -648,5 +620,18 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
          * @param selected 选择完毕之后的图片路径列表
          */
         void onImageSelected(ArrayList<String> selected);
+    }
+
+    private OnImageCompressedListener mOnImageCompressedListener;
+
+    /**
+     * 设置图片压缩完毕后的回调
+     */
+    protected void setOnImageCompressedListener(OnImageCompressedListener l) {
+        mOnImageCompressedListener = l;
+    }
+
+    protected interface OnImageCompressedListener {
+        void onCompressed(ArrayList<String> compressed);
     }
 }

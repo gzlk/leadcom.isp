@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.individual;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,7 +25,7 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 import com.gzlk.android.isp.model.BaiduLocation;
-import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -53,6 +54,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private SimpleClickableViewHolder privacyHolder;
     private String[] textItems;
     private String address = "";
+    private String privacy;
 
     public static MomentNewFragment newInstance(String params) {
         MomentNewFragment mnf = new MomentNewFragment();
@@ -115,9 +117,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                ToastHelper.make().showMsg("暂时无法上传图片");
                 tryAddMoment();
-
             }
         });
         initializeHolder();
@@ -129,20 +129,41 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void tryAddMoment() {
+        if (getSelectedImages().size() > 0) {
+            // 如果选择了的图片大于1张，则需要压缩图片并且上传
+            compressImage();
+        } else {
+            if (StringHelper.isEmpty(momentContent.getValue())) {
+                ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
+            } else {
+                addMoment();
+            }
+        }
+    }
+
+    private OnFileUploadingListener mOnFileUploadingListener = new OnFileUploadingListener() {
+        @Override
+        public void onUploading(int all, int current, String file, long size, long uploaded) {
+
+        }
+
+        @Override
+        public void onUploadingComplete(ArrayList<String> uploaded) {
+            addMoment();
+        }
+    };
+
+    private void addMoment() {
         String content = StringHelper.escapeToHtml(momentContent.getValue());
         MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
             @Override
             public void onResponse(Moment moment, boolean success, String message) {
                 super.onResponse(moment, success, message);
                 if (success) {
-                    if (null != moment) {
-                        moment.resetAdditional(moment.getAddition());
-                        new Dao<>(Moment.class).save(moment);
-                    }
                     finish();
                 }
             }
-        }).add(address, content, getSelectedImages());
+        }).add(address, content, getUploadedFiles());
     }
 
     @Override
@@ -181,28 +202,33 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             // 这里不需要直接上传，只需要把选择的图片传递给新建动态页面即可，上传在那里实现
-            isSupportDirectlyUpload = false;
-            // 添加图片选择
+            isSupportDirectlyUpload = true;
+            // 图片选择后的回调
             addOnImageSelectedListener(albumImageSelectedListener);
+            // 图片压缩完毕后的回调处理
+            setOnImageCompressedListener(imageCompressedListener);
+            // 文件上传完毕后的回调处理
+            setOnFileUploadingListener(mOnFileUploadingListener);
             // 不需要下拉加载更多
             setSupportLoadingMore(false);
             mRecyclerView.addItemDecoration(new SpacesItemDecoration());
             mAdapter = new ImageAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            resetImages();
+            // 初始化时为空白
+            resetImages(getSelectedImages());
         }
     }
 
-    private void resetImages() {
+    private void resetImages(ArrayList<String> images) {
         mAdapter.clear();
-        for (String string : getSelectedImages()) {
+        for (String string : images) {
             mAdapter.add(string);
         }
         appendAttacher();
     }
 
     private void appendAttacher() {
-        if (getSelectedImages().size() < getMaxSelectable()) {
+        if (mAdapter.getItemCount() < getMaxSelectable()) {
             mAdapter.add("");
         }
     }
@@ -211,15 +237,34 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private OnImageSelectedListener albumImageSelectedListener = new OnImageSelectedListener() {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
-            resetImages();
+            resetImages(selected);
         }
     };
+
+    private OnImageCompressedListener imageCompressedListener = new OnImageCompressedListener() {
+        @Override
+        public void onCompressed(ArrayList<String> compressed) {
+            resetImages(compressed);
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == PrivacyFragment.REQUEST_SECURITY) {
+            // 隐私设置返回了
+            privacy = getResultedData(data);
+        }
+        super.onActivityResult(requestCode, data);
+    }
 
     // 隐私设置点击了
     private OnViewHolderClickListener privacyListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            ToastHelper.make(Activity()).showMsg("隐私设置");
+            openActivity(PrivacyFragment.class.getName(),
+                    String.valueOf(Archive.Type.USER),
+                    PrivacyFragment.REQUEST_SECURITY, true, false);
+            //ToastHelper.make(Activity()).showMsg("隐私设置");
         }
     };
 

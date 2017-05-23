@@ -105,7 +105,6 @@ public class MomentRequest extends Request<Moment> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
     }

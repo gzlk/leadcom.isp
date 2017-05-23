@@ -27,6 +27,7 @@
 
     <string name="ui_text_new_moment_fragment_title">发布新动态</string>
     <string name="ui_text_new_moment_content_hint">这一刻的心情&#8230;</string>
+    <string name="ui_text_new_moment_content_cannot_blank">至少说点什么吧</string>
 
     <string name="ui_text_moment_details_button_privacy">设置为私密</string>
     <string name="ui_text_moment_details_button_favorite">@string/ui_base_text_favorite</string>

@@ -73,7 +73,6 @@ public class OrgRequest extends Request<Organization> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleGroup.class, url(ADD), object.toString(), HttpMethods.Post));
     }
@@ -90,7 +89,6 @@ public class OrgRequest extends Request<Organization> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <b>功能描述：</b>档案隐私设置<br />
+ * <b>功能描述：</b>隐私设置<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/16 21:46 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -37,10 +37,15 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
+public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static SecuritySettingFragment newInstance(String params) {
-        SecuritySettingFragment ssf = new SecuritySettingFragment();
+    /**
+     * 隐私设置
+     */
+    public static final int REQUEST_SECURITY = ACTIVITY_BASE_REQUEST + 10;
+
+    public static PrivacyFragment newInstance(String params) {
+        PrivacyFragment ssf = new PrivacyFragment();
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, params);
         ssf.setArguments(bundle);
@@ -256,7 +261,7 @@ public class SecuritySettingFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public ArchiveSecurityViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ArchiveSecurityViewHolder holder = new ArchiveSecurityViewHolder(itemView, SecuritySettingFragment.this);
+            ArchiveSecurityViewHolder holder = new ArchiveSecurityViewHolder(itemView, PrivacyFragment.this);
             holder.addOnViewHolderClickListener(viewHolderClickListener);
             return holder;
         }

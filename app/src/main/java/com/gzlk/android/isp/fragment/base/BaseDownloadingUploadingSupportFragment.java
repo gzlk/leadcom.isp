@@ -1,12 +1,23 @@
 package com.gzlk.android.isp.fragment.base;
 
 import android.app.ProgressDialog;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.UploadRequest;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.listener.OnUploadingListener;
 import com.gzlk.android.isp.helper.HttpHelper;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.Json;
 import com.hlk.hlklib.lib.inject.ViewId;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
@@ -23,11 +34,135 @@ import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransparentSupportFragment {
 
+    private static final String KEY_HANDLED_FILES = "handled_files_";
+    private static final String KEY_UPLOADED_FILES = "uploaded_files_";
+    private static final String KEY_MAX_SELECTABLE = "max_selectable_size";
+    private static final String KEY_DIRECTLY_UPLOAD = "directly_upload";
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        maxSelectable = bundle.getInt(KEY_MAX_SELECTABLE, defaultMaxSelectable());
+        isSupportDirectlyUpload = bundle.getBoolean(KEY_DIRECTLY_UPLOAD, true);
+        String string = bundle.getString(KEY_HANDLED_FILES, "[]");
+        waitingForUploadFiles = Json.gson().fromJson(string, new TypeToken<List<String>>() {
+        }.getType());
+        string = bundle.getString(KEY_UPLOADED_FILES, "[]");
+        uploadedFiles = Json.gson().fromJson(string, new TypeToken<List<String>>() {
+        }.getType());
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putInt(KEY_MAX_SELECTABLE, maxSelectable);
+        bundle.putBoolean(KEY_DIRECTLY_UPLOAD, isSupportDirectlyUpload);
+        bundle.putString(KEY_HANDLED_FILES, Json.gson().toJson(waitingForUploadFiles));
+        bundle.putString(KEY_UPLOADED_FILES, Json.gson().toJson(uploadedFiles));
+    }
+
+    /**
+     * 标记是否直接上传图片，默认直接上传
+     */
+    protected boolean isSupportDirectlyUpload = true;
+    protected int maxSelectable = 0;
+
+    private int defaultMaxSelectable() {
+        return StringHelper.getInteger(R.integer.integer_max_image_pick_size);
+    }
+
+    protected int getMaxSelectable() {
+        if (0 == maxSelectable) {
+            maxSelectable = defaultMaxSelectable();
+        }
+        return maxSelectable;
+    }
+
     /**
      * 进度框
      */
     private ProgressDialog progressDialog = null;
     private TextView handlingTextView;
+
+    /**
+     * 已选择且已压缩了的图片缓存列表
+     */
+    private ArrayList<String> waitingForUploadFiles = new ArrayList<>();
+    /**
+     * 已上传了的图片列表
+     */
+    private ArrayList<String> uploadedFiles = new ArrayList<>();
+
+    /**
+     * 已上传的图片地址列表
+     */
+    protected ArrayList<String> getUploadedFiles() {
+        return uploadedFiles;
+    }
+
+    /**
+     * 已压缩后的本地图片地址列表
+     */
+    protected ArrayList<String> getWaitingForUploadFiles() {
+        return waitingForUploadFiles;
+    }
+
+    private void onImageUploading(int index, String file, long size, long uploaded) {
+        //log(format("index: %d, file: %s, size: %d, uploaded: %d", index, file, size, uploaded));
+        if (null != mOnFileUploadingListener) {
+            mOnFileUploadingListener.onUploading(getWaitingForUploadFiles().size(), index + 1, file, size, uploaded);
+        }
+    }
+
+    private int uploadingIndex = 0;
+
+    /**
+     * 上传图片
+     */
+    protected void uploadImages() {
+        if (getWaitingForUploadFiles().size() > 0) {
+            showImageHandlingDialog(R.string.ui_base_text_uploading);
+            uploadingIndex = 0;
+            uploading();
+        }
+    }
+
+    private void uploading() {
+        if (uploadingIndex > waitingForUploadFiles.size() - 1) {
+            // 上传完毕
+            hideImageHandlingDialog();
+            if (null != mOnFileUploadingListener) {
+                mOnFileUploadingListener.onUploadingComplete(uploadedFiles);
+            }
+        } else {
+            String string = waitingForUploadFiles.get(uploadingIndex);
+            File file = new File(string);
+            final long size = file.length();
+            log(format("now start upload file(size: %d): %s", size, string));
+            onImageUploading(uploadingIndex, string, size, 0L);
+            uploadFile(string, uploadingSuccess, uploadingListener);
+        }
+    }
+
+    private OnSingleRequestListener<String> uploadingSuccess = new OnSingleRequestListener<String>() {
+        @Override
+        public void onResponse(String s, boolean success, String message) {
+            super.onResponse(s, success, message);
+            uploadedFiles.add(s);
+            uploadingIndex++;
+            // 继续上传下一张图片
+            uploading();
+        }
+    };
+
+    private OnUploadingListener<String> uploadingListener = new OnUploadingListener<String>() {
+        @Override
+        public void onUploading(String s, long total, long length) {
+            super.onUploading(s, total, length);
+            // 上传进度
+            onImageUploading(uploadingIndex, s, total, length);
+        }
+    };
 
     /**
      * 显示图片处理对话框
@@ -69,11 +204,9 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     /**
      * 上传文件
      */
-    protected void uploadFile(String path) {
-
-    }
-
-    protected void uploadFile(String path, boolean bool) {
+    protected void uploadFile(String file, OnSingleRequestListener<String> successListener, OnUploadingListener<String> uploadingListener) {
+        UploadRequest.request().setOnSingleRequestListener(successListener)
+                .setOnUploadingListener(uploadingListener).upload(file);
     }
 
     @ViewId(R.id.ui_tool_horizontal_progressbar)
@@ -120,7 +253,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
 
             @Override
             public void onProgressing(int current, int total, int currentHandled, int currentTotal, String processingUrl) {
-                log(format("onProgressing %d of %d, handled %d of %d(%f)", current, total, currentHandled, currentTotal, (currentHandled * 1.0 / currentTotal)));
+                //log(format("onProgressing %d of %d, handled %d of %d(%f)", current, total, currentHandled, currentTotal, (currentHandled * 1.0 / currentTotal)));
                 if (null != materialHorizontalProgressBar) {
                     handleMaterialHorizontalProgressBar(current, total);
                     int per = (int) ((currentHandled * 1.0 / currentTotal) * 100);
@@ -197,5 +330,29 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
      * 指定的文件已经下载完毕，子类需要重载此方法以获取结果
      */
     protected void onFileDownloadingComplete(String url, boolean success) {
+    }
+
+    private OnFileUploadingListener mOnFileUploadingListener;
+
+    /**
+     * 设置图片上传进度回调
+     */
+    protected void setOnFileUploadingListener(OnFileUploadingListener l) {
+        mOnFileUploadingListener = l;
+    }
+
+    /**
+     * 文件上传进度回调
+     */
+    protected interface OnFileUploadingListener {
+        /**
+         * 上传进度
+         */
+        void onUploading(int all, int current, String file, long size, long uploaded);
+
+        /**
+         * 上传完成
+         */
+        void onUploadingComplete(ArrayList<String> uploaded);
     }
 }
