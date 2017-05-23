@@ -287,7 +287,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
             String url = params[0];
             String local = params[1];
             String name = url.substring(url.lastIndexOf('/'));
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/" + App.CACHE_DIR;
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/" + App.ROOT_DIR;
             try {
                 File f = new File(path);
                 if (!f.exists()) {

@@ -76,7 +76,6 @@ public class SystemRequest extends Request<User> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(Register.class, SIGN_UP, object.toString(), HttpMethods.Post));
     }
@@ -93,7 +92,6 @@ public class SystemRequest extends Request<User> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(Register.class, SIGN_IN, object.toString(), HttpMethods.Post));
     }
@@ -130,7 +128,6 @@ public class SystemRequest extends Request<User> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(Register.class, PASSWORD, object.toString(), HttpMethods.Post));
     }
@@ -139,11 +136,11 @@ public class SystemRequest extends Request<User> {
      * 邀请手机通讯录好友注册
      */
     public void inviteRegister(@NonNull String phone, @NonNull String groupId) {
-        // {phone:"",accessToken:"",groupId:""}
+        // {toPhone:"",accessToken:"",toGroupId:""}
         JSONObject object = new JSONObject();
         try {
-            object.put("phone", phone)
-                    .put("groupId", groupId)
+            object.put("toPhone", phone)
+                    .put("toGroupId", groupId)
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();

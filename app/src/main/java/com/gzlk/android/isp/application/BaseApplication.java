@@ -93,10 +93,11 @@ public class BaseApplication extends Application {
         MultiDex.install(this);
     }
 
+    public static final String ROOT_DIR = "leadcom";
     /**
-     * 本地照片的缓存路径
+     * 本地缓存路径
      */
-    public static final String CACHE_DIR = "leadcom";
+    public static final String CACHE_DIR = "cache";
     /**
      * 本地数据库缓存目录
      */
@@ -179,7 +180,7 @@ public class BaseApplication extends Application {
             sb.append(gotExternalCacheDir());
             //}
         }
-        sb.append("/").append(CACHE_DIR).append("/").append(dir).append("/");
+        sb.append("/").append(ROOT_DIR).append("/").append(dir).append("/");
         createDirs(sb.toString());
         return sb.toString();
     }

@@ -39,7 +39,7 @@ public class Message extends Model {
     private String toUserName;
     //消息类型 1.用户聊天短消息 2.发起的活动变更消息  3.参与的活动变更消息   4.发起的群体变更消息  5.参与的群体变更消息 6.新成员入群申请消息（消息常量在Constant中定义）
     @Column(Field.MessageType)
-    private String msgType;
+    private int msgType;
     //消息内容
     @Column(Field.MessageContent)
     private String msgContent;
@@ -85,11 +85,11 @@ public class Message extends Model {
         this.toUserName = toUserName;
     }
 
-    public String getMsgType() {
+    public int getMsgType() {
         return msgType;
     }
 
-    public void setMsgType(String msgType) {
+    public void setMsgType(int msgType) {
         this.msgType = msgType;
     }
 

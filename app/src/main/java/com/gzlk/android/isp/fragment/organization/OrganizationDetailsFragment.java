@@ -130,8 +130,8 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
             switch (index) {
                 case 1:
                     int num = 0;
-                    if (null != org && !StringHelper.isEmpty(org.getMemberNum())) {
-                        num = Integer.valueOf(org.getMemberNum());
+                    if (null != org) {
+                        num = org.getMemberNum();
                     }
                     text = format(string, num);
                     break;

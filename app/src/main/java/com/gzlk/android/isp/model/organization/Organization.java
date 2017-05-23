@@ -68,7 +68,7 @@ public class Organization extends Model {
     @Column(Model.Field.CreatorName)
     private String creatorName;    //创建者名称
     @Column(Field.MemberNumber)
-    private String memberNum;      //成员数
+    private int memberNum;      //成员数
     @Column(Field.Verified)
     private boolean verified;      //是否组织认证
 
@@ -152,11 +152,11 @@ public class Organization extends Model {
         this.creatorName = creatorName;
     }
 
-    public String getMemberNum() {
+    public int getMemberNum() {
         return memberNum;
     }
 
-    public void setMemberNum(String memberNum) {
+    public void setMemberNum(int memberNum) {
         this.memberNum = memberNum;
     }
 

@@ -113,9 +113,6 @@ public class Archive extends Additional {
     @Column(Organization.Field.GroupId)
     private String groupId;            //群ID
 
-    @Column(Field.Source)
-    private String source;             //档案来源
-
     /**
      * 档案类型
      * <p>
@@ -194,14 +191,6 @@ public class Archive extends Additional {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
     }
 
     public String getUserId() {

@@ -331,9 +331,6 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         if (null == sourceHolder) {
             sourceHolder = new SimpleInputableViewHolder(sourceView, this);
         }
-        if (StringHelper.isEmpty(source)) {
-            source = null == archive ? "" : archive.getSource();
-        }
         sourceHolder.showContent(format(strings[1], source));
 
         // 时间
