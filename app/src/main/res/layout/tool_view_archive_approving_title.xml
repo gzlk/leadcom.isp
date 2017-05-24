@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/ui_tool_view_archive_approving_title_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/ui_static_dp_5"
+        android:text="@string/ui_base_text_all" />
+
+    <View
+        android:layout_width="@dimen/ui_base_border_size_normal"
+        android:layout_height="@dimen/ui_static_dp_20"
+        android:background="@color/textColorHintLight"
+        android:layout_marginEnd="@dimen/ui_base_border_size_normal"
+        android:layout_marginStart="@dimen/ui_base_border_size_normal" />
+
+    <TextView
+        android:id="@+id/ui_tool_view_archive_approving_title_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:padding="@dimen/ui_static_dp_5"
+        android:text="@string/ui_base_text_archive"
+        android:textColor="@color/colorPrimary" />
+
+    <View
+        android:layout_width="@dimen/ui_base_border_size_normal"
+        android:layout_height="@dimen/ui_static_dp_20"
+        android:background="@color/textColorHintLight"
+        android:layout_marginEnd="@dimen/ui_base_border_size_normal"
+        android:layout_marginStart="@dimen/ui_base_border_size_normal" />
+
+    <TextView
+        android:id="@+id/ui_tool_view_archive_approving_title_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/ui_static_dp_5"
+        android:text="@string/ui_base_text_image" />
+
+    <View
+        android:layout_width="@dimen/ui_base_border_size_normal"
+        android:layout_height="@dimen/ui_static_dp_20"
+        android:background="@color/textColorHintLight"
+        android:layout_marginEnd="@dimen/ui_base_border_size_normal"
+        android:layout_marginStart="@dimen/ui_base_border_size_normal" />
+
+    <TextView
+        android:id="@+id/ui_tool_view_archive_approving_title_4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/ui_static_dp_5"
+        android:text="@string/ui_base_text_video" />
+</LinearLayout>

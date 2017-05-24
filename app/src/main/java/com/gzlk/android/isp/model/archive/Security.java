@@ -19,7 +19,6 @@ public class Security extends Model {
     private int index;
     private String text;
     private String description;
-    private boolean selected;
 
     public Security(String text) {
         String[] strings = text.split("\\|", -1);
@@ -27,8 +26,9 @@ public class Security extends Model {
         setId(String.valueOf(index));
         this.text = strings[1];
         description = strings[2];
-        selected = !StringHelper.isEmpty(strings[3]) && strings[3].equals("1");
+        boolean selected = !StringHelper.isEmpty(strings[3]) && strings[3].equals("1");
         setLocalDeleted(selected);
+        setSelected(selected);
     }
 
     public int getIndex() {
@@ -55,11 +55,4 @@ public class Security extends Model {
         this.description = description;
     }
 
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
 }

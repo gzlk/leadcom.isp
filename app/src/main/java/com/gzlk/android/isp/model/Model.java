@@ -2,6 +2,7 @@ package com.gzlk.android.isp.model;
 
 import com.gzlk.android.isp.helper.StringHelper;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.NotNull;
 import com.litesuits.orm.db.annotation.PrimaryKey;
 import com.litesuits.orm.db.enums.AssignType;
@@ -43,8 +44,12 @@ public class Model extends BaseModel {
     @Column(Model.Field.AccessToken)
     private String accessToken;        //用户令牌
 
-    @Column(Field.LocalDeleted)
+    @Ignore
     private boolean localDeleted;
+    @Ignore
+    private boolean isSelectable;
+    @Ignore
+    private boolean isSelected;
 
     public String getId() {
         return id;
@@ -61,6 +66,7 @@ public class Model extends BaseModel {
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+
     /**
      * 本地是否已删除
      */
@@ -73,6 +79,34 @@ public class Model extends BaseModel {
      */
     public void setLocalDeleted(boolean localDeleted) {
         this.localDeleted = localDeleted;
+    }
+
+    /**
+     * 是否可选择
+     */
+    public boolean isSelectable() {
+        return isSelectable;
+    }
+
+    /**
+     * 是否可选择
+     */
+    public void setSelectable(boolean selectable) {
+        this.isSelectable = selectable;
+    }
+
+    /**
+     * 是否已选中
+     */
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    /**
+     * 是否已选中
+     */
+    public void setSelected(boolean selected) {
+        this.isSelected = selected;
     }
 
     @Override

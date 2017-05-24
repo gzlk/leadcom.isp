@@ -192,7 +192,7 @@ public class SlidView extends View {
     protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         if (visibility != VISIBLE) {
-            mTextHeight = mHeight / list.size();
+            mTextHeight = (list.size() <= 0) ? 50 : (mHeight / list.size());
         }
     }
 

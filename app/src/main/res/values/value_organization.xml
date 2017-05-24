@@ -41,6 +41,9 @@
     <string name="ui_squad_contact_menu_2">手机通讯录</string>
     <string name="ui_squad_contact_set_to_admin">设为管理员</string>
 
+    <string name="ui_organization_member_no_name">无名氏</string>
+    <string name="ui_organization_member_no_phone">未提供手机号码</string>
+
     <string name="ui_phone_contact_no_permission">无法读取联系人</string>
     <string name="ui_phone_contact_no_more">暂时没有什么联系人</string>
     <string name="ui_phone_contact_invite">邀请</string>
@@ -53,5 +56,19 @@
 
     <string name="ui_organization_document_new">新建档案</string>
     <string name="ui_organization_document_management">管理档案</string>
+
+    <string name="ui_archive_management_title_button_1">@string/ui_base_text_all</string>
+    <string name="ui_archive_management_title_button_2">未存档</string>
+    <string name="ui_archive_management_title_button_3">未审核</string>
+
+    <string name="ui_archive_approving_archive_attachments" formatted="false">其中有%d个文件</string>
+
+    <!--可审核页面中的元素-->
+    <string name="ui_archive_approvable_nothing">暂时没有更多此类档案了</string>
+
+    <!--最终审核页面中的元素-->
+    <string name="ui_archive_approve_passed">审核通过</string>
+    <string name="ui_archive_approve_not_passed">审核不通过</string>
+    <string name="ui_archive_approve_no_title">[没有标题]</string>
 
 </resources>

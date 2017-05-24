@@ -69,17 +69,19 @@ public class ContactViewHolder extends BaseViewHolder {
     public void showContent(Member member, String searchingText) {
         String text = member.getUserName();
         if (StringHelper.isEmpty(text)) {
-            text = "无名氏";
+            text = StringHelper.getString(R.string.ui_organization_member_no_name);
         }
         if (!StringHelper.isEmpty(searchingText)) {
+            assert text != null;
             text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
         }
         nameView.setText(Html.fromHtml(text));
         text = member.getPhone();
         if (StringHelper.isEmpty(text)) {
-            text = "未知手机号码";
+            text = StringHelper.getString(R.string.ui_organization_member_no_phone);
         }
         if (!StringHelper.isEmpty(searchingText)) {
+            assert text != null;
             text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
         }
         phoneView.setText(Html.fromHtml(text));

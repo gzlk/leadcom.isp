@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:gravity="center"
-            android:text="@string/ui_icon_choose"
+            android:text="@string/ui_icon_select_line"
             android:textColor="@color/textColorHintLightLight" />
 
         <LinearLayout

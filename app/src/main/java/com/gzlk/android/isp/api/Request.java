@@ -141,19 +141,16 @@ public abstract class Request<T> {
     /**
      * 组合请求
      */
-    protected JsonRequest<Api<T>> getRequest(Type resultType, String action, String body, HttpMethods methods) {
-        String fullUrl = format("%s%s", URL, action);
-        log(format("url(%s): %s", methods, fullUrl));
-        if (!isEmpty(body)) {
-            log("body: " + body);
-        }
-        return new JsonRequest<Api<T>>(fullUrl, resultType)
+    protected JsonRequest<Api<T>> getRequest(Type resultType, String action, final String body, final HttpMethods methods) {
+        final String url = format("%s%s", URL, action);
+        return new JsonRequest<Api<T>>(url, resultType)
                 .setHttpListener(new OnHttpListener<Api<T>>() {
 
                     @Override
                     public void onSucceed(Api<T> data, Response<Api<T>> response) {
                         super.onSucceed(data, response);
                         if (data.success()) {
+                            log(format("url(%s): %s\nbody: %s\nsuccess: %s", methods, url, body, data.success()));
                             if (data instanceof Query) {
                                 if (null != onMultipleRequestListener) {
                                     Query<T> query = (Query<T>) data;

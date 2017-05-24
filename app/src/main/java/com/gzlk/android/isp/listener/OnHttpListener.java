@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.listener;
 
-import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.litesuits.http.data.HttpStatus;
@@ -32,7 +31,6 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     @Override
     public void onSuccess(T data, Response<T> response) {
         super.onSuccess(data, response);
-        LogHelper.log("HTTP status", response.getHttpStatus().toString());
         onSucceed(data, response);
     }
 

@@ -39,7 +39,7 @@
             android:id="@+id/ui_holder_view_squad_add_editor_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ui_icon_confirm"
+            android:text="@string/ui_icon_select_solid"
             android:textColor="@color/colorPrimary" />
 
     </LinearLayout>

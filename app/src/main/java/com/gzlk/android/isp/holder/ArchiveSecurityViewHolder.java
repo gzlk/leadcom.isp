@@ -74,7 +74,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
 
     public void showContent(Security security) {
         root.setPadding(padding, 0, 0, 0);
-        icon.setText(R.string.ui_icon_choose);
+        icon.setText(R.string.ui_icon_select_line);
         icon.setVisibility(View.VISIBLE);
         icon.setTextColor(getColor(security.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
         textView.setText(security.getText());
@@ -85,7 +85,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
 
     public void showContent(User user) {
         root.setPadding(padding * 2, 0, 0, 0);
-        icon.setText(R.string.ui_icon_confirm);
+        icon.setText(R.string.ui_icon_select_solid);
         icon.setVisibility(View.VISIBLE);
         icon.setTextColor(getColor(user.isLocalDeleted() ? R.color.colorPrimary : R.color.textColorHintLightLight));
         textView.setText(user.getName());
@@ -95,7 +95,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
 
     public void showContent(Organization organization) {
         root.setPadding(padding * 2, 0, 0, 0);
-        icon.setText(R.string.ui_icon_confirm);
+        icon.setText(R.string.ui_icon_select_solid);
         icon.setVisibility(View.VISIBLE);
         icon.setTextColor(getColor(organization.isLocalDeleted() ? R.color.colorPrimary : R.color.textColorHintLightLight));
         textView.setText(organization.getName());

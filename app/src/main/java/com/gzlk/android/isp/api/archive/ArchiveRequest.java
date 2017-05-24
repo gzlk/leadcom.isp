@@ -177,13 +177,6 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 删除组织档案（待审核和已审核）
-     */
-    public void deleteGroupArchive(String archiveId) {
-        httpRequest(getRequest(SingleArchive.class, format("%s?groDocId=%s", url(Archive.Type.GROUP, DELETE), archiveId), "", HttpMethods.Post));
-    }
-
-    /**
      * 更改档案的内容
      *
      * @param archiveId  档案id

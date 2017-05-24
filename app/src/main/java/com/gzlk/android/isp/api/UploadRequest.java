@@ -34,7 +34,8 @@ public class UploadRequest extends Request<String> {
     private static class SingleFile extends Upload<String> {
     }
 
-    private static final String UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFile.do";
+    private static final String SINGLE_UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFile.do";
+    private static final String MULTI_UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFiles.do";
 
     @Override
     protected String url(String action) {
@@ -71,7 +72,7 @@ public class UploadRequest extends Request<String> {
     private JsonRequest<SingleFile> request(final String file) {
         MultipartBody body = new MultipartBody()
                 .addPart(new FilePart("file", new File(file)));
-        return new JsonRequest<SingleFile>(UPLOAD, SingleFile.class).setHttpListener(new OnHttpListener<SingleFile>(true, true) {
+        return new JsonRequest<SingleFile>(SINGLE_UPLOAD, SingleFile.class).setHttpListener(new OnHttpListener<SingleFile>(true, true) {
             @Override
             public void onSucceed(SingleFile data, Response<SingleFile> response) {
                 super.onSucceed(data, response);
