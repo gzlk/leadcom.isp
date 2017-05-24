@@ -5,6 +5,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.hlk.hlklib.lib.inject.Click;
@@ -67,6 +68,8 @@ public class AttachmentViewHolder extends BaseViewHolder {
             res = R.string.ui_icon_attachment_excel;
         } else if (ext.contains("ppt")) {
             res = R.string.ui_icon_attachment_powerpoint;
+        } else if (ImageCompress.isImage(ext)) {
+            res = R.string.ui_icon_attachment_picture;
         } else {
             switch (ext) {
                 case "pdf":
@@ -81,11 +84,8 @@ public class AttachmentViewHolder extends BaseViewHolder {
                 case "mp4":
                     res = R.string.ui_icon_attachment_mp4;
                     break;
-                case "jif":
-                case "jpg":
-                case "bmp":
-                case "jpeg":
-                    res = R.string.ui_icon_attachment_picture;
+                case "txt":
+                    res = R.string.ui_icon_attachment_text;
                     break;
             }
         }

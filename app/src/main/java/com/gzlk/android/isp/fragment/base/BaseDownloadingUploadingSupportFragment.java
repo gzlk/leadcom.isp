@@ -108,7 +108,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     }
 
     private void onImageUploading(int index, String file, long size, long uploaded) {
-        //log(format("index: %d, file: %s, size: %d, uploaded: %d", index, file, size, uploaded));
+        log(format("index: %d, file: %s, size: %d, uploaded: %d", index, file, size, uploaded));
         if (null != mOnFileUploadingListener) {
             mOnFileUploadingListener.onUploading(getWaitingForUploadFiles().size(), index + 1, file, size, uploaded);
         }
@@ -117,9 +117,9 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     private int uploadingIndex = 0;
 
     /**
-     * 上传图片
+     * 上传文件
      */
-    protected void uploadImages() {
+    protected void uploadFiles() {
         if (getWaitingForUploadFiles().size() > 0) {
             showImageHandlingDialog(R.string.ui_base_text_uploading);
             uploadingIndex = 0;
@@ -148,10 +148,16 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         @Override
         public void onResponse(String s, boolean success, String message) {
             super.onResponse(s, success, message);
-            uploadedFiles.add(s);
-            uploadingIndex++;
-            // 继续上传下一张图片
-            uploading();
+            log(format("upload %s %s: %s", waitingForUploadFiles.get(uploadingIndex), success, s));
+            if (success) {
+                uploadedFiles.add(s);
+                uploadingIndex++;
+                // 继续上传下一张图片
+                uploading();
+            } else {
+                // 上传失败时停止上传
+                hideImageHandlingDialog();
+            }
         }
     };
 

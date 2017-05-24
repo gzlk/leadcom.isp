@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.hlk.hlklib.lib.inject.Click;

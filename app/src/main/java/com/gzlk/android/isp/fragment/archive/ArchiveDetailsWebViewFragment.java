@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.organization;
+package com.gzlk.android.isp.fragment.archive;
 
 import android.os.Bundle;
 import android.webkit.WebView;
@@ -8,7 +8,6 @@ import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
-import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.archive.Archive;

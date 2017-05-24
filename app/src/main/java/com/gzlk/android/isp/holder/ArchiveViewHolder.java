@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.individual.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;

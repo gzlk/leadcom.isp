@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.individual.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.helper.ClipboardHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;

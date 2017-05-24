@@ -195,8 +195,7 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
         // 查找我所在的组织列表
         List<String> orgs = getMyOrganizations();
         if (orgs.size() > 0) {
-            QueryBuilder<Organization> query = new QueryBuilder<>(Organization.class)
-                    .whereIn(Model.Field.Id, orgs.toArray());
+            QueryBuilder<Organization> query = new QueryBuilder<>(Organization.class).whereIn(Model.Field.Id, orgs.toArray());
             List<Organization> organizations = new Dao<>(Organization.class).query(query);
             if (null != organizations && organizations.size() > 0) {
                 for (Organization organization : organizations) {

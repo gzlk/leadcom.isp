@@ -324,7 +324,7 @@ public class Utils {
      */
     public static String transformPinyin(String text) {
         if (TextUtils.isEmpty(text)) {
-            return "";
+            return "#";
         }
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {

@@ -49,4 +49,5 @@
     <string name="ui_icon_attachment_picture">&#xe60a;</string>
     <string name="ui_icon_attachment_rar">&#xe621;</string>
     <string name="ui_icon_attachment_zip">&#xe623;</string>
+    <string name="ui_icon_attachment_text">&#xe65c;</string>
 </resources>

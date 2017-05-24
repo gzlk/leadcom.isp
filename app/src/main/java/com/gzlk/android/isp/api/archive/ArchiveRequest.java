@@ -102,7 +102,6 @@ public class ArchiveRequest extends Request<Archive> {
     /**
      * 新增个人档案
      *
-     * @param type       档案类型(1.普通,2.个人,3.活动)
      * @param title      档案标题
      * @param content    档案内容(html)
      * @param markdown   档案内容(markdown)
@@ -110,14 +109,13 @@ public class ArchiveRequest extends Request<Archive> {
      * @param attach     附件地址(json数组)
      * @param attachName 附件名(json数组)
      */
-    public void add(@NonNull String type, @NonNull String title, String content, String markdown,
+    public void add(@NonNull String title, String content, String markdown,
                     ArrayList<String> image, ArrayList<String> attach, ArrayList<String> attachName) {
-        // {title,type,content,markdown,[image],[attach],[attachName],userId,userName,accessToken}
+        // {title,content,markdown,[image],[attach],[attachName],userId,userName,accessToken}
 
         JSONObject object = new JSONObject();
         try {
-            object.put("type", type)
-                    .put("title", title)
+            object.put("title", title)
                     .put("content", checkNull(content))
                     .put("markdown", checkNull(markdown))
                     .put("image", new JSONArray(image))
@@ -135,8 +133,7 @@ public class ArchiveRequest extends Request<Archive> {
      * 新增组织档案（待审核）
      *
      * @param groupId    组织id
-     * @param source     档案来源
-     * @param type       档案类型(1.普通,2.个人,3.活动)
+     * @param type       档案类型(1.普通,2.个人,3.活动){@link Archive.ArchiveType}
      * @param title      档案标题
      * @param content    档案内容(html)
      * @param markdown   档案内容(markdown)
@@ -144,14 +141,13 @@ public class ArchiveRequest extends Request<Archive> {
      * @param attach     附件地址(json数组)
      * @param attachName 附件名(json数组)
      */
-    public void add(@NonNull String groupId, String source, @NonNull String type, @NonNull String title, String content, String markdown,
+    public void add(@NonNull String groupId, int type, @NonNull String title, String content, String markdown,
                     ArrayList<String> image, ArrayList<String> attach, ArrayList<String> attachName) {
-        //{groupId,source,type,title,content,markdown,[image],[attach],[attachName],userId,userName,accessToken}
+        //{groupId,type,title,content,markdown,[image],[attach],[attachName],userId,userName,accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", groupId)
-                    .put("source", source)
                     .put("type", type)
                     .put("title", title)
                     .put("content", checkNull(content))

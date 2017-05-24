@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.individual;
+package com.gzlk.android.isp.fragment.archive;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,8 +16,10 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.individual.PrivacyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -152,7 +154,21 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             }
         });
         loadingArchive();
+        setOnFileUploadingListener(mOnFileUploadingListener);
     }
+
+    private OnFileUploadingListener mOnFileUploadingListener = new OnFileUploadingListener() {
+
+        @Override
+        public void onUploading(int all, int current, String file, long size, long uploaded) {
+
+        }
+
+        @Override
+        public void onUploadingComplete(ArrayList<String> uploaded) {
+            createArchive();
+        }
+    };
 
     private void tryCreateDocument() {
         String title = titleHolder.getValue();
@@ -160,8 +176,18 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_text_document_create_title_invalid);
             return;
         }
-        String content = StringHelper.escapeToHtml(contentView.getValue());
         Utils.hidingInputBoard(titleInputView);
+        if (getWaitingForUploadFiles().size() > 0) {
+            uploadFiles();
+        } else {
+            createArchive();
+        }
+    }
+
+    private void createArchive() {
+        handleUploadedItems();
+        String title = titleHolder.getValue();
+        String content = StringHelper.escapeToHtml(contentView.getValue());
         if (StringHelper.isEmpty(mQueryId)) {
             createDocument(title, content);
         } else {
@@ -187,7 +213,30 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(Archive.ArchiveContentType.TEXT, title, content, null, null, null, null);
+        }).add(title, content, null, images, files, names);
+    }
+
+    private ArrayList<String> images = new ArrayList<>();
+    private ArrayList<String> files = new ArrayList<>();
+    private ArrayList<String> names = new ArrayList<>();
+
+    // 处理上传之后的文件列表
+    private void handleUploadedItems() {
+        // 上传的原始文件
+        if (getUploadedFiles().size() > 0) {
+            for (int i = 0, len = getUploadedFiles().size(); i < len; i++) {
+                String uploaded = getUploadedFiles().get(i);
+                String source = getWaitingForUploadFiles().get(i);
+                String name = source.substring(source.lastIndexOf('/') + 1);
+                String ext = name.substring(name.lastIndexOf('.') + 1);
+                if (ImageCompress.isImage(ext)) {
+                    images.add(uploaded);
+                } else {
+                    files.add(uploaded);
+                    names.add(name);
+                }
+            }
+        }
     }
 
     private void createOrganizationArchive(String title, String content) {
@@ -200,7 +249,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(archiveGroup, sourceHolder.getValue(), Archive.ArchiveContentType.TEXT, title, content, null, null, null, null);
+        }).add(archiveGroup, Archive.ArchiveType.NORMAL, title, content, "", images, files, names);
     }
 
     private void editDocument(String title, String content) {
@@ -221,7 +270,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, Archive.Type.USER, title, content, "", null, null, null);
+        }).update(mQueryId, Archive.Type.USER, title, content, "", images, files, names);
     }
 
     private void editOrganizationArchive(String title, String content) {
@@ -371,6 +420,26 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             setSupportLoadingMore(false);
             mRecyclerView.setAdapter(mAdapter);
         }
+        if (null != archive) {
+            // 显示已有的图片列表
+            if (null != archive.getImage()) {
+                // 最大可选择的文件数量要去掉原有的图片数量
+                filePickerDialog.getProperties().maximum_count = getMaxSelectable() - archive.getImage().size();
+                images.addAll(archive.getImage());
+                mAdapter.update(archive.getImage());
+            }
+            // 显示已有的文件列表
+            if (null != archive.getAttachName()) {
+                // 最大可选文件数量要去掉已有的文件数量
+                filePickerDialog.getProperties().maximum_count = getMaxSelectable() - archive.getAttachName().size();
+                // 已有的文件列表
+                files.addAll(archive.getAttach());
+                // 文件名列表
+                names.addAll(archive.getAttachName());
+
+                mAdapter.update(archive.getAttachName());
+            }
+        }
     }
 
     private String getPrivacy() {
@@ -448,7 +517,12 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private DialogSelectionListener dialogSelectionListener = new DialogSelectionListener() {
         @Override
         public void onSelectedFilePaths(String[] strings) {
-            mAdapter.update(Arrays.asList(strings));
+            // 更新待上传文件列表
+            getWaitingForUploadFiles().clear();
+            getWaitingForUploadFiles().addAll(Arrays.asList(strings));
+            for (String string : getWaitingForUploadFiles()) {
+                mAdapter.update(string);
+            }
             resetAttachmentsHeight();
         }
     };
@@ -507,10 +581,26 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener attachmentViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
+            String string = mAdapter.get(index);
+            removeItems(string);
             mAdapter.remove(index);
             resetAttachmentsHeight();
         }
     };
+
+    private void removeItems(String string) {
+        // 尝试删除图片列表（这个列表是编辑档案时档案原有的列表）
+        images.remove(string);
+        // 尝试删除文件列表（这个列表是编辑档案时档案原有的列表）
+        int index = names.indexOf(string);
+        if (index >= 0) {
+            names.remove(index);
+            files.remove(index);
+        }
+        // 从待上传的列表里删除
+        getWaitingForUploadFiles().remove(string);
+        filePickerDialog.getProperties().maximum_count = getMaxSelectable() - images.size() - names.size();
+    }
 
     private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, String> {
         @Override
@@ -528,15 +618,15 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onBindHolderOfView(final AttachmentViewHolder holder, int position, @Nullable String item) {
             holder.showContent(item);
-            Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    if (itemHeight <= 0) {
+            if (itemHeight <= 0) {
+                Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
                         itemHeight = holder.itemView.getMeasuredHeight() + getDimension(R.dimen.ui_static_dp_half);
+                        resetAttachmentsHeight();
                     }
-                    resetAttachmentsHeight();
-                }
-            });
+                });
+            }
         }
 
         @Override

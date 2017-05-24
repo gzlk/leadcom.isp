@@ -145,6 +145,21 @@ public final class ImageCompress {
     }
 
     /**
+     * 指定路径的文件是否为图片格式
+     */
+    public static boolean isImage(String extension) {
+        switch (extension) {
+            case "jif":
+            case "jpg":
+            case "bmp":
+            case "jpeg":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * 循环压缩图片到指定效果
      */
     private static void compress(String fromPath, String toPath, int prepareToWidth, int prepareToHeight) throws IOException {

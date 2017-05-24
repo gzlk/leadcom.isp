@@ -20,7 +20,8 @@
 
         <include
             android:id="@+id/ui_document_new_source"
-            layout="@layout/holder_view_simple_inputable" />
+            layout="@layout/holder_view_simple_inputable"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/ui_document_new_time"

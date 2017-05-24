@@ -223,27 +223,11 @@ public class ContactFragment extends BaseOrganizationFragment {
     private void loadingQueryItem() {
         switch (showType) {
             case TYPE_ORG:
-                loadingOrganization();
+                loadingLocalMembers(mQueryId, "");
                 break;
             case TYPE_SQUAD:
                 loadingSquad();
                 break;
-        }
-    }
-
-    private void loadingOrganization() {
-        Organization organization = new Dao<>(Organization.class).query(mQueryId);
-        if (null == organization) {
-            fetchingRemoteOrganization(mQueryId);
-        } else {
-            loadingLocalMembers(organization.getId(), "");
-        }
-    }
-
-    @Override
-    protected void onFetchingRemoteOrganizationComplete(Organization organization) {
-        if (null != organization && !StringHelper.isEmpty(organization.getId())) {
-            loadingLocalMembers(organization.getId(), "");
         }
     }
 

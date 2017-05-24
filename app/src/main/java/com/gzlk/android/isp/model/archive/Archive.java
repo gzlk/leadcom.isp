@@ -89,6 +89,24 @@ public class Archive extends Additional {
     }
 
     /**
+     * 档案性质(1.普通,2.个人,3.活动)
+     */
+    public static class ArchiveType {
+        /**
+         * 普通档案
+         */
+        public static final int NORMAL = 1;
+        /**
+         * 个人档案
+         */
+        public static final int INDIVIDUAL = 2;
+        /**
+         * 活动档案
+         */
+        public static final int ACTIVITY = 3;
+    }
+
+    /**
      * 档案内容类型
      */
     public static class ArchiveContentType {
@@ -116,10 +134,10 @@ public class Archive extends Additional {
     /**
      * 档案类型
      * <p>
-     *     个人档案时：(1.普通个人档案,2.个人转到组织的档案)
+     * 个人档案时：(1.普通个人档案,2.个人转到组织的档案)
      * </p>
      * <p>
-     *     组织档案时：(1.普通组织档案,2.个人转到组织的档案,3.活动存档)
+     * 组织档案时：(1.普通组织档案,2.个人转到组织的档案,3.活动存档)
      * </p>
      */
     @Column(Field.Type)

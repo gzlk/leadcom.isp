@@ -236,7 +236,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
             onImageCompressed();
             if (isSupportDirectlyUpload) {
                 showImageHandlingDialog(R.string.ui_base_text_uploading);
-                uploadImages();
+                uploadFiles();
             } else {
                 ToastHelper.make().showMsg("压缩完了，暂时没有下一步任务");
                 hideImageHandlingDialog();

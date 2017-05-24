@@ -7,7 +7,8 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.individual.ArchiveNewFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveNewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.ArchiveViewHolder;
@@ -151,7 +152,8 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
             Archive groupArchive = mAdapter.get(index);
-            openActivity(ArchiveDetailsWebViewFragment.class.getName(), groupArchive.getId(), true, false);
+            openActivity(ArchiveDetailsFragment.class.getName(), groupArchive.getId(), true, false);
+            //openActivity(ArchiveDetailsWebViewFragment.class.getName(), groupArchive.getId(), true, false);
         }
     };
 

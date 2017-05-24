@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.individual;
+package com.gzlk.android.isp.fragment.archive;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -126,15 +126,16 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         }
     }
 
-    private void resetRightTitleButton(@NonNull Archive userArchive) {
-        if (userArchive.getUserId().equals(Cache.cache().userId)) {
+    private void resetRightTitleButton(@NonNull final Archive archive) {
+        if (archive.getUserId().equals(Cache.cache().userId)) {
             //setRightIcon(R.string.ui_icon_more);
             setRightText(R.string.ui_base_text_edit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
+                    int type = StringHelper.isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
                     //openEditSelector();
-                    openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.USER, mQueryId), true, true);
+                    openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", type, mQueryId), true, true);
                 }
             });
         }
