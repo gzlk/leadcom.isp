@@ -6,6 +6,7 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.litesuits.http.request.param.HttpMethods;
@@ -77,6 +78,8 @@ public class LikeRequest extends Request<ArchiveLike> {
 
     /**
      * 为某个档案点赞
+     *
+     * @param type 个人或组织档案点赞{@link Archive.Type}
      */
     public void add(int type, String archiveId) {
         // {momentId,accessToken}
@@ -94,6 +97,8 @@ public class LikeRequest extends Request<ArchiveLike> {
 
     /**
      * 取消某个档案的赞
+     *
+     * @param type 个人或组织档案点赞{@link Archive.Type}
      */
     public void delete(int type, String archiveId) {
         // momentId,accessToken
@@ -105,6 +110,8 @@ public class LikeRequest extends Request<ArchiveLike> {
 
     /**
      * 查询某个档案的赞
+     *
+     * @param type 个人或组织档案点赞{@link Archive.Type}
      */
     public void list(int type, String archiveId) {
         // momentId
@@ -115,6 +122,8 @@ public class LikeRequest extends Request<ArchiveLike> {
 
     /**
      * 判断用户是否已点赞
+     *
+     * @param type 个人或组织档案点赞{@link Archive.Type}
      */
     public void isExist(int type, String archiveId) {
         // momentId,accessToken

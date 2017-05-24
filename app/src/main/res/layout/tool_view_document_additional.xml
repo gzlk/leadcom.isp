@@ -2,15 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="@dimen/ui_static_dp_5">
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+    android:background="@android:color/white"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:id="@+id/ui_tool_view_document_additional_read_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/ui_static_dp_5">
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:layout_width="wrap_content"
@@ -35,12 +37,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/ui_static_dp_5">
 
         <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_tool_view_document_additional_like_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ui_icon_like"
+            android:text="@string/ui_icon_like_hollow"
             android:textColor="@color/textColorHint"
             android:textSize="@dimen/ui_base_text_size_small" />
 
@@ -60,7 +64,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/ui_static_dp_5">
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:layout_width="wrap_content"
@@ -85,9 +90,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="end"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/ui_static_dp_5">
 
         <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_tool_view_document_additional_favorite_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ui_icon_favorite"

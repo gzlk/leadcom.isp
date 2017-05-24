@@ -40,7 +40,6 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
     private SimpleClickableViewHolder sourceHolder;
     private SimpleClickableViewHolder timeHolder;
     private SimpleClickableViewHolder privacyHolder;
-    private ArchiveAdditionalViewHolder additionalViewHolder;
 
     // items
     private String[] items;
@@ -67,18 +66,15 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
         if (null == privacyHolder) {
             privacyHolder = new SimpleClickableViewHolder(privacyView, fragment());
         }
-        if (null == additionalViewHolder) {
-            additionalViewHolder = new ArchiveAdditionalViewHolder(itemView, fragment());
-        }
     }
 
-    public void showContent(Archive userArchive) {
-        titleHolder.showContent(format(items[0], userArchive.getTitle()));
-        sourceHolder.showContent(format(items[1], userArchive.getUserName()));
-        timeHolder.showContent(format(items[2], Utils.format(userArchive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
+    public void showContent(Archive archive) {
+        titleHolder.showContent(format(items[0], archive.getTitle()));
+        sourceHolder.showContent(format(items[1], archive.getUserName()));
+        timeHolder.showContent(format(items[2], Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
         privacyHolder.showContent(format(items[3], ""));
-        contentView.setText(StringHelper.escapeFromHtml(userArchive.getContent()));
+        contentView.setText(StringHelper.escapeFromHtml(archive.getContent()));
         contentView.makeExpandable();
-        additionalViewHolder.showContent(userArchive);
+        contentView.setVisibility(StringHelper.isEmpty(archive.getContent()) ? View.GONE : View.VISIBLE);
     }
 }

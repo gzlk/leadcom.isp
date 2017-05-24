@@ -39,10 +39,17 @@ public class AttachmentViewHolder extends BaseViewHolder {
     private TextView pathTextView;
     @ViewId(R.id.ui_holder_view_attachment_size)
     private TextView sizeTextView;
+    @ViewId(R.id.ui_holder_view_attachment_delete)
+    private CustomTextView deleteView;
 
     public AttachmentViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+    }
+
+    // 设置是否显示删除按钮
+    public void setEditable(boolean editable) {
+        deleteView.setVisibility(editable ? View.VISIBLE : View.GONE);
     }
 
     public void showContent(String filePath) {
@@ -51,11 +58,15 @@ public class AttachmentViewHolder extends BaseViewHolder {
         iconTextView.setText(getFileExtension(ext));
         nameTextView.setText(name);
         pathTextView.setText(filePath.replace(name, ""));
-        File file = new File(filePath);
-        if (file.exists() && file.length() > 0) {
-            sizeTextView.setText(Utils.formatSize(file.length()));
-        } else {
-            sizeTextView.setText(null);
+        boolean isFile = filePath.indexOf('/') >= 0;
+        additionalView.setVisibility(isFile ? View.VISIBLE : View.GONE);
+        if (isFile) {
+            File file = new File(filePath);
+            if (file.exists() && file.length() > 0) {
+                sizeTextView.setText(Utils.formatSize(file.length()));
+            } else {
+                sizeTextView.setText(null);
+            }
         }
     }
 

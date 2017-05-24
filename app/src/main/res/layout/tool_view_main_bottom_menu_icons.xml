@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:text="@string/ui_icon_main_home"
+        android:text="@string/ui_icon_home"
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/ui_text_size_main_bottom_icon" />
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:text="@string/ui_icon_main_organize"
+        android:text="@string/ui_icon_pentagon_hollow"
         android:textColor="@color/textColorHintDark"
         android:textSize="@dimen/ui_text_size_main_bottom_icon" />
 

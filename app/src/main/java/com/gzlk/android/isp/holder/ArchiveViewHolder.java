@@ -66,7 +66,9 @@ public class ArchiveViewHolder extends BaseViewHolder {
         if (null != dataHandlerBoundDataListener) {
             Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != object && object instanceof Archive) {
-                openActivity(ArchiveDetailsFragment.class.getName(), ((Archive) object).getId(), BaseFragment.REQUEST_CHANGE, true, false);
+                Archive archive = (Archive) object;
+                int type = StringHelper.isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archive.getId()), BaseFragment.REQUEST_CHANGE, true, false);
             }
         } else if (null != mOnViewHolderClickListener) {
             mOnViewHolderClickListener.onClick(getAdapterPosition());

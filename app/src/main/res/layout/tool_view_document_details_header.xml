@@ -29,13 +29,10 @@
             android:id="@+id/ui_tool_view_document_details_header_time"
             layout="@layout/holder_view_simple_clickable_gravity_left" />
 
-        <include layout="@layout/tool_view_half_line_horizontal" />
-
         <include
             android:id="@+id/ui_tool_view_document_details_header_privacy"
             layout="@layout/holder_view_simple_clickable"
             android:visibility="gone" />
-
 
     </com.hlk.hlklib.lib.view.CorneredView>
 
@@ -54,8 +51,6 @@
             android:textSize="@dimen/ui_base_text_size_small"
             app:lessText="@string/ui_base_text_collapse"
             app:moreText="@string/ui_base_text_expand" />
-
-        <include layout="@layout/tool_view_document_additional" />
 
     </com.hlk.hlklib.lib.view.CorneredView>
 </LinearLayout>

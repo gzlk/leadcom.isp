@@ -55,7 +55,9 @@ public class ArchiveCommentViewHolder extends BaseViewHolder {
             switch (v.getId()) {
                 case R.id.ui_tool_popup_menu_document_comment_copy:
                     Comment comment = ((ArchiveDetailsFragment) fragment()).getFromPosition(getAdapterPosition());
-                    ClipboardHelper.copyToClipboard(v.getContext(), comment.getContent());
+                    if (null != comment) {
+                        ClipboardHelper.copyToClipboard(v.getContext(), comment.getContent());
+                    }
                     break;
                 case R.id.ui_tool_popup_menu_document_comment_delete:
                     // 删除本条评论

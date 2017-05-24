@@ -100,9 +100,9 @@
     <string name="ui_text_document_details_delete">删除档案将会一同删除其下所有附件、评论等相关信息，您确定要继续吗？</string>
     <string name="ui_text_document_comment_content" formatted="false"><![CDATA[<font color="#3cbaff">%s</font>：%s]]></string>
     <string-array name="ui_document_details_item">
-        <item>0|题名：|%s|1</item>
+        <item>0|题名：|%s|0</item>
         <item>1|档案来源：|%s|0</item>
-        <item>2|发生时间：|%s|1</item>
+        <item>2|发生时间：|%s|0</item>
         <item>3|公开|%s|0</item>
     </string-array>
 

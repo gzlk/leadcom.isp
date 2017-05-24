@@ -283,7 +283,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, Archive.Type.GROUP, title, content, "", null, null, null);
+        }).update(mQueryId, Archive.Type.GROUP, title, content, "", images, files, names);
     }
 
     @Override

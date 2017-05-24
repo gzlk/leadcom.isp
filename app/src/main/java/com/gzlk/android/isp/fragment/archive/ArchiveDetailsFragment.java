@@ -2,11 +2,15 @@ package com.gzlk.android.isp.fragment.archive;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.Display;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.archive.CommentRequest;
+import com.gzlk.android.isp.api.archive.LikeRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
@@ -15,16 +19,21 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.holder.ArchiveAdditionalViewHolder;
+import com.gzlk.android.isp.holder.ArchiveCommentViewHolder;
+import com.gzlk.android.isp.holder.ArchiveDetailsHeaderViewHolder;
+import com.gzlk.android.isp.holder.AttachmentViewHolder;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.archive.Additional;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
-import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
-import com.gzlk.android.isp.multitype.binder.user.DocumentCommentViewBinder;
-import com.gzlk.android.isp.multitype.binder.user.DocumentDetailsHeaderViewBinder;
 import com.gzlk.android.isp.task.OrmTask;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
@@ -44,15 +53,32 @@ import java.util.List;
 public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 
     private static final String TAG = "document_%s";
+    private static final String TYPE = "adf_type";
 
     public static ArchiveDetailsFragment newInstance(String params) {
         ArchiveDetailsFragment ddf = new ArchiveDetailsFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putInt(TYPE, Integer.valueOf(strings[0]));
+        bundle.putString(PARAM_QUERY_ID, strings[1]);
         ddf.setArguments(bundle);
         return ddf;
     }
 
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        archiveType = bundle.getInt(TYPE, Archive.Type.USER);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putInt(TYPE, archiveType);
+    }
+
+    // 默认用户档案
+    private int archiveType = Archive.Type.USER;
     private DocumentDetailsAdapter mAdapter;
 
     @Override
@@ -91,12 +117,13 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
-        fetchingRemote();
+        fetchingRemoteComment();
+        fetchingRemoteLikes();
     }
 
     @Override
     protected void onLoadingMore() {
-        loadingLocalCache();
+        loadingLocalComments();
     }
 
     @Override
@@ -108,53 +135,88 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         if (null == mAdapter) {
             addOnInputCompleteListener(onInputCompleteListener);
             mAdapter = new DocumentDetailsAdapter();
-            mAdapter.register(Archive.class, new DocumentDetailsHeaderViewBinder().setFragment(this));
-            mAdapter.register(Comment.class, new DocumentCommentViewBinder().setFragment(this));
+            //mAdapter.register(Archive.class, new DocumentDetailsHeaderViewBinder().setFragment(this));
+            //mAdapter.register(Comment.class, new DocumentCommentViewBinder().setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
             loadingDocument();
         }
     }
 
     private void loadingDocument() {
-        Archive userArchive = new Dao<>(Archive.class).query(mQueryId);
-        if (null == userArchive) {
+        Archive archive = new Dao<>(Archive.class).query(mQueryId);
+        if (null == archive) {
             // 档案不存在则从服务器上拉取
             fetchingDocument();
         } else {
-            mAdapter.update(userArchive);
-            resetRightTitleButton(userArchive);
+            mAdapter.update(archive);
+            resetRightTitleButton(archive);
         }
     }
 
-    private void resetRightTitleButton(@NonNull final Archive archive) {
+    private void resetRightTitleButton(@NonNull Archive archive) {
         if (archive.getUserId().equals(Cache.cache().userId)) {
             //setRightIcon(R.string.ui_icon_more);
             setRightText(R.string.ui_base_text_edit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
-                    int type = StringHelper.isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
                     //openEditSelector();
-                    openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", type, mQueryId), true, true);
+                    openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
                 }
             });
         }
-        loadingLocalCache();
+        // 图片和文件附件列表
+        loadingAttachments(archive);
+        loadingLocalComments();
+        // 拉取远程赞列表
+        fetchingRemoteLikes();
     }
 
-    // 尝试拉取远程资源
-    private void tryFetchingRemote() {
-        if (isNeedRefresh()) {
-            refreshing();
-            fetchingRemote();
-        } else {
-            stopRefreshing();
+    private void loadingAttachments(final Archive archive) {
+        // 附件列表
+        if (null != archive.getImage() && archive.getImage().size() > 0) {
+            for (final String string : archive.getImage()) {
+                mAdapter.add(new Model() {{
+                    setId(string);
+                }});
+            }
+        }
+        if (null != archive.getAttachName()) {
+            for (final String string : archive.getAttachName()) {
+                mAdapter.add(new Model() {{
+                    setId(string);
+                }});
+            }
+        }
+        // 增加Additional
+        mAdapter.add(new Additional() {{
+            setReadNum(archive.getReadNum());
+            setLikeNum(archive.getLikeNum());
+            setCmtNum(archive.getCmtNum());
+            setColNum(archive.getColNum());
+        }});
+    }
+
+    private void updateAdapter(List<Comment> list) {
+        if (null != list) {
+            for (Comment comment : list) {
+                mAdapter.update(comment);
+            }
         }
     }
 
-    private void fetchingRemote() {
+    private void fetchingRemoteLikes() {
+        LikeRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<ArchiveLike>() {
+            @Override
+            public void onResponse(List<ArchiveLike> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+            }
+        }).list(archiveType, mQueryId);
+    }
+
+    private void fetchingRemoteComment() {
         CommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
-            @SuppressWarnings("unchecked")
+
             @Override
             public void onResponse(List<Comment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
@@ -168,17 +230,21 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                         remotePageNumber += 1;
                     }
                     if (list.size() > 0) {
-                        mAdapter.update((List<Model>) (Object) list);
+                        updateAdapter(list);
                     }
                 }
                 stopRefreshing();
                 smoothScrollToBottom(mAdapter.getItemCount() - 1);
             }
-        }).list(Comment.Type.USER, mQueryId, remotePageNumber);
+        }).list(commentType(), mQueryId, remotePageNumber);
     }
 
-    // 加载本地缓存
-    private void loadingLocalCache() {
+    private int commentType() {
+        return archiveType == Archive.Type.USER ? Comment.Type.USER : Comment.Type.GROUP;
+    }
+
+    // 加载本地缓存的评论列表
+    private void loadingLocalComments() {
         new OrmTask<Comment>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Comment>() {
             @Override
             public boolean isModifiable() {
@@ -203,9 +269,9 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                         // 取满一页后下一次需要取下一页
                         localPageNumber++;
                     }
-                    mAdapter.update((List<Model>) (Object) result);
-                    fetchingRemote();
+                    updateAdapter(result);
                     isLoadingComplete(result.size() < PAGE_SIZE);
+                    fetchingRemoteComment();
                 }
             }
         }).exec();
@@ -233,7 +299,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 int id = view.getId();
                 switch (id) {
                     case R.id.ui_dialog_button_editor_to_change:
-                        openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.USER, mQueryId), true, true);
+                        openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
                         break;
                     case R.id.ui_dialog_button_editor_to_delete:
                         warningDeleteDocument();
@@ -257,8 +323,8 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     private void deleteDocument() {
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(Archive userArchive, boolean success, String message) {
-                super.onResponse(userArchive, success, message);
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(message);
                     Dao<Archive> dao = new Dao<>(Archive.class);
@@ -271,15 +337,23 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     finish();
                 }
             }
-        }).delete(Archive.Type.USER, mQueryId);
+        }).delete(archiveType, mQueryId);
     }
 
     public Comment getFromPosition(int position) {
-        return (Comment) mAdapter.get(position);
+        Model model = mAdapter.get(position);
+        if (model instanceof Comment) {
+            return (Comment) model;
+        } else {
+            return null;
+        }
     }
 
     public void deleteComment(final int position) {
         final Comment cmt = getFromPosition(position);
+        if (null == cmt) {
+            return;
+        }
         CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
@@ -290,23 +364,22 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     mAdapter.remove(position);
                 }
             }
-        }).delete(Comment.Type.USER, mQueryId, cmt.getId());
+        }).delete(commentType(), mQueryId, cmt.getId());
     }
 
     private void fetchingDocument() {
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(Archive userArchive, boolean success, String message) {
-                super.onResponse(userArchive, success, message);
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
                 if (success && null != message) {
-                    new Dao<>(Archive.class).save(userArchive);
-                    mAdapter.update(userArchive);
-                    resetRightTitleButton(userArchive);
+                    mAdapter.update(archive);
+                    resetRightTitleButton(archive);
                 } else {
                     closeWithWarning(R.string.ui_text_document_details_not_exists);
                 }
             }
-        }).find(Archive.Type.USER, mQueryId, true);
+        }).find(archiveType, mQueryId, true);
     }
 
     private OnInputCompleteListener onInputCompleteListener = new OnInputCompleteListener() {
@@ -316,7 +389,6 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         }
     };
 
-    @SuppressWarnings("ConstantConditions")
     private void tryComment(String text) {
         CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
@@ -324,17 +396,84 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 super.onResponse(comment, success, message);
                 if (success) {
                     if (null != comment && !StringHelper.isEmpty(comment.getId())) {
-                        new Dao<>(Comment.class).save(comment);
                         mAdapter.update(comment);
                     }
                     refreshing();
-                    fetchingRemote();
+                    fetchingRemoteComment();
                 }
             }
-        }).add(Comment.Type.USER, mQueryId, text);
+        }).add(commentType(), mQueryId, text);
     }
 
-    private class DocumentDetailsAdapter extends BaseMultiTypeAdapter<Model> {
+    private BaseViewHolder.OnHandlerBoundDataListener<Model> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+        @Override
+        public Model onHandlerBoundData(BaseViewHolder holder) {
+            // 收藏
+            return mAdapter.get(0);
+        }
+    };
+
+    private class DocumentDetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+        private static final int VT_HEADER = 0, VT_ADDITIONAL = 2, VT_ATTACHMENT = 3, VT_COMMENT = 4;
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            ArchiveDetailsFragment fragment = ArchiveDetailsFragment.this;
+            switch (viewType) {
+                case VT_HEADER:
+                    return new ArchiveDetailsHeaderViewHolder(itemView, fragment);
+                case VT_ATTACHMENT:
+                    return new AttachmentViewHolder(itemView, fragment);
+                case VT_ADDITIONAL:
+                    ArchiveAdditionalViewHolder aavh = new ArchiveAdditionalViewHolder(itemView, fragment);
+                    aavh.addOnHandlerBoundDataListener(onHandlerBoundDataListener);
+                    return aavh;
+                default:
+                    return new ArchiveCommentViewHolder(itemView, fragment);
+            }
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            switch (viewType) {
+                case VT_HEADER:
+                    return R.layout.tool_view_document_details_header;
+                case VT_ADDITIONAL:
+                    return R.layout.tool_view_document_additional;
+                case VT_ATTACHMENT:
+                    return R.layout.holder_view_attachment;
+                default:
+                    return R.layout.holder_view_document_comment;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            Model model = get(position);
+            if (model instanceof Archive) {
+                return VT_HEADER;
+            } else if (model instanceof Additional) {
+                return VT_ADDITIONAL;
+            } else if (model instanceof Comment) {
+                return VT_COMMENT;
+            }
+            return VT_ATTACHMENT;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof ArchiveDetailsHeaderViewHolder) {
+                ((ArchiveDetailsHeaderViewHolder) holder).showContent((Archive) item);
+            } else if (holder instanceof AttachmentViewHolder) {
+                ((AttachmentViewHolder) holder).setEditable(false);
+                ((AttachmentViewHolder) holder).showContent(item.getId());
+            } else if (holder instanceof ArchiveAdditionalViewHolder) {
+                ((ArchiveAdditionalViewHolder) holder).showContent((Archive) mAdapter.get(0));
+            } else if (holder instanceof ArchiveCommentViewHolder) {
+                ((ArchiveCommentViewHolder) holder).showContent((Comment) item);
+            }
+        }
+
         @Override
         protected int comparator(Model item1, Model item2) {
             if (item1 instanceof Comment && item2 instanceof Comment) {

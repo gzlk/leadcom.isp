@@ -151,8 +151,8 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
-            Archive groupArchive = mAdapter.get(index);
-            openActivity(ArchiveDetailsFragment.class.getName(), groupArchive.getId(), true, false);
+            Archive archive = mAdapter.get(index);
+            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, archive.getId()), true, false);
             //openActivity(ArchiveDetailsWebViewFragment.class.getName(), groupArchive.getId(), true, false);
         }
     };
