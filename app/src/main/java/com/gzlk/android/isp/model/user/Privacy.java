@@ -19,21 +19,43 @@ import com.litesuits.orm.db.annotation.Table;
 public class Privacy extends Model {
 
     /**
-     * 隐私类别
+     * 隐私类型
      */
-    public static class Type {
+    public interface Status {
         /**
          * 完全公开
          */
-        public static final String Public = "1";
+        int PUBLIC = 1;
         /**
-         * 完全私有
+         * 私密
          */
-        public static final String Private = "2";
+        int PRIVATE = 2;
         /**
-         * 对部分人公开
+         * 对某人公开
          */
-        public static final String Someone = "3";
+        int SOMEONE = 3;
+        /**
+         * 对某群公开
+         */
+        int GROUP = 4;
+    }
+
+    /**
+     * 设置隐私的文档类型
+     */
+    public interface Source {
+        /**
+         * 个人资料
+         */
+        int DATA = 1;
+        /**
+         * 个人档案
+         */
+        int ARCHIVE = 2;
+        /**
+         * 个人日志
+         */
+        int MOMENT = 3;
     }
 
     //用户名

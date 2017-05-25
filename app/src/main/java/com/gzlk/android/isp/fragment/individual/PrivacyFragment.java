@@ -18,6 +18,7 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.model.user.Privacy;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
@@ -91,12 +92,12 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
                     } else {
                         if (model instanceof User) {
                             // 对某人公开
-                            object.put("status", 3);
+                            object.put("status", Privacy.Status.SOMEONE);
                             object.put("userId", model.getId());
                             object.put("userName", ((User) model).getName());
                         } else if (model instanceof Organization) {
                             // 对某个群体公开
-                            object.put("status", 4);
+                            object.put("status", Privacy.Status.GROUP);
                             object.put("groupId", model.getId());
                             object.put("groupName", ((Organization) model).getName());
                         }

@@ -15,7 +15,9 @@ import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.user.PrivacyRequest;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -30,6 +32,7 @@ import com.gzlk.android.isp.holder.SimpleInputableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.user.Privacy;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -138,8 +141,53 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         if (requestCode == PrivacyFragment.REQUEST_SECURITY) {
             // 隐私设置返回了
             privacy = getResultedData(data);
+            if (!StringHelper.isEmpty(mQueryId)) {
+                // 如果当前是在编辑文档，则直接保存隐私设置
+                savePrivacy();
+            }
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    /**
+     * 保存隐私设置
+     */
+    private void savePrivacy() {
+        int status = 0;
+        String groupId = null, userId = null;
+        if (!StringHelper.isEmpty(privacy)) {
+            try {
+                JSONObject object = new JSONObject(privacy);
+                if (object.has("status")) {
+                    status = object.getInt("status");
+                    switch (status) {
+                        case Privacy.Status.SOMEONE:
+                            // 对个人公开
+                            userId = object.getString("userId");
+                            break;
+                        case Privacy.Status.GROUP:
+                            // 对某个组织公开
+                            groupId = object.getString("groupId");
+                            break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (status > 0) {
+            PrivacyRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Privacy>() {
+                @Override
+                public void onResponse(Privacy privacy, boolean success, String message) {
+                    super.onResponse(privacy, success, message);
+                    if (success) {
+                        ToastHelper.make().showMsg(message);
+                    } else {
+                        ToastHelper.make().showMsg("目前暂时无法保存隐私设置项目");
+                    }
+                }
+            }).save(status, Privacy.Source.ARCHIVE, mQueryId, groupId, userId);
+        }
     }
 
     @Override
@@ -440,6 +488,16 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.update(archive.getAttachName());
             }
         }
+    }
+
+    // 查找隐私设置
+    private void fetchingPrivacy() {
+        PrivacyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Privacy>() {
+            @Override
+            public void onResponse(List<Privacy> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+            }
+        }).list();
     }
 
     private String getPrivacy() {

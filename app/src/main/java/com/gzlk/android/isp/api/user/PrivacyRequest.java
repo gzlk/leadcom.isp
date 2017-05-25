@@ -27,6 +27,10 @@ import org.json.JSONObject;
 
 public class PrivacyRequest extends Request<Privacy> {
 
+    public static PrivacyRequest request() {
+        return new PrivacyRequest();
+    }
+
     private static class SinglePrivacy extends Output<Privacy> {
     }
 
@@ -58,13 +62,15 @@ public class PrivacyRequest extends Request<Privacy> {
     /**
      * 保存隐私设置
      *
-     * @param status   隐私类型 1.公开 2.不公开 3.对某人公开 4.对某群体公开
-     * @param source   1.个人资料；2.个人档案；3.个人日志
+     * @param status   隐私类型 1.公开 2.不公开 3.对某人公开 4.对某群体公开{@link Privacy.Status}
+     * @param source   1.个人资料；2.个人档案；3.个人日志{@link Privacy.Source}
      * @param sourceId 个人资料\档案\日志记录的id
      * @param groupId  被公开的组织id（当档案向某组织公开时有用）
      * @param userId   公开的用户id（当档案向某用户公开时有用）
+     * @see Privacy.Status
+     * @see Privacy.Source
      */
-    public void save(@NonNull String status, @NonNull String source, @NonNull String sourceId, String groupId, String userId) {
+    public void save(int status, int source, @NonNull String sourceId, String groupId, String userId) {
         //{accessToken:"",status:"",source:"",sourceId:"",groupId:"",userId:""}
 
         JSONObject object = new JSONObject();
@@ -88,5 +94,12 @@ public class PrivacyRequest extends Request<Privacy> {
     public void list() {
         // accessToken:""
         httpRequest(getRequest(MultiplePrivacy.class, format("%s?accessToken=%s", url(LIST), Cache.cache().accessToken), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查找指定文档的隐私设置
+     */
+    public void find(String sourceId, String groupId, String userId) {
+
     }
 }
