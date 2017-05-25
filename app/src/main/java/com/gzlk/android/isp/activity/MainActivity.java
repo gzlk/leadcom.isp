@@ -7,19 +7,25 @@ import android.view.KeyEvent;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.GroupInviteRequest;
+import com.gzlk.android.isp.api.org.GroupJoinRequest;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.nim.NimMessage;
+import com.gzlk.android.isp.model.organization.Invitation;
+import com.gzlk.android.isp.model.organization.JoinGroup;
 import com.gzlk.android.isp.model.user.User;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
+import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.util.List;
@@ -37,6 +43,8 @@ import java.util.List;
 
 public class MainActivity extends TitleActivity {
 
+    public static final String EXTRA_NOTIFICATION = "leadcom.extra.notification";
+
     public static void start(Context context) {
         start(context, 0);
     }
@@ -46,6 +54,10 @@ public class MainActivity extends TitleActivity {
     }
 
     public static void start(Context context, Intent extras) {
+        context.startActivity(getIntent(context, extras));
+    }
+
+    public static Intent getIntent(Context context, Intent extras) {
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (null != extras) {
@@ -55,7 +67,7 @@ public class MainActivity extends TitleActivity {
             }
             intent.putExtras(extras);
         }
-        context.startActivity(intent);
+        return intent;
     }
 
     private MainFragment mainFragment;
@@ -66,7 +78,11 @@ public class MainActivity extends TitleActivity {
         supportTransparentStatusBar = true;
         isToolbarSupported = false;
         super.onCreate(savedInstanceState);
+        // 接收消息
         NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, true);
+        // 接收自定义通知
+        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, true);
+
         if (null == mainFragment) {
             mainFragment = new MainFragment();
         }
@@ -92,10 +108,12 @@ public class MainActivity extends TitleActivity {
 
     @Override
     protected void onDestroy() {
+        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
         NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
         super.onDestroy();
     }
 
+    // 自定义消息接收类
     Observer<List<IMMessage>> incomingMessageObserver = new Observer<List<IMMessage>>() {
         @Override
         public void onEvent(List<IMMessage> messages) {
@@ -103,6 +121,21 @@ public class MainActivity extends TitleActivity {
             for (IMMessage msg : messages) {
                 if (msg.getMsgType() == MsgTypeEnum.custom) {
 
+                }
+            }
+        }
+    };
+
+    // 自定义系统通知类
+    Observer<CustomNotification> customNotificationObserver = new Observer<CustomNotification>() {
+        @Override
+        public void onEvent(CustomNotification message) {
+            // 在这里处理自定义通知。
+            String json = message.getContent();
+            if (!StringHelper.isEmpty(json)) {
+                NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
+                if (null != msg) {
+                    handleNimMessageDetails(msg);
                 }
             }
         }
@@ -116,65 +149,121 @@ public class MainActivity extends TitleActivity {
                 IMMessage message = (IMMessage) getIntent().getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
                 if (message.getMsgType() == MsgTypeEnum.custom) {
                     NimMessage nim = (NimMessage) message.getAttachment();
-                    handleNimMessage(message.getFromAccount(), nim);
+                    handleNimMessageDetails(nim);
                 }
+            } else if (intent.hasExtra(EXTRA_NOTIFICATION)) {
+                // 自定义系统通知
+                NimMessage msg = (NimMessage) intent.getSerializableExtra(EXTRA_NOTIFICATION);
+                handleNimMessageDetails(msg);
             }
         }
     }
 
-    private void handleNimMessage(String fromAccount, NimMessage msg) {
-        User user = new Dao<>(User.class).query(fromAccount);
-        if (null == user) {
-            fetchingUser(fromAccount, msg);
-        } else {
-            handleNimMessageDetails(user.getName(), msg);
-        }
-    }
-
-    private void fetchingUser(String account, final NimMessage msg) {
-        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
-            @Override
-            public void onResponse(User user, boolean success, String message) {
-                super.onResponse(user, success, message);
-                if (success) {
-                    if (null != user && !StringHelper.isEmpty(user.getId())) {
-                        new Dao<>(User.class).save(user);
-                        handleNimMessageDetails(user.getName(), msg);
-                    }
-                }
-            }
-        }).find(account);
-    }
-
-    private void handleNimMessageDetails(String fromName, NimMessage msg) {
-        String text = "";
+    private void handleNimMessageDetails(final NimMessage msg) {
+        String yes = "", no = "";
         switch (msg.getType()) {
             case NimMessage.Type.JOIN:
-                text = StringHelper.getString(R.string.ui_dialog_text_group_join, fromName, "您的组织");
+                yes = StringHelper.getString(R.string.ui_base_text_ok);
+                no = StringHelper.getString(R.string.ui_base_text_reject);
                 break;
             case NimMessage.Type.APPROVE:
-                text = StringHelper.getString(R.string.ui_dialog_text_group_approve, "xx组织");
+                // 组织管理者同意，申请方只有一个按钮“知道了”
+                yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
             case NimMessage.Type.DISAPPROVE:
-                text = StringHelper.getString(R.string.ui_dialog_text_group_disapprove, "xx组织");
+                // 组织管理者不同意，申请方都只有一个按钮“好吧”
+                yes = StringHelper.getString(R.string.ui_base_text_ok_ba);
                 break;
             case NimMessage.Type.INVITE:
-                text = StringHelper.getString(R.string.ui_dialog_text_group_invite, fromName, "xx组织");
+                // 受邀者出现的对话框是“好”,“不用了”
+                yes = StringHelper.getString(R.string.ui_base_text_ok);
+                no = StringHelper.getString(R.string.ui_base_text_no_need);
                 break;
             case NimMessage.Type.AGREE:
-                text = StringHelper.getString(R.string.ui_dialog_text_group_agree, fromName, "xx组织");
-                break;
             case NimMessage.Type.DISAGREE:
-                text = StringHelper.getString(R.string.ui_dialog_text_group_disagree, fromName, "xx组织");
+                // 新成员同意或不同意邀请，邀请方都只有一个按钮“知道了”
+                yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
         }
-        if (!StringHelper.isEmpty(text)) {
-            SimpleDialogHelper.init(this).show(text, StringHelper.getString(R.string.ui_base_text_ok), "", new DialogHelper.OnDialogConfirmListener() {
+        if (!StringHelper.isEmpty(yes)) {
+            SimpleDialogHelper.init(this).show(msg.getMsgContent(), yes, no, new DialogHelper.OnDialogConfirmListener() {
                 @Override
                 public boolean onConfirm() {
+                    switch (msg.getType()) {
+                        case NimMessage.Type.JOIN:
+                            // 通过别人的入群申请
+                            handleJoinPassed(msg);
+                            break;
+                        case NimMessage.Type.INVITE:
+                            // 通过别人的入群邀请
+                            handleInvitePassed(msg);
+                            break;
+                    }
                     return true;
                 }
-            }, null);
+            }, new DialogHelper.OnDialogCancelListener() {
+                @Override
+                public void onCancel() {
+                    switch (msg.getType()) {
+                        case NimMessage.Type.JOIN:
+                            // 拒绝别人的入群申请
+                            handleJoinDenied(msg);
+                            break;
+                        case NimMessage.Type.INVITE:
+                            // 拒绝别人的入群邀请
+                            handleInviteDenied(msg);
+                            break;
+                    }
+                }
+            });
         }
+    }
+
+    /**
+     * 处理申请入群的审批操作
+     */
+    private void handleJoinPassed(NimMessage msg) {
+        GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
+            @Override
+            public void onResponse(JoinGroup joinGroup, boolean success, String message) {
+                super.onResponse(joinGroup, success, message);
+            }
+        }).approveJoin(msg.getUuid(), "");
+    }
+
+    /**
+     * 处理申请入群的拒绝操作
+     */
+    private void handleJoinDenied(NimMessage msg) {
+        GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
+            @Override
+            public void onResponse(JoinGroup joinGroup, boolean success, String message) {
+                super.onResponse(joinGroup, success, message);
+            }
+        }).rejectJoin(msg.getUuid(), "");
+    }
+
+    /**
+     * 处理受邀入群的审批操作
+     */
+    private void handleInvitePassed(NimMessage msg) {
+        GroupInviteRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
+            @Override
+            public void onResponse(Invitation invitation, boolean success, String message) {
+                super.onResponse(invitation, success, message);
+            }
+        }).approveInvite(msg.getUuid(), "");
+    }
+
+    /**
+     * 处理受邀入群的拒绝操作
+     */
+    private void handleInviteDenied(NimMessage msg) {
+        GroupInviteRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
+            @Override
+            public void onResponse(Invitation invitation, boolean success, String message) {
+                super.onResponse(invitation, success, message);
+            }
+        }).rejectInvite(msg.getUuid(), "");
     }
 }

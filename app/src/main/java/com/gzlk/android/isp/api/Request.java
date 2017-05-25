@@ -183,6 +183,7 @@ public abstract class Request<T> {
                     @Override
                     public void onFailed() {
                         super.onFailed();
+                        log(format("url(%s): %s\nbody: %s\nsuccess: failed", methods, url, body));
                         fireFailedListenerEvents("");
                     }
                 }).setHttpBody(new JsonBody(body), methods);

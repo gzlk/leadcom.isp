@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.GroupInviteRequest;
@@ -31,13 +32,10 @@ import com.gzlk.android.isp.holder.PhoneContactViewHolder;
 import com.gzlk.android.isp.holder.SearchableViewHolder;
 import com.gzlk.android.isp.lib.view.SlidView;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.manager.group.MemberManager;
-import com.gzlk.android.isp.manager.listener.SingleManageListener;
 import com.gzlk.android.isp.model.Contact;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Invitation;
-import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.etc.Utility;
@@ -303,11 +301,13 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             return;
         }
         Contact contact = mAdapter.get(selectedUser);
-        if (!StringHelper.isEmpty(contact.getUserId())) {
-            fetchingUserById(org, contact.getUserId(), contact.getName());
-        } else {
-            fetchingUserByPhone(org, contact.getPhone(), contact.getName());
-        }
+        // 通过手机号码邀请
+        invite(org.getId(), contact.getPhone());
+//        if (!StringHelper.isEmpty(contact.getUserId())) {
+//            fetchingUserById(org, contact.getUserId(), contact.getName());
+//        } else {
+//            fetchingUserByPhone(org, contact.getPhone(), contact.getName());
+//        }
     }
 
     private void fetchingUserById(final Organization org, String userId, final String name) {
@@ -317,7 +317,6 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 super.onResponse(user, success, message);
                 if (success) {
                     if (null != user && !StringHelper.isEmpty(user.getId())) {
-                        new Dao<>(User.class).save(user);
                         invite(org, user.getId(), user.getName());
                     } else {
                         ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_phone_contact_invite_failed_not_exist, name));
@@ -334,7 +333,6 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     if (null != list && list.size() > 0) {
-                        new Dao<>(User.class).save(list);
                         User user = list.get(0);
                         invite(org, user.getId(), user.getName());
                     } else {
@@ -353,7 +351,6 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 super.onResponse(member, success, message);
                 if (success) {
                     if (null != member && !StringHelper.isEmpty(member.getId())) {
-                        new Dao<>(Invitation.class).save(member);
                         mAdapter.get(selectedUser).setInvited(true);
                         mAdapter.notifyItemChanged(selectedUser);
                     }
@@ -361,6 +358,18 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 }
             }
         }).invite(org.getId(), org.getName(), userId, userName, message);
+    }
+
+    private void invite(String groupId, String phone) {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
+                }
+            }
+        }).inviteRegister(phone, groupId);
     }
 
     private class ContactAdapter extends RecyclerViewAdapter<PhoneContactViewHolder, Contact> {

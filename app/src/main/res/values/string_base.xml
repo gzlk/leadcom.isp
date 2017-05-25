@@ -68,7 +68,11 @@
     <string name="ui_base_text_login">登录</string>
     <string name="ui_base_text_confirm">确定</string>
     <string name="ui_base_text_commit">提交</string>
+    <string name="ui_base_text_agree">同意</string>
+    <string name="ui_base_text_disagree">不同意</string>
+    <string name="ui_base_text_reject">拒绝</string>
     <string name="ui_base_text_ok">好</string>
+    <string name="ui_base_text_ok_ba">好吧</string>
     <string name="ui_base_text_new">新建</string>
     <string name="ui_base_text_management">管理</string>
     <string name="ui_base_text_yes">是的</string>

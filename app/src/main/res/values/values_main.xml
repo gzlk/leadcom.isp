@@ -8,11 +8,4 @@
     <string name="ui_text_main_bottom_button_text_3">组织</string>
     <string name="ui_text_main_bottom_button_text_4">个人</string>
 
-    <string name="ui_dialog_text_group_join" formatted="false">【%s】申请加入『%s』</string>
-    <string name="ui_dialog_text_group_approve" formatted="false">您已加入『%s』，恭喜您。</string>
-    <string name="ui_dialog_text_group_disapprove" formatted="false">抱歉，您未被允许加入『%s』</string>
-    <string name="ui_dialog_text_group_invite" formatted="false">【%s】邀请您加入他的组织『%s』</string>
-    <string name="ui_dialog_text_group_agree" formatted="false">【%s】已同意加入『%s』</string>
-    <string name="ui_dialog_text_group_disagree" formatted="false">抱歉，【%s】目前不想加入『%s』</string>
-
 </resources>

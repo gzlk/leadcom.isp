@@ -74,7 +74,8 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 signInButton.setEnabled(false);
                 signInButton.setText(R.string.ui_text_sign_in_still_processing);
                 // 同步用户信息，如果同步失败则需要重新登录
-                syncUserInfo();
+                //syncUserInfo();
+                checkNimStatus();
             }
         } else {
             // 尝试获取相关基本的运行时权限

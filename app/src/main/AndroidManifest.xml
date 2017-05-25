@@ -88,6 +88,16 @@
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateHidden" />
 
+        <!--网易云信自定义通知-->
+        <receiver
+            android:name=".receiver.NimNotificationReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="${APP_PKG_NAME}.ACTION.RECEIVE_CUSTOM_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
+
         <!--第三方相册-->
         <activity
             android:name="com.yanzhenjie.album.AlbumActivity"

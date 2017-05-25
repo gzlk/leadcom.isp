@@ -9,8 +9,11 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.http.request.param.HttpMethods;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>系统相关api<br />
@@ -136,10 +139,12 @@ public class SystemRequest extends Request<User> {
      * 邀请手机通讯录好友注册
      */
     public void inviteRegister(@NonNull String phone, @NonNull String groupId) {
-        // {toPhone:"",accessToken:"",toGroupId:""}
+        // {toPhoneArr:['1591111111','186111111'],accessToken:"",toGroupId:""}
+        ArrayList<String> phones = new ArrayList<>();
+        phones.add(phone);
         JSONObject object = new JSONObject();
         try {
-            object.put("toPhoneArr", phone)
+            object.put("toPhoneArr", new JSONArray(phones))
                     .put("toGroupId", groupId)
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {

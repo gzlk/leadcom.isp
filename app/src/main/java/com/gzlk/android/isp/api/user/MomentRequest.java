@@ -99,9 +99,8 @@ public class MomentRequest extends Request<Moment> {
         try {
             object.put("location", checkNull(location))
                     .put("content", checkNull(content))
-                    .put("accessToken", Cache.cache().accessToken);
-            JSONArray array = new JSONArray(image);
-            object.put("image", array);
+                    .put("accessToken", Cache.cache().accessToken)
+                    .put("image", new JSONArray(image));
         } catch (JSONException e) {
             e.printStackTrace();
         }

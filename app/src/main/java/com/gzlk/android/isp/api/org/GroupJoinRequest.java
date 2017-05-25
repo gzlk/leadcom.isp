@@ -26,6 +26,10 @@ import java.lang.reflect.Type;
 
 public class GroupJoinRequest extends Request<JoinGroup> {
 
+    public static GroupJoinRequest request(){
+        return new GroupJoinRequest();
+    }
+
     private static class SingleJoin extends Output<JoinGroup> {
     }
 
