@@ -165,7 +165,7 @@ public class ContactFragment extends BaseOrganizationFragment {
      */
     public void addMemberToOrganizationFromPhoneContact(View view) {
         if (showType != TYPE_ORG) return;
-        if(StringHelper.isEmpty(mQueryId)){
+        if (StringHelper.isEmpty(mQueryId)) {
             ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
             return;
         }
@@ -221,6 +221,9 @@ public class ContactFragment extends BaseOrganizationFragment {
      * 加载查询的对象
      */
     private void loadingQueryItem() {
+        if (StringHelper.isEmpty(mQueryId)) {
+            return;
+        }
         switch (showType) {
             case TYPE_ORG:
                 loadingLocalMembers(mQueryId, "");

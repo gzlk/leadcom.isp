@@ -40,6 +40,12 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
         BaiduHelper.Instance().stop();
         BaiduHelper.Instance().stopWhenLocated(stoppable)
                 .setScanInterval(interval).addOnLocatedListener(locatedListener).start();
+        Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                displayLoading(false);
+            }
+        }, 10000);
     }
 
     private BaiduHelper.OnLocatedListener locatedListener = new BaiduHelper.OnLocatedListener() {

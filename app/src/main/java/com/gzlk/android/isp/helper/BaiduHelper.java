@@ -174,33 +174,35 @@ public class BaiduHelper {
             // 定位失败超时后停止
             if (locateTimes <= 0) {
                 LogHelper.log("BaiduHelper", "Baidu Helper stoped, locate times: " + locateTimes + ", located: " + located);
+                // 这里不需要handle了，否则会陷入死循环
+                //handleMessage(location, false);
                 stop();
             }
 
-            handleMessage(location, located);
+            if (located) {
+                handleMessage(location, true);
 
-            if (located && stopWhenLocated) {
-                // 定位成功后停止
-                stop();
+                if (stopWhenLocated) {
+                    // 定位成功后停止
+                    stop();
+                }
             }
         }
 
         private void handleMessage(BDLocation location, boolean located) {
-            if (null == mHandler) {
-                return;
+            if (null != mHandler) {
+                // 通知handler进行处理
+                Message msg = mHandler.obtainMessage(LOCATE_TIMER);
+                Bundle bundle;
+                if (null == msg.getData()) {
+                    bundle = new Bundle();
+                } else {
+                    bundle = msg.getData();
+                }
+                bundle.putBoolean(InnerHandler.FLAG, located);
+                bundle.putParcelable(InnerHandler.DATA, new BaiduLocation(location));
+                mHandler.sendMessage(msg);
             }
-            // 通知handler进行处理
-            Message msg = mHandler.obtainMessage(LOCATE_TIMER);
-            Bundle bundle;
-            if (null == msg.getData()) {
-                bundle = new Bundle();
-            } else {
-                bundle = msg.getData();
-            }
-            bundle.putBoolean(InnerHandler.FLAG, located);
-            bundle.putParcelable(InnerHandler.DATA, new BaiduLocation(location));
-            mHandler.sendMessage(msg);
-
         }
 
         @Override

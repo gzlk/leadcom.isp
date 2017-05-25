@@ -139,7 +139,7 @@ public class SystemRequest extends Request<User> {
         // {toPhone:"",accessToken:"",toGroupId:""}
         JSONObject object = new JSONObject();
         try {
-            object.put("toPhone", phone)
+            object.put("toPhoneArr", phone)
                     .put("toGroupId", groupId)
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {

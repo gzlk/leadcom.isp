@@ -155,7 +155,10 @@ public class StructureFragment extends BaseOrganizationFragment {
         if (null != list && list.size() > 0) {
             concernedViewHolder.add(list);
         } else {
-            ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
+            // 当前显示本fragment时才提示用户
+            if (getUserVisibleHint()) {
+                ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
+            }
         }
         stopRefreshing();
         setSupportLoadingMore(false);
