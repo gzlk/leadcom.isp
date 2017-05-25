@@ -168,8 +168,12 @@ public class ApproveFragment extends BaseSwipeRefreshSupportFragment {
     private void loadLocalArchives(String searchingText) {
         mAdapter.setSearchingText(searchingText);
         QueryBuilder<Archive> builder = new QueryBuilder<>(Archive.class)
-                .whereEquals(Organization.Field.GroupId, mQueryId)
-                .appendOrderDescBy(Model.Field.CreateDate);
+                .whereEquals(Organization.Field.GroupId, mQueryId);
+        if (!StringHelper.isEmpty(searchingText)) {
+            builder = builder.whereAppendAnd()
+                    .whereAppend(Archive.Field.Title + " like ?", "%" + searchingText + "%");
+        }
+        builder = builder.appendOrderDescBy(Model.Field.CreateDate);
         List<Archive> list = new Dao<>(Archive.class).query(builder);
         if (null != list) {
             for (Archive archive : list) {

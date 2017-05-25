@@ -4,7 +4,7 @@
     <!--input type: 0=text; 1=phone; 2=number; 3=password; 4=visible password-->
     <!--title,hint,value,maxLength,inputType,extractRegex,verifyRegex-->
     <string name="ui_popup_input_name">修改昵称,请输入您的昵称,%s,10,0,[\u4e00#\u9fa5_A#Za#z0#9],[\u4e00#\u9fa5_A#Za#z0#9]{2@10},长度2到10位，可包含中文、大小写字母、数字、下划线</string>
-    <string name="ui_popup_input_id_number">设置身份证,请输入您的身份证号码,%s,18,2,\\d+,^\\d{14}$|^\\d{15}$|^\\d{17}$|^\\d{18}$,长度15或18位，纯数字，输入14位或17位纯数字时会自动添加末尾的X</string>
+    <string name="ui_popup_input_id_number">设置身份证,请输入您的身份证号码,%s,18,2,[\\dxX]+,^\\d{14}[xX]|^\\d{15}$|^\\d{17}[xX]$|^\\d{18}$,长度15或18位，纯数字，末尾可以带x或X</string>
     <string name="ui_popup_input_company">设置单位,请输入您工作的单位,%s,15,0,[\u4e00#\u9fa5],[\u4e00#\u9fa5]{2@15},长度2到15位，只能是纯中文</string>
     <string name="ui_popup_input_duty">我的职务,请输入您的职务,%s,15,0,[\u4e00#\u9fa5],[\u4e00#\u9fa5]{2@15},长度2到15位，只能是纯中文</string>
 </resources>

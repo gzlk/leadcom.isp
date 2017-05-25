@@ -8,6 +8,9 @@
     <string name="ui_text_sign_in_account_value_incorrect">请正确输入您的账号</string>
     <string name="ui_text_sign_in_password_value_incorrect">请输入有效的密码</string>
     <string name="ui_text_sign_in_still_processing">正在登录，请稍候</string>
+    <string name="ui_text_sing_nim_success">登录成功</string>
+    <string name="ui_text_sign_nim_failed" formatted="false">登录失败：%d</string>
+    <string name="ui_text_sing_nim_exception" formatted="false">登录异常：%s</string>
 
     <string name="ui_text_verify_phone_fragment_title_sin_up">新用户注册</string>
     <string name="ui_text_verify_phone_fragment_title_reset_password">重设密码</string>

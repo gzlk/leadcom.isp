@@ -75,12 +75,6 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 signInButton.setText(R.string.ui_text_sign_in_still_processing);
                 // 同步用户信息，如果同步失败则需要重新登录
                 syncUserInfo();
-                // 如果网易云需要重新登录
-                //StatusCode code = NIMClient.getStatus();
-                //if (code.shouldReLogin() || code.wontAutoLogin()) {
-                //    doLogin();
-                //} else {
-                //}
             }
         } else {
             // 尝试获取相关基本的运行时权限
@@ -94,23 +88,21 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         NIMClient.getService(AuthService.class).login(info).setCallback(new RequestCallback<LoginInfo>() {
             @Override
             public void onSuccess(LoginInfo loginInfo) {
-                ToastHelper.make().showMsg("登录成功");
+                ToastHelper.make().showMsg(R.string.ui_text_sing_nim_success);
                 // 打开主页面
                 finish(true);
             }
 
             @Override
             public void onFailed(int i) {
-                ToastHelper.make().showMsg("登录失败：" + i);
-                stillInSignIn = false;
-                signInButton.setEnabled(true);
+                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_text_sign_nim_failed, i));
+                needToReLogin();
             }
 
             @Override
             public void onException(Throwable throwable) {
-                ToastHelper.make().showMsg("登录异常：" + throwable.getMessage());
-                stillInSignIn = false;
-                signInButton.setEnabled(true);
+                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_text_sing_nim_exception, throwable.getMessage()));
+                needToReLogin();
             }
         });
     }
@@ -180,9 +172,8 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 super.onResponse(user, success, message);
                 if (success) {
                     Cache.cache().setCurrentUser(user);
-                    //doLogin();
-                    delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
-                    //finish(true);
+                    // 同步成功之后检测网易云登录状态
+                    checkNimStatus();
                 } else {
                     ToastHelper.make().showMsg(message);
                     needToReLogin();
@@ -201,14 +192,24 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 if (success) {
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
                     Cache.cache().setCurrentUser(user);
-                    //doLogin();
-                    finish(true);
+                    // 登录成功之后检测网易云账号登录状态
+                    checkNimStatus();
                 } else {
-                    stillInSignIn = false;
-                    signInButton.setEnabled(true);
+                    needToReLogin();
                 }
             }
         }).signIn(account, password, "");
+    }
+
+    private void checkNimStatus() {
+        StatusCode code = NIMClient.getStatus();
+        if (code.shouldReLogin() || code.wontAutoLogin()) {
+            // 如果网易云需要重新登录则重新登陆网易云
+            doLogin();
+        } else {
+            // 如不需要重新登录网易云则进入主页面
+            delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
+        }
     }
 
 //    /**

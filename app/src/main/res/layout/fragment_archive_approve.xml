@@ -52,7 +52,7 @@
             android:padding="@dimen/ui_base_dimen_margin_padding"
             app:cv_active_border="@color/colorCaution"
             app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size"
-            app:cv_normal_border="@color/textColorHint">
+            app:cv_normal_border="@color/textColorHintLight">
 
             <TextView
                 android:layout_width="wrap_content"

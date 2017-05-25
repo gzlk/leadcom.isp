@@ -149,8 +149,8 @@ public abstract class Request<T> {
                     @Override
                     public void onSucceed(Api<T> data, Response<Api<T>> response) {
                         super.onSucceed(data, response);
+                        log(format("url(%s): %s\nbody: %s\nsuccess: %s(%s,%s)", methods, url, body, data.success(), data.getCode(), data.getMsg()));
                         if (data.success()) {
-                            log(format("url(%s): %s\nbody: %s\nsuccess: %s", methods, url, body, data.success()));
                             if (data instanceof Query) {
                                 if (null != onMultipleRequestListener) {
                                     Query<T> query = (Query<T>) data;
@@ -175,7 +175,6 @@ public abstract class Request<T> {
                                 }
                             }
                         } else {
-                            log(format("response fail %s", data.getMsg()));
                             ToastHelper.make().showMsg(data.getMsg());
                             fireFailedListenerEvents(data.getMsg());
                         }
