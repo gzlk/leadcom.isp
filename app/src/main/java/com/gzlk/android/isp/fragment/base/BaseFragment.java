@@ -92,7 +92,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 判断字符串是否为空，"null"也当作空
      */
-    public boolean empty(String string) {
+    public boolean isEmpty(String string) {
         return StringHelper.isEmpty(string);
     }
 

@@ -71,8 +71,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 裁剪之后图片的宽高
      */
     protected int mCompressedImageWidth, mCompressedImageHeight;
-    /**
-     * 压缩后需要上传的文件
+    /*
+      压缩后需要上传的文件
      */
     //private String compressed = null;
 
@@ -81,8 +81,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      */
     protected boolean isSupportCacheSelected = true;
 
-    /**
-     * 最大可选择的图片数量
+    /*
+      最大可选择的图片数量
      */
     //protected int maxCachedImage = DFT_MAX_IMAGE;
 
@@ -145,23 +145,24 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                     ArrayList<String> images = Album.parseResult(data);
                     waitingFroCompressImages.clear();
                     waitingFroCompressImages.addAll(images);
-                    // 图片选择了
-                    onImageSelected();
+                    if (isChooseImageForCrop) {
+                        // 如果需要剪切图片
+                        if (waitingFroCompressImages.size() < 1)
+                            throw new IllegalArgumentException("You need select an image first.");
+                        // 第一张图片用来裁剪
+                        cameraPicturePath = waitingFroCompressImages.get(0);
+                        prepareForCrop();
+                    } else {
+                        // 图片选择了
+                        onImageSelected();
+                    }
                 } else {
                     if (null != data) {
                         // 相机照相之后返回的有可能是相册的路径，此时需要获取相册路径
                         cameraPicturePath = getGalleryResultedPath(data);
                     }
                     if (isChooseImageForCrop) {
-                        prepareCroppedImagePath();
-                        if (TextUtils.isEmpty(cameraPicturePath)) {
-                            ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_invalid_camera_path);
-                        } else {
-                            adjustWannaToImageSize();
-                            cropImageUri(Uri.fromFile(new File(cameraPicturePath)),
-                                    Uri.fromFile(new File(croppedImagePath)), REQUEST_CROP,
-                                    croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
-                        }
+                        prepareForCrop();
                     } else {
                         // 照片已选择了
                         waitingFroCompressImages.clear();
@@ -183,6 +184,18 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                 break;
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    private void prepareForCrop() {
+        prepareCroppedImagePath();
+        if (TextUtils.isEmpty(cameraPicturePath)) {
+            ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_invalid_camera_path);
+        } else {
+            adjustWannaToImageSize();
+            cropImageUri(Uri.fromFile(new File(cameraPicturePath)),
+                    Uri.fromFile(new File(croppedImagePath)), REQUEST_CROP,
+                    croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
+        }
     }
 
     private void adjustWannaToImageSize() {
@@ -494,8 +507,6 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                     .statusBarColor(getColor(R.color.colorPrimary))
                     .currentPosition(position)
                     .start();
-        } else {
-
         }
     }
 
@@ -562,7 +573,9 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 打开图片选择菜单
      */
     public void openImageSelector() {
-        if (waitingFroCompressImages.size() >= getMaxSelectable()) {
+        int size = waitingFroCompressImages.size();
+        // 裁剪照片时，可以多次选择裁剪
+        if (size > 1 && size >= getMaxSelectable()) {
             ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_image_cannot_attach_more);
             return;
         }

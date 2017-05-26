@@ -71,6 +71,10 @@ public class UserRequest extends Request<User> {
     public static final int TYPE_PASSWORD = 4;
     public static final int TYPE_SEX = 5;
     public static final int TYPE_BIRTHDAY = 6;
+    public static final int TYPE_PHOTO = 7;
+    public static final int TYPE_ID_NUM = 8;
+    public static final int TYPE_COMPANY = 9;
+    public static final int TYPE_DUTY = 10;
 
     /**
      * 更改我的信息
@@ -86,16 +90,27 @@ public class UserRequest extends Request<User> {
      * @param value 修改的值
      */
     public void update(int type, String value) {
-        // {name,phone,email,password,sex,accessToken}
+        // 这里不要直接保存返回的用户信息，里面有很多null值
+        directlySave = false;
+        // {password,headPhoto,name,phone,email,idNum,birthday,company,position,isAuth,sex,accessToken}
         JSONObject object = new JSONObject();
         try {
             object.put("accessToken", Cache.cache().accessToken);
             switch (type) {
                 case TYPE_BIRTHDAY:
-                    object.put("brithday", value);
+                    object.put("birthday", value);
+                    break;
+                case TYPE_COMPANY:
+                    object.put("company", value);
+                    break;
+                case TYPE_DUTY:
+                    object.put("position", value);
                     break;
                 case TYPE_EMAIL:
                     object.put("email", value);
+                    break;
+                case TYPE_ID_NUM:
+                    object.put("idNum", value);
                     break;
                 case TYPE_NAME:
                     object.put("name", value);
@@ -105,6 +120,9 @@ public class UserRequest extends Request<User> {
                     break;
                 case TYPE_PHONE:
                     object.put("phone", value);
+                    break;
+                case TYPE_PHOTO:
+                    object.put("headPhoto", value);
                     break;
                 case TYPE_SEX:
                     object.put("sex", value);

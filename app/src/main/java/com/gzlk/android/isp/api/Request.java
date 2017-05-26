@@ -79,7 +79,7 @@ public abstract class Request<T> {
     /**
      * http网络访问层
      */
-    protected LiteHttp liteHttp;
+    LiteHttp liteHttp;
 
     public Request() {
         liteHttp = LiteHttp.build(App.app()).create();
@@ -115,6 +115,10 @@ public abstract class Request<T> {
     }
 
     protected Dao<T> dao;
+    /**
+     * 是否支持直接保存
+     */
+    protected boolean directlySave = true;
 
     protected abstract Class<T> getType();
 
@@ -125,6 +129,10 @@ public abstract class Request<T> {
     }
 
     protected void save(T t) {
+        if (!directlySave) {
+            directlySave = true;
+            return;
+        }
         if (null != t) {
             initializeDao();
             dao.save(t);
@@ -132,6 +140,10 @@ public abstract class Request<T> {
     }
 
     protected void save(List<T> list) {
+        if (!directlySave) {
+            directlySave = true;
+            return;
+        }
         if (null != list && list.size() > 0) {
             initializeDao();
             dao.save(list);
@@ -192,7 +204,7 @@ public abstract class Request<T> {
     /**
      * 通知失败
      */
-    protected void fireFailedListenerEvents(String message) {
+    void fireFailedListenerEvents(String message) {
         if (null != onSingleRequestListener) {
             onSingleRequestListener.onResponse(null, false, message);
         }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
@@ -35,8 +36,10 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * <b>功能描述：</b>用户的基本信息<br />
@@ -86,6 +89,8 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     @SuppressWarnings("ConstantConditions")
     @Override
     public void doingInResume() {
+        // 头像选择是需要剪切的
+        isChooseImageForCrop = true;
         rightIcon1.setVisibility(View.GONE);
         rightIcon2.setVisibility(View.GONE);
         setSupportLoadingMore(false);
@@ -94,7 +99,33 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         rightIcon.setText(null);
         tryPaddingContent(titleView, false);
         tryPaddingContent(titleBackground, false);
+
+        // 图片选择后的回调
+        addOnImageSelectedListener(albumImageSelectedListener);
+        // 文件上传完毕后的回调处理
+        setOnFileUploadingListener(mOnFileUploadingListener);
     }
+
+    // 相册选择返回了
+    private OnImageSelectedListener albumImageSelectedListener = new OnImageSelectedListener() {
+        @Override
+        public void onImageSelected(ArrayList<String> selected) {
+            // 图片选择完毕之后立即压缩图片并且自动上传
+            compressImage();
+        }
+    };
+
+    private OnFileUploadingListener mOnFileUploadingListener = new OnFileUploadingListener() {
+        @Override
+        public void onUploading(int all, int current, String file, long size, long uploaded) {
+
+        }
+
+        @Override
+        public void onUploadingComplete(ArrayList<String> uploaded) {
+            tryEditUserInfo(UserRequest.TYPE_PHOTO, uploaded.get(0));
+        }
+    };
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
@@ -138,7 +169,6 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void toEdit() {
         User user = (User) mAdapter.get(0);
         if (user.getId().equals(Cache.cache().userId)) {
@@ -191,31 +221,34 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            checkClickType(index);
+            if (mQueryId.equals(Cache.cache().userId)) {
+                // 只有我自己才能修改我自己的信息
+                checkClickType(index);
+            }
         }
     };
 
     private void fetchingUser() {
         User user = new Dao<>(User.class).query(mQueryId);
         if (null == user) {
-            fetchingRemoteUser();
+            if (mQueryId.equals(Cache.cache().userId)) {
+                syncMineInformation();
+            } else {
+                fetchingRemoteUserInfo();
+            }
         } else {
             checkUser(user);
         }
     }
 
-    private void fetchingRemoteUser() {
+    private void fetchingRemoteUserInfo() {
         UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    if (null != user && !StringHelper.isEmpty(user.getId())) {
-                        //mAdapter.clear();
-                        new Dao<>(User.class).save(user);
-                        if (mAdapter.getItemCount() < 1) {
-                            checkUser(user);
-                        }
+                    if (null != user && !isEmpty(user.getId())) {
+                        checkUser(user);
                     } else {
                         ToastHelper.make().showMsg(message);
                     }
@@ -224,47 +257,115 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         }).find(mQueryId);
     }
 
-    @SuppressWarnings("ConstantConditions")
+    /**
+     * 修改完我的信息之后同步我的信息
+     */
+    private void syncMineInformation() {
+        // 同步我的信息
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    if (null != user && !isEmpty(user.getId())) {
+                        Cache.cache().setCurrentUser(user);
+                        //checkUser(user);
+                    }
+                }
+            }
+        }).sync();
+    }
+
     private void checkUser(final User user) {
-        mAdapter.add(user);
+        final String invalid = StringHelper.getString(R.string.ui_base_text_not_set);
+        // 头像部分
+        if (mAdapter.getItemCount() < 1) {
+            mAdapter.add(user);
+        } else {
+            mAdapter.update(user);
+        }
         if (user.getId().equals(Cache.cache().userId)) {
             rightTextView.setText(R.string.ui_base_text_edit);
         } else {
             rightTextView.setText(null);
         }
+
         // 动态
-        mAdapter.add(new SimpleClickableItem(format(items[1], "")) {{
-            setId(format(items[1], ""));
-        }});
+        if (mAdapter.getItemCount() < 2) {
+            mAdapter.add(new SimpleClickableItem(format(items[1], "")) {{
+                setId(format(items[1], ""));
+            }});
+        } else {
+            mAdapter.notifyItemChanged(1);
+        }
+
         // 性别
-        mAdapter.add(new Model() {{
-            setId(format(items[2], StringHelper.isEmpty(user.getSex()) ? "未设置" : user.getSex()));
-        }});
+        if (mAdapter.getItemCount() < 3) {
+            mAdapter.add(new Model() {{
+                setId(format(items[2], isEmpty(user.getSex()) ? invalid : user.getSex()));
+            }});
+        } else {
+            mAdapter.get(2).setId(format(items[2], isEmpty(user.getSex()) ? invalid : user.getSex()));
+            mAdapter.notifyItemChanged(2);
+        }
+
         // 生日
-        mAdapter.add(new Model() {{
-            birthday = user.getBirthday();
-            setId(format(items[3], StringHelper.isEmpty(user.getBirthday()) ? "未设置" : user.getBirthday().substring(0, 10)));
-        }});
+        if (mAdapter.getItemCount() < 4) {
+            mAdapter.add(new Model() {{
+                birthday = user.getBirthday();
+                setId(format(items[3], isEmpty(user.getBirthday()) ? invalid : user.getBirthday().substring(0, 10)));
+            }});
+        } else {
+            mAdapter.get(3).setId(format(items[3], isEmpty(user.getBirthday()) ? invalid : user.getBirthday().substring(0, 10)));
+            mAdapter.notifyItemChanged(3);
+        }
+
         // 身份证
-        mAdapter.add(new Model() {{
-            setId(format(items[4], "未设置"));
-        }});
+        if (mAdapter.getItemCount() < 5) {
+            mAdapter.add(new Model() {{
+                setId(format(items[4], isEmpty(user.getIdNum()) ? invalid : user.getIdNum()));
+            }});
+        } else {
+            mAdapter.get(4).setId(format(items[4], isEmpty(user.getIdNum()) ? invalid : user.getIdNum()));
+            mAdapter.notifyItemChanged(4);
+        }
+
         // 单位
-        mAdapter.add(new Model() {{
-            setId(format(items[5], "未设置"));
-        }});
+        if (mAdapter.getItemCount() < 6) {
+            mAdapter.add(new Model() {{
+                setId(format(items[5], isEmpty(user.getCompany()) ? invalid : user.getCompany()));
+            }});
+        } else {
+            mAdapter.get(5).setId(format(items[5], isEmpty(user.getCompany()) ? invalid : user.getCompany()));
+            mAdapter.notifyItemChanged(5);
+        }
+
         // 职务
-        mAdapter.add(new Model() {{
-            setId(format(items[6], "未设置"));
-        }});
+        if (mAdapter.getItemCount() < 7) {
+            mAdapter.add(new Model() {{
+                setId(format(items[6], isEmpty(user.getPosition()) ? invalid : user.getPosition()));
+            }});
+        } else {
+            mAdapter.get(6).setId(format(items[6], isEmpty(user.getPosition()) ? invalid : user.getPosition()));
+            mAdapter.notifyItemChanged(6);
+        }
+
         // 注册时间
-        mAdapter.add(new Model() {{
-            setId(format(items[7], StringHelper.isEmpty(user.getCreateDate()) ? "" : user.getCreateDate().substring(0, 10)));
-        }});
+        if (mAdapter.getItemCount() < 8) {
+            mAdapter.add(new Model() {{
+                setId(format(items[7], isEmpty(user.getCreateDate()) ? "-" : user.getCreateDate().substring(0, 10)));
+            }});
+        }
+
         // 电话
-        mAdapter.add(new Model() {{
-            setId(format(items[8], user.getPhone()));
-        }});
+        if (mAdapter.getItemCount() < 9) {
+            mAdapter.add(new Model() {{
+                setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
+            }});
+        } else {
+            mAdapter.get(8).setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
+            mAdapter.notifyItemChanged(8);
+        }
     }
 
     private static final int REQUEST_PHONE = ACTIVITY_BASE_REQUEST + 10;
@@ -280,7 +381,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
             case 0:
                 // 修改昵称
                 String name = user.getName();
-                if (StringHelper.isEmpty(name)) {
+                if (isEmpty(name)) {
                     name = "";
                 }
                 openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_name, name), REQUEST_NAME, true, false);
@@ -315,11 +416,11 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        String result = "";
+        String result;
         switch (requestCode) {
             case REQUEST_PHONE:
                 result = getResultedData(data);
-                if (!StringHelper.isEmpty(result)) {
+                if (!isEmpty(result)) {
                     // 输入的手机号码不为空时
                     openActivity(CodeVerifyFragment.class.getName(), format("%d,%s", CodeVerifyFragment.VT_MODIFY_PHONE, result), REQUEST_PHONE_CONFIRM, true, false);
                 }
@@ -330,16 +431,17 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.notifyItemChanged(8);
                 break;
             case REQUEST_ID:
+                // 身份证号码末尾的 X 字母需要大写
+                result = getResultedData(data).toUpperCase(Locale.getDefault());
+                tryEditUserInfo(UserRequest.TYPE_ID_NUM, result);
+                break;
             case REQUEST_COMPANY:
+                result = getResultedData(data);
+                tryEditUserInfo(UserRequest.TYPE_COMPANY, result);
+                break;
             case REQUEST_DUTY:
                 result = getResultedData(data);
-                if (requestCode == REQUEST_ID) {
-                    if (result.length() == 14 || result.length() == 17) {
-                        result = result + "X";
-                    }
-                }
-                log("inputed: " + result);
-                ToastHelper.make().showMsg("暂时不支持修改");
+                tryEditUserInfo(UserRequest.TYPE_DUTY, result);
                 break;
             case REQUEST_NAME:
                 result = getResultedData(data);
@@ -364,7 +466,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
                 .setContentSize(getFontDimension(R.dimen.ui_static_sp_20))
                 .setOutSideCancelable(false)
                 .isCenterLabel(true).isDialog(false).build();
-        if (StringHelper.isEmpty(birthday)) {
+        if (isEmpty(birthday)) {
             tpv.setDate(Calendar.getInstance());
         } else {
             Calendar calendar = Calendar.getInstance();
@@ -404,42 +506,52 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
-                if (success && null != user && !StringHelper.isEmpty(user.getId())) {
-                    resetUserInformation(type, value, user);
+                if (success) {
+                    // 同步我的基本信息
+                    syncMineInformation();
+                    resetUserInformation(type, value);
                 }
             }
         }).update(type, value);
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private void resetUserInformation(int type, String value, User user) {
+    private void resetUserInformation(int type, String value) {
         switch (type) {
             case UserRequest.TYPE_BIRTHDAY:
-                user.setBirthday(value);
-                mAdapter.get(3).setId(format(items[3], user.getBirthday()));
+                mAdapter.get(3).setId(format(items[3], value));
                 mAdapter.notifyItemChanged(3);
                 break;
+            case UserRequest.TYPE_COMPANY:
+                mAdapter.get(5).setId(format(items[5], value));
+                mAdapter.notifyItemChanged(5);
+                break;
+            case UserRequest.TYPE_DUTY:
+                mAdapter.get(6).setId(format(items[6], value));
+                mAdapter.notifyItemChanged(6);
+                break;
             case UserRequest.TYPE_EMAIL:
-                user.setEmail(value);
+                break;
+            case UserRequest.TYPE_ID_NUM:
+                mAdapter.get(4).setId(format(items[4], value));
+                mAdapter.notifyItemChanged(4);
                 break;
             case UserRequest.TYPE_NAME:
-                user.setName(value);
                 ((User) mAdapter.get(0)).setName(value);
                 mAdapter.notifyItemChanged(0);
                 break;
             case UserRequest.TYPE_PHONE:
-                user.setPhone(value);
-                mAdapter.get(8).setId(format(items[8], user.getPhone()));
+                mAdapter.get(8).setId(format(items[8], value));
                 mAdapter.notifyItemChanged(8);
                 break;
+            case UserRequest.TYPE_PHOTO:
+                ((User) mAdapter.get(0)).setHeadPhoto(value);
+                mAdapter.notifyItemChanged(0);
+                break;
             case UserRequest.TYPE_SEX:
-                user.setSex(value);
-                mAdapter.get(2).setId(format(items[2], user.getSex()));
+                mAdapter.get(2).setId(format(items[2], value));
                 mAdapter.notifyItemChanged(2);
                 break;
         }
-        // 重新拉取远程用户的信息，否则本地有null字段
-        fetchingRemoteUser();
     }
 
     private class SpacesItemDecoration extends RecyclerView.ItemDecoration {

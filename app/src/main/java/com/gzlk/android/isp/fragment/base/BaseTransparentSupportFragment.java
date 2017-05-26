@@ -50,7 +50,10 @@ public abstract class BaseTransparentSupportFragment extends BaseLocationSupport
      * 设置是否当前所显示的内容
      */
     public void setViewPagerDisplayedCurrent(boolean displayed) {
-        isDisplayedInViewPager = displayed;
+        if (isDisplayedInViewPager != displayed) {
+            isDisplayedInViewPager = displayed;
+            onViewPagerDisplayedChanged(displayed);
+        }
     }
 
     /**
@@ -58,6 +61,13 @@ public abstract class BaseTransparentSupportFragment extends BaseLocationSupport
      */
     public boolean isViewPagerDisplayedCurrent() {
         return isDisplayedInViewPager;
+    }
+
+    /**
+     * 当前页面在ViewPager中显示或隐藏事件
+     */
+    protected void onViewPagerDisplayedChanged(boolean visible) {
+
     }
 
     /**
