@@ -21,32 +21,32 @@ public class Collection extends Model {
     /**
      * 个人收藏类别
      */
-    public static class Type {
+    public interface Type {
         /**
          * 文本
          */
-        public static final String TEXT = "1";
+        int TEXT = 1;
         /**
          * 图片
          */
-        public static final String IMAGE = "2";
+        int IMAGE = 2;
         /**
          * 声音
          */
-        public static final String VOICE = "3";
+        int VOICE = 3;
         /**
          * 附件
          */
-        public static final String ATTACHMENT = "4";
+        int ATTACHMENT = 4;
         /**
          * 连接
          */
-        public static final String LINK = "5";
+        int LINK = 5;
     }
 
     //收藏的类型(1->文本, 2->图片, 3->语音, 4->附件, 5->链接)
     @Column(Archive.Field.Type)
-    private String type;
+    private int type;
     //收藏的内容(文本,图片,语音,附件,链接)
     @Column(Archive.Field.Content)
     private String content;
@@ -66,11 +66,11 @@ public class Collection extends Model {
     @Column(Archive.Field.LastModifiedDate)
     private String lastModifiedDate;
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 

@@ -61,7 +61,7 @@ public class CollectionRequest extends Request<Collection> {
         return this;
     }
 
-    public void add(@NonNull String type, String content, @NonNull String creatorId, String creatorName) {
+    public void add(int type, String content, @NonNull String creatorId, String creatorName) {
         // {type,content,creatorId,creatorName,accessToken}
 
         JSONObject object = new JSONObject();

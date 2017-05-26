@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.holder;
 
-import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,8 +42,6 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     private TextView creatorName;
     @ViewId(R.id.ui_holder_view_collection_time)
     private TextView createTime;
-    @ViewId(R.id.ui_holder_view_collection_content_cover)
-    private CorneredView convertView;
 
     @ViewId(R.id.ui_tool_view_collection_content_text)
     private ExpandableTextView textContent;
@@ -73,14 +70,14 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         showCollection(collection.getType(), collection.getContent());
     }
 
-    private void checkViews(String type) {
-        textContent.setVisibility(type.equals(Collection.Type.TEXT) ? View.VISIBLE : View.GONE);
-        imageContent.setVisibility(type.equals(Collection.Type.IMAGE) ? View.VISIBLE : View.GONE);
-        attachmentContent.setVisibility(type.equals(Collection.Type.ATTACHMENT) ? View.VISIBLE : View.GONE);
+    private void checkViews(int type) {
+        textContent.setVisibility(type == Collection.Type.TEXT ? View.VISIBLE : View.GONE);
+        imageContent.setVisibility(type == Collection.Type.IMAGE ? View.VISIBLE : View.GONE);
+        attachmentContent.setVisibility(type == Collection.Type.ATTACHMENT ? View.VISIBLE : View.GONE);
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void showCollection(String type, String content) {
+    private void showCollection(int type, String content) {
         switch (type) {
             case Collection.Type.TEXT:
                 textContent.setText(EmojiUtility.getEmojiString(textContent.getContext(), content, true));
@@ -115,7 +112,6 @@ public class CollectionItemViewHolder extends BaseViewHolder {
 
     public void setShowLargeImage(boolean largeImage) {
         showLargeImage = largeImage;
-        convertView.setVisibility(showLargeImage ? View.GONE : View.INVISIBLE);
         createTime.setVisibility(showLargeImage ? View.GONE : View.VISIBLE);
     }
 

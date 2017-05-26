@@ -18,4 +18,5 @@
     <color name="buttonActivityColor">@color/color_52a2fb</color>
     <color name="buttonDialogNormalColor">@android:color/white</color>
     <color name="buttonDialogActiveColor">@color/textColorHintLight</color>
+    <color name="activeBorderColor">@color/colorPrimary</color>
 </resources>

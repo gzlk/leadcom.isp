@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/ui_holder_view_moment_content"
             android:layout_alignTop="@+id/ui_holder_view_moment_content"
-            app:cv_active_border="@color/colorPrimary"
+            app:cv_active_border="@color/activeBorderColor"
             app:cv_background="@android:color/transparent"
             app:cv_background_active="@color/transparent_20"
             app:cv_background_type="fill"
