@@ -41,6 +41,7 @@ public class Organization extends Model {
         public static final String Verified = "verified";
         public static final String RoleId = "roleId";
         public static final String RoleName = "roleName";
+        public static final String RoleDescription = "roleDescription";
         public static final String SquadId = "squadId";
         public static final String PermissionId = "permissionId";
         public static final String GroupLogo = "groupLogo";
