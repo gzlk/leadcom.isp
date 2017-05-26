@@ -88,6 +88,26 @@ public class ContactViewHolder extends BaseViewHolder {
         boolean isMe = member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
         button.setVisibility(buttonVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
+        if (buttonVisible) {
+            // 只在显示按钮的时候才进行判断加入或不加入操作
+            if (!StringHelper.isEmpty(squadId)) {
+                // 小组id不为空时，判断当前成员是否已经加入本小组
+                if (!StringHelper.isEmpty(member.getSquadId()) && member.getSquadId().equals(squadId)) {
+                    button.setEnabled(false);
+                    // 成员已是小组的人了
+                    button.setText(R.string.ui_phone_contact_invited);
+                }
+            }
+        }
+    }
+
+    private String squadId = "";
+
+    /**
+     * 设置小组的id以便加人到小组里去
+     */
+    public void setSquadId(String squadId) {
+        this.squadId = squadId;
     }
 
     /**

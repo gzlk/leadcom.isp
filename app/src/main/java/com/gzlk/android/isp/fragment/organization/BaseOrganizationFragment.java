@@ -55,11 +55,6 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
             @Override
             public void onResponse(List<Organization> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list && list.size() > 0) {
-                        new Dao<>(Organization.class).save(list);
-                    }
-                }
                 onFetchingJoinedRemoteOrganizationsComplete(list);
             }
         }).list();
@@ -80,11 +75,6 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
             @Override
             public void onResponse(Organization organization, boolean success, String message) {
                 super.onResponse(organization, success, message);
-                if (success) {
-                    if (null != organization && !StringHelper.isEmpty(organization.getId())) {
-                        new Dao<>(Organization.class).save(organization);
-                    }
-                }
                 onFetchingRemoteOrganizationComplete(organization);
             }
         }).find(organizationId);
@@ -104,11 +94,6 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
             @Override
             public void onResponse(List<Squad> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list && list.size() > 0) {
-                        new Dao<>(Squad.class).save(list);
-                    }
-                }
                 onFetchingRemoteSquadsComplete(list);
             }
         }).list(organizationId);
@@ -128,11 +113,6 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
             @Override
             public void onResponse(Squad squad, boolean success, String message) {
                 super.onResponse(squad, success, message);
-                if (success) {
-                    if (null != squad && !StringHelper.isEmpty(squad.getId())) {
-                        new Dao<>(Squad.class).save(squad);
-                    }
-                }
                 onAddNewSquadToOrganizationComplete(squad);
             }
         }).add(orgId, squadName, squadIntroduction);
@@ -153,11 +133,6 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
             @Override
             public void onResponse(Squad squad, boolean success, String message) {
                 super.onResponse(squad, success, message);
-                if (success) {
-                    if (null != squad && !StringHelper.isEmpty(squad.getId())) {
-                        new Dao<>(Squad.class).save(squad);
-                    }
-                }
                 onFetchingRemoteSquadComplete(squad);
             }
         }).find(squadId);
@@ -177,14 +152,9 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
             @Override
             public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list && list.size() > 0) {
-                        new Dao<>(Member.class).save(list);
-                    }
-                }
                 onFetchingRemoteMembersComplete(list);
             }
-        }).list(organizationId, squadId);
+        }).list(organizationId, squadId, remotePageNumber);
     }
 
     /**
@@ -212,7 +182,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
         if (StringHelper.isEmpty(userId)) return false;
 
         QueryBuilder<Member> query = memberBuilder(organizationId, squadId)
-                .whereAppendAnd().whereAppend(Model.Field.UserId, userId);
+                .whereAppendAnd().whereEquals(Model.Field.UserId, userId);
         List<Member> members = new Dao<>(Member.class).query(query);
         return null != members && members.size() > 0;
     }
@@ -221,8 +191,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 查询本地成员列表，按照成员名字排序
      */
     protected void loadingLocalMembers(String organizationId, String squadId) {
-        QueryBuilder<Member> query = memberBuilder(organizationId, squadId)
-                .orderBy(Model.Field.UserName);
+        QueryBuilder<Member> query = memberBuilder(organizationId, squadId).orderBy(Model.Field.UserName);
         onLoadingLocalMembersComplete(organizationId, squadId, new Dao<>(Member.class).query(query));
     }
 

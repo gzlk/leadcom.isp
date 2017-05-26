@@ -80,7 +80,8 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         if (null == mAdapter) {
             mAdapter = new ContactAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            loadingLocalMembers(mOrganizationId, mSquadId);
+            // 查找本地该组织名下所有成员
+            loadingLocalMembers(mOrganizationId, "");
         }
     }
 
@@ -120,6 +121,7 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         public ContactViewHolder onCreateViewHolder(View itemView, int viewType) {
             ContactViewHolder holder = new ContactViewHolder(itemView, OrganizationContactFragment.this);
             holder.showButton(true);
+            holder.setSquadId(mSquadId);
             holder.addOnHandlerBoundDataListener(onHandlerBoundDataListener);
             return holder;
         }

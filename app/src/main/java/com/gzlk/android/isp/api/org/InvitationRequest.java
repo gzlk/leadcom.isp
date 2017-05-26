@@ -40,7 +40,7 @@ public class InvitationRequest extends Request<Invitation> {
     /**
      * 同意
      */
-    static final String APPROVE = "/aprove";
+    static final String APPROVE = "/approve";
     /**
      * 拒绝
      */

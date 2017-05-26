@@ -57,26 +57,27 @@ public class MemberRequest extends Request<Member> {
         return this;
     }
 
-    private String compound(String action, String groupId, String squadId) {
+    private String compound(String action, String groupId, String squadId, int pageNumber) {
         String params = format("%s?groupId=%s", url(action), groupId);
         if (!StringHelper.isEmpty(squadId)) {
             params += format("&squadId=%s", squadId);
         }
+        params += format("&pageNumber=%d", pageNumber);
         return params;
     }
 
     /**
      * 查找指定组织和指定小组内的成员列表
      */
-    public void list(String groupId, String squadId) {
-        httpRequest(getRequest(MultipleMember.class, compound(LIST, groupId, squadId), "", HttpMethods.Get));
+    public void list(String groupId, String squadId, int pageNumber) {
+        httpRequest(getRequest(MultipleMember.class, compound(LIST, groupId, squadId, pageNumber), "", HttpMethods.Get));
     }
 
     /**
      * 在指定组织和指定小组内搜索成员名字
      */
-    public void search(String groupId, String squadId, String memberName) {
-        httpRequest(getRequest(MultipleMember.class, format("%s&info=%s", compound(SEARCH, groupId, squadId), memberName), "", HttpMethods.Get));
+    public void search(String groupId, String squadId, String memberName, int pageNumber) {
+        httpRequest(getRequest(MultipleMember.class, format("%s&info=%s", compound(SEARCH, groupId, squadId, pageNumber), memberName), "", HttpMethods.Get));
     }
 
     /**
