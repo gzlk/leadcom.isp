@@ -44,7 +44,7 @@
     <string-array name="ui_individual_settings">
         <item>0|修改密码|</item>
         <item>1|消息管理|</item>
-        <item>2|隐私设置|</item>
+        <item>2|关于我们|</item>
     </string-array>
     <string name="ui_text_setting_fragment_title">设置</string>
     <string name="ui_text_setting_sign_out">退出登录</string>

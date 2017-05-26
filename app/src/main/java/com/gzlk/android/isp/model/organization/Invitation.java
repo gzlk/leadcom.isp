@@ -28,10 +28,18 @@ public class Invitation extends Model {
         public static final String State = "state";
     }
 
+    // 组织id和名称
     @Column(Organization.Field.GroupId)
     private String groupId;
     @Column(Organization.Field.GroupName)
     private String groupName;
+
+    //小组id和名称
+    @Column(Organization.Field.SquadId)
+    private String groSquId;
+    @Column(Organization.Field.SquadName)
+    private String groSquName;
+
     //邀请人ID和姓名
     @Column(Field.InviterId)
     private String inviterId;
@@ -77,6 +85,22 @@ public class Invitation extends Model {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public String getGroSquId() {
+        return groSquId;
+    }
+
+    public void setGroSquId(String groSquId) {
+        this.groSquId = groSquId;
+    }
+
+    public String getGroSquName() {
+        return groSquName;
+    }
+
+    public void setGroSquName(String groSquName) {
+        this.groSquName = groSquName;
     }
 
     public String getInviterId() {

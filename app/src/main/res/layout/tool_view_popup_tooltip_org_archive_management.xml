@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ui_tool_view_tooltip_menu_edit"
+    android:id="@+id/ui_tool_view_tooltip_menu_organization_document_manage"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:visibility="gone">
 
     <TextView
-        android:id="@+id/ui_tool_popup_menu_document_comment_copy"
+        android:id="@+id/ui_tool_popup_menu_organization_document_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/ui_static_dp_5"
-        android:text="@string/ui_base_text_copy"
+        android:text="@string/ui_organization_document_new"
         android:textColor="@android:color/white" />
 
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ui_icon_vertical_bar"
-        android:textColor="@android:color/white" />
+    <include layout="@layout/tool_view_half_line_horizontal" />
 
     <TextView
-        android:id="@+id/ui_tool_popup_menu_document_comment_delete"
+        android:id="@+id/ui_tool_popup_menu_organization_document_manage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/ui_static_dp_5"
-        android:text="@string/ui_base_text_delete"
+        android:text="@string/ui_organization_document_management"
         android:textColor="@android:color/white" />
-
 </LinearLayout>

@@ -41,12 +41,25 @@
                 android:layout_margin="@dimen/ui_base_dimen_margin_padding"
                 android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:minHeight="@dimen/ui_base_dimen_button_height"
-                    android:text="@string/ui_organization_squad_add_text" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/ui_base_dimen_button_height"
+                        android:text="@string/ui_organization_squad_add_text" />
+
+                    <include
+                        layout="@layout/tool_view_image_button_deleter"
+                        android:layout_width="@dimen/ui_static_dp_25"
+                        android:layout_height="@dimen/ui_static_dp_25" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

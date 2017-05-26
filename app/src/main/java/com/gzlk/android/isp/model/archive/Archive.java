@@ -66,6 +66,8 @@ public class Archive extends Additional {
         public static final String LastModifiedDate = "lastModifiedDate";
         public static final String CreatorId = "creatorId";
         public static final String CreatorName = "creatorName";
+        public static final String Tag = "tag";
+        public static final String HappenDate = "happenDate";
         public static final String Attach = "attach";
         public static final String AttachName = "attachName";
         public static final String ReadNumber = "readNumber";
@@ -177,7 +179,13 @@ public class Archive extends Additional {
     private String lastModifiedDate;   //最后一次修改时间
 
     @Ignore
-    private Additional addition;     //档案附加信息
+    private Additional addition;       //档案附加信息
+
+    @Column(Field.Tag)
+    private ArrayList<String> tag;     //标签(Json数组)
+
+    @Column(Field.HappenDate)
+    private String happenDate;         //档案发生时间
 
     public String getGroupId() {
         return groupId;

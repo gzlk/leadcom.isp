@@ -29,6 +29,9 @@ public class Moment extends Additional {
     //姓名
     @Column(Model.Field.UserName)
     private String userName;
+    //用户头像
+    @Column(User.Field.HeadPhoto)
+    private String headPhoto;
     //创建时间
     @Column(Model.Field.CreateDate)
     private String createDate;
@@ -59,6 +62,14 @@ public class Moment extends Additional {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getHeadPhoto() {
+        return headPhoto;
+    }
+
+    public void setHeadPhoto(String headPhoto) {
+        this.headPhoto = headPhoto;
     }
 
     public String getCreateDate() {

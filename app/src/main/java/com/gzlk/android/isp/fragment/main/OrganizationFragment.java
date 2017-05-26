@@ -83,11 +83,23 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         public void onChanged(Organization item) {
             if (null == item) return;
             selectedOrganizationId = item.getId();
-            mainFragment.setTitleText(item.getName());
+            if (getUserVisibleHint()) {
+                // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
+                mainFragment.setTitleText(item.getName());
+            }
             ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
             ((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
         }
     };
+
+    @Override
+    protected void onViewPagerDisplayedChanged(boolean visible) {
+        super.onViewPagerDisplayedChanged(visible);
+        if (visible) {
+            // 当前显示的是组织则判断能否显示右上角的 + 号
+            resetRightIcon();
+        }
+    }
 
     public void needChangeTitle() {
         ((StructureFragment) mFragments.get(0)).changeSelectedGroup();
@@ -102,7 +114,14 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         channel2.setTextColor(position == 1 ? color2 : color1);
         channel3.setTextColor(position == 2 ? color2 : color1);
         channel4.setTextColor(position == 3 ? color2 : color1);
+        if (getUserVisibleHint()) {
+            resetRightIcon();
+        }
+    }
 
+    private void resetRightIcon() {
+        // 如果当前显示的是组织页面才控制右上角的 + 显示与否
+        int position = getDisplayedPage();
         mainFragment.showRightIcon(position == 1 || position == 2);
     }
 

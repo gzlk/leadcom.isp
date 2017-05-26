@@ -100,7 +100,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
      * 打开新建、管理菜单
      */
     public void openTooltipMenu(View view) {
-        showTooltip(view, R.id.ui_tool_view_tooltip_menu_organization_document, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+        showTooltip(view, R.id.ui_tool_view_tooltip_menu_organization_document_manage, true, TooltipHelper.TYPE_RIGHT, onClickListener);
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {

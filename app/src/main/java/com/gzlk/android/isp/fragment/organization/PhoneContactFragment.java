@@ -20,12 +20,8 @@ import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.SystemRequest;
-import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.org.GroupInviteRequest;
-import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.application.App;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.PhoneContactViewHolder;
@@ -204,7 +200,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             for (Contact contact : contacts) {
                 // 检索此用户是否已被邀请
                 contact.setInvited(invited(contact.getPhone()));
-                contact.setMember(isMember(contact.getUserId(), mQueryId, ""));
+                contact.setMember(isMember(contact.getUserId(), mOrganizationId, mSquadId));
                 mAdapter.add(contact);
                 slidView.add(contact.getSpell());
             }
@@ -220,10 +216,17 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     private boolean invited(String phone) {
         User user = getUser(phone);
         if (null != user) {
-            QueryBuilder<Invitation> builder = new QueryBuilder<>(Invitation.class)
-                    .whereEquals(Organization.Field.GroupId, mQueryId)
-                    .whereAppendAnd()
-                    .whereEquals(Invitation.Field.InviteeId, user.getId());
+            QueryBuilder<Invitation> builder = new QueryBuilder<>(Invitation.class);
+            if (!StringHelper.isEmpty(mSquadId)) {
+                // 邀请进小组的
+                builder = builder.whereEquals(Organization.Field.SquadId, mSquadId);
+                //.whereAppendAnd().whereAppend(Organization.Field.GroupId + " IS NULL");
+            } else {
+                // 邀请进组织的
+                builder = builder.whereEquals(Organization.Field.GroupId, mOrganizationId);
+                //.whereAppendAnd().whereAppend(Organization.Field.SquadId + " IS NULL");
+            }
+            builder = builder.whereAppendAnd().whereEquals(Invitation.Field.InviteeId, user.getId());
             List<Invitation> list = new Dao<>(Invitation.class).query(builder);
             return null != list && list.size() > 0;
         }
@@ -266,101 +269,24 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 添加指定index的联系人到小组或组织
-            if (!StringHelper.isEmpty(mSquadId)) {
-                // 添加到小组
-                ToastHelper.make().showMsg("暂时无法添加成员到小组（api不支持）");
-            } else {
-                // 当前选择的用户
-                selectedUser = index;
-                // 加载组织信息
-                loadingOrganization();
-            }
+            Contact contact = mAdapter.get(index);
+            invite(contact.getPhone());
         }
     };
-    private int selectedUser = -1;
 
-    private void loadingOrganization() {
-        Organization org = new Dao<>(Organization.class).query(mQueryId);
-        if (null == org) {
-            fetchingRemoteOrganization(mQueryId);
+    // 发起邀请
+    private void invite(String phone) {
+        if (!StringHelper.isEmpty(mSquadId)) {
+            // 添加到小组
+            inviteToSquad(phone);
         } else {
-            addPhoneContactToOrganization(org);
+            // 添加到组织
+            inviteToOrganization(phone);
         }
     }
 
-    @Override
-    protected void onFetchingRemoteOrganizationComplete(Organization organization) {
-        if (null != organization && !StringHelper.isEmpty(organization.getId())) {
-            addPhoneContactToOrganization(organization);
-        }
-    }
-
-    private void addPhoneContactToOrganization(final Organization org) {
-        if (selectedUser < 0) {
-            ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_not_select_user);
-            return;
-        }
-        Contact contact = mAdapter.get(selectedUser);
-        // 通过手机号码邀请
-        invite(org.getId(), contact.getPhone());
-//        if (!StringHelper.isEmpty(contact.getUserId())) {
-//            fetchingUserById(org, contact.getUserId(), contact.getName());
-//        } else {
-//            fetchingUserByPhone(org, contact.getPhone(), contact.getName());
-//        }
-    }
-
-    private void fetchingUserById(final Organization org, String userId, final String name) {
-        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
-            @Override
-            public void onResponse(User user, boolean success, String message) {
-                super.onResponse(user, success, message);
-                if (success) {
-                    if (null != user && !StringHelper.isEmpty(user.getId())) {
-                        invite(org, user.getId(), user.getName());
-                    } else {
-                        ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_phone_contact_invite_failed_not_exist, name));
-                    }
-                }
-            }
-        }).find(userId);
-    }
-
-    private void fetchingUserByPhone(final Organization org, String phone, final String name) {
-        UserRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<User>() {
-            @Override
-            public void onResponse(List<User> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list && list.size() > 0) {
-                        User user = list.get(0);
-                        invite(org, user.getId(), user.getName());
-                    } else {
-                        ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_phone_contact_invite_failed_not_exist, name));
-                    }
-                }
-            }
-        }).list("", phone, "");
-    }
-
-    private void invite(Organization org, String userId, String userName) {
-        String message = StringHelper.getString(R.string.ui_phone_contact_invite_user_to_organization, Cache.cache().userName, org.getName());
-        GroupInviteRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
-            @Override
-            public void onResponse(Invitation member, boolean success, String message) {
-                super.onResponse(member, success, message);
-                if (success) {
-                    if (null != member && !StringHelper.isEmpty(member.getId())) {
-                        mAdapter.get(selectedUser).setInvited(true);
-                        mAdapter.notifyItemChanged(selectedUser);
-                    }
-                    ToastHelper.make().showMsg(message);//R.string.ui_phone_contact_invite_success);
-                }
-            }
-        }).invite(org.getId(), org.getName(), userId, userName, message);
-    }
-
-    private void invite(String groupId, String phone) {
+    // 邀请进小组
+    private void inviteToSquad(String phone) {
         SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
@@ -369,7 +295,20 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
-        }).inviteRegister(phone, groupId);
+        }).inviteToSquad(phone, mSquadId);
+    }
+
+    // 邀请进组织
+    private void inviteToOrganization(String phone) {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
+                }
+            }
+        }).inviteToGroup(phone, mOrganizationId);
     }
 
     private class ContactAdapter extends RecyclerViewAdapter<PhoneContactViewHolder, Contact> {

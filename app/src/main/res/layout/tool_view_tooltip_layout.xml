@@ -46,11 +46,13 @@
                 android:textSize="@dimen/ui_base_text_size_small"
                 android:visibility="gone" />
 
-            <include layout="@layout/tool_view_popup_tooltip_document_comment" />
+            <include layout="@layout/tool_view_popup_tooltip_archive_comment" />
 
             <include layout="@layout/tool_view_popup_tooltip_squad_contact" />
 
-            <include layout="@layout/tool_view_popup_tooltip_org_document_management" />
+            <include layout="@layout/tool_view_popup_tooltip_org_archive_management" />
+
+            <include layout="@layout/tool_view_popup_tooltip_activity_manage" />
         </com.hlk.hlklib.lib.view.CorneredView>
 
         <ImageView

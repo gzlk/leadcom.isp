@@ -23,6 +23,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -71,6 +72,7 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
             mAdapter = new DepthAdapter();
             viewPager.setOffscreenPageLimit(5);
             viewPager.setPageTransformer(true, new DepthTransformer());
+            //viewPager.setPageTransformer(true, new ScaleDepthTransformer());
             viewPager.setPageMargin(-getDimension(R.dimen.ui_static_dp_40));
             viewPager.setAdapter(mAdapter);
         }
@@ -89,6 +91,156 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
 
     public int getSelected() {
         return viewPager.getCurrentItem();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private class ScaleDepthTransformer implements ViewPager.PageTransformer {
+
+        private int currentItem = 0;
+        private boolean is3D = true;
+        private static final int LEFT = -1, MIDDLE = 0, RIGHT = 1;
+
+        @Override
+        public void transformPage(View page, float position) {
+            // 获取ViewPager当前显示的页面
+            currentItem = viewPager.getCurrentItem();
+            setPositionViewAnimation(page, position);
+        }
+
+        /**
+         * 对View进行动画效果处理
+         */
+        private void setPositionViewAnimation(View view, float position) {
+            //View所在页面
+            int pos = (int) view.getTag(R.id.hlklib_ids_custom_view_click_tag);
+            //是否在当前显示页的右边
+            int location = getLocation(currentItem, pos);
+            //缩放比例
+            float scaleFactor = getScaleCoefficient(currentItem, pos);
+            //位移比例
+            float transFactor = getTranslationCoefficient(currentItem, pos);
+            //位移距离
+            float translationFactor = 10 * getTranslationSize(location, transFactor, position);
+            //缩放大小
+            float scale = getScaleSize(scaleFactor, position);
+            //对View进行动画处理
+            //view.setAlpha(0.5f + (scale - scaleFactor) / (1 - scaleFactor) * (1 - 0.5f));
+            view.setScaleX(scale);
+            view.setScaleY(scale);
+            //setViewRotation(view, location);
+            view.setTranslationX(translationFactor);
+            view.setTranslationZ(scaleFactor);
+        }
+
+        /**
+         * 设置view旋转角度（3D效果）
+         */
+        public void setViewRotation(View view, int location) {
+            if (!is3D) {
+                return;
+            }
+            if (location == LEFT) {
+                view.setRotationY(28);
+            } else if (location == RIGHT) {
+                view.setRotationY(-28);
+            } else {
+                view.setRotationY(0);
+            }
+        }
+
+        /**
+         * 获取页面所在的位置
+         * 当前页的右边、左边或者是当前页
+         *
+         * @param position    view所在页面
+         * @param currentItem Viewpager当前显示的页面
+         */
+        private int getLocation(int currentItem, int position) {
+            if (position == currentItem) {
+                return MIDDLE;
+            } else if (position < currentItem) {
+                return LEFT;
+            } else {
+                return RIGHT;
+            }
+        }
+
+        /**
+         * 获取缩放比例系数
+         *
+         * @param position    view所在页面
+         * @param currentItem Viewpager当前显示的页面
+         */
+        private float getScaleCoefficient(int currentItem, int position) {
+            //右左边相邻的第1个Item
+            if (position == currentItem - 1 || position == currentItem + 1) {
+                return 0.8f;
+            }
+            //右左边相邻的第2个Item
+            else if (position == currentItem - 2 || position == currentItem + 2) {
+                return 0.6f;
+            }
+            //右左边相邻的第3个Item
+            else if (position == currentItem - 3 || position == currentItem + 3) {
+                return 0.4f;
+            }
+            //当前显示的item
+            else {
+                return 0.8f;
+            }
+        }
+
+        /**
+         * 获取缩放大小
+         * <p>
+         * 注：这里的float position，参数对应transformPage方法中的参数，因为我们要实现的效果是慢慢缩小或者，慢慢放大，所以缩放的最终大小在滑动的过程中是不固定的，所以需要根据该参数来计算。
+         * </p>
+         *
+         * @param max
+         * @param position
+         */
+        private float getScaleSize(float max, float position) {
+            return Math.max(max, 1 - Math.abs(position));
+        }
+
+        /**
+         * 获取偏移量比例系数
+         *
+         * @param position    view所在页面
+         * @param currentItem Viewpager当前显示的页面
+         */
+        private float getTranslationCoefficient(int currentItem, int position) {
+            //右左边相邻的第1个Item
+            if (position == currentItem - 1 || position == currentItem + 1) {
+                return 1.2f;
+            }
+            //右左边相邻的第2个Item
+            else if (position == currentItem - 2 || position == currentItem + 2) {
+                return 2.5f;
+            }
+            //右左边相邻的第3个Item
+            else if (position == currentItem - 3 || position == currentItem + 3) {
+                return 4f;
+            }
+            //当前显示的item
+            else {
+                return 0f;
+            }
+        }
+
+        /**
+         * 获计算最小偏移量
+         *
+         * @param location 页面所在位置
+         * @param min
+         * @param position viewpager滑动时 区间数值变化
+         */
+        private float getTranslationSize(int location, float min, float position) {
+            if (location == RIGHT) {
+                return -Math.min(min, min * Math.abs(position));
+            }
+            return Math.min(min, min * Math.abs(position));
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -183,6 +335,8 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
         }
     }
 
+    private HashMap<String, OrganizationConcerned> map = new HashMap<>();
+
     private class DepthAdapter extends PagerAdapter {
 
         @Override
@@ -195,11 +349,28 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
             return view == object;
         }
 
+        private void clearParent(View view) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (null != parent) {
+                parent.removeView(view);
+            }
+        }
+
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            OrganizationConcerned concerned = new OrganizationConcerned(viewPager.getContext());
-            concerned.setOnContainerClickListener(containerClickListener);
-            concerned.showOrganization(organizations.get(position));
+            Organization org = organizations.get(position);
+            String id = org.getId();
+            OrganizationConcerned concerned;
+            if (map.containsKey(id)) {
+                concerned = map.get(id);
+            } else {
+                concerned = new OrganizationConcerned(viewPager.getContext());
+                concerned.setOnContainerClickListener(containerClickListener);
+                concerned.showOrganization(org);
+                concerned.setTag(R.id.hlklib_ids_custom_view_click_tag, position);
+                map.put(id, concerned);
+            }
+            clearParent(concerned);
             container.addView(concerned);
             return concerned;
         }

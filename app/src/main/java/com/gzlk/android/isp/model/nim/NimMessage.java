@@ -22,27 +22,39 @@ public class NimMessage implements MsgAttachment {
         /**
          * 新成员申请加入组织
          */
-        int JOIN = 4;
+        int JOIN_TO_GROUP = 4;
         /**
          * 批准新成员加入
          */
-        int APPROVE = 6;
+        int APPROVE_JOIN_GROUP = 6;
         /**
          * 不批准新成员加入
          */
-        int DISAPPROVE = 7;
+        int DISAPPROVE_JOIN_GROUP = 7;
         /**
          * 邀请新成员加入组织
          */
-        int INVITE = 8;
+        int INVITE_TO_GROUP = 8;
         /**
          * 新成员同意加入组织
          */
-        int AGREE = 9;
+        int AGREE_TO_GROUP = 9;
         /**
          * 新成员不同意加入组织
          */
-        int DISAGREE = 10;
+        int DISAGREE_TO_GROUP = 10;
+        /**
+         * 小组成员邀请小组外人员加入小组
+         */
+        int INVITE_TO_SQUAD = 19;
+        /**
+         * 被邀请者同意加入小组
+         */
+        int AGREE_TO_SQUAD = 20;
+        /**
+         * 被邀请者拒绝加入小组
+         */
+        int DISAGREE_TO_SQUAD = 21;
     }
 
     // 自定义消息类型

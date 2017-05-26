@@ -41,7 +41,7 @@ public class ArchiveCommentViewHolder extends BaseViewHolder {
             @Override
             public boolean onLongClick(View v) {
                 container.setNormalColor(getColor(R.color.textColorHintLightLight));
-                fragment.showTooltip(v, R.id.ui_tool_view_tooltip_menu_edit, false, TooltipHelper.TYPE_CENTER, onClickListener);
+                fragment.showTooltip(v, R.id.ui_tool_view_tooltip_menu_document_comment, false, TooltipHelper.TYPE_CENTER, onClickListener);
                 return true;
             }
         });

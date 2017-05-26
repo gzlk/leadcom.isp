@@ -41,7 +41,8 @@ public class SystemRequest extends Request<User> {
     private static final String SYNC = SYSTEM + "/sync";
     private static final String CAPTCHA = SYSTEM + "/getCaptchaTo";
     private static final String PASSWORD = SYSTEM + "/retsetPwd";
-    private static final String INVITE_REGISTER = SYSTEM + "/sms/invToReg";
+    private static final String INVITE_TO_GROUP = SYSTEM + "/sms/invToJoinGroup";
+    private static final String INVITE_TO_SQUAD = SYSTEM + "/sms/invToJoinSquad";
 
     @Override
     protected String url(String action) {
@@ -136,9 +137,9 @@ public class SystemRequest extends Request<User> {
     }
 
     /**
-     * 邀请手机通讯录好友注册
+     * 邀请手机通讯录好友加入组织
      */
-    public void inviteRegister(@NonNull String phone, @NonNull String groupId) {
+    public void inviteToGroup(@NonNull String phone, @NonNull String groupId) {
         // {toPhoneArr:['1591111111','186111111'],accessToken:"",toGroupId:""}
         ArrayList<String> phones = new ArrayList<>();
         phones.add(phone);
@@ -151,6 +152,25 @@ public class SystemRequest extends Request<User> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(Register.class, INVITE_REGISTER, object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(Register.class, INVITE_TO_GROUP, object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 邀请手机通讯录好友加入小组
+     */
+    public void inviteToSquad(@NonNull String phone, @NonNull String squadId) {
+        // {toPhoneArr:['1591111111','186111111'],accessToken:"",toSquadId:""}
+        ArrayList<String> phones = new ArrayList<>();
+        phones.add(phone);
+        JSONObject object = new JSONObject();
+        try {
+            object.put("toPhoneArr", new JSONArray(phones))
+                    .put("toSquadId", squadId)
+                    .put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(Register.class, INVITE_TO_SQUAD, object.toString(), HttpMethods.Post));
     }
 }

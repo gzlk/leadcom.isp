@@ -85,7 +85,7 @@ public class GroupJoinRequest extends Request<JoinGroup> {
      * @param message     留言
      */
     public void approveJoin(String requestUUID, String message) {
-        handle(SingleJoin.class, GroupInviteRequest.APPROVE, requestUUID, message);
+        handle(SingleJoin.class, InvitationRequest.APPROVE, requestUUID, message);
     }
 
     /**
@@ -95,7 +95,7 @@ public class GroupJoinRequest extends Request<JoinGroup> {
      * @param message     留言
      */
     public void rejectJoin(String requestUUID, String message) {
-        handle(SingleJoin.class, GroupInviteRequest.REJECT, requestUUID, message);
+        handle(SingleJoin.class, InvitationRequest.REJECT, requestUUID, message);
     }
 
     private void handle(Type resultType, String action, String uuid, String message) {

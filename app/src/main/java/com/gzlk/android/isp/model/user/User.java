@@ -47,6 +47,9 @@ public class User extends Model {
         public static final String Email = "email";
         public static final String Password = "password";
         public static final String Birthday = "birthday";
+        public static final String IdentifyNumber = "identifyNumber";
+        public static final String Company = "company";
+        public static final String Duty = "duty";
         public static final String IsAuth = "isAuth";
         public static final String HeadPhoto = "headPhoto";
         public static final String LastModifiedDate = "lastModifiedDate";
@@ -58,12 +61,9 @@ public class User extends Model {
     }
 
     //用户id(同时也是网易云的accid)
-    //用户姓名
-    @Column(Model.Field.Name)
-    private String name;
-    //性别
-    @Column(Field.Sex)
-    private String sex;
+    //密码(同时也是网易云的token)
+    @Column(Field.Password)
+    private String password;
     //登录的Id
     @Column(Field.LoginId)
     private String loginId;
@@ -73,24 +73,36 @@ public class User extends Model {
     //qq授权指令，用于QQ登录
     @Column(Field.QQAccessToken)
     private String qqAccessToken;
+    //头像
+    @Column(Field.HeadPhoto)
+    private String headPhoto;
+    //用户姓名
+    @Column(Model.Field.Name)
+    private String name;
     //手机
     @Column(Field.Phone)
     private String phone;
     //邮箱
     @Column(Field.Email)
     private String email;
-    //密码(同时也是网易云的token)
-    @Column(Field.Password)
-    private String password;
+    //性别
+    @Column(Field.Sex)
+    private String sex;
     //生日
     @Column(Field.Birthday)
-    private String brithday;
+    private String birthday;
+    //身份证
+    @Column(Field.IdentifyNumber)
+    private String idNum;
+    //单位名称
+    @Column(Field.Company)
+    private String company;
+    //职位名称
+    @Column(Field.Duty)
+    private String position;
     //是否实名认证
     @Column(Field.IsAuth)
     private boolean isAuth;
-    //头像
-    @Column(Field.HeadPhoto)
-    private String headPhoto;
     //最后修改时间
     @Column(Field.LastModifiedDate)
     private String lastModifiedDate;
@@ -180,12 +192,36 @@ public class User extends Model {
         this.password = password;
     }
 
-    public String getBrithday() {
-        return brithday;
+    public String getBirthday() {
+        return birthday;
     }
 
-    public void setBrithday(String brithday) {
-        this.brithday = brithday;
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getIdNum() {
+        return idNum;
+    }
+
+    public void setIdNum(String idNum) {
+        this.idNum = idNum;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     public boolean isAuth() {

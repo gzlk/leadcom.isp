@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/ui_static_dp_120"
     android:layout_height="@dimen/ui_static_dp_120"
-    android:layout_margin="@dimen/ui_static_dp_10"
+    android:layout_margin="@dimen/ui_static_dp_5"
     android:animateLayoutChanges="true"
     app:cardCornerRadius="@dimen/ui_static_dp_10"
-    app:cardElevation="@dimen/ui_static_dp_5">
+    app:cardElevation="@dimen/ui_static_dp_1">
 
     <LinearLayout
         android:id="@+id/ui_tool_organization_concerned_pager_container"
