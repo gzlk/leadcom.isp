@@ -16,7 +16,7 @@
         <item>7|||</item>
     </string-array>
     <string name="ui_organization_structure_no_group_exist">您没有加入任何组织</string>
-    
+
     <string-array name="ui_organization_details_items">
         <item>0|||</item>
         <item>1|群成员|%d人|1</item>
@@ -30,13 +30,16 @@
         <item>9|清空聊天记录||0</item>
     </string-array>
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
-    
+
     <string name="ui_organization_squad_add_title">名称：</string>
     <string name="ui_organization_squad_add_hint">小组名称(不能以下划线开头和结尾)</string>
     <string name="ui_organization_squad_add_name_invalid">小组名称不符合要求</string>
     <string name="ui_organization_squad_add_introduction_hint">简介(50个字以内)</string>
     <string name="ui_organization_squad_add_introduction_invalid">小组简介不符合要求</string>
     <string name="ui_organization_squad_add_text">增加活动组</string>
+    <string name="ui_organization_squad_not_member" formatted="false">
+        <![CDATA[您还不是<font color="#3cbaff">%s</font>的小组成员。<br/>现在要加入吗？]]>
+    </string>
 
     <string name="ui_squad_contact_menu_1">组织通讯录</string>
     <string name="ui_squad_contact_menu_2">手机通讯录</string>

@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
@@ -53,7 +54,9 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private RelativeLayout rightChatIconContainer;
     @ViewId(R.id.ui_ui_custom_title_right_icon_2_flag)
     private LinearLayout rightChatIconFlag;
-    // 最右侧菜单栏的按钮，平时隐藏
+    /**
+     * 最右侧菜单栏的 + 按钮，平时隐藏
+     */
     @ViewId(R.id.ui_ui_custom_title_right_container)
     private View rightIconContainer;
 
@@ -120,6 +123,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             mFragments.add(new ActivityFragment());
             mFragments.add(new OrganizationFragment());
             mFragments.add(new IndividualFragmentMultiType());
+            ((ActivityFragment) mFragments.get(1)).mainFragment = this;
             ((OrganizationFragment) mFragments.get(2)).mainFragment = this;
         }
     }
@@ -157,7 +161,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
         if (position != 2) {
             restoreTitleText();
-            showRightIcon(false);
+            // 活动页面也需要显示右上角的 + 用来显示活动管理菜单
+            showRightIcon(position == 1);
         } else {
             ((OrganizationFragment) mFragments.get(2)).needChangeTitle();
         }
@@ -215,7 +220,12 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 break;
             case R.id.ui_ui_custom_title_right_container:
                 // + 号的点击
-                ((OrganizationFragment) mFragments.get(2)).rightIconClick(view);
+                BaseFragment fragment = mFragments.get(getDisplayedPage());
+                if (fragment instanceof ActivityFragment) {
+                    ((ActivityFragment) fragment).rightIconClick(view);
+                } else if (fragment instanceof OrganizationFragment) {
+                    ((OrganizationFragment) fragment).rightIconClick(view);
+                }
                 break;
         }
     }

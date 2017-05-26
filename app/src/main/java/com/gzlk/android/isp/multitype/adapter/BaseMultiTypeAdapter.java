@@ -163,9 +163,7 @@ public abstract class BaseMultiTypeAdapter<T extends Model> extends MultiTypeAda
 
     @Override
     public void update(List<T> list) {
-        for (T t : list) {
-            update(t);
-        }
+        update(list, false);
 //        Iterator<T> iterator = innerList.iterator();
 //        int index = 0;
 //        while (iterator.hasNext()) {
@@ -177,6 +175,13 @@ public abstract class BaseMultiTypeAdapter<T extends Model> extends MultiTypeAda
 //            index++;
 //        }
 //        add(list, false);
+    }
+
+    @Override
+    public void update(List<T> list, boolean replaceable) {
+        for (T t : list) {
+            update(t);
+        }
     }
 
     @Override

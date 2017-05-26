@@ -66,6 +66,14 @@ public interface RecycleAdapter<T> {
     void update(List<T> list);
 
     /**
+     * 将新纪录更新到旧记录里
+     *
+     * @param list        新纪录
+     * @param replaceable true=清理掉旧记录中不在此list里的所有记录之后在添加,false=有则更新无则添加
+     */
+    void update(List<T> list, boolean replaceable);
+
+    /**
      * 添加纪录
      *
      * @param list      需要添加的记录

@@ -9,9 +9,14 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.SquadRequest;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -72,10 +77,6 @@ public class StructureFragment extends BaseOrganizationFragment {
 
     public MainFragment mainFragment;
 
-    public interface OnOrganizationChangedListener {
-        void onChanged(Organization item);
-    }
-
     private OnOrganizationChangedListener organizationChangedListener;
 
     public void setOnOrganizationChangedListener(OnOrganizationChangedListener l) {
@@ -100,14 +101,6 @@ public class StructureFragment extends BaseOrganizationFragment {
             selectedIndex = concernedViewHolder.getSelected();
         }
         bundle.putInt(PARAM_SELECTED_, selectedIndex);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-//        if(!initialized){
-//
-//        }
     }
 
     @Override
@@ -211,10 +204,12 @@ public class StructureFragment extends BaseOrganizationFragment {
 
     }
 
-    @Click({R.id.ui_popup_squad_add_layout_background, R.id.ui_dialog_button_confirm})
+    @Click({R.id.ui_popup_squad_add_layout_background, R.id.ui_dialog_button_confirm, R.id.ui_tool_image_view_delete_container})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_popup_squad_add_layout_background:
+            case R.id.ui_tool_image_view_delete_container:
+                Utils.hidingInputBoard(popupName);
                 showSquadAddPopup(false);
                 break;
             case R.id.ui_dialog_button_confirm:
@@ -223,8 +218,12 @@ public class StructureFragment extends BaseOrganizationFragment {
                     ToastHelper.make().showMsg(R.string.ui_organization_squad_add_name_invalid);
                     return;
                 }
-                Utils.hidingInputBoard(popupName);
                 String introduction = popupIntroducing.getValue();
+                if (StringHelper.isEmpty(introduction)) {
+                    ToastHelper.make().showMsg(R.string.ui_organization_squad_add_introduction_invalid);
+                    return;
+                }
+                Utils.hidingInputBoard(popupName);
                 addNewSquad(value, introduction);
                 popupName.setValue("");
                 popupIntroducing.setValue("");
@@ -310,10 +309,35 @@ public class StructureFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             if (index > 5 && index < mAdapter.getItemCount()) {
-                openActivity(ContactFragment.class.getName(), format("%d,%s", ContactFragment.TYPE_SQUAD, squads.get(index - 6).getId()), true, false);
+                Squad squad = squads.get(index - 6);
+                if (isMember(Cache.cache().userId, squad.getGroupId(), squad.getId())) {
+                    openActivity(ContactFragment.class.getName(), format("%d,%s", ContactFragment.TYPE_SQUAD, squads.get(index - 6).getId()), true, false);
+                } else {
+                    warningJoinIntoSquad(squad.getId(), squad.getName());
+                }
             }
         }
     };
+
+    private void warningJoinIntoSquad(String squadId, String squadName) {
+        SimpleDialogHelper.init(Activity()).show(StringHelper.getString(R.string.ui_organization_squad_not_member, squadName), StringHelper.getString(R.string.ui_base_text_yes), StringHelper.getString(R.string.ui_base_text_no_need), new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                //joinIntoSquad();
+                ToastHelper.make().showMsg("暂时不能申请加入小组（无api支持）");
+                return true;
+            }
+        }, null);
+    }
+
+    private void joinIntoSquad() {
+        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
+            @Override
+            public void onResponse(Squad squad, boolean success, String message) {
+                super.onResponse(squad, success, message);
+            }
+        });
+    }
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
@@ -324,7 +348,12 @@ public class StructureFragment extends BaseOrganizationFragment {
         @Override
         public void onPageSelected(int position) {
             selectedIndex = position;
-            changeSelectedGroup();
+            Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    changeSelectedGroup();
+                }
+            });
         }
 
         @Override

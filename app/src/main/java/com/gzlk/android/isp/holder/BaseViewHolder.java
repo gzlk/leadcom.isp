@@ -38,6 +38,10 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    protected boolean isEmpty(String text) {
+        return StringHelper.isEmpty(text);
+    }
+
     protected boolean multiSelectable = false;
 
     /**

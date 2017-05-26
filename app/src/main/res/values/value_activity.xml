@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ui_activity_manage_tooltip_menu_1">活动管理</string>
+    <string name="ui_activity_manage_tooltip_menu_2">添加活动</string>
+
+    <string name="ui_activity_base_not_join_in">未参加</string>
+
+    <string name="ui_activity_main_not_exist_any_more">没有更多的活动了</string>
+    <string name="ui_activity_main_not_joined_text" formatted="false">1|未参加|未参加的活动|%d个活动未参加</string>
+    <string name="ui_activity_main_issue_text" formatted="false">2|议题|议题|%d个议题</string>
+    <string-array name="ui_activity_home_page_items">
+        <item>0|||</item>
+        <item>@string/ui_activity_main_not_joined_text</item>
+        <item>@string/ui_activity_main_issue_text</item>
+    </string-array>
+</resources>

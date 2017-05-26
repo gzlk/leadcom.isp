@@ -1,9 +1,31 @@
 package com.gzlk.android.isp.fragment.main;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.activity.ActRequest;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.helper.TooltipHelper;
+import com.gzlk.android.isp.holder.ActivityViewHolder;
+import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.OrganizationStructureConcernedViewHolder;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.SimpleClickableItem;
+import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.organization.Organization;
+import com.litesuits.orm.db.assit.QueryBuilder;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>主页活动<br />
@@ -16,21 +38,32 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
  * <b>修改备注：</b><br />
  */
 
-public class ActivityFragment extends BaseSwipeRefreshSupportFragment {
+public class ActivityFragment extends BaseOrganizationFragment {
 
-    @Override
-    public int getLayout() {
-        return R.layout.fragment_main_activity;
-    }
+    private static final String PARAM_SELECTED_ = "act_selected_index";
+
+    private String[] items;
+    private int selectedIndex = -1;
+    private ActivityAdapter mAdapter;
+    private OrganizationStructureConcernedViewHolder concernedViewHolder;
+
+    public MainFragment mainFragment;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
+        selectedIndex = bundle.getInt(PARAM_SELECTED_, -1);
+    }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        tryPaddingContent(true);
     }
 
     @Override
     public void doingInResume() {
-
+        initializeAdapter();
+        resetTitle();
     }
 
     @Override
@@ -40,12 +73,29 @@ public class ActivityFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
-
+        if (null != concernedViewHolder) {
+            selectedIndex = concernedViewHolder.getSelected();
+        }
+        bundle.putInt(PARAM_SELECTED_, selectedIndex);
     }
 
     @Override
     protected void onSwipeRefreshing() {
+        fetchingJoinedRemoteOrganizations();
+    }
 
+    @Override
+    protected void onFetchingJoinedRemoteOrganizationsComplete(List<Organization> list) {
+        if (null != list && list.size() > 0) {
+            concernedViewHolder.add(list);
+        } else {
+            // 当前显示本fragment时才提示用户
+            if (getUserVisibleHint()) {
+                ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
+            }
+        }
+        stopRefreshing();
+        setSupportLoadingMore(false);
     }
 
     @Override
@@ -66,5 +116,206 @@ public class ActivityFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
+    }
+
+    public void rightIconClick(View view) {
+        showTooltip(view, R.id.ui_tool_view_tooltip_menu_activity_manage, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+    }
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.ui_tool_popup_menu_activity_add:
+                    break;
+                case R.id.ui_tool_popup_menu_activity_manage:
+                    break;
+            }
+        }
+    };
+
+    private void initializeAdapter() {
+        if (null == items) {
+            items = StringHelper.getStringArray(R.array.ui_activity_home_page_items);
+        }
+        if (null == mAdapter) {
+            mAdapter = new ActivityAdapter();
+            mRecyclerView.setAdapter(mAdapter);
+        }
+        initializeItems();
+    }
+
+    private void initializeItems() {
+        for (String string : items) {
+            String text = "";
+            if (string.contains("%d")) {
+                // 未参加的活动
+                if (string.charAt(0) == '1') {
+                    text = format(string, 0);
+                } else {
+                    // 议题
+                    text = format(string, 0);
+                }
+            } else {
+                text = string;
+            }
+            if (!isEmpty(text)) {
+                SimpleClickableItem item = new SimpleClickableItem(text);
+                mAdapter.update(item);
+            }
+        }
+    }
+
+    private void loadingLocalActivity(String groupId) {
+        QueryBuilder<Activity> builder = new QueryBuilder<>(Activity.class)
+                .whereEquals(Organization.Field.GroupId, groupId)
+                .orderBy(Model.Field.CreateDate);
+        List<Activity> list = new Dao<>(Activity.class).query(builder);
+        if (null != list) {
+            updateActivityList(list);
+        }
+        fetchingGroupActivity(groupId);
+    }
+
+    private void updateActivityList(List<Activity> list) {
+        if (null == list) return;
+        for (Activity activity : list) {
+            mAdapter.update(activity);
+        }
+    }
+
+    private void fetchingGroupActivity(String groupId) {
+        ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
+            @Override
+            public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (null == list || list.size() < 1) {
+                        if (getUserVisibleHint()) {
+                            ToastHelper.make().showMsg(R.string.ui_activity_main_not_exist_any_more);
+                        }
+                    }
+                    if (null != list) {
+                        updateActivityList(list);
+                    }
+                }
+            }
+        }).list(groupId);
+    }
+
+    @Override
+    protected void onViewPagerDisplayedChanged(boolean visible) {
+        super.onViewPagerDisplayedChanged(visible);
+        if (visible) {
+            resetTitle();
+        }
+    }
+
+    private void resetTitle() {
+        if (getUserVisibleHint()) {
+            mainFragment.showRightIcon(true);
+        }
+        changeSelectedActivity();
+    }
+
+    private void changeSelectedActivity() {
+        if (selectedIndex < 0) return;
+        // 加载本地该组织的活动列表
+        Organization org = concernedViewHolder.get(selectedIndex);
+        // 更改标题栏上的文字和icon
+        if (getUserVisibleHint()) {
+            // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
+            mainFragment.setTitleText(org.getName());
+        }
+        loadingLocalActivity(org.getId());
+    }
+
+    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            selectedIndex = position;
+            Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    changeSelectedActivity();
+                }
+            });
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
+
+    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            ToastHelper.make().showMsg("不要点了，功能还未实现呢");
+        }
+    };
+
+    private class ActivityAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+
+        private static final int VT_HEAD = 0, VT_ACT = 1;
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            BaseFragment fragment = ActivityFragment.this;
+            switch (viewType) {
+                case VT_HEAD:
+                    if (null == concernedViewHolder) {
+                        concernedViewHolder = new OrganizationStructureConcernedViewHolder(itemView, fragment);
+                        concernedViewHolder.setPageChangeListener(onPageChangeListener);
+                        concernedViewHolder.loadingLocal();
+                    }
+                    return concernedViewHolder;
+                default:
+                    ActivityViewHolder holder = new ActivityViewHolder(itemView, fragment);
+                    holder.addOnViewHolderClickListener(onViewHolderClickListener);
+                    return holder;
+            }
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            switch (viewType) {
+                case VT_HEAD:
+                    return R.layout.holder_view_organization_concerned;
+                default:
+                    return R.layout.holder_view_activity_home_item;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            switch (position) {
+                case 0:
+                    return VT_HEAD;
+                default:
+                    return VT_ACT;
+            }
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof ActivityViewHolder) {
+                if (item instanceof SimpleClickableItem) {
+                    ((ActivityViewHolder) holder).showContent(((SimpleClickableItem) item).getSource());
+                } else {
+                    ((ActivityViewHolder) holder).showContent((Activity) item);
+                }
+            }
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return 0;
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.gzlk.android.isp.model.activity;
 
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -36,6 +37,9 @@ public class AppNotice extends Model {
     //创建时间
     @Column(Field.CreateDate)
     protected String createDate;
+    //修改时间
+    @Column(Organization.Field.ModifyDate)
+    protected String modifyDate;
 
     public String getActId() {
         return actId;
@@ -83,5 +87,13 @@ public class AppNotice extends Model {
 
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
+    }
+
+    public String getModifyDate() {
+        return modifyDate;
+    }
+
+    public void setModifyDate(String modifyDate) {
+        this.modifyDate = modifyDate;
     }
 }

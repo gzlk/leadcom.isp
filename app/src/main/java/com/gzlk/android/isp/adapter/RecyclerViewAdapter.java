@@ -196,16 +196,23 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
 
     @Override
     public void update(List<T> list) {
-        Iterator<T> iterator = innerList.iterator();
-        int index = 0;
-        while (iterator.hasNext()) {
-            // 移除旧列表里不在list中的记录
-            T t = iterator.next();
-            if (list.indexOf(t) < 0) {
-                iterator.remove();
-                notifyItemRemoved(index);
+        update(list, true);
+    }
+
+    @Override
+    public void update(List<T> list, boolean replaceable) {
+        if (replaceable) {
+            Iterator<T> iterator = innerList.iterator();
+            int index = 0;
+            while (iterator.hasNext()) {
+                // 移除旧列表里不在list中的记录
+                T t = iterator.next();
+                if (list.indexOf(t) < 0) {
+                    iterator.remove();
+                    notifyItemRemoved(index);
+                }
+                index++;
             }
-            index++;
         }
         for (T t : list) {
             update(t);

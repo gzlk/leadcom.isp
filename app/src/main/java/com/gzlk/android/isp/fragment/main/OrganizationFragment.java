@@ -9,6 +9,7 @@ import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.LivenessFragment;
+import com.gzlk.android.isp.fragment.organization.OnOrganizationChangedListener;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
@@ -78,7 +79,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         }
     }
 
-    private StructureFragment.OnOrganizationChangedListener organizationChangedListener = new StructureFragment.OnOrganizationChangedListener() {
+    private OnOrganizationChangedListener organizationChangedListener = new OnOrganizationChangedListener() {
         @Override
         public void onChanged(Organization item) {
             if (null == item) return;

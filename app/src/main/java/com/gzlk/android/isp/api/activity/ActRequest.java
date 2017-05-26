@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.api.activity;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import com.gzlk.android.isp.api.Output;
@@ -9,6 +8,7 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;

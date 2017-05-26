@@ -17,10 +17,16 @@ public class SimpleClickableItem extends Model {
     private int index;
     private String title;
     private String value;
+    private String source;
     private boolean iconVisible;
 
     public SimpleClickableItem(String text) {
-        String[] strings = text.split("\\|", -1);
+        source = text;
+        reset();
+    }
+
+    private void reset() {
+        String[] strings = source.split("\\|", -1);
         setId(strings[0]);
         index = Integer.valueOf(strings[0]);
         title = strings[1];
@@ -52,6 +58,14 @@ public class SimpleClickableItem extends Model {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public boolean isIconVisible() {
