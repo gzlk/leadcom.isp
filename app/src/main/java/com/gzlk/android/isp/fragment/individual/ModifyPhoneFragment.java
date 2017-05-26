@@ -42,6 +42,7 @@ public class ModifyPhoneFragment extends BaseVerifyFragment {
     @Override
     public void doingInResume() {
         setLeftIcon(0);
+        setCustomTitle(R.string.ui_text_modify_phone_number_fragment_title);
         setLeftText(R.string.ui_base_text_cancel);
         setRightText(R.string.ui_base_text_next_step);
         inputTitle.setText(StringHelper.getString(R.string.ui_text_modify_phone_number_86, ""));

@@ -242,8 +242,8 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         }});
         // 生日
         mAdapter.add(new Model() {{
-            birthday = user.getBrithday();
-            setId(format(items[3], StringHelper.isEmpty(user.getBrithday()) ? "未设置" : user.getBrithday().substring(0, 10)));
+            birthday = user.getBirthday();
+            setId(format(items[3], StringHelper.isEmpty(user.getBirthday()) ? "未设置" : user.getBirthday().substring(0, 10)));
         }});
         // 身份证
         mAdapter.add(new Model() {{
@@ -415,8 +415,8 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     private void resetUserInformation(int type, String value, User user) {
         switch (type) {
             case UserRequest.TYPE_BIRTHDAY:
-                user.setBrithday(value);
-                mAdapter.get(3).setId(format(items[3], user.getBrithday()));
+                user.setBirthday(value);
+                mAdapter.get(3).setId(format(items[3], user.getBirthday()));
                 mAdapter.notifyItemChanged(3);
                 break;
             case UserRequest.TYPE_EMAIL:

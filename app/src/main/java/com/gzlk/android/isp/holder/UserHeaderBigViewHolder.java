@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -58,6 +59,7 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         nameIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
         headerIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
         phoneTextView.setText(user.getPhone());
+        phoneTextView.setVisibility(user.getId().equals(Cache.cache().userId) ? View.GONE : View.VISIBLE);
     }
 
     public void showContent(Organization org) {
