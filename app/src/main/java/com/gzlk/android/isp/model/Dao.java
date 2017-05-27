@@ -74,6 +74,20 @@ public class Dao<E> {
         return null == orm ? null : orm.query(builder);
     }
 
+    /**
+     * 统计表内的记录数量
+     */
+    public long getCount() {
+        return null == orm ? 0L : orm.queryCount(clazz);
+    }
+
+    /**
+     * 统计查询条件内的记录数量
+     */
+    public long getCount(QueryBuilder<E> builder) {
+        return null == orm ? 0L : orm.queryCount(builder);
+    }
+
     public void clear() {
         if (null != orm) {
             orm.deleteAll(clazz);

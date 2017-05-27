@@ -211,7 +211,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
             public void onResponse(List<ArchiveLike> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
             }
-        }).list(archiveType, mQueryId);
+        }).list(archiveType, mQueryId, remotePageNumber);
     }
 
     private void fetchingRemoteComment() {

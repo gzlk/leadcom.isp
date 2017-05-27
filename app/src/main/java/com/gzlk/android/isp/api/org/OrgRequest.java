@@ -61,14 +61,21 @@ public class OrgRequest extends Request<Organization> {
         return this;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    public void add(String groupName, String groupLogo) {
-        //{name,logo,accessToken}
+    /**
+     * 新增组织
+     *
+     * @param groupName    组织名称
+     * @param groupLogo    组织图标
+     * @param introduction 组织描述(简介)
+     */
+    public void add(String groupName, String groupLogo, String introduction) {
+        //{name,logo,intro,accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("name", groupName)
                     .put("logo", checkNull(groupLogo))
+                    .put("intro", introduction)
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -77,6 +84,14 @@ public class OrgRequest extends Request<Organization> {
         httpRequest(getRequest(SingleGroup.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 更新组织的基本信息
+     *
+     * @param groupId      组织的id
+     * @param groupName    组织名称
+     * @param groupLogo    组织图标
+     * @param introduction 组织描述(简介)
+     */
     public void update(String groupId, String groupName, String groupLogo, String introduction) {
         //{_id,name,logo,intro,accessToken}
         JSONObject object = new JSONObject();
@@ -93,10 +108,16 @@ public class OrgRequest extends Request<Organization> {
         httpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 删除组织
+     */
     public void delete(String groupId) {
         httpRequest(getRequest(SingleGroup.class, format("%s?groupId=%s", url(DELETE), groupId), "", HttpMethods.Post));
     }
 
+    /**
+     * 查找组织的详细信息
+     */
     public void find(String groupId) {
         httpRequest(getRequest(SingleGroup.class, format("%s?groupId=%s", url(FIND), groupId), "", HttpMethods.Get));
     }
@@ -104,22 +125,27 @@ public class OrgRequest extends Request<Organization> {
     /**
      * 默认查询当前用户授权范围内的组织列表
      */
-    public void list() {
-        httpRequest(getRequest(MultipleGroup.class, format("%s?accessToken=%s", url(LIST), Cache.cache().accessToken), "", HttpMethods.Get));
+    public void list(int pageNumber) {
+        // accessToken,pageSize,pageNumber
+        httpRequest(getRequest(MultipleGroup.class, format("%s?pageNumber=%d&accessToken=%s", url(LIST), pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     /**
      * 在所有组织中搜索组织名称
      */
-    public void searchAll(String groupName) {
-        httpRequest(getRequest(MultipleGroup.class, format("%s?info=%s", url(SEARCH_ALL), groupName), "", HttpMethods.Get));
+    public void searchAll(String groupName, int pageNumber) {
+        // info,pageSize,pageNumber
+        httpRequest(getRequest(MultipleGroup.class, format("%s?pageNumber=%d&info=%s", url(SEARCH_ALL), pageNumber, groupName), "", HttpMethods.Get));
     }
 
     /**
      * 在已参加组织中搜索组织名称
      */
-    public void search(String groupName) {
-        httpRequest(getRequest(MultipleGroup.class, format("%s?info=%s&accessToken=%s", url(SEARCH), groupName, Cache.cache().accessToken), "", HttpMethods.Get));
+    public void search(String groupName, int pageNumber) {
+        // info,accessToken,pageSize,pageNumber
+        httpRequest(getRequest(MultipleGroup.class,
+                format("%s?pageNumber=%d&info=%s&accessToken=%s", url(SEARCH), pageNumber, groupName, Cache.cache().accessToken),
+                "", HttpMethods.Get));
     }
 
     /**

@@ -212,7 +212,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                     }
                 }
             }
-        }).update(UserRequest.TYPE_PHONE, verifyPhone);
+        }).update(UserRequest.UPDATE_PHONE, verifyPhone);
     }
 
     @Override

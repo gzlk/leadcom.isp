@@ -104,18 +104,22 @@ public class ArchiveRequest extends Request<Archive> {
      *
      * @param title      档案标题
      * @param content    档案内容(html)
+     * @param happenDate 发生时间
+     * @param tags       标签
      * @param markdown   档案内容(markdown)
      * @param image      图片地址(json数组)
      * @param attach     附件地址(json数组)
      * @param attachName 附件名(json数组)
      */
-    public void add(@NonNull String title, String content, String markdown,
+    public void add(@NonNull String title, String content, String happenDate, ArrayList<String> tags, String markdown,
                     ArrayList<String> image, ArrayList<String> attach, ArrayList<String> attachName) {
-        // {title,content,markdown,[image],[attach],[attachName],userId,userName,accessToken}
+        // {title,happenDate,tag,content,markdown,[image],[attach],[attachName],accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("title", title)
+                    .put("happenDate", happenDate)
+                    .put("tag", new JSONArray(tags))
                     .put("content", checkNull(content))
                     .put("markdown", checkNull(markdown))
                     .put("image", new JSONArray(image))
@@ -165,6 +169,15 @@ public class ArchiveRequest extends Request<Archive> {
         httpRequest(getRequest(SingleArchive.class, group(ADD), object.toString(), HttpMethods.Post));
     }
 
+    private String getArchiveId(int type) {
+        switch (type) {
+            case Archive.Type.GROUP:
+                return "groDocId";
+            default:
+                return "userDocId";
+        }
+    }
+
     /**
      * 删除档案
      *
@@ -172,7 +185,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param archiveId 档案id
      */
     public void delete(int type, @NonNull String archiveId) {
-        String params = format("%s=%s", (type == Archive.Type.USER ? "userDocId" : "groDocId"), archiveId);
+        String params = format("%s=%s", getArchiveId(type), archiveId);
         httpRequest(getRequest(SingleArchive.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Post));
     }
 
@@ -183,19 +196,24 @@ public class ArchiveRequest extends Request<Archive> {
      * @param type       档案类型{@link Archive.Type}
      * @param title      档案标题
      * @param content    档案内容(html)
+     * @param happenDate 发生时间
+     * @param tags       标签
      * @param markdown   档案内容(markdown)
      * @param image      图片地址(json数组)
      * @param attach     附件地址(json数组)
      * @param attachName 附件名(json数组)
      */
-    public void update(String archiveId, int type, @NonNull String title, String content, String markdown,
-                       ArrayList<String> image, ArrayList<String> attach, ArrayList<String> attachName) {
-        // {_id,type,title,content,markdown,[image],[attach],[attachName],accessToken}
+    public void update(String archiveId, int type, @NonNull String title, String content, String happenDate,
+                       ArrayList<String> tags, String markdown, ArrayList<String> image,
+                       ArrayList<String> attach, ArrayList<String> attachName) {
+        // {_id,title,happenDate,tag,content,markdown,[image],[attach],[attachName],accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("_id", archiveId)
                     .put("title", title)
+                    .put("happenDate", happenDate)
+                    .put("tag", new JSONArray(tags))
                     .put("content", checkNull(content))
                     .put("markdown", checkNull(markdown))
                     .put("image", new JSONArray(image))
@@ -235,14 +253,14 @@ public class ArchiveRequest extends Request<Archive> {
 
     private void findFromRemote(String archiveId, int type) {
         // 调用网络数据
-        String params = format("%s=%s", (type == Archive.Type.USER ? "userDocId" : "groDocId"), archiveId);
+        String params = format("%s=%s", getArchiveId(type), archiveId);
         httpRequest(getRequest(SingleArchive.class, format("%s?%s", url(type, FIND), params), "", HttpMethods.Get));
     }
 
     /**
      * 搜索个人档案
      *
-     * @param info 档案的名称
+     * @param info 档案的标题
      */
     public void search(String info) {
         httpRequest(getRequest(MultipleArchive.class, format("%s?info=%s&accessToken=%s", url(SEARCH), info, Cache.cache().accessToken), "", HttpMethods.Get));
@@ -254,9 +272,9 @@ public class ArchiveRequest extends Request<Archive> {
      * @param organizationId 组织的id
      * @param info           档案的名称
      */
-    public void search(String organizationId, String info) {
+    public void search(String organizationId, String info, int pageNumber) {
         //groupId,info
-        httpRequest(getRequest(MultipleArchive.class, format("%s?groupId=%s&info=%s", group(SEARCH), organizationId, info), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleArchive.class, format("%s?groupId=%s&info=%s&pageNumber=%d", group(SEARCH), organizationId, info, pageNumber), "", HttpMethods.Get));
     }
 
     /**
@@ -265,8 +283,7 @@ public class ArchiveRequest extends Request<Archive> {
     public void list(int pageNumber) {
         // abstrSize,abstrRow,pageSize,pageNumber,accessToken
         httpRequest(getRequest(SpecialArchive.class,
-                format("%s?%s&pageSize=%d&pageNumber=%d&accessToken=%s",
-                        url(LIST), SUMMARY, PAGE_SIZE, pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
+                format("%s?&pageNumber=%d&accessToken=%s", url(LIST), pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     /**
@@ -285,19 +302,18 @@ public class ArchiveRequest extends Request<Archive> {
      * 查询组织档案列表（待审核，默认按创建时间逆序排列）
      *
      * @param organizationId 组织id
-     * @param pageSize       页大小
      * @param pageNumber     页码
      * @param type1          1.个人档案，2.组织档案，3.活动附件
      * @param type2          1.图片，2.视频,3.文件
      */
-    public void listApproving(String organizationId, int pageSize, int pageNumber, int type1, int type2) {
+    public void listApproving(String organizationId, int pageNumber, int type1, int type2) {
         //groupId,pageSize,pageNumber,docType1,docType2
-        list(APPROVING, organizationId, pageSize, pageNumber, type1, type2);
+        list(APPROVING, organizationId, pageNumber, type1, type2);
     }
 
-    private void list(String action, String organizationId, int pageSize, int pageNumber, int type1, int type2) {
-        String param = format("?groupId=%d&pageSize=%d&pageNumber=%d&docType1=%d&docType2=&d",
-                organizationId, pageSize, pageNumber, type1, type2);
+    private void list(String action, String organizationId, int pageNumber, int type1, int type2) {
+        String param = format("?groupId=%d&pageNumber=%d&docType1=%d&docType2=&d",
+                organizationId, pageNumber, type1, type2);
         httpRequest(getRequest(MultipleArchive.class, format("%s%s", group(action), param), "", HttpMethods.Get));
     }
 
@@ -305,14 +321,13 @@ public class ArchiveRequest extends Request<Archive> {
      * 查询组织档案列表（已审核，默认按创建时间逆序排列,只显示当前用户授权范围内的记录）
      *
      * @param organizationId 组织id
-     * @param pageSize       页大小
      * @param pageNumber     页码
      * @param type1          1.个人档案，2.组织档案，3.活动附件
      * @param type2          1.图片，2.视频,3.文件
      */
-    public void listApproved(String organizationId, int pageSize, int pageNumber, int type1, int type2) {
+    public void listApproved(String organizationId, int pageNumber, int type1, int type2) {
         //groupId,pageSize,pageNumber,docType1,docType2
-        list(APPROVED, organizationId, pageSize, pageNumber, type1, type2);
+        list(APPROVED, organizationId, pageNumber, type1, type2);
     }
 
     /**

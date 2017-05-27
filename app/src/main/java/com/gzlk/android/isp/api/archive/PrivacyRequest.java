@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.api.user;
+package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
@@ -15,7 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * <b>功能描述：</b>个人隐私设置<br />
+ * <b>功能描述：</b>隐私设置<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/17 00:09 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -39,7 +39,7 @@ public class PrivacyRequest extends Request<Privacy> {
 
     @Override
     protected String url(String action) {
-        return null;
+        return format("/user/userPri%s", action);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class PrivacyRequest extends Request<Privacy> {
     /**
      * 保存隐私设置
      *
-     * @param status   隐私类型 1.公开 2.不公开 3.对某人公开 4.对某群体公开{@link Privacy.Status}
-     * @param source   1.个人资料；2.个人档案；3.个人日志{@link Privacy.Source}
+     * @param status   隐私类型 1.公开 2.不公开 3.对某人公开 4.对某群体公开 {@link Privacy.Status}
+     * @param source   1.个人资料；2.个人档案；3.个人日志 {@link Privacy.Source}
      * @param sourceId 个人资料\档案\日志记录的id
      * @param groupId  被公开的组织id（当档案向某组织公开时有用）
      * @param userId   公开的用户id（当档案向某用户公开时有用）
@@ -71,7 +71,7 @@ public class PrivacyRequest extends Request<Privacy> {
      * @see Privacy.Source
      */
     public void save(int status, int source, @NonNull String sourceId, String groupId, String userId) {
-        //{accessToken:"",status:"",source:"",sourceId:"",groupId:"",userId:""}
+        // {accessToken:"",status:"",source:"",sourceId:"",groupId:"",userId:""}
 
         JSONObject object = new JSONObject();
         try {

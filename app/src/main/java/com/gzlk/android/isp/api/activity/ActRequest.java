@@ -68,7 +68,14 @@ public class ActRequest extends Request<Activity> {
         return this;
     }
 
-    /**新增活动*/
+    /**
+     * 新增活动
+     *
+     * @param title   活动标题
+     * @param content 活动描述
+     * @param groupId 活动所属的组织id
+     * @param members 邀请的成员（可能是尚未加入活动的人）id 的 JSON 格式的数组，格式举例["aaa","bbb"]
+     */
     public void add(@NonNull String title, String content, @NonNull String groupId, ArrayList<String> members) {
         // {title:"",content:"",groupId:"",accessToken:"",memberIdArray:""}
         JSONObject object = new JSONObject();
@@ -85,7 +92,14 @@ public class ActRequest extends Request<Activity> {
         httpRequest(getRequest(SingleActivity.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
-    /**修改活动*/
+    /**
+     * 修改活动
+     *
+     * @param activityId 活动的id
+     * @param title      活动标题
+     * @param content    活动描述
+     * @param members    邀请的成员（可能是尚未加入活动的人）id 的 JSON 格式的数组，格式举例["aaa","bbb"]
+     */
     public void update(@NonNull String activityId, String title, String content, ArrayList<String> members) {
         // {id:"",title:"",content:"",accessToken:"",memberIdArray:""}
         JSONObject object = new JSONObject();
@@ -102,46 +116,62 @@ public class ActRequest extends Request<Activity> {
         httpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
-    /**(创建者或后台管理员)删除活动*/
+    /**
+     * (创建者或后台管理员)删除活动
+     */
     public void delete(@NonNull String activityId) {
         // id=""
         httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(DELETE), activityId), "", HttpMethods.Post));
     }
 
-    /**查询单个活动*/
+    /**
+     * 查询单个活动
+     */
     public void find(@NonNull String activityId) {
         // id=""
         httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(FIND), activityId), "", HttpMethods.Get));
     }
 
-    /**查看某组织内的活动列表(只显示当前用户被授权范围内的记录)*/
+    /**
+     * 查看某组织内的活动列表(只显示当前用户被授权范围内的记录)
+     */
     public void list(@NonNull String groupId) {
         // groupId="",accessToken=""
         String params = format("groupId=%s&accessToken=%s", groupId, Cache.cache().accessToken);
         httpRequest(getRequest(MultipleActivity.class, format("%s?%s", url(LIST), params), "", HttpMethods.Get));
     }
 
-    /**查询我参加的活动(非实时的缓存数据)*/
+    /**
+     * 查询我参加的活动(非实时的缓存数据)
+     */
     public void joined() {
         httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(JOINED), Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
-    /**查询我发起的活动(非实时的缓存数据)*/
+    /**
+     * 查询我发起的活动(非实时的缓存数据)
+     */
     public void created() {
         httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(CREATED), Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
-    /**查询我参与的已结束的活动*/
+    /**
+     * 查询我参与的已结束的活动
+     */
     public void ended() {
         httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(ENDED), Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
-    /**刷新我参加的和我发起的活动(手机端在同意加入活动时调用)*/
+    /**
+     * 刷新我参加的和我发起的活动(手机端在同意加入活动时调用)
+     */
     public void refresh() {
         httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(REFRESH), Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
-    /**结束活动*/
+    /**
+     * 结束活动
+     */
     public void end(@NonNull String activityId) {
         String params = format("id=%s&accessToken=%s", activityId, Cache.cache().accessToken);
         httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(END), params), "", HttpMethods.Post));

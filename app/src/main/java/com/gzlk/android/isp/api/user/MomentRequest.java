@@ -51,10 +51,6 @@ public class MomentRequest extends Request<Moment> {
         return MOMENT + action;
     }
 
-    private MomentRequest() {
-        super();
-    }
-
     @Override
     protected Class<Moment> getType() {
         return Moment.class;
@@ -111,35 +107,39 @@ public class MomentRequest extends Request<Moment> {
     private static final String QB_TOKEN = "accessToken";
     private static final String QB_MOMENT = "momentId";
 
-    private void getRequestBy(String baseUrl, String queryBy, Type resultType, String queryId, String body, HttpMethods methods) {
-        httpRequest(getRequest(resultType, StringHelper.format("%s?%s=%s", baseUrl, queryBy, queryId), body, methods));
+    private void getRequestBy(String baseUrl, String queryBy, Type resultType, String queryId, int pageNumber, String body, HttpMethods methods) {
+        String url = format("%s?%s=%s", baseUrl, queryBy, queryId);
+        if (pageNumber >= 0) {
+            url += format("%s&pageNumber=%d", url, pageNumber);
+        }
+        httpRequest(getRequest(resultType, url, body, methods));
     }
 
     /**
      * 查询指定用户id的说说列表
      */
-    public void list(String accessToken) {
-        getRequestBy(url(LIST), QB_TOKEN, MultiMoment.class, accessToken, "", HttpMethods.Get);
+    public void list(String accessToken, int pageNumber) {
+        getRequestBy(url(LIST), QB_TOKEN, MultiMoment.class, accessToken, pageNumber, "", HttpMethods.Get);
     }
 
     /**
-     * 查找指定id的说说详情
+     * 查找指定的单个id的说说详情
      */
     public void find(@NonNull String momentId) {
-        getRequestBy(url(FIND), QB_MOMENT, MultiMoment.class, momentId, "", HttpMethods.Get);
+        getRequestBy(url(FIND), QB_MOMENT, SingleMoment.class, momentId, -1, "", HttpMethods.Get);
     }
 
     /**
      * 删除一条说说，需要POST
      */
     public void delete(@NonNull String momentId) {
-        getRequestBy(url(DELETE), QB_MOMENT, SingleMoment.class, momentId, "", HttpMethods.Post);
+        getRequestBy(url(DELETE), QB_MOMENT, SingleMoment.class, momentId, -1, "", HttpMethods.Post);
     }
 
     /**
      * 查找同一组别的用户发布的说说列表
      */
-    public void groupList(@NonNull String accessToken) {
-        getRequestBy(url(GROUPS), QB_TOKEN, MultiMoment.class, accessToken, "", HttpMethods.Get);
+    public void groupList(@NonNull String accessToken, int pageNumber) {
+        getRequestBy(url(GROUPS), QB_TOKEN, MultiMoment.class, accessToken, pageNumber, "", HttpMethods.Get);
     }
 }

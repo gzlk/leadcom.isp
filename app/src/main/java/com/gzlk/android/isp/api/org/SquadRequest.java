@@ -59,13 +59,13 @@ public class SquadRequest extends Request<Squad> {
         return this;
     }
 
-    public void add(String groupId, String squadName, String squadIntroduction) {
+    public void add(String groupId, String squadName, String introduction) {
         //{groupId,name,intro,accessToken}
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", groupId)
                     .put("name", squadName)
-                    .put("intro", checkNull(squadIntroduction))
+                    .put("intro", checkNull(introduction))
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -78,13 +78,13 @@ public class SquadRequest extends Request<Squad> {
         httpRequest(getRequest(SingleSquad.class, format("%s?squadId=%s", url(DELETE), squadId), "", HttpMethods.Post));
     }
 
-    public void update(String squadId, String squadName, String squadIntroduction) {
+    public void update(String squadId, String squadName, String introduction) {
         //{_id,name,intro,accessToken}
         JSONObject object = new JSONObject();
         try {
             object.put("squadId", squadId)
                     .put("name", squadName)
-                    .put("intro", checkNull(squadIntroduction))
+                    .put("intro", checkNull(introduction))
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -100,15 +100,15 @@ public class SquadRequest extends Request<Squad> {
     /**
      * 查询指定组织的小组列表
      */
-    public void list(String groupId) {
-        httpRequest(getRequest(MultipleSquad.class, format("%s?groupId=%s", url(LIST), groupId), "", HttpMethods.Get));
+    public void list(String groupId, int pageNumber) {
+        httpRequest(getRequest(MultipleSquad.class, format("%s?pageNumber=%d&groupId=%s", url(LIST), pageNumber, groupId), "", HttpMethods.Get));
     }
 
     /**
      * 在组织中搜索小组名称
      */
-    public void search(String groupId, String squadName) {
-        httpRequest(getRequest(MultipleSquad.class, format("%s?groupId=%s&info=%s", url(SEARCH), groupId, squadName), "", HttpMethods.Get));
+    public void search(String groupId, String squadName, int pageNumber) {
+        httpRequest(getRequest(MultipleSquad.class, format("%s?groupId=%s&pageNumber=%d&info=%s", url(SEARCH), groupId, pageNumber, squadName), "", HttpMethods.Get));
     }
 
 }

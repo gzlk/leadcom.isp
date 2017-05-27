@@ -139,7 +139,7 @@ public class SystemRequest extends Request<User> {
     /**
      * 邀请手机通讯录好友加入组织
      */
-    public void inviteToGroup(@NonNull String phone, @NonNull String groupId) {
+    public void inviteJoinIntoGroup(@NonNull String phone, @NonNull String groupId) {
         // {toPhoneArr:['1591111111','186111111'],accessToken:"",toGroupId:""}
         ArrayList<String> phones = new ArrayList<>();
         phones.add(phone);
@@ -158,7 +158,7 @@ public class SystemRequest extends Request<User> {
     /**
      * 邀请手机通讯录好友加入小组
      */
-    public void inviteToSquad(@NonNull String phone, @NonNull String squadId) {
+    public void inviteJoinIntoSquad(@NonNull String phone, @NonNull String squadId) {
         // {toPhoneArr:['1591111111','186111111'],accessToken:"",toSquadId:""}
         ArrayList<String> phones = new ArrayList<>();
         phones.add(phone);

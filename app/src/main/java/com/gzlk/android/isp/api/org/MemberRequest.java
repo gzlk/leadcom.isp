@@ -68,6 +68,10 @@ public class MemberRequest extends Request<Member> {
 
     /**
      * 查找指定组织和指定小组内的成员列表
+     *
+     * @param groupId    组织的id
+     * @param squadId    小组的id
+     * @param pageNumber 页码
      */
     public void list(String groupId, String squadId, int pageNumber) {
         httpRequest(getRequest(MultipleMember.class, compound(LIST, groupId, squadId, pageNumber), "", HttpMethods.Get));

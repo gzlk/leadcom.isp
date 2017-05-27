@@ -61,6 +61,15 @@ public class CollectionRequest extends Request<Collection> {
         return this;
     }
 
+    /**
+     * 添加个人收藏
+     *
+     * @param type        收藏类型，参考 {@link Collection.Type}
+     * @param content     内容
+     * @param creatorId   作者id
+     * @param creatorName 作者名字
+     * @see Collection.Type
+     */
     public void add(int type, String content, @NonNull String creatorId, String creatorName) {
         // {type,content,creatorId,creatorName,accessToken}
 
@@ -78,11 +87,17 @@ public class CollectionRequest extends Request<Collection> {
         httpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 删除收藏
+     */
     public void delete(String collectionId) {
         // colId
         httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Post));
     }
 
+    /**
+     * 更新收藏内容（只针对文本型收藏内容）
+     */
     public void update(String collectionId, String content) {
         // {_id,content,accessToken}
         JSONObject object = new JSONObject();
@@ -98,17 +113,26 @@ public class CollectionRequest extends Request<Collection> {
         httpRequest(getRequest(SingleCollection.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 查找某个收藏的详细内容
+     */
     public void find(String collectionId) {
         // colId
         httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(FIND), collectionId), "", HttpMethods.Get));
     }
 
+    /**
+     * 查找指定用户的收藏内容
+     */
     public void list(String accessToken, int pageNumber) {
         // accessToken
         httpRequest(getRequest(MultipleCollection.class,
-                format("%s?pageSize=%d&pageNumber=%d&accessToken=%s", url(LIST), PAGE_SIZE, pageNumber, accessToken), "", HttpMethods.Get));
+                format("%s?pageNumber=%d&accessToken=%s", url(LIST), pageNumber, accessToken), "", HttpMethods.Get));
     }
 
+    /**
+     * 搜索指定用户的搜藏内容
+     */
     public void search(String accessToken, String info) {
         // info,accessToken
         httpRequest(getRequest(MultipleCollection.class, format("%s?info=%s&accessToken=%s", url(SEARCH), accessToken, info), "", HttpMethods.Get));

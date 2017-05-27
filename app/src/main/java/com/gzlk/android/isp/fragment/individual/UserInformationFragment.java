@@ -123,7 +123,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public void onUploadingComplete(ArrayList<String> uploaded) {
-            tryEditUserInfo(UserRequest.TYPE_PHOTO, uploaded.get(0));
+            tryEditUserInfo(UserRequest.UPDATE_PHOTO, uploaded.get(0));
         }
     };
 
@@ -433,19 +433,19 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
             case REQUEST_ID:
                 // 身份证号码末尾的 X 字母需要大写
                 result = getResultedData(data).toUpperCase(Locale.getDefault());
-                tryEditUserInfo(UserRequest.TYPE_ID_NUM, result);
+                tryEditUserInfo(UserRequest.UPDATE_ID_NUM, result);
                 break;
             case REQUEST_COMPANY:
                 result = getResultedData(data);
-                tryEditUserInfo(UserRequest.TYPE_COMPANY, result);
+                tryEditUserInfo(UserRequest.UPDATE_COMPANY, result);
                 break;
             case REQUEST_DUTY:
                 result = getResultedData(data);
-                tryEditUserInfo(UserRequest.TYPE_DUTY, result);
+                tryEditUserInfo(UserRequest.UPDATE_DUTY, result);
                 break;
             case REQUEST_NAME:
                 result = getResultedData(data);
-                tryEditUserInfo(UserRequest.TYPE_NAME, result);
+                tryEditUserInfo(UserRequest.UPDATE_NAME, result);
                 break;
         }
         super.onActivityResult(requestCode, data);
@@ -457,7 +457,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         TimePickerView tpv = new TimePickerView.Builder(Activity(), new TimePickerView.OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                tryEditUserInfo(UserRequest.TYPE_BIRTHDAY, Utils.format(StringHelper.getString(R.string.ui_base_text_date_format), date));
+                tryEditUserInfo(UserRequest.UPDATE_BIRTHDAY, Utils.format(StringHelper.getString(R.string.ui_base_text_date_format), date));
             }
         }).setType(new boolean[]{true, true, true, false, false, false})
                 .setTitleBgColor(getColor(R.color.colorPrimary))
@@ -495,7 +495,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public boolean onClick(View view) {
-                tryEditUserInfo(UserRequest.TYPE_SEX, StringHelper.getString(view.getId() == R.id.ui_dialog_button_sex_male ? R.string.ui_base_text_sex_male : R.string.ui_base_text_sex_female));
+                tryEditUserInfo(UserRequest.UPDATE_SEX, StringHelper.getString(view.getId() == R.id.ui_dialog_button_sex_male ? R.string.ui_base_text_sex_male : R.string.ui_base_text_sex_female));
                 return true;
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.TYPE_SLID).show();
@@ -517,37 +517,37 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
 
     private void resetUserInformation(int type, String value) {
         switch (type) {
-            case UserRequest.TYPE_BIRTHDAY:
+            case UserRequest.UPDATE_BIRTHDAY:
                 mAdapter.get(3).setId(format(items[3], value));
                 mAdapter.notifyItemChanged(3);
                 break;
-            case UserRequest.TYPE_COMPANY:
+            case UserRequest.UPDATE_COMPANY:
                 mAdapter.get(5).setId(format(items[5], value));
                 mAdapter.notifyItemChanged(5);
                 break;
-            case UserRequest.TYPE_DUTY:
+            case UserRequest.UPDATE_DUTY:
                 mAdapter.get(6).setId(format(items[6], value));
                 mAdapter.notifyItemChanged(6);
                 break;
-            case UserRequest.TYPE_EMAIL:
+            case UserRequest.UPDATE_EMAIL:
                 break;
-            case UserRequest.TYPE_ID_NUM:
+            case UserRequest.UPDATE_ID_NUM:
                 mAdapter.get(4).setId(format(items[4], value));
                 mAdapter.notifyItemChanged(4);
                 break;
-            case UserRequest.TYPE_NAME:
+            case UserRequest.UPDATE_NAME:
                 ((User) mAdapter.get(0)).setName(value);
                 mAdapter.notifyItemChanged(0);
                 break;
-            case UserRequest.TYPE_PHONE:
+            case UserRequest.UPDATE_PHONE:
                 mAdapter.get(8).setId(format(items[8], value));
                 mAdapter.notifyItemChanged(8);
                 break;
-            case UserRequest.TYPE_PHOTO:
+            case UserRequest.UPDATE_PHOTO:
                 ((User) mAdapter.get(0)).setHeadPhoto(value);
                 mAdapter.notifyItemChanged(0);
                 break;
-            case UserRequest.TYPE_SEX:
+            case UserRequest.UPDATE_SEX:
                 mAdapter.get(2).setId(format(items[2], value));
                 mAdapter.notifyItemChanged(2);
                 break;

@@ -65,27 +65,27 @@ public class UserRequest extends Request<User> {
         return this;
     }
 
-    public static final int TYPE_NAME = 1;
-    public static final int TYPE_PHONE = 2;
-    public static final int TYPE_EMAIL = 3;
-    public static final int TYPE_PASSWORD = 4;
-    public static final int TYPE_SEX = 5;
-    public static final int TYPE_BIRTHDAY = 6;
-    public static final int TYPE_PHOTO = 7;
-    public static final int TYPE_ID_NUM = 8;
-    public static final int TYPE_COMPANY = 9;
-    public static final int TYPE_DUTY = 10;
+    public static final int UPDATE_NAME = 1;
+    public static final int UPDATE_PHONE = 2;
+    public static final int UPDATE_EMAIL = 3;
+    public static final int UPDATE_PASSWORD = 4;
+    public static final int UPDATE_SEX = 5;
+    public static final int UPDATE_BIRTHDAY = 6;
+    public static final int UPDATE_PHOTO = 7;
+    public static final int UPDATE_ID_NUM = 8;
+    public static final int UPDATE_COMPANY = 9;
+    public static final int UPDATE_DUTY = 10;
 
     /**
      * 更改我的信息
      *
      * @param type  要修改的属性index
      *              <ul>
-     *              <li>TYPE_NAME: 修改昵称</li>
-     *              <li>TYPE_PHONE: 修改电话</li>
-     *              <li>TYPE_EMAIL: 修改email</li>
-     *              <li>TYPE_PASSWORD: 修改密码</li>
-     *              <li>TYPE_SEX: 修改性别</li>
+     *              <li>UPDATE_NAME: 修改昵称</li>
+     *              <li>UPDATE_PHONE: 修改电话</li>
+     *              <li>UPDATE_EMAIL: 修改email</li>
+     *              <li>UPDATE_PASSWORD: 修改密码</li>
+     *              <li>UPDATE_SEX: 修改性别</li>
      *              </ul>
      * @param value 修改的值
      */
@@ -97,34 +97,34 @@ public class UserRequest extends Request<User> {
         try {
             object.put("accessToken", Cache.cache().accessToken);
             switch (type) {
-                case TYPE_BIRTHDAY:
+                case UPDATE_BIRTHDAY:
                     object.put("birthday", value);
                     break;
-                case TYPE_COMPANY:
+                case UPDATE_COMPANY:
                     object.put("company", value);
                     break;
-                case TYPE_DUTY:
+                case UPDATE_DUTY:
                     object.put("position", value);
                     break;
-                case TYPE_EMAIL:
+                case UPDATE_EMAIL:
                     object.put("email", value);
                     break;
-                case TYPE_ID_NUM:
+                case UPDATE_ID_NUM:
                     object.put("idNum", value);
                     break;
-                case TYPE_NAME:
+                case UPDATE_NAME:
                     object.put("name", value);
                     break;
-                case TYPE_PASSWORD:
+                case UPDATE_PASSWORD:
                     object.put("password", value);
                     break;
-                case TYPE_PHONE:
+                case UPDATE_PHONE:
                     object.put("phone", value);
                     break;
-                case TYPE_PHOTO:
+                case UPDATE_PHOTO:
                     object.put("headPhoto", value);
                     break;
-                case TYPE_SEX:
+                case UPDATE_SEX:
                     object.put("sex", value);
                     break;
             }
@@ -152,7 +152,7 @@ public class UserRequest extends Request<User> {
         findInCache(userId);
     }
 
-    private void findInCache(String loginId, String phone, String name) {
+    private void findInCache(String loginId, String phone, String name, int pageNumber) {
         QueryBuilder<User> builder = new QueryBuilder<>(User.class);
         if (StringHelper.isEmpty(loginId)) {
             builder.where(User.Field.LoginId + " IS NOT NULL ");
@@ -171,13 +171,17 @@ public class UserRequest extends Request<User> {
         } else {
             builder.whereAppend(Model.Field.Name + " like ?", "%" + name + "%");
         }
-        List<User> users = new Dao<>(User.class).query(builder);
+        Dao<User> dao = new Dao<>(User.class);
+        int count = (int) dao.getCount(builder);
+        builder.limit(pageNumber * PAGE_SIZE, PAGE_SIZE);
+        List<User> users = dao.query(builder);
         if (null == users || users.size() < 1) {
-            String params = format("?pageSize=%d&pageNumber=%d&loginId=%s&name=%s&phone=%s", PAGE_SIZE, 1, loginId, name, phone);
+            String params = format("?pageNumber=%d&loginId=%s&name=%s&phone=%s", pageNumber, loginId, name, phone);
             httpRequest(getRequest(MultipleUser.class, format("%s%s", url(LIST), params), "", HttpMethods.Get));
         } else {
             if (null != onMultipleRequestListener) {
-                onMultipleRequestListener.onResponse(users, true, 1, PAGE_SIZE, users.size(), 1);
+                int pages = count / PAGE_SIZE + (count % PAGE_SIZE > 0 ? 1 : 0);
+                onMultipleRequestListener.onResponse(users, true, pages, PAGE_SIZE, count, pageNumber);
             }
         }
     }
@@ -189,10 +193,7 @@ public class UserRequest extends Request<User> {
      * @param phone   用户注册的手机号
      * @param name    用户真实姓名
      */
-    public void list(String loginId, String phone, String name) {
-        findInCache(loginId, phone, name);
-        // pageSize,pageNumber,loginId,name,phone
-//        String params = format("?pageSize=%d&pageNumber=%d&loginId=%s&name=%s&phone=%s", PAGE_SIZE, 1, loginId, name, phone);
-//        httpRequest(getRequest(SingleUser.class, format("%s%s", url(LIST), params), "", HttpMethods.Get));
+    public void list(String loginId, String phone, String name, int pageNumber) {
+        findInCache(loginId, phone, name, pageNumber);
     }
 }

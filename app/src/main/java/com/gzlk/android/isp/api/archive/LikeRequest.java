@@ -113,11 +113,13 @@ public class LikeRequest extends Request<ArchiveLike> {
      *
      * @param type 个人或组织档案点赞{@link Archive.Type}
      */
-    public void list(int type, String archiveId) {
+    public void list(int type, String archiveId, int pageNumber) {
         // momentId
         // userDocId
         // groDocId
-        httpRequest(getRequest(MultiLike.class, format("%s?%s=%s", url(type, LIST), CommentRequest.getArchiveId(type), archiveId), "", HttpMethods.Get));
+        httpRequest(getRequest(MultiLike.class,
+                format("%s?%s=%s&pageNumber=%d", url(type, LIST), CommentRequest.getArchiveId(type), archiveId, pageNumber),
+                "", HttpMethods.Get));
     }
 
     /**

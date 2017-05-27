@@ -93,41 +93,41 @@ public class Archive extends Additional {
     /**
      * 档案性质(1.普通,2.个人,3.活动)
      */
-    public static class ArchiveType {
+    public interface ArchiveType {
         /**
          * 普通档案
          */
-        public static final int NORMAL = 1;
+        int NORMAL = 1;
         /**
          * 个人档案
          */
-        public static final int INDIVIDUAL = 2;
+        int INDIVIDUAL = 2;
         /**
          * 活动档案
          */
-        public static final int ACTIVITY = 3;
+        int ACTIVITY = 3;
     }
 
     /**
      * 档案内容类型
      */
-    public static class ArchiveContentType {
+    public interface ArchiveContentType {
         /**
          * 文本
          */
-        public static final String TEXT = "1";
+        int TEXT = 1;
         /**
          * 连接引用
          */
-        public static final String LINK = "2";
+        int LINK = 2;
         /**
          * 个人
          */
-        public static final String INDIVIDUAL = "3";
+        int INDIVIDUAL = 3;
         /**
          * 活动
          */
-        public static final String ACTIVITY = "4";
+        int ACTIVITY = 4;
     }
 
     @Column(Organization.Field.GroupId)
@@ -143,7 +143,7 @@ public class Archive extends Additional {
      * </p>
      */
     @Column(Field.Type)
-    private String type;               //档案类型
+    private int type;                  //档案类型
 
     @Column(Field.Title)
     private String title;              //档案名称
@@ -211,11 +211,11 @@ public class Archive extends Additional {
         this.content = content;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -299,5 +299,21 @@ public class Archive extends Additional {
         this.addition = addition;
         // 重置附加信息
         resetAdditional(this.addition);
+    }
+
+    public ArrayList<String> getTag() {
+        return tag;
+    }
+
+    public void setTag(ArrayList<String> tag) {
+        this.tag = tag;
+    }
+
+    public String getHappenDate() {
+        return happenDate;
+    }
+
+    public void setHappenDate(String happenDate) {
+        this.happenDate = happenDate;
     }
 }

@@ -295,7 +295,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
-        }).inviteToSquad(phone, mSquadId);
+        }).inviteJoinIntoSquad(phone, mSquadId);
     }
 
     // 邀请进组织
@@ -308,7 +308,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
-        }).inviteToGroup(phone, mOrganizationId);
+        }).inviteJoinIntoGroup(phone, mOrganizationId);
     }
 
     private class ContactAdapter extends RecyclerViewAdapter<PhoneContactViewHolder, Contact> {

@@ -59,6 +59,14 @@ public class CommentRequest extends Request<Comment> {
         return format("%s%s", api, action);
     }
 
+    /**
+     * 获取档案的id
+     * <ul>
+     * <li>组织档案：groDocId</li>
+     * <li>说说：momentId</li>
+     * <li>个人档案：userDocId</li>
+     * </ul>
+     */
     static String getArchiveId(int type) {
         switch (type) {
             case Comment.Type.GROUP:
@@ -69,7 +77,14 @@ public class CommentRequest extends Request<Comment> {
                 return "userDocId";
         }
     }
-
+    /**
+     * 获取档案评论的id
+     * <ul>
+     * <li>组织档案：groDocCmtId</li>
+     * <li>说说：momentCmtId</li>
+     * <li>个人档案：userDocCmtId</li>
+     * </ul>
+     */
     private static String getCommentId(int type) {
         switch (type) {
             case Comment.Type.GROUP:
@@ -145,8 +160,6 @@ public class CommentRequest extends Request<Comment> {
         // groDocId
         // momentId
         httpRequest(getRequest(MultiComment.class,
-                format("%s?%s=%s&pageSize=%d&pageNumber=%d",
-                        url(type, LIST), getArchiveId(type), archiveId, PAGE_SIZE, pageNumber),
-                "", HttpMethods.Get));
+                format("%s?%s=%s&pageNumber=%d", url(type, LIST), getArchiveId(type), archiveId, pageNumber), "", HttpMethods.Get));
     }
 }

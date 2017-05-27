@@ -17,7 +17,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.user.PrivacyRequest;
+import com.gzlk.android.isp.api.archive.PrivacyRequest;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -261,7 +261,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(title, content, null, images, files, names);
+        }).add(title, content, happenDate, null, null, images, files, names);
     }
 
     private ArrayList<String> images = new ArrayList<>();
@@ -318,7 +318,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, Archive.Type.USER, title, content, "", images, files, names);
+        }).update(mQueryId, Archive.Type.USER, title, content, happenDate, null, "", images, files, names);
     }
 
     private void editOrganizationArchive(String title, String content) {
@@ -331,7 +331,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, Archive.Type.GROUP, title, content, "", images, files, names);
+        }).update(mQueryId, Archive.Type.GROUP, title, content, happenDate, null, "", images, files, names);
     }
 
     @Override
@@ -407,10 +407,13 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         });
     }
 
-    private String create_date = "";
+    /**
+     * 档案发生时间
+     */
+    private String happenDate = "";
 
     private void initializeHolders(Archive archive) {
-        create_date = null == archive ? "" : archive.getCreateDate();
+        happenDate = null == archive ? "" : archive.getHappenDate();
         if (null == strings) {
             strings = StringHelper.getStringArray(R.array.ui_individual_new_document);
         }
@@ -609,7 +612,8 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void showCreateDate(Date date) {
-        timeHolder.showContent(StringHelper.format(strings[2], Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs), date)));
+        happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs), date);
+        timeHolder.showContent(StringHelper.format(strings[2], happenDate));
     }
 
     private void openDatePicker() {
@@ -626,11 +630,12 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                 .setContentSize(getFontDimension(R.dimen.ui_static_sp_20))
                 .setOutSideCancelable(false)
                 .isCenterLabel(true).isDialog(false).build();
-        if (StringHelper.isEmpty(create_date)) {
+        if (StringHelper.isEmpty(happenDate)) {
             tpv.setDate(Calendar.getInstance());
+            happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs), Calendar.getInstance().getTime());
         } else {
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), create_date));
+            calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), happenDate));
             tpv.setDate(calendar);
         }
         tpv.show();

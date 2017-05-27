@@ -105,7 +105,7 @@ public class InvitationRequest extends Request<Invitation> {
         // {groSquId,inviteeId,msg,accessToken}
         JSONObject object = new JSONObject();
         try {
-            object.put("groupId", squadId)
+            object.put("groSquId", squadId)
                     .put("inviteeId", inviteeId)
                     .put("msg", checkNull(message))
                     .put("accessToken", Cache.cache().accessToken);

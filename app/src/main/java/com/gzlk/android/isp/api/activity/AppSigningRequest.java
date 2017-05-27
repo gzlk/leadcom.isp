@@ -60,9 +60,8 @@ public class AppSigningRequest extends Request<AppSigning> {
     }
 
     /**
-     * 保存签到应用
+     * 增加活动签到条目
      *
-     * @param signId      签到应用的id(为null则add，否则update)
      * @param activityId  活动id
      * @param title       签到应用的标题
      * @param description 描述
@@ -72,13 +71,47 @@ public class AppSigningRequest extends Request<AppSigning> {
      * @param beginTime   签到开始时间
      * @param endTime     签到结束时间
      */
-    public void save(String signId, @NonNull String activityId, String title, String description,
-                     double longitude, double latitude, double altitude, String beginTime, String endTime) {
+    public void add(@NonNull String activityId, String title, String description,
+                    double longitude, double latitude, double altitude, String beginTime, String endTime) {
+        // {actId:"",title:"",desc:"",lon:"",lat:"",alt:"",beginTime:"",endTime:"",accessToken：""}
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("actId", activityId)
+                    .put("title", title)
+                    .put("desc", description)
+                    .put("lon", longitude)
+                    .put("lat", latitude)
+                    .put("alt", altitude)
+                    .put("beginTime", beginTime)
+                    .put("endTime", endTime)
+                    .put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleSigning.class, url(ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 更新签到应用详情
+     *
+     * @param signId      签到应用的id
+     * @param activityId  活动id
+     * @param title       签到应用的标题
+     * @param description 描述
+     * @param longitude   目的地经度
+     * @param latitude    目的地纬度
+     * @param altitude    目的地海拔高度
+     * @param beginTime   签到开始时间
+     * @param endTime     签到结束时间
+     */
+    public void update(@NonNull String signId, @NonNull String activityId, String title, String description,
+                       double longitude, double latitude, double altitude, String beginTime, String endTime) {
         // {id:"",actId:"",title:"",desc:"",lon:"",lat:"",alt:"",beginTime:"",endTime:"",accessToken：""}
 
         JSONObject object = new JSONObject();
         try {
-            object.put("id", checkNull(signId))
+            object.put("id", signId)
                     .put("actId", activityId)
                     .put("title", title)
                     .put("desc", description)
@@ -92,19 +125,29 @@ public class AppSigningRequest extends Request<AppSigning> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleSigning.class, url(SAVE), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleSigning.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
      * 查找单个签到应用的详情
+     *
+     * @param signId 签到应用的id
+     * @param option 0：只查询签到设置；1：查询签到设置和其下的所有签到记录
      */
-    public void find(@NonNull String signId) {
-        httpRequest(getRequest(SingleSigning.class, format("%s?id=%s", url(FIND), signId), "", HttpMethods.Get));
+    public void find(@NonNull String signId, int option) {
+        if (option <= 0) {
+            option = 0;
+        }
+        if (option >= 1) {
+            option = 1;
+        }
+        httpRequest(getRequest(SingleSigning.class, format("%s?id=%s&ope=%d", url(FIND), signId, option), "", HttpMethods.Get));
     }
 
     /**
      * 查询活动中的签到应用列表
      */
+    @Deprecated
     public void list(@NonNull String activityId) {
         // actId=""
         httpRequest(getRequest(SingleSigning.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));

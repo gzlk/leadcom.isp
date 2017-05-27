@@ -194,7 +194,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
                 stopRefreshing();
             }
-        }).list(Cache.cache().accessToken);
+        }).list(Cache.cache().accessToken, remotePageNumber);
     }
 
     /**
