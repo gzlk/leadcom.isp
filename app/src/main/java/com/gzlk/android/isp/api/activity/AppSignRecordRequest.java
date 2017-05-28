@@ -63,20 +63,18 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
     /**
      * 成员签到
      *
-     * @param activityId 活动的id
-     * @param signId     活动中签到应用的id
-     * @param longitude  目的地经度
-     * @param latitude   目的地纬度
-     * @param altitude   目的地海拔高度
-     * @param imsi       手机识别码
+     * @param signId    活动中签到应用的id
+     * @param longitude 目的地经度
+     * @param latitude  目的地纬度
+     * @param altitude  目的地海拔高度
+     * @param imsi      手机识别码
      */
-    public void add(@NonNull String activityId, @NonNull String signId, double longitude, double latitude, double altitude, String imsi) {
+    public void add(@NonNull String signId, double longitude, double latitude, double altitude, String imsi) {
         // {actId:"",setupId:"",lon:"",lat:"",alt:"",imsi:""accessToken：""}
 
         JSONObject object = new JSONObject();
         try {
-            object.put("actId", activityId)
-                    .put("setupId", signId)
+            object.put("setupId", signId)
                     .put("lon", longitude)
                     .put("lat", latitude)
                     .put("alt", altitude)
@@ -102,6 +100,6 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
      */
     public void list(@NonNull String signId) {
         // setupId=""
-        httpRequest(getRequest(SingleRecord.class, format("%s?setupId=%s", url(LIST), signId), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleRecord.class, format("%s?setupId=%s", url(LIST), signId), "", HttpMethods.Get));
     }
 }

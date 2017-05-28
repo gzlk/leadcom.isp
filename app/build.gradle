@@ -82,8 +82,8 @@ configurations.all {
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile(name: 'hlklib-1.0.6.3-SNAPSHOT-release', ext: 'aar')
-    compile 'com.facebook.rebound:rebound:0.3.8'
+//    compile(name: 'hlklib-1.0.6.3-SNAPSHOT-release', ext: 'aar')
+//    compile 'com.facebook.rebound:rebound:0.3.8'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -95,9 +95,9 @@ dependencies {
     compile 'com.android.support:palette-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.google.code.gson:gson:2.8.0'
-//    compile('com.github.hsiangleekwok:hlklib:1.0.6.3-SNAPSHOT') {
-//        changing = true;
-//    }
+    compile('com.github.hsiangleekwok:hlklib:1.0.6.3-SNAPSHOT') {
+        changing = true;
+    }
     // 滑动删除
     //compile(name: 'android-swipelayout-library-release', ext: 'aar')
     compile "com.daimajia.swipelayout:library:1.2.0@aar"

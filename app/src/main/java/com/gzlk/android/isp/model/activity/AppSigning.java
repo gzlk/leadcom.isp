@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.activity;
 
+import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -16,21 +17,29 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Sign.Table.SIGNING)
 public class AppSigning extends Sign {
 
+    //活动Id
+    @Column(Activity.Field.ActivityId)
+    private String actId;
+    //修改时间
+    @Column(Organization.Field.ModifyDate)
+    private String modifyDate;
     //签到开始时间
     @Column(Vote.Field.BeginTime)
     private String beginTime;
     //签到结束时间
     @Column(Vote.Field.EndTime)
-    protected String endTime;
-    //应签到人数
-    @Column(Field.ExceptedNum)
-    private String expectedSignInNum;
-    //实际签到人数
-    @Column(Field.RealSignNum)
-    protected String readSignInNum;
-    //未签到人数
-    @Column(Field.NotSignNum)
-    private String toBeSignInNum;
+    private String endTime;
+    //签到人数(按user对象的id过滤，避免一个用户多次签到后被重复计数)
+    @Column(Field.SignInNum)
+    private String signInNum;
+
+    public String getActId() {
+        return actId;
+    }
+
+    public void setActId(String actId) {
+        this.actId = actId;
+    }
 
     public String getBeginTime() {
         return beginTime;
@@ -48,27 +57,19 @@ public class AppSigning extends Sign {
         this.endTime = endTime;
     }
 
-    public String getExpectedSignInNum() {
-        return expectedSignInNum;
+    public String getModifyDate() {
+        return modifyDate;
     }
 
-    public void setExpectedSignInNum(String expectedSignInNum) {
-        this.expectedSignInNum = expectedSignInNum;
+    public void setModifyDate(String modifyDate) {
+        this.modifyDate = modifyDate;
     }
 
-    public String getReadSignInNum() {
-        return readSignInNum;
+    public String getSignInNum() {
+        return signInNum;
     }
 
-    public void setReadSignInNum(String readSignInNum) {
-        this.readSignInNum = readSignInNum;
-    }
-
-    public String getToBeSignInNum() {
-        return toBeSignInNum;
-    }
-
-    public void setToBeSignInNum(String toBeSignInNum) {
-        this.toBeSignInNum = toBeSignInNum;
+    public void setSignInNum(String signInNum) {
+        this.signInNum = signInNum;
     }
 }

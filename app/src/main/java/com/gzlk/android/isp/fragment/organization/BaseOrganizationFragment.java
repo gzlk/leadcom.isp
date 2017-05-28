@@ -57,7 +57,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingJoinedRemoteOrganizationsComplete(list);
             }
-        }).list();
+        }).list(remotePageNumber);
     }
 
     /**
@@ -96,7 +96,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingRemoteSquadsComplete(list);
             }
-        }).list(organizationId);
+        }).list(organizationId, remotePageNumber);
     }
 
     /**
@@ -148,13 +148,31 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 查询指定组织或小组的成员列表。查询小组时，必须要指定组织id
      */
     protected void fetchingRemoteMembers(String organizationId, String squadId) {
+        if (isEmpty(squadId)) {
+            fetchingRemoteGroupMember(organizationId);
+        } else {
+            fetchingRemoteSquadMember(squadId);
+        }
+    }
+
+    private void fetchingRemoteGroupMember(String organizationId) {
         MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
             @Override
             public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingRemoteMembersComplete(list);
             }
-        }).list(organizationId, squadId, remotePageNumber);
+        }).list(Member.Type.GROUP, organizationId, remotePageNumber);
+    }
+
+    private void fetchingRemoteSquadMember(String squadId) {
+        MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
+            @Override
+            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                onFetchingRemoteMembersComplete(list);
+            }
+        }).list(Member.Type.SQUAD, squadId, remotePageNumber);
     }
 
     /**

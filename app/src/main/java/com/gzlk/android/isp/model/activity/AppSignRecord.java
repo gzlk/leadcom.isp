@@ -17,20 +17,13 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Sign.Table.SIGN_RECORD)
 public class AppSignRecord extends Sign {
 
-    //手机设备号
-    @Column(Vote.Field.IMSI)
-    private String imsi;
-    //签到设置的id(用于把签到记录和签到设置关联起来)
+    //签到应用的id(活动-签到应用-签到  三者间是一对多，一对多的关系)
     @Column(Field.SigningId)
     private String setupId;
 
-    public String getImsi() {
-        return imsi;
-    }
-
-    public void setImsi(String imsi) {
-        this.imsi = imsi;
-    }
+    //手机设备号
+    @Column(Vote.Field.IMSI)
+    private String imsi;
 
     public String getSetupId() {
         return setupId;
@@ -38,5 +31,13 @@ public class AppSignRecord extends Sign {
 
     public void setSetupId(String setupId) {
         this.setupId = setupId;
+    }
+
+    public String getImsi() {
+        return imsi;
+    }
+
+    public void setImsi(String imsi) {
+        this.imsi = imsi;
     }
 }

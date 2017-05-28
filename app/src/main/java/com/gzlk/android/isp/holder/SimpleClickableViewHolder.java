@@ -33,6 +33,8 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     public TextView valueTextView;
     @ViewId(R.id.ui_holder_view_simple_clickable_value_icon)
     public CustomTextView valueIcon;
+    @ViewId(R.id.ui_holder_view_simple_clickable_right_icon_add)
+    public CustomTextView appendIcon;
     @ViewId(R.id.ui_holder_view_simple_clickable_right_icon)
     public CustomTextView rightIcon;
 
@@ -78,11 +80,16 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     public void showContent(SimpleClickableItem item) {
         showContent(item.getIndex(), item.getTitle(), item.getValue());
         rightIcon.setVisibility(item.isIconVisible() ? View.VISIBLE : View.GONE);
+        appendIcon.setVisibility(item.isAddVisible() ? View.VISIBLE : View.GONE);
     }
 
     public void showContent(int index, String title, String value) {
         this.index = index;
         titleTextView.setText(title);
+        if(isEmpty(title)){
+            // 没有title则value的文字大小变成正常大小
+            //valueTextView.setTextSize();
+        }
         if (value.length() > 2 && value.charAt(0) == '0' && value.charAt(1) == 'x') {
             valueTextView.setText(null);
             Integer i = Integer.decode(value);

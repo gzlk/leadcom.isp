@@ -18,6 +18,20 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Organization.Table.MEMBER)
 public class Member extends Leaguer {
 
+    /**
+     * 成员类别
+     */
+    public interface Type {
+        /**
+         * 组织成员
+         */
+        int GROUP = 1;
+        /**
+         * 小组成员
+         */
+        int SQUAD = 2;
+    }
+
     @Column(Organization.Field.GroupId)
     private String groupId;        //群体ID
 

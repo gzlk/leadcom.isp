@@ -142,7 +142,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
 
     @Override
     public void remove(T item) {
-        remove(innerList.indexOf(item));
+        remove(indexOf(item));
     }
 
     @Override
@@ -171,13 +171,36 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     @Override
+    public void add(List<T> list) {
+        for (T t : list) {
+            add(t);
+        }
+    }
+
+    @Override
+    public void add(List<T> list, int position) {
+        int index = position;
+        for (T t : list) {
+            if (!exist(t)) {
+                add(t, index);
+                index++;
+            }
+        }
+    }
+
+    @Override
     public T get(int position) {
         return innerList.get(position);
     }
 
     @Override
     public boolean exist(T item) {
-        return innerList.indexOf(item) >= 0;
+        return indexOf(item) >= 0;
+    }
+
+    @Override
+    public int indexOf(T item) {
+        return innerList.indexOf(item);
     }
 
     /**
@@ -186,7 +209,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     @Override
     public void update(T item) {
         if (exist(item)) {
-            int index = innerList.indexOf(item);
+            int index = indexOf(item);
             innerList.set(index, item);
             notifyItemChanged(index);
         } else {
@@ -217,6 +240,11 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         for (T t : list) {
             update(t);
         }
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return innerList.iterator();
     }
 
     @Override

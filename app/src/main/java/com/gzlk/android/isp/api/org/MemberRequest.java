@@ -5,7 +5,6 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.organization.Member;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -33,11 +32,22 @@ public class MemberRequest extends Request<Member> {
     }
 
     // 成员
-    private static final String MEMBER = "/group/groMember";
+    private static final String GROUP_MEMBER = "/group/groMember";
+    private static final String SQUAD_MEMBER = "/group/groSquMember";
 
     @Override
     protected String url(String action) {
-        return MEMBER + action;
+        return GROUP_MEMBER + action;
+    }
+
+    private String url(int type, String action) {
+        String api = GROUP_MEMBER;
+        switch (type) {
+            case Member.Type.SQUAD:
+                api = SQUAD_MEMBER;
+                break;
+        }
+        return format("%s%s", api, action);
     }
 
     @Override
@@ -57,37 +67,40 @@ public class MemberRequest extends Request<Member> {
         return this;
     }
 
-    private String compound(String action, String groupId, String squadId, int pageNumber) {
-        String params = format("%s?groupId=%s", url(action), groupId);
-        if (!StringHelper.isEmpty(squadId)) {
-            params += format("&squadId=%s", squadId);
+    private String getOrgId(int type) {
+        switch (type) {
+            case Member.Type.SQUAD:
+                return "squadId";
+            default:
+                return "groupId";
         }
-        params += format("&pageNumber=%d", pageNumber);
-        return params;
     }
 
     /**
      * 查找指定组织和指定小组内的成员列表
      *
-     * @param groupId    组织的id
-     * @param squadId    小组的id
+     * @param type       要查询的类型，参见 {@link Member.Type}
+     * @param id         组织的id
      * @param pageNumber 页码
+     * @see Member.Type
      */
-    public void list(String groupId, String squadId, int pageNumber) {
-        httpRequest(getRequest(MultipleMember.class, compound(LIST, groupId, squadId, pageNumber), "", HttpMethods.Get));
-    }
-
-    /**
-     * 在指定组织和指定小组内搜索成员名字
-     */
-    public void search(String groupId, String squadId, String memberName, int pageNumber) {
-        httpRequest(getRequest(MultipleMember.class, format("%s&info=%s", compound(SEARCH, groupId, squadId, pageNumber), memberName), "", HttpMethods.Get));
+    public void list(int type, String id, int pageNumber) {
+        String param = format("%s?%s=%s&pageNumber=%d", url(type, LIST), getOrgId(type), id, pageNumber);
+        httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
      * 查询单个成员的详细信息
      */
-    public void find(String memberId) {
-        httpRequest(getRequest(SingleMember.class, format("%s?memberId=%s", url(FIND), memberId), "", HttpMethods.Get));
+    public void find(int type, String memberId) {
+        httpRequest(getRequest(SingleMember.class, format("%s?memberId=%s", url(type, FIND), memberId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 在指定组织和指定小组内搜索成员名字
+     */
+    public void search(int type, String id, String memberName, int pageNumber) {
+        String param = format("%s?%s=%s&info=%s&pageNumber=%d", url(type, SEARCH), getOrgId(type), id, memberName, pageNumber);
+        httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
     }
 }

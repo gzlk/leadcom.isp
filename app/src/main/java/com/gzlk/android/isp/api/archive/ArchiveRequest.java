@@ -104,6 +104,7 @@ public class ArchiveRequest extends Request<Archive> {
      *
      * @param title      档案标题
      * @param content    档案内容(html)
+     * @param authPublic 0=私密，1=公开
      * @param happenDate 发生时间
      * @param tags       标签
      * @param markdown   档案内容(markdown)
@@ -111,16 +112,17 @@ public class ArchiveRequest extends Request<Archive> {
      * @param attach     附件地址(json数组)
      * @param attachName 附件名(json数组)
      */
-    public void add(@NonNull String title, String content, String happenDate, ArrayList<String> tags, String markdown,
+    public void add(@NonNull String title, String content, int authPublic, String happenDate, ArrayList<String> tags, String markdown,
                     ArrayList<String> image, ArrayList<String> attach, ArrayList<String> attachName) {
-        // {title,happenDate,tag,content,markdown,[image],[attach],[attachName],accessToken}
+        // {title,content,authPublic,happenDate,tag,markdown,[image],[attach],[attachName],accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("title", title)
+                    .put("content", checkNull(content))
+                    .put("authPublic", authPublic)
                     .put("happenDate", happenDate)
                     .put("tag", new JSONArray(tags))
-                    .put("content", checkNull(content))
                     .put("markdown", checkNull(markdown))
                     .put("image", new JSONArray(image))
                     .put("attach", new JSONArray(attach))
@@ -140,14 +142,18 @@ public class ArchiveRequest extends Request<Archive> {
      * @param type       档案类型(1.普通,2.个人,3.活动){@link Archive.ArchiveType}
      * @param title      档案标题
      * @param content    档案内容(html)
+     * @param happenDate 发生时间
+     * @param tags       档案标签(Json数组)
+     * @param authUser   授权的指定用户ID(Json数组)
      * @param markdown   档案内容(markdown)
      * @param image      图片地址(json数组)
      * @param attach     附件地址(json数组)
      * @param attachName 附件名(json数组)
      */
-    public void add(@NonNull String groupId, int type, @NonNull String title, String content, String markdown,
+    public void add(@NonNull String groupId, int type, @NonNull String title, String content,
+                    String happenDate, ArrayList<String> tags, ArrayList<String> authUser, String markdown,
                     ArrayList<String> image, ArrayList<String> attach, ArrayList<String> attachName) {
-        //{groupId,type,title,content,markdown,[image],[attach],[attachName],userId,userName,accessToken}
+        // {groupId,type,title,happenDate,tag,[authUser],content,markdown,[image],[attach],[attachName],accessToken}
 
         JSONObject object = new JSONObject();
         try {
@@ -155,6 +161,9 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("type", type)
                     .put("title", title)
                     .put("content", checkNull(content))
+                    .put("happenDate", happenDate)
+                    .put("tag", new JSONArray(tags))
+                    .put("authUser", new JSONArray(authUser))
                     .put("markdown", checkNull(markdown))
                     .put("image", new JSONArray(image))
                     .put("attach", new JSONArray(attach))
@@ -190,31 +199,21 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 更改档案的内容
-     *
-     * @param archiveId  档案id
-     * @param type       档案类型{@link Archive.Type}
-     * @param title      档案标题
-     * @param content    档案内容(html)
-     * @param happenDate 发生时间
-     * @param tags       标签
-     * @param markdown   档案内容(markdown)
-     * @param image      图片地址(json数组)
-     * @param attach     附件地址(json数组)
-     * @param attachName 附件名(json数组)
+     * 更新用户档案
      */
-    public void update(String archiveId, int type, @NonNull String title, String content, String happenDate,
+    public void update(String archiveId, String title, String content, int authPublic, String happenDate,
                        ArrayList<String> tags, String markdown, ArrayList<String> image,
                        ArrayList<String> attach, ArrayList<String> attachName) {
-        // {_id,title,happenDate,tag,content,markdown,[image],[attach],[attachName],accessToken}
+        // {_id,title,happenDate,authPublic,tag,content,markdown,[image],[attach],[attachName],accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("_id", archiveId)
                     .put("title", title)
+                    .put("content", checkNull(content))
+                    .put("authPublic", authPublic)
                     .put("happenDate", happenDate)
                     .put("tag", new JSONArray(tags))
-                    .put("content", checkNull(content))
                     .put("markdown", checkNull(markdown))
                     .put("image", new JSONArray(image))
                     .put("attach", new JSONArray(attach))
@@ -224,7 +223,46 @@ public class ArchiveRequest extends Request<Archive> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleArchive.class, url(type, UPDATE), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleArchive.class, url(Archive.Type.USER, UPDATE), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 更改档案的内容
+     *
+     * @param archiveId  档案id
+     * @param title      档案标题
+     * @param content    档案内容(html)
+     * @param happenDate 发生时间
+     * @param tags       标签
+     * @param authUser   授权的指定用户ID(Json数组)
+     * @param markdown   档案内容(markdown)
+     * @param image      图片地址(json数组)
+     * @param attach     附件地址(json数组)
+     * @param attachName 附件名(json数组)
+     */
+    public void update(String archiveId, @NonNull String title, String content, String happenDate,
+                       ArrayList<String> tags, ArrayList<String> authUser, String markdown, ArrayList<String> image,
+                       ArrayList<String> attach, ArrayList<String> attachName) {
+        // {_id,title,happenDate,tag,[authUser],content,markdown,[image],[attach],[attachName],accessToken}
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", archiveId)
+                    .put("title", title)
+                    .put("content", checkNull(content))
+                    .put("happenDate", happenDate)
+                    .put("tag", new JSONArray(tags))
+                    .put("authUser", new JSONArray(authUser))
+                    .put("markdown", checkNull(markdown))
+                    .put("image", new JSONArray(image))
+                    .put("attach", new JSONArray(attach))
+                    .put("attachName", new JSONArray(attachName))
+                    .put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleArchive.class, url(Archive.Type.GROUP, UPDATE), object.toString(), HttpMethods.Post));
 
     }
 
@@ -283,7 +321,7 @@ public class ArchiveRequest extends Request<Archive> {
     public void list(int pageNumber) {
         // abstrSize,abstrRow,pageSize,pageNumber,accessToken
         httpRequest(getRequest(SpecialArchive.class,
-                format("%s?&pageNumber=%d&accessToken=%s", url(LIST), pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
+                format("%s?pageNumber=%d&accessToken=%s", url(LIST), pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     /**
@@ -294,7 +332,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void list(String organizationId, int pageNumber) {
         //groupId,abstrSize,abstrRow,pageSize,pageNumber
-        String param = format("?groupId=%s&%s&pageSize=%d&pageNumber=%d", organizationId, SUMMARY, PAGE_SIZE, pageNumber);
+        String param = format("?groupId=%s&pageNumber=%d", organizationId, pageNumber);
         httpRequest(getRequest(SpecialArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
     }
 

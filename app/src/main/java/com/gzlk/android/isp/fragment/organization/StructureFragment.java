@@ -9,7 +9,9 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.api.org.SquadRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
@@ -28,6 +30,7 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.SimpleClickableItem;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
@@ -311,13 +314,34 @@ public class StructureFragment extends BaseOrganizationFragment {
             if (index > 5 && index < mAdapter.getItemCount()) {
                 Squad squad = squads.get(index - 6);
                 if (isMember(Cache.cache().userId, squad.getGroupId(), squad.getId())) {
-                    openActivity(ContactFragment.class.getName(), format("%d,%s", ContactFragment.TYPE_SQUAD, squads.get(index - 6).getId()), true, false);
+                    openSquadContact(squad.getId());
                 } else {
-                    warningJoinIntoSquad(squad.getId(), squad.getName());
+                    isMeInSquad(squad.getId(), squad.getName());
                 }
             }
         }
     };
+
+    // 查询我是否在选中的小组中
+    private void isMeInSquad(final String squadId, final String squadName) {
+        MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
+            @Override
+            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (null != list && list.size() > 0) {
+                        openSquadContact(list.get(0).getId());
+                    } else {
+                        warningJoinIntoSquad(squadId, squadName);
+                    }
+                }
+            }
+        }).search(Member.Type.SQUAD, squadId, Cache.cache().userName, 0);
+    }
+
+    private void openSquadContact(String squadId) {
+        openActivity(ContactFragment.class.getName(), format("%d,%s", ContactFragment.TYPE_SQUAD, squadId), true, false);
+    }
 
     private void warningJoinIntoSquad(String squadId, String squadName) {
         SimpleDialogHelper.init(Activity()).show(StringHelper.getString(R.string.ui_organization_squad_not_member, squadName), StringHelper.getString(R.string.ui_base_text_yes), StringHelper.getString(R.string.ui_base_text_no_need), new DialogHelper.OnDialogConfirmListener() {

@@ -59,6 +59,10 @@ public class AppNoticeRequest extends Request<AppNotice> {
 
     /**
      * 增加通知
+     *
+     * @param activityId 所属活动的id
+     * @param title      通知标题
+     * @param content    通知内容
      */
     public void add(String activityId, String title, String content) {
         // {title:"",content:"",accessToken:"",actId:""}
@@ -78,13 +82,16 @@ public class AppNoticeRequest extends Request<AppNotice> {
 
     /**
      * 更改通知
+     *
+     * @param noticeId 通知id
+     * @param title    通知标题
+     * @param content  通知内容
      */
-    public void update(String noticeId, String activityId, String title, String content) {
-        // {id:"",title:"",content:"",accessToken:"",actId:""}
+    public void update(String noticeId, String title, String content) {
+        // {id:"",title:"",content:"",accessToken:""}
         JSONObject object = new JSONObject();
         try {
             object.put("id", noticeId)
-                    .put("actId", activityId)
                     .put("title", title)
                     .put("content", content)
                     .put("accessToken", Cache.cache().accessToken);
@@ -108,6 +115,6 @@ public class AppNoticeRequest extends Request<AppNotice> {
      */
     public void list(String activityId) {
         // actId=""
-        httpRequest(getRequest(SingleNotice.class, format("%s?actId=%s", url(UPDATE), activityId), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleNotice.class, format("%s?actId=%s", url(UPDATE), activityId), "", HttpMethods.Get));
     }
 }

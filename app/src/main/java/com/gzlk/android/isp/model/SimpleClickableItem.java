@@ -18,7 +18,8 @@ public class SimpleClickableItem extends Model {
     private String title;
     private String value;
     private String source;
-    private boolean iconVisible;
+    private boolean iconVisible = false;
+    private boolean addVisible = false;
 
     public SimpleClickableItem(String text) {
         source = text;
@@ -32,7 +33,17 @@ public class SimpleClickableItem extends Model {
         title = strings[1];
         value = strings[2];
         if (strings.length > 3) {
-            iconVisible = !StringHelper.isEmpty(strings[3]) && strings[3].equals("1");
+            if (StringHelper.isEmpty(strings[3])) {
+                iconVisible = false;
+            } else {
+                try {
+                    int i = Integer.valueOf(strings[3]);
+                    iconVisible = i >= 1;
+                    addVisible = i > 2;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -74,5 +85,13 @@ public class SimpleClickableItem extends Model {
 
     public void setIconVisible(boolean iconVisible) {
         this.iconVisible = iconVisible;
+    }
+
+    public boolean isAddVisible() {
+        return addVisible;
+    }
+
+    public void setAddVisible(boolean addVisible) {
+        this.addVisible = addVisible;
     }
 }

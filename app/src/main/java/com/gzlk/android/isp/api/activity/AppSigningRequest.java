@@ -93,10 +93,17 @@ public class AppSigningRequest extends Request<AppSigning> {
     }
 
     /**
+     * 删除签到应用
+     */
+    public void delete(String signingId) {
+        //id=""
+        httpRequest(getRequest(SingleSigning.class, format("%s?id=%s", url(DELETE), signingId), "", HttpMethods.Post));
+    }
+
+    /**
      * 更新签到应用详情
      *
-     * @param signId      签到应用的id
-     * @param activityId  活动id
+     * @param signingId   签到应用的id
      * @param title       签到应用的标题
      * @param description 描述
      * @param longitude   目的地经度
@@ -105,14 +112,13 @@ public class AppSigningRequest extends Request<AppSigning> {
      * @param beginTime   签到开始时间
      * @param endTime     签到结束时间
      */
-    public void update(@NonNull String signId, @NonNull String activityId, String title, String description,
+    public void update(@NonNull String signingId, String title, String description,
                        double longitude, double latitude, double altitude, String beginTime, String endTime) {
-        // {id:"",actId:"",title:"",desc:"",lon:"",lat:"",alt:"",beginTime:"",endTime:"",accessToken：""}
+        // {id:"",title:"",desc:"",lon:"",lat:"",alt:"",beginTime:"",endTime:"",accessToken：""}
 
         JSONObject object = new JSONObject();
         try {
-            object.put("id", signId)
-                    .put("actId", activityId)
+            object.put("id", signingId)
                     .put("title", title)
                     .put("desc", description)
                     .put("lon", longitude)
@@ -150,6 +156,6 @@ public class AppSigningRequest extends Request<AppSigning> {
     @Deprecated
     public void list(@NonNull String activityId) {
         // actId=""
-        httpRequest(getRequest(SingleSigning.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleSigning.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
     }
 }

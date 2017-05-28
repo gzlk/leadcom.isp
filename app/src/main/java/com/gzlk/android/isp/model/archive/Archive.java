@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.archive;
 
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
@@ -7,6 +8,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -66,8 +68,14 @@ public class Archive extends Additional {
         public static final String LastModifiedDate = "lastModifiedDate";
         public static final String CreatorId = "creatorId";
         public static final String CreatorName = "creatorName";
-        public static final String Tag = "tag";
+        public static final String Label = "label";
+        public static final String Office = "office";
+        public static final String Pdf = "pdf";
+        public static final String Video = "video";
         public static final String HappenDate = "happenDate";
+        public static final String AuthPublic = "authPublic";
+        public static final String AuthGroup = "authGroup";
+        public static final String AuthUser = "authUser";
         public static final String Attach = "attach";
         public static final String AttachName = "attachName";
         public static final String ReadNumber = "readNumber";
@@ -143,49 +151,67 @@ public class Archive extends Additional {
      * </p>
      */
     @Column(Field.Type)
-    private int type;                  //档案类型
-
+    private int type;
+    //档案名称
     @Column(Field.Title)
-    private String title;              //档案名称
-
+    private String title;
+    //档案内容(html)
     @Column(Field.Content)
-    private String content;            //档案内容(html)
-
+    private String content;
+    //档案内容(markdown)
     @Column(Field.Markdown)
-    private String markdown;           //档案内容(markdown)
-
+    private String markdown;
+    // 标签
+    @Column(Field.Label)
+    private ArrayList<String> label;
+    // Office 文档地址
+    @Column(Field.Office)
+    private ArrayList<String> office;
+    // Office 文档映射的pif文件地址
+    @Column(Field.Pdf)
+    private ArrayList<String> pdf;
+    // 图片地址
     @Column(Field.Image)
-    private ArrayList<String> image;   //图片地址
-
+    private ArrayList<String> image;
+    // 视频地址
+    @Column(Field.Video)
+    private ArrayList<String> video;
+    //附件地址
     @Column(Field.Attach)
-    private ArrayList<String> attach;  //附件地址
-
+    private ArrayList<String> attach;
+    //附件名称
     @Column(Field.AttachName)
-    private ArrayList<String> attachName;//附件名称
-
+    private ArrayList<String> attachName;
+    //档案发起者ID
     @Column(Model.Field.UserId)
-    private String userId;             //档案发起者ID
-
+    private String userId;
+    //档案发起者姓名
     @Column(Model.Field.UserName)
-    private String userName;           //档案发起者姓名
-
+    private String userName;
+    //创建者头像
     @Column(User.Field.HeadPhoto)
-    private String headPhoto;          //创建者头像
-
+    private String headPhoto;
+    //档案发生时间
     @Column(Model.Field.CreateDate)
-    private String createDate;         //档案发生时间
-
+    private String createDate;
+    //最后一次修改时间
     @Column(Field.LastModifiedDate)
-    private String lastModifiedDate;   //最后一次修改时间
-
-    @Ignore
-    private Additional addition;       //档案附加信息
-
-    @Column(Field.Tag)
-    private ArrayList<String> tag;     //标签(Json数组)
-
+    private String lastModifiedDate;
+    //授权公开(0.私密，自己可以看,1.公开，所有人都能查看)，个人档案的属性
+    @Column(Field.AuthPublic)
+    private int authPublic;
+    //授权组织(组织ID Json数组)，授权的组织才能查看
+    @Column(Field.AuthGroup)
+    private ArrayList<String> authGro;
+    //授权个人(用户ID Json数组)，授权的用户才能查看
+    @Column(Field.AuthUser)
+    private ArrayList<String> authUser;
+    //档案发生时间
     @Column(Field.HappenDate)
-    private String happenDate;         //档案发生时间
+    private String happenDate;
+    //档案附加信息
+    @Ignore
+    private Additional addition;
 
     public String getGroupId() {
         return groupId;
@@ -301,12 +327,36 @@ public class Archive extends Additional {
         resetAdditional(this.addition);
     }
 
-    public ArrayList<String> getTag() {
-        return tag;
+    public ArrayList<String> getLabel() {
+        return label;
     }
 
-    public void setTag(ArrayList<String> tag) {
-        this.tag = tag;
+    public void setLabel(ArrayList<String> label) {
+        this.label = label;
+    }
+
+    public ArrayList<String> getOffice() {
+        return office;
+    }
+
+    public void setOffice(ArrayList<String> office) {
+        this.office = office;
+    }
+
+    public ArrayList<String> getPdf() {
+        return pdf;
+    }
+
+    public void setPdf(ArrayList<String> pdf) {
+        this.pdf = pdf;
+    }
+
+    public ArrayList<String> getVideo() {
+        return video;
+    }
+
+    public void setVideo(ArrayList<String> video) {
+        this.video = video;
     }
 
     public String getHappenDate() {
@@ -315,5 +365,29 @@ public class Archive extends Additional {
 
     public void setHappenDate(String happenDate) {
         this.happenDate = happenDate;
+    }
+
+    public int getAuthPublic() {
+        return authPublic;
+    }
+
+    public void setAuthPublic(int authPublic) {
+        this.authPublic = authPublic;
+    }
+
+    public ArrayList<String> getAuthGro() {
+        return authGro;
+    }
+
+    public void setAuthGro(ArrayList<String> authGro) {
+        this.authGro = authGro;
+    }
+
+    public ArrayList<String> getAuthUser() {
+        return authUser;
+    }
+
+    public void setAuthUser(ArrayList<String> authUser) {
+        this.authUser = authUser;
     }
 }

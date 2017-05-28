@@ -64,6 +64,7 @@
 
     <string name="ui_base_text_member">成员</string>
     <string name="ui_base_text_not_set">未设置</string>
+    <string name="ui_base_text_have_set">已设置</string>
 
     <string name="ui_base_text_login">登录</string>
     <string name="ui_base_text_confirm">确定</string>
@@ -98,6 +99,7 @@
     <string name="ui_base_text_messaging_closed">已关闭</string>
     <string name="ui_base_text_public">公开</string>
     <string name="ui_base_text_private">私密</string>
+    <string name="ui_base_text_publish">发布</string>
 
     <string name="ui_base_text_record_voice">录音</string>
 

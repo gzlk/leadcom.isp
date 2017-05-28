@@ -12,6 +12,8 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
+import com.gzlk.android.isp.fragment.archive.PrivacyFragment;
+import com.gzlk.android.isp.fragment.archive.UserPrivacyFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -25,7 +27,7 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 import com.gzlk.android.isp.model.BaiduLocation;
-import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.Seclusion;
 import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -154,6 +156,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     };
 
     private void addMoment() {
+        Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
         String content = StringHelper.escapeToHtml(momentContent.getValue());
         MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
             @Override
@@ -261,9 +264,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener privacyListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            openActivity(PrivacyFragment.class.getName(),
-                    String.valueOf(Archive.Type.USER),
-                    PrivacyFragment.REQUEST_SECURITY, true, false);
+            Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
+            openActivity(UserPrivacyFragment.class.getName(), String.valueOf(seclusion.getStatus()), PrivacyFragment.REQUEST_SECURITY, true, false);
             //ToastHelper.make(Activity()).showMsg("隐私设置");
         }
     };

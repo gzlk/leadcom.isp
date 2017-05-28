@@ -9,6 +9,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -127,6 +128,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.ui_tool_popup_menu_activity_add:
+                    openActivity(CreateActivityFragment.class.getName(), format(",%s", mQueryId), true, true);
                     break;
                 case R.id.ui_tool_popup_menu_activity_manage:
                     break;
@@ -222,6 +224,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
         if (selectedIndex < 0) return;
         // 加载本地该组织的活动列表
         Organization org = concernedViewHolder.get(selectedIndex);
+        mQueryId = org.getId();
         // 更改标题栏上的文字和icon
         if (getUserVisibleHint()) {
             // 如果当前显示的是组织页面才更改标题栏文字，否则不需要

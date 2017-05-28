@@ -85,10 +85,11 @@
     <string name="ui_text_document_picker_title">请选择：</string>
     <string name="ui_text_document_create_title_invalid">标题不能为空</string>
 
+    <!--index,title,desc,default selected,user visible,group visible-->
     <string-array name="ui_security_setting_items">
-        <item>0|公开|所有朋友可见|1</item>
-        <item>1|私密|仅自己可见|0</item>
-        <item>2|指定部分人|选中朋友可见|0</item>
+        <item>0|私密|仅自己可见|0|1|0</item>
+        <item>1|公开|所有人可见|1|1|1</item>
+        <item>2|指定部分人|选中的组织或成员可见|0|0|1</item>
     </string-array>
     <string name="ui_security_fragment_title">选择公开范围</string>
     <string name="ui_security_force_to_user" formatted="false">只对[%s]公开</string>

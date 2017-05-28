@@ -10,4 +10,5 @@
     <integer name="integer_max_image_pick_size">9</integer>
     <integer name="integer_max_squad_name_size">10</integer>
     <integer name="integer_max_squad_introduction_size">50</integer>
+    <integer name="integer_activity_introduction_max_length">1000</integer>
 </resources>

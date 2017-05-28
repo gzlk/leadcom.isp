@@ -109,7 +109,7 @@ public abstract class BaseMultiTypeAdapter<T extends Model> extends MultiTypeAda
 
     @Override
     public void remove(T item) {
-        remove(innerList.indexOf(item));
+        remove(indexOf(item));
     }
 
     @Override
@@ -138,13 +138,41 @@ public abstract class BaseMultiTypeAdapter<T extends Model> extends MultiTypeAda
     }
 
     @Override
+    public void add(List<T> list) {
+        for (T t : list) {
+            add(t);
+        }
+    }
+
+    @Override
+    public void add(List<T> list, int position) {
+        int index = position;
+        for (T t : list) {
+            if (!exist(t)) {
+                add(t, index);
+                index++;
+            }
+        }
+    }
+
+    @Override
+    public int indexOf(T item) {
+        return innerList.indexOf(item);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return innerList.iterator();
+    }
+
+    @Override
     public T get(int position) {
         return innerList.get(position);
     }
 
     @Override
     public boolean exist(T item) {
-        return innerList.indexOf(item) >= 0;
+        return indexOf(item) >= 0;
     }
 
     /**
@@ -153,7 +181,7 @@ public abstract class BaseMultiTypeAdapter<T extends Model> extends MultiTypeAda
     @Override
     public void update(T item) {
         if (exist(item)) {
-            int index = innerList.indexOf(item);
+            int index = indexOf(item);
             innerList.set(index, item);
             notifyItemChanged(index);
         } else {

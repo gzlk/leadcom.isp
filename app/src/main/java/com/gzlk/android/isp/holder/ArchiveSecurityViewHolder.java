@@ -58,6 +58,8 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
             showContent((Organization) model);
         } else if (model instanceof User) {
             showContent((User) model);
+        } else if (model instanceof Member) {
+            showContent((Member) model);
         } else {
             showContent();
         }
@@ -84,11 +86,25 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
     }
 
     public void showContent(User user) {
-        root.setPadding(padding * 2, 0, 0, 0);
+        root.setPadding(padding * 3, 0, 0, 0);
         icon.setText(R.string.ui_icon_select_solid);
         icon.setVisibility(View.VISIBLE);
-        icon.setTextColor(getColor(user.isLocalDeleted() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        icon.setTextColor(getColor(user.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
         textView.setText(user.getName());
+        textView.setTextColor(getColor(R.color.textColor));
+        descriptionView.setVisibility(View.GONE);
+    }
+
+    public void showContent(Member member) {
+        root.setPadding(padding * 3, 0, 0, 0);
+        icon.setText(R.string.ui_icon_select_solid);
+        icon.setVisibility(View.VISIBLE);
+        icon.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        String text = member.getUserName();
+        if (isEmpty(text)) {
+            text = StringHelper.getString(R.string.ui_organization_member_no_name);
+        }
+        textView.setText(text);
         textView.setTextColor(getColor(R.color.textColor));
         descriptionView.setVisibility(View.GONE);
     }
@@ -97,7 +113,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
         root.setPadding(padding * 2, 0, 0, 0);
         icon.setText(R.string.ui_icon_select_solid);
         icon.setVisibility(View.VISIBLE);
-        icon.setTextColor(getColor(organization.isLocalDeleted() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        icon.setTextColor(getColor(organization.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
         textView.setText(organization.getName());
         textView.setTextColor(getColor(R.color.textColor));
         descriptionView.setText(getOrganizationMembers(organization.getId()));
@@ -109,6 +125,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
                 .whereEquals(Organization.Field.GroupId, orgId)
                 .whereAppendAnd()
                 .whereAppend(Organization.Field.SquadId + " IS NULL")
+                .groupBy(User.Field.Phone)
                 .orderBy(Model.Field.CreateDate);
         List<Member> members = new Dao<>(Member.class).query(query);
         String string = "";

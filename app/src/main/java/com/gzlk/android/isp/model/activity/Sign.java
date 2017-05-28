@@ -28,22 +28,11 @@ public class Sign extends Model {
         String Altitude = "altitude";
         String SigningId = "signingId";
         /**
-         * 应签到人数
+         * 签到人数
          */
-        String ExceptedNum = "exceptedNum";
-        /**
-         * 实际签到人数
-         */
-        String RealSignNum = "realSignNum";
-        /**
-         * 未签到人数
-         */
-        String NotSignNum = "notSignNum";
+        String SignInNum = "signInNum";
     }
 
-    //活动Id
-    @Column(Activity.Field.ActivityId)
-    private String actId;
     //标题
     @Column(Archive.Field.Title)
     private String title;
@@ -68,14 +57,6 @@ public class Sign extends Model {
     //创建时间
     @Column(Model.Field.CreateDate)
     protected String createDate;
-
-    public String getActId() {
-        return actId;
-    }
-
-    public void setActId(String actId) {
-        this.actId = actId;
-    }
 
     public String getTitle() {
         return title;

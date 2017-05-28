@@ -14,4 +14,17 @@
         <item>@string/ui_activity_main_not_joined_text</item>
         <item>@string/ui_activity_main_issue_text</item>
     </string-array>
+
+    <string name="ui_activity_create_fragment_title">新建活动</string>
+    <string name="ui_activity_create_content_hint">填写活动说明</string>
+    <string-array name="ui_activity_create_items">
+        <item>0||活动封面%s|2</item>
+        <item>|%s|活动主题|||30</item>
+        <item>1||活动时间%s|1</item>
+        <item>|%s|活动地点|||50</item>
+        <item>2||活动类型%s|1</item>
+        <item>3||公开范围%s|1</item>
+        <item>4||参与人员%d人|2</item>
+        <item>|%s|填写活动说明|||50</item>
+    </string-array>
 </resources>

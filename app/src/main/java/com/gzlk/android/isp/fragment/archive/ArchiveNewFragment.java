@@ -15,13 +15,11 @@ import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
-import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.archive.PrivacyRequest;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.individual.PrivacyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -29,13 +27,16 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.AttachmentViewHolder;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.SimpleInputableViewHolder;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Seclusion;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.user.Privacy;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
+import com.litesuits.http.data.TypeToken;
 
 import org.json.JSONObject;
 
@@ -84,7 +85,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         super.getParamsFromBundle(bundle);
         archiveType = bundle.getInt(PARAM_TYPE, Archive.Type.USER);
         archiveGroup = bundle.getString(PARAM_GROUP, "");
-        privacy = bundle.getString(PARAM_PRIVACY, "{}");
+        privacy = bundle.getString(PARAM_PRIVACY, null);
         title = bundle.getString(PARAM_TITLE, "");
         source = bundle.getString(PARAM_SOURCE, "");
     }
@@ -141,10 +142,6 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         if (requestCode == PrivacyFragment.REQUEST_SECURITY) {
             // 隐私设置返回了
             privacy = getResultedData(data);
-            if (!StringHelper.isEmpty(mQueryId)) {
-                // 如果当前是在编辑文档，则直接保存隐私设置
-                savePrivacy();
-            }
         }
         super.onActivityResult(requestCode, data);
     }
@@ -251,7 +248,12 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    private Seclusion getSeclusion() {
+        return PrivacyFragment.getSeclusion(privacy);
+    }
+
     private void createUserArchive(String title, String content) {
+        Seclusion seclusion = getSeclusion();
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -261,7 +263,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(title, content, happenDate, null, null, images, files, names);
+        }).add(title, content, seclusion.getStatus(), happenDate, null, null, images, files, names);
     }
 
     private ArrayList<String> images = new ArrayList<>();
@@ -288,6 +290,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void createOrganizationArchive(String title, String content) {
+        Seclusion sec = getSeclusion();
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -297,7 +300,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(archiveGroup, Archive.ArchiveType.NORMAL, title, content, "", images, files, names);
+        }).add(archiveGroup, Archive.ArchiveType.NORMAL, title, content, "happen", null, sec.getUserIds(), "", images, files, names);
     }
 
     private void editDocument(String title, String content) {
@@ -309,6 +312,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void editUserArchive(String title, String content) {
+        Seclusion seclusion = getSeclusion();
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -318,10 +322,11 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, Archive.Type.USER, title, content, happenDate, null, "", images, files, names);
+        }).update(mQueryId, title, content, seclusion.getStatus(), happenDate, null, "", images, files, names);
     }
 
     private void editOrganizationArchive(String title, String content) {
+        Seclusion seclusion = getSeclusion();
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -331,7 +336,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, Archive.Type.GROUP, title, content, happenDate, null, "", images, files, names);
+        }).update(mQueryId, title, content, happenDate, null, seclusion.getUserIds(), "", images, files, names);
     }
 
     @Override
@@ -414,6 +419,21 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeHolders(Archive archive) {
         happenDate = null == archive ? "" : archive.getHappenDate();
+        if (null != archive) {
+            // 保存已有的隐私设置
+            Seclusion seclusion = getSeclusion();
+            if (isEmpty(seclusion.getArchiveId())) {
+                // 新建fragment时才赋值
+                seclusion.setArchiveId(archive.getId());
+                if (isEmpty(archive.getGroupId())) {
+                    seclusion.setStatus(archive.getAuthPublic());
+                } else {
+                    // 组织公开程度
+                    seclusion.setUserIds(archive.getAuthUser());
+                }
+                privacy = PrivacyFragment.getSeclusion(seclusion);
+            }
+        }
         if (null == strings) {
             strings = StringHelper.getStringArray(R.array.ui_individual_new_document);
         }
@@ -493,36 +513,27 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    // 查找隐私设置
-    private void fetchingPrivacy() {
-        PrivacyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Privacy>() {
-            @Override
-            public void onResponse(List<Privacy> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-            }
-        }).list();
+    private String getSecurityNames(List<String> list) {
+        if (null == list || list.size() < 1) {
+            return "";
+        }
+        String ret = "";
+        for (String string : list) {
+            ret += (isEmpty(ret) ? "" : ",") + string;
+        }
+        return ret;
     }
 
     private String getPrivacy() {
-        if (!StringHelper.isEmpty(privacy)) {
-            try {
-                JSONObject object = new JSONObject(privacy);
-                if (object.has("status")) {
-                    int state = object.getInt("status");
-                    switch (state) {
-                        case 1:
-                            return StringHelper.getString(R.string.ui_base_text_public);
-                        case 2:
-                            return StringHelper.getString(R.string.ui_base_text_private);
-                        case 3:
-                            return StringHelper.getString(R.string.ui_security_force_to_user, object.get("userName"));
-                        case 4:
-                            return StringHelper.getString(R.string.ui_security_force_to_group, object.getString("groupName"));
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
+        String names = getSecurityNames(seclusion.getUserNames());
+        switch (seclusion.getStatus()) {
+            case Seclusion.Type.Private:
+                return StringHelper.getString(R.string.ui_base_text_private);
+            case Seclusion.Type.Public:
+                return StringHelper.getString(R.string.ui_base_text_public);
+            case Seclusion.Type.Specify:
+                return StringHelper.getString(R.string.ui_security_force_to_user, names);
         }
         return StringHelper.getString(R.string.ui_security_fragment_title);
     }
@@ -567,9 +578,15 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     openDatePicker();
                     break;
                 case 2:
+                    Seclusion seclusion = getSeclusion();
                     // 隐私设置
-                    openActivity(PrivacyFragment.class.getName(),
-                            String.valueOf(archiveType), PrivacyFragment.REQUEST_SECURITY, true, false);
+                    if (archiveType == Archive.Type.USER) {
+                        // 个人隐私设置
+                        openActivity(UserPrivacyFragment.class.getName(), Json.gson().toJson(seclusion), PrivacyFragment.REQUEST_SECURITY, true, false);
+                    } else {
+                        // 组织档案隐私设置
+                        openActivity(PrivacyFragment.class.getName(), Json.gson().toJson(seclusion), PrivacyFragment.REQUEST_SECURITY, true, false);
+                    }
                     break;
             }
         }
@@ -612,8 +629,8 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void showCreateDate(Date date) {
-        happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs), date);
-        timeHolder.showContent(StringHelper.format(strings[2], happenDate));
+        happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
+        timeHolder.showContent(StringHelper.format(strings[2], Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs), date)));
     }
 
     private void openDatePicker() {
@@ -632,7 +649,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                 .isCenterLabel(true).isDialog(false).build();
         if (StringHelper.isEmpty(happenDate)) {
             tpv.setDate(Calendar.getInstance());
-            happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs), Calendar.getInstance().getTime());
+            happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), Calendar.getInstance().getTime());
         } else {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), happenDate));

@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.listener;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -55,6 +56,9 @@ public interface RecycleAdapter<T> {
      */
     boolean exist(T item);
 
+    /**查找指定item的索引位置*/
+    int indexOf(T item);
+
     /**
      * 更新一个item，如果item已存在则更新，否则添加到末尾
      */
@@ -74,6 +78,16 @@ public interface RecycleAdapter<T> {
     void update(List<T> list, boolean replaceable);
 
     /**
+     * 在末尾添加多个记录
+     */
+    void add(List<T> list);
+
+    /**
+     * 在指定位置添加多个记录
+     */
+    void add(List<T> list, int position);
+
+    /**
      * 添加纪录
      *
      * @param list      需要添加的记录
@@ -85,6 +99,8 @@ public interface RecycleAdapter<T> {
      * 将列表内容重新排序，重新排序会导致整个列表重新绘制，如果holder里处理的东西太多可能会造成性能问题，万不得已时也要慎用
      */
     void sort();
+
+    Iterator<T> iterator();
 
     /**
      * 设置item是否占满整行

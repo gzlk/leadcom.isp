@@ -228,9 +228,10 @@ public abstract class Request<T> {
 
     protected OnMultipleRequestListener<T> onMultipleRequestListener;
 
-    protected void fireOnMultipleRequestListener(List<T> list) {
+    protected void fireOnMultipleRequestListener(List<T> list, boolean success, int totalCount, int pageNumber) {
         if (null != onMultipleRequestListener) {
-            onMultipleRequestListener.onResponse(list, true, 1, 1, list.size(), 1);
+            int page = totalCount / PAGE_SIZE + (totalCount % PAGE_SIZE > 0 ? 1 : 0);
+            onMultipleRequestListener.onResponse(list, success, page, PAGE_SIZE, totalCount, pageNumber);
         }
     }
 

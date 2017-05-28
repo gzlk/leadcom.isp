@@ -8,14 +8,19 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.http.request.param.HttpMethods;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>活动相关api<br />
@@ -124,21 +129,83 @@ public class ActRequest extends Request<Activity> {
         httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(DELETE), activityId), "", HttpMethods.Post));
     }
 
-    /**
-     * 查询单个活动
-     */
-    public void find(@NonNull String activityId) {
-        // id=""
+    private void findInCache(String activityId) {
+        Activity activity = new Dao<>(Activity.class).query(activityId);
+        if (null == activity) {
+            findFromRemote(activityId);
+        } else {
+            fireOnSingleRequestListener(activity);
+        }
+    }
+
+    private void findFromRemote(String activityId) {
         httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(FIND), activityId), "", HttpMethods.Get));
     }
 
     /**
-     * 查看某组织内的活动列表(只显示当前用户被授权范围内的记录)
+     * 查询单个活动
+     *
+     * @param activityId 活动的id
      */
-    public void list(@NonNull String groupId) {
-        // groupId="",accessToken=""
+    public void find(String activityId) {
+        find(activityId, false);
+    }
+
+    /**
+     * 查询单个活动
+     *
+     * @param activityId 活动的id
+     * @param fromRemote true=强制从远程服务器上拉取
+     */
+    public void find(@NonNull String activityId, boolean fromRemote) {
+        // id=""
+        if (fromRemote) {
+            findFromRemote(activityId);
+        } else {
+            findInCache(activityId);
+        }
+    }
+
+    private void loadingLocal(String groupId) {
+        Dao<Activity> dao = new Dao<>(Activity.class);
+        QueryBuilder<Activity> builder = new QueryBuilder<>(Activity.class)
+                .whereEquals(Organization.Field.GroupId, groupId)
+                .orderBy(Model.Field.CreateDate);
+        List<Activity> list = dao.query(builder);
+        if (null == list || list.size() < 1) {
+            listFromRemote(groupId);
+        } else {
+            fireOnMultipleRequestListener(list, true, list.size(), 0);
+        }
+    }
+
+    private void listFromRemote(String groupId) {
         String params = format("groupId=%s&accessToken=%s", groupId, Cache.cache().accessToken);
         httpRequest(getRequest(MultipleActivity.class, format("%s?%s", url(LIST), params), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查看某组织内的活动列表(只显示当前用户被授权范围内的记录)
+     *
+     * @param groupId 组织id
+     */
+    public void list(String groupId) {
+        list(groupId, false);
+    }
+
+    /**
+     * 查看某组织内的活动列表(只显示当前用户被授权范围内的记录)
+     *
+     * @param groupId    组织id
+     * @param fromRemote true=强制从远程服务器上拉取
+     */
+    public void list(@NonNull String groupId, boolean fromRemote) {
+        // groupId="",accessToken=""
+        if (fromRemote) {
+            listFromRemote(groupId);
+        } else {
+            loadingLocal(groupId);
+        }
     }
 
     /**

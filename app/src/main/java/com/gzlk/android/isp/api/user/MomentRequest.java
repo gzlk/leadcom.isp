@@ -110,7 +110,7 @@ public class MomentRequest extends Request<Moment> {
     private void getRequestBy(String baseUrl, String queryBy, Type resultType, String queryId, int pageNumber, String body, HttpMethods methods) {
         String url = format("%s?%s=%s", baseUrl, queryBy, queryId);
         if (pageNumber >= 0) {
-            url += format("%s&pageNumber=%d", url, pageNumber);
+            url += format("&pageNumber=%d", pageNumber);
         }
         httpRequest(getRequest(resultType, url, body, methods));
     }

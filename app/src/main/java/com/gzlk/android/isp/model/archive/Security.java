@@ -19,6 +19,10 @@ public class Security extends Model {
     private int index;
     private String text;
     private String description;
+    // 是否个人可见选项
+    private boolean userVisible;
+    // 是否组织可见选项
+    private boolean groupVisible;
 
     public Security(String text) {
         String[] strings = text.split("\\|", -1);
@@ -29,6 +33,8 @@ public class Security extends Model {
         boolean selected = !StringHelper.isEmpty(strings[3]) && strings[3].equals("1");
         setLocalDeleted(selected);
         setSelected(selected);
+        userVisible = !StringHelper.isEmpty(strings[4]) && strings[4].equals("1");
+        groupVisible = !StringHelper.isEmpty(strings[5]) && strings[5].equals("1");
     }
 
     public int getIndex() {
@@ -55,4 +61,19 @@ public class Security extends Model {
         this.description = description;
     }
 
+    public boolean isUserVisible() {
+        return userVisible;
+    }
+
+    public void setUserVisible(boolean userVisible) {
+        this.userVisible = userVisible;
+    }
+
+    public boolean isGroupVisible() {
+        return groupVisible;
+    }
+
+    public void setGroupVisible(boolean groupVisible) {
+        this.groupVisible = groupVisible;
+    }
 }
