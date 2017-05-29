@@ -36,7 +36,7 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, strings[0]);
-        bundle.putString(PARAM_MEMBERS, strings[1].replace("@", ","));
+        bundle.putString(PARAM_MEMBERS, replaceJson(strings[1], true));
         ocp.setArguments(bundle);
         return ocp;
     }

@@ -39,4 +39,7 @@
         <item>1|拍照|打开相机直接拍照|1</item>
         <item>2|模板库|从封面模板库里选择|1</item>
     </string-array>
+
+    <string name="ui_activity_label_picker_fragment_title">活动类型</string>
+    <string name="ui_activity_label_picker_create_hint">请输入10个字以内的活动类型</string>
 </resources>

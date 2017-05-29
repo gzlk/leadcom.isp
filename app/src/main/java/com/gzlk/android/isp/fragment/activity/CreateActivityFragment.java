@@ -46,6 +46,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_GROUP = "caf_group_id_params";
     private static final String PARAM_MEMBERS = "caf_members";
     private static final String PARAM_COVER = "caf_cover";
+    private static final String PARAM_LABEL = "caf_label";
+
 
     public static CreateActivityFragment newInstance(String params) {
         CreateActivityFragment caf = new CreateActivityFragment();
@@ -57,10 +59,11 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         return caf;
     }
 
-    private String members = "[]";
+    private String members = "[]", labels = "[]";
     private String cover = "";
     private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
     private static final int REQ_COVER = REQ_MEMBER + 1;
+    private static final int REQ_LABEL = REQ_COVER + 1;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -69,6 +72,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         members = bundle.getString(PARAM_MEMBERS, "[]");
         resetMembers();
         cover = bundle.getString(PARAM_COVER, "");
+        labels = bundle.getString(PARAM_LABEL, "[]");
+        resetLabels();
     }
 
     @Override
@@ -77,6 +82,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_GROUP, mGroupId);
         bundle.putString(PARAM_MEMBERS, members);
         bundle.putString(PARAM_COVER, cover);
+        bundle.putString(PARAM_LABEL, labels);
     }
 
     @Override
@@ -90,6 +96,15 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             case REQ_COVER:
                 // 封面选择了
                 cover = getResultedData(data);
+                if (cover.charAt(0) == '/') {
+                    // 如果照片选择的是本地图片则将其放入待上传列表
+                    getWaitingForUploadFiles().clear();
+                    getWaitingForUploadFiles().add(cover);
+                }
+                break;
+            case REQ_LABEL:
+                labels = getResultedData(data);
+                resetLabels();
                 break;
         }
         super.onActivityResult(requestCode, data);
@@ -100,6 +115,14 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         }.getType());
         if (null == membersId) {
             membersId = new ArrayList<>();
+        }
+    }
+
+    private void resetLabels() {
+        labelsId = Json.gson().fromJson(labels, new TypeToken<ArrayList<String>>() {
+        }.getType());
+        if (null == labelsId) {
+            labelsId = new ArrayList<>();
         }
     }
 
@@ -136,7 +159,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
      * 活动所属的组织id
      */
     private String mGroupId = "";
-    private ArrayList<String> membersId;
+    private ArrayList<String> membersId, labelsId;
     private String[] items;
 
     @Override
@@ -156,18 +179,9 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             }
         });
         enableSwipe(!isEmpty(mQueryId));
-        addOnImageSelectedListener(onImageSelectedListener);
         setOnFileUploadingListener(mOnFileUploadingListener);
         tryLoadActivity();
     }
-
-    private OnImageSelectedListener onImageSelectedListener = new OnImageSelectedListener() {
-        @Override
-        public void onImageSelected(ArrayList<String> selected) {
-            // 只能选择一张图片，因此可以直接显示图片
-            coverHolder.showImage(selected.get(0));
-        }
-    };
 
     private OnFileUploadingListener mOnFileUploadingListener = new OnFileUploadingListener() {
 
@@ -324,14 +338,19 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 case 0:
                     // 到活动封面拾取器
                     openActivity(CoverPickFragment.class.getName(), "", REQ_COVER, true, false);
-                    //openImageSelector();
                     break;
                 case 1:
                     // 选择活动时间
                     openDatePicker();
                     break;
+                case 2:
+                    // 选择活动标签
+                    String string = format("%s,%s", mGroupId, replaceJson(labels, false));
+                    openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
+                    break;
                 case 4:
-                    openActivity(OrganizationContactPickFragment.class.getName(), format("%s,%s", mGroupId, members.replace(',', '@')), REQ_MEMBER, true, false);
+                    String params = format("%s,%s", mGroupId, replaceJson(members, false));
+                    openActivity(OrganizationContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
                     break;
             }
         }
@@ -414,6 +433,6 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                     });
                 }
             }
-        }).add(title, content, mGroupId, logo, membersId);
+        }).add(title, content, mGroupId, logo, membersId, labelsId);
     }
 }

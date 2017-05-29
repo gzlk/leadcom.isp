@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
@@ -98,7 +100,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     /**
      * 横向排列
      */
-    protected int gridOrientation = 0;
+    protected int gridOrientation = StaggeredGridLayoutManager.HORIZONTAL;
 
     @Override
     public int getLayout() {
@@ -187,18 +189,21 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
             if (!supportLoadingMore) {
                 return;
             }
-            CustomLinearLayoutManager manager = (CustomLinearLayoutManager) recyclerView.getLayoutManager();
-            // 停止滚动时
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                // 获取最后一个完全显示 Item 的 position
-                int lastVisibleItem = manager.findLastCompletelyVisibleItemPosition();
-                int totalItemCount = manager.getItemCount();
-                // 判断是否滚动到底部，并且不在加载状态
-                if (lastVisibleItem == (totalItemCount - 1) && !forceToLoadingMore) {
-                    forceToLoadingMore = true;
-                    loadingText(R.string.hlklib_text_refreshable_recycler_view_loading_more);
-                    showView(mLoadingMoreProgress, true);
-                    showLoadingMoreLayout(true);
+            RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+            if (lm instanceof LinearLayoutManager) {
+                CustomLinearLayoutManager manager = (CustomLinearLayoutManager) lm;
+                // 停止滚动时
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    // 获取最后一个完全显示 Item 的 position
+                    int lastVisibleItem = manager.findLastCompletelyVisibleItemPosition();
+                    int totalItemCount = manager.getItemCount();
+                    // 判断是否滚动到底部，并且不在加载状态
+                    if (lastVisibleItem == (totalItemCount - 1) && !forceToLoadingMore) {
+                        forceToLoadingMore = true;
+                        loadingText(R.string.hlklib_text_refreshable_recycler_view_loading_more);
+                        showView(mLoadingMoreProgress, true);
+                        showLoadingMoreLayout(true);
+                    }
                 }
             }
         }

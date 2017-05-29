@@ -94,8 +94,18 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 判断字符串是否为空，"null"也当作空
      */
-    public boolean isEmpty(String string) {
+    public static boolean isEmpty(String string) {
         return StringHelper.isEmpty(string);
+    }
+
+    /**
+     * 将json的“,”替换成“@”以便传输到intent里去
+     *
+     * @param string 字符串
+     * @param toJson true=反转回json，false=替换掉json中的","为"@"
+     */
+    public static String replaceJson(String string, boolean toJson) {
+        return StringHelper.replaceJson(string, toJson);
     }
 
     /**

@@ -49,6 +49,16 @@ public class StringHelper {
     }
 
     /**
+     * 将json的“,”替换成“@”以便传输到intent里去
+     *
+     * @param string 字符串
+     * @param toJson true=反转回json，false=替换掉json中的","为"@"
+     */
+    public static String replaceJson(String string, boolean toJson) {
+        return string.replace((toJson ? "@" : ","), (toJson ? "," : "@"));
+    }
+
+    /**
      * 获取当前系统时间戳
      */
     public static long timestamp() {

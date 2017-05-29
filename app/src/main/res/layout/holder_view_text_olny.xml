@@ -16,5 +16,6 @@
         android:gravity="center"
         android:maxLines="3"
         android:minHeight="@dimen/ui_base_dimen_button_height"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/app_name" />
 </android.support.v7.widget.CardView>

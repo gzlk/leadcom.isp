@@ -79,9 +79,12 @@ public class ActRequest extends Request<Activity> {
      * @param title   活动标题
      * @param content 活动描述
      * @param groupId 活动所属的组织id
+     * @param logo    宣传图
      * @param members 邀请的成员（可能是尚未加入活动的人）id 的 JSON 格式的数组，格式举例["aaa","bbb"]
+     * @param labels  活动的标签
      */
-    public void add(@NonNull String title, String content, @NonNull String groupId, String logo, ArrayList<String> members) {
+    public void add(@NonNull String title, String content, @NonNull String groupId, String logo, ArrayList<String> members,
+                    ArrayList<String> labels) {
         // {title:"",content:"",groupId:"",accessToken:"",memberIdArray:""}
         JSONObject object = new JSONObject();
         try {
@@ -90,7 +93,8 @@ public class ActRequest extends Request<Activity> {
                     .put("groupId", groupId)
                     .put("img", checkNull(logo))
                     .put("accessToken", Cache.cache().accessToken)
-                    .put("memberIdArray", new JSONArray(members));
+                    .put("memberIdArray", new JSONArray(members))
+                    .put("label", labels);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/ui_base_dimen_button_height"
+            android:padding="@dimen/ui_base_dimen_margin_padding"
+            android:text="社会服务" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/ui_tool_swipe_refreshable_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/ui_base_dimen_button_height"
+            android:padding="@dimen/ui_base_dimen_margin_padding"
+            android:text="其他" />
+
+    </LinearLayout>
+
+</ScrollView>

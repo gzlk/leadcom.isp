@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+        android:orientation="vertical"
+        app:cv_border_size="0dp"
+        app:cv_corner_size="@dimen/ui_base_dimen_margin_padding">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            android:padding="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/ui_activity_label_picker_fragment_title" />
+
+        <com.hlk.hlklib.lib.view.ClearEditText
+            android:id="@+id/ui_dialog_activity_label_creator_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            app:cet_edit_active_border="@color/textColorHintLight"
+            app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
+            app:cet_edit_hint="@string/ui_activity_label_picker_create_hint"
+            app:cet_edit_normal_border="@android:color/white"
+            app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
+            app:cet_edit_value_max_length="@integer/integer_activity_label_name_max_length" />
+
+        <include layout="@layout/tool_view_divider_big" />
+
+        <include layout="@layout/popup_dialog_default_buttons" />
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
