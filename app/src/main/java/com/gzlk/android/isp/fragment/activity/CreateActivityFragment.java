@@ -25,6 +25,7 @@ import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,6 +45,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_GROUP = "caf_group_id_params";
     private static final String PARAM_MEMBERS = "caf_members";
+    private static final String PARAM_COVER = "caf_cover";
 
     public static CreateActivityFragment newInstance(String params) {
         CreateActivityFragment caf = new CreateActivityFragment();
@@ -56,7 +58,9 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private String members = "[]";
+    private String cover = "";
     private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
+    private static final int REQ_COVER = REQ_MEMBER + 1;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -64,6 +68,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         mGroupId = bundle.getString(PARAM_GROUP, "");
         members = bundle.getString(PARAM_MEMBERS, "[]");
         resetMembers();
+        cover = bundle.getString(PARAM_COVER, "");
     }
 
     @Override
@@ -71,13 +76,21 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_GROUP, mGroupId);
         bundle.putString(PARAM_MEMBERS, members);
+        bundle.putString(PARAM_COVER, cover);
     }
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQ_MEMBER) {
-            members = getResultedData(data);
-            resetMembers();
+        switch (requestCode) {
+            case REQ_MEMBER:
+                // 活动成员选择返回了
+                members = getResultedData(data);
+                resetMembers();
+                break;
+            case REQ_COVER:
+                // 封面选择了
+                cover = getResultedData(data);
+                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -239,8 +252,14 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         }
         String none = StringHelper.getString(R.string.ui_base_text_not_set);
         boolean non = null == activity;
-        String value = format(items[0], non ? none : (isEmpty(activity.getImg()) ? none : activity.getImg()));
+        if (isEmpty(cover)) {
+            if (!non) {
+                cover = activity.getImg();
+            }
+        }
+        String value = format(items[0], non ? none : (isEmpty(cover) ? none : ""));
         coverHolder.showContent(value);
+        coverHolder.showImage(cover);
 
         // title
         if (null == titleHolder) {
@@ -303,8 +322,9 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             switch (index) {
                 case 0:
-                    // 选择活动封面
-                    openImageSelector();
+                    // 到活动封面拾取器
+                    openActivity(CoverPickFragment.class.getName(), "", REQ_COVER, true, false);
+                    //openImageSelector();
                     break;
                 case 1:
                     // 选择活动时间
@@ -335,7 +355,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 .setTitleBgColor(getColor(R.color.colorPrimary))
                 .setSubmitColor(Color.WHITE)
                 .setCancelColor(Color.WHITE)
-                .setContentSize(getFontDimension(R.dimen.ui_static_sp_20))
+                .setContentSize(getFontDimension(R.dimen.ui_base_text_size))
                 .setOutSideCancelable(false)
                 .isCenterLabel(true).isDialog(false).build();
         if (StringHelper.isEmpty(happenDate)) {

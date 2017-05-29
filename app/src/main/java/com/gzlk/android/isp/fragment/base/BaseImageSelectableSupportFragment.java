@@ -546,7 +546,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     /**
      * 打开系统相机拍照并获取返回的数据
      */
-    private void startCameraForResult() {
+    protected void startCameraForResult() {
         if (chooseImageByAlbum()) {
             Album.camera(this).requestCode(REQUEST_CAMERA).start();
         } else {

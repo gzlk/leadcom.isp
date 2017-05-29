@@ -12,7 +12,7 @@
     <string name="ui_base_text_still_editing">您正在编辑的内容尚未保存。<br />确定就此放弃了吗？</string>
     <string name="ui_base_text_press_again_to_exit">再按一次退出</string>
     <string name="ui_base_text_no_sdcard_exists">没有可用的存储设备</string>
-    <string name="ui_base_text_choose_image" formatted="false">请选择照片(至多%d张)</string>
+    <string name="ui_base_text_choose_image" formatted="false">选择照片(最多能选%d张)</string>
     <string name="ui_base_text_invalid_camera_path">无效的照片，请从相机拍照或从相册中选取照片</string>
     <string name="ui_base_text_invalid_crop_path">数据丢失，无法保存裁剪的照片</string>
     <string name="ui_base_text_cannot_create_image_in_dcim">无法在您的相册中创建照片</string>

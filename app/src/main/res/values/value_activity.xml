@@ -30,4 +30,13 @@
     <string name="ui_activity_create_title_invalid">活动主题无效</string>
     <string name="ui_activity_create_address_invalid">活动地点无效</string>
     <string name="ui_activity_create_content_invalid">活动简介无效</string>
+
+    <string name="ui_activity_cover_picker_fragment_title">添加封面</string>
+    <string name="ui_activity_cover_picker_image_warning">建议图片尺寸900x525,小于4M</string>
+    <string name="ui_activity_cover_picker_none_image_selected">请为您的活动选择一张宣传照</string>
+    <string-array name="ui_activity_cover_picker_items">
+        <item>0|从手机相册选取|%s|1</item>
+        <item>1|拍照|打开相机直接拍照|1</item>
+        <item>2|模板库|从封面模板库里选择|1</item>
+    </string-array>
 </resources>
