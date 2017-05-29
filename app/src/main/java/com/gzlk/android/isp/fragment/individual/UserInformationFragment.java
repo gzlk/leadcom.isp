@@ -87,7 +87,6 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void doingInResume() {
         // 头像选择是需要剪切的
@@ -270,7 +269,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     if (null != user && !isEmpty(user.getId())) {
                         Cache.cache().setCurrentUser(user);
-                        //checkUser(user);
+                        checkUser(user);
                     }
                 }
             }

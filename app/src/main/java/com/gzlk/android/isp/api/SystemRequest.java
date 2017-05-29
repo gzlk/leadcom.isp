@@ -40,7 +40,7 @@ public class SystemRequest extends Request<User> {
     private static final String SIGN_IN = SYSTEM + "/login";
     private static final String SYNC = SYSTEM + "/sync";
     private static final String CAPTCHA = SYSTEM + "/getCaptchaTo";
-    private static final String PASSWORD = SYSTEM + "/retsetPwd";
+    private static final String PASSWORD = SYSTEM + "/resetPwd";
     private static final String INVITE_TO_GROUP = SYSTEM + "/sms/invToJoinGroup";
     private static final String INVITE_TO_SQUAD = SYSTEM + "/sms/invToJoinSquad";
 

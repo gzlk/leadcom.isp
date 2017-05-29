@@ -117,6 +117,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
+        fetchingDocument(false);
         fetchingRemoteComment();
         fetchingRemoteLikes();
     }
@@ -135,21 +136,9 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         if (null == mAdapter) {
             addOnInputCompleteListener(onInputCompleteListener);
             mAdapter = new DocumentDetailsAdapter();
-            //mAdapter.register(Archive.class, new DocumentDetailsHeaderViewBinder().setFragment(this));
-            //mAdapter.register(Comment.class, new DocumentCommentViewBinder().setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
-            loadingDocument();
-        }
-    }
-
-    private void loadingDocument() {
-        Archive archive = new Dao<>(Archive.class).query(mQueryId);
-        if (null == archive) {
-            // 档案不存在则从服务器上拉取
-            fetchingDocument();
-        } else {
-            mAdapter.update(archive);
-            resetRightTitleButton(archive);
+            // 从本地缓存中查找档案
+            fetchingDocument(true);
         }
     }
 
@@ -190,7 +179,8 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         // other
         loadingAttachments(archive.getAttach());
         // 增加Additional
-        mAdapter.add(new Additional() {{
+        mAdapter.update(new Additional() {{
+            setId(archive.getId() + "_1");
             setReadNum(archive.getReadNum());
             setLikeNum(archive.getLikeNum());
             setCmtNum(archive.getCmtNum());
@@ -368,7 +358,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         }).delete(commentType(), mQueryId, cmt.getId());
     }
 
-    private void fetchingDocument() {
+    private void fetchingDocument(boolean fromLocal) {
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -380,7 +370,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     closeWithWarning(R.string.ui_text_document_details_not_exists);
                 }
             }
-        }).find(archiveType, mQueryId, true);
+        }).find(archiveType, mQueryId, fromLocal);
     }
 
     private OnInputCompleteListener onInputCompleteListener = new OnInputCompleteListener() {

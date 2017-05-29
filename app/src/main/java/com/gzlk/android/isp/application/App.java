@@ -121,7 +121,7 @@ public class App extends NimApplication {
      * 初始化本地缓存数据库
      */
     private void initializeDatabase() {
-        if (null == Cache.cache().userId) {
+        if (StringHelper.isEmpty(Cache.cache().userId)) {
             Cache.cache().userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
         }
         if (!StringHelper.isEmpty(Cache.cache().userId)) {

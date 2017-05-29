@@ -62,7 +62,8 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
 
     public void showContent(User user) {
         ((BaseTransparentSupportFragment) fragment()).tryPaddingContent(itemView, true);
-        nameTextView.setText(StringHelper.isEmpty(user.getName()) ? user.getLoginId() : user.getName());
-        userHeader.displayImage("https://img3.cache.netease.com/photo/0001/2017-04-20/CIGA5N5D00AN0001.jpg", getDimension(R.dimen.ui_static_dp_60), false, false);
+        nameTextView.setText(isEmpty(user.getName()) ? user.getLoginId() : user.getName());
+        userHeader.displayImage(user.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_60), false, false);
+        additionalTextView.setText(isEmpty(user.getPosition()) ? "职务" : user.getPosition());
     }
 }
