@@ -27,4 +27,7 @@
         <item>4||参与人员%d人|2</item>
         <item>|%s|填写活动说明|||50</item>
     </string-array>
+    <string name="ui_activity_create_title_invalid">活动主题无效</string>
+    <string name="ui_activity_create_address_invalid">活动地点无效</string>
+    <string name="ui_activity_create_content_invalid">活动简介无效</string>
 </resources>

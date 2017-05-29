@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.fragment.base;
 
 import com.gzlk.android.isp.helper.BaiduHelper;
-import com.gzlk.android.isp.model.BaiduLocation;
+import com.gzlk.android.isp.model.common.BaiduLocation;
 
 /**
  * <b>功能描述：</b>提供定位相关api的fragment基类<br />

@@ -1,4 +1,6 @@
-package com.gzlk.android.isp.model;
+package com.gzlk.android.isp.model.common;
+
+import com.gzlk.android.isp.model.Model;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,8 @@
-package com.gzlk.android.isp.model;
+package com.gzlk.android.isp.model.common;
 
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;

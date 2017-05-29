@@ -3,7 +3,6 @@ package com.gzlk.android.isp.fragment.archive;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.Display;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
@@ -27,16 +26,17 @@ import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
-import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Additional;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.task.OrmTask;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -172,22 +172,23 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         fetchingRemoteLikes();
     }
 
+    private void loadingAttachments(ArrayList<Attachment> list) {
+        if (null != list && list.size() > 0) {
+            for (Attachment att : list) {
+                mAdapter.update(att);
+            }
+        }
+    }
+
     private void loadingAttachments(final Archive archive) {
-        // 附件列表
-        if (null != archive.getImage() && archive.getImage().size() > 0) {
-            for (final String string : archive.getImage()) {
-                mAdapter.add(new Model() {{
-                    setId(string);
-                }});
-            }
-        }
-        if (null != archive.getAttachName()) {
-            for (final String string : archive.getAttachName()) {
-                mAdapter.add(new Model() {{
-                    setId(string);
-                }});
-            }
-        }
+        // office 文件列表
+        loadingAttachments(archive.getOffice());
+        // image
+        loadingAttachments(archive.getImage());
+        // video
+        loadingAttachments(archive.getVideo());
+        // other
+        loadingAttachments(archive.getAttach());
         // 增加Additional
         mAdapter.add(new Additional() {{
             setReadNum(archive.getReadNum());
@@ -466,7 +467,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 ((ArchiveDetailsHeaderViewHolder) holder).showContent((Archive) item);
             } else if (holder instanceof AttachmentViewHolder) {
                 ((AttachmentViewHolder) holder).setEditable(false);
-                ((AttachmentViewHolder) holder).showContent(item.getId());
+                ((AttachmentViewHolder) holder).showContent((Attachment) item);
             } else if (holder instanceof ArchiveAdditionalViewHolder) {
                 ((ArchiveAdditionalViewHolder) holder).showContent((Archive) mAdapter.get(0));
             } else if (holder instanceof ArchiveCommentViewHolder) {

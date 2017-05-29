@@ -38,6 +38,15 @@
             android:textColor="@color/textColorHintDark"
             android:textSize="@dimen/ui_base_text_size_small" />
 
+        <com.gzlk.android.isp.lib.view.ImageDisplayer
+            android:id="@+id/ui_holder_view_simple_clickable_image"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:visibility="gone"
+            app:id_image_src="@mipmap/img_image_default"
+            app:id_image_type="normal"
+            app:id_is_large_image="false" />
+
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_holder_view_simple_clickable_right_icon_add"
             android:layout_width="wrap_content"

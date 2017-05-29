@@ -81,6 +81,11 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      */
     protected boolean isSupportCacheSelected = true;
 
+    /**
+     * 图片文件是否支持压缩
+     */
+    protected boolean isSupportCompress = false;
+
     /*
       最大可选择的图片数量
      */
@@ -208,14 +213,22 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     }
 
     private void onImageSelected() {
+        if (!isSupportCompress) {
+            // 如果不支持压缩则把选择了的图片放入待上传队列
+            getWaitingForUploadFiles().addAll(waitingFroCompressImages);
+        }
         if (null != mOnImageSelectedListener) {
             mOnImageSelectedListener.onImageSelected(waitingFroCompressImages);
+        } else {
+            log("no image selected callback exists.");
         }
     }
 
     private void onImageCompressed() {
         if (null != mOnImageCompressedListener) {
             mOnImageCompressedListener.onCompressed(getWaitingForUploadFiles());
+        } else {
+            log("no image compressed callback exists.");
         }
     }
 
@@ -223,15 +236,23 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 压缩图片
      */
     protected void compressImage() {
-        adjustWannaToImageSize();
-        new CompressImageTask()
-                .setDebuggable(true)
-                .addOnTaskPreparedListener(taskPreparedListener)
-                .addOnCompressCompleteListener(compressCompleteListener)
-                .exec(Json.gson().toJson(waitingFroCompressImages),
-                        Activity().app().getLocalImageDir(),
-                        String.valueOf(mCompressedImageWidth),
-                        String.valueOf(mCompressedImageHeight));
+        if (isSupportCompress) {
+            adjustWannaToImageSize();
+            new CompressImageTask()
+                    .setDebuggable(true)
+                    .addOnTaskPreparedListener(taskPreparedListener)
+                    .addOnCompressCompleteListener(compressCompleteListener)
+                    .exec(Json.gson().toJson(waitingFroCompressImages),
+                            Activity().app().getLocalImageDir(),
+                            String.valueOf(mCompressedImageWidth),
+                            String.valueOf(mCompressedImageHeight));
+        } else {
+            if (isSupportDirectlyUpload) {
+                uploadFiles();
+            } else {
+                onImageCompressed();
+            }
+        }
     }
 
     private OnTaskPreparedListener taskPreparedListener = new OnTaskPreparedListener() {

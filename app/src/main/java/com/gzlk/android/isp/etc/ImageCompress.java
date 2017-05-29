@@ -148,11 +148,13 @@ public final class ImageCompress {
      * 指定路径的文件是否为图片格式
      */
     public static boolean isImage(String extension) {
-        switch (extension) {
-            case "jif":
+        switch (extension.toLowerCase(Locale.getDefault())) {
+            case "gif":
             case "jpg":
             case "bmp":
+            case "png":
             case "jpeg":
+            case "tiff":
                 return true;
             default:
                 return false;

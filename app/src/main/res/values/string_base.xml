@@ -9,6 +9,7 @@
     <string name="ui_base_text_loading">请稍候&#8230;</string>
     <string name="ui_base_text_nothing">没有更多内容</string>
     <string name="ui_base_text_input_hint">请输入内容</string>
+    <string name="ui_base_text_still_editing">您正在编辑的内容尚未保存。<br />确定就此放弃了吗？</string>
     <string name="ui_base_text_press_again_to_exit">再按一次退出</string>
     <string name="ui_base_text_no_sdcard_exists">没有可用的存储设备</string>
     <string name="ui_base_text_choose_image" formatted="false">请选择照片(至多%d张)</string>
@@ -27,6 +28,7 @@
     <string name="ui_base_text_date_time_format">yyyy-MM-dd HH:mm:ss</string>
     <string name="ui_base_text_date_format">yyyy-MM-dd</string>
     <string name="ui_base_text_date_format_chs">yyyy年MM月dd日</string>
+    <string name="ui_base_text_date_format_chs_min">yyyy年MM月dd日HH时mm分</string>
     <string name="ui_base_text_time_format">HH:mm:ss</string>
 
     <string-array name="ui_base_file_pick_types">
@@ -74,6 +76,7 @@
     <string name="ui_base_text_reject">拒绝</string>
     <string name="ui_base_text_ok">好</string>
     <string name="ui_base_text_ok_ba">好吧</string>
+    <string name="ui_base_text_think_again">再想想</string>
     <string name="ui_base_text_new">新建</string>
     <string name="ui_base_text_management">管理</string>
     <string name="ui_base_text_yes">是的</string>
@@ -108,4 +111,5 @@
     <string name="ui_base_text_archive">文档</string>
     <string name="ui_base_text_image">图片</string>
     <string name="ui_base_text_video">视频</string>
+    <string name="ui_base_text_other">其他</string>
 </resources>

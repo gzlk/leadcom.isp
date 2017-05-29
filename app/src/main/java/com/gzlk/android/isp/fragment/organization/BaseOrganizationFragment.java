@@ -2,6 +2,7 @@ package com.gzlk.android.isp.fragment.organization;
 
 import android.os.Bundle;
 
+import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.MemberRequest;
@@ -11,6 +12,7 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
@@ -217,5 +219,18 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 查询本地成员返回了
      */
     protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
+    }
+
+    protected void fetchingActivity(boolean fromRemote) {
+        ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
+            @Override
+            public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                onFetchingActivityComplete(list);
+            }
+        }).list(mOrganizationId, fromRemote);
+    }
+
+    protected void onFetchingActivityComplete(List<Activity> list) {
     }
 }

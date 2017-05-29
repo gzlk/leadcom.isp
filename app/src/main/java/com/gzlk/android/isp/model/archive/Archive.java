@@ -1,15 +1,19 @@
 package com.gzlk.android.isp.model.archive;
 
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>档案基类<br />
@@ -138,6 +142,39 @@ public class Archive extends Additional {
         int ACTIVITY = 4;
     }
 
+    private void getLocalAttachments() {
+        if (!isLocalDeleted()) {
+            setLocalDeleted(true);
+            Dao<Attachment> dao = new Dao<>(Attachment.class);
+            QueryBuilder<Attachment> builder = new QueryBuilder<>(Attachment.class)
+                    .whereEquals(Attachment.Field.ArchiveId, getId());
+            List<Attachment> list = dao.query(builder);
+            for (Attachment attachment : list) {
+                if (attachment.isOffice()) {
+                    if (null == office) {
+                        office = new ArrayList<>();
+                    }
+                    office.add(attachment);
+                } else if (attachment.isImage()) {
+                    if (null == image) {
+                        image = new ArrayList<>();
+                    }
+                    image.add(attachment);
+                } else if (attachment.isVideo()) {
+                    if (null == video) {
+                        video = new ArrayList<>();
+                    }
+                    video.add(attachment);
+                } else {
+                    if (null == attach) {
+                        attach = new ArrayList<>();
+                    }
+                    attach.add(attachment);
+                }
+            }
+        }
+    }
+
     @Column(Organization.Field.GroupId)
     private String groupId;            //群ID
 
@@ -166,22 +203,16 @@ public class Archive extends Additional {
     private ArrayList<String> label;
     // Office 文档地址
     @Column(Field.Office)
-    private ArrayList<String> office;
-    // Office 文档映射的pif文件地址
-    @Column(Field.Pdf)
-    private ArrayList<String> pdf;
+    private ArrayList<Attachment> office;
     // 图片地址
     @Column(Field.Image)
-    private ArrayList<String> image;
+    private ArrayList<Attachment> image;
     // 视频地址
     @Column(Field.Video)
-    private ArrayList<String> video;
+    private ArrayList<Attachment> video;
     //附件地址
     @Column(Field.Attach)
-    private ArrayList<String> attach;
-    //附件名称
-    @Column(Field.AttachName)
-    private ArrayList<String> attachName;
+    private ArrayList<Attachment> attach;
     //档案发起者ID
     @Column(Model.Field.UserId)
     private String userId;
@@ -293,30 +324,6 @@ public class Archive extends Additional {
         this.markdown = markdown;
     }
 
-    public ArrayList<String> getImage() {
-        return image;
-    }
-
-    public void setImage(ArrayList<String> image) {
-        this.image = image;
-    }
-
-    public ArrayList<String> getAttach() {
-        return attach;
-    }
-
-    public void setAttach(ArrayList<String> attach) {
-        this.attach = attach;
-    }
-
-    public ArrayList<String> getAttachName() {
-        return attachName;
-    }
-
-    public void setAttachName(ArrayList<String> attachName) {
-        this.attachName = attachName;
-    }
-
     public Additional getAddition() {
         return addition;
     }
@@ -335,28 +342,52 @@ public class Archive extends Additional {
         this.label = label;
     }
 
-    public ArrayList<String> getOffice() {
+    public ArrayList<Attachment> getOffice() {
+        if (null == office) {
+            office = new ArrayList<>();
+            getLocalAttachments();
+        }
         return office;
     }
 
-    public void setOffice(ArrayList<String> office) {
+    public void setOffice(ArrayList<Attachment> office) {
         this.office = office;
     }
 
-    public ArrayList<String> getPdf() {
-        return pdf;
+    public ArrayList<Attachment> getImage() {
+        if (null == image) {
+            image = new ArrayList<>();
+            getLocalAttachments();
+        }
+        return image;
     }
 
-    public void setPdf(ArrayList<String> pdf) {
-        this.pdf = pdf;
+    public void setImage(ArrayList<Attachment> image) {
+        this.image = image;
     }
 
-    public ArrayList<String> getVideo() {
+    public ArrayList<Attachment> getVideo() {
+        if (null == video) {
+            video = new ArrayList<>();
+            getLocalAttachments();
+        }
         return video;
     }
 
-    public void setVideo(ArrayList<String> video) {
+    public void setVideo(ArrayList<Attachment> video) {
         this.video = video;
+    }
+
+    public ArrayList<Attachment> getAttach() {
+        if (null == attach) {
+            attach = new ArrayList<>();
+            getLocalAttachments();
+        }
+        return attach;
+    }
+
+    public void setAttach(ArrayList<Attachment> attach) {
+        this.attach = attach;
     }
 
     public String getHappenDate() {

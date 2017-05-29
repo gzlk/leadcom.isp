@@ -63,11 +63,13 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
+                <!-- Accepts URIs that begin with "http://www.leadcom.net.cn/android” -->
                 <data
-                    android:host="www.gzlk.com"
-                    android:pathPrefix="/gizmos"
+                    android:host="www.leadcom.net.cn"
+                    android:pathPrefix="/android"
                     android:scheme="http" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
                 <data
                     android:host="gzlk"
                     android:scheme="example" />
@@ -94,7 +96,7 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="${APP_PKG_NAME}.ACTION.RECEIVE_CUSTOM_NOTIFICATION"/>
+                <action android:name="${APP_PKG_NAME}.ACTION.RECEIVE_CUSTOM_NOTIFICATION" />
             </intent-filter>
         </receiver>
 

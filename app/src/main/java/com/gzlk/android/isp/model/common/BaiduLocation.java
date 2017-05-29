@@ -1,10 +1,11 @@
-package com.gzlk.android.isp.model;
+package com.gzlk.android.isp.model.common;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.Poi;
+import com.gzlk.android.isp.model.BaseModel;
 
 import java.util.List;
 import java.util.Locale;

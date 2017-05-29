@@ -29,7 +29,6 @@ public class Model extends BaseModel {
         public static final String Name = "name";
         public static final String UserId = "userId";
         public static final String UserName = "userName";
-        public static final String LocalDeleted = "localDeleted";
         public static final String CreatorId = "creatorId";
         public static final String CreatorName = "creatorName";
         public static final String UUID = "uuid";

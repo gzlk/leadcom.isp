@@ -10,6 +10,7 @@
     android:orientation="horizontal">
 
     <com.hlk.hlklib.lib.view.CorneredView
+        android:id="@+id/ui_holder_view_attachment_icon_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/ui_static_dp_5"
@@ -27,6 +28,17 @@
             android:text="@string/ui_icon_camera"
             android:textColor="@android:color/white" />
     </com.hlk.hlklib.lib.view.CorneredView>
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_holder_view_attachment_image"
+        android:layout_width="@dimen/ui_static_dp_30"
+        android:layout_height="@dimen/ui_static_dp_30"
+        android:layout_marginEnd="@dimen/ui_static_dp_5"
+        android:layout_marginStart="@dimen/ui_static_dp_5"
+        android:visibility="gone"
+        app:id_image_scale_type="centerCrop"
+        app:id_image_src="@mipmap/img_image_default"
+        app:id_image_type="rounded" />
 
     <LinearLayout
         android:layout_width="0dp"

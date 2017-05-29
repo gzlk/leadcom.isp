@@ -79,7 +79,7 @@ public abstract class Request<T> {
     /**
      * http网络访问层
      */
-    LiteHttp liteHttp;
+    protected LiteHttp liteHttp;
 
     public Request() {
         liteHttp = LiteHttp.build(App.app()).create();
@@ -155,56 +155,55 @@ public abstract class Request<T> {
      */
     protected JsonRequest<Api<T>> getRequest(Type resultType, String action, final String body, final HttpMethods methods) {
         final String url = format("%s%s", URL, action);
-        return new JsonRequest<Api<T>>(url, resultType)
-                .setHttpListener(new OnHttpListener<Api<T>>() {
+        return new JsonRequest<Api<T>>(url, resultType).setHttpListener(new OnHttpListener<Api<T>>() {
 
-                    @Override
-                    public void onSucceed(Api<T> data, Response<Api<T>> response) {
-                        super.onSucceed(data, response);
-                        log(format("url(%s): %s\nbody: %s\nsuccess: %s(%s,%s)", methods, url, body, data.success(), data.getCode(), data.getMsg()));
-                        if (data.success()) {
-                            if (data instanceof Query) {
-                                if (null != onMultipleRequestListener) {
-                                    Query<T> query = (Query<T>) data;
-                                    Pagination<T> pagination = query.getData();
-                                    save(pagination.getList());
-                                    onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
-                                            pagination.getTotalPages(), pagination.getPageSize(),
-                                            pagination.getTotal(), pagination.getPageNumber());
-                                }
-                            } else if (data instanceof Special) {
-                                if (null != onMultipleRequestListener) {
-                                    Special<T> special = (Special<T>) data;
-                                    save(special.getData());
-                                    onMultipleRequestListener.onResponse(special.getData(), data.success(),
-                                            1, PAGE_SIZE, special.getData().size(), 1);
-                                }
-                            } else if (data instanceof Output) {
-                                Output<T> output = (Output<T>) data;
-                                save(output.getData());
-                                if (null != onSingleRequestListener) {
-                                    onSingleRequestListener.onResponse(((Output<T>) data).getData(), data.success(), data.getMsg());
-                                }
-                            }
-                        } else {
-                            ToastHelper.make().showMsg(data.getMsg());
-                            fireFailedListenerEvents(data.getMsg());
+            @Override
+            public void onSucceed(Api<T> data, Response<Api<T>> response) {
+                super.onSucceed(data, response);
+                log(format("url(%s): %s\nbody: %s\nsuccess: %s(%s,%s)", methods, url, body, data.success(), data.getCode(), data.getMsg()));
+                if (data.success()) {
+                    if (data instanceof Query) {
+                        if (null != onMultipleRequestListener) {
+                            Query<T> query = (Query<T>) data;
+                            Pagination<T> pagination = query.getData();
+                            save(pagination.getList());
+                            onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
+                                    pagination.getTotalPages(), pagination.getPageSize(),
+                                    pagination.getTotal(), pagination.getPageNumber());
+                        }
+                    } else if (data instanceof Special) {
+                        if (null != onMultipleRequestListener) {
+                            Special<T> special = (Special<T>) data;
+                            save(special.getData());
+                            onMultipleRequestListener.onResponse(special.getData(), data.success(),
+                                    1, PAGE_SIZE, special.getData().size(), 1);
+                        }
+                    } else if (data instanceof Output) {
+                        Output<T> output = (Output<T>) data;
+                        save(output.getData());
+                        if (null != onSingleRequestListener) {
+                            onSingleRequestListener.onResponse(((Output<T>) data).getData(), data.success(), data.getMsg());
                         }
                     }
+                } else {
+                    ToastHelper.make().showMsg(data.getMsg());
+                    fireFailedListenerEvents(data.getMsg());
+                }
+            }
 
-                    @Override
-                    public void onFailed() {
-                        super.onFailed();
-                        log(format("url(%s): %s\nbody: %s\nsuccess: failed", methods, url, body));
-                        fireFailedListenerEvents("");
-                    }
-                }).setHttpBody(new JsonBody(body), methods);
+            @Override
+            public void onFailed() {
+                super.onFailed();
+                log(format("url(%s): %s\nbody: %s\nsuccess: failed", methods, url, body));
+                fireFailedListenerEvents("");
+            }
+        }).setHttpBody(new JsonBody(body), methods);
     }
 
     /**
      * 通知失败
      */
-    void fireFailedListenerEvents(String message) {
+    protected void fireFailedListenerEvents(String message) {
         if (null != onSingleRequestListener) {
             onSingleRequestListener.onResponse(null, false, message);
         }

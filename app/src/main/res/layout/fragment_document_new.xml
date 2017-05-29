@@ -46,7 +46,7 @@
 
     <include layout="@layout/tool_view_divider_big" />
 
-    <include layout="@layout/tool_view_attachment" />
+    <include layout="@layout/holder_view_attachment_picker" />
 
     <LinearLayout
         android:id="@+id/ui_document_new_attachments_layout"

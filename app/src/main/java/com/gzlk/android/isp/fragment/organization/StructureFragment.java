@@ -29,7 +29,7 @@ import com.gzlk.android.isp.holder.TextViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.SimpleClickableItem;
+import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
@@ -324,19 +324,19 @@ public class StructureFragment extends BaseOrganizationFragment {
 
     // 查询我是否在选中的小组中
     private void isMeInSquad(final String squadId, final String squadName) {
-        MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
                 if (success) {
-                    if (null != list && list.size() > 0) {
-                        openSquadContact(list.get(0).getId());
+                    if (null != member && !isEmpty(member.getId())) {
+                        openSquadContact(squadId);
                     } else {
                         warningJoinIntoSquad(squadId, squadName);
                     }
                 }
             }
-        }).search(Member.Type.SQUAD, squadId, Cache.cache().userName, 0);
+        }).find(Member.Type.SQUAD, squadId, Cache.cache().userName);
     }
 
     private void openSquadContact(String squadId) {

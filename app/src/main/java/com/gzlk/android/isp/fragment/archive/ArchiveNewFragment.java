@@ -16,8 +16,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.archive.PrivacyRequest;
-import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -30,15 +28,13 @@ import com.gzlk.android.isp.holder.SimpleInputableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Seclusion;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.common.Seclusion;
 import com.gzlk.android.isp.model.user.Privacy;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
-import com.litesuits.http.data.TypeToken;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,47 +142,6 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         super.onActivityResult(requestCode, data);
     }
 
-    /**
-     * 保存隐私设置
-     */
-    private void savePrivacy() {
-        int status = 0;
-        String groupId = null, userId = null;
-        if (!StringHelper.isEmpty(privacy)) {
-            try {
-                JSONObject object = new JSONObject(privacy);
-                if (object.has("status")) {
-                    status = object.getInt("status");
-                    switch (status) {
-                        case Privacy.Status.SOMEONE:
-                            // 对个人公开
-                            userId = object.getString("userId");
-                            break;
-                        case Privacy.Status.GROUP:
-                            // 对某个组织公开
-                            groupId = object.getString("groupId");
-                            break;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if (status > 0) {
-            PrivacyRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Privacy>() {
-                @Override
-                public void onResponse(Privacy privacy, boolean success, String message) {
-                    super.onResponse(privacy, success, message);
-                    if (success) {
-                        ToastHelper.make().showMsg(message);
-                    } else {
-                        ToastHelper.make().showMsg("目前暂时无法保存隐私设置项目");
-                    }
-                }
-            }).save(status, Privacy.Source.ARCHIVE, mQueryId, groupId, userId);
-        }
-    }
-
     @Override
     public void doingInResume() {
         setCustomTitle(StringHelper.isEmpty(mQueryId) ? R.string.ui_text_document_create_fragment_title : R.string.ui_text_document_create_fragment_title_edit);
@@ -194,7 +149,6 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                //ToastHelper.make().showMsg("暂时无法上传附件");
                 tryCreateDocument();
             }
         });
@@ -210,7 +164,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onUploadingComplete(ArrayList<String> uploaded) {
+        public void onUploadingComplete(ArrayList<Attachment> uploaded) {
             createArchive();
         }
     };
@@ -263,27 +217,30 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(title, content, seclusion.getStatus(), happenDate, null, null, images, files, names);
+        }).add(title, content, seclusion.getStatus(), happenDate, tags, "", office, images, video, attach);
     }
 
-    private ArrayList<String> images = new ArrayList<>();
-    private ArrayList<String> files = new ArrayList<>();
-    private ArrayList<String> names = new ArrayList<>();
+    private ArrayList<String> tags = new ArrayList<>();
+    private ArrayList<Attachment> office = new ArrayList<>();
+    private ArrayList<Attachment> images = new ArrayList<>();
+    private ArrayList<Attachment> video = new ArrayList<>();
+    private ArrayList<Attachment> attach = new ArrayList<>();
 
     // 处理上传之后的文件列表
     private void handleUploadedItems() {
         // 上传的原始文件
         if (getUploadedFiles().size() > 0) {
             for (int i = 0, len = getUploadedFiles().size(); i < len; i++) {
-                String uploaded = getUploadedFiles().get(i);
-                String source = getWaitingForUploadFiles().get(i);
-                String name = source.substring(source.lastIndexOf('/') + 1);
-                String ext = name.substring(name.lastIndexOf('.') + 1);
-                if (ImageCompress.isImage(ext)) {
-                    images.add(uploaded);
+                Attachment attachment = getUploadedFiles().get(i);
+                attachment.setArchiveId(mQueryId);
+                if (attachment.isImage()) {
+                    images.add(attachment);
+                } else if (attachment.isOffice()) {
+                    office.add(attachment);
+                } else if (attachment.isVideo()) {
+                    video.add(attachment);
                 } else {
-                    files.add(uploaded);
-                    names.add(name);
+                    attach.add(attachment);
                 }
             }
         }
@@ -300,7 +257,8 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(archiveGroup, Archive.ArchiveType.NORMAL, title, content, "happen", null, sec.getUserIds(), "", images, files, names);
+        }).add(archiveGroup, Archive.ArchiveType.NORMAL, title, content, happenDate,
+                tags, sec.getUserIds(), "", office, images, video, attach);
     }
 
     private void editDocument(String title, String content) {
@@ -322,7 +280,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, title, content, seclusion.getStatus(), happenDate, null, "", images, files, names);
+        }).update(mQueryId, title, content, seclusion.getStatus(), happenDate, tags, "", office, images, video, attach);
     }
 
     private void editOrganizationArchive(String title, String content) {
@@ -336,7 +294,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, title, content, happenDate, null, seclusion.getUserIds(), "", images, files, names);
+        }).update(mQueryId, title, content, happenDate, tags, seclusion.getUserIds(), "", office, images, video, attach);
     }
 
     @Override
@@ -477,7 +435,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             // 可以多选
             properties.selection_mode = DialogConfigs.MULTI_MODE;
             // 最多可选文件数量
-            properties.maximum_count = getMaxSelectable();
+            properties.maximum_count = 0;
             // 文件扩展名过滤
             //properties.extensions = StringHelper.getStringArray(R.array.ui_base_file_pick_types);
             filePickerDialog = new FilePickerDialog(Activity(), properties);
@@ -491,25 +449,36 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             setSupportLoadingMore(false);
             mRecyclerView.setAdapter(mAdapter);
         }
-        if (null != archive) {
-            // 显示已有的图片列表
-            if (null != archive.getImage()) {
-                // 最大可选择的文件数量要去掉原有的图片数量
-                filePickerDialog.getProperties().maximum_count = getMaxSelectable() - archive.getImage().size();
-                images.addAll(archive.getImage());
-                mAdapter.update(archive.getImage());
-            }
-            // 显示已有的文件列表
-            if (null != archive.getAttachName()) {
-                // 最大可选文件数量要去掉已有的文件数量
-                filePickerDialog.getProperties().maximum_count = getMaxSelectable() - archive.getAttachName().size();
-                // 已有的文件列表
-                files.addAll(archive.getAttach());
-                // 文件名列表
-                names.addAll(archive.getAttachName());
+        updateArchiveAttachment(archive);
+    }
 
-                mAdapter.update(archive.getAttachName());
-            }
+    private void updateArchiveAttachment(Archive archive) {
+        if (null == archive) return;
+        // 显示已有的office文件列表
+        if (null != archive.getOffice()) {
+            office.addAll(archive.getOffice());
+            mAdapter.update(archive.getOffice(), false);
+        }
+        // 显示已有的图片列表
+        if (null != archive.getImage()) {
+            // 最大可选择的文件数量要去掉原有的图片数量
+            //filePickerDialog.getProperties().maximum_count = getMaxSelectable() - archive.getImage().size();
+            images.addAll(archive.getImage());
+            mAdapter.update(archive.getImage(), false);
+        }
+        // 显示已有的视频文件列表
+        if (null != archive.getVideo()) {
+            video.addAll(archive.getVideo());
+            mAdapter.update(archive.getVideo(), false);
+        }
+        // 显示已有的文件列表
+        if (null != archive.getAttach()) {
+            // 最大可选文件数量要去掉已有的文件数量
+            //filePickerDialog.getProperties().maximum_count = getMaxSelectable() - archive.getAttachName().size();
+            // 已有的文件列表
+            attach.addAll(archive.getAttach());
+
+            mAdapter.update(archive.getAttach(), false);
         }
     }
 
@@ -538,37 +507,6 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         return StringHelper.getString(R.string.ui_security_fragment_title);
     }
 
-    private int itemHeight = 0;
-
-    private void resetAttachmentsLayoutHeight() {
-        if (itemHeight == 0) {
-            itemHeight = attachmentLayout.getHeight() / mAdapter.getItemCount();
-        }
-        int screenHeight = getScreenHeight();
-        int top = attachmentLayout.getTop();
-        int bot = attachmentLayout.getBottom();
-        int height = attachmentLayout.getMeasuredHeight();
-        int items = itemHeight * mAdapter.getItemCount();
-        log(format("top:%d,bottom:%d,height:%d/%d,mheight:%d", top, bot, bot - top, attachmentLayout.getHeight(), attachmentLayout.getMeasuredHeight()));
-        if (top + items + itemHeight > screenHeight) {
-            height = screenHeight - top - itemHeight;
-        } else {
-            height = items;
-        }
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) attachmentLayout.getLayoutParams();
-        params.height = height;
-        attachmentLayout.setLayoutParams(params);
-    }
-
-    private void resetAttachmentsHeight() {
-//        Handler().post(new Runnable() {
-//            @Override
-//            public void run() {
-//                resetAttachmentsLayoutHeight();
-//            }
-//        });
-    }
-
     private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
@@ -579,13 +517,14 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case 2:
                     Seclusion seclusion = getSeclusion();
+                    String json = PrivacyFragment.getSeclusion(seclusion);
                     // 隐私设置
                     if (archiveType == Archive.Type.USER) {
                         // 个人隐私设置
-                        openActivity(UserPrivacyFragment.class.getName(), Json.gson().toJson(seclusion), PrivacyFragment.REQUEST_SECURITY, true, false);
+                        openActivity(UserPrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
                     } else {
                         // 组织档案隐私设置
-                        openActivity(PrivacyFragment.class.getName(), Json.gson().toJson(seclusion), PrivacyFragment.REQUEST_SECURITY, true, false);
+                        openActivity(PrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
                     }
                     break;
             }
@@ -599,9 +538,9 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             getWaitingForUploadFiles().clear();
             getWaitingForUploadFiles().addAll(Arrays.asList(strings));
             for (String string : getWaitingForUploadFiles()) {
-                mAdapter.update(string);
+                Attachment attachment = new Attachment(string);
+                mAdapter.update(attachment);
             }
-            resetAttachmentsHeight();
         }
     };
 
@@ -610,7 +549,10 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         if (size > 0) {
             List<String> tmp = new ArrayList<>();
             for (int i = 0; i < size; i++) {
-                tmp.add(mAdapter.get(i));
+                Attachment att = mAdapter.get(i);
+                if (att.isLocalFile()) {
+                    tmp.add(att.getFullPath());
+                }
             }
             filePickerDialog.markFiles(tmp);
         }
@@ -661,28 +603,29 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener attachmentViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            String string = mAdapter.get(index);
-            removeItems(string);
-            mAdapter.remove(index);
-            resetAttachmentsHeight();
+            Attachment attachment = mAdapter.get(index);
+            removeItems(attachment);
+            mAdapter.remove(attachment);
         }
     };
 
-    private void removeItems(String string) {
+    private void removeItems(Attachment attachment) {
+        // 尝试删除office文档列表
+        office.remove(attachment);
         // 尝试删除图片列表（这个列表是编辑档案时档案原有的列表）
-        images.remove(string);
-        // 尝试删除文件列表（这个列表是编辑档案时档案原有的列表）
-        int index = names.indexOf(string);
-        if (index >= 0) {
-            names.remove(index);
-            files.remove(index);
-        }
+        images.remove(attachment);
+        // 从视频列表里删除
+        video.remove(attachment);
+        // 从其他附件里删除
+        attach.remove(attachment);
         // 从待上传的列表里删除
-        getWaitingForUploadFiles().remove(string);
-        filePickerDialog.getProperties().maximum_count = getMaxSelectable() - images.size() - names.size();
+        if (attachment.isLocalFile()) {
+            getWaitingForUploadFiles().remove(attachment.getFullPath());
+        }
+        //filePickerDialog.getProperties().maximum_count = getMaxSelectable() - images.size() - names.size();
     }
 
-    private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, String> {
+    private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
         @Override
         public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
             AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveNewFragment.this);
@@ -696,22 +639,13 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onBindHolderOfView(final AttachmentViewHolder holder, int position, @Nullable String item) {
+        public void onBindHolderOfView(final AttachmentViewHolder holder, int position, @Nullable Attachment item) {
             holder.showContent(item);
-            if (itemHeight <= 0) {
-                Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        itemHeight = holder.itemView.getMeasuredHeight() + getDimension(R.dimen.ui_static_dp_half);
-                        resetAttachmentsHeight();
-                    }
-                });
-            }
         }
 
         @Override
-        protected int comparator(String item1, String item2) {
-            return item1.compareTo(item2);
+        protected int comparator(Attachment item1, Attachment item2) {
+            return 0;
         }
     }
 }

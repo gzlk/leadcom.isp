@@ -16,11 +16,10 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.Seclusion;
+import com.gzlk.android.isp.model.common.Seclusion;
 import com.gzlk.android.isp.model.archive.Security;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
-import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.assit.QueryBuilder;
 

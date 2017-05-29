@@ -6,10 +6,13 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.ContactViewHolder;
+import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 
 import java.util.List;
@@ -105,14 +108,24 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
     private BaseViewHolder.OnHandlerBoundDataListener<Member> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Member>() {
         @Override
         public Member onHandlerBoundData(BaseViewHolder holder) {
-            addMemberToSquad(mAdapter.get(holder.getAdapterPosition()));
+            int index = holder.getAdapterPosition();
+            addMemberToSquad(mAdapter.get(index), index);
             return null;
         }
     };
 
-    private void addMemberToSquad(Member member) {
+    private void addMemberToSquad(Member member, final int index) {
         // 将不在小组内的组织成员添加到小组
-        ToastHelper.make().showMsg("暂时无法添加成员到小组(无api支持)");
+        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
+            @Override
+            public void onResponse(Invitation invitation, boolean success, String message) {
+                super.onResponse(invitation, success, message);
+                if (success) {
+                    mAdapter.get(index).setSelected(true);
+                    mAdapter.notifyItemChanged(index);
+                }
+            }
+        }).inviteToSquad(mSquadId, member.getId(), "");
     }
 
     private class ContactAdapter extends RecyclerViewAdapter<ContactViewHolder, Member> {

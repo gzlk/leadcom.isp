@@ -294,6 +294,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
      * 列表滚动到最后一条记录
      */
     public void smoothScrollToBottom(final int position) {
+        if (position < 0) return;
         if (null != mRecyclerView) {
             Handler().postDelayed(new Runnable() {
                 @Override

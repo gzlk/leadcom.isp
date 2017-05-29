@@ -1,6 +1,8 @@
 package com.gzlk.android.isp.holder;
 
+import android.content.Context;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
@@ -11,6 +13,11 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.NineRectangleGridImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>活动<br />
@@ -53,9 +60,24 @@ public class ActivityViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Activity activity) {
-        boolean hasImage = isEmpty(activity.getImg());
+        boolean hasImage = !isEmpty(activity.getImg());
+        List<String> img = new ArrayList<>();
+        if (hasImage) {
+            img.add(activity.getImg());
+            img.add(activity.getImg());
+            img.add(activity.getImg());
+            img.add(activity.getImg());
+            img.add(activity.getImg());
+            img.add(activity.getImg());
+            img.add(activity.getImg());
+            img.add(activity.getImg());
+            img.add(activity.getImg());
+            headers.setAdapter(adapter);
+            headers.setImagesData(img);
+        }
         headers.setVisibility(hasImage ? View.VISIBLE : View.GONE);
         iconText.setVisibility(hasImage ? View.GONE : View.VISIBLE);
+        iconContainer.setBackground(getColor(hasImage ? R.color.textColorHintLight : R.color.color_faaa2d));
         titleView.setText(activity.getTitle());
         descView.setText(activity.getContent());
     }
@@ -66,4 +88,19 @@ public class ActivityViewHolder extends BaseViewHolder {
             mOnViewHolderClickListener.onClick(getAdapterPosition());
         }
     }
+
+    private NineRectangleGridImageView.NineRectangleGridImageViewAdapter<String> adapter = new NineRectangleGridImageView.NineRectangleGridImageViewAdapter<String>() {
+
+        @Override
+        protected void onDisplayImage(Context context, ImageView imageView, String s) {
+            int size = getDimension(R.dimen.ui_static_dp_55);
+            ImageLoader.getInstance().displayImage(s, imageView, new ImageSize(size, size));
+        }
+
+        //重写该方法自定义生成ImageView方式，用于九宫格头像中的一个个图片控件，可以设置ScaleType等属性
+        @Override
+        protected ImageView generateImageView(Context context) {
+            return super.generateImageView(context);
+        }
+    };
 }

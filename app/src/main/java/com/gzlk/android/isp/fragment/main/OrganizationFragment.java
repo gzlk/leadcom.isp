@@ -4,13 +4,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
+import com.gzlk.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.gzlk.android.isp.fragment.organization.LivenessFragment;
 import com.gzlk.android.isp.fragment.organization.OnOrganizationChangedListener;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.PreferenceHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -123,7 +128,14 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     private void resetRightIcon() {
         // 如果当前显示的是组织页面才控制右上角的 + 显示与否
         int position = getDisplayedPage();
-        mainFragment.showRightIcon(position == 1 || position == 2);
+        boolean shown;
+        if (BuildConfig.DEBUG) {
+            // 测试状态下可以添加组织
+            shown = position <= 2;
+        } else {
+            shown = (position == 1 || position == 2);
+        }
+        mainFragment.showRightIcon(shown);
     }
 
     @Click({R.id.ui_tool_organization_top_channel_1, R.id.ui_tool_organization_top_channel_2,
@@ -146,13 +158,39 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     }
 
     public void rightIconClick(View view) {
-        if (getDisplayedPage() == 1) {
+        if (getDisplayedPage() == 0) {
+            // 新建组织
+            if (BuildConfig.DEBUG) {
+                String string = PreferenceHelper.get(R.string.pf_static_temp_organization_create_alert, "");
+                if (isEmpty(string)) {
+                    // 提醒测试人员这个功能目前只是为了测试方便而设置，release版本会取消
+                    warningCreateOrganization();
+                } else {
+                    toCreateOrganization();
+                }
+            }
+        } else if (getDisplayedPage() == 1) {
             // 打开手机通讯录加人到组织
             ((ContactFragment) mFragments.get(1)).addMemberToOrganizationFromPhoneContact(view);
         } else if (getDisplayedPage() == 2) {
             // 打开弹出菜单新建或管理组织档案
             ((ArchivesFragment) mFragments.get(2)).openTooltipMenu(view);
         }
+    }
+
+    private void warningCreateOrganization() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_organization_creator_warning, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                PreferenceHelper.save(R.string.pf_static_temp_organization_create_alert, "YES");
+                toCreateOrganization();
+                return true;
+            }
+        });
+    }
+
+    private void toCreateOrganization() {
+        openActivity(CreateOrganizationFragment.class.getName(), "", true, true);
     }
 
     @Override

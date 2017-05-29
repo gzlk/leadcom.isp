@@ -26,7 +26,8 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.SimpleClickableItem;
+import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.SimpleClickableViewBinder;
@@ -122,8 +123,8 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onUploadingComplete(ArrayList<String> uploaded) {
-            tryEditUserInfo(UserRequest.UPDATE_PHOTO, uploaded.get(0));
+        public void onUploadingComplete(ArrayList<Attachment> uploaded) {
+            tryEditUserInfo(UserRequest.UPDATE_PHOTO, uploaded.get(0).getUrl());
         }
     };
 

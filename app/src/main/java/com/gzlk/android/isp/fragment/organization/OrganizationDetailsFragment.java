@@ -22,7 +22,7 @@ import com.gzlk.android.isp.holder.SimpleMemberViewHolder;
 import com.gzlk.android.isp.holder.ToggleableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.SimpleClickableItem;
+import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;

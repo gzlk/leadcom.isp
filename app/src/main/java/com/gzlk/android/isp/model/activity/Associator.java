@@ -1,6 +1,6 @@
 package com.gzlk.android.isp.model.activity;
 
-import com.gzlk.android.isp.model.Leaguer;
+import com.gzlk.android.isp.model.common.Leaguer;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 

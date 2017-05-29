@@ -97,6 +97,19 @@ public class MemberRequest extends Request<Member> {
     }
 
     /**
+     * 在指定组织或小组内查看用户的信息
+     *
+     * @param type   成员类型（组织成员或小组成员）
+     * @param orgId  组织id或小组id
+     * @param userId 用户id
+     */
+    public void find(int type, String orgId, String userId) {
+        String action = type == Member.Type.SQUAD ? "/squAndUserId" : "/groAndUserId";
+        String url = format("%s%s?%s=%s&userId=%s", url(type, FIND), action, getOrgId(type), orgId, userId);
+        httpRequest(getRequest(SingleMember.class, url, "", HttpMethods.Get));
+    }
+
+    /**
      * 在指定组织和指定小组内搜索成员名字
      */
     public void search(int type, String id, String memberName, int pageNumber) {

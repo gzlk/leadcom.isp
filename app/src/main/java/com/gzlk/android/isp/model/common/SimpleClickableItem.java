@@ -1,6 +1,7 @@
-package com.gzlk.android.isp.model;
+package com.gzlk.android.isp.model.common;
 
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Model;
 
 /**
  * <b>功能描述：</b><br />

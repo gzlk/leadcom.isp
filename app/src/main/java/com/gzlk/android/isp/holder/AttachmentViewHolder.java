@@ -8,9 +8,12 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.io.File;
@@ -29,8 +32,12 @@ import java.util.Locale;
 
 public class AttachmentViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_attachment_icon_container)
+    private CorneredView iconContainer;
     @ViewId(R.id.ui_holder_view_attachment_icon)
     private CustomTextView iconTextView;
+    @ViewId(R.id.ui_holder_view_attachment_image)
+    private ImageDisplayer imageDisplayer;
     @ViewId(R.id.ui_holder_view_attachment_name)
     private TextView nameTextView;
     @ViewId(R.id.ui_holder_view_attachment_additional)
@@ -52,16 +59,36 @@ public class AttachmentViewHolder extends BaseViewHolder {
         deleteView.setVisibility(editable ? View.VISIBLE : View.GONE);
     }
 
-    public void showContent(String filePath) {
-        String name = filePath.substring(filePath.lastIndexOf('/') + 1);
-        String ext = name.substring(name.lastIndexOf('.') + 1);
-        iconTextView.setText(getFileExtension(ext));
-        nameTextView.setText(name);
-        pathTextView.setText(filePath.replace(name, ""));
-        boolean isFile = filePath.indexOf('/') >= 0;
-        additionalView.setVisibility(isFile ? View.VISIBLE : View.GONE);
-        if (isFile) {
-            File file = new File(filePath);
+//    public void showContent(String filePath) {
+//        String name = filePath.substring(filePath.lastIndexOf('/') + 1);
+//        String ext = name.substring(name.lastIndexOf('.') + 1);
+//        iconTextView.setText(getFileExtension(ext));
+//        nameTextView.setText(name);
+//        pathTextView.setText(filePath.replace(name, ""));
+//        boolean isFile = filePath.indexOf('/') >= 0;
+//        additionalView.setVisibility(isFile ? View.VISIBLE : View.GONE);
+//        if (isFile) {
+//            File file = new File(filePath);
+//            if (file.exists() && file.length() > 0) {
+//                sizeTextView.setText(Utils.formatSize(file.length()));
+//            } else {
+//                sizeTextView.setText(null);
+//            }
+//        }
+//    }
+
+    public void showContent(Attachment attachment) {
+        iconTextView.setText(getFileExtension(attachment.getExt()));
+        iconContainer.setVisibility(attachment.isImage() ? View.GONE : View.VISIBLE);
+        imageDisplayer.setVisibility(attachment.isImage() ? View.VISIBLE : View.GONE);
+        if (attachment.isImage()) {
+            imageDisplayer.displayImage(attachment.getUrl(), getDimension(R.dimen.ui_static_dp_30), false, false);
+        }
+        nameTextView.setText(attachment.getName());
+        pathTextView.setText(attachment.getFullPath());
+        additionalView.setVisibility(attachment.isLocalFile() ? View.VISIBLE : View.GONE);
+        if (attachment.isLocalFile()) {
+            File file = new File(attachment.getFullPath());
             if (file.exists() && file.length() > 0) {
                 sizeTextView.setText(Utils.formatSize(file.length()));
             } else {

@@ -15,6 +15,8 @@ import com.gzlk.android.isp.activity.LoginActivity;
 import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.main.MainFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -329,12 +331,36 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     public void onActivityResult(int requestCode, Intent data) {
     }
 
+    /**
+     * 子类重载此方法判断是否正处于编辑状态
+     */
+    protected boolean checkStillEditing() {
+        return false;
+    }
+
+    /**
+     * 询问用户是否放弃编辑
+     */
+    protected void warningStillInEditing() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_base_text_still_editing, R.string.ui_base_text_yes, R.string.ui_base_text_think_again, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                finish();
+                return true;
+            }
+        }, null);
+    }
+
     protected boolean onBackKeyPressed() {
         if (mCurPopupWindow != null && mCurPopupWindow.isShowing()) {
             mCurPopupWindow.dismiss();
             return true;
         }
-        return false;
+        boolean stillEditing = checkStillEditing();
+        if (stillEditing) {
+            warningStillInEditing();
+        }
+        return stillEditing;
     }
 
     private PopupWindow mCurPopupWindow;

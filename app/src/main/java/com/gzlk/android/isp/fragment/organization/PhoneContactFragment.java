@@ -28,7 +28,7 @@ import com.gzlk.android.isp.holder.PhoneContactViewHolder;
 import com.gzlk.android.isp.holder.SearchableViewHolder;
 import com.gzlk.android.isp.lib.view.SlidView;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Contact;
+import com.gzlk.android.isp.model.common.Contact;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Invitation;

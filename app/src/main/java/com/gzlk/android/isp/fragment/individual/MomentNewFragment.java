@@ -12,6 +12,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.PrivacyFragment;
 import com.gzlk.android.isp.fragment.archive.UserPrivacyFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -26,8 +27,9 @@ import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
-import com.gzlk.android.isp.model.BaiduLocation;
-import com.gzlk.android.isp.model.Seclusion;
+import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.common.BaiduLocation;
+import com.gzlk.android.isp.model.common.Seclusion;
 import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -131,15 +133,17 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void tryAddMoment() {
+        if (StringHelper.isEmpty(momentContent.getValue())) {
+            ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
+            return;
+        }
+        Utils.hidingInputBoard(momentContent);
         if (getSelectedImages().size() > 0) {
             // 如果选择了的图片大于1张，则需要压缩图片并且上传
             compressImage();
+            uploadFiles();
         } else {
-            if (StringHelper.isEmpty(momentContent.getValue())) {
-                ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
-            } else {
-                addMoment();
-            }
+            addMoment(null);
         }
     }
 
@@ -150,12 +154,16 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onUploadingComplete(ArrayList<String> uploaded) {
-            addMoment();
+        public void onUploadingComplete(ArrayList<Attachment> uploaded) {
+            ArrayList<String> temp = new ArrayList<>();
+            for (Attachment att : uploaded) {
+                temp.add(att.getUrl());
+            }
+            addMoment(temp);
         }
     };
 
-    private void addMoment() {
+    private void addMoment(ArrayList<String> images) {
         Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
         String content = StringHelper.escapeToHtml(momentContent.getValue());
         MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
@@ -166,7 +174,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(address, content, getUploadedFiles());
+        }).add(address, content, images);
     }
 
     @Override
@@ -337,11 +345,6 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
                 width = size;
                 height = size;
             }
-        }
-
-        @Override
-        public int getItemCount() {
-            return super.getItemCount();
         }
 
         @Override

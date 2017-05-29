@@ -3,7 +3,7 @@ package com.gzlk.android.isp.holder;
 import android.view.View;
 
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.model.SimpleClickableItem;
+import com.gzlk.android.isp.model.common.SimpleClickableItem;
 
 /**
  * <b>功能描述：</b><br />

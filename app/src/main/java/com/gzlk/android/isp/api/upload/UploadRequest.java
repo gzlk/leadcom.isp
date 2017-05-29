@@ -1,10 +1,13 @@
-package com.gzlk.android.isp.api;
+package com.gzlk.android.isp.api.upload;
 
+import com.gzlk.android.isp.api.Api;
+import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.listener.OnUploadingListener;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnHttpListener;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.litesuits.http.request.AbstractRequest;
 import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.multi.FilePart;
@@ -25,17 +28,18 @@ import java.io.File;
  * <b>修改备注：</b><br />
  */
 
-public class UploadRequest extends Request<String> {
+public class UploadRequest extends Request<Upload> {
 
     public static UploadRequest request() {
         return new UploadRequest();
     }
 
-    private static class SingleFile extends Upload<String> {
-    }
+//    private static class SingleFile extends Api<Upload> {
+//    }
 
     private static final String SINGLE_UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFile.do";
     private static final String MULTI_UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFiles.do";
+    private static final String OFFICE_UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFilePDF.do";
 
     @Override
     protected String url(String action) {
@@ -43,18 +47,18 @@ public class UploadRequest extends Request<String> {
     }
 
     @Override
-    protected Class<String> getType() {
-        return String.class;
+    protected Class<Upload> getType() {
+        return Upload.class;
     }
 
     @Override
-    public UploadRequest setOnSingleRequestListener(OnSingleRequestListener<String> listener) {
+    public UploadRequest setOnSingleRequestListener(OnSingleRequestListener<Upload> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public UploadRequest setOnMultipleRequestListener(OnMultipleRequestListener<String> listListener) {
+    public UploadRequest setOnMultipleRequestListener(OnMultipleRequestListener<Upload> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }
@@ -69,16 +73,21 @@ public class UploadRequest extends Request<String> {
 
     private OnUploadingListener<String> onUploadingListener;
 
-    private JsonRequest<SingleFile> request(final String file) {
-        MultipartBody body = new MultipartBody()
-                .addPart(new FilePart("file", new File(file)));
-        return new JsonRequest<SingleFile>(SINGLE_UPLOAD, SingleFile.class).setHttpListener(new OnHttpListener<SingleFile>(true, true) {
+    // 根据文件扩展名是否为office文档更改上传路径
+    private String path(String file) {
+        return (Attachment.isOffice(Attachment.getExtension(file))) ? OFFICE_UPLOAD : SINGLE_UPLOAD;
+    }
+
+    private JsonRequest<Api<Upload>> request(final String file) {
+        MultipartBody body = new MultipartBody().addPart(new FilePart("file", new File(file)));
+        return new JsonRequest<Api<Upload>>(path(file), Upload.class).setHttpListener(new OnHttpListener<Api<Upload>>(true, true) {
             @Override
-            public void onSucceed(SingleFile data, Response<SingleFile> response) {
+            public void onSucceed(Api<Upload> data, Response<Api<Upload>> response) {
                 super.onSucceed(data, response);
                 if (data.success()) {
+                    Upload upload = (Upload) data;
                     if (null != onSingleRequestListener) {
-                        onSingleRequestListener.onResponse(data.getResult(), data.success(), data.getMsg());
+                        onSingleRequestListener.onResponse(upload, data.success(), data.getMsg());
                     }
                 } else {
                     log(format("upload response fail %s", data.getMsg()));
@@ -94,7 +103,7 @@ public class UploadRequest extends Request<String> {
             }
 
             @Override
-            public void onUploading(AbstractRequest<SingleFile> request, long total, long len) {
+            public void onUploading(AbstractRequest<Api<Upload>> request, long total, long len) {
                 super.onUploading(request, total, len);
                 if (null != onUploadingListener) {
                     onUploadingListener.onUploading(file, total, len);

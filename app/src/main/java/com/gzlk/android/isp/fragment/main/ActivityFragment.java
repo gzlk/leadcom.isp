@@ -7,8 +7,6 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.activity.ActRequest;
-import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
@@ -19,12 +17,10 @@ import com.gzlk.android.isp.holder.ActivityViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.OrganizationStructureConcernedViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.SimpleClickableItem;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Organization;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.List;
 
@@ -83,6 +79,9 @@ public class ActivityFragment extends BaseOrganizationFragment {
     @Override
     protected void onSwipeRefreshing() {
         fetchingJoinedRemoteOrganizations();
+        if (!isEmpty(mQueryId)) {
+            fetchingActivity(true);
+        }
     }
 
     @Override
@@ -93,6 +92,20 @@ public class ActivityFragment extends BaseOrganizationFragment {
             // 当前显示本fragment时才提示用户
             if (getUserVisibleHint()) {
                 ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
+            }
+        }
+        stopRefreshing();
+        setSupportLoadingMore(false);
+    }
+
+    @Override
+    protected void onFetchingActivityComplete(List<Activity> list) {
+        if (null != list) {
+            updateActivityList(list);
+        } else {
+            // 当前显示本fragment时才提示用户
+            if (getUserVisibleHint()) {
+                ToastHelper.make().showMsg(R.string.ui_activity_main_not_exist_any_more);
             }
         }
         stopRefreshing();
@@ -149,7 +162,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     private void initializeItems() {
         for (String string : items) {
-            String text = "";
+            String text;
             if (string.contains("%d")) {
                 // 未参加的活动
                 if (string.charAt(0) == '1') {
@@ -168,41 +181,11 @@ public class ActivityFragment extends BaseOrganizationFragment {
         }
     }
 
-    private void loadingLocalActivity(String groupId) {
-        QueryBuilder<Activity> builder = new QueryBuilder<>(Activity.class)
-                .whereEquals(Organization.Field.GroupId, groupId)
-                .orderBy(Model.Field.CreateDate);
-        List<Activity> list = new Dao<>(Activity.class).query(builder);
-        if (null != list) {
-            updateActivityList(list);
-        }
-        fetchingGroupActivity(groupId);
-    }
-
     private void updateActivityList(List<Activity> list) {
         if (null == list) return;
         for (Activity activity : list) {
             mAdapter.update(activity);
         }
-    }
-
-    private void fetchingGroupActivity(String groupId) {
-        ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
-            @Override
-            public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null == list || list.size() < 1) {
-                        if (getUserVisibleHint()) {
-                            ToastHelper.make().showMsg(R.string.ui_activity_main_not_exist_any_more);
-                        }
-                    }
-                    if (null != list) {
-                        updateActivityList(list);
-                    }
-                }
-            }
-        }).list(groupId);
     }
 
     @Override
@@ -225,12 +208,13 @@ public class ActivityFragment extends BaseOrganizationFragment {
         // 加载本地该组织的活动列表
         Organization org = concernedViewHolder.get(selectedIndex);
         mQueryId = org.getId();
+        mOrganizationId = mQueryId;
         // 更改标题栏上的文字和icon
         if (getUserVisibleHint()) {
             // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
             mainFragment.setTitleText(org.getName());
         }
-        loadingLocalActivity(org.getId());
+        fetchingActivity(false);
     }
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {

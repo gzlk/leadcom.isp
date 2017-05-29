@@ -10,7 +10,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.Poi;
 import com.gzlk.android.isp.application.App;
-import com.gzlk.android.isp.model.BaiduLocation;
+import com.gzlk.android.isp.model.common.BaiduLocation;
 
 import java.lang.ref.SoftReference;
 import java.util.List;

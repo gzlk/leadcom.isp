@@ -18,6 +18,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.hlk.hlklib.lib.view.CustomTextView;
 
 /**
  * <b>功能描述：</b>联系人<br />
@@ -44,8 +45,11 @@ public class ContactViewHolder extends BaseViewHolder {
     private TextView myselfView;
     @ViewId(R.id.ui_holder_view_contact_button)
     private CorneredButton button;
+    @ViewId(R.id.ui_holder_view_contact_picker)
+    private CustomTextView iconPicker;
 
     private boolean buttonVisible = false;
+    private boolean pickerVisible = false;
 
     public ContactViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -96,9 +100,14 @@ public class ContactViewHolder extends BaseViewHolder {
                     button.setEnabled(false);
                     // 成员已是小组的人了
                     button.setText(R.string.ui_phone_contact_invited);
+                } else {
+                    button.setEnabled(!member.isSelected());
+                    button.setText(member.isSelected() ? R.string.ui_phone_contact_inviting : R.string.ui_phone_contact_invite);
                 }
             }
         }
+        iconPicker.setVisibility(pickerVisible ? View.VISIBLE : View.GONE);
+        iconPicker.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
     }
 
     private String squadId = "";
@@ -117,9 +126,14 @@ public class ContactViewHolder extends BaseViewHolder {
         buttonVisible = shown;
     }
 
+    public void showPicker(boolean shown) {
+        pickerVisible = shown;
+    }
+
     @Click({R.id.ui_holder_view_contact_layout,
             R.id.ui_tool_view_contact_delete,
-            R.id.ui_holder_view_contact_button})
+            R.id.ui_holder_view_contact_button,
+            R.id.ui_holder_view_contact_picker})
     private void click(View view) {
         switch (view.getId()) {
             case R.id.ui_holder_view_contact_layout:
@@ -136,6 +150,11 @@ public class ContactViewHolder extends BaseViewHolder {
             case R.id.ui_holder_view_contact_button:
                 if (null != dataHandlerBoundDataListener) {
                     dataHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
+                }
+                break;
+            case R.id.ui_holder_view_contact_picker:
+                if (null != mOnViewHolderClickListener) {
+                    mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }
                 break;
         }

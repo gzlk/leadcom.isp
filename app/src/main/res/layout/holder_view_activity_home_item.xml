@@ -29,7 +29,7 @@
             android:id="@+id/ui_holder_view_activity_item_headers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/ui_static_dp_2"
+            android:layout_margin="@dimen/ui_static_dp_1"
             android:visibility="gone"
             app:imageSpacing="@dimen/ui_static_dp_2" />
 

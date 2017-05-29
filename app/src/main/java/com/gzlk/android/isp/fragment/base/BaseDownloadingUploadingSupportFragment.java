@@ -7,12 +7,14 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.UploadRequest;
+import com.gzlk.android.isp.api.upload.Upload;
+import com.gzlk.android.isp.api.upload.UploadRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.listener.OnUploadingListener;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.io.File;
@@ -65,6 +67,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
      * 标记是否直接上传图片，默认直接上传
      */
     protected boolean isSupportDirectlyUpload = true;
+
     protected int maxSelectable = 0;
 
     private int defaultMaxSelectable() {
@@ -85,18 +88,18 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     private TextView handlingTextView;
 
     /**
-     * 已选择且已压缩了的图片缓存列表
+     * 已选择且已压缩了的图片缓存列表，或者非图片的源文件列表
      */
     private ArrayList<String> waitingForUploadFiles = new ArrayList<>();
     /**
      * 已上传了的图片列表
      */
-    private ArrayList<String> uploadedFiles = new ArrayList<>();
+    private ArrayList<Attachment> uploadedFiles = new ArrayList<>();
 
     /**
      * 已上传的图片地址列表
      */
-    protected ArrayList<String> getUploadedFiles() {
+    protected ArrayList<Attachment> getUploadedFiles() {
         return uploadedFiles;
     }
 
@@ -124,6 +127,8 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             showImageHandlingDialog(R.string.ui_base_text_uploading);
             uploadingIndex = 0;
             uploading();
+        } else {
+            log("no file(s) waiting for upload.");
         }
     }
 
@@ -131,6 +136,8 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         if (uploadingIndex > waitingForUploadFiles.size() - 1) {
             // 上传完毕
             hideImageHandlingDialog();
+            // 上传完毕之后清空本地已选择的文件列表以便下次再选择
+            waitingForUploadFiles.clear();
             if (null != mOnFileUploadingListener) {
                 mOnFileUploadingListener.onUploadingComplete(uploadedFiles);
             }
@@ -144,13 +151,16 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         }
     }
 
-    private OnSingleRequestListener<String> uploadingSuccess = new OnSingleRequestListener<String>() {
+    private OnSingleRequestListener<Upload> uploadingSuccess = new OnSingleRequestListener<Upload>() {
         @Override
-        public void onResponse(String s, boolean success, String message) {
-            super.onResponse(s, success, message);
-            log(format("upload %s %s: %s", waitingForUploadFiles.get(uploadingIndex), success, s));
+        public void onResponse(Upload upload, boolean success, String message) {
+            super.onResponse(upload, success, message);
+            String uploadedFile = waitingForUploadFiles.get(uploadingIndex);
+            log(format("upload %s %s: %s", uploadedFile, success, upload));
             if (success) {
-                uploadedFiles.add(s);
+                // 默认为档案的附件
+                Attachment attachment = new Attachment(Attachment.Type.ARCHIVE, "", uploadedFile, upload.getResult(), upload.getResult2());
+                uploadedFiles.add(attachment);
                 uploadingIndex++;
                 // 继续上传下一张图片
                 uploading();
@@ -210,7 +220,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     /**
      * 上传文件
      */
-    protected void uploadFile(String file, OnSingleRequestListener<String> successListener, OnUploadingListener<String> uploadingListener) {
+    protected void uploadFile(String file, OnSingleRequestListener<Upload> successListener, OnUploadingListener<String> uploadingListener) {
         UploadRequest.request().setOnSingleRequestListener(successListener)
                 .setOnUploadingListener(uploadingListener).upload(file);
     }
@@ -359,6 +369,6 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         /**
          * 上传完成
          */
-        void onUploadingComplete(ArrayList<String> uploaded);
+        void onUploadingComplete(ArrayList<Attachment> uploaded);
     }
 }

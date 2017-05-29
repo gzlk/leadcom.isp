@@ -73,6 +73,7 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
             text = StringHelper.getString(R.string.ui_archive_approve_no_title);
         }
         if (!StringHelper.isEmpty(searchingText)) {
+            assert text != null;
             text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
         }
         titleView.setText(Html.fromHtml(text));
@@ -82,16 +83,34 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
     }
 
     private int filesCount(Archive archive) {
-        return (null == archive.getImage() ? 0 : archive.getImage().size()) +
-                (null == archive.getAttachName() ? 0 : archive.getAttachName().size());
+        int cnt = 0;
+        if (null != archive.getOffice()) {
+            cnt += archive.getOffice().size();
+        }
+        if (null != archive.getImage()) {
+            cnt += archive.getImage().size();
+        }
+        if (null != archive.getVideo()) {
+            cnt += archive.getVideo().size();
+        }
+        if (null != archive.getAttach()) {
+            cnt += archive.getAttach().size();
+        }
+        return cnt;
     }
 
     private String firstFile(Archive archive) {
-        return (null != archive.getAttachName() && archive.getAttachName().size() > 0) ? archive.getAttachName().get(0) : null;
+        if (null != archive.getOffice() && archive.getOffice().size() > 0) {
+            return archive.getOffice().get(0).getUrl();
+        }
+        if (null != archive.getVideo() && archive.getVideo().size() > 0) {
+            return archive.getVideo().get(0).getUrl();
+        }
+        return (null != archive.getAttach() && archive.getAttach().size() > 0) ? archive.getAttach().get(0).getUrl() : null;
     }
 
     private String firstImage(Archive archive) {
-        return (null != archive.getImage() && archive.getImage().size() > 0) ? archive.getImage().get(0) : null;
+        return (null != archive.getImage() && archive.getImage().size() > 0) ? archive.getImage().get(0).getUrl() : null;
     }
 
     @Click({R.id.ui_holder_view_archive_management_root})

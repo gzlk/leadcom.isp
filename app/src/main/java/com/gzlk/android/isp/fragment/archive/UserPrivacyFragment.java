@@ -11,7 +11,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.ArchiveSecurityViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Seclusion;
+import com.gzlk.android.isp.model.common.Seclusion;
 import com.gzlk.android.isp.model.archive.Security;
 
 import java.util.ArrayList;

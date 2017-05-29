@@ -81,13 +81,14 @@ public class ActRequest extends Request<Activity> {
      * @param groupId 活动所属的组织id
      * @param members 邀请的成员（可能是尚未加入活动的人）id 的 JSON 格式的数组，格式举例["aaa","bbb"]
      */
-    public void add(@NonNull String title, String content, @NonNull String groupId, ArrayList<String> members) {
+    public void add(@NonNull String title, String content, @NonNull String groupId, String logo, ArrayList<String> members) {
         // {title:"",content:"",groupId:"",accessToken:"",memberIdArray:""}
         JSONObject object = new JSONObject();
         try {
             object.put("title", title)
                     .put("content", checkNull(content))
                     .put("groupId", groupId)
+                    .put("img", checkNull(logo))
                     .put("accessToken", Cache.cache().accessToken)
                     .put("memberIdArray", new JSONArray(members));
         } catch (JSONException e) {
