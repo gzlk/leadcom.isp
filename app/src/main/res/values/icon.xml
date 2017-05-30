@@ -13,7 +13,6 @@
     <string name="ui_icon_like_hollow">&#xe6dc;</string>
     <string name="ui_icon_like_solid">&#xe60e;</string>
     <string name="ui_icon_comment">&#xe613;</string>
-    <string name="ui_icon_favorite">&#xe626;</string>
     <string name="ui_icon_clear">&#xe634;</string>
     <string name="ui_icon_attachment">&#xe63f;</string>
     <string name="ui_icon_delete">&#xe602;</string>

@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model.archive;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
@@ -58,34 +59,36 @@ public class Archive extends Additional {
         public static final String LIKE = "archiveLike";
     }
 
-    public static class Field {
-        public static final String Type = "type";
-        public static final String Title = "title";
-        public static final String Content = "content";
-        public static final String Image = "image";
-        public static final String Source = "source";
-        public static final String Location = "location";
-        public static final String UserArchiveId = "userArchiveId";
-        public static final String UserMomentId = "userMomentId";
-        public static final String GroupArchiveId = "groupArchiveId";
-        public static final String Markdown = "markdown";
-        public static final String LastModifiedDate = "lastModifiedDate";
-        public static final String CreatorId = "creatorId";
-        public static final String CreatorName = "creatorName";
-        public static final String Label = "label";
-        public static final String Office = "office";
-        public static final String Pdf = "pdf";
-        public static final String Video = "video";
-        public static final String HappenDate = "happenDate";
-        public static final String AuthPublic = "authPublic";
-        public static final String AuthGroup = "authGroup";
-        public static final String AuthUser = "authUser";
-        public static final String Attach = "attach";
-        public static final String AttachName = "attachName";
-        public static final String ReadNumber = "readNumber";
-        public static final String LikeNumber = "likeNumber";
-        public static final String CommentNumber = "commentNumber";
-        public static final String CollectNumber = "collectNumber";
+    public interface Field {
+        String Type = "type";
+        String Title = "title";
+        String Cover = "cover";
+        String Content = "content";
+        String Image = "image";
+        String Source = "source";
+        String Location = "location";
+        String UserArchiveId = "userArchiveId";
+        String UserMomentId = "userMomentId";
+        String GroupArchiveId = "groupArchiveId";
+        String Markdown = "markdown";
+        String LastModifiedDate = "lastModifiedDate";
+        String CreatorId = "creatorId";
+        String CreatorName = "creatorName";
+        String Label = "label";
+        String Office = "office";
+        String Pdf = "pdf";
+        String Video = "video";
+        String Attach = "attach";
+        String HappenDate = "happenDate";
+        String AuthPublic = "authPublic";
+        String AuthGroup = "authGroup";
+        String AuthUser = "authUser";
+        String ApproverId = "approverId";
+        String ApproveDate = "approveDate";
+        String ReadNumber = "readNumber";
+        String LikeNumber = "likeNumber";
+        String CommentNumber = "commentNumber";
+        String CollectNumber = "collectNumber";
     }
 
     /**
@@ -107,15 +110,19 @@ public class Archive extends Additional {
      */
     public interface ArchiveType {
         /**
-         * 普通档案
+         * 普通档案（个人档案、组织档案通用）
          */
         int NORMAL = 1;
         /**
-         * 个人档案
+         * 组织档案（个人档案有效）
+         */
+        int GROUP = 2;
+        /**
+         * 个人档案（组织档案有效）
          */
         int INDIVIDUAL = 2;
         /**
-         * 活动档案
+         * 活动档案（组织档案有效）
          */
         int ACTIVITY = 3;
     }
@@ -140,6 +147,24 @@ public class Archive extends Additional {
          * 活动
          */
         int ACTIVITY = 4;
+    }
+
+    /**
+     * 档案审核状态
+     */
+    public interface ArchiveStatus {
+        /**
+         * 未审核
+         */
+        int APPROVING = 1;
+        /**
+         * 已审核通过
+         */
+        int APPROVED = 2;
+        /**
+         * 审核失败（未审核通过）
+         */
+        int FAILURE = 3;
     }
 
     private void getLocalAttachments() {
@@ -192,9 +217,15 @@ public class Archive extends Additional {
     // 标签
     @Column(Field.Label)
     private ArrayList<String> label;
+    //档案封面
+    @Column(Field.Cover)
+    private String cover;
     //档案名称
     @Column(Field.Title)
     private String title;
+    //档案简介
+    @Column(Organization.Field.Introduction)
+    private String intro;
     //档案内容(html)
     @Column(Field.Content)
     private String content;
@@ -202,16 +233,16 @@ public class Archive extends Additional {
     @Column(Field.Markdown)
     private String markdown;
     // Office 文档地址
-    @Column(Field.Office)
+    @Ignore
     private ArrayList<Attachment> office;
     // 图片地址
-    @Column(Field.Image)
+    @Ignore
     private ArrayList<Attachment> image;
     // 视频地址
-    @Column(Field.Video)
+    @Ignore
     private ArrayList<Attachment> video;
     //附件地址
-    @Column(Field.Attach)
+    @Ignore
     private ArrayList<Attachment> attach;
     //档案发起者ID
     @Column(Model.Field.UserId)
@@ -222,12 +253,6 @@ public class Archive extends Additional {
     //创建者头像
     @Column(User.Field.HeadPhoto)
     private String headPhoto;
-    //档案发生时间
-    @Column(Model.Field.CreateDate)
-    private String createDate;
-    //最后一次修改时间
-    @Column(Field.LastModifiedDate)
-    private String lastModifiedDate;
     //授权公开(0.私密，自己可以看,1.公开，所有人都能查看)，个人档案的属性
     @Column(Field.AuthPublic)
     private int authPublic;
@@ -238,8 +263,25 @@ public class Archive extends Additional {
     @Column(Field.AuthUser)
     private ArrayList<String> authUser;
     //档案发生时间
+    @Column(Model.Field.CreateDate)
+    private String createDate;
+    //档案发生时间
     @Column(Field.HappenDate)
     private String happenDate;
+    //最后一次修改时间
+    @Column(Field.LastModifiedDate)
+    private String lastModifiedDate;
+
+    // 审核相关
+    //1.未审核,2.审核成功,3.审核失败
+    @Column(Activity.Field.Status)
+    private int status;
+    //档案审核人用户ID
+    @Column(Field.ApproverId)
+    private String approverId;
+    //审核时间
+    @Column(Field.ApproveDate)
+    private String approveDate;
     //档案附加信息
     @Ignore
     private Additional addition;
@@ -256,8 +298,24 @@ public class Archive extends Additional {
         return title;
     }
 
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getIntro() {
+        return intro;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
     }
 
     public String getContent() {
@@ -438,5 +496,29 @@ public class Archive extends Additional {
 
     public void setAuthUser(ArrayList<String> authUser) {
         this.authUser = authUser;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getApproverId() {
+        return approverId;
+    }
+
+    public void setApproverId(String approverId) {
+        this.approverId = approverId;
+    }
+
+    public String getApproveDate() {
+        return approveDate;
+    }
+
+    public void setApproveDate(String approveDate) {
+        this.approveDate = approveDate;
     }
 }

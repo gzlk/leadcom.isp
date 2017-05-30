@@ -146,14 +146,15 @@ public class ArchiveRequest extends Request<Archive> {
                     ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {title,happenDate,authPublic,tag,content,markdown,[office],[image],[video],[attach],accessToken}
 
+        // 新建、更新档案时，手机端不再往服务器上传content/markdown字段(2017.05.31 00:04:43)
         JSONObject object = new JSONObject();
         try {
             object.put("title", title)
-                    .put("content", checkNull(content))
+                    //.put("content", checkNull(content))
                     .put("authPublic", authPublic)
                     .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
-                    .put("markdown", checkNull(markdown))
+                    //.put("markdown", checkNull(markdown))
                     .put("office", new JSONArray(getAttachJson(office)))
                     .put("image", new JSONArray(getAttachJson(image)))
                     .put("video", new JSONArray(getAttachJson(video)))
@@ -213,16 +214,17 @@ public class ArchiveRequest extends Request<Archive> {
                     ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {groupId,type,title,happenDate,tag,[authUser],content,markdown,[office],[image],[video],[attach],accessToken}
 
+        // 新建、更新档案时，手机端不再往服务器上传content/markdown字段(2017.05.31 00:04:43)
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", groupId)
                     .put("type", type)
                     .put("title", title)
-                    .put("content", checkNull(content))
+                    //.put("content", checkNull(content))
                     .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
                     .put("authUser", new JSONArray(authUser))
-                    .put("markdown", checkNull(markdown))
+                    //.put("markdown", checkNull(markdown))
                     .put("office", new JSONArray(getAttachJson(office)))
                     .put("image", new JSONArray(getAttachJson(image)))
                     .put("video", new JSONArray(getAttachJson(video)))
@@ -274,15 +276,16 @@ public class ArchiveRequest extends Request<Archive> {
                        ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {_id,title,happenDate,authPublic,tag,content,markdown,[office],[image],[video],[attach],accessToken}
 
+        // 新建、更新档案时，手机端不再往服务器上传content/markdown字段(2017.05.31 00:04:43)
         JSONObject object = new JSONObject();
         try {
             object.put("_id", archiveId)
                     .put("title", title)
-                    .put("content", checkNull(content))
+                    //.put("content", checkNull(content))
                     .put("authPublic", authPublic)
                     .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
-                    .put("markdown", checkNull(markdown))
+                    //.put("markdown", checkNull(markdown))
                     .put("office", new JSONArray(getAttachJson(office)))
                     .put("image", new JSONArray(getAttachJson(image)))
                     .put("video", new JSONArray(getAttachJson(video)))
@@ -315,15 +318,16 @@ public class ArchiveRequest extends Request<Archive> {
                        ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {_id,title,happenDate,tag,[authUser],content,markdown,[office],[image],[video],[attach],accessToken}
 
+        // 新建、更新档案时，手机端不再往服务器上传content/markdown字段(2017.05.31 00:04:43)
         JSONObject object = new JSONObject();
         try {
             object.put("_id", archiveId)
                     .put("title", title)
-                    .put("content", checkNull(content))
+                    //.put("content", checkNull(content))
                     .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
                     .put("authUser", new JSONArray(authUser))
-                    .put("markdown", checkNull(markdown))
+                    //.put("markdown", checkNull(markdown))
                     .put("office", new JSONArray(getAttachJson(office)))
                     .put("image", new JSONArray(getAttachJson(image)))
                     .put("video", new JSONArray(getAttachJson(video)))
@@ -445,18 +449,18 @@ public class ArchiveRequest extends Request<Archive> {
     /**
      * 批准档案入群
      *
-     * @param archiveId 申请的id
+     * @param requestId 申请的id
      * @param message   附加消息
      */
-    public void approve(String archiveId, String message) {
+    public void approve(String requestId, String message) {
         //{id:"",msg:"",accessToken:""}
-        approve("/group/appToBeDoc/approve", archiveId, message);
+        approve("/group/appToBeDoc/approve", requestId, message);
     }
 
-    private void approve(String action, String archiveId, String message) {
+    private void approve(String action, String requestId, String message) {
         JSONObject object = new JSONObject();
         try {
-            object.put("id", archiveId)
+            object.put("id", requestId)
                     .put("msg", message)
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
@@ -469,8 +473,70 @@ public class ArchiveRequest extends Request<Archive> {
 
     /**
      * 否决档案入群
+     *
+     * @param requestId 申请的id
+     * @param message   附加消息
      */
-    public void reject(String archiveId, String message) {
-        approve("/group/appToBeDoc/reject", archiveId, message);
+    public void reject(String requestId, String message) {
+        approve("/group/appToBeDoc/reject", requestId, message);
+    }
+
+    /**
+     * 存档组织档案
+     *
+     * @param archiveId 档案id
+     * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveStatus}
+     */
+    public void archive(String archiveId, int status) {
+        // groDocArchiveId,status,accessToken
+        String params = format("/group/groDocArchive/archive?groDocArchiveId=%s&status=%d&accessToken=%s", archiveId, status, Cache.cache().accessToken);
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Post));
+    }
+
+    /**
+     * 查询组织档案列表
+     */
+    public void archiveList(String groupId, int pageNumber) {
+        // groupId,pageSize,pageNumber
+        String params = format("/group/groDocArchive/list?groupId=%s&pageNumber=%d", groupId, pageNumber);
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+    }
+
+    /**
+     * 搜索组织档案(通过文件名模糊搜索)
+     */
+    public void archiveSearch(String groupId, String fileName, int pageNumber) {
+        String params = format("/group/groDocArchive/list?groupId=%s&pageNumber=%d&info=%s", groupId, pageNumber, fileName);
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+    }
+
+    /**
+     * 审核组织档案
+     *
+     * @param archiveId 档案id
+     * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveStatus}
+     */
+    public void approve(String archiveId, int status) {
+        // groDocApproveId,status,accessToken
+        String params = format("/group/groDocApprove/approve?groDocApproveId=%s&status=%d&accessToken=%s", archiveId, status, Cache.cache().accessToken);
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Post));
+    }
+
+    /**
+     * 查询单份未审核组织档案
+     */
+    public void approveFind(String archiveId) {
+        // groDocApproveId
+        String params = format("/group/groDocApprove/find?groDocApproveId=%s", archiveId);
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询未审核组织档案列表
+     */
+    public void approveList(String groupId, int pageNumber) {
+        // groupId,pageSize,pageNumber
+        String params = format("/group/groDocApprove/list?groupId=%s&pageNumber=%d", groupId, pageNumber);
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
     }
 }

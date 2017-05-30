@@ -77,9 +77,9 @@ public class LikeRequest extends Request<ArchiveLike> {
     }
 
     /**
-     * 为某个档案点赞
+     * 点赞
      *
-     * @param type 个人或组织档案点赞{@link Archive.Type}
+     * @param type 点赞{@link Comment.Type}
      */
     public void add(int type, String archiveId) {
         // {momentId,accessToken}
@@ -98,7 +98,7 @@ public class LikeRequest extends Request<ArchiveLike> {
     /**
      * 取消某个档案的赞
      *
-     * @param type 个人或组织档案点赞{@link Archive.Type}
+     * @param type 个人或组织档案点赞{@link Comment.Type}
      */
     public void delete(int type, String archiveId) {
         // momentId,accessToken
@@ -111,7 +111,7 @@ public class LikeRequest extends Request<ArchiveLike> {
     /**
      * 查询某个档案的赞
      *
-     * @param type 个人或组织档案点赞{@link Archive.Type}
+     * @param type 个人或组织档案点赞{@link Comment.Type}
      */
     public void list(int type, String archiveId, int pageNumber) {
         // momentId
@@ -125,7 +125,7 @@ public class LikeRequest extends Request<ArchiveLike> {
     /**
      * 判断用户是否已点赞
      *
-     * @param type 个人或组织档案点赞{@link Archive.Type}
+     * @param type 个人或组织档案点赞{@link Comment.Type}
      */
     public void isExist(int type, String archiveId) {
         // momentId,accessToken

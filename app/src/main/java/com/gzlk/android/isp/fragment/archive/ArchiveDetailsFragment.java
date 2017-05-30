@@ -117,6 +117,11 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
+        refreshingDocument();
+    }
+
+    // 刷新当前文档的所有属性
+    private void refreshingDocument() {
         fetchingDocument(false);
         fetchingRemoteComment();
         fetchingRemoteLikes();
@@ -390,7 +395,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                         mAdapter.update(comment);
                     }
                     refreshing();
-                    fetchingRemoteComment();
+                    refreshingDocument();
                 }
             }
         }).add(commentType(), mQueryId, text);

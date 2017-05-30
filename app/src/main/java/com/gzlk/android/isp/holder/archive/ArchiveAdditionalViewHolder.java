@@ -15,6 +15,7 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
+import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -59,15 +60,23 @@ public class ArchiveAdditionalViewHolder extends BaseViewHolder {
     public void showContent(Archive archive) {
         readNumber.setText(String.valueOf(archive.getReadNum()));
         likeNumber.setText(String.valueOf(archive.getLikeNum()));
-        ArchiveLike like = getLike(type(archive), archive.getId());
+        ArchiveLike like = getLike(likeType(archive), archive.getId());
         resetLikeIcon(like != null);
         commentNumber.setText(String.valueOf(archive.getCmtNum()));
         favoriteNumber.setText(String.valueOf(archive.getColNum()));
+        // 是否收藏了该文档
+        Collection col = getCollection(Collection.Type.ARCHIVE, archive.getId());
+        resetCollectIcon(col != null);
     }
 
     private void resetLikeIcon(boolean liked) {
         likeIcon.setText(liked ? R.string.ui_icon_like_solid : R.string.ui_icon_like_hollow);
         likeIcon.setTextColor(getColor(liked ? R.color.colorPrimary : R.color.textColorHint));
+    }
+
+    private void resetCollectIcon(boolean collected) {
+        favoriteIcon.setText(collected ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
+        favoriteIcon.setTextColor(getColor(collected ? R.color.colorPrimary : R.color.textColorHint));
     }
 
     @Click({R.id.ui_tool_view_document_additional_like_container,
@@ -78,7 +87,7 @@ public class ArchiveAdditionalViewHolder extends BaseViewHolder {
                 tryLike();
                 break;
             case R.id.ui_tool_view_document_additional_favorite_container:
-                collectArchive();
+                //tryCollect();
                 break;
         }
     }
@@ -100,7 +109,10 @@ public class ArchiveAdditionalViewHolder extends BaseViewHolder {
         }
     }
 
-    private int type(Model model) {
+    /**
+     * 点赞类型
+     */
+    private int likeType(Model model) {
         if (model instanceof Moment) return Comment.Type.MOMENT;
         if (model instanceof Archive) {
             Archive archive = (Archive) model;
@@ -131,8 +143,8 @@ public class ArchiveAdditionalViewHolder extends BaseViewHolder {
     }
 
     private void likeArchive(Archive archive) {
-        ArchiveLike like = getLike(type(archive), archive.getId());
-        int type = type(archive);
+        int type = likeType(archive);
+        ArchiveLike like = getLike(type, archive.getId());
         if (null == like) {
             likeArchive(type, archive.getId());
         } else {
@@ -173,15 +185,43 @@ public class ArchiveAdditionalViewHolder extends BaseViewHolder {
         new Dao<>(ArchiveLike.class).delete(builder);
     }
 
-    private void collectArchive() {
+    private void tryCollect() {
         if (null != dataHandlerBoundDataListener) {
             Model model = (Archive) dataHandlerBoundDataListener.onHandlerBoundData(this);
-            if (null != model && model instanceof Archive) {
-                collect((Archive) model);
+            if (null != model) {
+                if (model instanceof Archive) {
+                    collectArchive((Archive) model);
+                }
             }
         }
     }
 
-    private void collect(Archive archive) {
+    private Collection getCollection(int type, String moduleId) {
+        QueryBuilder<Collection> builder = new QueryBuilder<>(Collection.class)
+                .whereEquals(Collection.Field.ModuleId, moduleId)
+                .whereAppendAnd()
+                .whereEquals(Archive.Field.Type, type);
+        List<Collection> list = new Dao<>(Collection.class).query(builder);
+        return (null == list || list.size() < 1) ? null : list.get(0);
+    }
+
+    // 收藏类型
+    private int colType(Model model) {
+        return 0;
+    }
+
+    // 收藏或取消收藏文档
+    private void collectArchive(Archive archive) {
+        // 文档收藏类型
+        Collection col = getCollection(Collection.Type.ARCHIVE, archive.getId());
+        if (null == col) {
+            // 收藏
+        } else {
+            // 取消收藏
+        }
+    }
+
+    private void collectArchive(int module,String moduleId) {
+
     }
 }

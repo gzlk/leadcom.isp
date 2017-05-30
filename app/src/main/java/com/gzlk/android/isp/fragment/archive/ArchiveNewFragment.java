@@ -416,7 +416,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
             timeHolder.addOnViewHolderClickListener(viewHolderClickListener);
         }
-        showCreateDate(null == archive ? new Date() : Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), archive.getCreateDate()));
+        showCreateDate(null == archive ? new Date() : Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), archive.getHappenDate()));
 
         // 隐私
         if (null == securityHolder) {

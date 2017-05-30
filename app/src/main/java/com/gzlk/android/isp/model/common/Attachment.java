@@ -64,26 +64,6 @@ public class Attachment extends Model {
         return false;
     }
 
-    public static boolean isVideo(String ext) {
-        if (StringHelper.isEmpty(ext)) return false;
-        switch (ext) {
-            case "avi":
-            case "rmvb":
-            case "rm":
-            case "asf":
-            case "divx":
-            case "mpg":
-            case "mpeg":
-            case "mpe":
-            case "wmv":
-            case "mkv":
-            case "mp4":
-            case "vob":
-                return true;
-        }
-        return false;
-    }
-
     public static String getFileName(String path) {
         if (StringHelper.isEmpty(path)) return null;
         return path.substring(path.lastIndexOf('/') + 1);
@@ -155,7 +135,7 @@ public class Attachment extends Model {
     }
 
     public boolean isVideo() {
-        return isVideo(ext);
+        return ImageCompress.isVideo(ext);
     }
 
     public void resetInformation() {

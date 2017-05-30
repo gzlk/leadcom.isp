@@ -8,11 +8,14 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.archive.ArchiveSource;
 import com.gzlk.android.isp.model.user.Collection;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>个人收藏相关api<br />
@@ -61,21 +64,42 @@ public class CollectionRequest extends Request<Collection> {
         return this;
     }
 
+    @Override
+    protected void save(Collection collection) {
+        if (null != collection) {
+            collection.compound();
+        }
+        super.save(collection);
+    }
+
+    @Override
+    protected void save(List<Collection> list) {
+        if (null != list && list.size() > 0) {
+            for (Collection col : list) {
+                col.compound();
+            }
+        }
+        super.save(list);
+    }
+
     /**
      * 添加个人收藏
      *
      * @param type        收藏类型，参考 {@link Collection.Type}
+     * @param source      来源(module:模块类型,id:模块ID) {@link ArchiveSource}
      * @param content     内容
      * @param creatorId   作者id
      * @param creatorName 作者名字
      * @see Collection.Type
+     * @see ArchiveSource
      */
-    public void add(int type, String content, @NonNull String creatorId, String creatorName) {
+    public void add(int type, ArchiveSource source, String content, @NonNull String creatorId, String creatorName) {
         // {type,content,creatorId,creatorName,accessToken}
 
         JSONObject object = new JSONObject();
         try {
             object.put("type", type)
+                    .put("source", new JSONObject(source.toString()))
                     .put("content", checkNull(content))
                     .put("creatorId", checkNull(creatorId))
                     .put("creatorName", checkNull(creatorName))
@@ -108,7 +132,6 @@ public class CollectionRequest extends Request<Collection> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
 
         httpRequest(getRequest(SingleCollection.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
@@ -135,6 +158,7 @@ public class CollectionRequest extends Request<Collection> {
      */
     public void search(String accessToken, String info) {
         // info,accessToken
-        httpRequest(getRequest(MultipleCollection.class, format("%s?info=%s&accessToken=%s", url(SEARCH), accessToken, info), "", HttpMethods.Get));
+        String params = format("%s?info=%s&accessToken=%s", url(SEARCH), accessToken, info);
+        httpRequest(getRequest(MultipleCollection.class, params, "", HttpMethods.Get));
     }
 }

@@ -55,19 +55,20 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         selector.setTextColor(getColor(archive.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
         String image = firstImage(archive);
         // 有附件且附件不包含图片时，显示文档图标
-        imageView.setVisibility(!StringHelper.isEmpty(image) ? View.VISIBLE : View.GONE);
-        if (!StringHelper.isEmpty(image)) {
-            // 显示第一章图片
+        imageView.setVisibility(!isEmpty(image) ? View.VISIBLE : View.GONE);
+        if (!isEmpty(image)) {
+            // 显示第一张图片
             imageView.displayImage(image, getDimension(R.dimen.ui_static_dp_60), false, false);
-        }
-        // 显示第一个文件的格式
-        image = firstFile(archive);
-        iconContainer.setVisibility(!StringHelper.isEmpty(image) ? View.VISIBLE : View.GONE);
-        if (!StringHelper.isEmpty(image)) {
-            assert image != null;
-            String name = image.substring(image.lastIndexOf('/') + 1);
-            String ext = name.substring(name.lastIndexOf('.') + 1);
-            iconView.setText(AttachmentViewHolder.getFileExtension(ext));
+        } else {
+            // 显示第一个文件的格式
+            image = firstFile(archive);
+            iconContainer.setVisibility(!isEmpty(image) ? View.VISIBLE : View.GONE);
+            if (!StringHelper.isEmpty(image)) {
+                assert image != null;
+                String name = image.substring(image.lastIndexOf('/') + 1);
+                String ext = name.substring(name.lastIndexOf('.') + 1);
+                iconView.setText(AttachmentViewHolder.getFileExtension(ext));
+            }
         }
         String text = archive.getTitle();
         if (StringHelper.isEmpty(text)) {

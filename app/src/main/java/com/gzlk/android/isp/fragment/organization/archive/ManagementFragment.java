@@ -3,10 +3,10 @@ package com.gzlk.android.isp.fragment.organization.archive;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
+import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
@@ -32,14 +32,14 @@ public class ManagementFragment extends BaseViewPagerSupportFragment {
         return mf;
     }
 
-    @ViewId(R.id.ui_tool_view_archive_management_title)
-    private LinearLayout titleContainer;
     @ViewId(R.id.ui_tool_view_archive_management_title_button1)
     private CorneredButton button1;
     @ViewId(R.id.ui_tool_view_archive_management_title_button2)
     private CorneredButton button2;
     @ViewId(R.id.ui_tool_view_archive_management_title_button3)
     private CorneredButton button3;
+
+    private SearchableViewHolder searchableViewHolder;
 
     @Override
     public int getLayout() {
@@ -48,18 +48,21 @@ public class ManagementFragment extends BaseViewPagerSupportFragment {
 
     @Override
     public void doingInResume() {
-        tryPaddingContent(titleContainer, false);
         super.doingInResume();
+        initializeHolder();
     }
 
     @Override
     protected void initializeFragments() {
         // 组织的所有档案
-        mFragments.add(ApprovableArchivesFragment.newInstance(format("%s,%d", mQueryId, ApprovableArchivesFragment.ALL)));
+        String param = format("%s,%d", mQueryId, ArchiveListFragment.TYPE_ALL);
+        mFragments.add(ArchiveListFragment.newInstance(param));
         // 未存档组织档案
-        //mFragments.add(new ArchivingFragment());
+        param = format("%s,%d", mQueryId, ArchiveListFragment.TYPE_ARCHIVING);
+        mFragments.add(ArchiveListFragment.newInstance(param));
         // 未审核组织档案
-        //mFragments.add(new ApprovingFragment());
+        param = format("%s,%d", mQueryId, ArchiveListFragment.TYPE_APPROVING);
+        mFragments.add(ArchiveListFragment.newInstance(param));
     }
 
     @Override
@@ -75,6 +78,11 @@ public class ManagementFragment extends BaseViewPagerSupportFragment {
 
         button3.setNormalColor(position == 2 ? color1 : Color.WHITE);
         button3.setTextColor(position == 2 ? Color.WHITE : color2);
+
+        for (int i = 0, len = mFragments.size(); i < len; i++) {
+            ArchiveListFragment my = (ArchiveListFragment) mFragments.get(i);
+            my.setViewPagerDisplayedCurrent(position == i);
+        }
     }
 
     @Override
@@ -101,13 +109,27 @@ public class ManagementFragment extends BaseViewPagerSupportFragment {
                 break;
             case R.id.ui_tool_view_archive_management_title_button2:
                 // 打开未存档页面
-                //setDisplayPage(1);
+                setDisplayPage(1);
                 break;
             case R.id.ui_tool_view_archive_management_title_button3:
                 // 打开未审核页面
-                //setDisplayPage(2);
-                openActivity(ApprovingFragment.class.getName(), mQueryId, true, false);
+                setDisplayPage(2);
+                //openActivity(ApprovingFragment.class.getName(), mQueryId, true, false);
                 break;
         }
     }
+
+    private void initializeHolder() {
+        if (null == searchableViewHolder) {
+            searchableViewHolder = new SearchableViewHolder(mRootView, this);
+            searchableViewHolder.setOnSearchingListener(onSearchingListener);
+        }
+    }
+
+    private SearchableViewHolder.OnSearchingListener onSearchingListener = new SearchableViewHolder.OnSearchingListener() {
+        @Override
+        public void onSearching(String text) {
+            ((ArchiveListFragment) mFragments.get(getDisplayedPage())).onSearching(text);
+        }
+    };
 }

@@ -73,7 +73,7 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
     public void showContent(Archive archive) {
         titleHolder.showContent(format(items[0], archive.getTitle()));
         sourceHolder.showContent(format(items[1], archive.getUserName()));
-        timeHolder.showContent(format(items[2], Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
+        timeHolder.showContent(format(items[2], Utils.format(archive.getHappenDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
         privacyHolder.showContent(format(items[3], ""));
         contentView.setText(StringHelper.escapeFromHtml(archive.getContent()));
         contentView.makeExpandable();

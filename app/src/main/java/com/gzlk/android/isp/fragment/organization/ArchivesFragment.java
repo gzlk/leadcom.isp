@@ -141,7 +141,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                     break;
                 case R.id.ui_tooltip_menu_organization_document_manage:
                     // 管理组织档案
-                    openActivity(ManagementFragment.class.getName(), mQueryId, false, false, true);
+                    openActivity(ManagementFragment.class.getName(), mQueryId, false, false);
                     break;
             }
         }

@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.MediaMetadataRetriever;
+import android.text.TextUtils;
 
 import com.gzlk.android.isp.helper.LogHelper;
 
@@ -159,6 +161,77 @@ public final class ImageCompress {
             default:
                 return false;
         }
+    }
+
+    /**
+     * 指定的文件扩展名是否为视频文件
+     */
+    public static boolean isVideo(String extension) {
+        if (TextUtils.isEmpty(extension)) return false;
+        switch (extension.toLowerCase(Locale.getDefault())) {
+            case "avi":
+            case "rmvb":
+            case "rm":
+            case "asf":
+            case "divx":
+            case "mp4":
+            case "mpg":
+            case "mpeg":
+            case "mpe":
+            case "wmv":
+            case "mkv":
+            case "3gp":
+            case "vob":
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取视频的缩略图，默认获取视频1s时的帧
+     *
+     * @param filePath 本地视频文件路径
+     */
+    public static Bitmap getVideoThumbnail(String filePath) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(filePath);
+            bitmap = retriever.getFrameAtTime();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                retriever.release();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
+        return getVideoThumbnail(filePath, 1000);
+    }
+
+    /**
+     * 获取视频的缩略图
+     *
+     * @param filePath 本地视频文件路径
+     * @param atTime   指定时间点
+     */
+    public static Bitmap getVideoThumbnail(String filePath, long atTime) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(filePath);
+            bitmap = retriever.getFrameAtTime(atTime);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                retriever.release();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
+        return bitmap;
     }
 
     /**

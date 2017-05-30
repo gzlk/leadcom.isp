@@ -24,6 +24,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.archive.ArchiveSource;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
@@ -253,10 +254,12 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).add(Collection.Type.IMAGE, url, momentUser, momentName);
+        }).add(Collection.Type.IMAGE, new ArchiveSource() {{
+            setModule(Collection.Module.MOMENT);
+            setId(mQueryId);
+        }}, url, momentUser, momentName);
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void save() {
         String url = images.get(selected);
         String local = HttpHelper.helper().getLocalFilePath(url, App.IMAGE_DIR);
