@@ -86,11 +86,11 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
     /**
      * 尝试获取拨打电话的运行时权限
      */
-    public void requestPhoneCallPermission() {
-        String warning = StringHelper.getString(R.string.ui_grant_permission_phone_call);
-        String denied = StringHelper.getString(R.string.ui_denied_permission_phone_call);
-        tryGrantPermission(Manifest.permission.CALL_PHONE, BaseFragment.GRANT_PHONE_CALL, warning, denied);
-    }
+//    public void requestPhoneCallPermission() {
+//        String warning = StringHelper.getString(R.string.ui_grant_permission_phone_call);
+//        String denied = StringHelper.getString(R.string.ui_denied_permission_phone_call);
+//        tryGrantPermission(Manifest.permission.CALL_PHONE, BaseFragment.GRANT_PHONE_CALL, warning, denied);
+//    }
 
     /**
      * 尝试申请运行时权限
@@ -141,6 +141,18 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
      */
     public boolean hasPermission(String permission) {
         return hasPermission(mActivity, permission);
+    }
+
+    /**
+     * 检测当前用户是否已经设置了不要再询问
+     */
+    public boolean hasNeverAsked(String permission) {
+        if (!hasPermission(permission)) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                return !shouldShowRequestPermissionRationale(permission);
+            }
+        }
+        return true;
     }
 
     /**

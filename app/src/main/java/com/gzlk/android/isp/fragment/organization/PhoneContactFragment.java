@@ -22,6 +22,8 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.PhoneContactViewHolder;
@@ -66,6 +68,8 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         return pcf;
     }
 
+    private static boolean hasPermission = false;
+
     @ViewId(R.id.ui_phone_contact_slid_view)
     private SlidView slidView;
     @ViewId(R.id.ui_phone_contact_center_text_container)
@@ -77,6 +81,13 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     private SearchableViewHolder searchableViewHolder;
 
     private ContactAdapter mAdapter;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        hasPermission = false;
+        checkPermission();
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public int getLayout() {
@@ -94,7 +105,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         if (BuildConfig.DEBUG) {
             new Dao<>(Contact.class).clear();
         }
-        tryReadPhoneContact();
+        if (hasPermission) {
+            readyToReadContact();
+        }
     }
 
     @Override
@@ -123,31 +136,32 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     }
 
     // 尝试读取手机通讯录
-    private void tryReadPhoneContact() {
+    private void checkPermission() {
         if (!hasPermission(Manifest.permission.READ_CONTACTS)) {
             String text = StringHelper.getString(R.string.ui_text_permission_contact_request);
             String denied = StringHelper.getString(R.string.ui_text_permission_contact_denied);
             tryGrantPermission(Manifest.permission.READ_CONTACTS, GRANT_CONTACTS, text, denied);
         } else {
-            readyToReadContact();
+            hasPermission = true;
         }
     }
 
     @Override
     public void permissionGranted(String[] permissions, int requestCode) {
         if (requestCode == GRANT_CONTACTS) {
-            readyToReadContact();
+            hasPermission = true;
         }
         super.permissionGranted(permissions, requestCode);
     }
 
     @Override
     public void permissionGrantFailed(int requestCode) {
+        super.permissionGrantFailed(requestCode);
         if (requestCode == GRANT_CONTACTS) {
             setNothingText(R.string.ui_phone_contact_no_permission);
             displayNothing(true);
+            finish();
         }
-        super.permissionGrantFailed(requestCode);
     }
 
     /**
@@ -309,6 +323,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 }
             }
         }).inviteJoinIntoGroup(phone, mOrganizationId);
+    }
+
+    private void warningNoContact() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_phone_contact_nothing_read, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                return true;
+            }
+        });
     }
 
     private class ContactAdapter extends RecyclerViewAdapter<PhoneContactViewHolder, Contact> {
@@ -475,6 +498,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             } else if (values[0] == 1) {
                 materialHorizontalProgressBar.setProgress(values[1]);
             }
+            if (values[0] == 1 && values[1] == 0) {
+                warningNoContact();
+            }
         }
 
         // 读取手机联系人
@@ -500,7 +526,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                             }
                             index++;
                             if (BuildConfig.DEBUG) {
-                                Thread.sleep(5);
+                                Thread.sleep(3);
                             }
                             publishProgress(0, index, max);
                         }
@@ -539,7 +565,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                     dao.save(contact);
                     // 逐条插入
                     if (BuildConfig.DEBUG) {
-                        Thread.sleep(5);
+                        Thread.sleep(3);
                     }
                     index++;
                     publishProgress(1, index, max);
