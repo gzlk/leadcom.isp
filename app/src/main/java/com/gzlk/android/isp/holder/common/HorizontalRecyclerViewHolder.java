@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.common;
 
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.common.TextViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;

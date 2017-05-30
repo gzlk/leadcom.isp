@@ -13,7 +13,7 @@ import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.home.ArchiveFragment;
 import com.gzlk.android.isp.fragment.home.MomentFragment;
 import com.gzlk.android.isp.fragment.home.SeminarFragment;
-import com.gzlk.android.isp.holder.HorizontalRecyclerViewHolder;
+import com.gzlk.android.isp.holder.common.HorizontalRecyclerViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
