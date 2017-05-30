@@ -5,16 +5,14 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/ui_tool_view_activity_management_title"
+        android:id="@+id/ui_tool_view_activity_details_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary">
 
-        <include layout="@layout/tool_view_title_activity_management" />
+        <include layout="@layout/tool_view_title_activity_details" />
 
     </LinearLayout>
-
-    <include layout="@layout/holder_view_searchable" />
 
     <LinearLayout
         android:layout_width="match_parent"

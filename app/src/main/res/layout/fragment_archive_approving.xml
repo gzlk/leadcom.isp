@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/tool_view_archive_approving_title" />
+    <include layout="@layout/tool_view_title_archive_approving" />
 
     <LinearLayout
         android:layout_width="match_parent"

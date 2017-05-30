@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary">
 
-        <include layout="@layout/tool_view_archive_management_title" />
+        <include layout="@layout/tool_view_title_archive_management" />
 
     </LinearLayout>
 

@@ -261,7 +261,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-
+            openActivity(ActivityDetailsMainFragment.class.getName(), mAdapter.get(index).getId(), false, false);
         }
     };
 

@@ -63,6 +63,9 @@
 
     <string name="ui_phone_contact_no_permission">无法读取联系人</string>
     <string name="ui_phone_contact_no_more">暂时没有什么联系人</string>
+    <string name="ui_phone_contact_nothing_read">
+        <![CDATA[<b>没有读取到任何联系人</b><br/>由此造成的原因可能是您确实没有保存过联系人，或者因为其他<font color="#3cbaff">安全管理类软件</font>限制了相应的权限，请确认后再试试。]]>
+    </string>
     <string name="ui_phone_contact_invite">邀请</string>
     <string name="ui_phone_contact_inviting">已邀请</string>
     <string name="ui_phone_contact_invited">已加入</string>

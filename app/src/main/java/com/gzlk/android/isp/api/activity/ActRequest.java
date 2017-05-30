@@ -136,7 +136,7 @@ public class ActRequest extends Request<Activity> {
     }
 
     private void findInCache(String activityId) {
-        Activity activity = new Dao<>(Activity.class).query(activityId);
+        Activity activity = dao.query(activityId);
         if (null == activity) {
             findFromRemote(activityId);
         } else {
@@ -173,7 +173,6 @@ public class ActRequest extends Request<Activity> {
     }
 
     private void loadingLocal(String groupId) {
-        Dao<Activity> dao = new Dao<>(Activity.class);
         QueryBuilder<Activity> builder = new QueryBuilder<>(Activity.class)
                 .whereEquals(Organization.Field.GroupId, groupId)
                 .orderBy(Model.Field.CreateDate);

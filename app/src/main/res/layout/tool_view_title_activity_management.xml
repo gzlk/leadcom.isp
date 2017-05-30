@@ -48,6 +48,7 @@
             app:active_color="@color/colorPrimary"
             app:background_type="fill"
             app:corner_size="@dimen/ui_static_dp_zero"
+            app:disable_when_click="false"
             app:normal_color="@android:color/white" />
 
         <com.hlk.hlklib.lib.view.CorneredButton
@@ -64,6 +65,7 @@
             app:active_color="@color/colorPrimary"
             app:background_type="fill"
             app:corner_size="@dimen/ui_static_dp_zero"
+            app:disable_when_click="false"
             app:normal_color="@android:color/white" />
 
         <com.hlk.hlklib.lib.view.CorneredButton
@@ -78,6 +80,7 @@
             app:active_color="@color/colorPrimary"
             app:background_type="fill"
             app:corner_size="@dimen/ui_static_dp_zero"
+            app:disable_when_click="false"
             app:normal_color="@android:color/white"
             app:right_bottom_corner_size="@dimen/ui_base_dimen_button_corner_size"
             app:right_top_corner_size="@dimen/ui_base_dimen_button_corner_size" />

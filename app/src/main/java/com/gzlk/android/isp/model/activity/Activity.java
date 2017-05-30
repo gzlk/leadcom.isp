@@ -42,6 +42,20 @@ public class Activity extends Model {
         String ActivityId = "activityId";
     }
 
+    /**
+     * 活动状态
+     */
+    public interface Status {
+        /**
+         * 开放中
+         */
+        int ACTIVE = 1;
+        /**
+         * 已结束
+         */
+        int ENDED = 2;
+    }
+
     //标题
     @Column(Archive.Field.Title)
     private String title;

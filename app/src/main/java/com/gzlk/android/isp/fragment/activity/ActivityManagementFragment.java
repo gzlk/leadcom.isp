@@ -35,8 +35,6 @@ public class ActivityManagementFragment extends BaseViewPagerSupportFragment {
         return amf;
     }
 
-    @ViewId(R.id.ui_tool_view_activity_management_title)
-    private LinearLayout titleContainer;
     @ViewId(R.id.ui_ui_custom_title_left_text)
     private TextView leftText;
     @ViewId(R.id.ui_tool_view_activity_management_title_button1)
