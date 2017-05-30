@@ -2,6 +2,8 @@ package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
@@ -164,8 +166,29 @@ public class ArchiveRequest extends Request<Archive> {
         httpRequest(getRequest(SingleArchive.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
+    // 序列化 Attachment 类时的排除策略
+    private static ExclusionStrategy strategy = new ExclusionStrategy() {
+
+        @Override
+        public boolean shouldSkipField(FieldAttributes f) {
+            // Attachment 中上传到服务器上时不需要的字段
+            return f.getName().equals("id") ||          // id
+                    f.getName().equals("type") ||       // type
+                    f.getName().equals("archiveId") ||  // archiveId
+                    f.getName().contains("fullPath") || // fullPath
+                    f.getName().contains("ext") ||      // ext
+                    f.getName().startsWith("is") ||     // isSelectable, isSelected
+                    f.getName().startsWith("local");    // localDeleted
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> clazz) {
+            return false;
+        }
+    };
+
     private String getAttachJson(ArrayList<Attachment> list) {
-        return Json.gson().toJson(list, new TypeToken<ArrayList<Attachment>>() {
+        return Json.gson(strategy).toJson(list, new TypeToken<ArrayList<Attachment>>() {
         }.getType());
     }
 
@@ -370,7 +393,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param userId     用户的id
      */
     public void list(int pageNumber, String userId) {
-        // abstrSize,abstrRow,pageSize,pageNumber,accessToken
+        // abstrSize,abstrRow,pageNumber,accessToken
         String param = format("%s&pageNumber=%d&accessToken=%s&userId=%s", SUMMARY, pageNumber, Cache.cache().accessToken, userId);
         httpRequest(getRequest(SpecialArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
@@ -382,8 +405,8 @@ public class ArchiveRequest extends Request<Archive> {
      * @param pageNumber     页码
      */
     public void list(String organizationId, int pageNumber) {
-        //groupId,abstrSize,abstrRow,pageSize,pageNumber
-        String param = format("?%s&groupId=%s&pageNumber=%d&accessToken=&s", SUMMARY, organizationId, pageNumber, Cache.cache().accessToken);
+        //groupId,abstrSize,abstrRow,pageNumber
+        String param = format("?%s&groupId=%s&pageNumber=%d&accessToken=%s", SUMMARY, organizationId, pageNumber, Cache.cache().accessToken);
         httpRequest(getRequest(SpecialArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
     }
 

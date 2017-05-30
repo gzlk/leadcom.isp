@@ -7,7 +7,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.hlk.hlklib.lib.inject.ViewId;
 

@@ -48,4 +48,13 @@ public class Json {
             }
         }).create();
     }
+
+    /**
+     * 获取一个Gson实例并指定在序列化（反序列化时）的排除策略
+     *
+     * @param strategy 序列化、反序列化时的自定义排除策略
+     */
+    public static Gson gson(ExclusionStrategy strategy) {
+        return new GsonBuilder().setExclusionStrategies(strategy).create();
+    }
 }

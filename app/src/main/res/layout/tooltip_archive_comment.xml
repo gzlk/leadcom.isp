@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ui_tool_view_tooltip_menu_document_comment"
+    android:id="@+id/ui_tooltip_document_comment"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -8,7 +8,7 @@
     android:visibility="gone">
 
     <TextView
-        android:id="@+id/ui_tool_popup_menu_document_comment_copy"
+        android:id="@+id/ui_tooltip_menu_document_comment_copy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -23,7 +23,7 @@
         android:textColor="@android:color/white" />
 
     <TextView
-        android:id="@+id/ui_tool_popup_menu_document_comment_delete"
+        android:id="@+id/ui_tooltip_menu_document_comment_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"

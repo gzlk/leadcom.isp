@@ -189,6 +189,9 @@ public class Archive extends Additional {
      */
     @Column(Field.Type)
     private int type;
+    // 标签
+    @Column(Field.Label)
+    private ArrayList<String> label;
     //档案名称
     @Column(Field.Title)
     private String title;
@@ -198,9 +201,6 @@ public class Archive extends Additional {
     //档案内容(markdown)
     @Column(Field.Markdown)
     private String markdown;
-    // 标签
-    @Column(Field.Label)
-    private ArrayList<String> label;
     // Office 文档地址
     @Column(Field.Office)
     private ArrayList<Attachment> office;
@@ -268,10 +268,28 @@ public class Archive extends Additional {
         this.content = content;
     }
 
+    /**
+     * 档案类型
+     * <p>
+     * 个人档案时：(1.普通个人档案,2.个人转到组织的档案)
+     * </p>
+     * <p>
+     * 组织档案时：(1.普通组织档案,2.个人转到组织的档案,3.活动存档)
+     * </p>
+     */
     public int getType() {
         return type;
     }
 
+    /**
+     * 档案类型
+     * <p>
+     * 个人档案时：(1.普通个人档案,2.个人转到组织的档案)
+     * </p>
+     * <p>
+     * 组织档案时：(1.普通组织档案,2.个人转到组织的档案,3.活动存档)
+     * </p>
+     */
     public void setType(int type) {
         this.type = type;
     }

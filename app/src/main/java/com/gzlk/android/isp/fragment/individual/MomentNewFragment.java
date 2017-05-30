@@ -21,7 +21,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.ImageViewHolder;
-import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;

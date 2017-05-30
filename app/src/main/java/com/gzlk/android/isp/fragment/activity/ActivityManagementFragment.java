@@ -3,12 +3,11 @@ package com.gzlk.android.isp.fragment.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
-import com.gzlk.android.isp.holder.SearchableViewHolder;
+import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;

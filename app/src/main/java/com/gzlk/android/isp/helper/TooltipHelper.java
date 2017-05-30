@@ -32,17 +32,18 @@ public class TooltipHelper {
             // 普通文字
             R.id.ui_tool_popup_menu_text,
             // 文档评论
-            R.id.ui_tool_popup_menu_document_comment_copy,
-            R.id.ui_tool_popup_menu_document_comment_delete,
+            R.id.ui_tooltip_menu_document_comment_copy,
+            R.id.ui_tooltip_menu_document_comment_delete,
             // 组织小组里的通讯录
-            R.id.ui_tool_popup_menu_squad_contact_organization,
-            R.id.ui_tool_popup_menu_squad_contact_phone,
+            R.id.ui_tooltip_menu_squad_contact_organization,
+            R.id.ui_tooltip_menu_squad_contact_phone,
             // 组织档案管理菜单
-            R.id.ui_tool_popup_menu_organization_document_new,
-            R.id.ui_tool_popup_menu_organization_document_manage,
+            R.id.ui_tooltip_menu_organization_document_new,
+            R.id.ui_tooltip_menu_organization_document_manage,
+            R.id.ui_tooltip_menu_organization_document_new_normal,
             // 活动管理菜单
-            R.id.ui_tool_popup_menu_activity_add,
-            R.id.ui_tool_popup_menu_activity_manage
+            R.id.ui_tooltip_menu_activity_add,
+            R.id.ui_tooltip_menu_activity_manage
     };
 
     public static PopupWindow showTooltip(final View anchorView, int viewLayout, boolean belowAnchor, int arrowType, View.OnClickListener onClickListener) {

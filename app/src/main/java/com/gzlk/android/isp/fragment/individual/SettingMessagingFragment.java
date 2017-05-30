@@ -6,8 +6,8 @@ import android.widget.LinearLayout;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
-import com.gzlk.android.isp.holder.ToggleableViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.common.ToggleableViewHolder;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 /**

@@ -42,7 +42,7 @@ public class ArchiveCommentViewHolder extends BaseViewHolder {
             @Override
             public boolean onLongClick(View v) {
                 container.setNormalColor(getColor(R.color.textColorHintLightLight));
-                fragment.showTooltip(v, R.id.ui_tool_view_tooltip_menu_document_comment, false, TooltipHelper.TYPE_CENTER, onClickListener);
+                fragment.showTooltip(v, R.id.ui_tooltip_document_comment, false, TooltipHelper.TYPE_CENTER, onClickListener);
                 return true;
             }
         });
@@ -54,13 +54,13 @@ public class ArchiveCommentViewHolder extends BaseViewHolder {
             container.setNormalColor(Color.WHITE);
             log("clicked: " + v);
             switch (v.getId()) {
-                case R.id.ui_tool_popup_menu_document_comment_copy:
+                case R.id.ui_tooltip_menu_document_comment_copy:
                     Comment comment = ((ArchiveDetailsFragment) fragment()).getFromPosition(getAdapterPosition());
                     if (null != comment) {
                         ClipboardHelper.copyToClipboard(v.getContext(), comment.getContent());
                     }
                     break;
-                case R.id.ui_tool_popup_menu_document_comment_delete:
+                case R.id.ui_tooltip_menu_document_comment_delete:
                     // 删除本条评论
                     ((ArchiveDetailsFragment) fragment()).deleteComment(getAdapterPosition());
                     break;

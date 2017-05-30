@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
@@ -95,8 +96,13 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             }
             ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
             ((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
+            ((ArchivesFragment) mFragments.get(2)).setIsManager(isManager(item));
         }
     };
+
+    private boolean isManager(Organization org) {
+        return org.getCreatorId().equals(Cache.cache().userId);
+    }
 
     @Override
     protected void onViewPagerDisplayedChanged(boolean visible) {

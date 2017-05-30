@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <include layout="@layout/tool_view_divider_big" />
+    android:orientation="vertical"
+    android:paddingTop="@dimen/ui_base_dimen_margin_padding">
 
     <com.hlk.hlklib.lib.view.CorneredView
         android:layout_width="match_parent"
@@ -15,26 +14,26 @@
         app:cv_border_size="@dimen/ui_static_dp_zero">
 
         <include
-            android:id="@+id/ui_document_new_title"
+            android:id="@+id/ui_archive_creator_title"
             layout="@layout/holder_view_simple_inputable" />
 
         <include
-            android:id="@+id/ui_document_new_source"
+            android:id="@+id/ui_archive_creator_source"
             layout="@layout/holder_view_simple_inputable"
             android:visibility="gone" />
 
         <include
-            android:id="@+id/ui_document_new_time"
+            android:id="@+id/ui_archive_creator_happen_date"
             layout="@layout/holder_view_simple_clickable" />
 
         <include
-            android:id="@+id/ui_document_new_security"
+            android:id="@+id/ui_archive_creator_security"
             layout="@layout/holder_view_simple_clickable" />
 
     </com.hlk.hlklib.lib.view.CorneredView>
 
     <com.hlk.hlklib.lib.view.ClearEditText
-        android:id="@+id/ui_document_new_content"
+        android:id="@+id/ui_archive_creator_summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -49,7 +48,7 @@
     <include layout="@layout/holder_view_attachment_picker" />
 
     <LinearLayout
-        android:id="@+id/ui_document_new_attachments_layout"
+        android:id="@+id/ui_archive_creator_attachments_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

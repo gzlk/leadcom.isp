@@ -11,7 +11,7 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.hlk.hlklib.lib.inject.Click;

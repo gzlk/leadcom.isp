@@ -3,6 +3,7 @@ package com.gzlk.android.isp.holder;
 import android.view.View;
 
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 
 /**

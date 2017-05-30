@@ -23,8 +23,8 @@ import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
-import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
-import com.gzlk.android.isp.holder.SimpleInputableViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -64,7 +64,9 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         ArchiveNewFragment dnf = new ArchiveNewFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
+        // 档案类型，群档案或个人档案
         bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
+        // 档案id，编辑档案时传入，为空时表示新建档案
         bundle.putString(PARAM_QUERY_ID, strings[1]);
         if (strings.length > 2) {
             // 要发布到的组织id
@@ -97,17 +99,17 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     // UI
-    @ViewId(R.id.ui_document_new_title)
+    @ViewId(R.id.ui_archive_creator_title)
     private View titleInputView;
-    @ViewId(R.id.ui_document_new_source)
+    @ViewId(R.id.ui_archive_creator_source)
     private View sourceView;
-    @ViewId(R.id.ui_document_new_time)
+    @ViewId(R.id.ui_archive_creator_happen_date)
     private View timeView;
-    @ViewId(R.id.ui_document_new_security)
+    @ViewId(R.id.ui_archive_creator_security)
     private View securityView;
-    @ViewId(R.id.ui_document_new_content)
+    @ViewId(R.id.ui_archive_creator_summary)
     private ClearEditText contentView;
-    @ViewId(R.id.ui_document_new_attachments_layout)
+    @ViewId(R.id.ui_archive_creator_attachments_layout)
     private LinearLayout attachmentLayout;
 
     // holder
@@ -215,10 +217,10 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(title, content, seclusion.getStatus(), happenDate, tags, "", office, images, video, attach);
+        }).add(title, content, seclusion.getStatus(), happenDate, labels, "", office, images, video, attach);
     }
 
-    private ArrayList<String> tags = new ArrayList<>();
+    private ArrayList<String> labels = new ArrayList<>();
     private ArrayList<Attachment> office = new ArrayList<>();
     private ArrayList<Attachment> images = new ArrayList<>();
     private ArrayList<Attachment> video = new ArrayList<>();
@@ -256,7 +258,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).add(archiveGroup, Archive.ArchiveType.NORMAL, title, content, happenDate,
-                tags, sec.getUserIds(), "", office, images, video, attach);
+                labels, sec.getUserIds(), "", office, images, video, attach);
     }
 
     private void editDocument(String title, String content) {
@@ -278,7 +280,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, title, content, seclusion.getStatus(), happenDate, tags, "", office, images, video, attach);
+        }).update(mQueryId, title, content, seclusion.getStatus(), happenDate, labels, "", office, images, video, attach);
     }
 
     private void editOrganizationArchive(String title, String content) {
@@ -292,7 +294,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, title, content, happenDate, tags, seclusion.getUserIds(), "", office, images, video, attach);
+        }).update(mQueryId, title, content, happenDate, labels, seclusion.getUserIds(), "", office, images, video, attach);
     }
 
     @Override
@@ -307,7 +309,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_document_new;
+        return R.layout.fragment_archive_creator;
     }
 
     @Override

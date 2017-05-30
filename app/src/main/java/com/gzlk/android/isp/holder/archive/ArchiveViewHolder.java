@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.holder.archive;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -50,10 +51,12 @@ public class ArchiveViewHolder extends BaseViewHolder {
     public ArchiveViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        userHead.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
         additionalViewHolder = new ArchiveAdditionalViewHolder(itemView, fragment);
     }
 
     public void showContent(Archive archive) {
+        userHead.displayImage(archive.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_35), false, false);
         userName.setText(archive.getUserName());
         createTime.setText(Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
         documentTitle.setText(archive.getTitle());

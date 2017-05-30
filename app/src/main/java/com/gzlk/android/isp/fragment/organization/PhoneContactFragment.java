@@ -27,7 +27,7 @@ import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.PhoneContactViewHolder;
-import com.gzlk.android.isp.holder.SearchableViewHolder;
+import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.gzlk.android.isp.lib.view.SlidView;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.common.Contact;

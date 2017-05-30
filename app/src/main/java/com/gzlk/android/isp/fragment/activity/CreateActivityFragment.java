@@ -15,8 +15,8 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationContactPickFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
-import com.gzlk.android.isp.holder.SimpleInputableViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -25,7 +25,6 @@ import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
-import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;

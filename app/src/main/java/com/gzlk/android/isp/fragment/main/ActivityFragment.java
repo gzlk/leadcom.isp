@@ -134,17 +134,17 @@ public class ActivityFragment extends BaseOrganizationFragment {
     }
 
     public void rightIconClick(View view) {
-        showTooltip(view, R.id.ui_tool_view_tooltip_menu_activity_manage, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+        showTooltip(view, R.id.ui_tooltip_activity_management, true, TooltipHelper.TYPE_RIGHT, onClickListener);
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.ui_tool_popup_menu_activity_add:
+                case R.id.ui_tooltip_menu_activity_add:
                     openActivity(CreateActivityFragment.class.getName(), format(",%s", mQueryId), true, true);
                     break;
-                case R.id.ui_tool_popup_menu_activity_manage:
+                case R.id.ui_tooltip_menu_activity_manage:
                     openActivity(ActivityManagementFragment.class.getName(), mQueryId, false, false);
                     break;
             }

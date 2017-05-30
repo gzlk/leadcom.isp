@@ -19,11 +19,10 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.ContactViewHolder;
-import com.gzlk.android.isp.holder.SearchableViewHolder;
+import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Member;
-import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.ViewId;
 
@@ -134,7 +133,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
-                    showTooltip(((TitleActivity) Activity()).getRightButton(), R.id.ui_tool_view_tooltip_menu_squad_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
+                    showTooltip(((TitleActivity) Activity()).getRightButton(), R.id.ui_tooltip_squad_contact_picker, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             popupMenuClickHandle(v);
@@ -149,11 +148,11 @@ public class ContactFragment extends BaseOrganizationFragment {
         // 找到当前打开的小组
         Squad squad = new Dao<>(Squad.class).query(mQueryId);
         switch (view.getId()) {
-            case R.id.ui_tool_popup_menu_squad_contact_organization:
+            case R.id.ui_tooltip_menu_squad_contact_organization:
                 // 打开组织通讯录并尝试将里面的用户邀请到小组
                 openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", squad.getGroupId(), squad.getId()), true, false);
                 break;
-            case R.id.ui_tool_popup_menu_squad_contact_phone:
+            case R.id.ui_tooltip_menu_squad_contact_phone:
                 // 打开手机通讯录，并尝试将用户拉进小组
                 openActivity(PhoneContactFragment.class.getName(), format("%s,%s", squad.getGroupId(), squad.getId()), true, false);
                 break;

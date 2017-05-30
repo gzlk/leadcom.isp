@@ -17,7 +17,7 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.activity.ActivityLabelViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.TextViewHolder;
+import com.gzlk.android.isp.holder.common.TextViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;

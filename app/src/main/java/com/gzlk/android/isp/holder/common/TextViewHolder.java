@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.common;
 
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
