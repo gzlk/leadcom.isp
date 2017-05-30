@@ -1,16 +1,15 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.attachment;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredView;
 
 /**
@@ -23,17 +22,17 @@ import com.hlk.hlklib.lib.view.CorneredView;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class AttachItemViewHolder extends BaseViewHolder {
+public class AttacherItemViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_attach_item)
     private CorneredView container;
 
-    public AttachItemViewHolder(View itemView, BaseFragment fragment) {
+    public AttacherItemViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
 
-    public AttachItemViewHolder setSize(int width, int height) {
+    public AttacherItemViewHolder setSize(int width, int height) {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) container.getLayoutParams();
         params.width = width;
         params.height = height;
@@ -41,7 +40,7 @@ public class AttachItemViewHolder extends BaseViewHolder {
         return this;
     }
 
-    public AttachItemViewHolder setOnViewHolderClickListener(OnViewHolderClickListener l) {
+    public AttacherItemViewHolder setOnViewHolderClickListener(OnViewHolderClickListener l) {
         super.addOnViewHolderClickListener(l);
         return this;
     }

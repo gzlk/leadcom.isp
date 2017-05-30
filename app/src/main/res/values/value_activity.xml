@@ -42,4 +42,14 @@
 
     <string name="ui_activity_label_picker_fragment_title">活动类型</string>
     <string name="ui_activity_label_picker_create_hint">请输入10个字以内的活动类型</string>
+
+    <string name="ui_activity_management_title_button_text_1">我参加</string>
+    <string name="ui_activity_management_title_button_text_2">我发起</string>
+    <string name="ui_activity_management_title_button_text_3">未报名</string>
+    <string name="ui_activity_management_title_button_text_4">已结束</string>
+
+    <string name="ui_activity_management_nothing_joined">您未参加过任何活动</string>
+    <string name="ui_activity_management_nothing_created">所有您创建的活动都在这里了</string>
+    <string name="ui_activity_management_nothing_not_join">未参加的活动都在这里，您没有错过什么</string>
+    <string name="ui_activity_management_nothing_ended">您未参加任何活动或参加的活动都还未结束</string>
 </resources>

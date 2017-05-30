@@ -18,7 +18,7 @@ import com.gzlk.android.isp.fragment.archive.UserPrivacyFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.AttachItemViewHolder;
+import com.gzlk.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.ImageViewHolder;
 import com.gzlk.android.isp.holder.SimpleClickableViewHolder;
@@ -378,7 +378,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             gotSize();
             return viewType == VT_IMAGE ? new ImageViewHolder(itemView, MomentNewFragment.this) :
-                    new AttachItemViewHolder(itemView, MomentNewFragment.this)
+                    new AttacherItemViewHolder(itemView, MomentNewFragment.this)
                             .setSize(width, height).setOnViewHolderClickListener(imagePickClickListener);
         }
 

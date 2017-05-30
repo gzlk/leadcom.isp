@@ -8,7 +8,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.common.Contact;
-import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -41,9 +40,7 @@ public class PhoneContactViewHolder extends BaseViewHolder {
 
     public void showContent(Contact contact, String searchingText) {
         String text = contact.getName();
-        if (!StringHelper.isEmpty(searchingText)) {
-            text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
-        }
+        text = getSearchingText(text, searchingText);
         nameView.setText(Html.fromHtml(text));
         phoneView.setText(contact.getPhone());
         if (contact.isMember()) {

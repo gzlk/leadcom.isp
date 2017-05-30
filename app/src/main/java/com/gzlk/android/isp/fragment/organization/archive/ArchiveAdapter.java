@@ -6,7 +6,7 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.holder.ArchiveManagementViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
 

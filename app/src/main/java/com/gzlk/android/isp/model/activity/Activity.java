@@ -63,9 +63,13 @@ public class Activity extends Model {
     //宣传照h
     @Column(Archive.Field.Image)
     private String img;
-    //状态
+    //状态：1.活跃 2.结束
     @Column(Field.Status)
-    private String status;
+    private int status;
+    //活动公开状态 1.向所有人公开 2。关闭（只向组织内公开） 参见ActivityConstant中的状态定义
+    private int openStatus;
+    //标签
+    private ArrayList<String> label;
     //创建者
     @Column(Archive.Field.CreatorId)
     private String creatorId;
@@ -138,12 +142,28 @@ public class Activity extends Model {
         this.img = img;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getOpenStatus() {
+        return openStatus;
+    }
+
+    public void setOpenStatus(int openStatus) {
+        this.openStatus = openStatus;
+    }
+
+    public ArrayList<String> getLabel() {
+        return label;
+    }
+
+    public void setLabel(ArrayList<String> label) {
+        this.label = label;
     }
 
     public String getCreatorId() {

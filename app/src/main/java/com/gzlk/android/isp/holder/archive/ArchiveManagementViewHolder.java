@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.archive;
 
 import android.text.Html;
 import android.view.View;
@@ -7,9 +7,10 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.archive.Archive;
-import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -72,10 +73,7 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         if (StringHelper.isEmpty(text)) {
             text = StringHelper.getString(R.string.ui_archive_approve_no_title);
         }
-        if (!StringHelper.isEmpty(searchingText)) {
-            assert text != null;
-            text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
-        }
+        text = getSearchingText(text, searchingText);
         titleView.setText(Html.fromHtml(text));
         filesView.setText(StringHelper.getString(R.string.ui_archive_approving_archive_attachments, filesCount(archive)));
         filesView.setVisibility(filesCount(archive) > 0 ? View.VISIBLE : View.GONE);

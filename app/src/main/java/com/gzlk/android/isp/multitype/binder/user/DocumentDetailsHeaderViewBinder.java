@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.holder.ArchiveDetailsHeaderViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveDetailsHeaderViewHolder;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 

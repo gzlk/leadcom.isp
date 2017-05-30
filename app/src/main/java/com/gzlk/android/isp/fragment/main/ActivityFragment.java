@@ -7,13 +7,14 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
 import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
-import com.gzlk.android.isp.holder.ActivityViewHolder;
+import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.OrganizationStructureConcernedViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -144,6 +145,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     openActivity(CreateActivityFragment.class.getName(), format(",%s", mQueryId), true, true);
                     break;
                 case R.id.ui_tool_popup_menu_activity_manage:
+                    openActivity(ActivityManagementFragment.class.getName(), mQueryId, false, false);
                     break;
             }
         }

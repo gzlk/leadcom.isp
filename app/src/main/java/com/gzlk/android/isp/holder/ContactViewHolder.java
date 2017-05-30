@@ -7,13 +7,11 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.user.User;
-import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -62,9 +60,7 @@ public class ContactViewHolder extends BaseViewHolder {
 
     public void showContent(User user, String searching) {
         String text = user.getName();
-        if (!StringHelper.isEmpty(searching)) {
-            text = Utility.addColor(text, searching, getColor(R.color.colorAccent));
-        }
+        text = getSearchingText(text, searching);
         nameView.setText(Html.fromHtml(text));
         phoneView.setText(user.getPhone());
         myselfView.setVisibility(user.getId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
@@ -75,19 +71,13 @@ public class ContactViewHolder extends BaseViewHolder {
         if (StringHelper.isEmpty(text)) {
             text = StringHelper.getString(R.string.ui_organization_member_no_name);
         }
-        if (!StringHelper.isEmpty(searchingText)) {
-            assert text != null;
-            text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
-        }
+        text = getSearchingText(text, searchingText);
         nameView.setText(Html.fromHtml(text));
         text = member.getPhone();
         if (StringHelper.isEmpty(text)) {
             text = StringHelper.getString(R.string.ui_organization_member_no_phone);
         }
-        if (!StringHelper.isEmpty(searchingText)) {
-            assert text != null;
-            text = Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
-        }
+        text = getSearchingText(text, searchingText);
         phoneView.setText(Html.fromHtml(text));
         boolean isMe = member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.holder.ArchiveCommentViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveCommentViewHolder;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 

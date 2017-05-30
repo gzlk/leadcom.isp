@@ -9,10 +9,12 @@ import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.hlk.hlklib.etc.Utility;
 
 import java.lang.ref.SoftReference;
 
@@ -113,6 +115,16 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
 
     public Object getTag() {
         return mTag;
+    }
+
+    protected String getSearchingText(String text, String searchingText) {
+        if (!StringHelper.isEmpty(searchingText)) {
+            if (!isEmpty(text)) {
+                assert text != null;
+                return Utility.addColor(text, searchingText, getColor(R.color.colorAccent));
+            }
+        }
+        return text;
     }
 
     /**

@@ -13,7 +13,7 @@ import com.gzlk.android.isp.fragment.archive.ArchiveNewFragment;
 import com.gzlk.android.isp.fragment.organization.archive.ManagementFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
-import com.gzlk.android.isp.holder.ArchiveViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.Archive;

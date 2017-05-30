@@ -11,6 +11,7 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -216,27 +217,45 @@ public class ActRequest extends Request<Activity> {
     /**
      * 查询我参加的活动(非实时的缓存数据)
      */
-    public void joined() {
-        httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(JOINED), Cache.cache().accessToken), "", HttpMethods.Get));
+    public void joined(@NonNull String groupId) {
+        String param = format("%s?groupId=%s&accessToken=%s", url(JOINED), groupId, Cache.cache().accessToken);
+        httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
+    }
+
+    private void loadingCreated(String groupId) {
+        QueryBuilder<Activity> builder = new QueryBuilder<>(Activity.class)
+                .whereEquals(Organization.Field.GroupId, groupId)
+                .whereAppendAnd()
+                .whereEquals(Archive.Field.CreatorId, Cache.cache().userId)
+                .orderBy(Model.Field.CreateDate);
+        List<Activity> temp = dao.query(builder);
+        fireOnMultipleRequestListener(temp, true, null == temp ? 0 : temp.size(), 1);
     }
 
     /**
      * 查询我发起的活动(非实时的缓存数据)
      */
-    public void created() {
-        httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(CREATED), Cache.cache().accessToken), "", HttpMethods.Get));
+    public void created(@NonNull String groupId, boolean fromRemote) {
+        if (fromRemote) {
+            String param = format("%s?groupId=%s&accessToken=%s", url(CREATED), groupId, Cache.cache().accessToken);
+            httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
+        } else {
+            loadingCreated(groupId);
+        }
     }
 
     /**
      * 查询我参与的已结束的活动
      */
-    public void ended() {
-        httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(ENDED), Cache.cache().accessToken), "", HttpMethods.Get));
+    public void ended(@NonNull String groupId) {
+        String param = format("%s?groupId=%s&accessToken=%s", url(ENDED), groupId, Cache.cache().accessToken);
+        httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 
     /**
      * 刷新我参加的和我发起的活动(手机端在同意加入活动时调用)
      */
+    @Deprecated
     public void refresh() {
         httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(REFRESH), Cache.cache().accessToken), "", HttpMethods.Get));
     }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize">
+
+    <include layout="@layout/tool_view_activity_normal_title_left_container" />
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:padding="@dimen/ui_base_border_size_normal"
+        app:cv_background="@android:color/white"
+        app:cv_background_type="fill"
+        app:cv_border_size="@dimen/ui_static_dp_zero"
+        app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size">
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_tool_view_activity_management_title_button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/ui_static_dp_60"
+            android:padding="@dimen/ui_static_dp_5"
+            android:text="@string/ui_activity_management_title_button_text_1"
+            android:textColor="@android:color/white"
+            app:active_color="@color/colorPrimary"
+            app:background_type="fill"
+            app:corner_size="@dimen/ui_static_dp_zero"
+            app:disable_when_click="false"
+            app:left_bottom_corner_size="@dimen/ui_base_dimen_button_corner_size"
+            app:left_top_corner_size="@dimen/ui_base_dimen_button_corner_size"
+            app:normal_color="@color/colorPrimary" />
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_tool_view_activity_management_title_button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_base_border_size_normal"
+            android:layout_marginStart="@dimen/ui_base_border_size_normal"
+            android:gravity="center"
+            android:minWidth="@dimen/ui_static_dp_60"
+            android:padding="@dimen/ui_static_dp_5"
+            android:text="@string/ui_activity_management_title_button_text_2"
+            android:textColor="@color/textColorHintLight"
+            app:active_color="@color/colorPrimary"
+            app:background_type="fill"
+            app:corner_size="@dimen/ui_static_dp_zero"
+            app:normal_color="@android:color/white" />
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_tool_view_activity_management_title_button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_base_border_size_normal"
+            android:layout_marginStart="@dimen/ui_base_border_size_normal"
+            android:gravity="center"
+            android:minWidth="@dimen/ui_static_dp_60"
+            android:padding="@dimen/ui_static_dp_5"
+            android:text="@string/ui_activity_management_title_button_text_3"
+            android:textColor="@color/textColorHintLight"
+            app:active_color="@color/colorPrimary"
+            app:background_type="fill"
+            app:corner_size="@dimen/ui_static_dp_zero"
+            app:normal_color="@android:color/white" />
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_tool_view_activity_management_title_button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/ui_static_dp_60"
+            android:padding="@dimen/ui_static_dp_5"
+            android:text="@string/ui_activity_management_title_button_text_4"
+            android:textColor="@color/textColorHintLight"
+            app:active_color="@color/colorPrimary"
+            app:background_type="fill"
+            app:corner_size="@dimen/ui_static_dp_zero"
+            app:normal_color="@android:color/white"
+            app:right_bottom_corner_size="@dimen/ui_base_dimen_button_corner_size"
+            app:right_top_corner_size="@dimen/ui_base_dimen_button_corner_size" />
+
+    </com.hlk.hlklib.lib.view.CorneredView>
+</RelativeLayout>
