@@ -19,4 +19,9 @@
     <color name="buttonDialogNormalColor">@android:color/white</color>
     <color name="buttonDialogActiveColor">@color/textColorHintLight</color>
     <color name="activeBorderColor">@color/colorPrimary</color>
+
+    <color name="colorWord">@color/color_295391</color>
+    <color name="colorExcel">@color/color_1f6b41</color>
+    <color name="colorPpt">@color/color_c44423</color>
+    <color name="colorAdobe">@color/color_f26666</color>
 </resources>

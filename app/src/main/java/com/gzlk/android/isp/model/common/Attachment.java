@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.common;
 
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Model;
@@ -48,6 +49,22 @@ public class Attachment extends Model {
          * 说说的附件
          */
         int MOMENT = 2;
+    }
+
+    public int iconColor() {
+        if (StringHelper.isEmpty(ext)) return 0;
+
+        if (ext.contains("doc")) return R.color.colorWord;
+
+        if (ext.contains("xls")) return R.color.colorExcel;
+
+        if (ext.contains("ppt")) return R.color.colorPpt;
+
+        if (ext.contains("pdf")) return R.color.colorAdobe;
+
+        if (ext.contains("rar") || ext.contains("zip")) return R.color.textColor;
+
+        return R.color.colorPrimary;
     }
 
     public static boolean isOffice(String ext) {

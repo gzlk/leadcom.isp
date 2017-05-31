@@ -109,6 +109,8 @@ public class AttachmentViewHolder extends BaseViewHolder {
             res = R.string.ui_icon_attachment_powerpoint;
         } else if (ImageCompress.isImage(ext)) {
             res = R.string.ui_icon_attachment_picture;
+        } else if (ImageCompress.isVideo(ext)) {
+            res = R.string.ui_icon_attachment_video;
         } else {
             switch (ext) {
                 case "pdf":

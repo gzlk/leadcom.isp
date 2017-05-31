@@ -46,7 +46,10 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_MEMBERS = "caf_members";
     private static final String PARAM_COVER = "caf_cover";
     private static final String PARAM_LABEL = "caf_label";
-
+    private static final String PARAM_HAPPEN = "caf_happen_date";
+    private static final String PARAM_TITLE = "caf_title";
+    private static final String PARAM_ADDR = "caf_address";
+    private static final String PARAM_CONTENT = "caf_content";
 
     public static CreateActivityFragment newInstance(String params) {
         CreateActivityFragment caf = new CreateActivityFragment();
@@ -59,7 +62,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private String members = "[]", labels = "[]";
-    private String cover = "";
+    private String cover = "", title = "", address = "", content = "";
     private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
     private static final int REQ_COVER = REQ_MEMBER + 1;
     private static final int REQ_LABEL = REQ_COVER + 1;
@@ -73,6 +76,10 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         cover = bundle.getString(PARAM_COVER, "");
         labels = bundle.getString(PARAM_LABEL, "[]");
         resetLabels();
+        happenDate = bundle.getString(PARAM_HAPPEN, "");
+        title = bundle.getString(PARAM_TITLE, "");
+        address = bundle.getString(PARAM_ADDR, "");
+        content = bundle.getString(PARAM_CONTENT, "");
     }
 
     @Override
@@ -82,6 +89,13 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_MEMBERS, members);
         bundle.putString(PARAM_COVER, cover);
         bundle.putString(PARAM_LABEL, labels);
+        bundle.putString(PARAM_HAPPEN, happenDate);
+        title = titleHolder.getValue();
+        bundle.putString(PARAM_TITLE, title);
+        address = addressHolder.getValue();
+        bundle.putString(PARAM_ADDR, address);
+        content = contentView.getValue();
+        bundle.putString(PARAM_CONTENT, content);
     }
 
     @Override
@@ -270,7 +284,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 cover = activity.getImg();
             }
         }
-        String value = format(items[0], non ? none : (isEmpty(cover) ? none : ""));
+        String value = format(items[0], (isEmpty(cover) ? none : ""));
         coverHolder.showContent(value);
         coverHolder.showImage(cover);
 
@@ -278,7 +292,12 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         if (null == titleHolder) {
             titleHolder = new SimpleInputableViewHolder(titleView, this);
         }
-        value = format(items[1], non ? "" : activity.getTitle());
+        if (isEmpty(title)) {
+            if (!non) {
+                title = activity.getTitle();
+            }
+        }
+        value = format(items[1], title);
         titleHolder.showContent(value);
 
         // time
@@ -286,22 +305,42 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
             timeHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        value = format(items[2], non ? "" : activity.getCreateDate());
+        if (isEmpty(happenDate)) {
+            if (!non) {
+                happenDate = activity.getCreateDate();
+            }
+        }
+        value = format(items[2], isEmpty(happenDate) ? "" : ("(" + formatDate(happenDate) + ")"));
         timeHolder.showContent(value);
 
         // address
         if (null == addressHolder) {
             addressHolder = new SimpleInputableViewHolder(addressView, this);
         }
-        value = format(items[3], "");
+        if (isEmpty(address)) {
+            if (!non) {
+                address = activity.getContent();
+            }
+        }
+        value = format(items[3], address);
         addressHolder.showContent(value);
 
         // type
         if (null == typeHolder) {
             typeHolder = new SimpleClickableViewHolder(typeView, this);
             typeHolder.addOnViewHolderClickListener(onViewHolderClickListener);
+            if (!non) {
+                if (null != activity.getLabel() && activity.getLabel().size() > 1) {
+                    for (String id : activity.getLabel()) {
+                        if (!labelsId.contains(id)) {
+                            labelsId.add(id);
+                        }
+                    }
+                }
+            }
         }
-        value = format(items[4], "");
+        String tmp = labelsId.size() < 1 ? "(选择标签)" : format("(%d个标签)", labelsId.size());
+        value = format(items[4], tmp);
         typeHolder.showContent(value);
 
         // privacy
@@ -309,7 +348,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             privacyHolder = new SimpleClickableViewHolder(privacyView, this);
             privacyHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        value = format(items[5], "未设置");
+        value = format(items[5], "(未设置)");
         privacyHolder.showContent(value);
 
         // member
@@ -328,6 +367,13 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         }
         value = format(items[6], membersId.size());
         memberHolder.showContent(value);
+
+        if (isEmpty(content)) {
+            if (!non) {
+                content = activity.getContent();
+            }
+        }
+        contentView.setValue(content);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
@@ -359,7 +405,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
 
     private void showCreateDate(Date date) {
         happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
-        timeHolder.showContent(StringHelper.format(items[2], "(" + Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs_min), date) + ")"));
+        timeHolder.showContent(format(items[2], "(" + Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs_min), date) + ")"));
     }
 
     private void openDatePicker() {
@@ -376,7 +422,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 .setContentSize(getFontDimension(R.dimen.ui_base_text_size))
                 .setOutSideCancelable(false)
                 .isCenterLabel(true).isDialog(false).build();
-        if (StringHelper.isEmpty(happenDate)) {
+        if (isEmpty(happenDate)) {
             tpv.setDate(Calendar.getInstance());
             happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), Calendar.getInstance().getTime());
         } else {

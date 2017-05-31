@@ -23,6 +23,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.hlk.hlklib.etc.Utility;
 
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -339,6 +340,13 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * Activity result事件，子类重载此方法以获取自己的处理方式
      */
     public void onActivityResult(int requestCode, Intent data) {
+    }
+
+    /**
+     * 将yyyy-MM-dd HH:mm:ss的时间格式化成yyyy年mm月dd日 hh时mm分
+     */
+    public String formatDate(String createDate) {
+        return Utils.format(createDate, StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs_min));
     }
 
     /**
