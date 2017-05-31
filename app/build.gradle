@@ -23,6 +23,7 @@ android {
             abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
         manifestPlaceholders = [APP_PKG_NAME: applicationId]
+        resValue "string", "app_name_default", "树脉"
         resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
         // 正式（leadcom）：e0535dd95633dfa23a6aba3a06628a55
         // 测试：3da0be9ec7ac70fea20f94a8fa8c84ce
