@@ -5,9 +5,15 @@ import android.Manifest;
 import com.gzlk.android.isp.fragment.base.BasePermissionHandleSupportFragment;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.task.OrmTask;
 import com.hlk.hlklib.etc.Cryptography;
 import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.DataBaseConfig;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <b>功能描述：</b>提供SQLite数据库操作的application基类<br />
@@ -41,41 +47,59 @@ public class OrmApplication extends BaseApplication {
             throw new IllegalArgumentException("could not initialize database with null parameter.");
         }
 
-        String db = getCachePath(DB_DIR) + Cryptography.md5(dbName) + ".db";
-        if (null == Orm) {
-            if (initialize(db)) {
-                LogHelper.log(TAG, "database initialized at: " + db);
-            }
-        } else {
-            if (!Orm.getDataBaseConfig().dbName.equals(db)) {
-                Orm.close();
-                if (initialize(db)) {
-                    LogHelper.log(TAG, "database re-initialized at: " + db);
+        try {
+            new OrmTask<>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Model>() {
+                @Override
+                public boolean isModifiable() {
+                    return false;
                 }
-            }
-        }
-    }
 
-    private boolean initialize(String db) {
-        if (BasePermissionHandleSupportFragment.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            try {
-                Orm = LiteOrm.newSingleInstance(getConfig(db));
-                Orm.openOrCreateDatabase();
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            // 没有权限时，orm = null
-            Orm = null;
-        }
-        return false;
-    }
+                @Override
+                public List<Model> executing(OrmTask<Model> task) {
 
-    private DataBaseConfig getConfig(String dbName) {
-        DataBaseConfig config = new DataBaseConfig(this, dbName);
-        //config.debugged = BuildConfig.DEBUG;
-        config.dbVersion = 1;
-        return config;
+                    String db = getCachePath(DB_DIR) + Cryptography.md5(dbName) + ".db";
+                    if (null == Orm) {
+                        if (initialize(db)) {
+                            LogHelper.log(TAG, "database initialized at: " + db);
+                        }
+                    } else {
+                        if (!Orm.getDataBaseConfig().dbName.equals(db)) {
+                            Orm.close();
+                            if (initialize(db)) {
+                                LogHelper.log(TAG, "database re-initialized at: " + db);
+                            }
+                        }
+                    }
+
+                    return null;
+                }
+
+                private boolean initialize(String db) {
+                    if (BasePermissionHandleSupportFragment.hasPermission(OrmApplication.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        try {
+                            Orm = LiteOrm.newSingleInstance(getConfig(db));
+                            Orm.openOrCreateDatabase();
+                            return true;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Orm = null;
+                    } else {
+                        // 没有权限时，orm = null
+                        Orm = null;
+                    }
+                    return false;
+                }
+
+                private DataBaseConfig getConfig(String dbName) {
+                    DataBaseConfig config = new DataBaseConfig(OrmApplication.this, dbName);
+                    //config.debugged = BuildConfig.DEBUG;
+                    config.dbVersion = 1;
+                    return config;
+                }
+            }).exec().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 }
