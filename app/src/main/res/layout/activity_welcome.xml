@@ -34,11 +34,12 @@
         android:orientation="vertical" />
 
     <com.hlk.hlklib.lib.view.CorneredButton
-        android:id="@+id/ui_welcome_join_in"
+        android:id="@+id/ui_welcome_to_join_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
         android:alpha="0"
+        android:animateLayoutChanges="true"
         android:clickable="true"
         android:gravity="center"
         android:minWidth="@dimen/ui_static_dp_100"

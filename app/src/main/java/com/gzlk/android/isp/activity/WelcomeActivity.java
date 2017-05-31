@@ -9,10 +9,12 @@ import android.widget.LinearLayout;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.crash.system.SysInfoUtil;
+import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
@@ -36,13 +38,19 @@ public class WelcomeActivity extends BaseActivity {
 
     @ViewId(R.id.ui_welcome_root_container)
     private LinearLayout root;
+    @ViewId(R.id.ui_welcome_to_join_in)
+    private CorneredButton button;
+
+    private String guided = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         ViewUtility.bind(this);
+        resetButtonPosition();
 
+        guided = PreferenceHelper.get(R.string.pf_is_guide_page_shown, "");
         if (savedInstanceState != null) {
             // 从堆栈恢复时，设置一个新的空白intent，不再重复解析之前的intent
             setIntent(new Intent());
@@ -55,45 +63,79 @@ public class WelcomeActivity extends BaseActivity {
         }
     }
 
+    private void resetButtonPosition() {
+        int width = getApplicationContext().getResources().getDisplayMetrics().widthPixels;
+        if (width >= 720) {
+            // 超过720p的，button需要向上移动15dp
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) button.getLayoutParams();
+            params.bottomMargin = getResources().getDimensionPixelOffset(R.dimen.ui_static_dp_25);
+            button.setLayoutParams(params);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         if (isFirstEnter) {
             isFirstEnter = false;
-            final Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (StringHelper.isEmpty(Cache.cache().userId)) {
-                        // 当前没有登录则转到登录页面
-                        toLogin();
-                    } else {
-                        // 已经登录过则处理消息，并转到主页，主页有自动登录逻辑
-                        handleIntent();
-                    }
-                }
-            };
             if (isWelcome) {
-                root.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateRoot();
-                        root.postDelayed(runnable, 3000);
-                    }
-                }, 1000);
+                delayToShowRoot();
             } else {
-                runnable.run();
+                handleIntentOrGoingToLogin();
             }
         }
     }
 
-    @Click({R.id.ui_welcome_join_in})
+    private void handleIntentOrGoingToLogin() {
+        if (StringHelper.isEmpty(Cache.cache().userId)) {
+            // 当前没有登录则转到登录页面
+            toLogin();
+        } else {
+            // 已经登录过则处理消息，并转到主页，主页有自动登录逻辑
+            handleIntent();
+        }
+    }
+
+    private void delayToShowRoot() {
+        root.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animateRoot();
+                if (StringHelper.isEmpty(guided)) {
+                    // 如果没有显示过引导页，则此时一直显示，同时显示欢迎进入按钮
+                    animateButton();
+                } else {
+                    delayToLogin();
+                }
+            }
+        }, 1500);
+    }
+
+    private void delayToLogin() {
+        root.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                handleIntentOrGoingToLogin();
+            }
+        }, 2000);
+    }
+
+    @Click({R.id.ui_welcome_to_join_in})
     private void elementClick(View view) {
-        //toLogin();
+        PreferenceHelper.save(R.string.pf_is_guide_page_shown, "YES");
+        toLogin();
     }
 
     private void toLogin() {
         LoginActivity.start(WelcomeActivity.this);
         finish();
+    }
+
+    // 渐变显示欢迎进入按钮
+    private void animateButton() {
+        button.animate().alpha(1)
+                .setDuration(getInteger(R.integer.animation_default_duration))
+                .start();
     }
 
     // 渐变显示欢迎页
