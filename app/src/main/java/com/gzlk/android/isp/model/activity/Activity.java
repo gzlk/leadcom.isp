@@ -1,9 +1,12 @@
 package com.gzlk.android.isp.model.activity;
 
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class Activity extends Model {
 
     public interface Table {
         String ACTIVITY = "activity";
+        String ACTIVITY_ARCHIVE = "activityArchive";
         String ASSOCIATOR = "associator";
         String CHARACTER = "character";
         String LABEL = "activityLabel";
@@ -35,10 +39,12 @@ public class Activity extends Model {
     public interface Field {
         String UseMessage = "useMessage";
         String Status = "status";
+        String OpenStatus = "openStatus";
         String NimId = "nimId";
         String MemberIdArray = "memberIdArray";
         String MemberNameArray = "memberNameArray";
-
+        String BeginDate = "beginDate";
+        String Site = "site";
         String ActivityId = "activityId";
     }
 
@@ -81,8 +87,10 @@ public class Activity extends Model {
     @Column(Field.Status)
     private int status;
     //活动公开状态 1.向所有人公开 2。关闭（只向组织内公开） 参见ActivityConstant中的状态定义
+    @Column(Field.OpenStatus)
     private int openStatus;
     //标签
+    @Column(Archive.Field.Label)
     private ArrayList<String> label;
     //创建者
     @Column(Archive.Field.CreatorId)
@@ -99,6 +107,19 @@ public class Activity extends Model {
     //邀请的成员姓名列表（可能是尚未加入活动）,内容格式如["aaa","bbb"]
     @Column(Field.MemberNameArray)
     private ArrayList<String> memberNameArray;
+    //所属组织
+    @Ignore
+    private Organization group;
+
+    //活动开始时间
+    @Column(Field.BeginDate)
+    private String beginDate;
+    //活动地点
+    @Column(Field.Site)
+    private String site;
+    //活动附件
+    @Ignore
+    private ArrayList<Attachment> attUrlArray;
 
     public String getTitle() {
         return title;
@@ -218,5 +239,40 @@ public class Activity extends Model {
 
     public void setMemberNameArray(ArrayList<String> memberNameArray) {
         this.memberNameArray = memberNameArray;
+    }
+
+    public Organization getGroup() {
+        if (null == group) {
+            group = new Dao<>(Organization.class).query(groupId);
+        }
+        return group;
+    }
+
+    public void setGroup(Organization group) {
+        this.group = group;
+    }
+
+    public String getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(String beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
+    }
+
+    public ArrayList<Attachment> getAttUrlArray() {
+        return attUrlArray;
+    }
+
+    public void setAttUrlArray(ArrayList<Attachment> attUrlArray) {
+        this.attUrlArray = attUrlArray;
     }
 }

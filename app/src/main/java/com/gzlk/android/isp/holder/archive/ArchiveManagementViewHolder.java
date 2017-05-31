@@ -46,8 +46,10 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
     private TextView titleView;
     @ViewId(R.id.ui_holder_view_archive_management_files)
     private TextView filesView;
-    @ViewId(R.id.ui_holder_view_archive_management_source)
-    private TextView sourceView;
+    @ViewId(R.id.ui_holder_view_archive_management_date)
+    private TextView dateView;
+    @ViewId(R.id.ui_holder_view_archive_management_status)
+    private TextView statusView;
 
     private int imageSize;
 
@@ -69,7 +71,9 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         titleView.setText(Html.fromHtml(text));
         filesView.setText(StringHelper.getString(R.string.ui_archive_approving_archive_attachments, filesCount(archive)));
         filesView.setVisibility(filesCount(archive) > 0 ? View.VISIBLE : View.GONE);
-        sourceView.setText("来源：无");
+        dateView.setText(StringHelper.getString(R.string.ui_archive_management_list_item_create_date, fragment().formatDate(archive.getCreateDate())));
+        statusView.setText(StringHelper.getString(R.string.ui_archive_management_list_item_status, archive.getArchiveStatus()));
+
         // 显示优先级
         // cover
         String path = archive.getCover();

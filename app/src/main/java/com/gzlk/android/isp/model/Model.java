@@ -35,6 +35,10 @@ public class Model extends BaseModel {
         public static final String AccessToken = "accessToken";
     }
 
+    protected boolean isEmpty(String string) {
+        return StringHelper.isEmpty(string);
+    }
+
     @PrimaryKey(AssignType.BY_MYSELF)
     @NotNull
     @Column(Field.Id)

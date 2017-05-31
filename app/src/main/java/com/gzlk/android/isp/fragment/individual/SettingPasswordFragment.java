@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -121,13 +120,14 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
 
     private void editPassword(String old, String newOne) {
         UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    if (null != user && !StringHelper.isEmpty(user.getId())) {
-                        Cache.cache().setCurrentUser(user);
-                    }
+//                    if (null != user && !StringHelper.isEmpty(user.getId())) {
+//                        App.app().setCurrentUser(user);
+//                    }
                     ToastHelper.make().showMsg(R.string.ui_text_edit_password_success);
                     finish();
                 }

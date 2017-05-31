@@ -7,7 +7,6 @@ import com.google.gson.FieldAttributes;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.Special;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
@@ -48,14 +47,11 @@ public class ArchiveRequest extends Request<Archive> {
     private static class MultipleArchive extends Query<Archive> {
     }
 
-    private static class SpecialArchive extends Special<Archive> {
-    }
+//    private static class SpecialArchive extends Special<Archive> {
+//    }
 
     private static final String USER = "/user/userDoc";
     private static final String GROUP = "/group/groDoc";
-
-    private static final String APPROVING = "/toBeAppr" + LIST;
-    private static final String APPROVED = "/approved" + LIST;
 
     @Override
     protected String url(String action) {
@@ -399,7 +395,7 @@ public class ArchiveRequest extends Request<Archive> {
     public void list(int pageNumber, String userId) {
         // abstrSize,abstrRow,pageNumber,accessToken
         String param = format("%s&pageNumber=%d&accessToken=%s&userId=%s", SUMMARY, pageNumber, Cache.cache().accessToken, userId);
-        httpRequest(getRequest(SpecialArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
 
     /**
@@ -411,39 +407,7 @@ public class ArchiveRequest extends Request<Archive> {
     public void list(String organizationId, int pageNumber) {
         //groupId,abstrSize,abstrRow,pageNumber
         String param = format("?%s&groupId=%s&pageNumber=%d&accessToken=%s", SUMMARY, organizationId, pageNumber, Cache.cache().accessToken);
-        httpRequest(getRequest(SpecialArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
-    }
-
-    /**
-     * 查询组织档案列表（待审核，默认按创建时间逆序排列）
-     *
-     * @param organizationId 组织id
-     * @param pageNumber     页码
-     * @param type1          1.个人档案，2.组织档案，3.活动附件
-     * @param type2          1.图片，2.视频,3.文件
-     */
-    public void listApproving(String organizationId, int pageNumber, int type1, int type2) {
-        //groupId,pageSize,pageNumber,docType1,docType2
-        list(APPROVING, organizationId, pageNumber, type1, type2);
-    }
-
-    private void list(String action, String organizationId, int pageNumber, int type1, int type2) {
-        String param = format("?groupId=%d&pageNumber=%d&docType1=%d&docType2=&d",
-                organizationId, pageNumber, type1, type2);
-        httpRequest(getRequest(MultipleArchive.class, format("%s%s", group(action), param), "", HttpMethods.Get));
-    }
-
-    /**
-     * 查询组织档案列表（已审核，默认按创建时间逆序排列,只显示当前用户授权范围内的记录）
-     *
-     * @param organizationId 组织id
-     * @param pageNumber     页码
-     * @param type1          1.个人档案，2.组织档案，3.活动附件
-     * @param type2          1.图片，2.视频,3.文件
-     */
-    public void listApproved(String organizationId, int pageNumber, int type1, int type2) {
-        //groupId,pageSize,pageNumber,docType1,docType2
-        list(APPROVED, organizationId, pageNumber, type1, type2);
+        httpRequest(getRequest(MultipleArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
     }
 
     /**
@@ -494,20 +458,22 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 查询组织档案列表
+     * 查询组织档案列表，此列表不保存到本地缓存
      */
     public void archiveList(String groupId, int pageNumber) {
+        //directlySave = false;
         // groupId,pageSize,pageNumber
         String params = format("/group/groDocArchive/list?groupId=%s&pageNumber=%d", groupId, pageNumber);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
-     * 搜索组织档案(通过文件名模糊搜索)
+     * 搜索组织档案(通过文件名模糊搜索)，此返回列表不保存到本地缓存
      */
     public void archiveSearch(String groupId, String fileName, int pageNumber) {
+        //directlySave = false;
         String params = format("/group/groDocArchive/list?groupId=%s&pageNumber=%d&info=%s", groupId, pageNumber, fileName);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -537,6 +503,6 @@ public class ArchiveRequest extends Request<Archive> {
     public void approveList(String groupId, int pageNumber) {
         // groupId,pageSize,pageNumber
         String params = format("/group/groDocApprove/list?groupId=%s&pageNumber=%d", groupId, pageNumber);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
     }
 }

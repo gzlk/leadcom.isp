@@ -139,7 +139,6 @@ public class BaseApplication extends Application {
      * 获取外挂 SD 卡目录下的 data 目录，末尾不包含/<br>
      * 如果外置SD卡不可读则转为获取内置缓存目录
      */
-    @SuppressWarnings("ConstantConditions")
     public String gotExternalCacheDir() {
         String path = null;
         try {

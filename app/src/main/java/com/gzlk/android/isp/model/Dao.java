@@ -20,7 +20,7 @@ import java.util.List;
 
 public class Dao<E> {
 
-    private LiteOrm orm;
+    public LiteOrm orm;
 
     /**
      * 当前类
@@ -31,8 +31,6 @@ public class Dao<E> {
     public Dao(Class<E> clazz) {
         orm = App.Orm;
         this.clazz = clazz;
-        //ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
-        //clazz = (Class<E>) type.getActualTypeArguments()[0];
     }
 
     public void save(E entity) {

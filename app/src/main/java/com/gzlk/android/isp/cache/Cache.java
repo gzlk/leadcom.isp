@@ -1,9 +1,10 @@
 package com.gzlk.android.isp.cache;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 
 /**
@@ -32,6 +33,7 @@ public class Cache {
     }
 
     public void clear() {
+        saveCurrentUser();
         userId = null;
         userName = null;
         nimToken = null;
@@ -41,22 +43,29 @@ public class Cache {
 
     public User me;
 
+    @SuppressWarnings("ConstantConditions")
     public void saveCurrentUser() {
-        new Dao<>(User.class).save(me);
+        App.app().saveCurrentUser(me);
     }
 
     public void setCurrentUser(User user) {
         me = user;
         if (null != me && !StringHelper.isEmpty(me.getId())) {
-            saveCurrentUser();
             userId = me.getId();
             nimToken = me.getPassword();
             userName = me.getName();
             accessToken = me.getAccessToken();
             // 保存网易云登录的账户和令牌
-            PreferenceHelper.save(R.string.pf_last_login_user_id, me.getId());
-            PreferenceHelper.save(R.string.pf_last_login_user_token, me.getPassword());
+            PreferenceHelper.save(R.string.pf_last_login_user_id, userId);
+            PreferenceHelper.save(R.string.pf_last_login_user_token, accessToken);
+            PreferenceHelper.save(R.string.pf_last_login_user_nim_token, nimToken);
         }
+    }
+
+    public void restoreCached() {
+        userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
+        accessToken = PreferenceHelper.get(R.string.pf_last_login_user_token);
+        nimToken = PreferenceHelper.get(R.string.pf_last_login_user_nim_token);
     }
 
     /**

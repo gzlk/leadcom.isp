@@ -180,12 +180,18 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
     private void refreshArchive() {
         switch (mType) {
             case TYPE_ALL:
+                setNothingText(R.string.ui_archive_management_nothing_1);
+                setLoadingText(R.string.ui_archive_management_loading_1);
                 loadingAllArchive();
                 break;
             case TYPE_ARCHIVING:
+                setNothingText(R.string.ui_archive_management_nothing_2);
+                setLoadingText(R.string.ui_archive_management_loading_2);
                 loadingArchivingArchive();
                 break;
             case TYPE_APPROVING:
+                setNothingText(R.string.ui_archive_management_nothing_3);
+                setLoadingText(R.string.ui_archive_management_loading_3);
                 loadingApprovingArchive();
                 break;
         }
@@ -209,6 +215,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
 
     // 加载全部档案
     private void loadingAllArchive() {
+        displayLoading(true);
         ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -216,12 +223,14 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 if (success) {
                     addMultipleArchive(list, pageSize);
                 }
+                displayLoading(false);
             }
         }).list(mQueryId, remotePageNumber);
     }
 
     // 未存档列表
     private void loadingArchivingArchive() {
+        displayLoading(true);
         ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -229,12 +238,14 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 if (success) {
                     addMultipleArchive(list, pageSize);
                 }
+                displayLoading(false);
             }
         }).archiveList(mQueryId, remotePageNumber);
     }
 
     // 未审核列表
     private void loadingApprovingArchive() {
+        displayLoading(true);
         ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -242,6 +253,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 if (success) {
                     addMultipleArchive(list, pageSize);
                 }
+                displayLoading(false);
             }
         }).approveList(mQueryId, remotePageNumber);
     }

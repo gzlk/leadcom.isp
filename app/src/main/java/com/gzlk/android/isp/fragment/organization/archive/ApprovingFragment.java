@@ -1,12 +1,8 @@
 package com.gzlk.android.isp.fragment.organization.archive;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;

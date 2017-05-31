@@ -114,7 +114,6 @@ public class ManagementFragment extends BaseViewPagerSupportFragment {
             case R.id.ui_tool_view_archive_management_title_button3:
                 // 打开未审核页面
                 setDisplayPage(2);
-                //openActivity(ApprovingFragment.class.getName(), mQueryId, true, false);
                 break;
         }
     }

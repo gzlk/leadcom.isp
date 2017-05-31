@@ -498,7 +498,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             } else if (values[0] == 1) {
                 materialHorizontalProgressBar.setProgress(values[1]);
             }
-            if (values[0] == 1 && values[1] == 0) {
+            if (values[0] == 1 && values[2] == 0) {
                 warningNoContact();
             }
         }

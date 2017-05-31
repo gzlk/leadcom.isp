@@ -263,12 +263,14 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     private void syncMineInformation() {
         // 同步我的信息
         SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
                     if (null != user && !isEmpty(user.getId())) {
                         Cache.cache().setCurrentUser(user);
+                        Cache.cache().saveCurrentUser();
                         checkUser(user);
                     }
                 }

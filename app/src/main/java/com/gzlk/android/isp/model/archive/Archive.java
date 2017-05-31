@@ -89,6 +89,10 @@ public class Archive extends Additional {
         String LikeNumber = "likeNumber";
         String CommentNumber = "commentNumber";
         String CollectNumber = "collectNumber";
+        String AttachmentNum = "attachmentNum";
+        String PassedNum = "passedNum";
+        String ArchiveDate = "archiveDate";
+        String ArchiveId = "archiveId";
     }
 
     /**
@@ -165,6 +169,24 @@ public class Archive extends Additional {
          * 审核失败（未审核通过）
          */
         int FAILURE = 3;
+    }
+
+    public String getArchiveStatus() {
+        switch (status) {
+            case ArchiveStatus.APPROVING:
+                // 不是活动档案时为未审核，活动档案为未存档
+                //return isEmpty(actId) ? "待审核" : "未存档";
+                return "待审核";
+            case ArchiveStatus.APPROVED:
+                // 不是活动档案时为已审核，活动档案为已存档
+                //return isEmpty(actId) ? "通过审核" : "已存档";
+                return "已审核";
+            case ArchiveStatus.FAILURE:
+                return "未通过审核";
+            default:
+                //return isEmpty(actId) ? "未通过审核" : "";
+                return "未知(" + String.valueOf(status) + ")";
+        }
     }
 
     private void getLocalAttachments() {
@@ -271,6 +293,23 @@ public class Archive extends Additional {
     //最后一次修改时间
     @Column(Field.LastModifiedDate)
     private String lastModifiedDate;
+
+    // 存档相关
+    //@Column(Activity.Field.ActivityId)
+    @Ignore
+    private String actId;              //活动ID
+    //@Column(Field.AttachmentNum)
+    @Ignore
+    private String attachNum;          //活动档案附件总数量
+    //@Column(Field.PassedNum)
+    @Ignore
+    private String passNum;            //通过审核的活动档案附件数量
+    //@Column(Field.ArchiveDate)
+    @Ignore
+    private String archiveDate;        //存档时间
+    //@Column(Field.AttachmentNum)
+    @Ignore
+    private String archiverId;         //存档人用户ID
 
     // 审核相关
     //1.未审核,2.审核成功,3.审核失败
@@ -520,5 +559,45 @@ public class Archive extends Additional {
 
     public void setApproveDate(String approveDate) {
         this.approveDate = approveDate;
+    }
+
+    public String getActId() {
+        return actId;
+    }
+
+    public void setActId(String actId) {
+        this.actId = actId;
+    }
+
+    public String getAttachNum() {
+        return attachNum;
+    }
+
+    public void setAttachNum(String attachNum) {
+        this.attachNum = attachNum;
+    }
+
+    public String getPassNum() {
+        return passNum;
+    }
+
+    public void setPassNum(String passNum) {
+        this.passNum = passNum;
+    }
+
+    public String getArchiveDate() {
+        return archiveDate;
+    }
+
+    public void setArchiveDate(String archiveDate) {
+        this.archiveDate = archiveDate;
+    }
+
+    public String getArchiverId() {
+        return archiverId;
+    }
+
+    public void setArchiverId(String archiverId) {
+        this.archiverId = archiverId;
     }
 }

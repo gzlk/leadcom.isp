@@ -6,7 +6,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.crash.AppCrashHandler;
 import com.gzlk.android.isp.crash.storage.StorageUtil;
-import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
@@ -122,16 +121,34 @@ public class App extends NimApplication {
      */
     private void initializeDatabase() {
         if (StringHelper.isEmpty(Cache.cache().userId)) {
-            Cache.cache().userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
+            Cache.cache().restoreCached();
         }
         if (!StringHelper.isEmpty(Cache.cache().userId)) {
             // 初始化个性化数据库
             initializeLiteOrm(Cache.cache().userId);
             // 查询个性化数据库中的个人信息
             if (null == Cache.cache().me || !Cache.cache().userId.equals(Cache.cache().me.getId())) {
-                Cache.cache().setCurrentUser(new Dao<>(User.class).query(Cache.cache().userId));
+                Cache.cache().setCurrentUser(dao().query(Cache.cache().userId));
             }
         }
+    }
+
+    private Dao<User> userDao;
+
+    private Dao<User> dao() {
+        // dao 为空或者 orm 跟当前 app 里的 orm 不是同一个实例时，要重新初始化 dao
+        if (null == userDao || userDao.orm != Orm) {
+            userDao = new Dao<>(User.class);
+        }
+        return userDao;
+    }
+
+    public void saveCurrentUser(User user) {
+        if (null != user) {
+            // 尝试可能因用户id不同而重新初始化缓存数据库
+            initializeLiteOrm(user.getId());
+        }
+        dao().save(user);
     }
 
     @Override

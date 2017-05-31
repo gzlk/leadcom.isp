@@ -118,7 +118,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
     public LoginInfo loginInfo() {
         String account = isForTest ? "xfeiffer" : PreferenceHelper.get(R.string.pf_last_login_user_id, "");
-        String token = isForTest ? "111111" : PreferenceHelper.get(R.string.pf_last_login_user_token, "");
+        String token = isForTest ? "111111" : PreferenceHelper.get(R.string.pf_last_login_user_nim_token, "");
         if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
             return new LoginInfo(account, token);
         } else {

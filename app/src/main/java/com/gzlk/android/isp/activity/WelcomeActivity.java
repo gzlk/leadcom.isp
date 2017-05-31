@@ -2,12 +2,15 @@ package com.gzlk.android.isp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.crash.system.SysInfoUtil;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.netease.nimlib.sdk.NimIntent;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 public class WelcomeActivity extends BaseActivity {
 
     private static boolean isFirstEnter = true;
+    private boolean isWelcome = false;
 
     @ViewId(R.id.ui_welcome_root_container)
     private LinearLayout root;
@@ -46,6 +50,8 @@ public class WelcomeActivity extends BaseActivity {
         if (!isFirstEnter) {
             // 不是第一次进入时才处理发送过来的intent
             handleIntent();
+        } else {
+            showWelcome();
         }
     }
 
@@ -54,22 +60,40 @@ public class WelcomeActivity extends BaseActivity {
         super.onResume();
         if (isFirstEnter) {
             isFirstEnter = false;
-            // 第一次进入显示欢迎页面
-            animateRoot();
-            root.postDelayed(new Runnable() {
+            final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
                     if (StringHelper.isEmpty(Cache.cache().userId)) {
                         // 当前没有登录则转到登录页面
-                        LoginActivity.start(WelcomeActivity.this);
-                        finish();
+                        toLogin();
                     } else {
                         // 已经登录过则处理消息，并转到主页，主页有自动登录逻辑
                         handleIntent();
                     }
                 }
-            }, 1500);
+            };
+            if (isWelcome) {
+                root.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        animateRoot();
+                        root.postDelayed(runnable, 3000);
+                    }
+                }, 1000);
+            } else {
+                runnable.run();
+            }
         }
+    }
+
+    @Click({R.id.ui_welcome_join_in})
+    private void elementClick(View view) {
+        //toLogin();
+    }
+
+    private void toLogin() {
+        LoginActivity.start(WelcomeActivity.this);
+        finish();
     }
 
     // 渐变显示欢迎页
@@ -114,9 +138,9 @@ public class WelcomeActivity extends BaseActivity {
             Intent intent = getIntent();
             if (null != intent) {
                 ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
-                if (null == messages || messages.size() > 1) {
-                    // 如果消息为空或者消息数量大于1个则直接打开默认的首页即可
-                    switchToMain();
+                if (null == messages) {
+                    // 如果消息为空则打开登录页面，同步用户信息后登录
+                    toLogin();
                 } else {
                     // 针对发过来的消息打开首页并按照intent内容提示用户
                     switchToMain(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
@@ -125,6 +149,14 @@ public class WelcomeActivity extends BaseActivity {
                 switchToMain();
             }
         }
+    }
+
+    /**
+     * 首次进入，打开欢迎界面
+     */
+    private void showWelcome() {
+        getWindow().setBackgroundDrawableResource(R.drawable.ui_background_welcome);
+        isWelcome = true;
     }
 
     private void switchToMain() {

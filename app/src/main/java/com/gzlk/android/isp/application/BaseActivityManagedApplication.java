@@ -90,6 +90,8 @@ public class BaseActivityManagedApplication extends OrmApplication {
         LogHelper.log(TAG, "manual exit.");
         // 清空已登录信息
         PreferenceHelper.save(R.string.pf_last_login_user_id, "");
+        // 关闭数据库
+        closeOrm();
         exitDirectly();
     }
 
@@ -97,8 +99,6 @@ public class BaseActivityManagedApplication extends OrmApplication {
      * 直接关闭程序但不关闭后台服务
      */
     public void exitDirectly() {
-        // 关闭数据库
-        closeOrm();
         clearActivity();
         //CrashHandler.getInstance().clearDebugLog();
     }

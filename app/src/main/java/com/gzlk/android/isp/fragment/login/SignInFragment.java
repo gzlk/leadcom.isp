@@ -168,11 +168,12 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
 
     private void syncUserInfo() {
         SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @SuppressWarnings("ConstantConditions")
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    Cache.cache().setCurrentUser(user);
+                    cacheUser(user);
                     // 同步成功之后检测网易云登录状态
                     checkNimStatus();
                 } else {
@@ -183,16 +184,22 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         }).sync();
     }
 
+    private void cacheUser(User user) {
+        Cache.cache().setCurrentUser(user);
+        Cache.cache().saveCurrentUser();
+    }
+
     private void signIn(String account, String password) {
         SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
 
+            @SuppressWarnings("ConstantConditions")
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 // 检测服务器返回的状态
                 if (success) {
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
-                    Cache.cache().setCurrentUser(user);
+                    cacheUser(user);
                     // 登录成功之后检测网易云账号登录状态
                     checkNimStatus();
                 } else {
