@@ -13,6 +13,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationContactPickFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
@@ -22,6 +23,7 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.organization.Member;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
@@ -50,6 +52,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_TITLE = "caf_title";
     private static final String PARAM_ADDR = "caf_address";
     private static final String PARAM_CONTENT = "caf_content";
+    private static final String PARAM_OPEN_STATUS = "caf_open_status";
 
     public static CreateActivityFragment newInstance(String params) {
         CreateActivityFragment caf = new CreateActivityFragment();
@@ -61,8 +64,10 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         return caf;
     }
 
-    private String members = "[]", labels = "[]";
+    private String memberJson = "[]", labelJson = "[]";
     private String cover = "", title = "", address = "", content = "";
+    // 默认只向组织内部开放
+    private int openStatus = Activity.OpenStatus.NONE;
     private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
     private static final int REQ_COVER = REQ_MEMBER + 1;
     private static final int REQ_LABEL = REQ_COVER + 1;
@@ -71,24 +76,25 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mGroupId = bundle.getString(PARAM_GROUP, "");
-        members = bundle.getString(PARAM_MEMBERS, "[]");
+        memberJson = bundle.getString(PARAM_MEMBERS, "[]");
         resetMembers();
         cover = bundle.getString(PARAM_COVER, "");
-        labels = bundle.getString(PARAM_LABEL, "[]");
+        labelJson = bundle.getString(PARAM_LABEL, "[]");
         resetLabels();
         happenDate = bundle.getString(PARAM_HAPPEN, "");
         title = bundle.getString(PARAM_TITLE, "");
         address = bundle.getString(PARAM_ADDR, "");
         content = bundle.getString(PARAM_CONTENT, "");
+        openStatus = bundle.getInt(PARAM_OPEN_STATUS, Activity.OpenStatus.NONE);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_GROUP, mGroupId);
-        bundle.putString(PARAM_MEMBERS, members);
+        bundle.putString(PARAM_MEMBERS, memberJson);
         bundle.putString(PARAM_COVER, cover);
-        bundle.putString(PARAM_LABEL, labels);
+        bundle.putString(PARAM_LABEL, labelJson);
         bundle.putString(PARAM_HAPPEN, happenDate);
         title = titleHolder.getValue();
         bundle.putString(PARAM_TITLE, title);
@@ -96,6 +102,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_ADDR, address);
         content = contentView.getValue();
         bundle.putString(PARAM_CONTENT, content);
+        bundle.putInt(PARAM_OPEN_STATUS, openStatus);
     }
 
     @Override
@@ -103,7 +110,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         switch (requestCode) {
             case REQ_MEMBER:
                 // 活动成员选择返回了
-                members = getResultedData(data);
+                memberJson = getResultedData(data);
                 resetMembers();
                 break;
             case REQ_COVER:
@@ -116,7 +123,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 break;
             case REQ_LABEL:
-                labels = getResultedData(data);
+                labelJson = getResultedData(data);
                 resetLabels();
                 break;
         }
@@ -124,15 +131,15 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resetMembers() {
-        membersId = Json.gson().fromJson(members, new TypeToken<ArrayList<String>>() {
+        selectedMembers = Json.gson().fromJson(memberJson, new TypeToken<ArrayList<Member>>() {
         }.getType());
-        if (null == membersId) {
-            membersId = new ArrayList<>();
+        if (null == selectedMembers) {
+            selectedMembers = new ArrayList<>();
         }
     }
 
     private void resetLabels() {
-        labelsId = Json.gson().fromJson(labels, new TypeToken<ArrayList<String>>() {
+        labelsId = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
         }.getType());
         if (null == labelsId) {
             labelsId = new ArrayList<>();
@@ -172,8 +179,9 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
      * 活动所属的组织id
      */
     private String mGroupId = "";
-    private ArrayList<String> membersId, labelsId;
-    private String[] items;
+    private ArrayList<Member> selectedMembers;
+    private ArrayList<String> labelsId;
+    private String[] items, openStates;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -272,20 +280,22 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_activity_create_items);
         }
+        if (null == openStates) {
+            openStates = StringHelper.getStringArray(R.array.ui_activity_open_status);
+        }
         // cover
         if (null == coverHolder) {
             coverHolder = new SimpleClickableViewHolder(coverView, this);
             coverHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        String none = StringHelper.getString(R.string.ui_base_text_not_set);
         boolean non = null == activity;
         if (isEmpty(cover)) {
             if (!non) {
                 cover = activity.getImg();
             }
         }
-        String value = format(items[0], (isEmpty(cover) ? none : ""));
-        coverHolder.showContent(value);
+        String value;// = format(items[0], (isEmpty(cover) ? none : ""));
+        coverHolder.showContent(items[0]);
         coverHolder.showImage(cover);
 
         // title
@@ -310,7 +320,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 happenDate = activity.getCreateDate();
             }
         }
-        value = format(items[2], isEmpty(happenDate) ? "" : ("(" + formatDate(happenDate) + ")"));
+        value = format(items[2], isEmpty(happenDate) ? "" : formatDate(happenDate));
         timeHolder.showContent(value);
 
         // address
@@ -339,7 +349,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }
-        String tmp = labelsId.size() < 1 ? "(选择标签)" : format("(%d个标签)", labelsId.size());
+        String tmp = labelsId.size() < 1 ? "选择标签" : format("%d个标签", labelsId.size());
         value = format(items[4], tmp);
         typeHolder.showContent(value);
 
@@ -348,7 +358,12 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             privacyHolder = new SimpleClickableViewHolder(privacyView, this);
             privacyHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        value = format(items[5], "(未设置)");
+        if (openStatus == Activity.OpenStatus.NONE) {
+            if (!non) {
+                openStatus = activity.getOpenStatus();
+            }
+        }
+        value = format(items[5], openStates[openStatus]);
         privacyHolder.showContent(value);
 
         // member
@@ -357,15 +372,18 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             memberHolder.addOnViewHolderClickListener(onViewHolderClickListener);
             if (!non) {
                 if (null != activity.getMemberIdArray() && activity.getMemberIdArray().size() > 0) {
-                    for (String id : activity.getMemberIdArray()) {
-                        if (!membersId.contains(id)) {
-                            membersId.add(id);
+                    for (final String id : activity.getMemberIdArray()) {
+                        Member member = new Member() {{
+                            setId(id);
+                        }};
+                        if (!selectedMembers.contains(member)) {
+                            selectedMembers.add(member);
                         }
                     }
                 }
             }
         }
-        value = format(items[6], membersId.size());
+        value = format(items[6], getMembersInfo());
         memberHolder.showContent(value);
 
         if (isEmpty(content)) {
@@ -374,6 +392,24 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         contentView.setValue(content);
+    }
+
+    private String getMembersInfo() {
+        String string = "";
+        if (selectedMembers.size() < 1) {
+            string = "请选择参与人员";
+        } else {
+            int i = 0;
+            for (Member member : selectedMembers) {
+                String name = member.getUserName();
+                string += (isEmpty(string) ? "" : "、") + (isEmpty(name) ? "" : name);
+                if (i >= 1) {
+                    string += format("%s%d人", (isEmpty(string) ? "" : "等"), selectedMembers.size());
+                }
+                i++;
+            }
+        }
+        return string;
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
@@ -390,16 +426,59 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case 2:
                     // 选择活动标签
-                    String string = format("%s,%s", mGroupId, replaceJson(labels, false));
+                    String string = format("%s,%s", mGroupId, replaceJson(labelJson, false));
                     openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
                     break;
+                case 3:
+                    // 选择公开范围
+                    openActivityOpenStatus();
+                    break;
                 case 4:
-                    String params = format("%s,%s", mGroupId, replaceJson(members, false));
+                    String params = format("%s,%s", mGroupId, replaceJson(memberJson, false));
                     openActivity(OrganizationContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
                     break;
             }
         }
     };
+
+    private View openStatusView;
+
+    private void openActivityOpenStatus() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == openStatusView) {
+                    openStatusView = View.inflate(Activity(), R.layout.popup_dialog_activity_open_status, null);
+                }
+                return openStatusView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_button_activity_open_status_open, R.id.ui_dialog_button_activity_open_status_close};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_dialog_button_activity_open_status_open:
+                        openStatus = Activity.OpenStatus.OPEN;
+                        privacyHolder.showContent(format(items[5], format("(%s)", openStates[openStatus])));
+                        break;
+                    case R.id.ui_dialog_button_activity_open_status_close:
+                        openStatus = Activity.OpenStatus.GROUP;
+                        privacyHolder.showContent(format(items[5], format("(%s)", openStates[openStatus])));
+                        break;
+                }
+                return true;
+            }
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.TYPE_SLID).show();
+    }
 
     private String happenDate;
 
@@ -439,11 +518,11 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_activity_create_title_invalid);
             return;
         }
-//        String address = addressHolder.getValue();
-//        if (isEmpty(address)) {
-//            ToastHelper.make().showMsg(R.string.ui_activity_create_address_invalid);
-//            return;
-//        }
+        String address = addressHolder.getValue();
+        if (isEmpty(address)) {
+            ToastHelper.make().showMsg(R.string.ui_activity_create_address_invalid);
+            return;
+        }
         String content = contentView.getValue();
         if (isEmpty(content)) {
             ToastHelper.make().showMsg(R.string.ui_activity_create_content_invalid);
@@ -458,12 +537,16 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void publishActivity() {
-        String title = titleHolder.getValue();
-        String address = addressHolder.getValue();
-        String content = contentView.getValue();
+        String title = titleHolder.getValue().trim();
+        String address = addressHolder.getValue().trim();
+        String content = contentView.getValue().trim();
         String logo = null;
         if (getUploadedFiles().size() > 0) {
             logo = getUploadedFiles().get(0).getUrl();
+        }
+        ArrayList<String> members = new ArrayList<>();
+        for (Member member : selectedMembers) {
+            members.add(member.getId());
         }
         ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
             @Override
@@ -478,6 +561,6 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                     });
                 }
             }
-        }).add(title, content, mGroupId, logo, membersId, labelsId);
+        }).add(title, content, openStatus, address, happenDate, mGroupId, logo, members, labelsId, null);
     }
 }

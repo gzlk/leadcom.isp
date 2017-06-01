@@ -45,7 +45,7 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         String json = bundle.getString(PARAM_MEMBERS, "[]");
-        exists = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
+        exists = Json.gson().fromJson(json, new TypeToken<ArrayList<Member>>() {
         }.getType());
     }
 
@@ -56,7 +56,7 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
     }
 
     private ContactAdapter mAdapter;
-    private ArrayList<String> exists;
+    private ArrayList<Member> exists;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -79,12 +79,12 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
     }
 
     private void resultMembers() {
-        ArrayList<String> list = new ArrayList<>();
+        ArrayList<Member> list = new ArrayList<>();
         for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
             Member member = mAdapter.get(i);
             if (member.isSelected()) {
-                if (!list.contains(member.getUserId())) {
-                    list.add(member.getUserId());
+                if (!list.contains(member)) {
+                    list.add(member);
                 }
             }
         }
@@ -125,15 +125,11 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
         }
     }
 
-    private boolean exists(String id) {
-        return !(null == exists || exists.size() < 1) && exists.contains(id);
-    }
-
     @Override
     protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
         if (null != list && list.size() > 0) {
             for (Member member : list) {
-                member.setSelected(exists(member.getUserId()));
+                member.setSelected(exists.contains(member));
             }
             mAdapter.add(list, false);
         }
@@ -144,7 +140,7 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
     protected void onFetchingRemoteMembersComplete(List<Member> list) {
         if (null != list && list.size() > 0) {
             for (Member member : list) {
-                member.setSelected(exists(member.getUserId()));
+                member.setSelected(exists.contains(member));
             }
             mAdapter.add(list, false);
             mAdapter.sort();
