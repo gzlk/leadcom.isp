@@ -20,27 +20,34 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Activity.Table.ACTIVITY_ARCHIVE)
 public class ActArchive extends Model {
 
+    public interface Field {
+        String AuditorId = "auditorId";
+        String AuditorDate = "auditorDate";
+    }
+
     @Column(Organization.Field.GroupId)
     private String groupId;        //群体ID
     @Column(Activity.Field.ActivityId)
     private String actId;          //活动id
     @Column(Archive.Field.Type)
     private String type;           //文件类型(1.文档,2.图片,3.视频,4.其他)
-    @Column(Field.Name)
+    @Column(Model.Field.Name)
     private String name;           //文件名(带后缀)
     @Column(Attachment.Field.Url)
     private String url;            //文件url;
     @Column(Attachment.Field.Pdf)
     private String pdf;            //Office文档映射的PDF地址(用来浏览Office文档)
-    @Column(Field.UserId)
+    @Column(Model.Field.UserId)
     private String userId;         //档案发起者ID
-    @Column(Field.UserName)
+    @Column(Model.Field.UserName)
     private String userName;       //档案发起者姓名
-    @Column(Field.CreateDate)
+    @Column(Model.Field.CreateDate)
     private String createDate;     //创建时间
     @Column(Activity.Field.Status)
     private String status;         //审核状态:1.未审核(如果档案已存档,则表示未通过审核),2.审核通过,3.审核未通过
+    @Column(Field.AuditorId)
     private String auditorId;      //档案审核人用户ID
+    @Column(Field.AuditorDate)
     private String auditDate;      //审核时间
 
     public String getGroupId() {

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
@@ -34,6 +35,7 @@ import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.task.OrmTask;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
@@ -77,6 +79,10 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         bundle.putInt(TYPE, archiveType);
     }
 
+    // 存档和审核需要的按钮
+    @ViewId(R.id.ui_archive_approve_container)
+    private LinearLayout approveContainer;
+
     // 默认用户档案
     private int archiveType = Archive.Type.USER;
     private DocumentDetailsAdapter mAdapter;
@@ -88,7 +94,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_chatable;
+        return R.layout.fragment_archive_details;
     }
 
     @Override

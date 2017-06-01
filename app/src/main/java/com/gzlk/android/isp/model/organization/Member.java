@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model.organization;
 import com.gzlk.android.isp.model.common.Leaguer;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
@@ -41,6 +42,9 @@ public class Member extends Leaguer {
     @Column(User.Field.Phone)
     private String phone;          //用户手机
 
+    @Ignore
+    private Role groRole;
+
     public String getGroupId() {
         return groupId;
     }
@@ -63,5 +67,19 @@ public class Member extends Leaguer {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Role getGroRole() {
+        if (null == groRole) {
+            groRole = Role.getRole(getRoleId());
+            if (null != groRole) {
+                setRoleName(groRole.getRoleName());
+            }
+        }
+        return groRole;
+    }
+
+    public void setGroRole(Role groRole) {
+        this.groRole = groRole;
     }
 }

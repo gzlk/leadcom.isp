@@ -175,16 +175,17 @@ public class Archive extends Additional {
         switch (status) {
             case ArchiveStatus.APPROVING:
                 // 不是活动档案时为未审核，活动档案为未存档
-                //return isEmpty(actId) ? "待审核" : "未存档";
-                return "待审核";
+                return type == ArchiveType.ACTIVITY ? "待存档" : "待审核";
+                //return "待审核";
             case ArchiveStatus.APPROVED:
                 // 不是活动档案时为已审核，活动档案为已存档
-                //return isEmpty(actId) ? "通过审核" : "已存档";
-                return "已审核";
+                return type == ArchiveType.ACTIVITY ? "已存档" : "已审核";
+                //return "已审核";
             case ArchiveStatus.FAILURE:
-                return "未通过审核";
+                return type == ArchiveType.ACTIVITY ? "存档失败" : "审核失败";
+                //return "未通过审核";
             default:
-                //return isEmpty(actId) ? "未通过审核" : "";
+                //return type == ArchiveType.ACTIVITY ? "" : "未通过审核";
                 return "未知(" + String.valueOf(status) + ")";
         }
     }
@@ -293,25 +294,24 @@ public class Archive extends Additional {
     //最后一次修改时间
     @Column(Field.LastModifiedDate)
     private String lastModifiedDate;
+    //档案附加信息
+    @Ignore
+    private Additional addition;
 
     // 存档相关
-    //@Column(Activity.Field.ActivityId)
-    @Ignore
+    @Column(Activity.Field.ActivityId)
     private String actId;              //活动ID
-    //@Column(Field.AttachmentNum)
-    @Ignore
+    @Column(Field.AttachmentNum)
     private String attachNum;          //活动档案附件总数量
-    //@Column(Field.PassedNum)
-    @Ignore
+    @Column(Field.PassedNum)
     private String passNum;            //通过审核的活动档案附件数量
-    //@Column(Field.ArchiveDate)
-    @Ignore
+    @Column(Field.ArchiveDate)
     private String archiveDate;        //存档时间
-    //@Column(Field.AttachmentNum)
-    @Ignore
+    @Column(Field.AttachmentNum)
     private String archiverId;         //存档人用户ID
 
     // 审核相关
+    //存档状态(1.未存档,2.存档成功,3.存档失败)
     //1.未审核,2.审核成功,3.审核失败
     @Column(Activity.Field.Status)
     private int status;
@@ -321,9 +321,6 @@ public class Archive extends Additional {
     //审核时间
     @Column(Field.ApproveDate)
     private String approveDate;
-    //档案附加信息
-    @Ignore
-    private Additional addition;
 
     public String getGroupId() {
         return groupId;

@@ -1,10 +1,11 @@
-package com.gzlk.android.isp.fragment.organization.archive;
+package com.gzlk.android.isp.fragment.activity.archive;
 
 import android.os.Bundle;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.organization.archive.ArchiveAdapter;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;

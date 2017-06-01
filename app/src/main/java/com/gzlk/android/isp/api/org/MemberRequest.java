@@ -5,8 +5,13 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Member;
+import com.gzlk.android.isp.model.organization.Permission;
+import com.gzlk.android.isp.model.organization.Role;
 import com.litesuits.http.request.param.HttpMethods;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>组织成员相关api<br />
@@ -48,6 +53,38 @@ public class MemberRequest extends Request<Member> {
                 break;
         }
         return format("%s%s", api, action);
+    }
+
+    private Dao<Role> roleDao = new Dao<>(Role.class);
+
+    private void saveMemberRole(Member member) {
+        if (null != member) {
+            if (null != member.getGroRole()) {
+                Role role = member.getGroRole();
+                member.setRoleId(role.getId());
+                member.setRoleName(role.getRoleName());
+                // 保存角色的权限列表
+                role.savePermissionIds();
+                // 保存角色信息
+                roleDao.save(role);
+            }
+        }
+    }
+
+    @Override
+    protected void save(Member member) {
+        saveMemberRole(member);
+        super.save(member);
+    }
+
+    @Override
+    protected void save(List<Member> list) {
+        if (null != list && list.size() > 0) {
+            for (Member member : list) {
+                saveMemberRole(member);
+            }
+        }
+        super.save(list);
     }
 
     @Override

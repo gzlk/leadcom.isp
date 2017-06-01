@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<WebView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.hlk.hlklib.lib.view.SoftInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_chatable_main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" />
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/tool_view_recycler_view_swipe_refreshable"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <include layout="@layout/tool_view_chatable_inputbar_input_board" />
+
+        <!--未审核档案需要显示以下按钮-->
+        <include layout="@layout/tool_view_archive_approve" />
+    </LinearLayout>
+
+    <!--表情以及其他附加内容-->
+    <include
+        layout="@layout/tool_view_chatable_inputbar_additional"
+        android:visibility="gone" />
+
+</com.hlk.hlklib.lib.view.SoftInputLayout>

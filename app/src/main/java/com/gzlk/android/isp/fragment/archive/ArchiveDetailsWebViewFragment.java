@@ -39,7 +39,7 @@ public class ArchiveDetailsWebViewFragment extends BaseTransparentSupportFragmen
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_archive_details;
+        return R.layout.fragment_archive_details_web_view;
     }
 
     @Override

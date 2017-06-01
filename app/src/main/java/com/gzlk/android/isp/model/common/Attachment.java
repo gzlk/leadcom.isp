@@ -59,6 +59,46 @@ public class Attachment extends Model {
         int MOMENT = 2;
     }
 
+    /**
+     * 活动文件的存档状态
+     */
+    public interface AttachmentStatus {
+        /**
+         * 待存档
+         */
+        int ARCHIVING = 1;
+        /**
+         * 已存档
+         */
+        int ARCHIVED = 2;
+        /**
+         * 存档失败
+         */
+        int FAILURE = 3;
+    }
+
+    /**
+     * 附件文件类型
+     */
+    public interface AttachmentType {
+        /**
+         * Office文档
+         */
+        int OFFICE = 1;
+        /**
+         * 图片
+         */
+        int IMAGE = 2;
+        /**
+         * 视频
+         */
+        int VIDEO = 3;
+        /**
+         * 其他
+         */
+        int OTHER = 4;
+    }
+
     public int iconColor() {
         if (StringHelper.isEmpty(ext)) return 0;
 
@@ -196,6 +236,16 @@ public class Attachment extends Model {
      */
     public boolean isLocalFile() {
         return !StringHelper.isEmpty(fullPath) && fullPath.charAt(0) == '/';
+    }
+
+    /**
+     * 获取当前附件的类型
+     */
+    public int getAttachmentType() {
+        if (isOffice()) return AttachmentType.OFFICE;
+        if (isImage()) return AttachmentType.IMAGE;
+        if (isVideo()) return AttachmentType.VIDEO;
+        return AttachmentType.OTHER;
     }
 
     public boolean isOffice() {

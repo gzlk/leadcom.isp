@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.organization.archive;
+package com.gzlk.android.isp.fragment.activity.archive;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 /**
- * <b>功能描述：</b>待审核档案列表<br />
+ * <b>功能描述：</b>活动的待存档文件列表<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/24 21:31 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -27,6 +27,7 @@ public class ApprovingFragment extends BaseViewPagerSupportFragment {
     public static ApprovingFragment newInstance(String params) {
         ApprovingFragment af = new ApprovingFragment();
         Bundle bundle = new Bundle();
+        // 传过来的活动的id
         bundle.putString(PARAM_QUERY_ID, params);
         af.setArguments(bundle);
         return af;

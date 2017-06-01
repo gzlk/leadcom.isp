@@ -178,6 +178,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
     }
 
     private void refreshArchive() {
+        displayNothing(false);
         switch (mType) {
             case TYPE_ALL:
                 setNothingText(R.string.ui_archive_management_nothing_1);

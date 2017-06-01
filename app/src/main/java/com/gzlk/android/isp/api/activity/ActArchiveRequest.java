@@ -1,10 +1,17 @@
 package com.gzlk.android.isp.api.activity;
 
+import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.activity.ActArchive;
+import com.gzlk.android.isp.model.common.Attachment;
+import com.litesuits.http.request.param.HttpMethods;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * <b>功能描述：</b>活动文档存档、审核相关接口<br />
@@ -23,12 +30,18 @@ public class ActArchiveRequest extends Request<ActArchive> {
         return new ActArchiveRequest();
     }
 
+    private static class SingleActivityArchive extends Output<ActArchive> {
+    }
+
     private static class MultipleActivityArchive extends Query<ActArchive> {
     }
 
+    private static final String DOC = "/activity/actDoc";
+    private static final String CALLBACK = "/uploadCallback";
+
     @Override
     protected String url(String action) {
-        return null;
+        return format("%s%s", DOC, action);
     }
 
     @Override
@@ -49,9 +62,70 @@ public class ActArchiveRequest extends Request<ActArchive> {
     }
 
     /**
-     * 存档单个档案
+     * 文件上传之后的回调
      */
-    public void archive() {
-        // groDocArchiveId,status,accessToken
+    public void uploadCallback(Attachment attachment) {
+        // actId,type,name,url,pdf,accessToken
+        JSONObject object = new JSONObject();
+        try {
+            object.put("actId", attachment.getArchiveId())
+                    .put("type", attachment.getAttachmentType())
+                    .put("name", attachment.getName())
+                    .put("url", attachment.getUrl())
+                    .put("pdf", attachment.getPdf())
+                    .put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleActivityArchive.class, url(CALLBACK), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 更改活动中文件的存档属性
+     *
+     * @param fileId 存档文件的id
+     * @param status 存档状态：审核状态(1.未审核,2.已通过,3.未通过[暂时不需要]) {@link com.gzlk.android.isp.model.common.Attachment.AttachmentStatus}
+     * @see com.gzlk.android.isp.model.common.Attachment.AttachmentStatus
+     */
+    public void update(String fileId, int status) {
+        // _id,status,accessToken
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", fileId)
+                    .put("status", status)
+                    .put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleActivityArchive.class, url(CALLBACK), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 搜索活动中的文件列表
+     *
+     * @param activityId     活动ID
+     * @param attachmentType 筛选文件类型(不传[所有],1.文档,2.图片,3.视频) {@link com.gzlk.android.isp.model.common.Attachment.AttachmentType}
+     * @see com.gzlk.android.isp.model.common.Attachment.AttachmentType
+     */
+    public void list(String activityId, int attachmentType) {
+        // actId,type
+        String param = format("actId=%s%s", activityId, (0 == attachmentType ? "" : format("&type=%d", attachmentType)));
+        httpRequest(getRequest(MultipleActivityArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
+    }
+
+    /**
+     * 在活动中搜索文件列表
+     *
+     * @param activityId     活动的id
+     * @param info           模糊搜索内容
+     * @param attachmentType 文件类型，为0时搜索全部文件名{@link com.gzlk.android.isp.model.common.Attachment.AttachmentType}
+     * @see com.gzlk.android.isp.model.common.Attachment.AttachmentType
+     */
+    public void search(String activityId, String info, int attachmentType) {
+        // actId,info,type
+        String param = format("actId=%s&info=%s%s", activityId, info, (0 == attachmentType ? "" : format("&type=%d", attachmentType)));
+        httpRequest(getRequest(MultipleActivityArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
 }
