@@ -5,10 +5,13 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.util.ArrayList;
@@ -61,17 +64,49 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
         // 只能选择一张图片
         maxSelectable = 1;
         setCustomTitle(R.string.ui_activity_cover_picker_fragment_title);
+        setRightText(R.string.ui_base_text_confirm);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                // 确定的时候上传封面并返回到上一层
+                confirmCover();
+            }
+        });
         initializeHolders();
         addOnImageSelectedListener(imageSelectedListener);
+        setOnFileUploadingListener(onFileUploadingListener);
     }
+
+    private void confirmCover() {
+        if (getWaitingForUploadFiles().size() > 0) {
+            uploadFiles();
+        } else {
+            warningNullCover();
+        }
+    }
+
+    private void warningNullCover() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_cover_picker_none_image_selected);
+    }
+
+    private OnFileUploadingListener onFileUploadingListener = new OnFileUploadingListener() {
+        @Override
+        public void onUploading(int all, int current, String file, long size, long uploaded) {
+
+        }
+
+        @Override
+        public void onUploadingComplete(ArrayList<Attachment> uploaded) {
+            resultData(uploaded.get(0).getUrl());
+        }
+    };
 
     private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
             if (selected.size() > 0) {
-                resultData(selected.get(0));
-            } else {
-                ToastHelper.make().showMsg(R.string.ui_activity_cover_picker_none_image_selected);
+                galleryHolder.showContent(format(items[0], ""));
+                galleryHolder.showImage(selected.get(0));
             }
         }
     };
