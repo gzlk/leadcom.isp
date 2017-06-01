@@ -6,7 +6,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.hlk.hlklib.lib.inject.Click;
@@ -57,6 +59,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         titleView.setText(strings[2]);
         timeView.setText(null);
         descView.setText(strings[3]);
+        headers.setVisibility(View.GONE);
         iconContainer.setBackground(getColor(text.charAt(0) == '1' ? R.color.color_fe4848 : R.color.color_faaa2d));
     }
 
@@ -76,6 +79,7 @@ public class ActivityViewHolder extends BaseViewHolder {
             headers.setAdapter(adapter);
             headers.setImagesData(img);
         }
+        timeView.setText(Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), activity.getBeginDate()));
         headers.setVisibility(hasImage ? View.VISIBLE : View.GONE);
         iconText.setVisibility(hasImage ? View.GONE : View.VISIBLE);
         iconContainer.setBackground(getColor(hasImage ? R.color.textColorHintLight : R.color.color_faaa2d));

@@ -151,42 +151,16 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
                     //.put("markdown", checkNull(markdown))
-                    .put("office", new JSONArray(getAttachJson(office)))
-                    .put("image", new JSONArray(getAttachJson(image)))
-                    .put("video", new JSONArray(getAttachJson(video)))
-                    .put("attach", new JSONArray(getAttachJson(attach)))
+                    .put("office", new JSONArray(Attachment.getJson(office)))
+                    .put("image", new JSONArray(Attachment.getJson(image)))
+                    .put("video", new JSONArray(Attachment.getJson(video)))
+                    .put("attach", new JSONArray(Attachment.getJson(attach)))
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         httpRequest(getRequest(SingleArchive.class, url(ADD), object.toString(), HttpMethods.Post));
-    }
-
-    // 序列化 Attachment 类时的排除策略
-    private static ExclusionStrategy strategy = new ExclusionStrategy() {
-
-        @Override
-        public boolean shouldSkipField(FieldAttributes f) {
-            // Attachment 中上传到服务器上时不需要的字段
-            return f.getName().equals("id") ||          // id
-                    f.getName().equals("type") ||       // type
-                    f.getName().equals("archiveId") ||  // archiveId
-                    f.getName().contains("fullPath") || // fullPath
-                    f.getName().contains("ext") ||      // ext
-                    f.getName().startsWith("is") ||     // isSelectable, isSelected
-                    f.getName().startsWith("local");    // localDeleted
-        }
-
-        @Override
-        public boolean shouldSkipClass(Class<?> clazz) {
-            return false;
-        }
-    };
-
-    private String getAttachJson(ArrayList<Attachment> list) {
-        return Json.gson(strategy).toJson(list, new TypeToken<ArrayList<Attachment>>() {
-        }.getType());
     }
 
     /**
@@ -221,10 +195,10 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("label", new JSONArray(labels))
                     .put("authUser", new JSONArray(authUser))
                     //.put("markdown", checkNull(markdown))
-                    .put("office", new JSONArray(getAttachJson(office)))
-                    .put("image", new JSONArray(getAttachJson(image)))
-                    .put("video", new JSONArray(getAttachJson(video)))
-                    .put("attach", new JSONArray(getAttachJson(attach)))
+                    .put("office", new JSONArray(Attachment.getJson(office)))
+                    .put("image", new JSONArray(Attachment.getJson(image)))
+                    .put("video", new JSONArray(Attachment.getJson(video)))
+                    .put("attach", new JSONArray(Attachment.getJson(attach)))
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -282,10 +256,10 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
                     //.put("markdown", checkNull(markdown))
-                    .put("office", new JSONArray(getAttachJson(office)))
-                    .put("image", new JSONArray(getAttachJson(image)))
-                    .put("video", new JSONArray(getAttachJson(video)))
-                    .put("attach", new JSONArray(getAttachJson(attach)))
+                    .put("office", new JSONArray(Attachment.getJson(office)))
+                    .put("image", new JSONArray(Attachment.getJson(image)))
+                    .put("video", new JSONArray(Attachment.getJson(video)))
+                    .put("attach", new JSONArray(Attachment.getJson(attach)))
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -324,10 +298,10 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("label", new JSONArray(labels))
                     .put("authUser", new JSONArray(authUser))
                     //.put("markdown", checkNull(markdown))
-                    .put("office", new JSONArray(getAttachJson(office)))
-                    .put("image", new JSONArray(getAttachJson(image)))
-                    .put("video", new JSONArray(getAttachJson(video)))
-                    .put("attach", new JSONArray(getAttachJson(attach)))
+                    .put("office", new JSONArray(Attachment.getJson(office)))
+                    .put("image", new JSONArray(Attachment.getJson(image)))
+                    .put("video", new JSONArray(Attachment.getJson(video)))
+                    .put("attach", new JSONArray(Attachment.getJson(attach)))
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();

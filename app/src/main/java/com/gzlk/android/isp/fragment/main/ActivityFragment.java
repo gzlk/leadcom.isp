@@ -3,6 +3,7 @@ package com.gzlk.android.isp.fragment.main;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.view.Display;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
@@ -23,6 +24,9 @@ import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Organization;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -186,6 +190,17 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private void updateActivityList(List<Activity> list) {
         if (null == list) return;
         for (Activity activity : list) {
+            if (!activities.contains(activity)) {
+                activities.add(activity);
+            }
+        }
+        Collections.sort(activities, new Comparator<Activity>() {
+            @Override
+            public int compare(Activity o1, Activity o2) {
+                return -o1.getCreateDate().compareTo(o2.getCreateDate());
+            }
+        });
+        for (Activity activity : activities) {
             mAdapter.update(activity);
         }
     }
@@ -205,6 +220,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
         changeSelectedActivity();
     }
 
+    private ArrayList<Activity> activities = new ArrayList<>();
+
     private void changeSelectedActivity() {
         if (selectedIndex < 0) return;
         // 加载本地该组织的活动列表
@@ -216,6 +233,10 @@ public class ActivityFragment extends BaseOrganizationFragment {
             // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
             mainFragment.setTitleText(org.getName());
         }
+        for (Activity activity : activities) {
+            mAdapter.remove(activity);
+        }
+        activities.clear();
         fetchingActivity(false);
     }
 
@@ -245,7 +266,12 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            ToastHelper.make().showMsg("不要点了，功能还未实现呢");
+            Model model = mAdapter.get(index);
+            if (model instanceof Activity) {
+                Activity act = (Activity) model;
+                openActivity(CreateActivityFragment.class.getName(), format("%s,%s", act.getId(), act.getGroupId()), true, true);
+            }
+            //ToastHelper.make().showMsg("不要点了，功能还未实现呢");
         }
     };
 

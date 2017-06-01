@@ -112,8 +112,7 @@ public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragmen
     private void display(Activity activity) {
         imageDisplayer.displayImage(activity.getImg(), getScreenWidth(), getDimension(R.dimen.ui_static_dp_200), false, false);
         titleHolder.showContent(format(items[0], activity.getTitle()));
-        String time = Utils.format(activity.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs_min));
-        timeHolder.showContent(format(items[1], time));
+        timeHolder.showContent(format(items[1], formatDate(activity.getBeginDate())));
         addressHolder.showContent(format(items[2], activity.getContent()));
         endButton.setEnabled(activity.getStatus() == Activity.Status.ACTIVE);
         endButton.setText(activity.getStatus() == Activity.Status.ACTIVE ? R.string.ui_activity_details_button_close_text : R.string.ui_activity_details_ended_activity);

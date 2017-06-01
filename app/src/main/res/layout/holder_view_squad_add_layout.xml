@@ -33,7 +33,7 @@
             app:cet_edit_hint="@string/ui_organization_squad_add_hint"
             app:cet_edit_value_extract_regex="@string/regex_normal_input_filter"
             app:cet_edit_value_max_length="10"
-            app:cet_edit_value_verify_regex="@string/regex_normal_input_verify" />
+            app:cet_edit_value_verify_regex="@string/regex_group_squad_name_input_verify" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_holder_view_squad_add_editor_confirm"

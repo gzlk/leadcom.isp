@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.holder.attachment;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,6 +54,7 @@ public class AttachmentViewHolder extends BaseViewHolder {
     public AttachmentViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        imageDisplayer.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
     // 设置是否显示删除按钮

@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -53,6 +54,7 @@ public class ActivityManagementViewHolder extends BaseViewHolder {
         text = getSearchingText(text, searchingText);
         titleTextView.setText(Html.fromHtml(text));
         addrTextView.setText(activity.getContent());
+        timeTextView.setText(fragment().formatDateTime(activity.getBeginDate()));
     }
 
     @Click({R.id.ui_holder_view_activity_management_item_container})

@@ -24,8 +24,9 @@
         app:cet_edit_gravity="center_vertical"
         app:cet_edit_hint="@string/app_name"
         app:cet_edit_icon_clear="@string/ui_icon_clear"
-        app:cet_edit_padding_left="@dimen/ui_base_dimen_margin_padding"
         app:cet_edit_minimum_height="@dimen/ui_base_dimen_button_height"
-        app:cet_edit_normal_border="@android:color/white" />
+        app:cet_edit_normal_border="@android:color/white"
+        app:cet_edit_padding_left="@dimen/ui_base_dimen_margin_padding"
+        app:cet_edit_padding_right="@dimen/ui_static_dp_30" />
 
 </LinearLayout>

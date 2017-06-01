@@ -34,13 +34,13 @@ public class SimpleClickableItem extends Model {
         title = strings[1];
         value = strings[2];
         if (strings.length > 3) {
-            if (StringHelper.isEmpty(strings[3])) {
+            if (isEmpty(strings[3])) {
                 iconVisible = false;
             } else {
                 try {
                     int i = Integer.valueOf(strings[3]);
                     iconVisible = i >= 1;
-                    addVisible = i > 2;
+                    addVisible = i >= 2;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

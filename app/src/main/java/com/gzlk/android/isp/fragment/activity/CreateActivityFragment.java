@@ -3,11 +3,17 @@ package com.gzlk.android.isp.fragment.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.bigkoo.pickerview.TimePickerView;
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
@@ -16,6 +22,7 @@ import com.gzlk.android.isp.fragment.organization.OrganizationContactPickFragmen
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.lib.Json;
@@ -24,12 +31,15 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Member;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>新增活动<br />
@@ -116,11 +126,6 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             case REQ_COVER:
                 // 封面选择了
                 cover = getResultedData(data);
-                if (cover.charAt(0) == '/') {
-                    // 如果照片选择的是本地图片则将其放入待上传列表
-                    getWaitingForUploadFiles().clear();
-                    getWaitingForUploadFiles().add(cover);
-                }
                 break;
             case REQ_LABEL:
                 labelJson = getResultedData(data);
@@ -163,8 +168,6 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     private View memberView;
     @ViewId(R.id.ui_activity_creator_content)
     private ClearEditText contentView;
-    @ViewId(R.id.ui_tool_attachment_button)
-    private View attachmentView;
 
     // holder
     private SimpleClickableViewHolder coverHolder;
@@ -182,6 +185,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     private ArrayList<Member> selectedMembers;
     private ArrayList<String> labelsId;
     private String[] items, openStates;
+
+    private FileAdapter mAdapter;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -276,9 +281,15 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         }).find(mQueryId, fromRemote);
     }
 
+    @Override
+    protected boolean checkStillEditing() {
+        return !isEmpty(titleHolder.getValue()) || !isEmpty(addressHolder.getValue()) || !isEmpty(contentView.getValue());
+    }
+
     private void initializeHolder(Activity activity) {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_activity_create_items);
+            mRecyclerView.setNestedScrollingEnabled(false);
         }
         if (null == openStates) {
             openStates = StringHelper.getStringArray(R.array.ui_activity_open_status);
@@ -320,7 +331,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 happenDate = activity.getCreateDate();
             }
         }
-        value = format(items[2], isEmpty(happenDate) ? "" : formatDate(happenDate));
+        value = format(items[2], isEmpty(happenDate) ? "" : formatDateTime(happenDate));
         timeHolder.showContent(value);
 
         // address
@@ -329,7 +340,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (isEmpty(address)) {
             if (!non) {
-                address = activity.getContent();
+                address = activity.getSite();
             }
         }
         value = format(items[3], address);
@@ -392,6 +403,23 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         contentView.setValue(content);
+        if (null == mAdapter) {
+            mAdapter = new FileAdapter();
+            setSupportLoadingMore(false);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+        updateArchiveAttachment(activity);
+    }
+
+    private ArrayList<Attachment> attachments = new ArrayList<>();
+
+    private void updateArchiveAttachment(Activity activity) {
+        if (null == activity) return;
+
+        if (null != activity.getAttUrlArray()) {
+            attachments.addAll(activity.getAttUrlArray());
+            mAdapter.update(activity.getAttUrlArray(), false);
+        }
     }
 
     private String getMembersInfo() {
@@ -404,7 +432,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 String name = member.getUserName();
                 string += (isEmpty(string) ? "" : "、") + (isEmpty(name) ? "" : name);
                 if (i >= 1) {
-                    string += format("%s%d人", (isEmpty(string) ? "" : "等"), selectedMembers.size());
+                    string += format("%s，共%d人", (isEmpty(string) ? "" : "等"), selectedMembers.size());
                 }
                 i++;
             }
@@ -418,7 +446,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             switch (index) {
                 case 0:
                     // 到活动封面拾取器
-                    openActivity(CoverPickFragment.class.getName(), "", REQ_COVER, true, false);
+                    openActivity(CoverPickFragment.class.getName(), cover, REQ_COVER, true, false);
                     break;
                 case 1:
                     // 选择活动时间
@@ -440,6 +468,68 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
     };
+
+    @Click({R.id.ui_tool_attachment_button})
+    private void attachmentClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.ui_tool_attachment_button:
+                Utils.hidingInputBoard(contentView);
+                resetSelectedFiles();
+                openFilePicker();
+                break;
+        }
+    }
+
+    // 文件选择
+    private FilePickerDialog filePickerDialog;
+
+    private void openFilePicker() {
+        if (null == filePickerDialog) {
+            DialogProperties properties = new DialogProperties();
+            // 选择文件
+            properties.selection_type = DialogConfigs.FILE_SELECT;
+            // 可以多选
+            properties.selection_mode = DialogConfigs.MULTI_MODE;
+            // 最多可选文件数量
+            properties.maximum_count = 0;
+            // 文件扩展名过滤
+            //properties.extensions = StringHelper.getStringArray(R.array.ui_base_file_pick_types);
+            filePickerDialog = new FilePickerDialog(Activity(), properties);
+            filePickerDialog.setTitle(StringHelper.getString(R.string.ui_text_document_picker_title));
+            filePickerDialog.setPositiveBtnName(StringHelper.getString(R.string.ui_base_text_confirm));
+            filePickerDialog.setNegativeBtnName(StringHelper.getString(R.string.ui_base_text_cancel));
+            filePickerDialog.setDialogSelectionListener(dialogSelectionListener);
+        }
+        filePickerDialog.show();
+    }
+
+    private DialogSelectionListener dialogSelectionListener = new DialogSelectionListener() {
+        @Override
+        public void onSelectedFilePaths(String[] strings) {
+            // 更新待上传文件列表
+            getWaitingForUploadFiles().clear();
+            getWaitingForUploadFiles().addAll(Arrays.asList(strings));
+            for (String string : getWaitingForUploadFiles()) {
+                Attachment attachment = new Attachment(string);
+                mAdapter.update(attachment);
+            }
+        }
+    };
+
+    private void resetSelectedFiles() {
+        int size = mAdapter.getItemCount();
+        if (size > 0) {
+            List<String> tmp = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Attachment att = mAdapter.get(i);
+                if (att.isLocalFile()) {
+                    tmp.add(att.getFullPath());
+                }
+            }
+            filePickerDialog.markFiles(tmp);
+        }
+    }
 
     private View openStatusView;
 
@@ -529,38 +619,111 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         Utils.hidingInputBoard(contentView);
-        if (getWaitingForUploadFiles().size() > 0) {
-            uploadFiles();
-        } else {
-            publishActivity();
-        }
+//        if (getWaitingForUploadFiles().size() > 0) {
+//            uploadFiles();
+//        } else {
+//            publishActivity();
+//        }
     }
 
     private void publishActivity() {
+        showImageHandlingDialog(R.string.ui_activity_create_handing_warning);
+        handleUploadAttachments();
         String title = titleHolder.getValue().trim();
         String address = addressHolder.getValue().trim();
         String content = contentView.getValue().trim();
-        String logo = null;
-        if (getUploadedFiles().size() > 0) {
-            logo = getUploadedFiles().get(0).getUrl();
-        }
         ArrayList<String> members = new ArrayList<>();
         for (Member member : selectedMembers) {
             members.add(member.getId());
         }
-        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
-            @Override
-            public void onResponse(Activity activity, boolean success, String message) {
-                super.onResponse(activity, success, message);
-                if (success) {
-                    Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    });
+        if (isEmpty(mQueryId)) {
+            ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+                @Override
+                public void onResponse(Activity activity, boolean success, String message) {
+                    super.onResponse(activity, success, message);
+                    if (success) {
+                        successToClose();
+                    } else {
+                        hideImageHandlingDialog();
+                    }
                 }
+            }).add(title, content, openStatus, address, happenDate, mGroupId, cover, members, labelsId, attachments);
+        } else {
+            ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+                @Override
+                public void onResponse(Activity activity, boolean success, String message) {
+                    super.onResponse(activity, success, message);
+                    if (success) {
+                        successToClose();
+                    } else {
+                        hideImageHandlingDialog();
+                    }
+                }
+            }).update(mQueryId, title, content, openStatus, address, happenDate, cover, members, labelsId, attachments);
+        }
+    }
+
+    private void successToClose() {
+        Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                finish();
             }
-        }).add(title, content, openStatus, address, happenDate, mGroupId, logo, members, labelsId, null);
+        });
+    }
+
+    // 处理上传之后的文件列表
+    private void handleUploadAttachments() {
+        // 上传的原始文件
+        if (getUploadedFiles().size() > 0) {
+            for (int i = 0, len = getUploadedFiles().size(); i < len; i++) {
+                Attachment attachment = getUploadedFiles().get(i);
+                attachment.setArchiveId(mQueryId);
+                attachments.add(attachment);
+            }
+        }
+    }
+
+    private OnViewHolderClickListener attachmentViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Attachment attachment = mAdapter.get(index);
+            removeItems(attachment);
+            mAdapter.remove(attachment);
+        }
+    };
+
+    private void removeItems(Attachment attachment) {
+        // 从附件里删除
+        attachments.remove(attachment);
+        // 从待上传的列表里删除
+        if (attachment.isLocalFile()) {
+            getWaitingForUploadFiles().remove(attachment.getFullPath());
+        }
+        //filePickerDialog.getProperties().maximum_count = getMaxSelectable() - images.size() - names.size();
+    }
+
+    private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
+        @Override
+        public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
+            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, CreateActivityFragment.this);
+            holder.addOnViewHolderClickListener(attachmentViewHolderClickListener);
+            return holder;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_attachment;
+        }
+
+        @Override
+        public void onBindHolderOfView(final AttachmentViewHolder holder, int position, @Nullable Attachment item) {
+            holder.showContent(item);
+        }
+
+        @Override
+        protected int comparator(Attachment item1, Attachment item2) {
+            return 0;
+        }
     }
 }

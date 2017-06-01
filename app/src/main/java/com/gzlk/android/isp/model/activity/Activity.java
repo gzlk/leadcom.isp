@@ -10,6 +10,7 @@ import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>活动<br />
@@ -60,6 +61,24 @@ public class Activity extends Model {
          * 已结束
          */
         int ENDED = 2;
+    }
+
+    /**
+     * 开放形式
+     */
+    public interface OpenStatus {
+        /**
+         * 未设置
+         */
+        int NONE = 0;
+        /**
+         * 向所有人开放
+         */
+        int OPEN = 1;
+        /**
+         * 只向组织内开放
+         */
+        int GROUP = 2;
     }
 
     //标题
@@ -269,6 +288,13 @@ public class Activity extends Model {
     }
 
     public ArrayList<Attachment> getAttUrlArray() {
+        if (null == attUrlArray) {
+            attUrlArray = new ArrayList<>();
+            List<Attachment> list = Attachment.getAttachments(getId());
+            if (null != list) {
+                attUrlArray.addAll(list);
+            }
+        }
         return attUrlArray;
     }
 

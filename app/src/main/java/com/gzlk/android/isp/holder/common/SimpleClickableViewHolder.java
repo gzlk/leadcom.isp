@@ -73,18 +73,31 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     }
 
     public void showContent(String string) {
-        String[] strings = string.split("\\|", -1);
-        showContent(Integer.valueOf(strings[0]), strings[1], strings[2]);
-        if (strings.length > 3) {
-            boolean invisible = StringHelper.isEmpty(strings[3]) || strings[3].equals("0");
-            rightIcon.setVisibility(invisible ? View.GONE : View.VISIBLE);
-        }
+        SimpleClickableItem item = new SimpleClickableItem(string);
+        showContent(item);
+//        String[] strings = string.split("\\|", -1);
+//        showContent(Integer.valueOf(strings[0]), strings[1], strings[2]);
+//        if (strings.length > 3) {
+//            if (isEmpty(strings[3])) {
+//                rightIcon.setVisibility(View.GONE);
+//                appendIcon.setVisibility(View.GONE);
+//            } else {
+//                try {
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            boolean invisible = isEmpty(strings[3]) || strings[3].equals("0");
+//            rightIcon.setVisibility(invisible ? View.GONE : View.VISIBLE);
+//        }
     }
 
     public void showImage(String path) {
         if (null != imageView) {
-            imageView.setVisibility(StringHelper.isEmpty(path) ? View.GONE : View.VISIBLE);
+            imageView.setVisibility(isEmpty(path) ? View.GONE : View.VISIBLE);
             imageView.displayImage(path, getDimension(R.dimen.ui_base_dimen_button_height), false, false);
+            appendIcon.setVisibility(isEmpty(path) ? View.VISIBLE : View.GONE);
         }
     }
 

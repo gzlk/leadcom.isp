@@ -192,10 +192,10 @@ public class Archive extends Additional {
     private void getLocalAttachments() {
         if (!isLocalDeleted()) {
             setLocalDeleted(true);
-            Dao<Attachment> dao = new Dao<>(Attachment.class);
-            QueryBuilder<Attachment> builder = new QueryBuilder<>(Attachment.class)
-                    .whereEquals(Attachment.Field.ArchiveId, getId());
-            List<Attachment> list = dao.query(builder);
+            List<Attachment> list = Attachment.getAttachments(getId());
+            if (null == list) {
+                return;
+            }
             for (Attachment attachment : list) {
                 if (attachment.isOffice()) {
                     if (null == office) {

@@ -29,6 +29,8 @@ import java.util.ArrayList;
 
 public class CoverPickFragment extends BaseImageSelectableSupportFragment {
 
+    private static final String PARAM_IMAGE = "cpf_selected_image";
+
     public static CoverPickFragment newInstance(String params) {
         CoverPickFragment cpf = new CoverPickFragment();
         Bundle bundle = new Bundle();
@@ -36,6 +38,20 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
         bundle.putString(PARAM_QUERY_ID, params);
         cpf.setArguments(bundle);
         return cpf;
+    }
+
+    private String selectedImage = "";
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        selectedImage = bundle.getString(PARAM_IMAGE, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_IMAGE, selectedImage);
     }
 
     // view
@@ -105,8 +121,9 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
             if (selected.size() > 0) {
+                selectedImage = selected.get(0);
                 galleryHolder.showContent(format(items[0], ""));
-                galleryHolder.showImage(selected.get(0));
+                galleryHolder.showImage(selectedImage);
             }
         }
     };
@@ -129,8 +146,11 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
             galleryHolder = new SimpleClickableViewHolder(galleryView, this);
             galleryHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
+        if (isEmpty(selectedImage)) {
+            selectedImage = mQueryId;
+        }
         String fmt;
-        if (isEmpty(mQueryId)) {
+        if (isEmpty(selectedImage)) {
             // 如果图片地址为空则显示提醒
             fmt = format(items[0], StringHelper.getString(R.string.ui_activity_cover_picker_image_warning));
             galleryHolder.showContent(fmt);
@@ -139,7 +159,7 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
             // 图片地址不为空则显示图片预览图
             fmt = format(items[0], "");
             galleryHolder.showContent(fmt);
-            galleryHolder.showImage(mQueryId);
+            galleryHolder.showImage(selectedImage);
         }
         if (null == cameraHolder) {
             cameraHolder = new SimpleClickableViewHolder(cameraView, this);

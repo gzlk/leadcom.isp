@@ -126,7 +126,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private String privacy, title, source;
     // 文件选择
     private FilePickerDialog filePickerDialog;
-    DialogProperties properties;
+    private DialogProperties properties;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {

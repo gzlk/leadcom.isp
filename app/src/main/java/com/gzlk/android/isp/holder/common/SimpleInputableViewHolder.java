@@ -72,7 +72,7 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
 
     public void showContent(String title, String value, String hint, String valueExtract, String valueVerify, int maxLength) {
         titleTextView.setText(title);
-        titleTextView.setVisibility(StringHelper.isEmpty(title) ? View.GONE : View.VISIBLE);
+        titleTextView.setVisibility(isEmpty(title) ? View.GONE : View.VISIBLE);
         contentView.setValue(value);
         contentView.setTextHint(hint);
         contentView.setValueExtract(valueExtract);

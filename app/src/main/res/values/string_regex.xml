@@ -1,17 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="regex_phone_number_filter">\\d+</string>
+
+    <!--普通过滤：数字、英文、下划线、空格、全角符号和中文-->
+    <string name="regex_normal_input_filter">[\\w\\s\u0391-\uFFE5]+</string>
+
+    <!--中文过滤：纯中文，不带符号-->
+    <string name="regex_normal_input_filter_chs_only">[\u4E00-\u9FA5]+</string>
+
+    <!--数字过滤：纯数字-->
+    <string name="regex_normal_input_filter_num_only">\\d+</string>
+
+    <!--密码过滤：a-z，A-Z，0-9-->
+    <string name="regex_normal_input_filter_pwd_only">[a-zA-Z0-9]+</string>
+
+    <!--手机号码-->
+    <string name="regex_phone_number_filter">@string/regex_normal_input_filter_num_only</string>
     <string name="regex_phone_number_verify">^1\\d{10}</string>
 
-    <string name="regex_verify_code_filter">\\d+</string>
+    <!--验证码-->
+    <string name="regex_verify_code_filter">@string/regex_normal_input_filter_num_only</string>
     <string name="regex_verify_code_verify">\\d{4,8}</string>
 
-    <string name="regex_password_filter">[a-zA-Z0-9]+</string>
+    <!--密码-->
+    <string name="regex_password_filter">@string/regex_normal_input_filter_pwd_only</string>
     <string name="regex_password_verify">[a-zA-Z0-9]{6,18}</string>
 
+    <!--中文名字-->
     <string name="regex_name_filter">[\u4E00-\u9FA5]+</string>
     <string name="regex_name_verify">[\u4E00-\u9FA5]{2,4}</string>
 
-    <string name="regex_normal_input_filter">[a-zA-Z0-9_\u4e00-\u9fa5]+</string>
-    <string name="regex_normal_input_verify">^(?!_)(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]{2,10}</string>
+    <!--普通长文本框输入内容验证：头尾不能有空格、下划线、中画线，其余可包含大小写字母、数字、下划线、中画线、中文、全角符号-->
+    <string name="regex_normal_long_input_verify">^(?![_\\-\\s])(?!.*?[_\\-\\s]$)[\\-\\w\\s\u0391-\uFFE5]+$</string>
+    <!--普通长文本框输入内容过滤：可输入大小写字母、下划线、中画线、数字、中文、全角符号-->
+    <string name="regex_normal_long_input_filter">[\\-\\w\\s\u0391-\uFFE5]+</string>
+
+    <!--群名称、小组名称输入值验证-->
+    <string name="regex_group_squad_name_input_verify">^(?![_\\s])(?!.*?[_\\s]$)[\\w\\s\u0391-\uFFE5]{2,10}</string>
 </resources>

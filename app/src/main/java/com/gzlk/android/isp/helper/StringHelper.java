@@ -92,9 +92,7 @@ public class StringHelper {
      * 将文本中的空格、换行替换成html代码
      */
     public static String escapeToHtml(String text) {
-        if (isEmpty(text)) {
-            return text;
-        }
+        if (isEmpty(text)) return "";
         // 先替换空格，再替换换行
         return replaceAll(replaceAll(text, " ", "&nbsp;"), "\n", "<br/>");
     }
@@ -103,6 +101,7 @@ public class StringHelper {
      * 将html中的空格、换行替换成文本
      */
     public static String escapeFromHtml(String html) {
+        if (isEmpty(html)) return "";
         return replaceAll(replaceAll(html, "&nbsp;", " "), "<br/>", "\n");
     }
 
@@ -110,6 +109,7 @@ public class StringHelper {
      * 将文本中的json字符串进行转义
      */
     public static String escapeJson(String text) {
+        if (isEmpty(text)) return "";
         return replaceAll(replaceAll(text, "\\\\", "\\\\\\\\"), "\"", "\\\\\"");
     }
 
@@ -121,6 +121,7 @@ public class StringHelper {
      * @param to   替换成的文本
      */
     public static String replaceAll(String text, String from, String to) {
+        if (isEmpty(text)) return "";
         return text.replaceAll(from, to);
     }
 }

@@ -71,7 +71,7 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         titleView.setText(Html.fromHtml(text));
         filesView.setText(StringHelper.getString(R.string.ui_archive_approving_archive_attachments, filesCount(archive)));
         filesView.setVisibility(filesCount(archive) > 0 ? View.VISIBLE : View.GONE);
-        dateView.setText(StringHelper.getString(R.string.ui_archive_management_list_item_create_date, fragment().formatDate(archive.getCreateDate())));
+        dateView.setText(StringHelper.getString(R.string.ui_archive_management_list_item_create_date, fragment().formatDateTime(archive.getCreateDate())));
         statusView.setText(StringHelper.getString(R.string.ui_archive_management_list_item_status, archive.getArchiveStatus()));
 
         // 显示优先级

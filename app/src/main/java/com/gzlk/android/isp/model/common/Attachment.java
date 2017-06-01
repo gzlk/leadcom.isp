@@ -1,14 +1,22 @@
 package com.gzlk.android.isp.model.common;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.litesuits.http.data.TypeToken;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -89,6 +97,53 @@ public class Attachment extends Model {
     public static String getExtension(String path) {
         if (StringHelper.isEmpty(path)) return null;
         return path.substring(path.lastIndexOf('.') + 1).toLowerCase(Locale.getDefault());
+    }
+
+    /**
+     * 获取服务器需要的json对象
+     */
+    public static String getJson(ArrayList<Attachment> list) {
+        return Json.gson(strategy).toJson(list, new TypeToken<ArrayList<Attachment>>() {
+        }.getType());
+    }
+
+    /**
+     * 获取服务器需要的json对象
+     */
+    public static String getJson(Attachment attachment) {
+        return Json.gson(strategy).toJson(attachment, new TypeToken<Attachment>() {
+        }.getType());
+    }
+
+    // 序列化 Attachment 类时的排除策略
+    private static ExclusionStrategy strategy = new ExclusionStrategy() {
+
+        @Override
+        public boolean shouldSkipField(FieldAttributes f) {
+            // Attachment 中上传到服务器上时不需要的字段
+            return f.getName().equals("id") ||          // id
+                    f.getName().equals("type") ||       // type
+                    f.getName().equals("archiveId") ||  // archiveId
+                    f.getName().contains("fullPath") || // fullPath
+                    f.getName().contains("ext") ||      // ext
+                    f.getName().startsWith("is") ||     // isSelectable, isSelected
+                    f.getName().startsWith("local");    // localDeleted
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> clazz) {
+            return false;
+        }
+    };
+
+    /**
+     * 查询指定archiveId的附件列表
+     */
+    public static List<Attachment> getAttachments(String archiveId) {
+        Dao<Attachment> dao = new Dao<>(Attachment.class);
+        QueryBuilder<Attachment> builder = new QueryBuilder<>(Attachment.class)
+                .whereEquals(Attachment.Field.ArchiveId, archiveId);
+        return dao.query(builder);
     }
 
     @Column(Archive.Field.Type)
