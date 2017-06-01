@@ -48,7 +48,18 @@ public class Cache {
         App.app().saveCurrentUser(me);
     }
 
+    private void logUser(User user, String tag) {
+        if (null == user) {
+            LogHelper.log("CacheLog", tag + " user is null");
+        } else {
+            LogHelper.log("CacheLog", tag + " user is: " +
+                    StringHelper.format("id: %s, accessToken: %s, last login: %s", user.getId(), user.getAccessToken(), user.getLastLoginDate()));
+        }
+    }
+
     public void setCurrentUser(User user) {
+        logUser(me, "Old");
+        logUser(user, "New");
         me = user;
         if (null != me && !StringHelper.isEmpty(me.getId())) {
             userId = me.getId();

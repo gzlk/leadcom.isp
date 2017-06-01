@@ -70,7 +70,7 @@ class ExternalStorage {
 
     private void loadStorageState(Context context) {
         String externalPath = Environment.getExternalStorageDirectory().getPath();
-        this.sdkStorageRoot = externalPath + "/" + App.ROOT_DIR + "/nim-cache/";
+        this.sdkStorageRoot = externalPath + "/" + App.ROOT_DIR + "/nim/";
     }
 
     private void createSubFolders() {

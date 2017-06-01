@@ -21,8 +21,7 @@ import java.util.Date;
 
 class CrashSaver {
 
-    public static final void save(Context context, Throwable ex,
-                                  boolean uncaught) {
+    public static final void save(Context context, Throwable ex, boolean uncaught) {
 
         if (!StorageUtil.isExternalStorageExist()) {// 如果没有sdcard，则不存储
             return;
@@ -105,8 +104,10 @@ class CrashSaver {
             mFile.createNewFile();
 
             mBufferedWriter = new BufferedWriter(new FileWriter(mFile, true));// 追加模式写文件
-            mBufferedWriter.append(CrashSnapshot.snapshot(context, uncaught, timestamp, stackTrace, count));
+            CharSequence cs = CrashSnapshot.snapshot(context, uncaught, timestamp, stackTrace, count);
+            mBufferedWriter.append(cs);
             mBufferedWriter.flush();
+            new CrashSender(context).execute(cs.toString());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

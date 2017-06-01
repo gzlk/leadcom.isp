@@ -76,8 +76,7 @@ public class CrashSnapshot {
     }
 
     private static long getAvailMemory() {
-        ActivityManager am = (ActivityManager) App.app()
-                .getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) App.app().getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
         am.getMemoryInfo(mi);
         return mi.availMem;
@@ -120,8 +119,7 @@ public class CrashSnapshot {
             long total = 0L;
             String str;
             try {
-                if (!TextUtils.isEmpty(str = parseFile(
-                        new File("/proc/meminfo"), "MemTotal"))) {
+                if (!TextUtils.isEmpty(str = parseFile(new File("/proc/meminfo"), "MemTotal"))) {
                     str = str.toUpperCase(Locale.US);
                     if (str.endsWith("KB")) {
                         total = getSize(str, "KB", 1024);
@@ -214,7 +212,7 @@ public class CrashSnapshot {
         info.put("rooted: ", isRooted() ? "yes" : "no");
         info.put("ram: ", ram());
         info.put("disk: ", disk());
-        info.put("ver: ", String.format("%d", InstallUtil.getVersionCode(context)));
+        info.put("ver: ", String.format(Locale.getDefault(), "%d", InstallUtil.getVersionCode(context)));
         info.put("caught: ", uncaught ? "no" : "yes");
         info.put("network: ", NetworkUtil.getNetworkInfo(context));
         Iterator<Map.Entry<String, String>> iterator = info.entrySet().iterator();

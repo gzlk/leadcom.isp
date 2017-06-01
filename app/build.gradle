@@ -23,6 +23,7 @@ android {
             abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
         manifestPlaceholders = [APP_PKG_NAME: applicationId]
+        resValue "string", "app_internal_version", getInternalVersion()
         resValue "string", "app_name_default", "树脉"
         resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
         // 正式（leadcom）：e0535dd95633dfa23a6aba3a06628a55
@@ -99,6 +100,11 @@ dependencies {
     compile('com.github.hsiangleekwok:hlklib:1.0.6.3-SNAPSHOT') {
         changing = true;
     }
+    // https://mvnrepository.com/artifact/com.sun.mail/android-mail
+    compile group: 'com.sun.mail', name: 'android-mail', version: '1.6.0-rc2'
+    // https://mvnrepository.com/artifact/com.sun.mail/android-activation
+    compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
+
     // 滑动删除
     //compile(name: 'android-swipelayout-library-release', ext: 'aar')
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
@@ -145,4 +151,10 @@ dependencies {
     //compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-arm64-v8a:1.0.14'
 
     testCompile 'junit:junit:4.12'
+}
+
+static def getInternalVersion() {
+    def formatted = new Date().format("yyyyMMddHHmm");
+    def subed = formatted.take(11);
+    return "${subed}0";
 }
