@@ -36,4 +36,8 @@
 
     <!--群名称、小组名称输入值验证-->
     <string name="regex_group_squad_name_input_verify">^(?![_\\s])(?!.*?[_\\s]$)[\\w\\s\u0391-\uFFE5]{2,10}</string>
+
+    <!--标签名称输入值验证-->
+    <string name="regex_activity_label_name_input_filter">@string/regex_normal_input_filter_chs_only</string>
+    <string name="regex_activity_label_name_input_verify">[\u4E00-\u9FA5]{2,10}</string>
 </resources>
