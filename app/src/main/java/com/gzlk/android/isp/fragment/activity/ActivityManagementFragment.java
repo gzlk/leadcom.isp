@@ -49,7 +49,7 @@ public class ActivityManagementFragment extends BaseViewPagerSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_activity_management;
+        return R.layout.fragment_activity_management_mine;
     }
 
     @Override

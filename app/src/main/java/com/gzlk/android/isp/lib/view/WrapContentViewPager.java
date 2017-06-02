@@ -1,12 +1,10 @@
 package com.gzlk.android.isp.lib.view;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.hlk.hlklib.etc.Utility;
+import com.gzlk.android.isp.lib.DepthViewPager;
 
 /**
  * <b>功能描述：</b><br />
@@ -19,7 +17,7 @@ import com.hlk.hlklib.etc.Utility;
  * <b>修改备注：</b><br />
  */
 
-public class WrapContentViewPager extends ViewPager {
+public class WrapContentViewPager extends DepthViewPager {
 
     public WrapContentViewPager(Context context) {
         super(context);

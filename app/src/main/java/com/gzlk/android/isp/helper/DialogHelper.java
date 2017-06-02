@@ -205,7 +205,7 @@ public class DialogHelper {
     }
 
     public void dismiss() {
-        if (null != dialog) {
+        if (null != dialog && dialog.isShowing()) {
             dialog.dismiss();
         }
     }

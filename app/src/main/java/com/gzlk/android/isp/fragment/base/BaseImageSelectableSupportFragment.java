@@ -590,6 +590,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
 
     private View imageSelector;
 
+    private DialogHelper dialogHelper;
+
     /**
      * 打开图片选择菜单
      */
@@ -600,7 +602,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
             ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_image_cannot_attach_more);
             return;
         }
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+        dialogHelper = DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override
             public View onInitializeView() {
                 if (null == imageSelector) {
@@ -621,7 +623,18 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
 
             @Override
             public boolean onClick(View view) {
-                int id = view.getId();
+                handleUserRequest(view.getId());
+                return true;
+            }
+        }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true);
+        dialogHelper.show();
+    }
+
+    private void handleUserRequest(final int id) {
+        dialogHelper.dismiss();
+        Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
                 switch (id) {
                     case R.id.ui_dialog_button_from_camera:
                         startCameraForResult();
@@ -630,9 +643,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                         startGalleryForResult();
                         break;
                 }
-                return true;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true).show();
+        }, duration());
     }
 
     private OnImageSelectedListener mOnImageSelectedListener;

@@ -34,7 +34,7 @@ public class ActivityDetailsStatisticsFragment extends BaseTransparentSupportFra
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_activity_details_statistics;
+        return R.layout.fragment_activity_management_statistics;
     }
 
     @Override

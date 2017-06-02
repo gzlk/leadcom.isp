@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationDetailsFragment;
+import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.lib.view.WrapContentViewPager;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Organization;
@@ -71,16 +72,16 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
             });
             mAdapter = new DepthAdapter();
             viewPager.setOffscreenPageLimit(5);
-            viewPager.setPageTransformer(true, new DepthTransformer());
-            //viewPager.setPageTransformer(true, new ScaleDepthTransformer());
+            //viewPager.setPageTransformer(true, new DepthTransformer());
+            viewPager.setPageTransformer(true, new ScaleDepthTransformer());
             viewPager.setPageMargin(-getDimension(R.dimen.ui_static_dp_40));
             viewPager.setAdapter(mAdapter);
         }
     }
 
-    private ViewPager.OnPageChangeListener onPageChangeListener;
+    private DepthViewPager.OnPageChangeListener onPageChangeListener;
 
-    public void setPageChangeListener(ViewPager.OnPageChangeListener listener) {
+    public void setPageChangeListener(DepthViewPager.OnPageChangeListener listener) {
         onPageChangeListener = listener;
         viewPager.addOnPageChangeListener(onPageChangeListener);
     }
@@ -94,7 +95,7 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private class ScaleDepthTransformer implements ViewPager.PageTransformer {
+    private class ScaleDepthTransformer implements DepthViewPager.PageTransformer {
 
         private int currentItem = 0;
         private boolean is3D = true;
@@ -129,7 +130,6 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
             view.setScaleY(scale);
             //setViewRotation(view, location);
             view.setTranslationX(translationFactor);
-            view.setTranslationZ(scaleFactor);
         }
 
         /**
@@ -243,11 +243,11 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private class DepthTransformer implements ViewPager.PageTransformer {
         private static final float MIN_SCALE = 0.8f;
         private final int margin = getDimension(R.dimen.ui_static_dp_25);
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void transformPage(View page, float position) {
             float scaleFactor;

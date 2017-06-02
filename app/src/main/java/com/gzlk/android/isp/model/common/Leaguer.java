@@ -48,6 +48,9 @@ public class Leaguer extends Model {
     }
 
     public String getUserName() {
+        if (isEmpty(userName)) {
+            userName = "无名氏";
+        }
         return userName;
     }
 

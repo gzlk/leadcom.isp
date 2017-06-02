@@ -152,7 +152,7 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
 
         @Override
         protected int comparator(Member item1, Member item2) {
-            return item1.getUserName().compareTo(item2.getUserName());
+            return item1.getSpell().compareTo(item2.getSpell());
         }
     }
 }

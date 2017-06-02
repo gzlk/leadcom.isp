@@ -4,8 +4,6 @@ import android.app.Activity;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.TitleActivity;
-import com.gzlk.android.isp.helper.DialogHelper.OnDialogConfirmListener;
-import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 
 /**
@@ -20,18 +18,6 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
  */
 
 public abstract class BaseTitleSupportFragment extends BaseFragment {
-
-    /**
-     * 询问用户是否放弃编辑
-     */
-    protected void warningUserStillEditing() {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_warning_still_in_editing_mode_title, new OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                return true;
-            }
-        }, null);
-    }
 
     /**
      * 设置默认的标题栏事件处理

@@ -34,5 +34,4 @@
     <string name="ui_warning_none_fragment_will_display">
         <![CDATA[没有可以显示的内容：<font color="#db7763">fragment is not exists.</font>]]>
     </string>
-    <string name="ui_warning_still_in_editing_mode_title">您正在编辑的内容还未保存，确实要放弃吗？</string>
 </resources>

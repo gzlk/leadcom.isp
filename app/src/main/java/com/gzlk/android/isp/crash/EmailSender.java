@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.crash;
 
+import com.gzlk.android.isp.helper.LogHelper;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -149,25 +151,29 @@ public class EmailSender {
      * @throws MessagingException
      */
     public void sendEmail(String account, String pwd) throws MessagingException {
-        // 发送时间
-        this.message.setSentDate(new Date());
-        // 发送的内容，文本和附件
-        this.message.setContent(this.multipart);
-        this.message.saveChanges();
-        MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-        mc.addMailcap("text/html;; x-Java-content-handler=com.sun.mail.handlers.text_html");
-        mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-        mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-        mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-        mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
-        CommandMap.setDefaultCommandMap(mc);
-        // 创建邮件发送对象，并指定其使用SMTP协议发送邮件
-        Transport transport = session.getTransport("smtp");
-        // 登录邮箱
-        transport.connect(mailHost, account, pwd);
-        // 发送邮件
-        transport.sendMessage(message, message.getAllRecipients());
-        // 关闭连接
-        transport.close();
+        try {
+            // 发送时间
+            this.message.setSentDate(new Date());
+            // 发送的内容，文本和附件
+            this.message.setContent(this.multipart);
+            this.message.saveChanges();
+            MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+            mc.addMailcap("text/html;; x-Java-content-handler=com.sun.mail.handlers.text_html");
+            mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+            mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+            mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+            mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+            CommandMap.setDefaultCommandMap(mc);
+            // 创建邮件发送对象，并指定其使用SMTP协议发送邮件
+            Transport transport = session.getTransport("smtp");
+            // 登录邮箱
+            transport.connect(mailHost, account, pwd);
+            // 发送邮件
+            transport.sendMessage(message, message.getAllRecipients());
+            // 关闭连接
+            transport.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

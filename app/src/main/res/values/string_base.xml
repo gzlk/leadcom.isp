@@ -10,7 +10,9 @@
     <string name="ui_base_text_loading">请稍候&#8230;</string>
     <string name="ui_base_text_nothing">没有更多内容</string>
     <string name="ui_base_text_input_hint">请输入内容</string>
-    <string name="ui_base_text_still_editing">您正在编辑的内容尚未保存。<br />确定就此放弃了吗？</string>
+    <string name="ui_base_text_still_editing">
+        <![CDATA[您正在编辑的内容尚未保存。<br/>确定就此放弃了吗？]]>
+    </string>
     <string name="ui_base_text_press_again_to_exit">再按一次退出</string>
     <string name="ui_base_text_no_sdcard_exists">没有可用的存储设备</string>
     <string name="ui_base_text_choose_image" formatted="false">选择照片(最多能选%d张)</string>

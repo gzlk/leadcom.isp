@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -58,7 +57,7 @@ public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragmen
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_activity_details_details;
+        return R.layout.fragment_activity_management_end;
     }
 
     @Override

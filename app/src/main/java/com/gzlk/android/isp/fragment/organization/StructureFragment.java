@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
@@ -22,9 +21,10 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.OrganizationStructureConcernedViewHolder;
-import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.SquadAddViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.TextViewHolder;
+import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -311,15 +311,40 @@ public class StructureFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             if (index > 5 && index < mAdapter.getItemCount()) {
-                Squad squad = squads.get(index - 6);
-                if (isMember(Cache.cache().userId, squad.getGroupId(), squad.getId())) {
-                    openSquadContact(squad.getId());
-                } else {
-                    isMeInSquad(squad.getId(), squad.getName());
-                }
+                selectedSquadIndex = index - 6;
+                isTryGoingToSquad = false;
+                //tryGoingToSquad();
+                openSquadContact(squads.get(selectedSquadIndex).getId());
             }
         }
     };
+
+    private static int selectedSquadIndex = 0;
+    private static boolean isTryGoingToSquad = false;
+
+    private void tryGoingToSquad() {
+        if (selectedSquadIndex < 0) return;
+        Squad squad = squads.get(selectedSquadIndex);
+        // 如果我不在本地小组成员列表里，则拉取远程小组成员列表
+        if (isMember(Cache.cache().userId, squad.getGroupId(), squad.getId())) {
+            openSquadContact(squad.getId());
+            selectedSquadIndex = -1;
+        } else {
+            if (!isTryGoingToSquad) {
+                isTryGoingToSquad = true;
+                // 拉取该小组的成员列表并查询我是否在里面
+                fetchingRemoteMembers(squad.getGroupId(), squad.getId());
+            } else {
+                isMeInSquad(squad.getId(), squad.getName());
+            }
+        }
+    }
+
+    @Override
+    protected void onFetchingRemoteMembersComplete(List<Member> list) {
+        super.onFetchingRemoteMembersComplete(list);
+        tryGoingToSquad();
+    }
 
     // 查询我是否在选中的小组中
     private void isMeInSquad(final String squadId, final String squadName) {
@@ -335,7 +360,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                     }
                 }
             }
-        }).find(Member.Type.SQUAD, squadId, Cache.cache().userName);
+        }).find(Member.Type.SQUAD, squadId, Cache.cache().userId);
     }
 
     private void openSquadContact(String squadId) {
@@ -362,7 +387,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         });
     }
 
-    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+    private DepthViewPager.OnPageChangeListener onPageChangeListener = new DepthViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 

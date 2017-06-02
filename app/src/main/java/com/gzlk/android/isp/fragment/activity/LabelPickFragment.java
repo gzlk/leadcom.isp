@@ -135,7 +135,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onLoadingMore() {
-
+        isLoadingComplete(true);
     }
 
     @Override
@@ -170,6 +170,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     updateList(list);
                 }
+                stopRefreshing();
             }
         }).getTopLabels(100);
     }

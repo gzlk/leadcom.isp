@@ -101,7 +101,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     };
 
     private boolean isManager(Organization org) {
-        return org.getCreatorId().equals(Cache.cache().userId);
+        return null != org && !isEmpty(org.getCreatorId()) && org.getCreatorId().equals(Cache.cache().userId);
     }
 
     @Override

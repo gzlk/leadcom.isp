@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_home_seminar_item_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/ui_base_dimen_margin_padding"
+    app:cv_active_border="@color/colorPrimary"
+    app:cv_normal_border="@android:color/white">
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_holder_view_home_seminar_item_image"
+        android:layout_width="@dimen/ui_static_dp_110"
+        android:layout_height="@dimen/ui_static_dp_80"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        app:id_image_src="@mipmap/img_image_default" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="@dimen/ui_static_dp_80"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ui_holder_view_home_seminar_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/app_company_name" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <include layout="@layout/tool_view_document_additional" />
+
+    </LinearLayout>
+</com.hlk.hlklib.lib.view.CorneredView>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <include layout="@layout/tool_view_recycler_view_swipe_refreshable" />
+    </LinearLayout>
+
+    <com.hlk.hlklib.lib.view.CorneredButton
+        android:id="@+id/ui_sign_in_to_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginEnd="@dimen/ui_static_dp_12"
+        android:layout_marginStart="@dimen/ui_static_dp_12"
+        android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+        android:clickable="true"
+        android:gravity="center"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
+        android:text="@string/ui_base_text_login"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ui_base_text_size_big"
+        app:active_color="@color/buttonActivityColor"
+        app:corner_size="@dimen/ui_base_dimen_button_corner_size"
+        app:disable_when_click="false"
+        app:normal_color="@color/buttonNormalColor" />
+
+</LinearLayout>

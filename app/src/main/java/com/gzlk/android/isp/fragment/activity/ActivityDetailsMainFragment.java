@@ -44,7 +44,7 @@ public class ActivityDetailsMainFragment extends BaseViewPagerSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_activity_details_main;
+        return R.layout.fragment_activity_management_main;
     }
 
     @Override
