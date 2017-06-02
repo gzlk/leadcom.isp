@@ -8,6 +8,13 @@
     app:cv_border_size="@dimen/ui_static_dp_zero"
     app:cv_corner_size="@dimen/ui_static_dp_50">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/ic_launcher_round"
+        android:visibility="gone" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

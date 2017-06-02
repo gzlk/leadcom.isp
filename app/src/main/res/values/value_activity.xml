@@ -18,6 +18,9 @@
     <string name="ui_activity_create_fragment_title">新建活动</string>
     <string name="ui_activity_create_content_hint">填写活动说明</string>
     <string name="ui_activity_create_handing_warning">正在发布请稍候&#8230;</string>
+    <string name="ui_activity_create_handing_attachment_warning">正在处理文件请稍候&#8230;</string>
+    <string name="ui_activity_create_handing_attachment_warning1" formatted="false">正在处理文件(%d/%d)请稍候&#8230;</string>
+    <string name="ui_activity_create_handing_attachment_failed">文件处理失败</string>
     <string-array name="ui_activity_create_items">
         <item>0|活动封面||2</item>
         <item>|%s|活动主题|[a-zA-Z0-9\u4e00-\u9fa5]+||30</item>
@@ -49,6 +52,7 @@
     </string-array>
 
     <string name="ui_activity_label_picker_fragment_title">活动类型</string>
+    <string name="ui_activity_label_picker_picked_max">您最多只能同时选择2个标签</string>
     <string name="ui_activity_label_picker_create_hint">请输入10个字以内的活动类型</string>
 
     <string name="ui_activity_management_title_button_text_1">我参加</string>

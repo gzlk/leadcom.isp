@@ -82,12 +82,6 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     }
 
     /**
-     * 进度框
-     */
-    private ProgressDialog progressDialog = null;
-    private TextView handlingTextView;
-
-    /**
      * 已选择且已压缩了的图片缓存列表，或者非图片的源文件列表
      */
     private ArrayList<String> waitingForUploadFiles = new ArrayList<>();
@@ -181,6 +175,13 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     };
 
     /**
+     * 进度框
+     */
+    private ProgressDialog progressDialog = null;
+    private View progressDialogView;
+    private TextView handlingTextView;
+
+    /**
      * 显示图片处理对话框
      */
     protected void showImageHandlingDialog() {
@@ -188,10 +189,13 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             progressDialog = new ProgressDialog(Activity());
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(false);
+            progressDialogView = View.inflate(Activity(), R.layout.popup_dialog_image_handling, null);
+            handlingTextView = (TextView) progressDialogView.findViewById(R.id.ui_dialog_image_handling_text);
         }
-        progressDialog.show();
-        View progressDialogView = View.inflate(Activity(), R.layout.popup_dialog_image_handling, null);
-        handlingTextView = (TextView) progressDialogView.findViewById(R.id.ui_dialog_image_handling_text);
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+        //clearDirectParent(progressDialogView);
         progressDialog.setContentView(progressDialogView);
     }
 
@@ -212,7 +216,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
      * 隐藏图片处理对话框
      */
     protected void hideImageHandlingDialog() {
-        if (null != progressDialog) {
+        if (null != progressDialog && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
     }

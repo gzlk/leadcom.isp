@@ -58,6 +58,10 @@ public class Dao<E> {
         return query(new QueryBuilder<E>(clazz).whereEquals(field, value));
     }
 
+    public List<E> in(String field, List<String> values) {
+        return query(new QueryBuilder<E>(clazz).whereIn(field, values));
+    }
+
     /**
      * 查询整个列表
      */

@@ -11,6 +11,7 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Organization;
@@ -79,6 +80,8 @@ public class ActRequest extends Request<Activity> {
     private Dao<Organization> orgDao = new Dao<>(Organization.class);
     // 附件保存dao
     private Dao<Attachment> attDao = new Dao<>(Attachment.class);
+    // 标签dao
+    private Dao<Label> labelDao = new Dao<>(Label.class);
 
     private void saveAttachment(ArrayList<Attachment> list, String archiveId) {
         if (null != list && list.size() > 0) {
@@ -88,6 +91,12 @@ public class ActRequest extends Request<Activity> {
                 attachment.resetInformation();
             }
             attDao.save(list);
+        }
+    }
+
+    private void saveLabels(ArrayList<Label> list) {
+        if (null != list && list.size() > 0) {
+            labelDao.save(list);
         }
     }
 
@@ -127,7 +136,7 @@ public class ActRequest extends Request<Activity> {
      */
     public void add(@NonNull String title, String content, int openStatus, String address,
                     String beginDate, @NonNull String groupId, String logo,
-                    ArrayList<String> members, ArrayList<String> labels, ArrayList<Attachment> attachments) {
+                    ArrayList<String> members, ArrayList<String> names, ArrayList<String> labels, ArrayList<Attachment> attachments) {
         // {title:"",[label]:"",content:"",openStatus："",groupId:"",accessToken:"",memberIdArray:"",beginDate:"",site:"",attUrlArray:""}
         JSONObject object = new JSONObject();
         try {
@@ -140,6 +149,7 @@ public class ActRequest extends Request<Activity> {
                     .put("site", address)
                     .put("accessToken", Cache.cache().accessToken)
                     .put("memberIdArray", new JSONArray(members))
+                    .put("memberNameArray", new JSONArray(names))
                     .put("label", new JSONArray(labels))
                     .put("attUrlArray", new JSONArray(Attachment.getJson(attachments)));
         } catch (JSONException e) {
@@ -164,7 +174,7 @@ public class ActRequest extends Request<Activity> {
      * @param attachments 附件列表
      */
     public void update(@NonNull String activityId, @NonNull String title, String content, int openStatus, String address,
-                       String beginDate, String logo, ArrayList<String> members, ArrayList<String> labels, ArrayList<Attachment> attachments) {
+                       String beginDate, String logo, ArrayList<String> members, ArrayList<String> names, ArrayList<String> labels, ArrayList<Attachment> attachments) {
         // {id:"",title:"",content:"",accessToken:"",memberIdArray:""}
         JSONObject object = new JSONObject();
         try {
@@ -177,6 +187,7 @@ public class ActRequest extends Request<Activity> {
                     .put("site", address)
                     .put("accessToken", Cache.cache().accessToken)
                     .put("memberIdArray", new JSONArray(members))
+                    .put("memberNameArray", new JSONArray(names))
                     .put("label", new JSONArray(labels))
                     .put("attUrlArray", new JSONArray(Attachment.getJson(attachments)));
         } catch (JSONException e) {

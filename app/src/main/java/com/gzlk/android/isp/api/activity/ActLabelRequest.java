@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
+import com.gzlk.android.isp.api.Special;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.model.activity.Label;
@@ -34,6 +35,9 @@ public class ActLabelRequest extends Request<Label> {
     }
 
     private static class MultipleLabel extends Query<Label> {
+    }
+
+    private static class SpecialLabel extends Special<Label> {
     }
 
     @Override
@@ -82,5 +86,12 @@ public class ActLabelRequest extends Request<Label> {
     public void list(@NonNull String activityId) {
         // actId=""
         httpRequest(getRequest(MultipleLabel.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 获取服务器上的热门标签
+     */
+    public void getTopLabels(int topSet) {
+        httpRequest(getRequest(SpecialLabel.class, format("%s?top=%d", "/ontolog/getLabelTop", topSet), "", HttpMethods.Get));
     }
 }

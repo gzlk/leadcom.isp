@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.activity.ActLabelRequest;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -26,6 +28,7 @@ import com.gzlk.android.isp.model.activity.Label;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>活动标签拾取器<br />
@@ -41,6 +44,7 @@ import java.util.ArrayList;
 public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_SELECTED = "lpf_selected_labels";
+    private static final String PARAM_ACT_ID = "lpf_activity_id";
 
     public static LabelPickFragment newInstance(String params) {
         LabelPickFragment lpf = new LabelPickFragment();
@@ -48,7 +52,10 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         Bundle bundle = new Bundle();
         // 传入的组织id
         bundle.putString(PARAM_QUERY_ID, strings[0]);
-        bundle.putString(PARAM_SELECTED, replaceJson(strings[1], true));
+        // 活动的id
+        bundle.putString(PARAM_ACT_ID, strings[1]);
+        // 已选择了的标签列表
+        bundle.putString(PARAM_SELECTED, replaceJson(strings[2], true));
         lpf.setArguments(bundle);
         return lpf;
     }
@@ -66,14 +73,17 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         String json = bundle.getString(PARAM_SELECTED, "[]");
         labels = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
         }.getType());
+        activityId = bundle.getString(PARAM_ACT_ID, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_SELECTED, Json.gson().toJson(labels));
+        bundle.putString(PARAM_ACT_ID, activityId);
     }
 
+    private String activityId;
     private ArrayList<String> labels;
     private LabelAdapter mAdapter;
 
@@ -96,6 +106,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resultSelected() {
+        labels.clear();
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
             Model model = mAdapter.get(i);
             if (model.isSelected() && model instanceof Label) {
@@ -119,7 +130,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        stopRefreshing();
+        loadingTopestLabels();
     }
 
     @Override
@@ -137,48 +148,84 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new LabelAdapter();
             mRecyclerView.setAdapter(mAdapter);
             setTestData();
+            loadingTopestLabels();
+        }
+    }
+
+    private void loadingLabels() {
+        ActLabelRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Label>() {
+            @Override
+            public void onResponse(List<Label> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+            }
+        }).list(activityId);
+    }
+
+    // 获取热门标签
+    private void loadingTopestLabels() {
+        ActLabelRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Label>() {
+            @Override
+            public void onResponse(List<Label> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    updateList(list);
+                }
+            }
+        }).getTopLabels(100);
+    }
+
+    private void updateList(List<Label> list) {
+        if (null != list) {
+            for (Label label : list) {
+                label.setSelected(labels.contains(label.getId()));
+                // 新的标签始终加在倒数第三个位置
+                int index = mAdapter.getItemCount() - 2;
+                if (!mAdapter.exist(label)) {
+                    mAdapter.add(label, index);
+                }
+            }
         }
     }
 
     private void setTestData() {
         mAdapter.add(new Model() {{
-            setId("社会服务");
+            setId("热门标签");
         }});
-        mAdapter.add(new Label() {{
-            setId("1");
-            setSelected(labels.contains(getId()));
-            setName("参政议政");
-        }});
-        mAdapter.add(new Label() {{
-            setId("2");
-            setSelected(labels.contains(getId()));
-            setName("学习文件精神");
-        }});
-        mAdapter.add(new Label() {{
-            setId("3");
-            setSelected(labels.contains(getId()));
-            setName("宣传报道");
-        }});
-        mAdapter.add(new Label() {{
-            setId("4");
-            setSelected(labels.contains(getId()));
-            setName("通知理论");
-        }});
-        mAdapter.add(new Label() {{
-            setId("5");
-            setSelected(labels.contains(getId()));
-            setName("社会实践");
-        }});
-        mAdapter.add(new Label() {{
-            setId("6");
-            setSelected(labels.contains(getId()));
-            setName("上山下乡");
-        }});
-        mAdapter.add(new Label() {{
-            setId("7");
-            setSelected(labels.contains(getId()));
-            setName("调研");
-        }});
+//        mAdapter.add(new Label() {{
+//            setId("1");
+//            setSelected(labels.contains(getId()));
+//            setName("参政议政");
+//        }});
+//        mAdapter.add(new Label() {{
+//            setId("2");
+//            setSelected(labels.contains(getId()));
+//            setName("学习文件精神");
+//        }});
+//        mAdapter.add(new Label() {{
+//            setId("3");
+//            setSelected(labels.contains(getId()));
+//            setName("宣传报道");
+//        }});
+//        mAdapter.add(new Label() {{
+//            setId("4");
+//            setSelected(labels.contains(getId()));
+//            setName("通知理论");
+//        }});
+//        mAdapter.add(new Label() {{
+//            setId("5");
+//            setSelected(labels.contains(getId()));
+//            setName("社会实践");
+//        }});
+//        mAdapter.add(new Label() {{
+//            setId("6");
+//            setSelected(labels.contains(getId()));
+//            setName("上山下乡");
+//        }});
+//        mAdapter.add(new Label() {{
+//            setId("7");
+//            setSelected(labels.contains(getId()));
+//            setName("调研");
+//        }});
         mAdapter.add(new Model() {{
             setId("其他");
         }});
@@ -196,16 +243,33 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 // 自定义
                 openCreateDialog();
             } else {
-                label.setSelected(!label.isSelected());
-                mAdapter.notifyItemChanged(index);
+                int selected = selected();
+                // 如果已选择的数量超过2个且当前项未被选中则说明是要选中一个新的，提醒
+                if (selected >= 2 && !label.isSelected()) {
+                    ToastHelper.make().showMsg(R.string.ui_activity_label_picker_picked_max);
+                } else {
+                    label.setSelected(!label.isSelected());
+                    mAdapter.notifyItemChanged(index);
+                }
             }
         }
     };
+
+    private int selected() {
+        int cnt = 0;
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            if (mAdapter.get(i).isSelected()) {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
 
     private View dialogView;
     private ClearEditText labelName;
 
     private void openCreateDialog() {
+        ToastHelper.make().showMsg("目前api暂时不能添加自定义标签");
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override
             public View onInitializeView() {

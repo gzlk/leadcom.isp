@@ -1,10 +1,16 @@
 package com.gzlk.android.isp.model.organization;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.common.Leaguer;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>组织内成员<br />
@@ -31,6 +37,27 @@ public class Member extends Leaguer {
          * 小组成员
          */
         int SQUAD = 2;
+    }
+
+    private static ExclusionStrategy strategy = new ExclusionStrategy() {
+        @Override
+        public boolean shouldSkipField(FieldAttributes f) {
+            return f.getName().contains("groRole");
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> clazz) {
+            return false;
+        }
+    };
+
+    public static String toJson(Member member) {
+        return Json.gson(strategy).toJson(member);
+    }
+
+    public static String toJson(List<Member> members) {
+        return Json.gson(strategy).toJson(members, new TypeToken<List<Member>>() {
+        }.getType());
     }
 
     @Column(Organization.Field.GroupId)

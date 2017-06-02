@@ -1,9 +1,13 @@
 package com.gzlk.android.isp.model.activity;
 
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>活动的标签<br />
@@ -18,6 +22,17 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Activity.Table.LABEL)
 public class Label extends Model {
 
+    public static List<Label> getLabels(String activityId) {
+        return new Dao<>(Label.class).query(Activity.Field.ActivityId, activityId);
+    }
+
+    public static List<Label> getLabels(List<String> ids) {
+        if (null != ids && ids.size() > 0) {
+            return new Dao<>(Label.class).in(Model.Field.Id, ids);
+        }
+        return new ArrayList<>();
+    }
+
     //名称
     @Column(Model.Field.Name)
     private String name;
@@ -27,6 +42,8 @@ public class Label extends Model {
     //活动id
     @Column(Activity.Field.ActivityId)
     private String actId;
+
+    private int signaNum;
 
     public String getName() {
         return name;
@@ -50,5 +67,13 @@ public class Label extends Model {
 
     public void setActId(String actId) {
         this.actId = actId;
+    }
+
+    public int getSignaNum() {
+        return signaNum;
+    }
+
+    public void setSignaNum(int signaNum) {
+        this.signaNum = signaNum;
     }
 }

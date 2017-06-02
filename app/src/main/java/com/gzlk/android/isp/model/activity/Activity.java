@@ -111,6 +111,8 @@ public class Activity extends Model {
     //标签
     @Column(Archive.Field.Label)
     private ArrayList<String> label;
+    @Ignore
+    private ArrayList<Label> labels;
     //创建者
     @Column(Archive.Field.CreatorId)
     private String creatorId;
@@ -213,11 +215,27 @@ public class Activity extends Model {
     }
 
     public ArrayList<String> getLabel() {
+        fetchingLabels();
         return label;
     }
 
     public void setLabel(ArrayList<String> label) {
         this.label = label;
+    }
+
+    private void fetchingLabels() {
+        if (null == labels) {
+            labels = (ArrayList<Label>) Label.getLabels(label);
+        }
+    }
+
+    public ArrayList<Label> getLabels() {
+        fetchingLabels();
+        return labels;
+    }
+
+    public void setLabels(ArrayList<Label> labels) {
+        this.labels = labels;
     }
 
     public String getCreatorId() {

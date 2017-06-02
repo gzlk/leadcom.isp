@@ -186,6 +186,10 @@ public class Attachment extends Model {
         return dao.query(builder);
     }
 
+    public static void delete(String attachmentId) {
+        new Dao<>(Attachment.class).delete(attachmentId);
+    }
+
     @Column(Archive.Field.Type)
     private int type;
     @Column(Field.ArchiveId)

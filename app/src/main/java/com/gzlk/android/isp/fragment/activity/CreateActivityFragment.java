@@ -14,6 +14,7 @@ import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.activity.ActArchiveRequest;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
@@ -28,6 +29,7 @@ import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Member;
@@ -63,6 +65,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_ADDR = "caf_address";
     private static final String PARAM_CONTENT = "caf_content";
     private static final String PARAM_OPEN_STATUS = "caf_open_status";
+    private static final String PARAM_ATTACHMENTS = "caf_attachments";
 
     public static CreateActivityFragment newInstance(String params) {
         CreateActivityFragment caf = new CreateActivityFragment();
@@ -96,6 +99,9 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         address = bundle.getString(PARAM_ADDR, "");
         content = bundle.getString(PARAM_CONTENT, "");
         openStatus = bundle.getInt(PARAM_OPEN_STATUS, Activity.OpenStatus.NONE);
+        String json = bundle.getString(PARAM_ATTACHMENTS, "[]");
+        attachments = Json.gson().fromJson(json, new TypeToken<ArrayList<Attachment>>() {
+        }.getType());
     }
 
     @Override
@@ -113,6 +119,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         content = contentView.getValue();
         bundle.putString(PARAM_CONTENT, content);
         bundle.putInt(PARAM_OPEN_STATUS, openStatus);
+        bundle.putString(PARAM_ATTACHMENTS, Json.gson().toJson(attachments, new TypeToken<ArrayList<Attachment>>() {
+        }.getType()));
     }
 
     @Override
@@ -140,6 +148,19 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         }.getType());
         if (null == selectedMembers) {
             selectedMembers = new ArrayList<>();
+        }
+    }
+
+    private void updateMember(Member member) {
+        boolean exist = false;
+        for (Member m : selectedMembers) {
+            if (m.getUserId().equals(member.getUserId())) {
+                exist = true;
+                break;
+            }
+        }
+        if (!exist) {
+            selectedMembers.add(member);
         }
     }
 
@@ -286,7 +307,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         return !isEmpty(titleHolder.getValue()) || !isEmpty(addressHolder.getValue()) || !isEmpty(contentView.getValue());
     }
 
-    private void initializeHolder(Activity activity) {
+    private void initializeHolder(final Activity activity) {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_activity_create_items);
             mRecyclerView.setNestedScrollingEnabled(false);
@@ -383,13 +404,15 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             memberHolder.addOnViewHolderClickListener(onViewHolderClickListener);
             if (!non) {
                 if (null != activity.getMemberIdArray() && activity.getMemberIdArray().size() > 0) {
+                    ArrayList<String> names = activity.getMemberNameArray();
+                    int i = 0;
                     for (final String id : activity.getMemberIdArray()) {
-                        Member member = new Member() {{
-                            setId(id);
-                        }};
-                        if (!selectedMembers.contains(member)) {
-                            selectedMembers.add(member);
-                        }
+                        final String name = (null != names && names.size() >= i + 1) ? names.get(i) : "";
+                        Member member = new Member();
+                        member.setUserId(id);
+                        member.setUserName(name);
+                        updateMember(member);
+                        i++;
                     }
                 }
             }
@@ -408,17 +431,26 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             setSupportLoadingMore(false);
             mRecyclerView.setAdapter(mAdapter);
         }
-        updateArchiveAttachment(activity);
+        updateActivityAttachment(activity);
+        createFilePickerDialog();
     }
 
-    private ArrayList<Attachment> attachments = new ArrayList<>();
+    private ArrayList<Attachment> attachments;
 
-    private void updateArchiveAttachment(Activity activity) {
+    // 更新活动里已经存在的文件
+    private void updateActivityAttachment(Activity activity) {
         if (null == activity) return;
 
-        if (null != activity.getAttUrlArray()) {
-            attachments.addAll(activity.getAttUrlArray());
-            mAdapter.update(activity.getAttUrlArray(), false);
+        if (null == attachments || attachments.size() < 1) {
+            attachments = new ArrayList<>();
+            if (null != activity.getAttUrlArray()) {
+                for (Attachment attachment : activity.getAttUrlArray()) {
+                    // 将活动的id存入附件的宿主id中
+                    attachment.setArchiveId(activity.getId());
+                    attachments.add(attachment);
+                }
+                mAdapter.update(attachments, false);
+            }
         }
     }
 
@@ -432,10 +464,12 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 String name = member.getUserName();
                 string += (isEmpty(string) ? "" : "、") + (isEmpty(name) ? "" : name);
                 if (i >= 1) {
-                    string += format("%s，共%d人", (isEmpty(string) ? "" : "等"), selectedMembers.size());
+                    break;
                 }
                 i++;
             }
+            int size = selectedMembers.size();
+            string += format("%s共%d人", (isEmpty(string) ? "" : (size > 2 ? "等，" : "，")), selectedMembers.size());
         }
         return string;
     }
@@ -454,7 +488,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case 2:
                     // 选择活动标签
-                    String string = format("%s,%s", mGroupId, replaceJson(labelJson, false));
+                    labelJson = Json.gson().toJson(labelsId);
+                    String string = format("%s,%s,%s", mGroupId, mQueryId, replaceJson(labelJson, false));
                     openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
                     break;
                 case 3:
@@ -462,6 +497,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                     openActivityOpenStatus();
                     break;
                 case 4:
+                    memberJson = Member.toJson(selectedMembers);
+                    log(memberJson);
                     String params = format("%s,%s", mGroupId, replaceJson(memberJson, false));
                     openActivity(OrganizationContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
                     break;
@@ -476,7 +513,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             case R.id.ui_tool_attachment_button:
                 Utils.hidingInputBoard(contentView);
                 resetSelectedFiles();
-                openFilePicker();
+                filePickerDialog.show();
                 break;
         }
     }
@@ -484,7 +521,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     // 文件选择
     private FilePickerDialog filePickerDialog;
 
-    private void openFilePicker() {
+    private void createFilePickerDialog() {
         if (null == filePickerDialog) {
             DialogProperties properties = new DialogProperties();
             // 选择文件
@@ -501,7 +538,6 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             filePickerDialog.setNegativeBtnName(StringHelper.getString(R.string.ui_base_text_cancel));
             filePickerDialog.setDialogSelectionListener(dialogSelectionListener);
         }
-        filePickerDialog.show();
     }
 
     private DialogSelectionListener dialogSelectionListener = new DialogSelectionListener() {
@@ -619,11 +655,11 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         Utils.hidingInputBoard(contentView);
-//        if (getWaitingForUploadFiles().size() > 0) {
-//            uploadFiles();
-//        } else {
-//            publishActivity();
-//        }
+        if (getWaitingForUploadFiles().size() > 0) {
+            uploadFiles();
+        } else {
+            publishActivity();
+        }
     }
 
     private void publishActivity() {
@@ -632,9 +668,11 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         String title = titleHolder.getValue().trim();
         String address = addressHolder.getValue().trim();
         String content = contentView.getValue().trim();
-        ArrayList<String> members = new ArrayList<>();
+        ArrayList<String> ids = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<>();
         for (Member member : selectedMembers) {
-            members.add(member.getId());
+            ids.add(member.getUserId());
+            names.add(member.getUserName());
         }
         if (isEmpty(mQueryId)) {
             ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
@@ -642,34 +680,92 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 public void onResponse(Activity activity, boolean success, String message) {
                     super.onResponse(activity, success, message);
                     if (success) {
-                        successToClose();
+                        // 成功之后设置mQuery为新建的活动的id
+                        if (null != activity) {
+                            mQueryId = activity.getId();
+                        }
+                        handleUnCallbackedAttachments();
                     } else {
                         hideImageHandlingDialog();
                     }
                 }
-            }).add(title, content, openStatus, address, happenDate, mGroupId, cover, members, labelsId, attachments);
+            }).add(title, content, openStatus, address, happenDate, mGroupId, cover, ids, names, labelsId, attachments);
         } else {
             ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
                 @Override
                 public void onResponse(Activity activity, boolean success, String message) {
                     super.onResponse(activity, success, message);
                     if (success) {
-                        successToClose();
+                        handleUnCallbackedAttachments();
                     } else {
                         hideImageHandlingDialog();
                     }
                 }
-            }).update(mQueryId, title, content, openStatus, address, happenDate, cover, members, labelsId, attachments);
+            }).update(mQueryId, title, content, openStatus, address, happenDate, cover, ids, names, labelsId, attachments);
         }
     }
 
+    private int handledIndex = 0;
+
+    // 处理未调用活动文件回调的文件
+    private void handleUnCallbackedAttachments() {
+        if (!isEmpty(mQueryId)) {
+            showImageHandlingDialog(R.string.ui_activity_create_handing_attachment_warning);
+            handledIndex = 0;
+            handleCallbackAttachment();
+        } else {
+            successToClose();
+        }
+    }
+
+    private void handleCallbackAttachment() {
+        Attachment attachment = attachments.get(handledIndex);
+        if (isEmpty(attachment.getArchiveId())) {
+            attachment.setArchiveId(mQueryId);
+            callback(attachment);
+        } else {
+            handledIndex++;
+            if (handledIndex >= attachments.size()) {
+                successToClose();
+            } else {
+                showImageHandlingDialog(StringHelper.getString(R.string.ui_activity_create_handing_attachment_warning1, handledIndex, attachments.size()));
+                handleCallbackAttachment();
+            }
+        }
+    }
+
+    private void callback(final Attachment attachment) {
+        ActArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ActArchive>() {
+            @Override
+            public void onResponse(ActArchive actArchive, boolean success, String message) {
+                super.onResponse(actArchive, success, message);
+                if (success) {
+                    handledIndex++;
+                    if (handledIndex >= attachments.size()) {
+                        // 完成之后退出
+                        successToClose();
+                    } else {
+                        showImageHandlingDialog(StringHelper.getString(R.string.ui_activity_create_handing_attachment_warning1, handledIndex, attachments.size()));
+                        // 成功之后继续处理下一个文件
+                        handleCallbackAttachment();
+                    }
+                } else {
+                    attachment.setArchiveId("");
+                    hideImageHandlingDialog();
+                    ToastHelper.make().showMsg(R.string.ui_activity_create_handing_attachment_failed);
+                }
+            }
+        }).uploadCallback(attachment);
+    }
+
     private void successToClose() {
-        Handler().post(new Runnable() {
+        hideImageHandlingDialog();
+        Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 finish();
             }
-        });
+        }, 300);
     }
 
     // 处理上传之后的文件列表
@@ -678,7 +774,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         if (getUploadedFiles().size() > 0) {
             for (int i = 0, len = getUploadedFiles().size(); i < len; i++) {
                 Attachment attachment = getUploadedFiles().get(i);
-                attachment.setArchiveId(mQueryId);
+                //attachment.setArchiveId(mQueryId);
                 attachments.add(attachment);
             }
         }
@@ -700,6 +796,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         if (attachment.isLocalFile()) {
             getWaitingForUploadFiles().remove(attachment.getFullPath());
         }
+        // 从本地缓存中删除
+        Attachment.delete(attachment.getId());
         //filePickerDialog.getProperties().maximum_count = getMaxSelectable() - images.size() - names.size();
     }
 
