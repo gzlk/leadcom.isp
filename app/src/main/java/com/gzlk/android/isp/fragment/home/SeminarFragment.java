@@ -5,14 +5,19 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.common.FocusImageRequest;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.ArchiveHomeViewHolder;
 import com.gzlk.android.isp.holder.home.HomeImagesViewHolder;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.common.FocusImage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>首页 - 会议<br />
@@ -52,7 +57,7 @@ public class SeminarFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        stopRefreshing();
+        fetchingFocusImages();
     }
 
     @Override
@@ -133,17 +138,31 @@ public class SeminarFragment extends BaseSwipeRefreshSupportFragment {
         }});
     }
 
-    private String[] images = new String[]{
-            "https://img5.cache.netease.com/photo/0001/2017-06-02/CLTLCFMD00AN0001.jpg",
-            "http://cms-bucket.nosdn.127.net/catchpic/8/8f/8f98fa0204ae83cbddec8f8d092f93d6.jpg",
-            "https://cms-bucket.nosdn.127.net/catchpic/1/1f/1f12c0757a7a900b13fbfc40125507fd.png"
-    };
+    private void fetchingFocusImages() {
+        FocusImageRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<FocusImage>() {
+            @Override
+            public void onResponse(List<FocusImage> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (null != list) {
+                        ArrayList<String> strings = new ArrayList<>();
+                        for (FocusImage image : list) {
+                            strings.add(image.getImageUrl());
+                        }
+                        homeImagesViewHolder.addImages(strings);
+                    }
+                }
+                stopRefreshing();
+            }
+        }).all();
+    }
 
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new SeminarAdapter();
             mRecyclerView.setAdapter(mAdapter);
             setTestData();
+            fetchingFocusImages();
         }
     }
 
@@ -155,7 +174,6 @@ public class SeminarFragment extends BaseSwipeRefreshSupportFragment {
             if (viewType == VT_HEADER) {
                 if (null == homeImagesViewHolder) {
                     homeImagesViewHolder = new HomeImagesViewHolder(itemView, SeminarFragment.this);
-                    homeImagesViewHolder.addImages(Arrays.asList(images));
                 }
                 return homeImagesViewHolder;
             } else {
