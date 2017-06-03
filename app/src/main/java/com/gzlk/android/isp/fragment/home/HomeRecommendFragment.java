@@ -16,7 +16,6 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.FocusImage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,7 +29,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class SeminarFragment extends BaseSwipeRefreshSupportFragment {
+public class HomeRecommendFragment extends BaseSwipeRefreshSupportFragment {
 
     private SeminarAdapter mAdapter;
     private HomeImagesViewHolder homeImagesViewHolder;
@@ -173,11 +172,11 @@ public class SeminarFragment extends BaseSwipeRefreshSupportFragment {
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             if (viewType == VT_HEADER) {
                 if (null == homeImagesViewHolder) {
-                    homeImagesViewHolder = new HomeImagesViewHolder(itemView, SeminarFragment.this);
+                    homeImagesViewHolder = new HomeImagesViewHolder(itemView, HomeRecommendFragment.this);
                 }
                 return homeImagesViewHolder;
             } else {
-                return new ArchiveHomeViewHolder(itemView, SeminarFragment.this);
+                return new ArchiveHomeViewHolder(itemView, HomeRecommendFragment.this);
             }
         }
 

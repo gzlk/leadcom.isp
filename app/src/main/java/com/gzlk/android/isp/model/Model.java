@@ -35,6 +35,8 @@ public class Model extends BaseModel {
         public static final String AccessToken = "accessToken";
     }
 
+    public static final String DFT_DATE = "1970-01-01 00:00:01";
+
     protected boolean isEmpty(String string) {
         return StringHelper.isEmpty(string);
     }

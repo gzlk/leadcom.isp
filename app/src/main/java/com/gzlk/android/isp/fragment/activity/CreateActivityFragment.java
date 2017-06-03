@@ -217,8 +217,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void doingInResume() {
         maxSelectable = 1;
-        setCustomTitle(R.string.ui_activity_create_fragment_title);
-        setRightText(R.string.ui_base_text_publish);
+        setCustomTitle(isEmpty(mQueryId) ? R.string.ui_activity_create_fragment_title : R.string.ui_activity_create_fragment_title_edit);
+        setRightText(isEmpty(mQueryId) ? R.string.ui_base_text_publish : R.string.ui_base_text_commit);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
@@ -709,7 +709,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
 
     // 处理未调用活动文件回调的文件
     private void handleUnCallbackedAttachments() {
-        if (!isEmpty(mQueryId)) {
+        if (!isEmpty(mQueryId) && attachments.size() > 0) {
             showImageHandlingDialog(R.string.ui_activity_create_handing_attachment_warning);
             handledIndex = 0;
             handleCallbackAttachment();

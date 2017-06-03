@@ -16,6 +16,7 @@
         android:layout_width="@dimen/ui_static_dp_110"
         android:layout_height="@dimen/ui_static_dp_80"
         android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        app:id_image_scale_type="centerCrop"
         app:id_image_src="@mipmap/img_image_default" />
 
     <LinearLayout

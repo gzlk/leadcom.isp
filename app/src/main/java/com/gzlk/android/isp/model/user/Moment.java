@@ -73,6 +73,9 @@ public class Moment extends Additional {
     }
 
     public String getCreateDate() {
+        if (isEmpty(createDate)) {
+            createDate = DFT_DATE;
+        }
         return createDate;
     }
 

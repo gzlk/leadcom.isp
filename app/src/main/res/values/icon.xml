@@ -43,6 +43,12 @@
     <string name="ui_icon_main_activity">&#xe62e;</string>
     <string name="ui_icon_main_individual">&#xe899;</string>
 
+    <!--系统消息界面的icon-->
+    <string name="ui_icon_system_msg">&#xe614;</string>
+    <string name="ui_icon_system_announcement">&#xe600;</string>
+    <string name="ui_icon_system_notification">&#xe636;</string>
+    <string name="ui_icon_system_secretary">&#xe90a;</string>
+
     <string name="ui_icon_attachment_unknown">&#xe615;</string>
     <string name="ui_icon_attachment_pdf">&#xe68f;</string>
     <string name="ui_icon_attachment_mp4">&#xe706;</string>

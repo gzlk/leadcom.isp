@@ -567,9 +567,9 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         @Override
         protected int comparator(Model item1, Model item2) {
             if (item1 instanceof Moment && item2 instanceof Moment) {
-                // 按照创建时间倒序排序
-                int compared = ((Moment) item1).getCreateDate().compareTo(((Moment) item2).getCreateDate());
-                return compared == 0 ? 0 : -compared;
+                Moment m1 = (Moment) item1;
+                Moment m2 = (Moment) item2;
+                return -m1.getCreateDate().compareTo(m2.getCreateDate());
             }
             return 0;
         }

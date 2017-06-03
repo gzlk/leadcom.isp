@@ -182,6 +182,7 @@ public final class ImageCompress {
             case "mkv":
             case "3gp":
             case "vob":
+            case "mov":
                 return true;
         }
         return false;

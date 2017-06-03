@@ -60,6 +60,10 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         imageView.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
+    public void showStatus(boolean shown) {
+        statusView.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+
     public void showContent(Archive archive, String searchingText) {
         selector.setVisibility(archive.isSelectable() ? View.VISIBLE : View.GONE);
         selector.setTextColor(getColor(archive.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
@@ -87,6 +91,7 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         Attachment attachment = firstOf(archive.getVideo());
         if (null != attachment && !isEmpty(attachment.getUrl())) {
             // 显示视频图片或默认视频图片
+            imageView.displayImage("drawable://" + R.drawable.img_image_video, imageSize, false, false);
             imageView.setVisibility(View.GONE);
             iconContainer.setVisibility(View.VISIBLE);
             iconContainer.setNormalColor(getColor(attachment.iconColor()));

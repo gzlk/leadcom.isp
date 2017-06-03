@@ -33,22 +33,48 @@ public class ArchiveHomeViewHolder extends BaseViewHolder {
     private TextView textView;
 
     private ArchiveAdditionalViewHolder additionalViewHolder;
+    private int width, height;
 
     public ArchiveHomeViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageDisplayer.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
         additionalViewHolder = new ArchiveAdditionalViewHolder(itemView, fragment);
+        width = getDimension(R.dimen.ui_static_dp_110);
+        height = getDimension(R.dimen.ui_static_dp_80);
     }
 
     public void showContent(Archive archive) {
         textView.setText(archive.getTitle());
-        imageDisplayer.displayImage(archive.getCover(), getDimension(R.dimen.ui_static_dp_110), getDimension(R.dimen.ui_static_dp_80), false, false);
         additionalViewHolder.showContent(archive);
+        // 优先级：封面
+        String image = archive.getCover();
+        if (!isEmpty(image)) {
+            imageDisplayer.displayImage(image, width, height, false, false);
+            return;
+        }
+        // 视频
+        if (null != archive.getVideo() && archive.getVideo().size() > 0) {
+            imageDisplayer.displayImage("drawable://" + R.drawable.img_image_video, width, height, false, false);
+            return;
+        }
+        // 文档
+        // 图片
+        if (null != archive.getImage() && archive.getImage().size() > 0) {
+            image = archive.getImage().get(0).getUrl();
+            imageDisplayer.displayImage(image, width, height, false, false);
+            return;
+        }
+        if (isEmpty(image)) {
+            if (null != archive.getImage() && archive.getImage().size() > 0) {
+                image = archive.getImage().get(0).getUrl();
+            }
+        }
+        imageDisplayer.displayImage(image, width, height, false, false);
     }
 
     @Click({R.id.ui_holder_view_home_seminar_item_container})
-    private void click(View view){
+    private void click(View view) {
 
     }
 }

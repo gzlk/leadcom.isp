@@ -70,6 +70,9 @@ public class Comment extends ArchiveInfo {
     }
 
     public String getCreateDate() {
+        if (isEmpty(createDate)) {
+            createDate = DFT_DATE;
+        }
         return createDate;
     }
 

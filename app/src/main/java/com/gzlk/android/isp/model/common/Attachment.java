@@ -81,6 +81,7 @@ public class Attachment extends Model {
      * 附件文件类型
      */
     public interface AttachmentType {
+        int NONE = 0;
         /**
          * Office文档
          */
@@ -100,7 +101,7 @@ public class Attachment extends Model {
     }
 
     public int iconColor() {
-        if (StringHelper.isEmpty(ext)) return 0;
+        if (StringHelper.isEmpty(ext)) return R.color.colorPrimary;
 
         if (ext.contains("doc")) return R.color.colorWord;
 
@@ -268,9 +269,13 @@ public class Attachment extends Model {
         setId(url);
         fullPath = url;
         ext = getExtension(url);
+        type = getAttachmentType();
     }
 
     public int getType() {
+        if (type == AttachmentType.NONE) {
+            resetInformation();
+        }
         return type;
     }
 
@@ -279,6 +284,9 @@ public class Attachment extends Model {
     }
 
     public String getArchiveId() {
+        if (isEmpty(archiveId)) {
+            resetInformation();
+        }
         return archiveId;
     }
 
@@ -296,6 +304,9 @@ public class Attachment extends Model {
     }
 
     public String getFullPath() {
+        if (isEmpty(fullPath)) {
+            resetInformation();
+        }
         return fullPath;
     }
 
@@ -304,6 +315,9 @@ public class Attachment extends Model {
     }
 
     public String getExt() {
+        if (isEmpty(ext)) {
+            resetInformation();
+        }
         return ext;
     }
 

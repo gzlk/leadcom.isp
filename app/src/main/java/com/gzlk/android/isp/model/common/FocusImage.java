@@ -14,40 +14,20 @@ import com.gzlk.android.isp.model.Model;
  */
 
 public class FocusImage extends Model {
-    //标题
-    private String title;
-    //链接
-    private String targetPath;
-    //图片地址
-    private String imageUrl;
     //播放间隔
     private String playerInterval;
     //播放帧数
     private String playerFrames;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getTargetPath() {
-        return targetPath;
-    }
-
-    public void setTargetPath(String targetPath) {
-        this.targetPath = targetPath;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+    private String createTime;
+    //图片地址
+    private String imageUrl;
+    //链接
+    private String targetPath;
+    //标题
+    private String title;
+    private String createrId;
+    private String createrName;
+    private int status;
 
     public String getPlayerInterval() {
         return playerInterval;
@@ -63,5 +43,61 @@ public class FocusImage extends Model {
 
     public void setPlayerFrames(String playerFrames) {
         this.playerFrames = playerFrames;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getTargetPath() {
+        return targetPath;
+    }
+
+    public void setTargetPath(String targetPath) {
+        this.targetPath = targetPath;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCreaterId() {
+        return createrId;
+    }
+
+    public void setCreaterId(String createrId) {
+        this.createrId = createrId;
+    }
+
+    public String getCreaterName() {
+        return createrName;
+    }
+
+    public void setCreaterName(String createrName) {
+        this.createrName = createrName;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

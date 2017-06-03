@@ -10,9 +10,10 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
-import com.gzlk.android.isp.fragment.home.ArchiveFragment;
+import com.gzlk.android.isp.fragment.home.HomeArchiveFragment;
+import com.gzlk.android.isp.fragment.home.HomeActivityFragment;
 import com.gzlk.android.isp.fragment.home.MomentFragment;
-import com.gzlk.android.isp.fragment.home.SeminarFragment;
+import com.gzlk.android.isp.fragment.home.HomeRecommendFragment;
 import com.gzlk.android.isp.holder.common.HorizontalRecyclerViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -66,9 +67,9 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
 
     @Override
     protected void initializeFragments() {
-        mFragments.add(new SeminarFragment());
-        mFragments.add(new com.gzlk.android.isp.fragment.home.ActivityFragment());
-        mFragments.add(new ArchiveFragment());
+        mFragments.add(new HomeRecommendFragment());
+        mFragments.add(new HomeActivityFragment());
+        mFragments.add(new HomeArchiveFragment());
         mFragments.add(new MomentFragment());
     }
 
@@ -80,6 +81,9 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
         topChannel2.setTextColor(position == 1 ? color2 : color1);
         topChannel3.setTextColor(position == 2 ? color2 : color1);
         topChannel4.setTextColor(position == 3 ? color2 : color1);
+        for (int i = 0; i < mFragments.size(); i++) {
+            mFragments.get(i).setViewPagerDisplayedCurrent(position == i);
+        }
     }
 
     @Override

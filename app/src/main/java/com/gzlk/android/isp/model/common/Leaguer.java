@@ -76,6 +76,9 @@ public class Leaguer extends Model {
     }
 
     public String getCreateDate() {
+        if (isEmpty(createDate)) {
+            createDate = DFT_DATE;
+        }
         return createDate;
     }
 

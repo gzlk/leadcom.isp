@@ -123,6 +123,9 @@ public class Organization extends Model {
     }
 
     public String getCreateDate() {
+        if (isEmpty(createDate)) {
+            createDate = DFT_DATE;
+        }
         return createDate;
     }
 
