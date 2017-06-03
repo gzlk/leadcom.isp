@@ -38,10 +38,10 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class OrganizationDetailsFragment extends BaseOrganizationFragment {
+public class OrganizationPropertiesFragment extends BaseOrganizationFragment {
 
-    public static OrganizationDetailsFragment newInstance(String params) {
-        OrganizationDetailsFragment odf = new OrganizationDetailsFragment();
+    public static OrganizationPropertiesFragment newInstance(String params) {
+        OrganizationPropertiesFragment odf = new OrganizationPropertiesFragment();
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, params);
         odf.setArguments(bundle);
@@ -223,7 +223,7 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
-            BaseFragment fragment = OrganizationDetailsFragment.this;
+            BaseFragment fragment = OrganizationPropertiesFragment.this;
             switch (viewType) {
                 case VT_HEADER:
                     UserHeaderBigViewHolder uhbvh = new UserHeaderBigViewHolder(itemView, fragment);
@@ -272,7 +272,9 @@ public class OrganizationDetailsFragment extends BaseOrganizationFragment {
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable SimpleClickableItem item) {
-            if (holder instanceof SimpleClickableViewHolder) {
+            if (holder instanceof SimpleMemberViewHolder) {
+                ((SimpleMemberViewHolder) holder).setOrganizationId(mOrganizationId);
+            } else if (holder instanceof SimpleClickableViewHolder) {
                 ((SimpleClickableViewHolder) holder).showContent(item);
             } else if (holder instanceof ToggleableViewHolder) {
                 ((ToggleableViewHolder) holder).showContent(item);

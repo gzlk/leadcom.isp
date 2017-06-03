@@ -4,11 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
@@ -36,6 +39,12 @@ public class QRCodeFragment extends BaseTransparentSupportFragment {
     private LinearLayout background;
     @ViewId(R.id.ui_2d_code_buttons)
     private CorneredView buttons;
+    @ViewId(R.id.ui_individual_2d_code_header)
+    private ImageDisplayer header;
+    @ViewId(R.id.ui_individual_2d_code_name)
+    private TextView nameTextView;
+    @ViewId(R.id.ui_individual_2d_code_code)
+    private ImageDisplayer coder;
 
     @Override
     public int getLayout() {
@@ -46,6 +55,9 @@ public class QRCodeFragment extends BaseTransparentSupportFragment {
     public void doingInResume() {
         tryPaddingContent(titleContainer, false);
         initializeElements();
+        header.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
+        header.displayImage(Cache.cache().me.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_50), false, false);
+        nameTextView.setText(Cache.cache().userName);
     }
 
     @Override

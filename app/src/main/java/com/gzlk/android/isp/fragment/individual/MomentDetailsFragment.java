@@ -15,6 +15,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -30,6 +31,7 @@ import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.hlk.hlklib.tasks.AsyncedTask;
 
@@ -54,6 +56,8 @@ import java.util.ArrayList;
 public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
 
     private static final String PARAM_SELECTED = "mdf_moment_selected";
+    private static final String PARAM_USER_ID = "mdf_moment_user_id";
+    private static final String PARAM_USER_NAME = "mdf_moment_user_name";
 
     public static MomentDetailsFragment newInstance(String params) {
         MomentDetailsFragment mdf = new MomentDetailsFragment();
@@ -68,17 +72,22 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private int selected;
+    private String momentUser = "", momentName = "";
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         selected = bundle.getInt(PARAM_SELECTED, 0);
+        momentUser = bundle.getString(PARAM_USER_ID, "");
+        momentName = bundle.getString(PARAM_USER_NAME, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_SELECTED, selected);
+        bundle.putString(PARAM_USER_ID, momentUser);
+        bundle.putString(PARAM_USER_NAME, momentName);
     }
 
     // UI
@@ -96,7 +105,6 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     private ExpandableTextView detailContentTextView;
 
     private ArrayList<String> images;
-    private String momentUser, momentName;
 
     @Override
     public int getLayout() {
@@ -138,8 +146,6 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
             public void onResponse(Moment moment, boolean success, String message) {
                 super.onResponse(moment, success, message);
                 if (success) {
-                    // 保存拉取回来的说说记录
-                    new Dao<>(Moment.class).save(moment);
                     // 拉取回来之后立即显示
                     displayMomentDetails(moment);
                 }
@@ -189,6 +195,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private View dialogView;
+    private CorneredButton toPrivacy, toDelete;
 
     private void showMoreButtons() {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
@@ -196,6 +203,12 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
             public View onInitializeView() {
                 if (null == dialogView) {
                     dialogView = View.inflate(Activity(), R.layout.popup_dialog_moment_details, null);
+                    toPrivacy = (CorneredButton) dialogView.findViewById(R.id.ui_dialog_moment_details_button_privacy);
+                    toDelete = (CorneredButton) dialogView.findViewById(R.id.ui_dialog_moment_details_button_delete);
+
+                    // 不是我自己时，不显示设为私密和删除按钮
+                    toPrivacy.setVisibility(momentUser.equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
+                    toDelete.setVisibility(momentUser.equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
                 }
                 return dialogView;
             }
@@ -216,7 +229,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
             @Override
             public boolean onClick(View view) {
                 handlePopupClick(view.getId());
-                return false;
+                return true;
             }
         }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true).show();
     }
@@ -243,6 +256,9 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     private void tryCollection() {
         // 收藏当前显示的图片
         String url = images.get(selected);
+        ArchiveSource as = new ArchiveSource();
+        as.setModule(Collection.Module.MOMENT);
+        as.setId(mQueryId);
         CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
             @Override
             public void onResponse(Collection collection, boolean success, String message) {
@@ -254,10 +270,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).add(Collection.Type.IMAGE, new ArchiveSource() {{
-            setModule(Collection.Module.MOMENT);
-            setId(mQueryId);
-        }}, url, momentUser, momentName);
+        }).add(Collection.Type.IMAGE, as, url, momentUser, momentName);
     }
 
     private void save() {

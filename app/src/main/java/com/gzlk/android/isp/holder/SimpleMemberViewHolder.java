@@ -5,9 +5,10 @@ import android.view.View;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
+import com.gzlk.android.isp.model.organization.Organization;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>群成员简略显示<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/08 10:47 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -26,5 +27,15 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
     @Override
     public void showContent(SimpleClickableItem item) {
         super.showContent(item);
+    }
+
+    private String groupId = "";
+
+    public void setOrganizationId(String orgId) {
+        this.groupId = orgId;
+    }
+
+    public void showContent(Organization org) {
+
     }
 }

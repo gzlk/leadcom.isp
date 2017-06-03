@@ -42,7 +42,7 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_setting_password;
+        return R.layout.fragment_individual_setting_password;
     }
 
     @Override

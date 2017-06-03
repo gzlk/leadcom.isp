@@ -5,8 +5,11 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.holder.UserSimpleMomentViewHolder;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
+
+import java.lang.ref.SoftReference;
 
 /**
  * <b>功能描述：</b><br />
@@ -20,6 +23,14 @@ import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
  */
 
 public class UserSimpleMomentViewBinder extends BaseViewBinder<SimpleClickableItem, UserSimpleMomentViewHolder> {
+
+    private SoftReference<OnViewHolderClickListener> click;
+
+    public UserSimpleMomentViewBinder(OnViewHolderClickListener l) {
+        super();
+        click = new SoftReference<>(l);
+    }
+
     @Override
     protected int itemLayout() {
         return R.layout.holder_view_user_simple_moment;
@@ -27,7 +38,9 @@ public class UserSimpleMomentViewBinder extends BaseViewBinder<SimpleClickableIt
 
     @Override
     public UserSimpleMomentViewHolder onCreateViewHolder(@NonNull View itemView) {
-        return new UserSimpleMomentViewHolder(itemView, fragment.get());
+        UserSimpleMomentViewHolder holder = new UserSimpleMomentViewHolder(itemView, fragment.get());
+        holder.addOnViewHolderClickListener(click.get());
+        return holder;
     }
 
     @Override

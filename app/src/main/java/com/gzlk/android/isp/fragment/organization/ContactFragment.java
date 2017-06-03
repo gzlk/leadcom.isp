@@ -67,6 +67,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
+        // TYPE=ORG时为组织id，否则为小组的id
         bundle.putString(PARAM_QUERY_ID, strings[1]);
         cf.setArguments(bundle);
         return cf;
@@ -113,6 +114,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             return;
         }
         mQueryId = queryId;
+        mOrganizationId = mQueryId;
         members.clear();
         mAdapter.clear();
         loadingQueryItem();
@@ -184,12 +186,12 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-
+        fetchingRemoteMembers(mOrganizationId, mSquadId);
     }
 
     @Override
     protected void onLoadingMore() {
-
+        isLoadingComplete(true);
     }
 
     @Override
@@ -239,7 +241,10 @@ public class ContactFragment extends BaseOrganizationFragment {
             fetchingRemoteSquad(mSquadId);
         } else {
             setCustomTitle(squad.getName());
-            loadingLocalMembers(squad.getGroupId(), squad.getId());
+            if (isEmpty(mOrganizationId)) {
+                mOrganizationId = squad.getGroupId();
+            }
+            loadingLocalMembers(mOrganizationId, mSquadId);
         }
     }
 
@@ -272,6 +277,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             Collections.sort(members, new MemberComparator());
             searchingListener.onSearching("");
         }
+        stopRefreshing();
     }
 
     /**
@@ -294,6 +300,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 searchingText = "";
                 mAdapter.addAll(members);
             }
+            stopRefreshing();
         }
     };
 

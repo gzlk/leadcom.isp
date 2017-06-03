@@ -41,7 +41,7 @@ public class SettingFragment extends BaseTransparentSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_setting;
+        return R.layout.fragment_individual_setting;
     }
 
     @Override

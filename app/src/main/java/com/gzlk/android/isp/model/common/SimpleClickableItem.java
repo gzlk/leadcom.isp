@@ -42,7 +42,7 @@ public class SimpleClickableItem extends Model {
                     iconVisible = i >= 1;
                     addVisible = i >= 2;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         }

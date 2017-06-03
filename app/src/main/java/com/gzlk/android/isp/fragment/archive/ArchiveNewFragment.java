@@ -423,7 +423,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             securityHolder = new SimpleClickableViewHolder(securityView, this);
             securityHolder.addOnViewHolderClickListener(viewHolderClickListener);
         }
-        securityHolder.showContent(format(strings[3], getPrivacy()));
+        securityHolder.showContent(format(strings[3], PrivacyFragment.getPrivacy(PrivacyFragment.getSeclusion(privacy))));
 
         // 内容
         contentView.setValue(null == archive ? "" : StringHelper.escapeFromHtml(archive.getContent()));
@@ -480,31 +480,6 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
 
             mAdapter.update(archive.getAttach(), false);
         }
-    }
-
-    private String getSecurityNames(List<String> list) {
-        if (null == list || list.size() < 1) {
-            return "";
-        }
-        String ret = "";
-        for (String string : list) {
-            ret += (isEmpty(ret) ? "" : ",") + string;
-        }
-        return ret;
-    }
-
-    private String getPrivacy() {
-        Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
-        String names = getSecurityNames(seclusion.getUserNames());
-        switch (seclusion.getStatus()) {
-            case Seclusion.Type.Private:
-                return StringHelper.getString(R.string.ui_base_text_private);
-            case Seclusion.Type.Public:
-                return StringHelper.getString(R.string.ui_base_text_public);
-            case Seclusion.Type.Specify:
-                return StringHelper.getString(R.string.ui_security_force_to_user, names);
-        }
-        return StringHelper.getString(R.string.ui_security_fragment_title);
     }
 
     private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {

@@ -368,7 +368,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     /**
      * 远程获取的页码
      */
-    protected int remotePageNumber = 0;
+    protected int remotePageNumber = 1;
     /**
      * 远程页总数
      */

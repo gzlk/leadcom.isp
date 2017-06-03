@@ -22,6 +22,6 @@
             android:paddingStart="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/ui_text_collection_details_create_at"
             android:textColor="@color/textColorHintDark"
-            android:textSize="@dimen/ui_base_text_size_small" />
+            android:textSize="@dimen/ui_base_text_size_little" />
     </LinearLayout>
 </ScrollView>

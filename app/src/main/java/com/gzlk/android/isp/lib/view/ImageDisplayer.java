@@ -113,9 +113,6 @@ public class ImageDisplayer extends RelativeLayout {
         selectContainer = (CorneredView) view.findViewById(R.id.ui_tool_image_view_select_container);
         selectIconTextView = (CustomTextView) view.findViewById(R.id.ui_tool_image_view_select_icon);
 
-        if (scaleType > 0) {
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        }
         imageView.setOnClickListener(onClickListener);
         deleteContainer.setOnClickListener(onClickListener);
         selectContainer.setOnClickListener(onClickListener);
@@ -146,6 +143,9 @@ public class ImageDisplayer extends RelativeLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        if (scaleType > 0) {
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
         if (!isNullUrl() && !isInEditMode()) {
             displayImage(displayUrl, imageWidth, imageHeight, showSelect, showDelete);
         } else {

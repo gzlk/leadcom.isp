@@ -50,6 +50,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_IMAGE = "mnf_initialized_image";
     private static final String PARAM_ADDRESS = "mnf_fetched_address";
+    private static final String PARAM_PRIVACY = "mnf_privacy";
 
     // UI
     @ViewId(R.id.ui_moment_new_text_content)
@@ -58,7 +59,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private SimpleClickableViewHolder privacyHolder;
     private String[] textItems;
     private String address = "";
-    private String privacy;
+    private String privacy = "";
 
     public static MomentNewFragment newInstance(String params) {
         MomentNewFragment mnf = new MomentNewFragment();
@@ -83,12 +84,14 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         }.getType());
         getSelectedImages().clear();
         getSelectedImages().addAll(images);
+        privacy = bundle.getString(PARAM_PRIVACY, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(address, PARAM_ADDRESS);
+        bundle.putString(PARAM_PRIVACY, privacy);
     }
 
     @Override
@@ -206,8 +209,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         if (null == privacyHolder) {
             privacyHolder = new SimpleClickableViewHolder(mRootView, MomentNewFragment.this);
             privacyHolder.addOnViewHolderClickListener(privacyListener);
-            privacyHolder.showContent(format(textItems[1], "公开"));
         }
+        privacyHolder.showContent(format(textItems[1], PrivacyFragment.getPrivacy(PrivacyFragment.getSeclusion(privacy))));
     }
 
     private void initializeAdapter() {
@@ -273,7 +276,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
-            openActivity(UserPrivacyFragment.class.getName(), String.valueOf(seclusion.getStatus()), PrivacyFragment.REQUEST_SECURITY, true, false);
+            String json = PrivacyFragment.getSeclusion(seclusion);
+            openActivity(UserPrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
             //ToastHelper.make(Activity()).showMsg("隐私设置");
         }
     };

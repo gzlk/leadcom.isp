@@ -382,10 +382,10 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 } else {
                     isLoadingComplete(true);
                 }
-                String json = getString(R.string.temp_json);
-                ArrayList<Collection> temp = Json.gson().fromJson(json, new TypeToken<ArrayList<Collection>>() {
-                }.getType());
-                adapter.add((ArrayList<Model>) (Object) temp, false);
+//                String json = getString(R.string.temp_json);
+//                ArrayList<Collection> temp = Json.gson().fromJson(json, new TypeToken<ArrayList<Collection>>() {
+//                }.getType());
+//                adapter.add((ArrayList<Model>) (Object) temp, false);
                 autoRefreshing();
             }
         }).exec();

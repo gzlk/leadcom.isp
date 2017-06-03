@@ -129,13 +129,12 @@ public class MomentViewHolder extends BaseViewHolder {
             if (null != gotPositionListener) {
                 previous = gotPositionListener.previous(getAdapterPosition());
             }
-            if (null != previous) {
-                long preDate = Utils.parseDate(fmt, previous.getCreateDate()).getTime();
-                long createDate = Utils.parseDate(fmt, moment.getCreateDate()).getTime();
-                long todayBegin = dayBegin(true, false, 0);
-                long yesterday = dayBegin(false, false, 0);
-                showTime(preDate, createDate, dayBegin(true, true, createDate), yesterday, todayBegin);
-            }
+
+            long todayBegin = dayBegin(true, false, 0);
+            long yesterday = dayBegin(false, false, 0);
+            long preDate = null == previous ? todayBegin : Utils.parseDate(fmt, previous.getCreateDate()).getTime();
+            long createDate = Utils.parseDate(fmt, moment.getCreateDate()).getTime();
+            showTime(preDate, createDate, dayBegin(true, true, createDate), yesterday, todayBegin);
             showMoment(moment);
         }
     }

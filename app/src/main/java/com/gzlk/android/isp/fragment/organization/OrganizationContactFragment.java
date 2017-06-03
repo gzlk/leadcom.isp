@@ -34,8 +34,9 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         OrganizationContactFragment ocf = new OrganizationContactFragment();
         Bundle bundle = new Bundle();
         String[] strings = splitParameters(params);
-        // 此时传入的是小组的id，需要把组织里的人拉入此小组
+        // 此时传入的是组织的id，需要显示此组织的成员列表
         bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 小组的id，要把组织的用户邀请入这个小组
         bundle.putString(PARAM_SQUAD_ID, strings[1]);
         ocf.setArguments(bundle);
         return ocf;

@@ -83,9 +83,9 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
      */
     public static Seclusion getSeclusion(String json) {
         if (StringHelper.isEmpty(json)) {
-            return new Seclusion() {{
-                setStatus(Type.Public);
-            }};
+            Seclusion seclusion = new Seclusion();
+            seclusion.setStatus(Seclusion.Type.Public);
+            return seclusion;
         }
         return Json.gson().fromJson(json, new TypeToken<Seclusion>() {
         }.getType());
@@ -97,6 +97,30 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
     public static String getSeclusion(Seclusion seclusion) {
         return Json.gson().toJson(seclusion, new TypeToken<Seclusion>() {
         }.getType());
+    }
+
+    private static String getSecurityNames(List<String> list) {
+        if (null == list || list.size() < 1) {
+            return "";
+        }
+        String ret = "";
+        for (String string : list) {
+            ret += (isEmpty(ret) ? "" : ",") + string;
+        }
+        return ret;
+    }
+
+    public static String getPrivacy(Seclusion seclusion) {
+        String names = getSecurityNames(seclusion.getUserNames());
+        switch (seclusion.getStatus()) {
+            case Seclusion.Type.Private:
+                return StringHelper.getString(R.string.ui_base_text_private);
+            case Seclusion.Type.Public:
+                return StringHelper.getString(R.string.ui_base_text_public);
+            case Seclusion.Type.Specify:
+                return StringHelper.getString(R.string.ui_security_force_to_user, names);
+        }
+        return StringHelper.getString(R.string.ui_security_fragment_title);
     }
 
     private void resultPrivacy() {

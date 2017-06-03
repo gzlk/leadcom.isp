@@ -35,6 +35,7 @@ import com.gzlk.android.isp.multitype.binder.user.UserHeaderBigViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.UserSimpleMomentViewBinder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     public static UserInformationFragment newInstance(String params) {
         UserInformationFragment mf = new UserInformationFragment();
         Bundle bundle = new Bundle();
+        // 需要查看的用户的id
         bundle.putString(PARAM_QUERY_ID, params);
         mf.setArguments(bundle);
         return mf;
@@ -78,6 +80,10 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     private TextView rightTextView;
     @ViewId(R.id.ui_ui_custom_title_right_icon)
     private CustomTextView rightIcon;
+    @ViewId(R.id.ui_user_information_to_archives)
+    private CorneredView toArchives;
+    @ViewId(R.id.ui_user_information_to_chat)
+    private CorneredView toChat;
 
     private String[] items;
     private MyAdapter mAdapter;
@@ -139,7 +145,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_user_information;
+        return R.layout.fragment_individual_information;
     }
 
     @Override
@@ -157,7 +163,10 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
-    @Click({R.id.ui_ui_custom_title_left_container, R.id.ui_ui_custom_title_right_container})
+    @Click({R.id.ui_ui_custom_title_left_container,
+            R.id.ui_ui_custom_title_right_container,
+            R.id.ui_user_information_to_archives,
+            R.id.ui_user_information_to_chat})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_ui_custom_title_left_container:
@@ -165,6 +174,10 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case R.id.ui_ui_custom_title_right_container:
                 toEdit();
+                break;
+            case R.id.ui_user_information_to_archives:
+                break;
+            case R.id.ui_user_information_to_chat:
                 break;
         }
     }
@@ -210,7 +223,7 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.addItemDecoration(new SpacesItemDecoration());
             mAdapter = new MyAdapter();
             mAdapter.register(User.class, new UserHeaderBigViewBinder(onViewHolderClickListener).setFragment(this));
-            mAdapter.register(SimpleClickableItem.class, new UserSimpleMomentViewBinder().setFragment(this));
+            mAdapter.register(SimpleClickableItem.class, new UserSimpleMomentViewBinder(onViewHolderClickListener).setFragment(this));
             mAdapter.register(Model.class, new SimpleClickableViewBinder(onViewHolderClickListener).setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
             titleBackground.setAlpha(0);
@@ -221,9 +234,14 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            if (mQueryId.equals(Cache.cache().userId)) {
-                // 只有我自己才能修改我自己的信息
-                checkClickType(index);
+            if (index == 1) {
+                // 打开我的动态页
+                openActivity(MomentListFragment.class.getName(), mQueryId, true, false);
+            } else {
+                if (mQueryId.equals(Cache.cache().userId)) {
+                    // 只有我自己才能修改我自己的信息
+                    checkClickType(index);
+                }
             }
         }
     };
@@ -279,6 +297,9 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void checkUser(final User user) {
+        // 自己和自己不能聊天
+        toChat.setVisibility(user.getId().equals(Cache.cache().userId) ? View.GONE : View.VISIBLE);
+
         final String invalid = StringHelper.getString(R.string.ui_base_text_not_set);
         // 头像部分
         if (mAdapter.getItemCount() < 1) {
@@ -415,7 +436,6 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         String result;

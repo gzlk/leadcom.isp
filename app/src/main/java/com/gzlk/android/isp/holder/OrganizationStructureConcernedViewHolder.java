@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.organization.OrganizationDetailsFragment;
+import com.gzlk.android.isp.fragment.organization.OrganizationPropertiesFragment;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.lib.view.WrapContentViewPager;
 import com.gzlk.android.isp.model.Dao;
@@ -385,7 +385,7 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
     private OrganizationConcerned.OnContainerClickListener containerClickListener = new OrganizationConcerned.OnContainerClickListener() {
         @Override
         public void onClick(String id) {
-            openActivity(OrganizationDetailsFragment.class.getName(), id, false, false, true);
+            openActivity(OrganizationPropertiesFragment.class.getName(), id, false, false, true);
         }
     };
 }

@@ -38,7 +38,7 @@ public class SettingMessagingFragment extends BaseTransparentSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_setting_messaging;
+        return R.layout.fragment_individual_setting_messaging;
     }
 
     @Override

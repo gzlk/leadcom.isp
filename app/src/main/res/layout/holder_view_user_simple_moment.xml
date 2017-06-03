@@ -32,32 +32,32 @@
             android:text="@string/app_name" />
 
         <com.gzlk.android.isp.lib.view.ImageDisplayer
-            android:layout_width="@dimen/ui_static_dp_60"
-            android:layout_height="@dimen/ui_static_dp_60"
+            android:layout_width="@dimen/ui_static_dp_50"
+            android:layout_height="@dimen/ui_static_dp_50"
             android:layout_margin="@dimen/ui_static_dp_5"
             app:id_image_scale_type="centerCrop"
             app:id_image_src="@mipmap/img_image_default"
             app:id_image_url="https://img2.cache.netease.com/photo/0005/2017-05-08/CJT34QR74TM10005.jpg" />
 
         <com.gzlk.android.isp.lib.view.ImageDisplayer
-            android:layout_width="@dimen/ui_static_dp_60"
-            android:layout_height="@dimen/ui_static_dp_60"
+            android:layout_width="@dimen/ui_static_dp_50"
+            android:layout_height="@dimen/ui_static_dp_50"
             android:layout_margin="@dimen/ui_static_dp_5"
             app:id_image_scale_type="centerCrop"
             app:id_image_src="@mipmap/img_image_default"
             app:id_image_url="https://img4.cache.netease.com/photo/0005/2017-05-08/CJT1CO2D4TM10005.jpg" />
 
         <com.gzlk.android.isp.lib.view.ImageDisplayer
-            android:layout_width="@dimen/ui_static_dp_60"
-            android:layout_height="@dimen/ui_static_dp_60"
+            android:layout_width="@dimen/ui_static_dp_50"
+            android:layout_height="@dimen/ui_static_dp_50"
             android:layout_margin="@dimen/ui_static_dp_5"
             app:id_image_scale_type="centerCrop"
             app:id_image_src="@mipmap/img_image_default"
             app:id_image_url="https://img5.cache.netease.com/photo/0005/2017-05-08/CJST9PFT4TM10005.jpg" />
 
         <com.gzlk.android.isp.lib.view.ImageDisplayer
-            android:layout_width="@dimen/ui_static_dp_60"
-            android:layout_height="@dimen/ui_static_dp_60"
+            android:layout_width="@dimen/ui_static_dp_50"
+            android:layout_height="@dimen/ui_static_dp_50"
             android:layout_margin="@dimen/ui_static_dp_5"
             app:id_image_scale_type="centerCrop"
             app:id_image_src="@mipmap/img_image_default"
