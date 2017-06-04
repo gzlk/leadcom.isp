@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.organization.Invitation;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class UnHandledInviteFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onLoadingMore() {
-
+        isLoadingComplete(true);
     }
 
     @Override
@@ -97,11 +98,21 @@ public class UnHandledInviteFragment extends BaseOrganizationFragment {
         }
     }
 
+    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            // 打开活动报名页面
+            Invitation inv = mAdapter.get(index);
+            openActivity(ActivityEntranceFragment.class.getName(), format("%s,%s", inv.getActId(), inv.getTid()), true, false);
+        }
+    };
+
     private class InviteAdapter extends RecyclerViewAdapter<ActivityViewHolder, Invitation> {
 
         @Override
         public ActivityViewHolder onCreateViewHolder(View itemView, int viewType) {
             ActivityViewHolder holder = new ActivityViewHolder(itemView, UnHandledInviteFragment.this);
+            holder.addOnViewHolderClickListener(onViewHolderClickListener);
             return holder;
         }
 

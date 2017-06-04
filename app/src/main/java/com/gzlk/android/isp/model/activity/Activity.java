@@ -47,8 +47,8 @@ public class Activity extends Model {
         String BeginDate = "beginDate";
         String Site = "site";
         String ActivityId = "activityId";
-        String ActivityName="activityName";
-        String ActivityImage="activityImage";
+        String ActivityName = "activityName";
+        String ActivityImage = "activityImage";
     }
 
     /**
@@ -303,6 +303,9 @@ public class Activity extends Model {
     }
 
     public String getSite() {
+        if (isEmpty(site)) {
+            site = "未设置地址";
+        }
         return site;
     }
 

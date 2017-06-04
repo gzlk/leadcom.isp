@@ -15,7 +15,20 @@
     </string-array>
 
     <string name="ui_activity_un_handled_invite_fragment_title">@string/ui_activity_base_not_join_in</string>
-    <string name="ui_activity_unhandled_invite_nothing">目前没有更多未处理的活动</string>
+    <string name="ui_activity_unhandled_invite_nothing">目前没有更多待处理的内容</string>
+
+    <string name="ui_activity_enter_fragment_title">活动报名</string>
+    <string name="ui_activity_entrance_button_reject">暂不参加</string>
+    <string name="ui_activity_entrance_button_agree">我要报名</string>
+    <string name="ui_activity_entrance_hint">填写备注信息</string>
+    <string name="ui_activity_entrance_labels_nothing">未设置类型</string>
+    <string-array name="ui_activity_entrance_items">
+        <item>0|%s||0</item>
+        <item>1|活动时间：%s||0</item>
+        <item>2|活动地址：%s||0</item>
+        <item>3|活动类型：%s||0</item>
+        <item>4|活动发起者：%s||0</item>
+    </string-array>
 
     <string name="ui_activity_create_fragment_title">新建活动</string>
     <string name="ui_activity_create_fragment_title_edit">修改活动</string>

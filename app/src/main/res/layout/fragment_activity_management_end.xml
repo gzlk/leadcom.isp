@@ -9,6 +9,7 @@
         android:id="@+id/ui_activity_details_image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ui_static_dp_200"
+        app:id_image_scale_type="centerCrop"
         app:id_image_src="@mipmap/img_image_default" />
 
     <include

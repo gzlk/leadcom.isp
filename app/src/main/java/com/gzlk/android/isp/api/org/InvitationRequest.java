@@ -41,7 +41,7 @@ public class InvitationRequest extends Request<Invitation> {
     // 邀请成员
     private static final String INVITE_GROUP = "/group/groInv";
     private static final String INVITE_SQUAD = "/group/groSquInv";
-    private static final String INVITE_ACTIVITY = "/activity/invitation/list";
+    private static final String INVITE_ACTIVITY = "/activity/invitation";
 
     /**
      * 同意
@@ -179,7 +179,7 @@ public class InvitationRequest extends Request<Invitation> {
      * 指定群的未处理活动请求
      */
     public void activityToBeHandled(String groupId) {
-        String param = format("%s?groupId=%s&accessToken=%s", url(INVITE_ACTIVITY, "/toBeHandled"), groupId, Cache.cache().accessToken);
+        String param = format("%s?groupId=%s&accessToken=%s", url(INVITE_ACTIVITY, "/list/toBeHandled"), groupId, Cache.cache().accessToken);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 
@@ -187,7 +187,7 @@ public class InvitationRequest extends Request<Invitation> {
      * 同意活动邀请
      */
     public void activityApprove(String tid) {
-        String param = format("%s?tid=%s", url(INVITE_ACTIVITY, APPROVE), tid);
+        String param = format("%s?tid=%s&accessToken=%s", url(INVITE_ACTIVITY, APPROVE), tid, Cache.cache().accessToken);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 
@@ -195,7 +195,7 @@ public class InvitationRequest extends Request<Invitation> {
      * 拒绝活动邀请
      */
     public void activityReject(String tid) {
-        String param = format("%s?tid=%s", url(INVITE_ACTIVITY, REJECT), tid);
+        String param = format("%s?tid=%s&accessToken=%s", url(INVITE_ACTIVITY, REJECT), tid, Cache.cache().accessToken);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 }

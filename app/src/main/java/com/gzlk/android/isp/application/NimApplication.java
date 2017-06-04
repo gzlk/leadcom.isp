@@ -48,7 +48,7 @@ public class NimApplication extends BaseActivityManagedApplication {
         // 注册自定义网易云消息解析器，必须在主进程中。
         if (shouldInit()) {
             NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
-            //handleUserOnlineStatus();
+            handleUserOnlineStatus();
         }
     }
 
