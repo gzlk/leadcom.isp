@@ -47,6 +47,8 @@ public class Activity extends Model {
         String BeginDate = "beginDate";
         String Site = "site";
         String ActivityId = "activityId";
+        String ActivityName="activityName";
+        String ActivityImage="activityImage";
     }
 
     /**
@@ -290,6 +292,9 @@ public class Activity extends Model {
     }
 
     public String getBeginDate() {
+        if (isEmpty(beginDate)) {
+            beginDate = DFT_DATE;
+        }
         return beginDate;
     }
 

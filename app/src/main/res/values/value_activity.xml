@@ -12,8 +12,10 @@
     <string-array name="ui_activity_home_page_items">
         <item>0|||</item>
         <item>@string/ui_activity_main_not_joined_text</item>
-        <item>@string/ui_activity_main_issue_text</item>
     </string-array>
+
+    <string name="ui_activity_un_handled_invite_fragment_title">@string/ui_activity_base_not_join_in</string>
+    <string name="ui_activity_unhandled_invite_nothing">目前没有更多未处理的活动</string>
 
     <string name="ui_activity_create_fragment_title">新建活动</string>
     <string name="ui_activity_create_fragment_title_edit">修改活动</string>

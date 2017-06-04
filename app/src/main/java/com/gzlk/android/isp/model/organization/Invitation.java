@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.model.organization;
 
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -26,6 +27,7 @@ public class Invitation extends Model {
         public static final String HandleDate = "handleDime";
         public static final String Message = "message";
         public static final String State = "state";
+        public static final String CreateTime = "createTime";
     }
 
     // 组织id和名称
@@ -39,6 +41,18 @@ public class Invitation extends Model {
     private String groSquId;
     @Column(Organization.Field.SquadName)
     private String groSquName;
+
+    // 活动相关的邀请
+    @Column(Activity.Field.ActivityId)
+    private String actId;
+    @Column(Activity.Field.ActivityName)
+    private String actName;
+    @Column(Activity.Field.NimId)
+    private String tid;
+    @Column(Field.CreateTime)
+    private String createTime;
+    @Column(Activity.Field.ActivityImage)
+    private String actImg;
 
     //邀请人ID和姓名
     @Column(Field.InviterId)
@@ -71,6 +85,7 @@ public class Invitation extends Model {
     @Column(Model.Field.UUID)
     private String uuid;
 
+
     public String getGroupId() {
         return groupId;
     }
@@ -101,6 +116,46 @@ public class Invitation extends Model {
 
     public void setGroSquName(String groSquName) {
         this.groSquName = groSquName;
+    }
+
+    public String getActId() {
+        return actId;
+    }
+
+    public void setActId(String actId) {
+        this.actId = actId;
+    }
+
+    public String getActName() {
+        return actName;
+    }
+
+    public void setActName(String actName) {
+        this.actName = actName;
+    }
+
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getActImg() {
+        return actImg;
+    }
+
+    public void setActImg(String actImg) {
+        this.actImg = actImg;
     }
 
     public String getInviterId() {

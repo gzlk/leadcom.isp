@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.api.org.SquadRequest;
@@ -13,6 +14,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
@@ -232,5 +234,24 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
     }
 
     protected void onFetchingActivityComplete(List<Activity> list) {
+    }
+
+    /**
+     * 查询本群中我未处理的活动邀请
+     */
+    protected void fetchingUnHandledActivityInvite(String groupId) {
+        InvitationRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Invitation>() {
+            @Override
+            public void onResponse(List<Invitation> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                onFetchingUnHandledActivityInviteComplete(list);
+            }
+        }).activityToBeHandled(groupId);
+    }
+
+    /**
+     * 拉取完毕我未处理的活动请求
+     */
+    protected void onFetchingUnHandledActivityInviteComplete(List<Invitation> list) {
     }
 }

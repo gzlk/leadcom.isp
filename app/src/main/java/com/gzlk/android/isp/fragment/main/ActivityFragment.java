@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
 import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
+import com.gzlk.android.isp.fragment.activity.UnHandledInviteFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -21,6 +22,7 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
+import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Organization;
 
 import java.util.ArrayList;
@@ -82,9 +84,18 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        refreshingItems();
+    }
+
+    private void refreshingItems() {
+        displayLoading(true);
         fetchingJoinedRemoteOrganizations();
         if (!isEmpty(mQueryId)) {
             fetchingActivity(true);
+            // 拉取我为处理的群活动邀请
+            fetchingUnHandledActivityInvite(mQueryId);
+        } else {
+            displayLoading(false);
         }
     }
 
@@ -114,6 +125,17 @@ public class ActivityFragment extends BaseOrganizationFragment {
         }
         stopRefreshing();
         setSupportLoadingMore(false);
+    }
+
+    @Override
+    protected void onFetchingUnHandledActivityInviteComplete(List<Invitation> list) {
+        super.onFetchingUnHandledActivityInviteComplete(list);
+        int cnt = null == list ? 0 : list.size();
+        String string = format(items[1], cnt);
+        SimpleClickableItem item = (SimpleClickableItem) mAdapter.get(1);
+        item.setSource(string);
+        mAdapter.notifyItemChanged(1);
+        displayLoading(false);
     }
 
     @Override
@@ -209,6 +231,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
         super.onViewPagerDisplayedChanged(visible);
         if (visible) {
             resetTitle();
+            refreshingItems();
         }
     }
 
@@ -236,7 +259,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
             mAdapter.remove(activity);
         }
         activities.clear();
-        fetchingActivity(false);
+        refreshingItems();
     }
 
     private DepthViewPager.OnPageChangeListener onPageChangeListener = new DepthViewPager.OnPageChangeListener() {
@@ -269,6 +292,11 @@ public class ActivityFragment extends BaseOrganizationFragment {
             if (model instanceof Activity) {
                 Activity act = (Activity) model;
                 openActivity(CreateActivityFragment.class.getName(), format("%s,%s", act.getId(), act.getGroupId()), true, true);
+            } else if (model instanceof SimpleClickableItem) {
+                // 打开未参加的活动列表
+                if (index == 1) {
+                    openActivity(UnHandledInviteFragment.class.getName(), mQueryId, true, false);
+                }
             }
             //ToastHelper.make().showMsg("不要点了，功能还未实现呢");
         }

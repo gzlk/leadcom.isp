@@ -11,6 +11,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.organization.Invitation;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -41,6 +42,8 @@ public class ActivityViewHolder extends BaseViewHolder {
     private NineRectangleGridImageView<String> headers;
     @ViewId(R.id.ui_holder_view_activity_item_icon_text)
     private TextView iconText;
+    @ViewId(R.id.ui_holder_view_activity_item_flag)
+    private CorneredView flagView;
     @ViewId(R.id.ui_holder_view_activity_item_title)
     private TextView titleView;
     @ViewId(R.id.ui_holder_view_activity_item_time)
@@ -51,6 +54,7 @@ public class ActivityViewHolder extends BaseViewHolder {
     public ActivityViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        flagView.setVisibility(View.GONE);
     }
 
     public void showContent(String text) {
@@ -60,7 +64,23 @@ public class ActivityViewHolder extends BaseViewHolder {
         timeView.setText(null);
         descView.setText(strings[3]);
         headers.setVisibility(View.GONE);
+        iconText.setVisibility(View.VISIBLE);
+        flagView.setVisibility(strings[3].startsWith("0个") ? View.GONE : View.VISIBLE);
         iconContainer.setBackground(getColor(text.charAt(0) == '1' ? R.color.color_fe4848 : R.color.color_faaa2d));
+    }
+
+    public void showContent(Invitation invitation) {
+        String actImg = invitation.getActImg();
+        List<String> img = new ArrayList<>();
+        img.add(actImg);
+        headers.setAdapter(adapter);
+        headers.setImagesData(img);
+        timeView.setText(Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), invitation.getCreateTime()));
+        headers.setVisibility(View.VISIBLE);
+        iconText.setVisibility(View.GONE);
+        iconContainer.setBackground(getColor(R.color.textColorHintLight));
+        titleView.setText(invitation.getActName());
+        descView.setText(format("%s邀请您加入活动", invitation.getInviterName()));
     }
 
     public void showContent(Activity activity) {

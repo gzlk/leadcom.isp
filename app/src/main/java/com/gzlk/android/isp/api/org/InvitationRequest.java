@@ -1,7 +1,9 @@
 package com.gzlk.android.isp.api.org;
 
 import com.gzlk.android.isp.api.Output;
+import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
+import com.gzlk.android.isp.api.Special;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
@@ -33,9 +35,13 @@ public class InvitationRequest extends Request<Invitation> {
     private static class SingleInvite extends Output<Invitation> {
     }
 
+    private static class MultipleInvite extends Special<Invitation> {
+    }
+
     // 邀请成员
     private static final String INVITE_GROUP = "/group/groInv";
     private static final String INVITE_SQUAD = "/group/groSquInv";
+    private static final String INVITE_ACTIVITY = "/activity/invitation/list";
 
     /**
      * 同意
@@ -169,4 +175,27 @@ public class InvitationRequest extends Request<Invitation> {
         httpRequest(getRequest(SingleInvite.class, url(path, action), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 指定群的未处理活动请求
+     */
+    public void activityToBeHandled(String groupId) {
+        String param = format("%s?groupId=%s&accessToken=%s", url(INVITE_ACTIVITY, "/toBeHandled"), groupId, Cache.cache().accessToken);
+        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 同意活动邀请
+     */
+    public void activityApprove(String tid) {
+        String param = format("%s?tid=%s", url(INVITE_ACTIVITY, APPROVE), tid);
+        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 拒绝活动邀请
+     */
+    public void activityReject(String tid) {
+        String param = format("%s?tid=%s", url(INVITE_ACTIVITY, REJECT), tid);
+        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+    }
 }
