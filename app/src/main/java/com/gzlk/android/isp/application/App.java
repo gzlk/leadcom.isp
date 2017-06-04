@@ -10,6 +10,8 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
+import com.netease.nim.uikit.ImageLoaderKit;
+import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
@@ -114,6 +116,8 @@ public class App extends NimApplication {
                 .build();
 
         ImageLoader.getInstance().init(config);
+
+        //NimUIKit.getImageLoaderKit() = new ImageLoaderKit(this, config);
     }
 
     /**

@@ -12,6 +12,7 @@ import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.nim.NimMessageParser;
+import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.SDKOptions;
@@ -47,6 +48,8 @@ public class NimApplication extends BaseActivityManagedApplication {
         NIMClient.init(this, loginInfo(), options());
         // 注册自定义网易云消息解析器，必须在主进程中。
         if (shouldInit()) {
+            // 初始化，使用 uikit 默认的用户信息提供者
+            NimUIKit.init(this);
             NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
             handleUserOnlineStatus();
         }

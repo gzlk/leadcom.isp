@@ -25,6 +25,7 @@ import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Organization;
+import com.netease.nim.uikit.NimUIKit;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -293,7 +294,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
             if (model instanceof Activity) {
                 Activity act = (Activity) model;
                 //openActivity(CreateActivityFragment.class.getName(), format("%s,%s", act.getId(), act.getGroupId()), true, true);
-                openActivity(ActivityPropertiesFragment.class.getName(), act.getId(), false, false, true);
+                //openActivity(ActivityPropertiesFragment.class.getName(), act.getId(), false, false, true);
+                NimUIKit.startTeamSession(Activity(), act.getTid(), null);
             } else if (model instanceof SimpleClickableItem) {
                 // 打开未参加的活动列表
                 if (index == 1) {

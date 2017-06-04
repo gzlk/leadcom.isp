@@ -17,6 +17,7 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.nim.NimMessage;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.JoinGroup;
+import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.Observer;
@@ -76,7 +77,7 @@ public class MainActivity extends TitleActivity {
         isToolbarSupported = false;
         super.onCreate(savedInstanceState);
         // 接收消息
-        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, true);
+        //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, true);
         // 接收自定义通知
         NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, true);
 
@@ -106,22 +107,22 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onDestroy() {
         NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
-        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
+        //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
         super.onDestroy();
     }
 
     // 自定义消息接收类
-    Observer<List<IMMessage>> incomingMessageObserver = new Observer<List<IMMessage>>() {
-        @Override
-        public void onEvent(List<IMMessage> messages) {
-            // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
-            for (IMMessage msg : messages) {
-                if (msg.getMsgType() == MsgTypeEnum.custom) {
-
-                }
-            }
-        }
-    };
+//    Observer<List<IMMessage>> incomingMessageObserver = new Observer<List<IMMessage>>() {
+//        @Override
+//        public void onEvent(List<IMMessage> messages) {
+//            // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
+//            for (IMMessage msg : messages) {
+//                if (msg.getMsgType() == MsgTypeEnum.custom) {
+//
+//                }
+//            }
+//        }
+//    };
 
     // 自定义系统通知类
     Observer<CustomNotification> customNotificationObserver = new Observer<CustomNotification>() {
@@ -144,6 +145,16 @@ public class MainActivity extends TitleActivity {
             if (intent.hasExtra(NimIntent.EXTRA_NOTIFY_CONTENT)) {
                 // 点击通知栏传过来的消息
                 IMMessage message = (IMMessage) getIntent().getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
+                switch (message.getSessionType()) {
+                    case P2P:
+                        // 点对点聊天
+                        NimUIKit.startP2PSession(this, message.getSessionId());
+                        break;
+                    case Team:
+                        // 群聊
+                        NimUIKit.startTeamSession(this, message.getSessionId());
+                        break;
+                }
                 if (message.getMsgType() == MsgTypeEnum.custom) {
                     NimMessage nim = (NimMessage) message.getAttachment();
                     handleNimMessageDetails(nim);
