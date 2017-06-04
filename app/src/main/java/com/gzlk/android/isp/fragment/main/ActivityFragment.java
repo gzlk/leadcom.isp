@@ -7,6 +7,7 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
+import com.gzlk.android.isp.fragment.activity.ActivityPropertiesFragment;
 import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
 import com.gzlk.android.isp.fragment.activity.UnHandledInviteFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
@@ -291,7 +292,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
             Model model = mAdapter.get(index);
             if (model instanceof Activity) {
                 Activity act = (Activity) model;
-                openActivity(CreateActivityFragment.class.getName(), format("%s,%s", act.getId(), act.getGroupId()), true, true);
+                //openActivity(CreateActivityFragment.class.getName(), format("%s,%s", act.getId(), act.getGroupId()), true, true);
+                openActivity(ActivityPropertiesFragment.class.getName(), act.getId(), false, false, true);
             } else if (model instanceof SimpleClickableItem) {
                 // 打开未参加的活动列表
                 if (index == 1) {

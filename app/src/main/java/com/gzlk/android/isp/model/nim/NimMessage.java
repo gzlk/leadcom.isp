@@ -59,6 +59,8 @@ public class NimMessage implements MsgAttachment {
 
     // 自定义消息类型
     private int type;
+    // 自定义消息标题
+    private String msgTitle;
     // 自定义消息内容
     private String msgContent;
     // 自定义消息id
@@ -70,6 +72,14 @@ public class NimMessage implements MsgAttachment {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getMsgTitle() {
+        return msgTitle;
+    }
+
+    public void setMsgTitle(String msgTitle) {
+        this.msgTitle = msgTitle;
     }
 
     public String getMsgContent() {

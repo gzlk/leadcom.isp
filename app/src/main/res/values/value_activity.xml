@@ -30,6 +30,20 @@
         <item>4|活动发起者：%s||0</item>
     </string-array>
 
+    <string name="ui_activity_property_button_text">退出活动</string>
+    <string-array name="ui_activity_property_items">
+        <item>0|||</item>
+        <item>1|活动成员|%d人|1</item>
+        <item>2|活动名称|%s|1</item>
+        <item>3|活动二维码|0xe63b|1</item>
+        <item>4|活动管理权转让||1</item>
+        <item>5|置顶活动组||0</item>
+        <item>6|消息免打扰||0</item>
+        <item>7|聊天文件||1</item>
+        <item>8|查看聊天内容||1</item>
+        <item>9|清空聊天记录||0</item>
+    </string-array>
+
     <string name="ui_activity_create_fragment_title">新建活动</string>
     <string name="ui_activity_create_fragment_title_edit">修改活动</string>
     <string name="ui_activity_create_content_hint">填写活动说明</string>

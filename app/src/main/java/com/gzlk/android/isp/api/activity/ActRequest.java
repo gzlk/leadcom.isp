@@ -197,6 +197,37 @@ public class ActRequest extends Request<Activity> {
         httpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    public static final int TYPE_TITLE = 1;
+    public static final int TYPE_IMAGE = 2;
+
+    /**
+     * 更活动的指定值
+     */
+    public void update(@NonNull String activityId, int updateType, String value) {
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", activityId);
+            switch (updateType) {
+                case TYPE_TITLE:
+                    object.put("title", value);
+                    break;
+                case TYPE_IMAGE:
+                    object.put("img", checkNull(value));
+                    break;
+            }
+//                    .put("content", checkNull(content))
+//                    .put("openStatus", openStatus)
+//                    .put("beginDate", beginDate)
+//                    .put("site", address)
+            object.put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
+    }
+
     /**
      * (创建者或后台管理员)删除活动
      */

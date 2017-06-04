@@ -10,6 +10,7 @@ import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
@@ -70,6 +71,16 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         nameIcon.setVisibility(null != org && org.isLocalDeleted() ? View.VISIBLE : View.GONE);
         headerIcon.setVisibility(null != org && org.isLocalDeleted() ? View.VISIBLE : View.GONE);
         phoneTextView.setVisibility(View.GONE);
+    }
+
+    public void showContent(Activity activity) {
+        String text = null != activity && !isEmpty(activity.getTitle()) ? activity.getTitle() : StringHelper.getString(R.string.ui_base_text_not_set);
+        nameTextView.setText(text);
+        phoneTextView.setVisibility(View.GONE);
+        text = null != activity && !isEmpty(activity.getImg()) ? activity.getImg() : "";
+        headerImage.displayImage(text, getDimension(R.dimen.ui_static_dp_100), false, false);
+        nameIcon.setVisibility(View.GONE);
+        headerIcon.setVisibility(View.GONE);
     }
 
     @Click({R.id.ui_holder_view_user_header_icon,

@@ -56,29 +56,11 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ui_holder_view_simple_member_view_headers"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <com.gzlk.android.isp.lib.view.ImageDisplayer
-                android:layout_width="@dimen/ui_static_dp_20"
-                android:layout_height="@dimen/ui_static_dp_20"
-                android:layout_margin="@dimen/ui_static_dp_2"
-                app:id_image_src="@mipmap/img_default_user_header"
-                app:id_image_type="oval" />
-
-            <com.gzlk.android.isp.lib.view.ImageDisplayer
-                android:layout_width="@dimen/ui_static_dp_20"
-                android:layout_height="@dimen/ui_static_dp_20"
-                android:layout_margin="@dimen/ui_static_dp_2"
-                app:id_image_src="@mipmap/img_default_user_header"
-                app:id_image_type="oval" />
-
-            <com.gzlk.android.isp.lib.view.ImageDisplayer
-                android:layout_width="@dimen/ui_static_dp_20"
-                android:layout_height="@dimen/ui_static_dp_20"
-                android:layout_margin="@dimen/ui_static_dp_2"
-                app:id_image_src="@mipmap/img_default_user_header"
-                app:id_image_type="oval" />
         </LinearLayout>
     </com.hlk.hlklib.lib.view.CorneredView>
 </LinearLayout>

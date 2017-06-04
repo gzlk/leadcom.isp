@@ -108,6 +108,36 @@ public class OrgRequest extends Request<Organization> {
         httpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    public static final int TYPE_NAME = 1;
+    public static final int TYPE_LOGO = 2;
+    public static final int TYPE_INTRO = 3;
+
+    /**
+     * 更新组织的指定属性
+     */
+    public void update(String groupId, int type, String value) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", groupId);
+            switch (type) {
+                case TYPE_INTRO:
+                    object.put("name", checkNull(value));
+                    break;
+                case TYPE_LOGO:
+                    object.put("logo", checkNull(value));
+                    break;
+                case TYPE_NAME:
+                    object.put("intro", checkNull(value));
+                    break;
+            }
+            object.put("accessToken", Cache.cache().accessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
+    }
+
     /**
      * 删除组织
      */

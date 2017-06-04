@@ -48,4 +48,8 @@
     <string name="ui_text_sign_up_input_password_title">密码</string>
     <string name="ui_text_sign_up_password_value_incorrect">@string/ui_text_sign_in_password_value_incorrect</string>
     <string name="ui_text_sign_up_success">您已注册，请登录</string>
+
+    <string name="ui_text_nim_pwd_error">密码错误</string>
+    <string name="ui_text_nim_kick_out">您的账号已在别的设备登录，请注意账号安全</string>
+    <string name="ui_text_nim_net_broken">网络掉线，重连中&#8230;</string>
 </resources>

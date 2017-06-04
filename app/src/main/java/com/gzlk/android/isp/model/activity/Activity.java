@@ -169,6 +169,9 @@ public class Activity extends Model {
     }
 
     public String getCreateDate() {
+        if (isEmpty(createDate)) {
+            createDate = DFT_DATE;
+        }
         return createDate;
     }
 

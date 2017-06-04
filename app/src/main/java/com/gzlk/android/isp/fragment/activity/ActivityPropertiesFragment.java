@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.organization;
+package com.gzlk.android.isp.fragment.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,100 +7,93 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.SimpleMemberViewHolder;
 import com.gzlk.android.isp.holder.UserHeaderBigViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.ToggleableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
-import com.gzlk.android.isp.model.organization.Member;
-import com.gzlk.android.isp.model.organization.Organization;
-import com.litesuits.orm.db.assit.QueryBuilder;
-
-import java.util.List;
 
 /**
- * <b>功能描述：</b>机构详情页<br />
+ * <b>功能描述：</b>活动属性页<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
- * <b>创建时间：</b>2017/05/08 07:58 <br />
+ * <b>创建时间：</b>2017/06/04 16:05 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
  * <b>最新版本：</b>Version: 1.0.0 <br />
- * <b>修改时间：</b>2017/05/08 07:58 <br />
+ * <b>修改时间：</b>2017/06/04 16:05 <br />
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
 
-public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragment {
+public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment {
 
-    public static OrganizationPropertiesFragment newInstance(String params) {
-        OrganizationPropertiesFragment odf = new OrganizationPropertiesFragment();
+    public static ActivityPropertiesFragment newInstance(String params) {
+        ActivityPropertiesFragment apf = new ActivityPropertiesFragment();
         Bundle bundle = new Bundle();
-        // 组织的id
+        // 活动的id
         bundle.putString(PARAM_QUERY_ID, params);
-        odf.setArguments(bundle);
-        return odf;
+        apf.setArguments(bundle);
+        return apf;
     }
 
-    private DetailsAdapter mAdapter;
     private String[] items;
+    private PropertiesAdapter mAdapter;
 
     @Override
     public void doingInResume() {
         super.doingInResume();
-        bottomButton.setVisibility(View.GONE);
+        bottomButton.setText(R.string.ui_activity_property_button_text);
         initializeAdapter();
     }
 
     @Override
-    protected void onSwipeRefreshing() {
-        fetchingRemoteOrganization();
-    }
-
-    @Override
-    protected void onLoadingMore() {
-        super.onLoadingMore();
-    }
-
-    @Override
     protected void onBottomButtonClicked() {
-
+        // 退出活动
+        ToastHelper.make().showMsg("暂时不能退出活动（无api支撑）");
     }
 
-    private void initializeAdapter() {
+    @Override
+    protected void onSwipeRefreshing() {
+        fetchingActivity(true);
+    }
+
+    private void fetchingActivity(boolean fromRemote) {
+        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+            @Override
+            public void onResponse(Activity activity, boolean success, String message) {
+                super.onResponse(activity, success, message);
+                if (success) {
+                    if (null != activity) {
+                        initializeActivity(activity);
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_activity_details_invalid_parameter);
+                        finish();
+                    }
+                }
+                stopRefreshing();
+            }
+        }).find(mQueryId, fromRemote);
+    }
+
+    private void initializeActivity(Activity activity) {
         if (null == items) {
-            items = StringHelper.getStringArray(R.array.ui_organization_details_items);
+            items = StringHelper.getStringArray(R.array.ui_activity_property_items);
         }
-        if (null == mAdapter) {
-            mAdapter = new DetailsAdapter();
-            mRecyclerView.setAdapter(mAdapter);
-            fetchingOrganization();
-        }
-    }
-
-    private int getMembers() {
-        QueryBuilder<Member> builder = new QueryBuilder<>(Member.class)
-                .whereEquals(Organization.Field.GroupId, mQueryId)
-                .whereAppendAnd()
-                .whereAppend(Organization.Field.SquadId + " IS NULL");
-        List<Member> members = new Dao<>(Member.class).query(builder);
-        return null == members ? 0 : members.size();
-    }
-
-    private void initializeOrg(Organization org) {
         int index = 0;
         for (String string : items) {
             if (string.startsWith("0|")) {
-                mAdapter.update(org);
+                mAdapter.update(activity);
                 index++;
                 continue;
             }
@@ -108,12 +101,12 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
             switch (index) {
                 case 1:
                     // 活动成员
-                    int size = getMembers();
+                    int size = null == activity.getMemberIdArray() ? 0 : activity.getMemberIdArray().size();
                     text = format(string, size);
                     break;
                 case 2:
                     // 活动标题
-                    text = format(string, org.getName());
+                    text = format(string, activity.getTitle());
                     break;
                 default:
                     text = string;
@@ -125,39 +118,25 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
         }
     }
 
-    private void fetchingOrganization() {
-        Organization org = new Dao<>(Organization.class).query(mQueryId);
-        if (null == org) {
-            fetchingRemoteOrganization();
-        } else {
-            initializeOrg(org);
+    private void initializeAdapter() {
+        if (null == mAdapter) {
+            mAdapter = new PropertiesAdapter();
+            mRecyclerView.setAdapter(mAdapter);
+            fetchingActivity(false);
         }
     }
 
-    private void fetchingRemoteOrganization() {
-        OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
-            @Override
-            public void onResponse(Organization organization, boolean success, String message) {
-                super.onResponse(organization, success, message);
-                if (null == organization) {
-                    closeWithWarning(R.string.ui_organization_details_not_exists);
-                } else {
-                    initializeOrg(organization);
-                }
-            }
-        }).find(mQueryId);
-    }
-
     private static final int REQUEST_NAME = ACTIVITY_BASE_REQUEST + 10;
+
     private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
             switch (index) {
                 case 2:
                     // 创建者是当前登录的用户时，可以 修改群名称
-                    Organization org = (Organization) mAdapter.get(0);
-                    if (null != org && org.getCreatorId().equals(Cache.cache().userId)) {
-                        String name = StringHelper.isEmpty(org.getName()) ? "" : org.getName();
+                    Activity activity = (Activity) mAdapter.get(0);
+                    if (activity.getCreatorId().equals(Cache.cache().userId)) {
+                        String name = StringHelper.isEmpty(activity.getTitle()) ? "" : activity.getTitle();
                         openActivity(BasePopupInputSupportFragment.class.getName(),
                                 StringHelper.getString(R.string.ui_popup_input_name, name), REQUEST_NAME, true, false);
                     }
@@ -170,37 +149,34 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
     public void onActivityResult(int requestCode, Intent data) {
         if (requestCode == REQUEST_NAME) {
             String result = getResultedData(data);
-            tryEditOrgInfo(OrgRequest.TYPE_NAME, result);
+            tryEditActivity(ActRequest.TYPE_TITLE, result);
         }
         super.onActivityResult(requestCode, data);
     }
 
-    private void tryEditOrgInfo(int type, String value) {
-        OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
+    private void tryEditActivity(int type, String value) {
+        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
             @Override
-            public void onResponse(Organization organization, boolean success, String message) {
-                super.onResponse(organization, success, message);
+            public void onResponse(Activity activity, boolean success, String message) {
+                super.onResponse(activity, success, message);
                 if (success) {
-                    if (null != organization) {
-                        initializeOrg(organization);
-                    } else {
-                        fetchingRemoteOrganization();
-                    }
+                    fetchingActivity(true);
                 }
             }
         }).update(mQueryId, type, value);
     }
 
-    private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+    private class PropertiesAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_HEADER = 0, VT_MEMBER = 1, VT_TOGGLE = 2, VT_NORMAL = 3;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
-            BaseFragment fragment = OrganizationPropertiesFragment.this;
+            BaseFragment fragment = ActivityPropertiesFragment.this;
             switch (viewType) {
                 case VT_HEADER:
                     UserHeaderBigViewHolder uhbvh = new UserHeaderBigViewHolder(itemView, fragment);
+                    //tryPaddingContent(itemView, false);
                     uhbvh.addOnViewHolderClickListener(viewHolderClickListener);
                     return uhbvh;
                 case VT_MEMBER:
@@ -211,20 +187,6 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
                     SimpleClickableViewHolder scvh = new SimpleClickableViewHolder(itemView, fragment);
                     scvh.addOnViewHolderClickListener(viewHolderClickListener);
                     return scvh;
-            }
-        }
-
-        @Override
-        public int itemLayout(int viewType) {
-            switch (viewType) {
-                case VT_HEADER:
-                    return R.layout.holder_view_individual_header_big;
-                case VT_MEMBER:
-                    return R.layout.holder_view_organization_simple_member;
-                case VT_TOGGLE:
-                    return R.layout.holder_view_toggle;
-                default:
-                    return R.layout.holder_view_simple_clickable;
             }
         }
 
@@ -244,16 +206,30 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
         }
 
         @Override
+        public int itemLayout(int viewType) {
+            switch (viewType) {
+                case VT_HEADER:
+                    return R.layout.holder_view_individual_header_big;
+                case VT_MEMBER:
+                    return R.layout.holder_view_organization_simple_member;
+                case VT_TOGGLE:
+                    return R.layout.holder_view_toggle;
+                default:
+                    return R.layout.holder_view_simple_clickable;
+            }
+        }
+
+        @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof SimpleMemberViewHolder) {
                 ((SimpleMemberViewHolder) holder).showContent((SimpleClickableItem) item);
-                ((SimpleMemberViewHolder) holder).showContent((Organization) mAdapter.get(0));
+                ((SimpleMemberViewHolder) holder).showContent((Activity) mAdapter.get(0));
             } else if (holder instanceof SimpleClickableViewHolder) {
                 ((SimpleClickableViewHolder) holder).showContent(item);
             } else if (holder instanceof ToggleableViewHolder) {
                 ((ToggleableViewHolder) holder).showContent((SimpleClickableItem) item);
             } else if (holder instanceof UserHeaderBigViewHolder) {
-                ((UserHeaderBigViewHolder) holder).showContent((Organization) item);
+                ((UserHeaderBigViewHolder) holder).showContent((Activity) item);
             }
         }
 

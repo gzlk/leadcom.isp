@@ -131,10 +131,16 @@ public class NimApplication extends BaseActivityManagedApplication {
             public void onEvent(StatusCode status) {
                 LogHelper.log("tag", "User status changed to: " + status);
                 if (status.wontAutoLogin()) {
-                    // 被踢出、账号被禁用、密码错误等情况，自动登录失败，需要返回到登录界面进行重新登录操作
-                    ToastHelper.make(NimApplication.this).showMsg("您的账号已被迫下线，请重新登录");
+                    if (StatusCode.typeOfValue(status.getValue()) == StatusCode.PWD_ERROR) {
+                        ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_pwd_error);
+                    } else {
+                        // 被踢出、账号被禁用、密码错误等情况，自动登录失败，需要返回到登录界面进行重新登录操作
+                        ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_kick_out);
+                    }
                 } else if (status.shouldReLogin()) {
-                    ToastHelper.make().showMsg("登录信息已超时，请重新登录");
+                    if (StatusCode.typeOfValue(status.getValue()) == StatusCode.NET_BROKEN) {
+                        ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_net_broken);
+                    }
                 }
             }
         }, true);
