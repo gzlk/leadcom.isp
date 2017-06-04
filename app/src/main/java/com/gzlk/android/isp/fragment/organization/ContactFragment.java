@@ -15,12 +15,14 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.TitleActivity;
+import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.ContactViewHolder;
 import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Squad;
@@ -327,6 +329,15 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
     };
 
+    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            // 点击打开用户属性页
+            Member member = mAdapter.get(index);
+            openActivity(UserPropertyFragment.class.getName(), member.getUserId(), false, false, true);
+        }
+    };
+
     private class ContactAdapter extends RecyclerSwipeAdapter<ContactViewHolder> {
 
         private ArrayList<Member> list = new ArrayList<>();
@@ -336,6 +347,10 @@ public class ContactFragment extends BaseOrganizationFragment {
             int pos = holder.getAdapterPosition();
             remove(pos);
             mItemManger.closeAllItems();
+        }
+
+        private Member get(int position) {
+            return list.get(position);
         }
 
         private void addAll(List<Member> all) {
@@ -391,6 +406,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             int layout = R.layout.holder_view_organization_contact;
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(layout, viewGroup, false);
             ContactViewHolder holder = new ContactViewHolder(view, ContactFragment.this);
+            holder.addOnViewHolderClickListener(onViewHolderClickListener);
             holder.setOnUserDeleteListener(onUserDeleteListener);
             return holder;
         }

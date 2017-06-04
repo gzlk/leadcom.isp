@@ -23,7 +23,7 @@
             android:layout_height="wrap_content">
 
             <com.hlk.hlklib.lib.view.CorneredView
-                android:id="@+id/ui_user_information_to_archives"
+                android:id="@+id/ui_transparent_title_property_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ui_base_dimen_margin_padding"
@@ -63,6 +63,12 @@
         </LinearLayout>
     </LinearLayout>
 
-    <include layout="@layout/tool_view_main_title" />
+    <LinearLayout
+        android:id="@+id/ui_transparent_title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/tool_view_activity_normal_title" />
+    </LinearLayout>
 
 </RelativeLayout>

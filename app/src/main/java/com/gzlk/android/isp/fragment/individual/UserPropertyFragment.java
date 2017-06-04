@@ -17,6 +17,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.login.CodeVerifyFragment;
@@ -44,7 +45,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * <b>功能描述：</b>用户的基本信息<br />
+ * <b>功能描述：</b>用户的基本属性页<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/02 08:02 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -54,10 +55,10 @@ import java.util.Locale;
  * <b>修改备注：</b><br />
  */
 
-public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
+public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
-    public static UserInformationFragment newInstance(String params) {
-        UserInformationFragment mf = new UserInformationFragment();
+    public static UserPropertyFragment newInstance(String params) {
+        UserPropertyFragment mf = new UserPropertyFragment();
         Bundle bundle = new Bundle();
         // 需要查看的用户的id
         bundle.putString(PARAM_QUERY_ID, params);
@@ -66,22 +67,8 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     // UI
-    @ViewId(R.id.ui_main_tool_bar_container)
-    private View titleView;
-    @ViewId(R.id.ui_main_tool_bar_background)
-    private View titleBackground;
-    @ViewId(R.id.ui_ui_custom_title_text)
-    private TextView titleTextView;
-    @ViewId(R.id.ui_ui_custom_title_right_icon_1)
-    private CustomTextView rightIcon1;
-    @ViewId(R.id.ui_ui_custom_title_right_icon_2_container)
-    private RelativeLayout rightIcon2;
     @ViewId(R.id.ui_ui_custom_title_right_text)
     private TextView rightTextView;
-    @ViewId(R.id.ui_ui_custom_title_right_icon)
-    private CustomTextView rightIcon;
-    @ViewId(R.id.ui_user_information_to_archives)
-    private CorneredView toArchives;
     @ViewId(R.id.ui_user_information_to_chat)
     private CorneredView toChat;
 
@@ -89,22 +76,13 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     private MyAdapter mAdapter;
 
     @Override
-    protected void onDelayRefreshComplete(@DelayType int type) {
-
-    }
-
-    @Override
     public void doingInResume() {
         // 头像选择是需要剪切的
         isChooseImageForCrop = true;
-        rightIcon1.setVisibility(View.GONE);
-        rightIcon2.setVisibility(View.GONE);
+        super.doingInResume();
         setSupportLoadingMore(false);
         initializeItems();
         titleTextView.setText(null);
-        rightIcon.setText(null);
-        tryPaddingContent(titleView, false);
-        tryPaddingContent(titleBackground, false);
 
         // 图片选择后的回调
         addOnImageSelectedListener(albumImageSelectedListener);
@@ -134,16 +112,6 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
     };
 
     @Override
-    protected boolean shouldSetDefaultTitleEvents() {
-        return false;
-    }
-
-    @Override
-    protected void destroyView() {
-
-    }
-
-    @Override
     public int getLayout() {
         return R.layout.fragment_individual_information;
     }
@@ -158,28 +126,24 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    @Override
-    protected String getLocalPageTag() {
-        return null;
-    }
-
-    @Click({R.id.ui_ui_custom_title_left_container,
-            R.id.ui_ui_custom_title_right_container,
-            R.id.ui_user_information_to_archives,
+    @Click({R.id.ui_ui_custom_title_right_container,
             R.id.ui_user_information_to_chat})
-    private void elementClick(View view) {
+    private void click(View view) {
         switch (view.getId()) {
-            case R.id.ui_ui_custom_title_left_container:
-                resultSucceededActivity();
-                break;
             case R.id.ui_ui_custom_title_right_container:
                 toEdit();
                 break;
-            case R.id.ui_user_information_to_archives:
-                break;
             case R.id.ui_user_information_to_chat:
+                // 发消息
+                ToastHelper.make().showMsg("发消息");
                 break;
         }
+    }
+
+    @Override
+    protected void onBottomButtonClicked() {
+        // 查看档案
+        ToastHelper.make().showMsg("查看档案");
     }
 
     private void toEdit() {
@@ -190,43 +154,16 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-        private int scrolledY = 0;
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if (!isViewPagerDisplayedCurrent()) {
-                return;
-            }
-            scrolledY += dy;
-            if (scrolledY >= 0 && scrolledY <= 500) {
-                float alpha = scrolledY * 0.005f;
-                if (null != titleBackground) {
-                    titleBackground.setAlpha(alpha);
-                }
-            }
-        }
-    };
-
     private void initializeItems() {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_text_my_setting_items);
         }
         if (null == mAdapter) {
-            mRecyclerView.addOnScrollListener(scrollListener);
-            mRecyclerView.addItemDecoration(new SpacesItemDecoration());
             mAdapter = new MyAdapter();
             mAdapter.register(User.class, new UserHeaderBigViewBinder(onViewHolderClickListener).setFragment(this));
             mAdapter.register(SimpleClickableItem.class, new UserSimpleMomentViewBinder(onViewHolderClickListener).setFragment(this));
             mAdapter.register(Model.class, new SimpleClickableViewBinder(onViewHolderClickListener).setFragment(this));
             mRecyclerView.setAdapter(mAdapter);
-            titleBackground.setAlpha(0);
             fetchingUser();
         }
     }
@@ -573,15 +510,6 @@ public class UserInformationFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.get(2).setId(format(items[2], value));
                 mAdapter.notifyItemChanged(2);
                 break;
-        }
-    }
-
-    private class SpacesItemDecoration extends RecyclerView.ItemDecoration {
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition(view);
-            outRect.bottom = position > 0 ? getDimension(R.dimen.ui_static_dp_half) : 0;
         }
     }
 

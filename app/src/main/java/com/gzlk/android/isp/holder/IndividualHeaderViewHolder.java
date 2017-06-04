@@ -8,8 +8,7 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.individual.QRCodeFragment;
-import com.gzlk.android.isp.fragment.individual.UserInformationFragment;
-import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
@@ -44,7 +43,7 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
 
             @Override
             public void onImageClick(String url) {
-                openActivity(UserInformationFragment.class.getName(), Cache.cache().userId, false, false, true);
+                openActivity(UserPropertyFragment.class.getName(), Cache.cache().userId, false, false, true);
             }
         });
 
