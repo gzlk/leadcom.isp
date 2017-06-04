@@ -75,7 +75,7 @@ public class SquadRequest extends Request<Squad> {
     }
 
     public void delete(String squadId) {
-        httpRequest(getRequest(SingleSquad.class, format("%s?squadId=%s", url(DELETE), squadId), "", HttpMethods.Post));
+        httpRequest(getRequest(SingleSquad.class, format("%s?squadId=%s", url(DELETE), squadId), "", HttpMethods.Get));
     }
 
     public void update(String squadId, String squadName, String introduction) {

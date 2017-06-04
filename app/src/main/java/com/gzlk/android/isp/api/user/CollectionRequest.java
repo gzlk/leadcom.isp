@@ -116,7 +116,7 @@ public class CollectionRequest extends Request<Collection> {
      */
     public void delete(String collectionId) {
         // colId
-        httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Post));
+        httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Get));
     }
 
     /**

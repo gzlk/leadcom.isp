@@ -139,7 +139,7 @@ public class CommentRequest extends Request<Comment> {
         // groDocId,groDocCmtId
         // momentId,momentCmtId
         String params = format("%s=%s&%s=%s", getArchiveId(type), archiveId, getCommentId(type), commentId);
-        httpRequest(getRequest(SingleComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Post));
+        httpRequest(getRequest(SingleComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
     }
 
     /**

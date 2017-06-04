@@ -202,7 +202,7 @@ public class ActRequest extends Request<Activity> {
      */
     public void delete(@NonNull String activityId) {
         // id=""
-        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(DELETE), activityId), "", HttpMethods.Post));
+        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(DELETE), activityId), "", HttpMethods.Get));
     }
 
     private void findInCache(String activityId) {
@@ -334,6 +334,6 @@ public class ActRequest extends Request<Activity> {
      */
     public void end(@NonNull String activityId) {
         String params = format("id=%s&accessToken=%s", activityId, Cache.cache().accessToken);
-        httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(END), params), "", HttpMethods.Post));
+        httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(END), params), "", HttpMethods.Get));
     }
 }

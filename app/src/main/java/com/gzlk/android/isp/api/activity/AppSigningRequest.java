@@ -97,7 +97,7 @@ public class AppSigningRequest extends Request<AppSigning> {
      */
     public void delete(String signingId) {
         //id=""
-        httpRequest(getRequest(SingleSigning.class, format("%s?id=%s", url(DELETE), signingId), "", HttpMethods.Post));
+        httpRequest(getRequest(SingleSigning.class, format("%s?id=%s", url(DELETE), signingId), "", HttpMethods.Get));
     }
 
     /**

@@ -224,7 +224,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void delete(int type, @NonNull String archiveId) {
         String params = format("%s=%s", getArchiveId(type), archiveId);
-        httpRequest(getRequest(SingleArchive.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Post));
+        httpRequest(getRequest(SingleArchive.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
     }
 
     /**
@@ -428,7 +428,7 @@ public class ArchiveRequest extends Request<Archive> {
     public void archive(String archiveId, int status) {
         // groDocArchiveId,status,accessToken
         String params = format("/group/groDocArchive/archive?groDocArchiveId=%s&status=%d&accessToken=%s", archiveId, status, Cache.cache().accessToken);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Post));
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -459,7 +459,7 @@ public class ArchiveRequest extends Request<Archive> {
     public void approve(String archiveId, int status) {
         // groDocApproveId,status,accessToken
         String params = format("/group/groDocApprove/approve?groDocApproveId=%s&status=%d&accessToken=%s", archiveId, status, Cache.cache().accessToken);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Post));
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
     }
 
     /**

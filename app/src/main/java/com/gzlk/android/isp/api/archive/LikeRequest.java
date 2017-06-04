@@ -105,7 +105,7 @@ public class LikeRequest extends Request<ArchiveLike> {
         // userDocId,accessToken
         // groDocId,accessToken
         String params = format("%s=%s&accessToken=%s", CommentRequest.getArchiveId(type), archiveId, Cache.cache().accessToken);
-        httpRequest(getRequest(SingleLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Post));
+        httpRequest(getRequest(SingleLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
     }
 
     /**

@@ -104,7 +104,7 @@ public class SystemRequest extends Request<User> {
      * 同步用户信息
      */
     public void sync() {
-        httpRequest(getRequest(Register.class, format("%s?accessToken=%s", SYNC, Cache.cache().accessToken), "", HttpMethods.Post));
+        httpRequest(getRequest(Register.class, format("%s?accessToken=%s", SYNC, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     /**

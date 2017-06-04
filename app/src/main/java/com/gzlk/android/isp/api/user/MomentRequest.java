@@ -133,7 +133,7 @@ public class MomentRequest extends Request<Moment> {
      * 删除一条说说，需要POST
      */
     public void delete(@NonNull String momentId) {
-        getRequestBy(url(DELETE), QB_MOMENT, SingleMoment.class, momentId, -1, "", HttpMethods.Post);
+        getRequestBy(url(DELETE), QB_MOMENT, SingleMoment.class, momentId, -1, "", HttpMethods.Get);
     }
 
     /**
