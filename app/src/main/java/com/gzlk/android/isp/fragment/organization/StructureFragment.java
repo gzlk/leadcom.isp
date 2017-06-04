@@ -314,7 +314,8 @@ public class StructureFragment extends BaseOrganizationFragment {
                 selectedSquadIndex = index - 6;
                 isTryGoingToSquad = false;
                 //tryGoingToSquad();
-                openSquadContact(squads.get(selectedSquadIndex).getId());
+                Squad squad = squads.get(selectedSquadIndex);
+                openSquadContact(squad.getGroupId(), squad.getId());
             }
         }
     };
@@ -327,7 +328,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         Squad squad = squads.get(selectedSquadIndex);
         // 如果我不在本地小组成员列表里，则拉取远程小组成员列表
         if (isMember(Cache.cache().userId, squad.getGroupId(), squad.getId())) {
-            openSquadContact(squad.getId());
+            openSquadContact(squad.getGroupId(), squad.getId());
             selectedSquadIndex = -1;
         } else {
             if (!isTryGoingToSquad) {
@@ -354,7 +355,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                 super.onResponse(member, success, message);
                 if (success) {
                     if (null != member && !isEmpty(member.getId())) {
-                        openSquadContact(squadId);
+                        openSquadContact(member.getGroupId(), member.getSquadId());
                     } else {
                         warningJoinIntoSquad(squadId, squadName);
                     }
@@ -363,8 +364,8 @@ public class StructureFragment extends BaseOrganizationFragment {
         }).find(Member.Type.SQUAD, squadId, Cache.cache().userId);
     }
 
-    private void openSquadContact(String squadId) {
-        openActivity(ContactFragment.class.getName(), format("%d,%s", ContactFragment.TYPE_SQUAD, squadId), true, false);
+    private void openSquadContact(String groupId, String squadId) {
+        openActivity(ContactFragment.class.getName(), format("%d,%s,%s", ContactFragment.TYPE_SQUAD, groupId, squadId), true, false);
     }
 
     private void warningJoinIntoSquad(String squadId, String squadName) {

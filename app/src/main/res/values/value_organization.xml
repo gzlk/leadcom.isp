@@ -56,6 +56,9 @@
     <string name="ui_squad_contact_menu_2">手机通讯录</string>
     <string name="ui_squad_contact_set_to_admin">设为管理员</string>
 
+    <string name="ui_organization_contact_no_member">组织目前没有其他成员</string>
+    <string name="ui_organization_contact_squad_no_member">小组目前没有其他成员</string>
+
     <string name="ui_organization_contact_picker_fragment_title">选择参加人员</string>
 
     <string name="ui_organization_member_no_name">无名氏</string>

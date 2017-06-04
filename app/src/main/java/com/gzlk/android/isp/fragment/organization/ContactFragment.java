@@ -66,9 +66,12 @@ public class ContactFragment extends BaseOrganizationFragment {
         ContactFragment cf = new ContactFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
+        // 类型
         bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
-        // TYPE=ORG时为组织id，否则为小组的id
+        // 组织的id
         bundle.putString(PARAM_QUERY_ID, strings[1]);
+        // 小组的id
+        bundle.putString(PARAM_SQUAD_ID, strings[2]);
         cf.setArguments(bundle);
         return cf;
     }
@@ -113,6 +116,10 @@ public class ContactFragment extends BaseOrganizationFragment {
         if (!StringHelper.isEmpty(mQueryId) && mQueryId.equals(queryId)) {
             return;
         }
+        // 切换组织指挥设置可以加载更多
+        remotePageNumber = 1;
+        isLoadingComplete(false);
+        setSupportLoadingMore(true);
         mQueryId = queryId;
         mOrganizationId = mQueryId;
         members.clear();
@@ -124,6 +131,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     public void doingInResume() {
         searchView.setVisibility(showType == TYPE_SQUAD ? View.VISIBLE : View.GONE);
         phoneContactView.setVisibility(showType == TYPE_ORG ? View.VISIBLE : View.GONE);
+        setNothingText(showType == TYPE_ORG ? R.string.ui_organization_contact_no_member : R.string.ui_organization_contact_squad_no_member);
         initializeTitleEvent();
         initializeHolders();
     }
@@ -147,16 +155,14 @@ public class ContactFragment extends BaseOrganizationFragment {
     }
 
     private void popupMenuClickHandle(View view) {
-        // 找到当前打开的小组
-        Squad squad = new Dao<>(Squad.class).query(mQueryId);
         switch (view.getId()) {
             case R.id.ui_tooltip_menu_squad_contact_organization:
                 // 打开组织通讯录并尝试将里面的用户邀请到小组
-                openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", squad.getGroupId(), squad.getId()), true, false);
+                openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
                 break;
             case R.id.ui_tooltip_menu_squad_contact_phone:
                 // 打开手机通讯录，并尝试将用户拉进小组
-                openActivity(PhoneContactFragment.class.getName(), format("%s,%s", squad.getGroupId(), squad.getId()), true, false);
+                openActivity(PhoneContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
                 break;
         }
     }
@@ -191,7 +197,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        fetchingRemoteMembers(mOrganizationId, mSquadId);
     }
 
     @Override
@@ -227,7 +233,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
         switch (showType) {
             case TYPE_ORG:
-                loadingLocalMembers(mQueryId, "");
+                fetchingRemoteMembers(mQueryId, "");
                 break;
             case TYPE_SQUAD:
                 loadingSquad();
@@ -244,7 +250,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             if (isEmpty(mOrganizationId)) {
                 mOrganizationId = squad.getGroupId();
             }
-            loadingLocalMembers(mOrganizationId, mSquadId);
+            fetchingRemoteMembers(mOrganizationId, mSquadId);
         }
     }
 
@@ -252,18 +258,15 @@ public class ContactFragment extends BaseOrganizationFragment {
     protected void onFetchingRemoteSquadComplete(Squad squad) {
         if (null != squad && !StringHelper.isEmpty(squad.getId())) {
             setCustomTitle(squad.getName());
-            loadingLocalMembers(squad.getGroupId(), squad.getId());
+            fetchingRemoteMembers(squad.getGroupId(), squad.getId());
         }
     }
 
     @Override
-    protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
-        if (null != list && list.size() > 0) {
-            members.addAll(list);
-        }
-        mAdapter.addAll(members);
-        // 拉取远程成员列表
-        fetchingRemoteMembers(organizationId, squadId);
+    protected void fetchingRemoteMembers(String groupId, String squadId) {
+        displayLoading(true);
+        displayNothing(false);
+        super.fetchingRemoteMembers(groupId, squadId);
     }
 
     @Override
@@ -275,8 +278,10 @@ public class ContactFragment extends BaseOrganizationFragment {
                 }
             }
             Collections.sort(members, new MemberComparator());
-            searchingListener.onSearching("");
+            searchingListener.onSearching(searchingText);
         }
+        displayLoading(false);
+        displayNothing(mAdapter.getItemCount() < 1);
         stopRefreshing();
     }
 
