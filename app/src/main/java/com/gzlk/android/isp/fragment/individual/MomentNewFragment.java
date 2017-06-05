@@ -60,6 +60,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private String[] textItems;
     private String address = "";
     private String privacy = "";
+    private String imageJson = "[]";
 
     public static MomentNewFragment newInstance(String params) {
         MomentNewFragment mnf = new MomentNewFragment();
@@ -79,18 +80,24 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         address = bundle.getString(PARAM_ADDRESS, "");
-        String json = bundle.getString(PARAM_IMAGE, EMPTY_ARRAY);
-        ArrayList<String> images = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
+        imageJson = bundle.getString(PARAM_IMAGE, EMPTY_ARRAY);
+        ArrayList<String> images = Json.gson().fromJson(imageJson, new TypeToken<ArrayList<String>>() {
         }.getType());
-        getSelectedImages().clear();
-        getSelectedImages().addAll(images);
+        if (images.size() > 0) {
+            //getSelectedImages().clear();
+            //getSelectedImages().addAll(images);
+            getWaitingForUploadFiles().clear();
+            getWaitingForUploadFiles().addAll(images);
+        }
+        imageJson = "[]";
         privacy = bundle.getString(PARAM_PRIVACY, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putString(address, PARAM_ADDRESS);
+        bundle.putString(PARAM_IMAGE, imageJson);
+        bundle.putString(PARAM_ADDRESS, address);
         bundle.putString(PARAM_PRIVACY, privacy);
     }
 
@@ -129,21 +136,20 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         });
         initializeHolder();
         initializeAdapter();
-        if (StringHelper.isEmpty(address)) {
+        if (isEmpty(address)) {
             tryFetchingLocation();
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void tryAddMoment() {
         if (StringHelper.isEmpty(momentContent.getValue())) {
             ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
             return;
         }
         Utils.hidingInputBoard(momentContent);
-        if (getSelectedImages().size() > 0) {
+        if (getWaitingForUploadFiles().size() > 0) {
             // 如果选择了的图片大于1张，则需要压缩图片并且上传
-            compressImage();
+            //compressImage();
             uploadFiles();
         } else {
             addMoment(null);
@@ -220,7 +226,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
             // 图片选择后的回调
             addOnImageSelectedListener(albumImageSelectedListener);
             // 图片压缩完毕后的回调处理
-            setOnImageCompressedListener(imageCompressedListener);
+            //setOnImageCompressedListener(imageCompressedListener);
             // 文件上传完毕后的回调处理
             setOnFileUploadingListener(mOnFileUploadingListener);
             // 不需要下拉加载更多
@@ -229,7 +235,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new ImageAdapter();
             mRecyclerView.setAdapter(mAdapter);
             // 初始化时为空白
-            resetImages(getSelectedImages());
+            resetImages(getWaitingForUploadFiles());
         }
     }
 
@@ -252,13 +258,6 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
             resetImages(selected);
-        }
-    };
-
-    private OnImageCompressedListener imageCompressedListener = new OnImageCompressedListener() {
-        @Override
-        public void onCompressed(ArrayList<String> compressed) {
-            resetImages(compressed);
         }
     };
 
@@ -295,7 +294,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private ImageDisplayer.OnDeleteClickListener imageDeleteClickListener = new ImageDisplayer.OnDeleteClickListener() {
         @Override
         public void onDeleteClick(String url) {
-            getSelectedImages().remove(url);
+            getWaitingForUploadFiles().remove(url);
             mAdapter.remove(url);
             appendAttacher();
         }
@@ -313,7 +312,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onImageClick(String url) {
             // 相册预览
-            startGalleryPreview(getSelectedImages().indexOf(url));
+            startGalleryPreview(getWaitingForUploadFiles().indexOf(url));
         }
     };
 
@@ -363,9 +362,10 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
                 ImageViewHolder ivh = (ImageViewHolder) holder;
                 ivh.addOnDeleteClickListener(imageDeleteClickListener);
                 ivh.addOnImageClickListener(imagePreviewClickListener);
+                // 这里是要尝试删除选择的文件
                 ivh.addOnHandlerBoundDataListener(handlerBoundDataListener);
                 ivh.setImageSize(width, height);
-                ivh.showContent(getSelectedImages().get(position));
+                ivh.showContent(item);
             }
         }
 

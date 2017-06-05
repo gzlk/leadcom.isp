@@ -203,6 +203,17 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         }
     }
 
+    /**
+     * 准备剪切之后的照片存储路径
+     */
+    private void prepareCroppedImagePath() {
+        if (null != croppedImagePath) {
+            // 删除之前剪切过的图片
+            deleteFile(croppedImagePath);
+        }
+        croppedImagePath = Activity().app().getLocalCroppedDir() + getTempFileName();
+    }
+
     private void adjustWannaToImageSize() {
         if (0 == mCompressedImageHeight) {
             mCompressedImageHeight = getScreenHeight();
@@ -212,13 +223,24 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         }
     }
 
+    // 重置已选择了的文件列表
+    private void resetSelectedImage() {
+        for (String string : waitingFroCompressImages) {
+            if (!getWaitingForUploadFiles().contains(string)) {
+                getWaitingForUploadFiles().add(string);
+            }
+        }
+    }
+
     private void onImageSelected() {
         if (!isSupportCompress) {
             // 如果不支持压缩则把选择了的图片放入待上传队列
-            getWaitingForUploadFiles().addAll(waitingFroCompressImages);
+            //getWaitingForUploadFiles().clear();
+            //getWaitingForUploadFiles().addAll(waitingFroCompressImages);
+            resetSelectedImage();
         }
         if (null != mOnImageSelectedListener) {
-            mOnImageSelectedListener.onImageSelected(waitingFroCompressImages);
+            mOnImageSelectedListener.onImageSelected(isSupportCompress ? waitingFroCompressImages : getWaitingForUploadFiles());
         } else {
             log("no image selected callback exists.");
         }
@@ -281,9 +303,9 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     /**
      * 已选择了的本地原始图片地址列表
      */
-    protected ArrayList<String> getSelectedImages() {
-        return waitingFroCompressImages;
-    }
+//    protected ArrayList<String> getSelectedImages() {
+//        return waitingFroCompressImages;
+//    }
 
     /**
      * 删除指定的文件
@@ -293,17 +315,6 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         File file = new File(path);
         if (file.exists())
             file.delete();
-    }
-
-    /**
-     * 准备剪切之后的照片存储路径
-     */
-    private void prepareCroppedImagePath() {
-        if (null != croppedImagePath) {
-            // 删除之前剪切过的图片
-            deleteFile(croppedImagePath);
-        }
-        croppedImagePath = Activity().app().getLocalCroppedDir() + getTempFileName();
     }
 
     /**
@@ -506,7 +517,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                     .toolBarColor(getColor(R.color.colorPrimary))
                     .statusBarColor(getColor(R.color.colorPrimary))
                     .title(getString(R.string.ui_base_text_choose_image, getMaxSelectable()))
-                    .checkedList(waitingFroCompressImages)
+                    .checkedList(isSupportCompress ? waitingFroCompressImages : getWaitingForUploadFiles())
                     .selectCount(getMaxSelectable()).columnCount(3).camera(true).start();
         } else {
             Intent imageIntent = new Intent();
@@ -523,7 +534,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         if (chooseImageByAlbum()) {
             Album.gallery(this).checkFunction(true)
                     .requestCode(REQUEST_PREVIEW)
-                    .checkedList(waitingFroCompressImages)
+                    .checkedList(isSupportCompress ? waitingFroCompressImages : getWaitingForUploadFiles())
                     .toolBarColor(getColor(R.color.colorPrimary))
                     .statusBarColor(getColor(R.color.colorPrimary))
                     .currentPosition(position)
@@ -596,7 +607,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 打开图片选择菜单
      */
     public void openImageSelector() {
-        int size = waitingFroCompressImages.size();
+        int size = isSupportCompress ? waitingFroCompressImages.size() : getWaitingForUploadFiles().size();
         // 裁剪照片时，可以多次选择裁剪
         if (size > 1 && size >= getMaxSelectable()) {
             ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_image_cannot_attach_more);
