@@ -21,6 +21,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.pgyersdk.crash.PgyCrashManager;
 
 import java.io.File;
 
@@ -56,10 +57,11 @@ public class App extends NimApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        AppCrashHandler.getInstance(this);
+        //AppCrashHandler.getInstance(this);
+        PgyCrashManager.register(this);
         initializeNim();
         if (shouldInit()) {
-            StorageUtil.init(this, null);
+            //StorageUtil.init(this, null);
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();
             initializeDatabase();

@@ -11,6 +11,9 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.activity.ActArchive;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.Click;
@@ -64,6 +67,53 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         statusView.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
+    public void showContent(ActArchive archive, String searchingText) {
+        selector.setVisibility(archive.isSelectable() ? View.VISIBLE : View.GONE);
+        selector.setTextColor(getColor(archive.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        String text = archive.getName();
+        if (isEmpty(text)) {
+            text = StringHelper.getString(R.string.ui_activity_archiving_no_attachment_name);
+        }
+        if (StringHelper.isEmpty(text)) {
+            text = StringHelper.getString(R.string.ui_archive_approve_no_title);
+        }
+        text = getSearchingText(text, searchingText);
+        titleView.setText(text);
+        filesView.setText(fragment().formatDateTime(archive.getCreateDate()));
+
+        Activity act = new Dao<>(Activity.class).query(archive.getActId());
+        if (null == act || isEmpty(act.getTitle())) {
+            text = "";
+        } else {
+            text = act.getTitle();
+        }
+
+        dateView.setText(StringHelper.getString(R.string.ui_activity_archiving_source, text));
+        statusView.setText(StringHelper.getString(R.string.ui_archive_management_list_item_status, Attachment.getAttachmentStatus(archive.getStatus())));
+        Attachment attachment = new Attachment();
+        attachment.setUrl(archive.getUrl());
+        attachment.resetInformation();
+        switch (archive.getType()) {
+            case Attachment.AttachmentType.IMAGE:
+                showImage(archive.getUrl());
+                break;
+            case Attachment.AttachmentType.OFFICE:
+                showOffice(attachment);
+                break;
+            case Attachment.AttachmentType.OTHER:
+                showOther(attachment);
+                break;
+            case Attachment.AttachmentType.VIDEO:
+                showVideo(attachment);
+                break;
+            default:
+                imageView.setVisibility(View.GONE);
+                iconContainer.setVisibility(View.GONE);
+                iconContainer.setNormalColor(getColor(attachment.iconColor()));
+                break;
+        }
+    }
+
     public void showContent(Archive archive, String searchingText) {
         selector.setVisibility(archive.isSelectable() ? View.VISIBLE : View.GONE);
         selector.setTextColor(getColor(archive.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
@@ -82,52 +132,66 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         // cover
         String path = archive.getCover();
         if (!isEmpty(path)) {
-            iconContainer.setVisibility(View.GONE);
-            imageView.setVisibility(View.VISIBLE);
-            imageView.displayImage(path, imageSize, false, false);
+            showImage(path);
             return;
         }
         // 视频
         Attachment attachment = firstOf(archive.getVideo());
         if (null != attachment && !isEmpty(attachment.getUrl())) {
             // 显示视频图片或默认视频图片
-            imageView.displayImage("drawable://" + R.drawable.img_image_video, imageSize, false, false);
-            imageView.setVisibility(View.GONE);
-            iconContainer.setVisibility(View.VISIBLE);
-            iconContainer.setNormalColor(getColor(attachment.iconColor()));
-            iconView.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
+            showVideo(attachment);
             return;
         }
         // office 文档
         attachment = firstOf(archive.getOffice());
         if (null != attachment && !isEmpty(attachment.getUrl())) {
-            imageView.setVisibility(View.GONE);
-            iconContainer.setVisibility(View.VISIBLE);
-            iconContainer.setNormalColor(getColor(attachment.iconColor()));
-            iconView.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
+            showOffice(attachment);
             return;
         }
         // 图片
         attachment = firstOf(archive.getImage());
         if (null != attachment && !isEmpty(attachment.getUrl())) {
-            imageView.setVisibility(View.VISIBLE);
-            iconContainer.setVisibility(View.GONE);
-            imageView.displayImage(attachment.getUrl(), imageSize, false, false);
+            showImage(attachment.getUrl());
             return;
         }
         // 其他附件
         attachment = firstOf(archive.getAttach());
         if (null != attachment && !isEmpty(attachment.getUrl())) {
-            imageView.setVisibility(View.GONE);
-            iconContainer.setVisibility(View.VISIBLE);
-            iconContainer.setNormalColor(getColor(attachment.iconColor()));
-            iconView.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
+            showOther(attachment);
             return;
         }
         // 什么附件都没有则不显示图标
         imageView.setVisibility(View.GONE);
         iconContainer.setVisibility(View.GONE);
         iconContainer.setNormalColor(getColor(null == attachment ? R.color.colorPrimary : attachment.iconColor()));
+    }
+
+    private void showImage(String url) {
+        iconContainer.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
+        imageView.displayImage(url, imageSize, false, false);
+    }
+
+    private void showVideo(Attachment attachment) {
+        imageView.displayImage("drawable://" + R.drawable.img_image_video, imageSize, false, false);
+        imageView.setVisibility(View.GONE);
+        iconContainer.setVisibility(View.VISIBLE);
+        iconContainer.setNormalColor(getColor(attachment.iconColor()));
+        iconView.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
+    }
+
+    private void showOffice(Attachment attachment) {
+        imageView.setVisibility(View.GONE);
+        iconContainer.setVisibility(View.VISIBLE);
+        iconContainer.setNormalColor(getColor(attachment.iconColor()));
+        iconView.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
+    }
+
+    private void showOther(Attachment attachment) {
+        imageView.setVisibility(View.GONE);
+        iconContainer.setVisibility(View.VISIBLE);
+        iconContainer.setNormalColor(getColor(attachment.iconColor()));
+        iconView.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
     }
 
     private Attachment firstOf(ArrayList<Attachment> list) {

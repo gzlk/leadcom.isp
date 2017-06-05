@@ -10,7 +10,7 @@ import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveNewFragment;
-import com.gzlk.android.isp.fragment.organization.archive.ManagementFragment;
+import com.gzlk.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
@@ -141,7 +141,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                     break;
                 case R.id.ui_tooltip_menu_organization_document_manage:
                     // 管理组织档案
-                    openActivity(ManagementFragment.class.getName(), mQueryId, false, false);
+                    openActivity(OrgArchiveManagementFragment.class.getName(), mQueryId, false, false);
                     break;
             }
         }

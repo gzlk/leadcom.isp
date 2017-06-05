@@ -19,11 +19,11 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveAdditionalViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsHeaderViewHolder;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
-import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
@@ -35,6 +35,7 @@ import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.task.OrmTask;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
@@ -78,10 +79,6 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(TYPE, archiveType);
     }
-
-    // 存档和审核需要的按钮
-    @ViewId(R.id.ui_archive_approve_container)
-    private LinearLayout approveContainer;
 
     // 默认用户档案
     private int archiveType = Archive.Type.USER;
@@ -149,22 +146,39 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
             mAdapter = new DocumentDetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
             // 从本地缓存中查找档案
-            fetchingDocument(true);
+            fetchingDocument(false);
         }
     }
 
     private void resetRightTitleButton(@NonNull Archive archive) {
+        // 档案创建者可以编辑
         if (archive.getUserId().equals(Cache.cache().userId)) {
             //setRightIcon(R.string.ui_icon_more);
+            // 个人档案可以编辑、未审核的档案可以编辑
+            //if (archive.getType() == Archive.Type.USER || archive.getStatus() <= Archive.ArchiveStatus.APPROVED) {
+            // 未审核之前的档案可以编辑
+//                if (archive.getType() == Archive.ArchiveType.ACTIVITY) {
+//                    // 活动产生的档案不需要再编辑
+//                    setRightText(0);
+//                } else {
             setRightText(R.string.ui_base_text_edit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
-                    //openEditSelector();
-                    openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
+                    openEditSelector();
+                    //openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
                 }
             });
+//                }
+            //}
         }
+        // 用户档案不需要审核
+//        if (archive.getType() == Archive.Type.USER) {
+//            approveContainer.setVisibility(View.GONE);
+//        } else {
+//            // 未审核过的档案才显示审核按钮
+//            approveContainer.setVisibility(archive.getStatus() <= Archive.ArchiveStatus.APPROVING ? View.VISIBLE : View.GONE);
+//        }
         // 图片和文件附件列表
         loadingAttachments(archive);
         loadingLocalComments();
@@ -301,6 +315,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 int id = view.getId();
                 switch (id) {
                     case R.id.ui_dialog_button_editor_to_change:
+                        //openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
                         openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
                         break;
                     case R.id.ui_dialog_button_editor_to_delete:
@@ -332,8 +347,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     Dao<Archive> dao = new Dao<>(Archive.class);
                     Archive doc = dao.query(mQueryId);
                     if (null != doc) {
-                        doc.setLocalDeleted(true);
-                        dao.save(doc);
+                        dao.delete(doc);
                     }
                     // 返回成功
                     finish();
@@ -378,6 +392,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     mAdapter.update(archive);
                     resetRightTitleButton(archive);
                 } else {
+                    new Dao<>(Archive.class).delete(mQueryId);
                     closeWithWarning(R.string.ui_text_document_details_not_exists);
                 }
             }

@@ -53,6 +53,7 @@ public class ActRequest extends Request<Activity> {
     private static final String ENDED = "/list/ended";
     private static final String REFRESH = "/list/refresh";
     private static final String END = "/end";
+    private static final String IS_JOINED = "/joinPublicAct";
 
     @Override
     protected String url(String action) {
@@ -366,5 +367,13 @@ public class ActRequest extends Request<Activity> {
     public void end(@NonNull String activityId) {
         String params = format("id=%s&accessToken=%s", activityId, Cache.cache().accessToken);
         httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(END), params), "", HttpMethods.Get));
+    }
+
+    /**
+     * 判断是否已经加入公共活动（首页推荐的）
+     */
+    public void isJoinPublicAct(String activityId) {
+        String params = format("actId=%s&accessToken=%s", activityId, Cache.cache().accessToken);
+        httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(IS_JOINED), params), "", HttpMethods.Get));
     }
 }

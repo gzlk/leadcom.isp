@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.fragment.home;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -8,9 +10,11 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.common.FocusImageRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.ArchiveHomeViewHolder;
 import com.gzlk.android.isp.holder.home.HomeImagesViewHolder;
+import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.FocusImage;
@@ -143,12 +147,10 @@ public class HomeRecommendFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(List<FocusImage> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
+                    images.clear();
                     if (null != list) {
-                        ArrayList<String> strings = new ArrayList<>();
-                        for (FocusImage image : list) {
-                            strings.add(image.getImageUrl());
-                        }
-                        homeImagesViewHolder.addImages(strings);
+                        images.addAll(list);
+                        resetImages();
                     }
                 }
                 stopRefreshing();
@@ -165,6 +167,58 @@ public class HomeRecommendFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    private List<FocusImage> images = new ArrayList<>();
+
+    private void resetImages() {
+        ArrayList<String> strings = new ArrayList<>();
+        for (FocusImage image : images) {
+            strings.add(image.getImageUrl());
+        }
+        homeImagesViewHolder.addImages(strings);
+    }
+
+    private FocusImage getImage(String imageUrl) {
+        for (FocusImage image : images) {
+            if (image.getImageUrl().equals(imageUrl)) {
+                return image;
+            }
+        }
+        return null;
+    }
+
+    private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
+        @Override
+        public void onImageClick(String url) {
+            FocusImage image = getImage(url);
+            if (null != image) {
+                String type = image.getType();
+                String target = image.getTargetPath();
+                if (isEmpty(target)) {
+                    ToastHelper.make().showMsg("无效的url路径");
+                } else {
+                    if (isEmpty(type) || type.equals("inner")) {
+                        openActivity(InnerWebViewFragment.class.getName(), format("%s,%s", image.getTargetPath(), image.getTitle()), true, false);
+                    } else {
+                        openDefaultWeb(image.getTargetPath());
+                    }
+                }
+            } else {
+                ToastHelper.make().showMsg("未指定的推荐内容");
+            }
+        }
+    };
+
+    private void openDefaultWeb(String url) {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        if (!url.startsWith("http://")) {
+            url = "http://" + url;
+        }
+        Uri content_url = Uri.parse(url);
+        intent.setData(content_url);
+        Activity().startActivity(intent);
+    }
+
     private class SeminarAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
         private static final int VT_HEADER = 0, VT_NORMAL = 1;
 
@@ -173,6 +227,7 @@ public class HomeRecommendFragment extends BaseSwipeRefreshSupportFragment {
             if (viewType == VT_HEADER) {
                 if (null == homeImagesViewHolder) {
                     homeImagesViewHolder = new HomeImagesViewHolder(itemView, HomeRecommendFragment.this);
+                    homeImagesViewHolder.setOnImageClickListener(onImageClickListener);
                 }
                 return homeImagesViewHolder;
             } else {

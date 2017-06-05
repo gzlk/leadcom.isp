@@ -95,7 +95,7 @@
 
     <string name="ui_archive_approving_archive_attachments" formatted="false">其中有%d个文件</string>
 
-    <!--可审核页面中的元素-->
+    <!--活动附件存档页面中的元素-->
     <string name="ui_archive_approvable_nothing">暂时没有更多此类档案了</string>
 
     <!--最终审核页面中的元素-->

@@ -4,7 +4,8 @@
     android:id="@+id/ui_archive_approve_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:visibility="gone">
 
     <com.hlk.hlklib.lib.view.CorneredView
         android:id="@+id/ui_archive_approve_reject"
@@ -13,6 +14,7 @@
         android:layout_margin="@dimen/ui_base_dimen_margin_padding"
         android:layout_weight="1"
         android:gravity="center"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
         android:padding="@dimen/ui_base_dimen_margin_padding"
         app:cv_active_border="@color/colorCaution"
         app:cv_background="@color/colorPrimary"
@@ -20,6 +22,7 @@
         app:cv_normal_border="@color/colorPrimary">
 
         <TextView
+            android:id="@+id/ui_archive_approve_reject_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ui_archive_approve_not_passed"
@@ -33,12 +36,14 @@
         android:layout_margin="@dimen/ui_base_dimen_margin_padding"
         android:layout_weight="1"
         android:gravity="center"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
         android:padding="@dimen/ui_base_dimen_margin_padding"
         app:cv_active_border="@color/colorCaution"
         app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size"
         app:cv_normal_border="@color/textColorHintLight">
 
         <TextView
+            android:id="@+id/ui_archive_approve_passed_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ui_archive_approve_passed"

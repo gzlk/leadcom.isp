@@ -205,7 +205,14 @@ public class ImageDisplayer extends RelativeLayout {
     }
 
     /**
-     * 显示图片
+     * 显示图片，支持以下uri方式：
+     * <ul>
+     * <li>http://</li>
+     * <li>drawable://  ex.: "drawable://" + R.drawable.image</li>
+     * <li>assets://image.png</li>
+     * <li>file:///mnt/sdcard/image.png  ex.: "file://" + uri(string)</li>
+     * <li>content://media/external/audio/albumart/13</li>
+     * </ul>
      */
     public void displayImage(String url, int size, boolean selectable, boolean deletable) {
         imageSize = size;
@@ -213,7 +220,14 @@ public class ImageDisplayer extends RelativeLayout {
     }
 
     /**
-     * 显示图片
+     * 显示图片，支持以下uri方式：
+     * <ul>
+     * <li>http://</li>
+     * <li>drawable://  ex.: "drawable://" + R.drawable.image</li>
+     * <li>assets://image.png</li>
+     * <li>file:///mnt/sdcard/image.png  ex.: "file://" + uri(string)</li>
+     * <li>content://media/external/audio/albumart/13</li>
+     * </ul>
      */
     public void displayImage(String url, int width, int height, boolean selectable, boolean deletable) {
         imageWidth = width;

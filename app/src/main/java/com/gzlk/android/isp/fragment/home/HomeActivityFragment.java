@@ -5,13 +5,17 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.common.RecommendRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.home.ActivityHomeViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.RecommendContent;
+import com.netease.nim.uikit.NimUIKit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,9 +111,26 @@ public class HomeActivityFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            // 到活动详情
+            // 到活动详情报名页
+            Activity act = mAdapter.get(index);
+            isJoinedPublicAct(act.getId(), act.getTid());
         }
     };
+
+    private void isJoinedPublicAct(final String actId, final String tid) {
+        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+            @Override
+            public void onResponse(Activity activity, boolean success, String message) {
+                super.onResponse(activity, success, message);
+                if (success) {
+                    NimUIKit.startTeamSession(Activity(), tid);
+                } else {
+                    // 如果不在该群则打开报名页面
+                    openActivity(ActivityEntranceFragment.class.getName(), format("%s,%s", actId, tid), true, false);
+                }
+            }
+        }).isJoinPublicAct(actId);
+    }
 
     private void initializeAdapter() {
         if (null == mAdapter) {

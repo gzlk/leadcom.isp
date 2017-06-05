@@ -22,10 +22,10 @@ import com.hlk.hlklib.lib.view.CorneredButton;
  * <b>修改备注：</b><br />
  */
 
-public class ManagementFragment extends BaseViewPagerSupportFragment {
+public class OrgArchiveManagementFragment extends BaseViewPagerSupportFragment {
 
-    public static ManagementFragment newInstance(String params) {
-        ManagementFragment mf = new ManagementFragment();
+    public static OrgArchiveManagementFragment newInstance(String params) {
+        OrgArchiveManagementFragment mf = new OrgArchiveManagementFragment();
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, params);
         mf.setArguments(bundle);

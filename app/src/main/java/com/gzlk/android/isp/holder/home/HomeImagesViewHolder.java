@@ -135,8 +135,15 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         public Object instantiateItem(ViewGroup container, int position) {
             ImageDisplayer displayer = images.get(position);
             displayer.displayImage(urls.get(position), fragment().getScreenWidth(), getDimension(R.dimen.ui_static_dp_140), false, false);
+            displayer.addOnImageClickListener(onImageClickListener);
             container.addView(displayer);
             return displayer;
         }
+    }
+
+    private ImageDisplayer.OnImageClickListener onImageClickListener;
+
+    public void setOnImageClickListener(ImageDisplayer.OnImageClickListener l) {
+        onImageClickListener = l;
     }
 }

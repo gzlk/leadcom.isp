@@ -108,4 +108,19 @@
     <string name="ui_activity_details_button_close_text">结束活动</string>
 
     <string name="ui_activity_details_statistics_text">统计</string>
+
+    <string name="ui_activity_archive_loading_all">正在加载活动中的所有文档请稍候&#8230;</string>
+    <string name="ui_activity_archive_loading_archive">正在加载活动中的文档请稍候&#8230;</string>
+    <string name="ui_activity_archive_loading_image">正在加载活动中的图片请稍候&#8230;</string>
+    <string name="ui_activity_archive_loading_video">正在加载活动中的视频请稍候&#8230;</string>
+    <string name="ui_activity_archive_nothing_all">活动中没有更多未审核的文档了</string>
+    <string name="ui_activity_archive_nothing_archive">活动中没有更多未审核的文档了</string>
+    <string name="ui_activity_archive_nothing_image">活动中没有更多图片了</string>
+    <string name="ui_activity_archive_nothing_video">活动中没有更视频了</string>
+
+    <string name="ui_activity_archiving_no_attachment_name">[没有文件名]</string>
+    <string name="ui_activity_archiving_source">来源：%s</string>
+    <string name="ui_activity_archiving_save_to_archive">存为档案</string>
+    <string name="ui_activity_archiving_selected_too_much">目前未存档的文件有点多，全选后存档会耗费更多的时间</string>
+    <string name="ui_activity_archiving_update">正在存档您选中的文件，请稍后&#8230;</string>
 </resources>

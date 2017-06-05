@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
     android:padding="@dimen/ui_base_dimen_margin_padding"
     app:cv_active_border="@color/colorPrimary"
     app:cv_normal_border="@android:color/white">

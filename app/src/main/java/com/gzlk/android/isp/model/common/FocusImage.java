@@ -27,6 +27,7 @@ public class FocusImage extends Model {
     private String title;
     private String createrId;
     private String createrName;
+    private String type;
     private int status;
 
     public String getPlayerInterval() {
@@ -91,6 +92,14 @@ public class FocusImage extends Model {
 
     public void setCreaterName(String createrName) {
         this.createrName = createrName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getStatus() {

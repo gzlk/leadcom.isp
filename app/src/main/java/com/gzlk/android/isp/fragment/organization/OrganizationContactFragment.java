@@ -124,9 +124,10 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
                 if (success) {
                     mAdapter.get(index).setSelected(true);
                     mAdapter.notifyItemChanged(index);
+                    ToastHelper.make().showMsg(message);
                 }
             }
-        }).inviteToSquad(mSquadId, member.getId(), "");
+        }).inviteToSquad(mSquadId, member.getUserId(), "");
     }
 
     private class ContactAdapter extends RecyclerViewAdapter<ContactViewHolder, Member> {

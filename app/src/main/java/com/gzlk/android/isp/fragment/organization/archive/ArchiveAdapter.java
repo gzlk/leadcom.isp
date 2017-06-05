@@ -8,6 +8,8 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.archive.Archive;
 
 import java.lang.ref.SoftReference;
@@ -23,7 +25,7 @@ import java.lang.ref.SoftReference;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveAdapter extends RecyclerViewAdapter<ArchiveManagementViewHolder, Archive> {
+public class ArchiveAdapter extends RecyclerViewAdapter<ArchiveManagementViewHolder, Model> {
 
     private SoftReference<BaseFragment> fragment;
 
@@ -57,12 +59,16 @@ public class ArchiveAdapter extends RecyclerViewAdapter<ArchiveManagementViewHol
     }
 
     @Override
-    public void onBindHolderOfView(ArchiveManagementViewHolder holder, int position, @Nullable Archive item) {
-        holder.showContent(item, searchingText);
+    public void onBindHolderOfView(ArchiveManagementViewHolder holder, int position, @Nullable Model item) {
+        if (item instanceof Archive) {
+            holder.showContent((Archive) item, searchingText);
+        } else if (item instanceof ActArchive) {
+            holder.showContent((ActArchive) item, searchingText);
+        }
     }
 
     @Override
-    protected int comparator(Archive item1, Archive item2) {
+    protected int comparator(Model item1, Model item2) {
         return 0;
     }
 }

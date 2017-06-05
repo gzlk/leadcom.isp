@@ -21,6 +21,7 @@ import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.netease.nim.uikit.NimUIKit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,6 +160,8 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     ToastHelper.make().showMsg(message);
                     finish();
+                    // 报名成功之后打开群聊页面
+                    NimUIKit.startTeamSession(Activity(), tid);
                 }
             }
         }).activityApprove(tid);

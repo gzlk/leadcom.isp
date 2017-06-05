@@ -75,7 +75,8 @@ public class UploadRequest extends Request<Upload> {
 
     // 根据文件扩展名是否为office文档更改上传路径
     private String path(String file) {
-        return (Attachment.isOffice(Attachment.getExtension(file))) ? OFFICE_UPLOAD : SINGLE_UPLOAD;
+        //return (Attachment.isOffice(Attachment.getExtension(file))) ? OFFICE_UPLOAD : SINGLE_UPLOAD;
+        return SINGLE_UPLOAD;
     }
 
     private JsonRequest<Api<Upload>> request(final String file) {

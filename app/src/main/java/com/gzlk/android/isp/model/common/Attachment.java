@@ -77,6 +77,19 @@ public class Attachment extends Model {
         int FAILURE = 3;
     }
 
+    public static String getAttachmentStatus(int status) {
+        switch (status) {
+            case AttachmentStatus.ARCHIVING:
+                return "待存档";
+            case AttachmentStatus.ARCHIVED:
+                return "已存档";
+            case AttachmentStatus.FAILURE:
+                return "存档失败";
+            default:
+                return StringHelper.format("未知(%d)", status);
+        }
+    }
+
     /**
      * 附件文件类型
      */

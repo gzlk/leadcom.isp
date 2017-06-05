@@ -104,7 +104,7 @@ public class InvitationRequest extends Request<Invitation> {
      * 邀请某人加入小组
      *
      * @param squadId   要加入的小组的id
-     * @param inviteeId 被邀请人的id
+     * @param inviteeId 被邀请人的userId
      * @param message   申请、审核人的留言
      */
     public void inviteToSquad(String squadId, String inviteeId, String message) {
@@ -188,7 +188,7 @@ public class InvitationRequest extends Request<Invitation> {
      */
     public void activityApprove(String tid) {
         String param = format("%s?tid=%s&accessToken=%s", url(INVITE_ACTIVITY, APPROVE), tid, Cache.cache().accessToken);
-        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+        httpRequest(getRequest(SingleInvite.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -196,6 +196,6 @@ public class InvitationRequest extends Request<Invitation> {
      */
     public void activityReject(String tid) {
         String param = format("%s?tid=%s&accessToken=%s", url(INVITE_ACTIVITY, REJECT), tid, Cache.cache().accessToken);
-        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+        httpRequest(getRequest(SingleInvite.class, param, "", HttpMethods.Get));
     }
 }

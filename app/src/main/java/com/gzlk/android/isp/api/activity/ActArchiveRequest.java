@@ -88,18 +88,19 @@ public class ActArchiveRequest extends Request<ActArchive> {
      * @param status 存档状态：审核状态(1.未审核,2.已通过,3.未通过[暂时不需要]) {@link com.gzlk.android.isp.model.common.Attachment.AttachmentStatus}
      * @see com.gzlk.android.isp.model.common.Attachment.AttachmentStatus
      */
-    public void update(String fileId, int status) {
+    public void update(String fileId, String activityId, int status) {
         // _id,status,accessToken
         JSONObject object = new JSONObject();
         try {
             object.put("_id", fileId)
+                    .put("actId", activityId)
                     .put("status", status)
                     .put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleActivityArchive.class, url(CALLBACK), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleActivityArchive.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**

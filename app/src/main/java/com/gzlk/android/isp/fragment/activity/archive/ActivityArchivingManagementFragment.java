@@ -12,7 +12,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 /**
- * <b>功能描述：</b>活动的待存档文件列表<br />
+ * <b>功能描述：</b>活动的待存档文件管理页面<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/24 21:31 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -22,10 +22,10 @@ import com.hlk.hlklib.lib.inject.ViewId;
  * <b>修改备注：</b><br />
  */
 
-public class ApprovingFragment extends BaseViewPagerSupportFragment {
+public class ActivityArchivingManagementFragment extends BaseViewPagerSupportFragment {
 
-    public static ApprovingFragment newInstance(String params) {
-        ApprovingFragment af = new ApprovingFragment();
+    public static ActivityArchivingManagementFragment newInstance(String params) {
+        ActivityArchivingManagementFragment af = new ActivityArchivingManagementFragment();
         Bundle bundle = new Bundle();
         // 传过来的活动的id
         bundle.putString(PARAM_QUERY_ID, params);
@@ -49,13 +49,13 @@ public class ApprovingFragment extends BaseViewPagerSupportFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_archive_management_title_button_3);
+        setCustomTitle(R.string.ui_archive_management_title_button_2);
         setRightText(R.string.ui_base_text_edit);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                // 打开组织档案的审核页面
-                openActivity(ApproveFragment.class.getName(), mQueryId, true, false);
+                // 打开活动文档的存档页面
+                openActivity(ActivityArchivingFragment.class.getName(), mQueryId, true, false);
             }
         });
         super.doingInResume();
@@ -63,10 +63,10 @@ public class ApprovingFragment extends BaseViewPagerSupportFragment {
 
     @Override
     protected void initializeFragments() {
-        mFragments.add(ApprovableArchivesFragment.newInstance(format("%s,0", mQueryId)));
-        mFragments.add(ApprovableArchivesFragment.newInstance(format("%s,1", mQueryId)));
-        mFragments.add(ApprovableArchivesFragment.newInstance(format("%s,2", mQueryId)));
-        mFragments.add(ApprovableArchivesFragment.newInstance(format("%s,3", mQueryId)));
+        mFragments.add(ActivityArchivingListFragment.newInstance(format("%s,%d", mQueryId, ActivityArchivingListFragment.ALL)));
+        mFragments.add(ActivityArchivingListFragment.newInstance(format("%s,%d", mQueryId, ActivityArchivingListFragment.ARCHIVES)));
+        mFragments.add(ActivityArchivingListFragment.newInstance(format("%s,%d", mQueryId, ActivityArchivingListFragment.IMAGES)));
+        mFragments.add(ActivityArchivingListFragment.newInstance(format("%s,%d", mQueryId, ActivityArchivingListFragment.VIDEOS)));
     }
 
     @Override
@@ -85,6 +85,9 @@ public class ApprovingFragment extends BaseViewPagerSupportFragment {
 
         titleText4.setTextColor(position == 3 ? text2 : text1);
         titleText4.setBackgroundColor(position == 3 ? Color.WHITE : Color.TRANSPARENT);
+        for (int i = 0; i < mFragments.size(); i++) {
+            mFragments.get(i).setViewPagerDisplayedCurrent(i == position);
+        }
     }
 
     @Override

@@ -244,6 +244,9 @@ public class Activity extends Model {
     }
 
     public String getCreatorId() {
+        if (isEmpty(creatorId)) {
+            creatorId = "";
+        }
         return creatorId;
     }
 

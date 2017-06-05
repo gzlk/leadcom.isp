@@ -88,22 +88,15 @@ public class ActivityViewHolder extends BaseViewHolder {
         List<String> img = new ArrayList<>();
         if (hasImage) {
             img.add(activity.getImg());
-            img.add(activity.getImg());
-            img.add(activity.getImg());
-            img.add(activity.getImg());
-            img.add(activity.getImg());
-            img.add(activity.getImg());
-            img.add(activity.getImg());
-            img.add(activity.getImg());
-            img.add(activity.getImg());
             headers.setAdapter(adapter);
             headers.setImagesData(img);
         }
         flagView.setVisibility(View.GONE);
         timeView.setText(Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), activity.getBeginDate()));
-        headers.setVisibility(hasImage ? View.VISIBLE : View.GONE);
-        iconText.setVisibility(hasImage ? View.GONE : View.VISIBLE);
-        iconContainer.setBackground(getColor(hasImage ? R.color.textColorHintLight : R.color.color_faaa2d));
+        //headers.setVisibility(hasImage ? View.VISIBLE : View.GONE);
+        headers.setVisibility(View.VISIBLE);
+        iconText.setVisibility(View.GONE);
+        iconContainer.setBackground(getColor(R.color.textColorHintLight));
         titleView.setText(activity.getTitle());
         descView.setText(activity.getContent());
     }

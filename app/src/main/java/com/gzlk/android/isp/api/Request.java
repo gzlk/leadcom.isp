@@ -118,7 +118,7 @@ public abstract class Request<T> {
     /**
      * 是否支持直接保存
      */
-    protected boolean directlySave = true;
+    protected boolean directlySave = false;
 
     protected abstract Class<T> getType();
 

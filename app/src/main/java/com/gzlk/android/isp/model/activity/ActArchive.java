@@ -30,7 +30,7 @@ public class ActArchive extends Model {
     @Column(Activity.Field.ActivityId)
     private String actId;          //活动id
     @Column(Archive.Field.Type)
-    private String type;           //文件类型(1.文档,2.图片,3.视频,4.其他)
+    private int type;              //文件类型(1.文档,2.图片,3.视频,4.其他)
     @Column(Model.Field.Name)
     private String name;           //文件名(带后缀)
     @Column(Attachment.Field.Url)
@@ -44,7 +44,7 @@ public class ActArchive extends Model {
     @Column(Model.Field.CreateDate)
     private String createDate;     //创建时间
     @Column(Activity.Field.Status)
-    private String status;         //审核状态:1.未审核(如果档案已存档,则表示未通过审核),2.审核通过,3.审核未通过
+    private int status;            //审核状态:1.未审核(如果档案已存档,则表示未通过审核),2.审核通过,3.审核未通过
     @Column(Field.AuditorId)
     private String auditorId;      //档案审核人用户ID
     @Column(Field.AuditorDate)
@@ -66,11 +66,11 @@ public class ActArchive extends Model {
         this.actId = actId;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -122,11 +122,11 @@ public class ActArchive extends Model {
         this.createDate = createDate;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

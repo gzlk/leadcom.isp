@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -113,6 +114,7 @@ public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragmen
         titleHolder.showContent(format(items[0], activity.getTitle()));
         timeHolder.showContent(format(items[1], formatDate(activity.getBeginDate())));
         addressHolder.showContent(format(items[2], activity.getContent()));
+        endButton.setVisibility(activity.getCreatorId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
         endButton.setEnabled(activity.getStatus() == Activity.Status.ACTIVE);
         endButton.setText(activity.getStatus() == Activity.Status.ACTIVE ? R.string.ui_activity_details_button_close_text : R.string.ui_activity_details_ended_activity);
     }

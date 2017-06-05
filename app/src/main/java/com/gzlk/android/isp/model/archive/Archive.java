@@ -506,6 +506,9 @@ public class Archive extends Additional {
     }
 
     public String getHappenDate() {
+        if (isEmpty(happenDate)) {
+            happenDate = DFT_DATE;
+        }
         return happenDate;
     }
 

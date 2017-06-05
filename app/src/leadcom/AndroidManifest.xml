@@ -10,9 +10,30 @@
     <!-- 接收 SDK 消息广播权限， 第三方 APP 接入时，请将 com.netease.nim.demo 替换为自己的包名 -->
     <uses-permission android:name="${APP_PKG_NAME}.permission.RECEIVE_MSG" />
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application>
+
+        <!-- 可选-->
+        <activity android:name="com.pgyersdk.activity.FeedbackActivity" />
+
+        <!-- 必选-->
+        <meta-data
+            android:name="PGYER_APPID"
+            android:value="2207abadcda55ccc5c80b7288443cbb9" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="leadcom_provider_file"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/pgy_provider_paths" />
+        </provider>
+
         <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。如果 SDKOptions 中提供了，取 SDKOptions 中的值。 -->
         <meta-data
             android:name="com.netease.nim.appKey"

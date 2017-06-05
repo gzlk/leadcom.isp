@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityPropertiesFragment;
 import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
@@ -295,14 +296,19 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 Activity act = (Activity) model;
                 //openActivity(CreateActivityFragment.class.getName(), format("%s,%s", act.getId(), act.getGroupId()), true, true);
                 //openActivity(ActivityPropertiesFragment.class.getName(), act.getId(), false, false, true);
-                NimUIKit.startTeamSession(Activity(), act.getTid(), null);
+                if (act.getStatus() == Activity.Status.ACTIVE) {
+                    // 未结束的活动打开群聊窗口
+                    NimUIKit.startTeamSession(Activity(), act.getTid(), null);
+                } else {
+                    // 已结束的活动打开活动详情页
+                    openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
+                }
             } else if (model instanceof SimpleClickableItem) {
                 // 打开未参加的活动列表
                 if (index == 1) {
                     openActivity(UnHandledInviteFragment.class.getName(), mQueryId, true, false);
                 }
             }
-            //ToastHelper.make().showMsg("不要点了，功能还未实现呢");
         }
     };
 
