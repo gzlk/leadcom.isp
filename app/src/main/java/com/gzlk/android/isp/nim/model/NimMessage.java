@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.model.nim;
+package com.gzlk.android.isp.nim.model;
 
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 

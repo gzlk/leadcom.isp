@@ -11,7 +11,7 @@ import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.model.nim.NimMessageParser;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
@@ -20,7 +20,6 @@ import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
-import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
@@ -50,7 +49,9 @@ public class NimApplication extends BaseActivityManagedApplication {
         if (shouldInit()) {
             // 初始化，使用 uikit 默认的用户信息提供者
             NimUIKit.init(this);
-            NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
+
+            NimSessionHelper.init();
+
             handleUserOnlineStatus();
         }
     }

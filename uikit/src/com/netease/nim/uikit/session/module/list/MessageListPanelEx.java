@@ -750,7 +750,7 @@ public class MessageListPanelEx {
             longClickItemCopy(selectedItem, alertDialog, msgType);
             // 3 revoke
             if (selectedItem.getDirect() == MsgDirectionEnum.Out && selectedItem.getStatus() == MsgStatusEnum.success
-                    && !NimUIKit.getMsgRevokeFilter().shouldIgnore(selectedItem) && !recordOnly) {
+                    && (null != NimUIKit.getMsgRevokeFilter() && !NimUIKit.getMsgRevokeFilter().shouldIgnore(selectedItem)) && !recordOnly) {
                 longClickRevokeMsg(selectedItem, alertDialog);
             }
             // 4 delete

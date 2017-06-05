@@ -14,9 +14,10 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.model.nim.NimMessage;
+import com.gzlk.android.isp.nim.model.NimMessage;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.JoinGroup;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
@@ -25,8 +26,6 @@ import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-
-import java.util.List;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -152,7 +151,7 @@ public class MainActivity extends TitleActivity {
                         break;
                     case Team:
                         // 群聊
-                        NimUIKit.startTeamSession(this, message.getSessionId());
+                        NimSessionHelper.startTeamSession(this, message.getSessionId());
                         break;
                 }
                 if (message.getMsgType() == MsgTypeEnum.custom) {

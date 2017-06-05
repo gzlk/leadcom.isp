@@ -15,7 +15,7 @@ import com.gzlk.android.isp.holder.home.ActivityHomeViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.RecommendContent;
-import com.netease.nim.uikit.NimUIKit;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +123,7 @@ public class HomeActivityFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(Activity activity, boolean success, String message) {
                 super.onResponse(activity, success, message);
                 if (success) {
-                    NimUIKit.startTeamSession(Activity(), tid);
+                    NimSessionHelper.startTeamSession(Activity(), tid);
                 } else {
                     // 如果不在该群则打开报名页面
                     openActivity(ActivityEntranceFragment.class.getName(), format("%s,%s", actId, tid), true, false);

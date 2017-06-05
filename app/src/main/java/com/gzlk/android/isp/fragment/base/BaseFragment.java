@@ -18,12 +18,11 @@ import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.hlk.hlklib.etc.Utility;
 
-import java.util.Date;
 import java.util.Locale;
 
 /**

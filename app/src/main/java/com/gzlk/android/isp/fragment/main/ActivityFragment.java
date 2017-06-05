@@ -8,7 +8,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
-import com.gzlk.android.isp.fragment.activity.ActivityPropertiesFragment;
 import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
 import com.gzlk.android.isp.fragment.activity.UnHandledInviteFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
@@ -26,7 +25,7 @@ import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Organization;
-import com.netease.nim.uikit.NimUIKit;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -298,7 +297,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 //openActivity(ActivityPropertiesFragment.class.getName(), act.getId(), false, false, true);
                 if (act.getStatus() == Activity.Status.ACTIVE) {
                     // 未结束的活动打开群聊窗口
-                    NimUIKit.startTeamSession(Activity(), act.getTid(), null);
+                    NimSessionHelper.startTeamSession(Activity(), act.getTid());
                 } else {
                     // 已结束的活动打开活动详情页
                     openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);

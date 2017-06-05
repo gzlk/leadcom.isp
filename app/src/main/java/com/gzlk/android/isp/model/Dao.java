@@ -54,8 +54,19 @@ public class Dao<E> {
         //return orm.queryById(id, clazz);
     }
 
+    /**
+     * 按指定字段值查询多个对象
+     */
     public List<E> query(String field, Object value) {
         return query(new QueryBuilder<E>(clazz).whereEquals(field, value));
+    }
+
+    /**
+     * 按指定字段值查询单个对象
+     */
+    public E querySingle(String field, Object value) {
+        List<E> list = query(field, value);
+        return (null == list || list.size() < 1) ? null : list.get(0);
     }
 
     public List<E> in(String field, List<String> values) {

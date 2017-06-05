@@ -2,12 +2,9 @@ package com.gzlk.android.isp.fragment.individual;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
@@ -19,7 +16,6 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.login.CodeVerifyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -37,7 +33,6 @@ import com.gzlk.android.isp.multitype.binder.user.UserSimpleMomentViewBinder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
-import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
