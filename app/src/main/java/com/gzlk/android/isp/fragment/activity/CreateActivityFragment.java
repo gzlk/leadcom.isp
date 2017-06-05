@@ -681,10 +681,11 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                     super.onResponse(activity, success, message);
                     if (success) {
                         // 成功之后设置mQuery为新建的活动的id
-                        if (null != activity) {
-                            mQueryId = activity.getId();
-                        }
-                        handleUnCallbackedAttachments();
+//                        if (null != activity) {
+//                            mQueryId = activity.getId();
+//                        }
+//                        handleUnCallbackedAttachments();
+                        successToClose();
                     } else {
                         hideImageHandlingDialog();
                     }
@@ -696,7 +697,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                 public void onResponse(Activity activity, boolean success, String message) {
                     super.onResponse(activity, success, message);
                     if (success) {
-                        handleUnCallbackedAttachments();
+                        //handleUnCallbackedAttachments();
+                        successToClose();
                     } else {
                         hideImageHandlingDialog();
                     }
