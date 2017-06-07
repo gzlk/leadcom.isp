@@ -12,6 +12,9 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.organization.Member;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +33,15 @@ import java.util.List;
 public class OrganizationContactPickFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_MEMBERS = "ocpf_members";
+    private static final String PARAM_SELECT_ALL = "ocpf_select_all";
 
     public static OrganizationContactPickFragment newInstance(String params) {
         OrganizationContactPickFragment ocp = new OrganizationContactPickFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
+        // 组织的id
         bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 已选中的成员列表
         bundle.putString(PARAM_MEMBERS, replaceJson(strings[1], true));
         ocp.setArguments(bundle);
         return ocp;
@@ -44,23 +50,38 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
+        isSelectAll = bundle.getBoolean(PARAM_SELECT_ALL, false);
         String json = bundle.getString(PARAM_MEMBERS, "[]");
         exists = Json.gson().fromJson(json, new TypeToken<ArrayList<Member>>() {
         }.getType());
+        if (null == exists) {
+            exists = new ArrayList<>();
+        }
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_SELECT_ALL, isSelectAll);
         bundle.putString(PARAM_MEMBERS, Json.gson().toJson(exists));
     }
 
+    // UI
+    @ViewId(R.id.ui_tool_view_select_all_icon)
+    private CustomTextView selectAllIcon;
+
+    private boolean isSelectAll = false;
     private ContactAdapter mAdapter;
     private ArrayList<Member> exists;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_organization_member;
     }
 
     @Override
@@ -103,12 +124,15 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-
+        remotePageNumber = 1;
+        displayLoading(true);
+        fetchingRemoteMembers(mOrganizationId, "");
     }
 
     @Override
     protected void onLoadingMore() {
-
+        displayLoading(true);
+        fetchingRemoteMembers(mOrganizationId, "");
     }
 
     @Override
@@ -116,24 +140,33 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
         return null;
     }
 
-    private void initializeAdapter() {
-        if (null == mAdapter) {
-            mAdapter = new ContactAdapter();
-            mRecyclerView.setAdapter(mAdapter);
-            // 查找本地该组织名下所有成员
-            loadingLocalMembers(mOrganizationId, "");
+    @Click({R.id.ui_tool_view_select_all_root})
+    private void click(View view) {
+        isSelectAll = !isSelectAll;
+        selectAllIcon.setTextColor(getColor(isSelectAll ? R.color.colorPrimary : R.color.textColorHintLight));
+        resetSelectAll();
+    }
+
+    private void resetSelectAll() {
+        int size = mAdapter.getItemCount();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                Member member = mAdapter.get(i);
+                member.setSelected(isSelectAll);
+                mAdapter.update(member);
+            }
         }
     }
 
-    @Override
-    protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
-        if (null != list && list.size() > 0) {
-            for (Member member : list) {
-                member.setSelected(exists.contains(member));
-            }
-            mAdapter.add(list, false);
+    private void initializeAdapter() {
+        if (null == mAdapter) {
+            setLoadingText(R.string.ui_organization_contact_loading_text);
+            mAdapter = new ContactAdapter();
+            mRecyclerView.setAdapter(mAdapter);
+            displayLoading(true);
+            // 查找本地该组织名下所有成员
+            fetchingRemoteMembers(mOrganizationId, "");
         }
-        fetchingRemoteMembers(organizationId, squadId);
     }
 
     @Override
@@ -141,10 +174,15 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
         if (null != list && list.size() > 0) {
             for (Member member : list) {
                 member.setSelected(exists.contains(member));
+                if (!member.isSelected()) {
+                    // 如果不在初始选中的列表里，则根据全选状态来设置选中与否
+                    member.setSelected(isSelectAll);
+                }
             }
-            mAdapter.add(list, false);
+            mAdapter.update(list, false);
             mAdapter.sort();
         }
+        displayLoading(false);
         stopRefreshing();
     }
 

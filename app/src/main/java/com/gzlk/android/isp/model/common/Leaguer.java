@@ -20,12 +20,18 @@ import com.litesuits.orm.db.annotation.Column;
 
 public class Leaguer extends Model {
 
+    // 用户的昵称
+    @Column(Field.Name)
+    private String name;
     //用户Id
     @Column(Field.UserId)
     private String userId;
     //用户姓名
     @Column(Field.UserName)
     private String userName;
+    // 用户头像
+    @Column(User.Field.HeadPhoto)
+    private String headPhoto;
     //角色Id
     @Column(Organization.Field.RoleId)
     private String roleId;
@@ -47,6 +53,9 @@ public class Leaguer extends Model {
         this.userId = userId;
     }
 
+    /**
+     * 姓名
+     */
     public String getUserName() {
         if (isEmpty(userName)) {
             userName = "无名氏";
@@ -54,9 +63,34 @@ public class Leaguer extends Model {
         return userName;
     }
 
+    /**
+     * 姓名
+     */
     public void setUserName(String userName) {
         this.userName = userName;
         spell = Utils.transformPinyin(this.userName);
+    }
+
+    /**
+     * 群聊里的昵称
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * 群聊里的昵称
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHeadPhoto() {
+        return headPhoto;
+    }
+
+    public void setHeadPhoto(String headPhoto) {
+        this.headPhoto = headPhoto;
     }
 
     public String getRoleId() {

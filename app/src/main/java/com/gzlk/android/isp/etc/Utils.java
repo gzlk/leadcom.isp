@@ -202,7 +202,7 @@ public class Utils {
     private static final long SECOND = 1000;
     private static final long MINUTE = 60 * SECOND;
     private static final long HOUR = 60 * MINUTE;
-    private static final long DAY = HOUR * 24;
+    public static final long DAY = HOUR * 24;
 
     public static String formatTimeAgo(String fmt, String time) {
         return formatTimeAgo(parseDate(fmt, time));

@@ -31,7 +31,9 @@ public abstract class BaseMessageActivity extends UI {
     private MessageFragment messageFragment;
 
     protected abstract MessageFragment fragment();
+
     protected abstract int getContentViewId();
+
     protected abstract void initToolBar();
 
     @Override
@@ -70,12 +72,12 @@ public abstract class BaseMessageActivity extends UI {
         customization = (SessionCustomization) getIntent().getSerializableExtra(Extras.EXTRA_CUSTOMIZATION);
 
         if (customization != null) {
-            addRightCustomViewOnActionBar(this, customization.buttons);
+            addRightCustomViewOnActionBar(this, customization.buttons, customization.buttonSelectorResources);
         }
     }
 
     // 添加action bar的右侧按钮及响应事件
-    private void addRightCustomViewOnActionBar(UI activity, List<SessionCustomization.OptionsButton> buttons) {
+    private void addRightCustomViewOnActionBar(UI activity, List<SessionCustomization.OptionsButton> buttons, int buttonSelectorResources) {
         if (buttons == null || buttons.size() == 0) {
             return;
         }
@@ -90,7 +92,8 @@ public abstract class BaseMessageActivity extends UI {
         for (final SessionCustomization.OptionsButton button : buttons) {
             ImageView imageView = new ImageView(activity);
             imageView.setImageResource(button.iconId);
-            imageView.setBackgroundResource(R.drawable.nim_nim_action_bar_button_selector);
+            imageView.setBackgroundResource(0 == buttonSelectorResources ?
+                    R.drawable.nim_nim_action_bar_button_selector : buttonSelectorResources);
             imageView.setPadding(ScreenUtil.dip2px(10), 0, ScreenUtil.dip2px(10), 0);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override

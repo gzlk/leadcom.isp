@@ -139,20 +139,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (activities.size() < 1) {
             // 列表为空则从缓存中取
-            switch (mType) {
-                case TYPE_CREATED:
-                    loadingCreatedActivity(true);
-                    break;
-                case TYPE_ENDED:
-                    loadingEndedActivity();
-                    break;
-                case TYPE_JOINED:
-                    loadingJoinedActivity();
-                    break;
-                case TYPE_NO_JOIN:
-                    loadingNotJoinActivity();
-                    break;
-            }
+            refreshActivity();
         } else {
             showActivity();
         }
@@ -161,15 +148,27 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
     private void refreshActivity() {
         switch (mType) {
             case TYPE_CREATED:
+                setNothingText(R.string.ui_activity_management_nothing_created);
+                setLoadingText(R.string.ui_activity_management_loading_created);
+                displayLoading(true);
                 loadingCreatedActivity(false);
                 break;
             case TYPE_ENDED:
+                setNothingText(R.string.ui_activity_management_nothing_ended);
+                setLoadingText(R.string.ui_activity_management_loading_ended);
+                displayLoading(true);
                 loadingEndedActivity();
                 break;
             case TYPE_JOINED:
+                setNothingText(R.string.ui_activity_management_nothing_joined);
+                setLoadingText(R.string.ui_activity_management_loading_joined);
+                displayLoading(true);
                 loadingJoinedActivity();
                 break;
             case TYPE_NO_JOIN:
+                setNothingText(R.string.ui_activity_management_nothing_not_join);
+                setLoadingText(R.string.ui_activity_management_loading_not_join);
+                displayLoading(true);
                 loadingNotJoinActivity();
                 break;
         }
@@ -195,7 +194,6 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
 
     // 从本地缓存中查找我发起的活动列表
     private void loadingCreatedActivity(boolean fromLocal) {
-        setNothingText(R.string.ui_activity_management_nothing_created);
         ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
             @Override
             public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -203,13 +201,13 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     addMultipleActivity(list, pageSize);
                 }
+                displayLoading(false);
                 stopRefreshing();
             }
         }).created(mQueryId, !fromLocal);
     }
 
     private void loadingEndedActivity() {
-        setNothingText(R.string.ui_activity_management_nothing_ended);
         ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
             @Override
             public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -217,13 +215,13 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     addMultipleActivity(list, pageSize);
                 }
+                displayLoading(false);
                 stopRefreshing();
             }
         }).ended(mQueryId);
     }
 
     private void loadingJoinedActivity() {
-        setNothingText(R.string.ui_activity_management_nothing_joined);
         ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
             @Override
             public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -231,14 +229,15 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     addMultipleActivity(list, pageSize);
                 }
+                displayLoading(false);
                 stopRefreshing();
             }
         }).joined(mQueryId);
     }
 
     private void loadingNotJoinActivity() {
-        setNothingText(R.string.ui_activity_management_nothing_not_join);
         stopRefreshing();
+        displayLoading(false);
         displayNothing(true);
     }
 

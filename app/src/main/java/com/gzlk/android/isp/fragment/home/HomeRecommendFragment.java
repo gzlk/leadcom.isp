@@ -142,6 +142,7 @@ public class HomeRecommendFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingFocusImages() {
+        displayLoading(true);
         FocusImageRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<FocusImage>() {
             @Override
             public void onResponse(List<FocusImage> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -153,6 +154,7 @@ public class HomeRecommendFragment extends BaseSwipeRefreshSupportFragment {
                         resetImages();
                     }
                 }
+                displayLoading(false);
                 stopRefreshing();
             }
         }).all();

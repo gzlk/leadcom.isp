@@ -243,17 +243,28 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
     protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
     }
 
-    protected void fetchingActivity(boolean fromRemote) {
+    /**
+     * 查询我加入的活动列表
+     */
+    protected void fetchingJoinedActivity(boolean fromRemote) {
         ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
             @Override
             public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                onFetchingActivityComplete(list);
+                if (null != list) {
+                    if (list.size() >= pageSize) {
+                        remotePageNumber++;
+                        isLoadingComplete(false);
+                    } else {
+                        isLoadingComplete(true);
+                    }
+                }
+                onFetchingJoinedActivityComplete(list);
             }
-        }).list(mOrganizationId, fromRemote);
+        }).joined(mOrganizationId);
     }
 
-    protected void onFetchingActivityComplete(List<Activity> list) {
+    protected void onFetchingJoinedActivityComplete(List<Activity> list) {
     }
 
     /**

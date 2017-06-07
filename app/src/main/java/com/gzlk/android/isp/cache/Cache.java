@@ -2,10 +2,13 @@ package com.gzlk.android.isp.cache;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
+
+import java.util.Date;
 
 /**
  * <b>功能描述：</b>全局缓存<br />
@@ -77,6 +80,15 @@ public class Cache {
         userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
         accessToken = PreferenceHelper.get(R.string.pf_last_login_user_token);
         nimToken = PreferenceHelper.get(R.string.pf_last_login_user_nim_token);
+    }
+
+    /**
+     * 查看当前用户是否需要同步基本信息
+     */
+    public boolean isNeedSync() {
+        long then = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), me.getLastLoginDate()).getTime();
+        long now = Utils.timestamp();
+        return (now - then) >= Utils.DAY * 7;
     }
 
     /**

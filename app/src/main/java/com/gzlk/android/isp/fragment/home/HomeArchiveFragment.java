@@ -7,8 +7,9 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.common.RecommendRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -67,7 +68,7 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        fetchingRecommendedActivity();
     }
 
     @Override
@@ -86,6 +87,9 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
                     if (null != list) {
                         if (list.size() >= pageSize) {
                             remotePageNumber++;
+                            isLoadingComplete(false);
+                        } else {
+                            isLoadingComplete(true);
                         }
                         ArrayList<Archive> temp = new ArrayList<>();
                         for (RecommendContent content : list) {
@@ -96,8 +100,12 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
                         initializeAdapter();
                         mAdapter.update(temp);
                         mAdapter.sort();
+                    } else {
+                        isLoadingComplete(true);
                     }
                     displayNothing(mAdapter.getItemCount() < 1);
+                } else {
+                    isLoadingComplete(true);
                 }
                 stopRefreshing();
                 displayLoading(false);
@@ -110,7 +118,12 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             // 到档案详情
             Archive arc = mAdapter.get(index);
-            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, arc.getId()), true, false);
+            if (isEmpty(arc.getContent())) {
+                ToastHelper.make().showMsg(R.string.ui_text_home_archive_content_empty);
+            } else {
+                int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+                openActivity(ArchiveDetailsWebViewFragment.class.getName(), format("%d,%s,%s", type, arc.isManager(), arc.getId()), true, false);
+            }
         }
     };
 

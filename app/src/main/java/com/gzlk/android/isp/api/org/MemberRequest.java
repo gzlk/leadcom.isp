@@ -39,6 +39,7 @@ public class MemberRequest extends Request<Member> {
     // 成员
     private static final String GROUP_MEMBER = "/group/groMember";
     private static final String SQUAD_MEMBER = "/group/groSquMember";
+    private static final String ACTIVITY_MEMBER = "/activity/actMember";
 
     @Override
     protected String url(String action) {
@@ -50,6 +51,9 @@ public class MemberRequest extends Request<Member> {
         switch (type) {
             case Member.Type.SQUAD:
                 api = SQUAD_MEMBER;
+                break;
+            case Member.Type.ACTIVITY:
+                api = ACTIVITY_MEMBER;
                 break;
         }
         return format("%s%s", api, action);
@@ -108,6 +112,8 @@ public class MemberRequest extends Request<Member> {
         switch (type) {
             case Member.Type.SQUAD:
                 return "squadId";
+            case Member.Type.ACTIVITY:
+                return "actId";
             default:
                 return "groupId";
         }
@@ -152,5 +158,14 @@ public class MemberRequest extends Request<Member> {
     public void search(int type, String id, String memberName, int pageNumber) {
         String param = format("%s?%s=%s&info=%s&pageNumber=%d", url(type, SEARCH), getOrgId(type), id, memberName, pageNumber);
         httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 活动中踢人
+     */
+    public void activityKickOut(String activityId, String userId) {
+        int type = Member.Type.ACTIVITY;
+        String param = format("%s?id=%s&userId=%s", url(type, "/kick"), activityId, userId);
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 }

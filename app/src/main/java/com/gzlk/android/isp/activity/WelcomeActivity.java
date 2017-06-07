@@ -127,8 +127,13 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     private void toLogin() {
-        LoginActivity.start(WelcomeActivity.this);
-        finish();
+        if (Cache.cache().isNeedSync()) {
+            // 登录信息已过期则需要重新登录
+            LoginActivity.start(WelcomeActivity.this);
+            finish();
+        } else {
+            switchToMain();
+        }
     }
 
     // 渐变显示欢迎进入按钮

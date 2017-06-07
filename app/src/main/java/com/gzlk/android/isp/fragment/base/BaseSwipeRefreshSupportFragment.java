@@ -134,7 +134,7 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
         gridOrientation = bundle.getInt(PARAM_ORIENTATION, 0);
         localPageNumber = bundle.getInt(PARAM_LOCAL_PAGE_NUM, 0);
         localPageCount = bundle.getInt(PARAM_LOCAL_PAGE_TOTAL, 0);
-        remotePageNumber = bundle.getInt(PARAM_REMOTE_PAGE_NUM, 0);
+        remotePageNumber = bundle.getInt(PARAM_REMOTE_PAGE_NUM, 1);
         remoteTotalPages = bundle.getInt(PARAM_REMOTE_PAGE_TOTAL, 0);
         remotePageSize = bundle.getInt(PARAM_REMOTE_PAGE_SIZE, 0);
         remoteTotalCount = bundle.getInt(PARAM_REMOTE_TOTAL_COUNT, 0);
@@ -189,21 +189,26 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
             if (!supportLoadingMore) {
                 return;
             }
-            RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
-            if (lm instanceof LinearLayoutManager) {
-                CustomLinearLayoutManager manager = (CustomLinearLayoutManager) lm;
-                // 停止滚动时
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    // 获取最后一个完全显示 Item 的 position
-                    int lastVisibleItem = manager.findLastCompletelyVisibleItemPosition();
-                    int totalItemCount = manager.getItemCount();
-                    // 判断是否滚动到底部，并且不在加载状态
-                    if (lastVisibleItem == (totalItemCount - 1) && !forceToLoadingMore) {
-                        forceToLoadingMore = true;
-                        loadingText(R.string.hlklib_text_refreshable_recycler_view_loading_more);
-                        showView(mLoadingMoreProgress, true);
-                        showLoadingMoreLayout(true);
-                    }
+            // 停止滚动时
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+                RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+                int totalItemCount = lm.getItemCount();
+                int lastVisibleItem;
+
+                // 获取最后一个完全显示 Item 的 position
+                if (lm instanceof StaggeredGridLayoutManager) {
+                    lastVisibleItem = ((StaggeredGridLayoutManager) lm).findLastCompletelyVisibleItemPositions(null)[0];
+                } else {
+                    lastVisibleItem = ((LinearLayoutManager) lm).findLastCompletelyVisibleItemPosition();
+                }
+
+                // 判断是否滚动到底部，并且不在加载状态
+                if (lastVisibleItem == (totalItemCount - 1) && !forceToLoadingMore) {
+                    forceToLoadingMore = true;
+                    loadingText(R.string.hlklib_text_refreshable_recycler_view_loading_more);
+                    showView(mLoadingMoreProgress, true);
+                    showLoadingMoreLayout(true);
                 }
             }
         }

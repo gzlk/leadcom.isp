@@ -3,7 +3,7 @@
 
     <string name="app_name">@string/app_name_default</string>
     <string name="app_sms_stuff_header">历康科技</string>
-    <string name="app_company_name">广州历康科技信息股份有限公司</string>
+    <string name="app_company_name">广州历康信息科技股份有限公</string>
     <string name="app_company_website">www.leadcom.net.cn</string>
 
     <string name="ui_base_text_welcome_button">立即进入</string>
@@ -13,6 +13,7 @@
     <string name="ui_base_text_still_editing">
         <![CDATA[您正在编辑的内容尚未保存。<br/>确定就此放弃了吗？]]>
     </string>
+    <string name="ui_base_text_loading_web_page">正在加载网页，请稍候&#8230;</string>
     <string name="ui_base_text_press_again_to_exit">再按一次退出</string>
     <string name="ui_base_text_no_sdcard_exists">没有可用的存储设备</string>
     <string name="ui_base_text_choose_image" formatted="false">选择照片(最多能选%d张)</string>
@@ -106,6 +107,7 @@
     <string name="ui_base_text_public">公开</string>
     <string name="ui_base_text_private">私密</string>
     <string name="ui_base_text_publish">发布</string>
+    <string name="ui_base_text_kick_out">踢出</string>
 
     <string name="ui_base_text_record_voice">录音</string>
 

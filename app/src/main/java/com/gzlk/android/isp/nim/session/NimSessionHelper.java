@@ -372,6 +372,8 @@ public class NimSessionHelper {
             teamCustomization.buttons = buttons;
 
             teamCustomization.withSticker = false;
+
+            teamCustomization.buttonSelectorResources = R.drawable.nim_nim_action_bar_button_selector;
         }
 
         return teamCustomization;

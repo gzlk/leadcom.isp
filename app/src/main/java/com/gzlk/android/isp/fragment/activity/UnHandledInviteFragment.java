@@ -46,6 +46,7 @@ public class UnHandledInviteFragment extends BaseOrganizationFragment {
     public void doingInResume() {
         setCustomTitle(R.string.ui_activity_un_handled_invite_fragment_title);
         initializeAdapter();
+        setLoadingText(R.string.ui_activity_unhandled_invite_loading);
         fetchingUnhandled();
     }
 

@@ -47,6 +47,10 @@ public abstract class Request<T> {
      */
     protected static final String DELETE = "/delete";
     /**
+     * 退出
+     */
+    protected static final String EXIT = "/exit";
+    /**
      * 更新
      */
     protected static final String UPDATE = "/update";

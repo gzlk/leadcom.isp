@@ -77,10 +77,20 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
         for (int i = 0; i < size; i++) {
             ImageDisplayer displayer = (ImageDisplayer) LayoutInflater.from(headerContainer.getContext())
                     .inflate(R.layout.tool_view_small_user_header, headerContainer, false);
+            displayer.addOnImageClickListener(onImageClickListener);
             headerContainer.addView(displayer);
             if (i >= 9) {
                 break;
             }
         }
     }
+
+    private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
+        @Override
+        public void onImageClick(String url) {
+            if (null != mOnViewHolderClickListener) {
+                mOnViewHolderClickListener.onClick(getAdapterPosition());
+            }
+        }
+    };
 }

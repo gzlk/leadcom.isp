@@ -93,9 +93,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
         displayLoading(true);
         fetchingJoinedRemoteOrganizations();
         if (!isEmpty(mQueryId)) {
-            fetchingActivity(true);
-            // 拉取我为处理的群活动邀请
-            fetchingUnHandledActivityInvite(mQueryId);
+            fetchingJoinedActivity(true);
         } else {
             displayLoading(false);
         }
@@ -112,11 +110,10 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
         }
         stopRefreshing();
-        setSupportLoadingMore(false);
     }
 
     @Override
-    protected void onFetchingActivityComplete(List<Activity> list) {
+    protected void onFetchingJoinedActivityComplete(List<Activity> list) {
         if (null != list) {
             updateActivityList(list);
         } else {
@@ -126,7 +123,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
         }
         stopRefreshing();
-        setSupportLoadingMore(false);
+        // 拉取我未处理的群活动邀请
+        fetchingUnHandledActivityInvite(mQueryId);
     }
 
     @Override
@@ -142,7 +140,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onLoadingMore() {
-
+        fetchingJoinedActivity(true);
     }
 
     @Override
@@ -250,18 +248,24 @@ public class ActivityFragment extends BaseOrganizationFragment {
         if (selectedIndex < 0) return;
         // 加载本地该组织的活动列表
         Organization org = concernedViewHolder.get(selectedIndex);
-        mQueryId = org.getId();
-        mOrganizationId = mQueryId;
-        // 更改标题栏上的文字和icon
-        if (getUserVisibleHint()) {
-            // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
-            mainFragment.setTitleText(org.getName());
+        if (null == org) {
+            return;
         }
-        for (Activity activity : activities) {
-            mAdapter.remove(activity);
+        if (isEmpty(mQueryId) || !mQueryId.equals(org.getId())) {
+            // 群id不一样时才刷新
+            mQueryId = org.getId();
+            mOrganizationId = mQueryId;
+            // 更改标题栏上的文字和icon
+            if (getUserVisibleHint()) {
+                // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
+                mainFragment.setTitleText(org.getName());
+            }
+            for (Activity activity : activities) {
+                mAdapter.remove(activity);
+            }
+            activities.clear();
+            refreshingItems();
         }
-        activities.clear();
-        refreshingItems();
     }
 
     private DepthViewPager.OnPageChangeListener onPageChangeListener = new DepthViewPager.OnPageChangeListener() {

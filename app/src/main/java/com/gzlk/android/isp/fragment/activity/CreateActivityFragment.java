@@ -29,6 +29,7 @@ import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Attachment;
@@ -654,6 +655,10 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_activity_create_content_invalid);
             return;
         }
+        if (selectedMembers.size() < 1) {
+            ToastHelper.make().showMsg(R.string.ui_activity_create_member_invalid);
+            return;
+        }
         Utils.hidingInputBoard(contentView);
         if (getWaitingForUploadFiles().size() > 0) {
             uploadFiles();
@@ -668,6 +673,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         String title = titleHolder.getValue().trim();
         String address = addressHolder.getValue().trim();
         String content = contentView.getValue().trim();
+        String beginDate = isEmpty(happenDate) ? Model.DFT_DATE : happenDate;
         ArrayList<String> ids = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
         for (Member member : selectedMembers) {
@@ -690,7 +696,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                         hideImageHandlingDialog();
                     }
                 }
-            }).add(title, content, openStatus, address, happenDate, mGroupId, cover, ids, names, labelsId, attachments);
+            }).add(title, content, openStatus, address, beginDate, mGroupId, cover, ids, names, labelsId, attachments);
         } else {
             ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
                 @Override
@@ -703,7 +709,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                         hideImageHandlingDialog();
                     }
                 }
-            }).update(mQueryId, title, content, openStatus, address, happenDate, cover, ids, names, labelsId, attachments);
+            }).update(mQueryId, title, content, openStatus, address, beginDate, cover, ids, names, labelsId, attachments);
         }
     }
 

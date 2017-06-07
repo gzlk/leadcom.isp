@@ -4,6 +4,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Leaguer;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
@@ -37,12 +38,16 @@ public class Member extends Leaguer {
          * 小组成员
          */
         int SQUAD = 2;
+        /**
+         * 活动成员
+         */
+        int ACTIVITY = 3;
     }
 
     private static ExclusionStrategy strategy = new ExclusionStrategy() {
         @Override
         public boolean shouldSkipField(FieldAttributes f) {
-            return f.getName().contains("groRole");
+            return f.getName().contains("groRole") || f.getName().contains("strategy");
         }
 
         @Override
@@ -69,6 +74,9 @@ public class Member extends Leaguer {
     @Column(User.Field.Phone)
     private String phone;          //用户手机
 
+    //活动Id
+    @Column(Activity.Field.ActivityId)
+    private String actId;
     @Ignore
     private Role groRole;
 
@@ -94,6 +102,14 @@ public class Member extends Leaguer {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getActId() {
+        return actId;
+    }
+
+    public void setActId(String actId) {
+        this.actId = actId;
     }
 
     public Role getGroRole() {

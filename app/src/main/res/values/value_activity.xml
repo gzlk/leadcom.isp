@@ -12,10 +12,12 @@
     <string-array name="ui_activity_home_page_items">
         <item>0|||</item>
         <item>@string/ui_activity_main_not_joined_text</item>
+        <item>@string/ui_activity_main_issue_text</item>
     </string-array>
 
     <string name="ui_activity_un_handled_invite_fragment_title">@string/ui_activity_base_not_join_in</string>
     <string name="ui_activity_unhandled_invite_nothing">目前没有更多待处理的内容</string>
+    <string name="ui_activity_unhandled_invite_loading">正在加载未处理的活动邀请，请稍候&#8230;</string>
 
     <string name="ui_activity_enter_fragment_title">活动报名</string>
     <string name="ui_activity_entrance_button_reject">暂不参加</string>
@@ -31,6 +33,8 @@
     </string-array>
 
     <string name="ui_activity_property_button_text">退出活动</string>
+    <string name="ui_activity_property_exit_warning">您确定不再留恋就此退出这个活动吗？</string>
+    <string name="ui_activity_property_exited">您已退出本活动</string>
     <string-array name="ui_activity_property_items">
         <item>0|||</item>
         <item>1|活动成员|%d人|1</item>
@@ -43,6 +47,12 @@
         <item>8|查看聊天内容||1</item>
         <item>9|清空聊天记录||0</item>
     </string-array>
+
+    <string name="ui_activity_member_fragment_title">活动中的成员</string>
+    <string name="ui_activity_member_loading">正在加载活动中的成员列表，请稍候&#8230;</string>
+    <string name="ui_activity_member_empty">本活动中暂时没有其他成员</string>
+    <string name="ui_activity_member_invite_loading">正在向您选择的人员发送邀请&#8230;</string>
+    <string name="ui_activity_member_invite_success">已向相关人员发送活动邀请</string>
 
     <string name="ui_activity_create_fragment_title">新建活动</string>
     <string name="ui_activity_create_fragment_title_edit">修改活动</string>
@@ -71,6 +81,7 @@
     <string name="ui_activity_create_title_invalid">活动主题无效</string>
     <string name="ui_activity_create_address_invalid">活动地点无效</string>
     <string name="ui_activity_create_content_invalid">活动简介无效</string>
+    <string name="ui_activity_create_member_invalid">请选择活动参加人员</string>
 
     <string name="ui_activity_cover_picker_fragment_title">添加封面</string>
     <string name="ui_activity_cover_picker_image_warning">建议图片尺寸900x525,小于4M</string>
@@ -89,6 +100,10 @@
     <string name="ui_activity_management_title_button_text_2">我发起</string>
     <string name="ui_activity_management_title_button_text_3">未报名</string>
     <string name="ui_activity_management_title_button_text_4">已结束</string>
+    <string name="ui_activity_management_loading_joined">正在加载您参加过的活动请稍候&#8230;</string>
+    <string name="ui_activity_management_loading_created">正在加载您创建的活动请稍候&#8230;</string>
+    <string name="ui_activity_management_loading_not_join">正在加载您未参加的活动请稍候&#8230;</string>
+    <string name="ui_activity_management_loading_ended">正在加载已结束的活动请稍候&#8230;</string>
     <string name="ui_activity_management_nothing_joined">您未参加过任何活动</string>
     <string name="ui_activity_management_nothing_created">所有您创建的活动都在这里了</string>
     <string name="ui_activity_management_nothing_not_join">未参加的活动都在这里，您没有错过什么</string>
@@ -97,6 +112,8 @@
     <string name="ui_activity_details_title_button_text_1">活动详情</string>
     <string name="ui_activity_details_title_button_text_2">报名统计</string>
     <string name="ui_activity_details_title_button_text_3">其他统计</string>
+    <string name="ui_activity_details_delete_warning">您确定要删除这个活动吗？</string>
+    <string name="ui_activity_details_deleted">您已删除本活动</string>
 
     <string-array name="ui_activity_details_items">
         <item>0|活动主题：|%s|0</item>

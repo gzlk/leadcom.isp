@@ -3,10 +3,18 @@ package com.gzlk.android.isp.fragment.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.activity.ActRequest;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
@@ -35,6 +43,10 @@ public class ActivityDetailsMainFragment extends BaseViewPagerSupportFragment {
 
     @ViewId(R.id.ui_ui_custom_title_left_text)
     private TextView leftText;
+    @ViewId(R.id.ui_ui_custom_title_right_container)
+    private LinearLayout rightContainer;
+    @ViewId(R.id.ui_ui_custom_title_right_text)
+    private TextView rightText;
     @ViewId(R.id.ui_tool_view_activity_details_title_button1)
     private CorneredButton button1;
     @ViewId(R.id.ui_tool_view_activity_details_title_button2)
@@ -53,11 +65,19 @@ public class ActivityDetailsMainFragment extends BaseViewPagerSupportFragment {
     }
 
     @Override
+    public void doingInResume() {
+        super.doingInResume();
+        rightContainer.setVisibility(View.GONE);
+        rightText.setText(R.string.ui_base_text_delete);
+    }
+
+    @Override
     protected void initializeFragments() {
         if (mFragments.size() < 1) {
             mFragments.add(ActivityDetailsSingleFragment.newInstance(mQueryId));
             mFragments.add(ActivityDetailsStatisticsFragment.newInstance("0"));
             mFragments.add(ActivityDetailsStatisticsFragment.newInstance("1"));
+            ((ActivityDetailsSingleFragment) mFragments.get(0)).manager = this;
         }
     }
 
@@ -79,11 +99,15 @@ public class ActivityDetailsMainFragment extends BaseViewPagerSupportFragment {
     @Click({R.id.ui_tool_view_activity_details_title_button1,
             R.id.ui_tool_view_activity_details_title_button2,
             R.id.ui_tool_view_activity_details_title_button3,
-            R.id.ui_ui_custom_title_left_container})
+            R.id.ui_ui_custom_title_left_container,
+            R.id.ui_ui_custom_title_right_container})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_ui_custom_title_left_container:
                 finish();
+                break;
+            case R.id.ui_ui_custom_title_right_container:
+                warningDelete();
                 break;
             case R.id.ui_tool_view_activity_details_title_button1:
                 setDisplayPage(0);
@@ -95,5 +119,33 @@ public class ActivityDetailsMainFragment extends BaseViewPagerSupportFragment {
                 setDisplayPage(2);
                 break;
         }
+    }
+
+    public void wannaDelete() {
+        rightContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void warningDelete() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_details_delete_warning, R.string.ui_base_text_yes, R.string.ui_base_text_think_again, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                deleteActivity();
+                return true;
+            }
+        }, null);
+    }
+
+    private void deleteActivity() {
+        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+            @Override
+            public void onResponse(Activity activity, boolean success, String message) {
+                super.onResponse(activity, success, message);
+                if (success) {
+                    new Dao<>(Activity.class).delete(mQueryId);
+                    ToastHelper.make().showMsg(R.string.ui_activity_details_deleted);
+                    finish();
+                }
+            }
+        }).delete(mQueryId);
     }
 }

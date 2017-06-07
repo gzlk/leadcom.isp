@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
@@ -67,12 +68,17 @@ public class ActivityManagementFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         if (mFragments.size() < 1) {
+            // 已参加的
             String param = format("%s,%d", mQueryId, MyActivitiesFragment.TYPE_JOINED);
             mFragments.add(MyActivitiesFragment.newInstance(param));
+            // 我创建的
             param = format("%s,%d", mQueryId, MyActivitiesFragment.TYPE_CREATED);
             mFragments.add(MyActivitiesFragment.newInstance(param));
-            param = format("%s,%d", mQueryId, MyActivitiesFragment.TYPE_NO_JOIN);
-            mFragments.add(MyActivitiesFragment.newInstance(param));
+            //param = format("%s,%d", mQueryId, MyActivitiesFragment.TYPE_NO_JOIN);
+            //mFragments.add(MyActivitiesFragment.newInstance(param));
+            // 未参加的
+            mFragments.add(UnHandledInviteFragment.newInstance(mQueryId));
+            // 已结束的
             param = format("%s,%d", mQueryId, MyActivitiesFragment.TYPE_ENDED);
             mFragments.add(MyActivitiesFragment.newInstance(param));
         }
@@ -96,7 +102,7 @@ public class ActivityManagementFragment extends BaseViewPagerSupportFragment {
         button4.setTextColor(position == 3 ? Color.WHITE : color2);
 
         for (int i = 0, len = mFragments.size(); i < len; i++) {
-            MyActivitiesFragment my = (MyActivitiesFragment) mFragments.get(i);
+            BaseTransparentSupportFragment my = mFragments.get(i);
             my.setViewPagerDisplayedCurrent(position == i);
         }
     }

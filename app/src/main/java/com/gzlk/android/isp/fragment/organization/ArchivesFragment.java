@@ -8,10 +8,11 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveNewFragment;
 import com.gzlk.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -191,8 +192,13 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
             Archive archive = mAdapter.get(index);
-            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, archive.getId()), true, false);
-            //openActivity(ArchiveDetailsWebViewFragment.class.getName(), groupArchive.getId(), true, false);
+            if (isEmpty(archive.getContent())) {
+                ToastHelper.make().showMsg(R.string.ui_text_home_archive_content_empty);
+            } else {
+                //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, archive.getId()), true, false);
+                openActivity(ArchiveDetailsWebViewFragment.class.getName(),
+                        format("%d,%s,%s", Archive.Type.GROUP, archive.isManager(), archive.getId()), true, false);
+            }
         }
     };
 

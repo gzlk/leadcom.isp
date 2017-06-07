@@ -1,10 +1,9 @@
 package com.gzlk.android.isp.fragment.home;
 
 import android.os.Bundle;
-import android.webkit.WebView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.gzlk.android.isp.fragment.WebViewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 
 /**
@@ -18,7 +17,7 @@ import com.gzlk.android.isp.helper.StringHelper;
  * <b>修改备注：</b><br />
  */
 
-public class InnerWebViewFragment extends BaseTransparentSupportFragment {
+public class InnerWebViewFragment extends WebViewFragment {
 
     private static final String PARAM_TITLE = "iwvf_title";
 
@@ -45,12 +44,6 @@ public class InnerWebViewFragment extends BaseTransparentSupportFragment {
     }
 
     private String mTitle;
-    private WebView webView;
-
-    @Override
-    public int getLayout() {
-        return R.layout.fragment_archive_details_web_view;
-    }
 
     @Override
     public void doingInResume() {
@@ -58,20 +51,18 @@ public class InnerWebViewFragment extends BaseTransparentSupportFragment {
         if (StringHelper.isEmpty(mQueryId)) {
             closeWithWarning(R.string.ui_text_home_inner_web_view_invalid_url);
         } else {
-            if (null == webView) {
-                webView = (WebView) mRootView;
-                webView.loadUrl(mQueryId);
-            }
+            super.doingInResume();
         }
+    }
+
+    @Override
+    protected String loadingUrl() {
+        log("loading url from inner WebView: " + mQueryId);
+        return mQueryId;
     }
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return true;
-    }
-
-    @Override
-    protected void destroyView() {
-
     }
 }

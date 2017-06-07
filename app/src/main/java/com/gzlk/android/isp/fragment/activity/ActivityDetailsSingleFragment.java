@@ -56,6 +56,8 @@ public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragmen
 
     private String[] items;
 
+    public ActivityDetailsMainFragment manager;
+
     @Override
     public int getLayout() {
         return R.layout.fragment_activity_management_end;
@@ -87,6 +89,9 @@ public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragmen
                 if (success) {
                     endButton.setEnabled(false);
                     endButton.setText(R.string.ui_activity_details_ended_activity);
+                    if (activity.getStatus() == Activity.Status.ENDED) {
+                        manager.wannaDelete();
+                    }
                 }
             }
         }).end(mQueryId);
@@ -114,9 +119,13 @@ public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragmen
         titleHolder.showContent(format(items[0], activity.getTitle()));
         timeHolder.showContent(format(items[1], formatDate(activity.getBeginDate())));
         addressHolder.showContent(format(items[2], activity.getContent()));
-        endButton.setVisibility(activity.getCreatorId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
+        boolean isManager = activity.getCreatorId().equals(Cache.cache().userId);
+        endButton.setVisibility(isManager ? View.VISIBLE : View.GONE);
         endButton.setEnabled(activity.getStatus() == Activity.Status.ACTIVE);
         endButton.setText(activity.getStatus() == Activity.Status.ACTIVE ? R.string.ui_activity_details_button_close_text : R.string.ui_activity_details_ended_activity);
+        if (activity.getStatus() == Activity.Status.ENDED && isManager) {
+            manager.wannaDelete();
+        }
     }
 
     private void loadingActivity() {

@@ -42,6 +42,7 @@
     <string name="ui_icon_home">&#xe607;</string>
     <string name="ui_icon_main_activity">&#xe62e;</string>
     <string name="ui_icon_main_individual">&#xe899;</string>
+    <string name="ui_icon_single_head">&#xe617;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>

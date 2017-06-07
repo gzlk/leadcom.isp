@@ -8,4 +8,5 @@
     <string name="ui_text_home_top_channel_4">说说</string>
 
     <string name="ui_text_home_inner_web_view_invalid_url">无效的url路径</string>
+    <string name="ui_text_home_archive_content_empty">该档案的内容是空的</string>
 </resources>

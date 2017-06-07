@@ -19,11 +19,12 @@ import java.util.ArrayList;
  */
 public class SessionCustomization implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     /**
      * 聊天背景。优先使用uri，如果没有提供uri，使用color。如果没有color，使用默认。uri暂时支持以下格式：<br>
-     *     drawable: android.resource://包名/drawable/资源名
-     *     assets: file:///android_asset/{asset文件路径}
-     *     file: file:///文件绝对路径
+     * drawable: android.resource://包名/drawable/资源名
+     * assets: file:///android_asset/{asset文件路径}
+     * file: file:///文件绝对路径
      */
     public String backgroundUri;
     public int backgroundColor;
@@ -43,15 +44,21 @@ public class SessionCustomization implements Serializable {
     public ArrayList<OptionsButton> buttons;
 
     /**
+     * ActionBar点击响应资源
+     */
+    public int buttonSelectorResources = 0;
+
+    /**
      * 如果OptionsButton的点击响应中需要startActivityForResult，可在此函数中处理结果。
      * 需要注意的是，由于加号中的Action的限制，RequestCode只能使用int的最低8位。
      *
-     * @param activity 当前的聊天Activity
+     * @param activity    当前的聊天Activity
      * @param requestCode 请求码
-     * @param resultCode 结果码
-     * @param data 返回的结果数据
+     * @param resultCode  结果码
+     * @param data        返回的结果数据
      */
-    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {}
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+    }
 
     // uikit内建了对贴图消息的输入和管理展示，并和emoji表情整合在了一起，但贴图消息的附件定义开发者需要根据自己的扩展
     public MsgAttachment createStickerAttachment(String category, String item) {

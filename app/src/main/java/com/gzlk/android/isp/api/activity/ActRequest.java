@@ -198,6 +198,23 @@ public class ActRequest extends Request<Activity> {
         httpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 更新活动中通知人员列表
+     */
+    public void update(String activityId, ArrayList<String> ids, ArrayList<String> names) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", activityId)
+                    .put("accessToken", Cache.cache().accessToken)
+                    .put("memberIdArray", new JSONArray(ids))
+                    .put("memberNameArray", new JSONArray(names));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
+    }
+
     public static final int TYPE_TITLE = 1;
     public static final int TYPE_IMAGE = 2;
 
@@ -235,6 +252,14 @@ public class ActRequest extends Request<Activity> {
     public void delete(@NonNull String activityId) {
         // id=""
         httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(DELETE), activityId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 退出指定活动
+     */
+    public void exit(@NonNull String activityId) {
+        // id="",accessToken=""
+        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s&accessToken=%s", url(EXIT), activityId, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     private void findInCache(String activityId) {

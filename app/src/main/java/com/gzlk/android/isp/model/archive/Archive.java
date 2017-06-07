@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.archive;
 
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -221,6 +222,13 @@ public class Archive extends Additional {
                 }
             }
         }
+    }
+
+    /**
+     * 当前登录者是否是本档案的管理员
+     */
+    public boolean isManager() {
+        return Cache.cache().userId.equals(userId);
     }
 
     @Column(Organization.Field.GroupId)

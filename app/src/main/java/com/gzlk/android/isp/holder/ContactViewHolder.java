@@ -33,6 +33,10 @@ public class ContactViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_contact_swipe_layout)
     private SwipeLayout swipeLayout;
+    @ViewId(R.id.ui_tool_view_contact_button1)
+    private TextView button1;
+    @ViewId(R.id.ui_tool_view_contact_button2)
+    private TextView button2;
     @ViewId(R.id.ui_holder_view_contact_header)
     private ImageDisplayer headerView;
     @ViewId(R.id.ui_holder_view_contact_name)
@@ -48,10 +52,34 @@ public class ContactViewHolder extends BaseViewHolder {
 
     private boolean buttonVisible = false;
     private boolean pickerVisible = false;
+    private int imageSize;
 
     public ContactViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        imageSize = getDimension(R.dimen.ui_static_dp_30);
+    }
+
+    /**
+     * 滑动后第一个按钮是否可见
+     */
+    public void showButton1(boolean shown) {
+        button1.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * 滑动后第二个按钮是否可见
+     */
+    public void showButton2(boolean shown) {
+        button2.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+
+    public void button2Text(int text) {
+        button2.setText(text);
+    }
+
+    public void button2Text(String text) {
+        button2.setText(text);
     }
 
     public SwipeLayout getSwipeLayout() {
@@ -63,6 +91,7 @@ public class ContactViewHolder extends BaseViewHolder {
         text = getSearchingText(text, searching);
         nameView.setText(Html.fromHtml(text));
         phoneView.setText(user.getPhone());
+        headerView.displayImage(user.getHeadPhoto(), imageSize, false, false);
         myselfView.setVisibility(user.getId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
     }
 
@@ -79,7 +108,8 @@ public class ContactViewHolder extends BaseViewHolder {
         }
         text = getSearchingText(text, searchingText);
         phoneView.setText(Html.fromHtml(text));
-        boolean isMe = member.getUserId().equals(Cache.cache().userId);
+        headerView.displayImage(member.getHeadPhoto(), imageSize, false, false);
+        boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
         button.setVisibility(buttonVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
         if (buttonVisible) {
@@ -121,7 +151,7 @@ public class ContactViewHolder extends BaseViewHolder {
     }
 
     @Click({R.id.ui_holder_view_contact_layout,
-            R.id.ui_tool_view_contact_delete,
+            R.id.ui_tool_view_contact_button2,
             R.id.ui_holder_view_contact_button,
             R.id.ui_holder_view_contact_picker})
     private void click(View view) {
@@ -132,7 +162,7 @@ public class ContactViewHolder extends BaseViewHolder {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }
                 break;
-            case R.id.ui_tool_view_contact_delete:
+            case R.id.ui_tool_view_contact_button2:
                 if (null != onUserDeleteListener) {
                     onUserDeleteListener.onDelete(ContactViewHolder.this);
                 }

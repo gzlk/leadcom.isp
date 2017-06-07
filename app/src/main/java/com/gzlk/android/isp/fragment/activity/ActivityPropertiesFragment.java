@@ -13,6 +13,8 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -21,6 +23,7 @@ import com.gzlk.android.isp.holder.UserHeaderBigViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.ToggleableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
@@ -59,8 +62,32 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
 
     @Override
     protected void onBottomButtonClicked() {
+        warningExit();
+    }
+
+    private void warningExit() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_property_exit_warning, R.string.ui_base_text_yes, R.string.ui_base_text_think_again, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                exitActivity();
+                return true;
+            }
+        }, null);
+    }
+
+    private void exitActivity() {
         // 退出活动
-        ToastHelper.make().showMsg("暂时不能退出活动（无api支撑）");
+        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+            @Override
+            public void onResponse(Activity activity, boolean success, String message) {
+                super.onResponse(activity, success, message);
+                if (success) {
+                    new Dao<>(Activity.class).delete(mQueryId);
+                    ToastHelper.make().showMsg(R.string.ui_activity_property_exited);
+                    finish();
+                }
+            }
+        }).exit(mQueryId);
     }
 
     @Override
@@ -69,6 +96,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
     }
 
     private void fetchingActivity(boolean fromRemote) {
+        displayLoading(true);
         ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
             @Override
             public void onResponse(Activity activity, boolean success, String message) {
@@ -82,6 +110,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                     }
                 }
                 stopRefreshing();
+                displayLoading(false);
             }
         }).find(mQueryId, fromRemote);
     }
@@ -132,13 +161,17 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         @Override
         public void onClick(int index) {
             switch (index) {
+                case 1:
+                    // 查看活动成员列表
+                    openActivity(ActivityMemberFragment.class.getName(), mQueryId, true, false);
+                    break;
                 case 2:
                     // 创建者是当前登录的用户时，可以 修改群名称
                     Activity activity = (Activity) mAdapter.get(0);
                     if (activity.getCreatorId().equals(Cache.cache().userId)) {
                         String name = StringHelper.isEmpty(activity.getTitle()) ? "" : activity.getTitle();
-                        openActivity(BasePopupInputSupportFragment.class.getName(),
-                                StringHelper.getString(R.string.ui_popup_input_name, name), REQUEST_NAME, true, false);
+                        String regex = StringHelper.getString(R.string.ui_popup_input_activity_title, name).replace("", "");
+                        openActivity(BasePopupInputSupportFragment.class.getName(), regex, REQUEST_NAME, true, false);
                     }
                     break;
             }
@@ -155,13 +188,14 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
     }
 
     private void tryEditActivity(int type, String value) {
+        displayLoading(true);
         ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
             @Override
             public void onResponse(Activity activity, boolean success, String message) {
                 super.onResponse(activity, success, message);
-                if (success) {
-                    fetchingActivity(true);
-                }
+                // 无论活动名称更改成功与否都重新拉取活动的信息
+                // 此时失败有可能是服务器端不能同步网易云，但实际上名称已经改了
+                fetchingActivity(true);
             }
         }).update(mQueryId, type, value);
     }
@@ -180,7 +214,9 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                     uhbvh.addOnViewHolderClickListener(viewHolderClickListener);
                     return uhbvh;
                 case VT_MEMBER:
-                    return new SimpleMemberViewHolder(itemView, fragment);
+                    SimpleMemberViewHolder memberViewHolder = new SimpleMemberViewHolder(itemView, fragment);
+                    memberViewHolder.addOnViewHolderClickListener(viewHolderClickListener);
+                    return memberViewHolder;
                 case VT_TOGGLE:
                     return new ToggleableViewHolder(itemView, fragment);
                 default:

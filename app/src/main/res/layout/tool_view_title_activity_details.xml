@@ -6,6 +6,8 @@
 
     <include layout="@layout/tool_view_activity_normal_title_left_container" />
 
+    <include layout="@layout/tool_view_activity_normal_title_right_container" />
+
     <com.hlk.hlklib.lib.view.CorneredView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
