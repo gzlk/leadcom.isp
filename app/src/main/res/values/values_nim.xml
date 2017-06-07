@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_nim_action_camera">相　机</string>
+    <string name="ui_nim_action_file">文　件</string>
+    <string name="ui_nim_action_notice">通　知</string>
+    <string name="ui_nim_action_survey">问卷调查</string>
+    <string name="ui_nim_action_issue">议　题</string>
+    <string name="ui_nim_action_vote">投　票</string>
+    <string name="ui_nim_action_sign">签　到</string>
+    <string name="ui_nim_action_minutes">会议记录</string>
+    <string name="ui_nim_action_image">图　片</string>
+    <string name="ui_nim_action_video">视　频</string>
+</resources>

@@ -123,6 +123,7 @@
         <item>7|注册时间|%s|1</item>
         <item>8|手机号码|%s|1</item>
     </string-array>
+    <string name="ui_text_user_information_loading">正在加载用户信息，请稍候&#8230;</string>
     <string name="ui_text_user_information_to_archives">查看档案</string>
     <string name="ui_text_user_information_to_chat">发消息</string>
 
