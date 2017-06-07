@@ -3,6 +3,7 @@ package com.gzlk.android.isp.api;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -17,6 +18,7 @@ import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -201,7 +203,7 @@ public abstract class Request<T> {
                 log(format("url(%s): %s\nbody: %s\nsuccess: failed", methods, url, body));
                 fireFailedListenerEvents("");
             }
-        }).setHttpBody(new JsonBody(body), methods);
+        }).addHeader("accessToken", Cache.cache().accessToken).setHttpBody(new JsonBody(body), methods);
     }
 
     /**
