@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.individual;
 
 import android.view.View;
 

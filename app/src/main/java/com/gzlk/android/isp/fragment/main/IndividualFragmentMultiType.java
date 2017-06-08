@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
@@ -16,8 +15,8 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.MomentNewFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.IndividualFunctionViewHolder;
-import com.gzlk.android.isp.holder.MomentViewHolder;
+import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
+import com.gzlk.android.isp.holder.individual.MomentViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;

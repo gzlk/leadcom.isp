@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.individual;
 
 import android.view.View;
 import android.widget.TextView;
@@ -9,6 +9,8 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.individual.QRCodeFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
@@ -63,6 +65,6 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
         ((BaseTransparentSupportFragment) fragment()).tryPaddingContent(itemView, true);
         nameTextView.setText(isEmpty(user.getName()) ? user.getLoginId() : user.getName());
         userHeader.displayImage(user.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_60), false, false);
-        additionalTextView.setText(isEmpty(user.getPosition()) ? "职务" : user.getPosition());
+        additionalTextView.setText(isEmpty(user.getSignature()) ? StringHelper.getString(R.string.ui_text_user_information_signature_empty) : user.getSignature());
     }
 }

@@ -16,7 +16,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.OrganizationStructureConcernedViewHolder;
+import com.gzlk.android.isp.holder.organization.OrganizationStructureConcernedViewHolder;
 import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;

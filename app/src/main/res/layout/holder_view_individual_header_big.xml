@@ -62,7 +62,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/ui_holder_view_user_phone"
+            android:id="@+id/ui_holder_view_user_signature"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ui_holder_view_user_name"

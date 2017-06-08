@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.MomentViewHolder;
+import com.gzlk.android.isp.holder.individual.MomentViewHolder;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;

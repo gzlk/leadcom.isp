@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.CollectionItemViewHolder;
+import com.gzlk.android.isp.holder.individual.CollectionItemViewHolder;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;

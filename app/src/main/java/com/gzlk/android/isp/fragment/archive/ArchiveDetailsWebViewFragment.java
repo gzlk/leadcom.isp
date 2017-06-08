@@ -74,7 +74,7 @@ public class ArchiveDetailsWebViewFragment extends WebViewFragment {
         return true;
     }
 
-    private static final String BASE_URL = Api.apiUrl() + "/lcbase-manage/editor/md_view.html";
+    private static final String BASE_URL = "http://113.108.144.2:8045/lcbase-manage/editor/md_view.html";
 
     @Override
     protected String loadingUrl() {

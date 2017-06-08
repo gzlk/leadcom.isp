@@ -56,6 +56,7 @@ public class User extends Model {
         public static final String LastLoginDate = "lastLoginDate";
         public static final String Captcha = "captcha";
         public static final String Spell = "spell";
+        public static final String Signature = "signature";
         public static final String JoinedActs = "joinedActs";
         public static final String CreatedActs = "createdActs";
     }
@@ -119,6 +120,9 @@ public class User extends Model {
     // 拼音
     @Column(Field.Spell)
     private String spell;
+    //签名（比如黄埔区民盟主委）
+    @Column(Field.Signature)
+    private String signature;
 
     //加入的活动id列表，格式[id1,id2,id3]
     @Column(Field.JoinedActs)
@@ -285,6 +289,14 @@ public class User extends Model {
         } else {
             this.spell = spell;
         }
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     public ArrayList<String> getJoinedActs() {

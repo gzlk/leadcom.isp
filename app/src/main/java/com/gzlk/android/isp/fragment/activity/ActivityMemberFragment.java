@@ -27,7 +27,7 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationContactPickFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.ContactViewHolder;
+import com.gzlk.android.isp.holder.organization.ContactViewHolder;
 import com.gzlk.android.isp.holder.activity.ActivityMemberViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;

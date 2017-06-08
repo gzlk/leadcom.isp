@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.organization;
 
 import android.text.Html;
 import android.view.View;
@@ -9,6 +9,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.user.User;

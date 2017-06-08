@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.organization;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationPropertiesFragment;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.lib.view.WrapContentViewPager;
 import com.gzlk.android.isp.model.Dao;

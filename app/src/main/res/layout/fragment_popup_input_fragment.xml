@@ -10,17 +10,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
         android:orientation="vertical"
-        android:translationZ="@dimen/ui_base_translationZ">
+        android:translationZ="@dimen/ui_base_translationZ_small">
 
         <com.hlk.hlklib.lib.view.ClearEditText
             android:id="@+id/ui_popup_input_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cet_edit_active_border="@android:color/white"
+            app:cet_edit_gravity="center_vertical"
             app:cet_edit_icon_clear="@string/ui_icon_clear"
             app:cet_edit_minimum_height="@dimen/ui_base_dimen_button_height"
             app:cet_edit_normal_border="@android:color/white"
-            app:cet_edit_padding="@dimen/ui_static_dp_8" />
+            app:cet_edit_padding_left="@dimen/ui_static_dp_8"
+            app:cet_edit_padding_right="@dimen/ui_static_dp_30" />
     </LinearLayout>
 
     <TextView

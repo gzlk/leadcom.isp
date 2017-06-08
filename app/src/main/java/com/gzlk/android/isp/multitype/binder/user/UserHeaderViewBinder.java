@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.holder.IndividualHeaderViewHolder;
+import com.gzlk.android.isp.holder.individual.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
 

@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.organization;
 
 import android.view.LayoutInflater;
 import android.view.View;

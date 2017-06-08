@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.individual;
 
 import android.view.View;
 import android.widget.TextView;
@@ -9,6 +9,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.organization.Organization;
@@ -35,8 +36,8 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
     private TextView nameTextView;
     @ViewId(R.id.ui_holder_view_user_name_icon)
     private CustomTextView nameIcon;
-    @ViewId(R.id.ui_holder_view_user_phone)
-    private TextView phoneTextView;
+    @ViewId(R.id.ui_holder_view_user_signature)
+    private TextView signatureTextView;
     @ViewId(R.id.ui_holder_view_user_header)
     private ImageDisplayer headerImage;
     @ViewId(R.id.ui_holder_view_user_header_icon)
@@ -59,8 +60,17 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         headerImage.displayImage(user.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_100), false, false);
         nameIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
         headerIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
-        phoneTextView.setText(user.getPhone());
-        phoneTextView.setVisibility(user.getId().equals(Cache.cache().userId) ? View.GONE : View.VISIBLE);
+        // 个性签名
+        String signature = user.getSignature();
+        if (isEmpty(signature)) {
+            if (user.getId().equals(Cache.cache().userId)) {
+                signature = StringHelper.getString(R.string.ui_text_user_information_signature_empty);
+            } else {
+                signatureTextView.setVisibility(View.GONE);
+            }
+        }
+        signatureTextView.setText(signature);
+        //signatureTextView.setVisibility(user.getId().equals(Cache.cache().userId) ? View.GONE : View.VISIBLE);
     }
 
     public void showContent(Organization org) {
@@ -70,13 +80,13 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         headerImage.displayImage(text, getDimension(R.dimen.ui_static_dp_100), false, false);
         nameIcon.setVisibility(null != org && org.isLocalDeleted() ? View.VISIBLE : View.GONE);
         headerIcon.setVisibility(null != org && org.isLocalDeleted() ? View.VISIBLE : View.GONE);
-        phoneTextView.setVisibility(View.GONE);
+        signatureTextView.setVisibility(View.GONE);
     }
 
     public void showContent(Activity activity) {
         String text = null != activity && !isEmpty(activity.getTitle()) ? activity.getTitle() : StringHelper.getString(R.string.ui_base_text_not_set);
         nameTextView.setText(text);
-        phoneTextView.setVisibility(View.GONE);
+        signatureTextView.setVisibility(View.GONE);
         text = null != activity && !isEmpty(activity.getImg()) ? activity.getImg() : "";
         headerImage.displayImage(text, getDimension(R.dimen.ui_static_dp_100), false, false);
         nameIcon.setVisibility(View.GONE);
@@ -85,7 +95,8 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_user_header_icon,
             R.id.ui_holder_view_user_name_icon,
-            R.id.ui_holder_view_user_name})
+            R.id.ui_holder_view_user_name,
+            R.id.ui_holder_view_user_signature})
     private void elementClick(View view) {
         int id = view.getId();
         switch (id) {
@@ -94,7 +105,12 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
                 break;
             case R.id.ui_holder_view_user_name_icon:
             case R.id.ui_holder_view_user_name:
-                if (null != mOnViewHolderClickListener && headerIcon.getVisibility() == View.VISIBLE) {
+                if (null != mOnViewHolderClickListener) {
+                    mOnViewHolderClickListener.onClick(-1);
+                }
+                break;
+            case R.id.ui_holder_view_user_signature:
+                if (null != mOnViewHolderClickListener) {
                     mOnViewHolderClickListener.onClick(0);
                 }
                 break;
@@ -102,8 +118,11 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
     }
 
     private void openImageSelector() {
-        if (headerIcon.getVisibility() == View.VISIBLE) {
-            ((BaseImageSelectableSupportFragment) fragment()).openImageSelector();
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(-2);
         }
+//        if (headerIcon.getVisibility() == View.VISIBLE) {
+//            ((BaseImageSelectableSupportFragment) fragment()).openImageSelector();
+//        }
     }
 }

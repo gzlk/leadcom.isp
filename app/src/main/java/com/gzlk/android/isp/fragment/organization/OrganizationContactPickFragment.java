@@ -7,7 +7,7 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.holder.ContactViewHolder;
+import com.gzlk.android.isp.holder.organization.ContactViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;

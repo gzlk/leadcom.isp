@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder;
+package com.gzlk.android.isp.holder.individual;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -11,6 +11,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.fragment.individual.MomentDetailsFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.Click;

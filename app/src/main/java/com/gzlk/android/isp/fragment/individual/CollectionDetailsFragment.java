@@ -10,7 +10,7 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.CollectionItemViewHolder;
+import com.gzlk.android.isp.holder.individual.CollectionItemViewHolder;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.Collection;
 import com.hlk.hlklib.lib.inject.ViewId;

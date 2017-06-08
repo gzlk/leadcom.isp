@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.holder.UserSimpleMomentViewHolder;
+import com.gzlk.android.isp.holder.individual.UserSimpleMomentViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.multitype.binder.BaseViewBinder;
