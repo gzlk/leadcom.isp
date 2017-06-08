@@ -12,13 +12,24 @@ import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.activity.ActivityPropertiesFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.nim.action.FileAction;
+import com.gzlk.android.isp.nim.action.ImageAction;
+import com.gzlk.android.isp.nim.action.IssueAction;
+import com.gzlk.android.isp.nim.action.MinutesAction;
+import com.gzlk.android.isp.nim.action.NoticeAction;
+import com.gzlk.android.isp.nim.action.SignAction;
+import com.gzlk.android.isp.nim.action.SurveyAction;
+import com.gzlk.android.isp.nim.action.VoteAction;
 import com.gzlk.android.isp.nim.model.NimMessageParser;
+import com.gzlk.android.isp.nim.viewholder.MsgViewHolderFile;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.session.SessionCustomization;
 import com.netease.nim.uikit.session.SessionEventListener;
 import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nim.uikit.session.actions.VideoAction;
 import com.netease.nim.uikit.session.helper.MessageHelper;
 import com.netease.nim.uikit.session.module.MsgForwardFilter;
 import com.netease.nim.uikit.session.module.MsgRevokeFilter;
@@ -29,6 +40,7 @@ import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.avchat.model.AVChatAttachment;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
@@ -36,6 +48,7 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -55,6 +68,9 @@ public class NimSessionHelper {
 
         // 注册自定义消息解析器
         NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
+
+        // 注册各种聊天内容ViewHolder
+        registerViewHolders();
 
         // 设置会话中点击事件响应处理
         setSessionListener();
@@ -189,6 +205,34 @@ public class NimSessionHelper {
     private static SessionCustomization teamCustomization;
     private static SessionCustomization myP2pCustomization;
 
+    private static ArrayList<BaseAction> actions;
+
+    private static ArrayList<BaseAction> getActions() {
+        // 定制加号点开后可以包含的操作， 默认已经有图片，视频等消息了
+        if (null == actions) {
+            actions = new ArrayList<>();
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+//                actions.add(new AVChatAction(AVChatType.AUDIO));
+//                actions.add(new AVChatAction(AVChatType.VIDEO));
+//            }
+            actions.add(new ImageAction());
+            //actions.add(new VideoAction());// 视频插件有问题，暂时不放
+            actions.add(new NoticeAction());
+            actions.add(new FileAction());
+            actions.add(new SurveyAction());
+            actions.add(new IssueAction());
+            actions.add(new VoteAction());
+            actions.add(new SignAction());
+            actions.add(new MinutesAction());
+        }
+        return actions;
+    }
+
+    private static void registerViewHolders() {
+        // 文件显示
+        NimUIKit.registerMsgItemViewHolder(FileAttachment.class, MsgViewHolderFile.class);
+    }
+
     // 定制化单聊界面。如果使用默认界面，返回null即可
     private static SessionCustomization getP2pCustomization() {
         if (p2pCustomization == null) {
@@ -212,18 +256,7 @@ public class NimSessionHelper {
 //            p2pCustomization.backgroundUri = "file:///sdcard/Pictures/bk.png";
 //            p2pCustomization.backgroundUri = "android.resource://com.netease.nim.demo/drawable/bk"
 
-            // 定制加号点开后可以包含的操作， 默认已经有图片，视频等消息了
-            ArrayList<BaseAction> actions = new ArrayList<>();
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-//                actions.add(new AVChatAction(AVChatType.AUDIO));
-//                actions.add(new AVChatAction(AVChatType.VIDEO));
-//            }
-//            actions.add(new RTSAction());
-//            actions.add(new SnapChatAction());
-//            actions.add(new GuessAction());
-//            actions.add(new FileAction());
-//            actions.add(new TipAction());
-            p2pCustomization.actions = actions;
+            p2pCustomization.actions = getActions();
             p2pCustomization.withSticker = true;
 
             // 定制ActionBar右边的按钮，可以加多个
@@ -288,12 +321,7 @@ public class NimSessionHelper {
 //            p2pCustomization.backgroundUri = "file:///sdcard/Pictures/bk.png";
 //            p2pCustomization.backgroundUri = "android.resource://com.netease.nim.demo/drawable/bk"
 
-            // 定制加号点开后可以包含的操作， 默认已经有图片，视频等消息了
-            ArrayList<BaseAction> actions = new ArrayList<>();
-            //actions.add(new SnapChatAction());
-            //actions.add(new GuessAction());
-            //actions.add(new FileAction());
-            myP2pCustomization.actions = actions;
+            myP2pCustomization.actions = getActions();
             myP2pCustomization.withSticker = false;
             // 定制ActionBar右边的按钮，可以加多个
 //            ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
@@ -335,12 +363,7 @@ public class NimSessionHelper {
                 }
             };
 
-            // 定制加号点开后可以包含的操作， 默认已经有图片，视频等消息了
-            ArrayList<BaseAction> actions = new ArrayList<>();
-            //actions.add(new GuessAction());
-            //actions.add(new FileAction());
-            //actions.add(new TipAction());
-            teamCustomization.actions = actions;
+            teamCustomization.actions = getActions();
 
             // 定制ActionBar右边的按钮，可以加多个
             ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
@@ -384,12 +407,10 @@ public class NimSessionHelper {
                 new Dao<>(com.gzlk.android.isp.model.activity.Activity.class)
                         .querySingle(com.gzlk.android.isp.model.activity.Activity.Field.NimId, sessionId);
         if (null != act) {
-            BaseActivity.openActivity(context, ActivityPropertiesFragment.class.getName(), act.getId(), false, false, true);
+            BaseActivity.openActivity(context, ActivityPropertiesFragment.class.getName(), StringHelper.format("%s,%s", act.getId(), sessionId), false, false, true);
         } else {
             // 本地找不到活动记录则按照网易自己的方式打开群属性页
             NimUIKit.startTeamInfo(context, sessionId);
         }
     }
-
-
 }

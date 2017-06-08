@@ -17,11 +17,14 @@ import java.io.File;
  */
 public class VideoAction extends BaseAction {
     // 视频
-    protected VideoMessageHelper videoMessageHelper;
+    private transient VideoMessageHelper videoMessageHelper;
 
     public VideoAction() {
-        super(R.drawable.nim_message_plus_video_selector, R.string.input_panel_video);
+        this(R.drawable.nim_message_plus_video_selector, R.string.input_panel_video);
+    }
 
+    protected VideoAction(int iconResId, int titleId) {
+        super(iconResId, titleId);
     }
 
     @Override
@@ -49,6 +52,7 @@ public class VideoAction extends BaseAction {
 
     /**
      * 获取视频mediaPlayer
+     *
      * @param file 视频文件
      * @return mediaPlayer
      */
@@ -64,12 +68,12 @@ public class VideoAction extends BaseAction {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-        case RequestCode.GET_LOCAL_VIDEO:
-            videoHelper().onGetLocalVideoResult(data);
-            break;
-        case RequestCode.CAPTURE_VIDEO:
-            videoHelper().onCaptureVideoResult(data);
-            break;
+            case RequestCode.GET_LOCAL_VIDEO:
+                videoHelper().onGetLocalVideoResult(data);
+                break;
+            case RequestCode.CAPTURE_VIDEO:
+                videoHelper().onCaptureVideoResult(data);
+                break;
         }
     }
 
