@@ -75,6 +75,8 @@ public class UserRequest extends Request<User> {
     public static final int UPDATE_ID_NUM = 8;
     public static final int UPDATE_COMPANY = 9;
     public static final int UPDATE_DUTY = 10;
+    public static final int UPDATE_NICK_NAME = 11;
+    public static final int UPDATE_SIGNATURE = 12;
 
     /**
      * 更改我的信息
@@ -115,6 +117,9 @@ public class UserRequest extends Request<User> {
                 case UPDATE_NAME:
                     object.put("name", value);
                     break;
+                //case UPDATE_NICK_NAME:
+                //    object.put("name", value);
+                //break;
                 case UPDATE_PASSWORD:
                     object.put("password", value);
                     break;
@@ -126,6 +131,9 @@ public class UserRequest extends Request<User> {
                     break;
                 case UPDATE_SEX:
                     object.put("sex", value);
+                    break;
+                case UPDATE_SIGNATURE:
+                    object.put("signature", value);
                     break;
             }
         } catch (JSONException e) {

@@ -41,12 +41,16 @@
         <item>2|活动名称|%s|1</item>
         <item>3|活动二维码|0xe63b|1</item>
         <item>4|活动管理权转让||1</item>
-        <item>5|置顶活动组||0</item>
-        <item>6|消息免打扰||0</item>
+        <item>5|置顶活动组|0|</item>
+        <item>6|消息免打扰|%d|</item>
         <item>7|聊天文件||1</item>
         <item>8|查看聊天内容||1</item>
         <item>9|清空聊天记录||0</item>
     </string-array>
+    <string name="ui_activity_property_not_exist">无效的活动或活动已结束</string>
+    <string name="ui_activity_property_chat_history_title">聊天记录</string>
+    <string name="ui_activity_property_chat_history_title_anchor_point">锚点记录</string>
+    <string name="ui_activity_property_clean_chat_history">您确定要清空本活动内的聊天记录吗？</string>
 
     <string name="ui_activity_member_fragment_title">活动中的成员</string>
     <string name="ui_activity_member_loading">正在加载活动中的成员列表，请稍候&#8230;</string>

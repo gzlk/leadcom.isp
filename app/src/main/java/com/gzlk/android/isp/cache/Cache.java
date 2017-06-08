@@ -86,6 +86,10 @@ public class Cache {
      * 查看当前用户是否需要同步基本信息
      */
     public boolean isNeedSync() {
+        if (StringHelper.isEmpty(userId) || null == me) {
+            return true;
+        }
+
         long then = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), me.getLastLoginDate()).getTime();
         long now = Utils.timestamp();
         return (now - then) >= Utils.DAY * 7;

@@ -27,6 +27,15 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
+import com.gzlk.android.isp.nim.activity.SessionHistoryActivity;
+import com.netease.nim.uikit.cache.SimpleCallback;
+import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.session.helper.MessageListPanelHelper;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.team.TeamService;
+import com.netease.nimlib.sdk.team.model.Team;
 
 /**
  * <b>功能描述：</b>活动属性页<br />
@@ -41,15 +50,33 @@ import com.gzlk.android.isp.model.common.SimpleClickableItem;
 
 public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment {
 
+    private static final String PARAM_SESSION_ID = "apf_session_id";
+
     public static ActivityPropertiesFragment newInstance(String params) {
         ActivityPropertiesFragment apf = new ActivityPropertiesFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 活动的id
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 活动的sessionId
+        bundle.putString(PARAM_SESSION_ID, strings[1]);
         apf.setArguments(bundle);
         return apf;
     }
 
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        mSessionId = bundle.getString(PARAM_SESSION_ID, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_SESSION_ID, mSessionId);
+    }
+
+    private String mSessionId = "";
     private String[] items;
     private PropertiesAdapter mAdapter;
 
@@ -137,6 +164,10 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                     // 活动标题
                     text = format(string, activity.getTitle());
                     break;
+                case 6:
+                    // 消息免打扰
+                    text = format(string, 0);
+                    break;
                 default:
                     text = string;
                     break;
@@ -145,6 +176,43 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
             mAdapter.update(item);
             index++;
         }
+        Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                resetNotificationStatus();
+            }
+        });
+    }
+
+    private void resetNotificationStatus() {
+        Team team = TeamDataCache.getInstance().getTeamById(mSessionId);
+        if (null != team) {
+            // 静音=1，反之=0
+            resetNotificationStatus(team.mute());
+        } else {
+            TeamDataCache.getInstance().fetchTeamById(mSessionId, new SimpleCallback<Team>() {
+                @Override
+                public void onResult(boolean success, Team result) {
+                    if (success && result != null) {
+                        resetNotificationStatus(result.mute());
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_activity_property_not_exist);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 重设消息免打扰状态
+     *
+     * @param mute true=静音开启（免打扰）
+     */
+    private void resetNotificationStatus(boolean mute) {
+        String string = items[6];
+        string = format(string, mute ? 1 : 0);
+        SimpleClickableItem item = new SimpleClickableItem(string);
+        mAdapter.update(item);
     }
 
     private void initializeAdapter() {
@@ -174,6 +242,35 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                         openActivity(BasePopupInputSupportFragment.class.getName(), regex, REQUEST_NAME, true, false);
                     }
                     break;
+                case 8:
+                    // 查看聊天内容
+                    SessionHistoryActivity.start(Activity(), mSessionId, SessionTypeEnum.Team);
+                    break;
+                case 9:
+                    // 清空聊天记录
+                    warningClearChatHistory();
+                    break;
+            }
+        }
+    };
+
+    private void warningClearChatHistory() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_property_clean_chat_history, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                NIMClient.getService(MsgService.class).clearChattingHistory(mSessionId, SessionTypeEnum.Team);
+                MessageListPanelHelper.getInstance().notifyClearMessages(mSessionId);
+                return true;
+            }
+        }, null);
+    }
+
+    private ToggleableViewHolder.OnViewHolderToggleChangedListener toggleChangedListener = new ToggleableViewHolder.OnViewHolderToggleChangedListener() {
+        @Override
+        public void onChange(int index, boolean togged) {
+            if (index == 6) {
+                // 消息免打扰
+                NIMClient.getService(TeamService.class).muteTeam(mSessionId, togged);
             }
         }
     };
@@ -218,7 +315,9 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                     memberViewHolder.addOnViewHolderClickListener(viewHolderClickListener);
                     return memberViewHolder;
                 case VT_TOGGLE:
-                    return new ToggleableViewHolder(itemView, fragment);
+                    ToggleableViewHolder toggleableViewHolder = new ToggleableViewHolder(itemView, fragment);
+                    toggleableViewHolder.addOnViewHolderToggleChangedListener(toggleChangedListener);
+                    return toggleableViewHolder;
                 default:
                     SimpleClickableViewHolder scvh = new SimpleClickableViewHolder(itemView, fragment);
                     scvh.addOnViewHolderClickListener(viewHolderClickListener);

@@ -7,16 +7,16 @@ import android.view.KeyEvent;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.api.org.GroupJoinRequest;
+import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.nim.model.NimMessage;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.JoinGroup;
+import com.gzlk.android.isp.nim.model.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
@@ -85,6 +85,7 @@ public class MainActivity extends TitleActivity {
         }
         setMainFrameLayout(mainFragment);
         parseIntent();
+        //registerUpgradeListener();
     }
 
     @Override
@@ -107,6 +108,7 @@ public class MainActivity extends TitleActivity {
     protected void onDestroy() {
         NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
+        //PgyUpdateManager.unregister();
         super.onDestroy();
     }
 
@@ -314,5 +316,9 @@ public class MainActivity extends TitleActivity {
                 super.onResponse(invitation, success, message);
             }
         }).disagreeInviteToSquad(msg.getUuid(), "");
+    }
+
+    private void registerUpgradeListener() {
+        //PgyUpdateManager.register(this, "leadcom_provider_file");
     }
 }

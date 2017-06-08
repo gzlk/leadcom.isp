@@ -119,6 +119,15 @@ public class MemberRequest extends Request<Member> {
         }
     }
 
+    private String getMemberId(int type) {
+        switch (type) {
+            case Member.Type.ACTIVITY:
+                return "id";
+            default:
+                return "memberId";
+        }
+    }
+
     /**
      * 查找指定组织和指定小组内的成员列表
      *
@@ -136,7 +145,7 @@ public class MemberRequest extends Request<Member> {
      * 查询单个成员的详细信息
      */
     public void find(int type, String memberId) {
-        httpRequest(getRequest(SingleMember.class, format("%s?memberId=%s", url(type, FIND), memberId), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleMember.class, format("%s?%s=%s", url(type, FIND), getMemberId(type), memberId), "", HttpMethods.Get));
     }
 
     /**

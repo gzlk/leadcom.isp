@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.api;
 
+import com.gzlk.android.isp.BuildConfig;
+
 import java.io.Serializable;
 
 /**
@@ -18,7 +20,10 @@ abstract class BaseApi implements Serializable {
     /**
      * 所有网络调用的网址前缀
      */
-    static final String URL = "http://113.108.144.2:8044";//"http://10.141.130.17:8888";//
+    @SuppressWarnings("ConstantConditions")
+    static final String URL = "http://113.108.144.2:" + (BuildConfig.RELEASEABLE ? "8044" : "8889");
+
+    //"http://10.141.130.17:8888";//
     /**
      * 网络调用成功时的状态码
      */

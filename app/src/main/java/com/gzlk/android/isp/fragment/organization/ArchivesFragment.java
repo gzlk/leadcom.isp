@@ -137,8 +137,12 @@ public class ArchivesFragment extends BaseOrganizationFragment {
             switch (v.getId()) {
                 case R.id.ui_tooltip_menu_organization_document_new:
                 case R.id.ui_tooltip_menu_organization_document_new_normal:
-                    // 新建组织档案
-                    openActivity(ArchiveNewFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), true, true);
+                    if (isEmpty(mQueryId)) {
+                        ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
+                    } else {
+                        // 新建组织档案
+                        openActivity(ArchiveNewFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), true, true);
+                    }
                     break;
                 case R.id.ui_tooltip_menu_organization_document_manage:
                     // 管理组织档案

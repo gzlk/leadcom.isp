@@ -34,8 +34,8 @@
         <item>2|群名称|%s|1</item>
         <item>3|群二维码|0xe63b|1</item>
         <item>4|群管理权转让||1</item>
-        <item>5|置顶群组||0</item>
-        <item>6|消息免打扰||0</item>
+        <item>5|置顶群组|0|</item>
+        <item>6|消息免打扰|0|</item>
         <item>7|聊天文件||1</item>
         <item>8|查看聊天内容||1</item>
         <item>9|清空聊天记录||0</item>

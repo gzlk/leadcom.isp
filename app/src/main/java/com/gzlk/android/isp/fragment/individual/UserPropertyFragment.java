@@ -152,6 +152,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     private void initializeItems() {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_text_my_setting_items);
+            setLoadingText(R.string.ui_text_user_information_loading);
         }
         if (null == mAdapter) {
             mAdapter = new MyAdapter();
@@ -192,6 +193,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     }
 
     private void fetchingRemoteUserInfo() {
+        displayLoading(true);
         UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
@@ -203,6 +205,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                         ToastHelper.make().showMsg(message);
                     }
                 }
+                displayLoading(false);
             }
         }).find(mQueryId);
     }

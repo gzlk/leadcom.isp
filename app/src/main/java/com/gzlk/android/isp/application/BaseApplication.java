@@ -11,6 +11,8 @@ import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.gzlk.android.isp.BuildConfig;
+import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.etc.Cryptography;
 
 import java.io.File;
@@ -29,6 +31,8 @@ import java.util.UUID;
  */
 
 public class BaseApplication extends Application {
+
+    protected static final String TAG = "Application";
 
     protected static BaseApplication getApplicationUsingReflectionOfActivityThread() throws Exception {
         return (BaseApplication) Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null, (Object[]) null);
@@ -91,6 +95,18 @@ public class BaseApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    protected static boolean isEmpty(String text) {
+        return StringHelper.isEmpty(text);
+    }
+
+    protected static void log(String text) {
+        LogHelper.log(TAG, text);
+    }
+
+    protected static String format(String fmt, Object... objects) {
+        return StringHelper.format(fmt, objects);
     }
 
     public static final String ROOT_DIR = "leadcom";

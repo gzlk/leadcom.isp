@@ -6,12 +6,9 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.crash.AppCrashHandler;
 import com.gzlk.android.isp.crash.storage.StorageUtil;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
-import com.netease.nim.uikit.ImageLoaderKit;
-import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
@@ -21,7 +18,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.pgyersdk.crash.PgyCrashManager;
 
 import java.io.File;
 
@@ -57,11 +53,11 @@ public class App extends NimApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        //AppCrashHandler.getInstance(this);
-        PgyCrashManager.register(this);
+        AppCrashHandler.getInstance(this);
+        //PgyCrashManager.register(this);
         initializeNim();
         if (shouldInit()) {
-            //StorageUtil.init(this, null);
+            StorageUtil.init(this, null);
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();
             initializeDatabase();
@@ -126,10 +122,10 @@ public class App extends NimApplication {
      * 初始化本地缓存数据库
      */
     private void initializeDatabase() {
-        if (StringHelper.isEmpty(Cache.cache().userId)) {
+        if (isEmpty(Cache.cache().userId)) {
             Cache.cache().restoreCached();
         }
-        if (!StringHelper.isEmpty(Cache.cache().userId)) {
+        if (!isEmpty(Cache.cache().userId)) {
             // 初始化个性化数据库
             initializeLiteOrm(Cache.cache().userId);
             // 查询个性化数据库中的个人信息

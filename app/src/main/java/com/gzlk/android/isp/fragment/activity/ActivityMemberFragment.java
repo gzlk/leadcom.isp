@@ -314,6 +314,10 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             notifyItemRemoved(index);
         }
 
+        private void clear() {
+
+        }
+
         private void delete(ContactViewHolder holder) {
             mItemManger.removeShownLayouts(holder.getSwipeLayout());
             int pos = holder.getAdapterPosition();

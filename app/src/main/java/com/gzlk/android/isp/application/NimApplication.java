@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.WelcomeActivity;
 import com.gzlk.android.isp.helper.LogHelper;
@@ -56,10 +57,24 @@ public class NimApplication extends BaseActivityManagedApplication {
         }
     }
 
+    private String getAppKey() {
+        if (isForTest) {
+            // 我的测试key
+            return getString(R.string.netease_nim_app_key_test);
+        }
+        if (BuildConfig.RELEASEABLE) {
+            // release 版的 app key
+            return getString(R.string.netease_nim_app_key);
+        }
+        // beta 版的 app key
+        return getString(R.string.netease_nim_app_key_beta);
+    }
+
     // 如果返回值为 null，则全部使用默认参数。
     private SDKOptions options() {
         SDKOptions options = new SDKOptions();
-        options.appKey = StringHelper.getString(isForTest ? R.string.netease_nim_app_key_test : R.string.netease_nim_app_key);
+        options.appKey = getAppKey();
+        log(format("app key: %s, isForTest: %s, is release: %s", options.appKey, isForTest, BuildConfig.RELEASEABLE));
         // 如果将新消息通知提醒托管给 SDK 完成，需要添加以下配置。否则无需设置。
         StatusBarNotificationConfig config = new StatusBarNotificationConfig();
         config.notificationEntrance = WelcomeActivity.class; // 点击通知栏跳转到该Activity
@@ -133,7 +148,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     private void handleUserOnlineStatus() {
         NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(new Observer<StatusCode>() {
             public void onEvent(StatusCode status) {
-                LogHelper.log("tag", "User status changed to: " + status);
+                log("User status changed to: " + status);
                 if (status.wontAutoLogin()) {
                     if (StatusCode.typeOfValue(status.getValue()) == StatusCode.PWD_ERROR) {
                         ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_pwd_error);

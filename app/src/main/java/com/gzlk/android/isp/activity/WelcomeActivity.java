@@ -15,7 +15,9 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
+import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.util.ArrayList;
@@ -127,7 +129,9 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     private void toLogin() {
-        if (Cache.cache().isNeedSync()) {
+
+        StatusCode code = NIMClient.getStatus();
+        if (code.shouldReLogin() || code.wontAutoLogin() || Cache.cache().isNeedSync()) {
             // 登录信息已过期则需要重新登录
             LoginActivity.start(WelcomeActivity.this);
             finish();
@@ -193,7 +197,8 @@ public class WelcomeActivity extends BaseActivity {
                     switchToMain(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
                 }
             } else {
-                switchToMain();
+                //switchToMain();
+                toLogin();
             }
         }
     }

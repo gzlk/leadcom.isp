@@ -3,7 +3,6 @@ package com.gzlk.android.isp.application;
 import android.Manifest;
 
 import com.gzlk.android.isp.fragment.base.BasePermissionHandleSupportFragment;
-import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.model.Model;
@@ -27,8 +26,6 @@ import java.util.concurrent.ExecutionException;
  */
 
 public class OrmApplication extends BaseApplication {
-
-    protected static final String TAG = OrmApplication.class.getSimpleName();
 
     public static LiteOrm Orm;
 
@@ -60,13 +57,13 @@ public class OrmApplication extends BaseApplication {
                     String db = getCachePath(DB_DIR) + Cryptography.md5(dbName) + ".db";
                     if (null == Orm) {
                         if (initialize(db)) {
-                            LogHelper.log(TAG, "database initialized at: " + db);
+                            log("database initialized at: " + db);
                         }
                     } else {
                         if (!Orm.getDataBaseConfig().dbName.equals(db)) {
                             Orm.close();
                             if (initialize(db)) {
-                                LogHelper.log(TAG, "database re-initialized at: " + db);
+                                log("database re-initialized at: " + db);
                             }
                         }
                     }

@@ -4,7 +4,6 @@ import android.app.Activity;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.PressAgainToExit;
-import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 
@@ -76,7 +75,7 @@ public class BaseActivityManagedApplication extends OrmApplication {
         if (mPressAgainToExit.isExit()) {
             exitDirectly();
         } else {
-            LogHelper.log(TAG, "press again to exit.");
+            log("press again to exit.");
             String text = getString(R.string.ui_base_text_press_again_to_exit);
             ToastHelper.make(this).showMsg(text);
             mPressAgainToExit.doExitInOneSecond();
@@ -87,7 +86,7 @@ public class BaseActivityManagedApplication extends OrmApplication {
      * 退出登录
      */
     public void logout() {
-        LogHelper.log(TAG, "manual exit.");
+        log("manual exit.");
         // 清空已登录信息
         PreferenceHelper.save(R.string.pf_last_login_user_id, "");
         // 关闭数据库

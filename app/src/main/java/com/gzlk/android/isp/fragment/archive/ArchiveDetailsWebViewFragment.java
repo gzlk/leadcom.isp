@@ -3,6 +3,7 @@ package com.gzlk.android.isp.fragment.archive;
 import android.os.Bundle;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.Api;
 import com.gzlk.android.isp.fragment.WebViewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
@@ -73,7 +74,7 @@ public class ArchiveDetailsWebViewFragment extends WebViewFragment {
         return true;
     }
 
-    private static final String BASE_URL = "http://113.108.144.2:8045/lcbase-manage/editor/md_view.html";
+    private static final String BASE_URL = Api.apiUrl() + "/lcbase-manage/editor/md_view.html";
 
     @Override
     protected String loadingUrl() {

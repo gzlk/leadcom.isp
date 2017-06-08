@@ -167,7 +167,11 @@ public class ActivityFragment extends BaseOrganizationFragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.ui_tooltip_menu_activity_add:
-                    openActivity(CreateActivityFragment.class.getName(), format(",%s", mQueryId), true, true);
+                    if (isEmpty(mQueryId)) {
+                        ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
+                    } else {
+                        openActivity(CreateActivityFragment.class.getName(), format(",%s", mQueryId), true, true);
+                    }
                     break;
                 case R.id.ui_tooltip_menu_activity_manage:
                     openActivity(ActivityManagementFragment.class.getName(), mQueryId, false, false);
