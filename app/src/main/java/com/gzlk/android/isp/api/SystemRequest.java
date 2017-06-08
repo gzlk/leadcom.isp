@@ -100,12 +100,12 @@ public class SystemRequest extends Request<User> {
         httpRequest(getRequest(Register.class, SIGN_IN, object.toString(), HttpMethods.Post));
     }
 
-    /**
-     * 同步用户信息
+    /*
+      同步用户信息
      */
-    public void sync() {
-        httpRequest(getRequest(Register.class, format("%s?accessToken=%s", SYNC, Cache.cache().accessToken), "", HttpMethods.Get));
-    }
+//    public void sync() {
+//        httpRequest(getRequest(Register.class, format("%s?accessToken=%s", SYNC, Cache.cache().accessToken), "", HttpMethods.Get));
+//    }
 
     /**
      * 获取验证码

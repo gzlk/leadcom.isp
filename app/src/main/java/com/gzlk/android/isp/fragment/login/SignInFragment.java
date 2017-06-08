@@ -8,6 +8,7 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
@@ -167,8 +168,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private void syncUserInfo() {
-        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
-            @SuppressWarnings("ConstantConditions")
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
@@ -181,7 +181,22 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     needToReLogin();
                 }
             }
-        }).sync();
+        }).find(Cache.cache().userId);
+//        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+//            @SuppressWarnings("ConstantConditions")
+//            @Override
+//            public void onResponse(User user, boolean success, String message) {
+//                super.onResponse(user, success, message);
+//                if (success) {
+//                    cacheUser(user);
+//                    // 同步成功之后检测网易云登录状态
+//                    checkNimStatus();
+//                } else {
+//                    ToastHelper.make().showMsg(message);
+//                    needToReLogin();
+//                }
+//            }
+//        }).sync();
     }
 
     private void cacheUser(User user) {

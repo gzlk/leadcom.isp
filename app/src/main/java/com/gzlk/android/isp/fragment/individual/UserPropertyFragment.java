@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
@@ -33,6 +32,7 @@ import com.gzlk.android.isp.multitype.binder.user.UserSimpleMomentViewBinder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
+import com.netease.nim.uikit.NimUIKit;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -126,11 +126,12 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     private void click(View view) {
         switch (view.getId()) {
             case R.id.ui_ui_custom_title_right_container:
-                toEdit();
+                //toEdit();
                 break;
             case R.id.ui_user_information_to_chat:
-                // 发消息
-                ToastHelper.make().showMsg("发消息");
+                // 到单聊页面
+                NimUIKit.startP2PSession(Activity(), mQueryId);
+                //ToastHelper.make().showMsg("发消息");
                 break;
         }
     }
@@ -149,10 +150,13 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }
     }
 
+    private boolean isMe() {
+        return !isEmpty(mQueryId) && mQueryId.equals(Cache.cache().userId);
+    }
+
     private void initializeItems() {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_text_my_setting_items);
-            setLoadingText(R.string.ui_text_user_information_loading);
         }
         if (null == mAdapter) {
             mAdapter = new MyAdapter();
@@ -168,7 +172,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         @Override
         public void onClick(int index) {
             if (index == 1) {
-                // 打开我的动态页
+                // 打开动态页
                 openActivity(MomentListFragment.class.getName(), mQueryId, true, false);
             } else {
                 if (mQueryId.equals(Cache.cache().userId)) {
@@ -182,17 +186,14 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     private void fetchingUser() {
         User user = new Dao<>(User.class).query(mQueryId);
         if (null == user) {
-            if (mQueryId.equals(Cache.cache().userId)) {
-                syncMineInformation();
-            } else {
-                fetchingRemoteUserInfo();
-            }
+            fetchingRemoteUserInfo();
         } else {
             checkUser(user);
         }
     }
 
     private void fetchingRemoteUserInfo() {
+        setLoadingText(R.string.ui_text_user_information_loading);
         displayLoading(true);
         UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
@@ -210,26 +211,29 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }).find(mQueryId);
     }
 
-    /**
+    /*
      * 修改完我的信息之后同步我的信息
      */
-    private void syncMineInformation() {
-        // 同步我的信息
-        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
-
-            @Override
-            public void onResponse(User user, boolean success, String message) {
-                super.onResponse(user, success, message);
-                if (success) {
-                    if (null != user && !isEmpty(user.getId())) {
-                        Cache.cache().setCurrentUser(user);
-                        Cache.cache().saveCurrentUser();
-                        checkUser(user);
-                    }
-                }
-            }
-        }).sync();
-    }
+//    private void syncMineInformation() {
+//        setLoadingText(R.string.ui_text_user_information_loading_sync_mine);
+//        // 同步我的信息
+//        displayLoading(true);
+//        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+//
+//            @Override
+//            public void onResponse(User user, boolean success, String message) {
+//                super.onResponse(user, success, message);
+//                if (success) {
+//                    if (null != user && !isEmpty(user.getId())) {
+//                        Cache.cache().setCurrentUser(user);
+//                        Cache.cache().saveCurrentUser();
+//                        checkUser(user);
+//                    }
+//                }
+//                displayLoading(false);
+//            }
+//        }).sync();
+//    }
 
     private void checkUser(final User user) {
         // 自己和自己不能聊天
@@ -242,11 +246,11 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         } else {
             mAdapter.update(user);
         }
-        if (user.getId().equals(Cache.cache().userId)) {
-            rightTextView.setText(R.string.ui_base_text_edit);
-        } else {
-            rightTextView.setText(null);
-        }
+//        if (user.getId().equals(Cache.cache().userId)) {
+//            rightTextView.setText(R.string.ui_base_text_edit);
+//        } else {
+//            rightTextView.setText(null);
+//        }
 
         // 动态
         if (mAdapter.getItemCount() < 2) {
@@ -332,17 +336,31 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     private static final int REQUEST_COMPANY = REQUEST_PHONE + 3;
     private static final int REQUEST_DUTY = REQUEST_PHONE + 4;
     private static final int REQUEST_NAME = REQUEST_PHONE + 5;
+    private static final int REQUEST_SIGNATURE = REQUEST_PHONE + 6;
 
     private void checkClickType(int index) {
         User user = (User) mAdapter.get(0);
+        String value;
         switch (index) {
-            case 0:
+            case -2:
+                // 头像选择
+                openImageSelector();
+                break;
+            case -1:
                 // 修改昵称
-                String name = user.getName();
-                if (isEmpty(name)) {
-                    name = "";
+                value = user.getName();
+                if (isEmpty(value)) {
+                    value = "";
                 }
-                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_name, name), REQUEST_NAME, true, false);
+                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_name, value), REQUEST_NAME, true, false);
+                break;
+            case 0:
+                // 修改个性签名
+                value = user.getSignature();
+                if (isEmpty(value)) {
+                    value = "";
+                }
+                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_signature, value), REQUEST_SIGNATURE, true, false);
                 break;
             case 2:
                 // 性别修改
@@ -354,15 +372,27 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 break;
             case 4:
                 // 身份证号码
-                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_id_number), REQUEST_ID, true, false);
+                value = user.getIdNum();
+                if (isEmpty(value)) {
+                    value = "";
+                }
+                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_id_number, value), REQUEST_ID, true, false);
                 break;
             case 5:
                 // 工作单位
-                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_company), REQUEST_COMPANY, true, false);
+                value = user.getCompany();
+                if (isEmpty(value)) {
+                    value = "";
+                }
+                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_company, value), REQUEST_COMPANY, true, false);
                 break;
             case 6:
                 // 职务
-                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_duty), REQUEST_DUTY, true, false);
+                value = user.getPosition();
+                if (isEmpty(value)) {
+                    value = "";
+                }
+                openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_duty, value), REQUEST_DUTY, true, false);
                 break;
             case 8:
                 // 修改手机号
@@ -403,6 +433,10 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             case REQUEST_NAME:
                 result = getResultedData(data);
                 tryEditUserInfo(UserRequest.UPDATE_NAME, result);
+                break;
+            case REQUEST_SIGNATURE:
+                result = getResultedData(data);
+                tryEditUserInfo(UserRequest.UPDATE_SIGNATURE, result);
                 break;
         }
         super.onActivityResult(requestCode, data);
@@ -459,15 +493,19 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     }
 
     private void tryEditUserInfo(final int type, final String value) {
+        setLoadingText(R.string.ui_text_user_information_loading_updating);
+        displayLoading(true);
         UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
                     // 同步我的基本信息
-                    syncMineInformation();
+                    //syncMineInformation();
+                    fetchingRemoteUserInfo();
                     resetUserInformation(type, value);
                 }
+                displayLoading(false);
             }
         }).update(type, value);
     }
@@ -507,6 +545,10 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             case UserRequest.UPDATE_SEX:
                 mAdapter.get(2).setId(format(items[2], value));
                 mAdapter.notifyItemChanged(2);
+                break;
+            case UserRequest.UPDATE_SIGNATURE:
+                ((User) mAdapter.get(0)).setSignature(value);
+                mAdapter.notifyItemChanged(0);
                 break;
         }
     }
