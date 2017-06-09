@@ -86,6 +86,9 @@
     <string name="ui_activity_create_address_invalid">活动地点无效</string>
     <string name="ui_activity_create_content_invalid">活动简介无效</string>
     <string name="ui_activity_create_member_invalid">请选择活动参加人员</string>
+    <string name="ui_activity_create_member_select_blocked">请在活动成员列表里进行邀请或踢出相关操作</string>
+    <string name="ui_activity_create_member_inviting">正在为新活动的成员发送邀请&#8230;</string>
+    <string name="ui_activity_create_member_invited">您选择的成员将会收到邀请通知</string>
 
     <string name="ui_activity_cover_picker_fragment_title">添加封面</string>
     <string name="ui_activity_cover_picker_image_warning">建议图片尺寸900x525,小于4M</string>

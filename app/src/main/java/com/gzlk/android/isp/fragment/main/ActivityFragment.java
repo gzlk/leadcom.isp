@@ -9,7 +9,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
 import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
-import com.gzlk.android.isp.fragment.activity.UnHandledInviteFragment;
+import com.gzlk.android.isp.fragment.activity.UnApprovedInviteFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -313,7 +313,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
             } else if (model instanceof SimpleClickableItem) {
                 // 打开未参加的活动列表
                 if (index == 1) {
-                    openActivity(UnHandledInviteFragment.class.getName(), mQueryId, true, false);
+                    openActivity(UnApprovedInviteFragment.class.getName(), mQueryId, true, false);
                 }
             }
         }

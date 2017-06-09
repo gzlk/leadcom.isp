@@ -10,10 +10,12 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.litesuits.http.request.param.HttpMethods;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>群/组织邀请<br />
@@ -171,8 +173,22 @@ public class InvitationRequest extends Request<Invitation> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        log(object.toString());
         httpRequest(getRequest(SingleInvite.class, url(path, action), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 批量邀请用户到活动中来
+     */
+    public void activityInvite(String activityId, ArrayList<String> userIds) {
+        // actId,inviteeIds,msg
+        JSONObject object = new JSONObject();
+        try {
+            object.put("actId", activityId)
+                    .put("inviteeIds", new JSONArray(userIds));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleInvite.class, url(INVITE_ACTIVITY, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -180,6 +196,14 @@ public class InvitationRequest extends Request<Invitation> {
      */
     public void activityToBeHandled(String groupId) {
         String param = format("%s?groupId=%s&accessToken=%s", url(INVITE_ACTIVITY, "/list/toBeHandled"), groupId, Cache.cache().accessToken);
+        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询未参加的活动（包括暂不参加和未处理的）
+     */
+    public void activityNotApproved(String groupId) {
+        String param = format("%s?groupId=%s", url(INVITE_ACTIVITY, "/list/notApproved/forInvitee"), groupId);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 

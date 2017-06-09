@@ -157,8 +157,8 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
             switch (index) {
                 case 1:
                     // 活动成员
-                    int size = null == activity.getMemberIdArray() ? 0 : activity.getMemberIdArray().size();
-                    text = format(string, size);
+                    //int size = null == activity.getMemberIdArray() ? 0 : activity.getMemberIdArray().size();
+                    text = format(string, 0);
                     break;
                 case 2:
                     // 活动标题
@@ -231,7 +231,9 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
             switch (index) {
                 case 1:
                     // 查看活动成员列表
-                    openActivity(ActivityMemberFragment.class.getName(), mQueryId, true, false);
+                    Activity act = (Activity) mAdapter.get(0);
+                    boolean isMaster = act.getCreatorId().equals(Cache.cache().userId);
+                    openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,%s", mQueryId, isMaster, act.getGroupId()), true, false);
                     break;
                 case 2:
                     // 创建者是当前登录的用户时，可以 修改群名称

@@ -18,22 +18,23 @@ import com.daimajia.swipe.util.Attributes;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationContactPickFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.organization.ContactViewHolder;
 import com.gzlk.android.isp.holder.activity.ActivityMemberViewHolder;
+import com.gzlk.android.isp.holder.organization.ContactViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
+import com.gzlk.android.isp.model.organization.SubMember;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,12 +54,19 @@ import java.util.List;
 
 public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
-    private static final String PARAM_MEMBERS = "amf_members_json";
+    private static final String PARAM_MASTER = "amf_member_is_master";
+    private static final String PARAM_GROUP_ID = "amf_group_id";
 
     public static ActivityMemberFragment newInstance(String params) {
         ActivityMemberFragment amf = new ActivityMemberFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
-        bundle.putString(PARAM_QUERY_ID, params);
+        // 活动的id
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 当前登录者是否是管理员
+        bundle.putBoolean(PARAM_MASTER, Boolean.valueOf(strings[1]));
+        // 活动所属的组织id
+        bundle.putString(PARAM_GROUP_ID, strings[2]);
         amf.setArguments(bundle);
         return amf;
     }
@@ -66,17 +74,22 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        memberJson = bundle.getString(PARAM_MEMBERS, EMPTY_ARRAY);
+        isMaster = bundle.getBoolean(PARAM_MASTER, false);
+        groupId = bundle.getString(PARAM_GROUP_ID, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putString(memberJson, PARAM_MEMBERS);
+        bundle.putBoolean(PARAM_MASTER, isMaster);
+        bundle.putString(PARAM_GROUP_ID, groupId);
     }
 
     private MembersAdapter mAdapter;
-    private String memberJson = EMPTY_ARRAY;
+    // 活动所属的组织
+    private String groupId = "";
+    // 当前登录者是否是活动的创建者
+    private boolean isMaster = false;
 
     @Override
     protected void onSwipeRefreshing() {
@@ -98,6 +111,9 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     public void doingInResume() {
         setCustomTitle(R.string.ui_activity_member_fragment_title);
         setNothingText(R.string.ui_activity_member_empty);
+        if (isMaster) {
+            resetRightTitleIcon();
+        }
         initializeAdapter();
     }
 
@@ -113,52 +129,45 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         if (isEmpty(json) || json.equals(EMPTY_ARRAY)) {
             return;
         }
-        List<Member> members = Json.gson().fromJson(json, new TypeToken<ArrayList<Member>>() {
+        List<SubMember> members = Json.gson().fromJson(json, new TypeToken<ArrayList<SubMember>>() {
         }.getType());
         if (null != members && members.size() > 0) {
             ArrayList<String> ids = new ArrayList<>();
-            ArrayList<String> names = new ArrayList<>();
-            for (Member member : members) {
+            for (SubMember member : members) {
                 if (!ids.contains(member.getUserId())) {
                     ids.add(member.getUserId());
-                    names.add(member.getUserName());
                 }
             }
-            updateActivity(ids, names);
+            updateActivity(ids);
         }
     }
 
-    private void updateActivity(ArrayList<String> ids, ArrayList<String> names) {
+    private void updateActivity(ArrayList<String> ids) {
         setLoadingText(R.string.ui_activity_member_invite_loading);
         displayLoading(true);
-        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
-            public void onResponse(Activity activity, boolean success, String message) {
-                super.onResponse(activity, success, message);
+            public void onResponse(Invitation invitation, boolean success, String message) {
+                super.onResponse(invitation, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_activity_member_invite_success);
                 }
                 displayLoading(false);
             }
-        }).update(mQueryId, ids, names);
+        }).activityInvite(mQueryId, ids);
     }
 
     private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
 
+    // 尝试从组织通讯录里选取其他成员进本活动
     private void pickNewMembers(String groupId) {
-        List<String> ids = Json.gson().fromJson(memberJson, new TypeToken<List<String>>() {
-        }.getType());
-        String json = EMPTY_ARRAY;
-        if (null != ids) {
-            ArrayList<Member> members = new ArrayList<>();
-            for (String string : ids) {
-                Member member = new Member();
-                member.setUserId(string);
-                members.add(member);
-            }
-            json = Member.toJson(members);
+        ArrayList<SubMember> members = new ArrayList<>();
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            members.add(new SubMember(mAdapter.get(i)));
         }
-        openActivity(OrganizationContactPickFragment.class.getName(), format("%s,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
+        String json = Json.gson().toJson(members, new TypeToken<ArrayList<SubMember>>() {
+        }.getType());
+        openActivity(OrganizationContactPickFragment.class.getName(), format("%s,true,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
     }
 
     @Override
@@ -179,7 +188,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    private void resetRightTitleIcon(final String groupId) {
+    private void resetRightTitleIcon() {
         setRightIcon(R.string.ui_icon_add);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
@@ -189,35 +198,9 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         });
     }
 
-    private void loadActivity() {
+    private void fetchingMembers() {
         setLoadingText(R.string.ui_activity_member_loading);
         displayLoading(true);
-        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
-            @Override
-            public void onResponse(Activity activity, boolean success, String message) {
-                super.onResponse(activity, success, message);
-                if (success) {
-                    if (null != activity) {
-                        if (Cache.cache().userId.equals(activity.getCreatorId())) {
-                            resetRightTitleIcon(activity.getGroupId());
-                            // 保存活动中已有的成员id
-                            memberJson = Json.gson().toJson(activity.getMemberIdArray(), new TypeToken<ArrayList<String>>() {
-                            }.getType());
-                        }
-                        fetchingMembers();
-                    } else {
-                        displayNothing(mAdapter.getItemCount() < 1);
-                        displayLoading(false);
-                    }
-                } else {
-                    displayNothing(mAdapter.getItemCount() < 1);
-                    displayLoading(false);
-                }
-            }
-        }).find(mQueryId);
-    }
-
-    private void fetchingMembers() {
         MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
             @Override
             public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -232,11 +215,12 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
                         }
                         mAdapter.update(list);
                     } else {
-                        displayNothing(mAdapter.getItemCount() < 1);
+                        isLoadingComplete(true);
                     }
                 } else {
-                    displayNothing(mAdapter.getItemCount() < 1);
+                    isLoadingComplete(true);
                 }
+                displayNothing(mAdapter.getItemCount() < 1);
                 displayLoading(false);
                 stopRefreshing();
             }
@@ -249,7 +233,8 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter.setMode(Attributes.Mode.Single);
             mRecyclerView.addItemDecoration(new StickDecoration());
             mRecyclerView.setAdapter(mAdapter);
-            loadActivity();
+            // 加载活动的成员列表
+            fetchingMembers();
         }
     }
 
@@ -339,7 +324,12 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public void onBindViewHolder(ContactViewHolder holder, int position) {
-            holder.showContent(list.get(position), "");
+            Member member = list.get(position);
+            boolean isManager = member.getUserId().equals(Cache.cache().userId) && isMaster;
+            // 管理者不需要踢出
+            holder.showButton2(!isManager);
+            holder.showContent(member, "");
+
             mItemManger.bindView(holder.itemView, position);
         }
 

@@ -8,7 +8,6 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Member;
-import com.gzlk.android.isp.model.organization.Permission;
 import com.gzlk.android.isp.model.organization.Role;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -142,7 +141,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void list(int type, String id, int pageNumber) {
         String param = format("%s?%s=%s&pageNumber=%d", url(type, LIST), getOrgId(type), id, pageNumber);
-        httpRequest(getRequest(SpecialMember.class, param, "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
     }
 
     /**

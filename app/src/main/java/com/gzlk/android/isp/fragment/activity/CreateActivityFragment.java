@@ -17,6 +17,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActArchiveRequest;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationContactPickFragment;
@@ -33,7 +34,8 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Attachment;
-import com.gzlk.android.isp.model.organization.Member;
+import com.gzlk.android.isp.model.organization.Invitation;
+import com.gzlk.android.isp.model.organization.SubMember;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -72,7 +74,9 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         CreateActivityFragment caf = new CreateActivityFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
+        // 活动id，如果不为空则说明是修改活动的属性
         bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 组织的id，本活动所属的组织
         bundle.putString(PARAM_GROUP, strings[1]);
         caf.setArguments(bundle);
         return caf;
@@ -145,25 +149,25 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resetMembers() {
-        selectedMembers = Json.gson().fromJson(memberJson, new TypeToken<ArrayList<Member>>() {
+        selectedMembers = Json.gson().fromJson(memberJson, new TypeToken<ArrayList<SubMember>>() {
         }.getType());
         if (null == selectedMembers) {
             selectedMembers = new ArrayList<>();
         }
     }
 
-    private void updateMember(Member member) {
-        boolean exist = false;
-        for (Member m : selectedMembers) {
-            if (m.getUserId().equals(member.getUserId())) {
-                exist = true;
-                break;
-            }
-        }
-        if (!exist) {
-            selectedMembers.add(member);
-        }
-    }
+//    private void updateMember(Member member) {
+//        boolean exist = false;
+//        for (Member m : selectedMembers) {
+//            if (m.getUserId().equals(member.getUserId())) {
+//                exist = true;
+//                break;
+//            }
+//        }
+//        if (!exist) {
+//            selectedMembers.add(member);
+//        }
+//    }
 
     private void resetLabels() {
         labelsId = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
@@ -204,7 +208,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
      * 活动所属的组织id
      */
     private String mGroupId = "";
-    private ArrayList<Member> selectedMembers;
+    private ArrayList<SubMember> selectedMembers;
     private ArrayList<String> labelsId;
     private String[] items, openStates;
 
@@ -228,6 +232,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         });
         enableSwipe(!isEmpty(mQueryId));
         setOnFileUploadingListener(mOnFileUploadingListener);
+        // 编辑活动属性时，不要显示成员添加选项
+        memberView.setVisibility(isEmpty(mQueryId) ? View.VISIBLE : View.GONE);
         tryLoadActivity();
     }
 
@@ -403,20 +409,20 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         if (null == memberHolder) {
             memberHolder = new SimpleClickableViewHolder(memberView, this);
             memberHolder.addOnViewHolderClickListener(onViewHolderClickListener);
-            if (!non) {
-                if (null != activity.getMemberIdArray() && activity.getMemberIdArray().size() > 0) {
-                    ArrayList<String> names = activity.getMemberNameArray();
-                    int i = 0;
-                    for (final String id : activity.getMemberIdArray()) {
-                        final String name = (null != names && names.size() >= i + 1) ? names.get(i) : "";
-                        Member member = new Member();
-                        member.setUserId(id);
-                        member.setUserName(name);
-                        updateMember(member);
-                        i++;
-                    }
-                }
-            }
+//            if (!non) {
+//                if (null != activity.getMemberIdArray() && activity.getMemberIdArray().size() > 0) {
+//                    ArrayList<String> names = activity.getMemberNameArray();
+//                    int i = 0;
+//                    for (final String id : activity.getMemberIdArray()) {
+//                        final String name = (null != names && names.size() >= i + 1) ? names.get(i) : "";
+//                        Member member = new Member();
+//                        member.setUserId(id);
+//                        member.setUserName(name);
+//                        updateMember(member);
+//                        i++;
+//                    }
+//                }
+//            }
         }
         value = format(items[6], getMembersInfo());
         memberHolder.showContent(value);
@@ -461,7 +467,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             string = "请选择参与人员";
         } else {
             int i = 0;
-            for (Member member : selectedMembers) {
+            for (SubMember member : selectedMembers) {
                 String name = member.getUserName();
                 string += (isEmpty(string) ? "" : "、") + (isEmpty(name) ? "" : name);
                 if (i >= 1) {
@@ -498,10 +504,15 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                     openActivityOpenStatus();
                     break;
                 case 4:
-                    memberJson = Member.toJson(selectedMembers);
-                    log(memberJson);
-                    String params = format("%s,%s", mGroupId, replaceJson(memberJson, false));
-                    openActivity(OrganizationContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
+                    if (!isEmpty(mQueryId)) {
+                        ToastHelper.make().showMsg(R.string.ui_activity_create_member_select_blocked);
+                    } else {
+                        memberJson = Json.gson().toJson(selectedMembers, new TypeToken<List<SubMember>>() {
+                        }.getType());
+                        log(memberJson);
+                        String params = format("%s,false,%s", mGroupId, replaceJson(memberJson, false));
+                        openActivity(OrganizationContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
+                    }
                     break;
             }
         }
@@ -655,10 +666,11 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_activity_create_content_invalid);
             return;
         }
-        if (selectedMembers.size() < 1) {
-            ToastHelper.make().showMsg(R.string.ui_activity_create_member_invalid);
-            return;
-        }
+        // 预不预选活动成员暂时无所谓
+//        if (selectedMembers.size() < 1) {
+//            ToastHelper.make().showMsg(R.string.ui_activity_create_member_invalid);
+//            return;
+//        }
         Utils.hidingInputBoard(contentView);
         if (getWaitingForUploadFiles().size() > 0) {
             uploadFiles();
@@ -674,12 +686,6 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
         String address = addressHolder.getValue().trim();
         String content = contentView.getValue().trim();
         String beginDate = isEmpty(happenDate) ? Model.DFT_DATE : happenDate;
-        ArrayList<String> ids = new ArrayList<>();
-        ArrayList<String> names = new ArrayList<>();
-        for (Member member : selectedMembers) {
-            ids.add(member.getUserId());
-            names.add(member.getUserName());
-        }
         if (isEmpty(mQueryId)) {
             ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
                 @Override
@@ -687,83 +693,52 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                     super.onResponse(activity, success, message);
                     if (success) {
                         // 成功之后设置mQuery为新建的活动的id
-//                        if (null != activity) {
-//                            mQueryId = activity.getId();
-//                        }
-//                        handleUnCallbackedAttachments();
-                        successToClose();
+                        if (null != activity && selectedMembers.size() > 0) {
+                            invitePreSelectedMembers(activity.getId());
+                        } else {
+                            successToClose();
+                        }
                     } else {
                         hideImageHandlingDialog();
                     }
                 }
-            }).add(title, content, openStatus, address, beginDate, mGroupId, cover, ids, names, labelsId, attachments);
+            }).add(title, content, openStatus, address, beginDate, mGroupId, cover, labelsId, attachments);
         } else {
             ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
                 @Override
                 public void onResponse(Activity activity, boolean success, String message) {
                     super.onResponse(activity, success, message);
                     if (success) {
-                        //handleUnCallbackedAttachments();
                         successToClose();
                     } else {
                         hideImageHandlingDialog();
                     }
                 }
-            }).update(mQueryId, title, content, openStatus, address, beginDate, cover, ids, names, labelsId, attachments);
+            }).update(mQueryId, title, content, openStatus, address, beginDate, cover, labelsId, attachments);
         }
     }
 
-    private int handledIndex = 0;
-
-    // 处理未调用活动文件回调的文件
-    private void handleUnCallbackedAttachments() {
-        if (!isEmpty(mQueryId) && attachments.size() > 0) {
-            showImageHandlingDialog(R.string.ui_activity_create_handing_attachment_warning);
-            handledIndex = 0;
-            handleCallbackAttachment();
-        } else {
-            successToClose();
+    /**
+     * 邀请预选择的成员到新建的活动里
+     */
+    private void invitePreSelectedMembers(String activityId) {
+        setLoadingText(R.string.ui_activity_create_member_inviting);
+        displayLoading(true);
+        ArrayList<String> ids = new ArrayList<>();
+        for (SubMember member : selectedMembers) {
+            ids.add(member.getUserId());
         }
-    }
-
-    private void handleCallbackAttachment() {
-        Attachment attachment = attachments.get(handledIndex);
-        if (isEmpty(attachment.getArchiveId())) {
-            attachment.setArchiveId(mQueryId);
-            callback(attachment);
-        } else {
-            handledIndex++;
-            if (handledIndex >= attachments.size()) {
-                successToClose();
-            } else {
-                showImageHandlingDialog(StringHelper.getString(R.string.ui_activity_create_handing_attachment_warning1, handledIndex, attachments.size()));
-                handleCallbackAttachment();
-            }
-        }
-    }
-
-    private void callback(final Attachment attachment) {
-        ActArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ActArchive>() {
+        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
-            public void onResponse(ActArchive actArchive, boolean success, String message) {
-                super.onResponse(actArchive, success, message);
+            public void onResponse(Invitation invitation, boolean success, String message) {
+                super.onResponse(invitation, success, message);
                 if (success) {
-                    handledIndex++;
-                    if (handledIndex >= attachments.size()) {
-                        // 完成之后退出
-                        successToClose();
-                    } else {
-                        showImageHandlingDialog(StringHelper.getString(R.string.ui_activity_create_handing_attachment_warning1, handledIndex, attachments.size()));
-                        // 成功之后继续处理下一个文件
-                        handleCallbackAttachment();
-                    }
-                } else {
-                    attachment.setArchiveId("");
-                    hideImageHandlingDialog();
-                    ToastHelper.make().showMsg(R.string.ui_activity_create_handing_attachment_failed);
+                    ToastHelper.make().showMsg(R.string.ui_activity_create_member_invited);
                 }
+                displayLoading(false);
+                successToClose();
             }
-        }).uploadCallback(attachment);
+        }).activityInvite(activityId, ids);
     }
 
     private void successToClose() {

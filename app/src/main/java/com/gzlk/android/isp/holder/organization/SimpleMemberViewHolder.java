@@ -6,16 +6,15 @@ import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.List;
@@ -36,8 +35,11 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
     @ViewId(R.id.ui_holder_view_simple_member_view_headers)
     private LinearLayout headerContainer;
 
+    private int imageSize;
+
     public SimpleMemberViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
+        imageSize = getDimension(R.dimen.ui_static_dp_20);
     }
 
     @Override
@@ -67,9 +69,28 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
      */
     public void showContent(Activity activity) {
         headerContainer.removeAllViews();
-        List<String> ids = activity.getMemberIdArray();
-        if (null != ids && ids.size() > 0) {
-            showHeaders(ids.size());
+        String items = StringHelper.getStringArray(R.array.ui_activity_property_items)[1];
+        List<Member> members = Activity.getMembers(activity.getId());
+        if (null != members && members.size() > 0) {
+            items = format(items, members.size());
+            // 重新显示成员数量
+            showContent(new SimpleClickableItem(items));
+            showHeaders(members);
+        }
+    }
+
+    private void showHeaders(List<Member> members) {
+        int i = 0;
+        for (Member member : members) {
+            ImageDisplayer displayer = (ImageDisplayer) LayoutInflater.from(headerContainer.getContext())
+                    .inflate(R.layout.tool_view_small_user_header, headerContainer, false);
+            displayer.displayImage(member.getHeadPhoto(), imageSize, false, false);
+            displayer.addOnImageClickListener(onImageClickListener);
+            headerContainer.addView(displayer);
+            if (i >= 9) {
+                break;
+            }
+            i++;
         }
     }
 

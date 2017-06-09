@@ -10,6 +10,7 @@
     <string name="ui_icon_weibo">&#xe603;</string>
     <string name="ui_icon_weixin">&#xe675;</string>
     <string name="ui_icon_eye">&#xe609;</string>
+    <string name="ui_icon_lock">&#xe63c;</string>
     <string name="ui_icon_like_hollow">&#xe6dc;</string>
     <string name="ui_icon_like_solid">&#xe60e;</string>
     <string name="ui_icon_comment">&#xe613;</string>

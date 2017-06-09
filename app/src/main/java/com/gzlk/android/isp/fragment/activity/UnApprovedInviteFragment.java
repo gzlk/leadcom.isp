@@ -6,6 +6,8 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -14,7 +16,7 @@ import com.gzlk.android.isp.model.organization.Invitation;
 import java.util.List;
 
 /**
- * <b>功能描述：</b>组织内未处理的活动邀请记录<br />
+ * <b>功能描述：</b>组织内查询未参加的活动（包括暂不参加和未处理的）<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/06/04 12:55 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -24,10 +26,10 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class UnHandledInviteFragment extends BaseOrganizationFragment {
+public class UnApprovedInviteFragment extends BaseOrganizationFragment {
 
-    public static UnHandledInviteFragment newInstance(String params) {
-        UnHandledInviteFragment uhif = new UnHandledInviteFragment();
+    public static UnApprovedInviteFragment newInstance(String params) {
+        UnApprovedInviteFragment uhif = new UnApprovedInviteFragment();
         Bundle bundle = new Bundle();
         // 组织的id，这里要显示改组织内未处理的所有活动邀请
         bundle.putString(PARAM_QUERY_ID, params);
@@ -67,7 +69,7 @@ public class UnHandledInviteFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        fetchingUnhandled();
     }
 
     @Override
@@ -77,18 +79,32 @@ public class UnHandledInviteFragment extends BaseOrganizationFragment {
 
     private void fetchingUnhandled() {
         displayLoading(true);
-        fetchingUnHandledActivityInvite(mQueryId);
+        displayNothing(false);
+        fetchingUnApprovedActivityInvites();
     }
 
-    @Override
-    protected void onFetchingUnHandledActivityInviteComplete(List<Invitation> list) {
-        super.onFetchingUnHandledActivityInviteComplete(list);
-        if (null != list) {
-            mAdapter.update(list, true);
-        }
-        stopRefreshing();
-        displayLoading(false);
-        displayNothing(mAdapter.getItemCount() < 1);
+    // 加载我未参加的活动邀请列表
+    private void fetchingUnApprovedActivityInvites() {
+        InvitationRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Invitation>() {
+            @Override
+            public void onResponse(List<Invitation> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (null != list) {
+                    if (list.size() >= pageSize) {
+                        remotePageNumber++;
+                        isLoadingComplete(false);
+                    } else {
+                        isLoadingComplete(true);
+                    }
+                    mAdapter.update(list, true);
+                } else {
+                    isLoadingComplete(true);
+                }
+                stopRefreshing();
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() < 1);
+            }
+        }).activityNotApproved(mQueryId);
     }
 
     private void initializeAdapter() {
@@ -112,7 +128,7 @@ public class UnHandledInviteFragment extends BaseOrganizationFragment {
 
         @Override
         public ActivityViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ActivityViewHolder holder = new ActivityViewHolder(itemView, UnHandledInviteFragment.this);
+            ActivityViewHolder holder = new ActivityViewHolder(itemView, UnApprovedInviteFragment.this);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             return holder;
         }

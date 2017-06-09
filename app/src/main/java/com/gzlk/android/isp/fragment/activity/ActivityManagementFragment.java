@@ -77,7 +77,7 @@ public class ActivityManagementFragment extends BaseViewPagerSupportFragment {
             //param = format("%s,%d", mQueryId, MyActivitiesFragment.TYPE_NO_JOIN);
             //mFragments.add(MyActivitiesFragment.newInstance(param));
             // 未参加的
-            mFragments.add(UnHandledInviteFragment.newInstance(mQueryId));
+            mFragments.add(UnApprovedInviteFragment.newInstance(mQueryId));
             // 已结束的
             param = format("%s,%d", mQueryId, MyActivitiesFragment.TYPE_ENDED);
             mFragments.add(MyActivitiesFragment.newInstance(param));

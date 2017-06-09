@@ -4,6 +4,7 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
@@ -42,8 +43,6 @@ public class Activity extends Model {
         String Status = "status";
         String OpenStatus = "openStatus";
         String NimId = "nimId";
-        String MemberIdArray = "memberIdArray";
-        String MemberNameArray = "memberNameArray";
         String BeginDate = "beginDate";
         String Site = "site";
         String ActivityId = "activityId";
@@ -81,6 +80,13 @@ public class Activity extends Model {
          * 只向组织内开放
          */
         int GROUP = 2;
+    }
+
+    /**
+     * 从本地缓存中查找指定活动成员列表
+     */
+    public static List<Member> getMembers(String activityId) {
+        return new Dao<>(Member.class).query(Field.ActivityId, activityId);
     }
 
     //标题
@@ -125,11 +131,11 @@ public class Activity extends Model {
     @Column(Field.NimId)
     private String tid;
     //邀请的成员id列表（可能是尚未加入活动）,内容格式如["aaa","bbb"]
-    @Column(Field.MemberIdArray)
-    private ArrayList<String> memberIdArray;
+    //@Column(Field.MemberIdArray)
+    //private ArrayList<String> memberIdArray;
     //邀请的成员姓名列表（可能是尚未加入活动）,内容格式如["aaa","bbb"]
-    @Column(Field.MemberNameArray)
-    private ArrayList<String> memberNameArray;
+    //@Column(Field.MemberNameArray)
+    //private ArrayList<String> memberNameArray;
     //所属组织
     @Ignore
     private Organization group;
@@ -268,22 +274,6 @@ public class Activity extends Model {
 
     public void setTid(String tid) {
         this.tid = tid;
-    }
-
-    public ArrayList<String> getMemberIdArray() {
-        return memberIdArray;
-    }
-
-    public void setMemberIdArray(ArrayList<String> memberIdArray) {
-        this.memberIdArray = memberIdArray;
-    }
-
-    public ArrayList<String> getMemberNameArray() {
-        return memberNameArray;
-    }
-
-    public void setMemberNameArray(ArrayList<String> memberNameArray) {
-        this.memberNameArray = memberNameArray;
     }
 
     public Organization getGroup() {

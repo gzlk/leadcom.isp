@@ -50,6 +50,8 @@ public class ContactViewHolder extends BaseViewHolder {
     private CorneredButton button;
     @ViewId(R.id.ui_holder_view_contact_picker)
     private CustomTextView iconPicker;
+    @ViewId(R.id.ui_holder_view_contact_locked)
+    private CustomTextView lockFlag;
 
     private boolean buttonVisible = false;
     private boolean pickerVisible = false;
@@ -113,6 +115,7 @@ public class ContactViewHolder extends BaseViewHolder {
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
         button.setVisibility(buttonVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
+        lockFlag.setVisibility(member.isLocalDeleted() ? View.VISIBLE : View.GONE);
         if (buttonVisible) {
             // 只在显示按钮的时候才进行判断加入或不加入操作
             if (!StringHelper.isEmpty(squadId)) {

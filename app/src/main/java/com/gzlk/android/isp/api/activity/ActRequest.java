@@ -131,13 +131,11 @@ public class ActRequest extends Request<Activity> {
      * @param beginDate   活动开始时间
      * @param groupId     活动所属的组织id
      * @param logo        宣传图
-     * @param members     邀请的成员（可能是尚未加入活动的人）id 的 JSON 格式的数组，格式举例["aaa","bbb"]
      * @param labels      活动的标签
      * @param attachments 附件列表
      */
     public void add(@NonNull String title, String content, int openStatus, String address,
-                    String beginDate, @NonNull String groupId, String logo,
-                    ArrayList<String> members, ArrayList<String> names, ArrayList<String> labels, ArrayList<Attachment> attachments) {
+                    String beginDate, @NonNull String groupId, String logo,ArrayList<String> labels, ArrayList<Attachment> attachments) {
         // {title:"",[label]:"",content:"",openStatus："",groupId:"",accessToken:"",memberIdArray:"",beginDate:"",site:"",attUrlArray:""}
         JSONObject object = new JSONObject();
         try {
@@ -149,8 +147,8 @@ public class ActRequest extends Request<Activity> {
                     .put("beginDate", beginDate)
                     .put("site", address)
                     .put("accessToken", Cache.cache().accessToken)
-                    .put("memberIdArray", new JSONArray(members))
-                    .put("memberNameArray", new JSONArray(names))
+                    //.put("memberIdArray", new JSONArray(members))
+                    //.put("memberNameArray", new JSONArray(names))
                     .put("label", new JSONArray(labels))
                     .put("attUrlArray", new JSONArray(Attachment.getJson(attachments)));
         } catch (JSONException e) {
@@ -170,12 +168,11 @@ public class ActRequest extends Request<Activity> {
      * @param address     活动地点
      * @param beginDate   活动开始时间
      * @param logo        宣传图
-     * @param members     邀请的成员（可能是尚未加入活动的人）id 的 JSON 格式的数组，格式举例["aaa","bbb"]
      * @param labels      活动的标签
      * @param attachments 附件列表
      */
     public void update(@NonNull String activityId, @NonNull String title, String content, int openStatus, String address,
-                       String beginDate, String logo, ArrayList<String> members, ArrayList<String> names, ArrayList<String> labels, ArrayList<Attachment> attachments) {
+                       String beginDate, String logo, ArrayList<String> labels, ArrayList<Attachment> attachments) {
         // {id:"",title:"",content:"",accessToken:"",memberIdArray:""}
         JSONObject object = new JSONObject();
         try {
@@ -187,8 +184,6 @@ public class ActRequest extends Request<Activity> {
                     .put("beginDate", beginDate)
                     .put("site", address)
                     .put("accessToken", Cache.cache().accessToken)
-                    .put("memberIdArray", new JSONArray(members))
-                    .put("memberNameArray", new JSONArray(names))
                     .put("label", new JSONArray(labels))
                     .put("attUrlArray", new JSONArray(Attachment.getJson(attachments)));
         } catch (JSONException e) {

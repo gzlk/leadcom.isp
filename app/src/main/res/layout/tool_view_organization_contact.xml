@@ -106,6 +106,16 @@
             android:layout_height="@dimen/ui_base_border_size_normal"
             android:layout_alignParentBottom="true"
             android:background="@color/textColorHintLightLight" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_contact_locked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_icon_lock"
+            android:layout_margin="@dimen/ui_static_dp_5"
+            android:layout_alignParentEnd="true"
+            android:textSize="@dimen/ui_base_text_size_little"
+            android:textColor="@color/colorCaution" />
     </RelativeLayout>
 
 </LinearLayout>

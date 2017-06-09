@@ -2,6 +2,7 @@ package com.gzlk.android.isp.fragment.archive;
 
 import android.os.Bundle;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.Api;
 import com.gzlk.android.isp.fragment.WebViewFragment;
@@ -78,7 +79,8 @@ public class ArchiveDetailsWebViewFragment extends WebViewFragment {
 
     @Override
     protected String loadingUrl() {
-        String url = format("%s?%sDocId=%s", BASE_URL, (mType == Archive.Type.GROUP ? "gro" : "user"), mQueryId);
+        int type = BuildConfig.RELEASEABLE ? 1 : 0;
+        String url = format("%s?test=%d&%sDocId=%s", BASE_URL, type, (mType == Archive.Type.GROUP ? "gro" : "user"), mQueryId);
         log("loading archive content from inner WebView: " + url);
         return url;
     }

@@ -60,6 +60,7 @@
     <string name="ui_organization_contact_squad_no_member">小组目前没有其他成员</string>
 
     <string name="ui_organization_contact_picker_fragment_title">选择参加人员</string>
+    <string name="ui_organization_contact_picker_cannot_unpick_exists">锁定状态的成员不能在这里取消</string>
     <string name="ui_organization_contact_loading_text">正在加载成员列表，请稍候&#8230;</string>
 
     <string name="ui_organization_member_no_name">无名氏</string>
