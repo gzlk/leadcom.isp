@@ -126,7 +126,6 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private String privacy, title, source;
     // 文件选择
     private FilePickerDialog filePickerDialog;
-    private DialogProperties properties;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -429,7 +428,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         contentView.setValue(null == archive ? "" : StringHelper.escapeFromHtml(archive.getContent()));
 
         if (null == filePickerDialog) {
-            properties = new DialogProperties();
+            DialogProperties properties = new DialogProperties();
             // 选择文件
             properties.selection_type = DialogConfigs.FILE_SELECT;
             // 可以多选

@@ -145,7 +145,7 @@ public class UserRequest extends Request<User> {
     private void findInCache(String userId) {
         User user = new Dao<>(User.class).query(userId);
         if (null == user) {
-            httpRequest(getRequest(SingleUser.class, format("%s?userId=%s", url(FIND), userId), "", HttpMethods.Get));
+            findFromRemote(userId);
         } else {
             if (null != onSingleRequestListener) {
                 onSingleRequestListener.onResponse(user, true, "");
@@ -153,11 +153,19 @@ public class UserRequest extends Request<User> {
         }
     }
 
+    private void findFromRemote(String userId) {
+        httpRequest(getRequest(SingleUser.class, format("%s?userId=%s", url(FIND), userId), "", HttpMethods.Get));
+    }
+
     /**
      * 拉取某个用户的基本信息
      */
-    public void find(String userId) {
-        findInCache(userId);
+    public void find(String userId, boolean fromRemote) {
+        if (fromRemote) {
+            findFromRemote(userId);
+        } else {
+            findInCache(userId);
+        }
     }
 
     private void findInCache(String loginId, String phone, String name, int pageNumber) {

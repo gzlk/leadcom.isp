@@ -111,7 +111,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 }
             }
-        }).find(mQueryId);
+        }).find(mQueryId, true);
     }
 
     private BaseViewHolder.OnHandlerBoundDataListener<Moment> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Moment>() {

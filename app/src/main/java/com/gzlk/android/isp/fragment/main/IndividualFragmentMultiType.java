@@ -446,6 +446,9 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             appendListHeader(selectedFunction == 0);
             // 自动加载本地缓存中的记录
             performLoadingLocalModels();
+        } else {
+            // 更新我的信息
+            adapter.update(Cache.cache().me);
         }
     }
 

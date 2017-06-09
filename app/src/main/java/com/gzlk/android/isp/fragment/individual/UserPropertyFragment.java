@@ -142,13 +142,13 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         ToastHelper.make().showMsg("查看档案");
     }
 
-    private void toEdit() {
-        User user = (User) mAdapter.get(0);
-        if (user.getId().equals(Cache.cache().userId)) {
-            user.setLocalDeleted(!user.isLocalDeleted());
-            mAdapter.notifyItemChanged(0);
-        }
-    }
+//    private void toEdit() {
+//        User user = (User) mAdapter.get(0);
+//        if (user.getId().equals(Cache.cache().userId)) {
+//            user.setLocalDeleted(!user.isLocalDeleted());
+//            mAdapter.notifyItemChanged(0);
+//        }
+//    }
 
     private boolean isMe() {
         return !isEmpty(mQueryId) && mQueryId.equals(Cache.cache().userId);
@@ -200,7 +200,12 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    if (null != user && !isEmpty(user.getId())) {
+                    if (null != user) {
+                        if (isMe()) {
+                            // 随时更新我的信息
+                            Cache.cache().setCurrentUser(user);
+                            Cache.cache().saveCurrentUser();
+                        }
                         checkUser(user);
                     } else {
                         ToastHelper.make().showMsg(message);
@@ -208,36 +213,12 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 }
                 displayLoading(false);
             }
-        }).find(mQueryId);
+        }).find(mQueryId, true);
     }
-
-    /*
-     * 修改完我的信息之后同步我的信息
-     */
-//    private void syncMineInformation() {
-//        setLoadingText(R.string.ui_text_user_information_loading_sync_mine);
-//        // 同步我的信息
-//        displayLoading(true);
-//        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
-//
-//            @Override
-//            public void onResponse(User user, boolean success, String message) {
-//                super.onResponse(user, success, message);
-//                if (success) {
-//                    if (null != user && !isEmpty(user.getId())) {
-//                        Cache.cache().setCurrentUser(user);
-//                        Cache.cache().saveCurrentUser();
-//                        checkUser(user);
-//                    }
-//                }
-//                displayLoading(false);
-//            }
-//        }).sync();
-//    }
 
     private void checkUser(final User user) {
         // 自己和自己不能聊天
-        toChat.setVisibility(user.getId().equals(Cache.cache().userId) ? View.GONE : View.VISIBLE);
+        toChat.setVisibility(isMe() ? View.GONE : View.VISIBLE);
 
         final String invalid = StringHelper.getString(R.string.ui_base_text_not_set);
         // 头像部分
@@ -347,7 +328,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 openImageSelector();
                 break;
             case -1:
-                // 修改昵称
+                // 修改姓名
                 value = user.getName();
                 if (isEmpty(value)) {
                     value = "";

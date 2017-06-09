@@ -181,7 +181,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     needToReLogin();
                 }
             }
-        }).find(Cache.cache().userId);
+        }).find(Cache.cache().userId, true);
 //        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
 //            @SuppressWarnings("ConstantConditions")
 //            @Override

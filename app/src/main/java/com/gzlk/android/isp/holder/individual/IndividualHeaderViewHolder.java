@@ -1,9 +1,11 @@
 package com.gzlk.android.isp.holder.individual;
 
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -36,11 +38,13 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
     private TextView additionalTextView;
     @ViewId(R.id.ui_holder_view_user_header)
     private ImageDisplayer userHeader;
+    @ViewId(R.id.tool_view_individual_top_padding)
+    private LinearLayout topPadding;
 
     public IndividualHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
-        ((BaseTransparentSupportFragment) fragment).tryPaddingContent(itemView, true);
+        resetTopPadding();
         userHeader.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
 
             @Override
@@ -48,7 +52,14 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
                 openActivity(UserPropertyFragment.class.getName(), Cache.cache().userId, false, false, true);
             }
         });
+    }
 
+    private void resetTopPadding() {
+        int statusBarHeight = BaseActivity.getStatusHeight(fragment().Activity());
+        int actionBarHeight = fragment().Activity().getActionBarSize();
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) topPadding.getLayoutParams();
+        params.height = statusBarHeight + actionBarHeight;
+        topPadding.setLayoutParams(params);
     }
 
     @Click({R.id.ui_tool_individual_header_to_2d_code})
@@ -62,7 +73,6 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
     }
 
     public void showContent(User user) {
-        ((BaseTransparentSupportFragment) fragment()).tryPaddingContent(itemView, true);
         nameTextView.setText(isEmpty(user.getName()) ? user.getLoginId() : user.getName());
         userHeader.displayImage(user.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_60), false, false);
         additionalTextView.setText(isEmpty(user.getSignature()) ? StringHelper.getString(R.string.ui_text_user_information_signature_empty) : user.getSignature());
