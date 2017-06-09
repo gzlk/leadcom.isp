@@ -71,7 +71,8 @@ public class AboutFragment extends BaseLayoutSupportFragment {
     @SuppressWarnings("ConstantConditions")
     private void initializeHolders() {
         if (null == strings) {
-            versionTextView.setText(StringHelper.getString(R.string.ui_text_about_version, App.app().version()));
+            String buildType = StringHelper.getString(R.string.app_build_type);
+            versionTextView.setText(StringHelper.getString(R.string.ui_text_about_version, buildType, App.app().version()));
             strings = StringHelper.getStringArray(R.array.ui_about);
         }
         if (null == evaluateHolder) {

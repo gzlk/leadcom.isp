@@ -3,6 +3,7 @@ package com.gzlk.android.isp.api.org;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
+import com.gzlk.android.isp.api.Special;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.model.Dao;
@@ -34,6 +35,9 @@ public class MemberRequest extends Request<Member> {
     }
 
     private static class MultipleMember extends Query<Member> {
+    }
+
+    private static class SpecialMember extends Special<Member> {
     }
 
     // 成员
@@ -138,7 +142,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void list(int type, String id, int pageNumber) {
         String param = format("%s?%s=%s&pageNumber=%d", url(type, LIST), getOrgId(type), id, pageNumber);
-        httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
+        httpRequest(getRequest(SpecialMember.class, param, "", HttpMethods.Get));
     }
 
     /**

@@ -37,31 +37,37 @@ android {
         leadcom {}
     }
     buildTypes {
+        // 发布版本
         release {
             buildConfigField "boolean", "RELEASEABLE", "true"
+            resValue "string", "app_build_type", "release"
             minifyEnabled false
-            debuggable true
             signingConfig signingConfigs.release
             zipAlignEnabled true  // 混淆后的zip优化
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        // 内测测试版本
         alpha {
             initWith release
             signingConfig signingConfigs.release
             debuggable true
             buildConfigField "boolean", "RELEASEABLE", "false"
+            resValue "string", "app_build_type", "alpha"
         }
+        // 正式测试版本
         beta {
             initWith release
             signingConfig signingConfigs.release
             debuggable true
-            buildConfigField "boolean", "RELEASEABLE", "false"
+            buildConfigField "boolean", "RELEASEABLE", "true"
+            resValue "string", "app_build_type", "beta"
         }
         debug {
             initWith release
             signingConfig signingConfigs.release
             debuggable true
             buildConfigField "boolean", "RELEASEABLE", "false"
+            resValue "string", "app_build_type", "debug"
         }
     }
     externalNativeBuild {
