@@ -70,7 +70,8 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
         mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ALL)));
         mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ACTIVITY)));
         mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ARCHIVE)));
-        mFragments.add(new MomentFragment());
+        mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_EDITOR)));
+        //mFragments.add(new MomentFragment());
     }
 
     @Override

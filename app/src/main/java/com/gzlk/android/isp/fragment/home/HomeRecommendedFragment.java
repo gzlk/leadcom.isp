@@ -184,11 +184,13 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
         if (null == mAdapter) {
             mAdapter = new RecommendedAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            if (mType == TYPE_ALL) {
-                setTestData();
-                fetchingFocusImages();
-            } else {
-                fetchingRecommended();
+            if (getUserVisibleHint()) {
+                if (mType == TYPE_ALL) {
+                    setTestData();
+                    fetchingFocusImages();
+                } else {
+                    fetchingRecommended();
+                }
             }
         }
     }
