@@ -91,7 +91,7 @@ public class ActivityViewHolder extends BaseViewHolder {
             headers.setAdapter(adapter);
             headers.setImagesData(img);
         }
-        flagView.setVisibility(View.GONE);
+        flagView.setVisibility(activity.getUnreadNum() > 0 ? View.VISIBLE : View.GONE);
         timeView.setText(Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), activity.getBeginDate()));
         //headers.setVisibility(hasImage ? View.VISIBLE : View.GONE);
         headers.setVisibility(View.VISIBLE);

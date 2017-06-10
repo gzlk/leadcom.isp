@@ -191,6 +191,8 @@ public class NimSessionHelper {
     }
 
     public static void startTeamSession(Context context, String tid, IMMessage anchor) {
+        // 通知中的 RecentContact 对象的未读数为0
+        NIMClient.getService(MsgService.class).clearUnreadCount(tid, SessionTypeEnum.Team);
         NimUIKit.startTeamSession(context, tid, anchor);
     }
 

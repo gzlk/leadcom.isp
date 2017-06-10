@@ -146,6 +146,8 @@ public class Activity extends Model {
     //活动地点
     @Column(Field.Site)
     private String site;
+    @Ignore
+    private int unreadNum;
     //活动附件
     @Ignore
     private ArrayList<Attachment> attUrlArray;
@@ -307,6 +309,14 @@ public class Activity extends Model {
 
     public void setSite(String site) {
         this.site = site;
+    }
+
+    public int getUnreadNum() {
+        return unreadNum;
+    }
+
+    public void setUnreadNum(int unreadNum) {
+        this.unreadNum = unreadNum;
     }
 
     public ArrayList<Attachment> getAttUrlArray() {

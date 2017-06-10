@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
 import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
@@ -26,6 +27,12 @@ import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.RequestCallbackWrapper;
+import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +64,72 @@ public class ActivityFragment extends BaseOrganizationFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         selectedIndex = bundle.getInt(PARAM_SELECTED_, -1);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //  注册/注销观察者
+        NIMClient.getService(MsgServiceObserve.class).observeRecentContact(messageObserver, true);
+    }
+
+    @Override
+    public void onDestroy() {
+        //  注册/注销观察者
+        NIMClient.getService(MsgServiceObserve.class).observeRecentContact(messageObserver, false);
+        super.onDestroy();
+    }
+
+    //  创建观察者对象
+    private Observer<List<RecentContact>> messageObserver = new Observer<List<RecentContact>>() {
+        @Override
+        public void onEvent(List<RecentContact> contacts) {
+            // 当最近联系人列表数据有变化时，同步当前显示组织里的所有活动的未读标记和最近聊天内容
+            resetUnreadFlags(contacts);
+        }
+    };
+
+    // 查询最近联系人列表，并同步更新未读消息
+    private void resetUnreadFlags() {
+        NIMClient.getService(MsgService.class).queryRecentContacts().setCallback(new RequestCallbackWrapper<List<RecentContact>>() {
+            @Override
+            public void onResult(int code, List<RecentContact> recents, Throwable e) {
+                // recents参数即为最近联系人列表（最近会话列表）
+                resetUnreadFlags(recents);
+            }
+        });
+    }
+
+    private void resetUnreadFlags(List<RecentContact> contacts) {
+        if (null == mAdapter) {
+            return;
+        }
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            Model model = mAdapter.get(i);
+            if (model instanceof Activity) {
+                Activity act = (Activity) model;
+                RecentContact contact = get(act.getTid(), contacts);
+                if (null != contact) {
+                    act.setUnreadNum(contact.getUnreadCount());
+                    // 最后发送消息的时间
+                    act.setBeginDate(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), contact.getTime()));
+                    act.setContent(format("[%s]说：%s", contact.getFromNick(), contact.getContent()));
+                    mAdapter.notifyItemChanged(i);
+                }
+            }
+        }
+    }
+
+    private RecentContact get(String tid, List<RecentContact> contacts) {
+        if (null == contacts || contacts.size() < 1) {
+            return null;
+        }
+        for (RecentContact r : contacts) {
+            if (r.getFromAccount().equals(tid)) {
+                return r;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -269,6 +342,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
             activities.clear();
             refreshingItems();
+            // 查询网易云信联系人列表，并更新相应的未读提示和最后发送的消息
+            resetUnreadFlags();
         }
     }
 
