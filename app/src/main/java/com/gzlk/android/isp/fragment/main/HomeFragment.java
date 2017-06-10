@@ -13,7 +13,7 @@ import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.home.HomeArchiveFragment;
 import com.gzlk.android.isp.fragment.home.HomeActivityFragment;
 import com.gzlk.android.isp.fragment.home.MomentFragment;
-import com.gzlk.android.isp.fragment.home.HomeRecommendFragment;
+import com.gzlk.android.isp.fragment.home.HomeRecommendedFragment;
 import com.gzlk.android.isp.holder.common.HorizontalRecyclerViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -67,9 +67,9 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
 
     @Override
     protected void initializeFragments() {
-        mFragments.add(new HomeRecommendFragment());
-        mFragments.add(new HomeActivityFragment());
-        mFragments.add(new HomeArchiveFragment());
+        mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ALL)));
+        mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ACTIVITY)));
+        mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ARCHIVE)));
         mFragments.add(new MomentFragment());
     }
 

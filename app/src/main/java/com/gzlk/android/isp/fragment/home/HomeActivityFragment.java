@@ -42,6 +42,7 @@ public class HomeActivityFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
+        setNothingText(R.string.ui_text_home_activity_nothing);
         initializeAdapter();
     }
 

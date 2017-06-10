@@ -98,6 +98,7 @@ public class RecommendRequest extends Request<RecommendContent> {
     public void list(int type) {
         // 不保存
         directlySave = false;
-        httpRequest(getRequest(MultiRecommend.class, format("/operate/recommend/list?sourceType=%d", type), "", HttpMethods.Get));
+        String params = type <= 0 ? "" : format("%d", type);
+        httpRequest(getRequest(MultiRecommend.class, format("/operate/recommend/list?sourceType=%s", params), "", HttpMethods.Get));
     }
 }

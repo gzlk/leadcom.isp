@@ -29,6 +29,10 @@ public class RecommendContent extends Model {
          * 档案
          */
         int ARCHIVE = 2;
+        /**
+         * 编辑展示位
+         */
+        int PRIORITY_PLACE = 3;
     }
 
     //被推荐的内容类型：1来自活动，2来自组织档案
@@ -37,6 +41,8 @@ public class RecommendContent extends Model {
     private Activity activity;
     //组织档案，当推荐的内容来自活动时此字段为空
     private Archive groDoc;
+    //编辑展示位
+    private PriorityPlace priorityPlace;
     //推荐时间
     private String createTime;
 
@@ -62,6 +68,14 @@ public class RecommendContent extends Model {
 
     public void setGroDoc(Archive groDoc) {
         this.groDoc = groDoc;
+    }
+
+    public PriorityPlace getPriorityPlace() {
+        return priorityPlace;
+    }
+
+    public void setPriorityPlace(PriorityPlace priorityPlace) {
+        this.priorityPlace = priorityPlace;
     }
 
     public String getCreateTime() {

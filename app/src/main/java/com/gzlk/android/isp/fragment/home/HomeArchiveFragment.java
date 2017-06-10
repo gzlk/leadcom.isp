@@ -40,6 +40,7 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
+        setNothingText(R.string.ui_text_home_archive_nothing);
         initializeAdapter();
     }
 

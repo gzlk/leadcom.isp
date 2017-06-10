@@ -2,10 +2,13 @@
 <resources>
 
     <string name="ui_text_home_top_channel_full">全部选项</string>
-    <string name="ui_text_home_top_channel_1">会议</string>
+    <string name="ui_text_home_top_channel_1">推荐</string>
     <string name="ui_text_home_top_channel_2">活动</string>
     <string name="ui_text_home_top_channel_3">@string/ui_organization_top_channel_3</string>
     <string name="ui_text_home_top_channel_4">说说</string>
+
+    <string name="ui_text_home_activity_nothing">暂时没有更多活动了</string>
+    <string name="ui_text_home_archive_nothing">暂时没有更多档案了</string>
 
     <string name="ui_text_home_inner_web_view_invalid_url">无效的url路径</string>
     <string name="ui_text_home_archive_content_empty">该档案的内容是空的</string>

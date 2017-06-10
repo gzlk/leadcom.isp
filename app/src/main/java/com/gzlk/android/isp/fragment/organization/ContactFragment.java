@@ -26,6 +26,7 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Squad;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.util.ArrayList;
@@ -127,6 +128,11 @@ public class ContactFragment extends BaseOrganizationFragment {
         members.clear();
         mAdapter.clear();
         loadingQueryItem();
+    }
+
+    @Click({R.id.ui_tool_view_phone_contact_container})
+    private void elementClick(View view) {
+        openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
     }
 
     @Override

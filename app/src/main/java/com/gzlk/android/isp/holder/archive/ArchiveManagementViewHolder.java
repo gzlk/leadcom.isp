@@ -16,6 +16,7 @@ import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.common.PriorityPlace;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -213,6 +214,15 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
             cnt += archive.getAttach().size();
         }
         return cnt;
+    }
+
+    public void showContent(PriorityPlace place) {
+        selector.setVisibility(View.GONE);
+        showImage(place.getImageUrl());
+        titleView.setText(place.getTitle());
+        dateView.setText(StringHelper.getString(R.string.ui_archive_management_list_item_create_date, fragment().formatDateTime(place.getCreateTime())));
+        filesView.setText(format("推荐者：%s", place.getCreaterName()));
+        statusView.setVisibility(View.INVISIBLE);
     }
 
     @Click({R.id.ui_holder_view_archive_management_root})
