@@ -137,6 +137,22 @@ public class SystemRequest extends Request<User> {
     }
 
     /**
+     * 重置手机号码时发送验证码
+     */
+    public void getCaptchaToResetPhone(String phone) {
+        String param = format("/system/getCaptchaToResetPhone?phone=%s", phone);
+        httpRequest(getRequest(Register.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 重置手机号码
+     */
+    public void resetPhone(String phone, String captcha) {
+        String param = format("/system/resetPhone?phone=%s&captcha=%s", phone, captcha);
+        httpRequest(getRequest(Register.class, param, "", HttpMethods.Get));
+    }
+
+    /**
      * 邀请手机通讯录好友加入组织
      */
     public void inviteJoinIntoGroup(@NonNull String phone, @NonNull String groupId) {

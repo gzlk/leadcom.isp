@@ -198,21 +198,16 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void tryModifyMyPhoneNumber() {
-        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    if (null != user && !StringHelper.isEmpty(user.getId())) {
-                        Cache.cache().me.setPhone(user.getPhone());
-                        Cache.cache().saveCurrentUser();
-                        resultSucceededActivity();
-                    } else {
-                        ToastHelper.make().showMsg(message);
-                    }
+                    resultSucceededActivity();
                 }
+                ToastHelper.make().showMsg(message);
             }
-        }).update(UserRequest.UPDATE_PHONE, verifyPhone);
+        }).resetPhone(verifyPhone, super.verifyCode);
     }
 
     @Override
@@ -292,9 +287,30 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
     @Override
     public void permissionGrantFailed(int requestCode) {
         if (requestCode == GRANT_SMS) {
-            requestVerifyCode();
+            if (verifyType == VT_MODIFY_PHONE) {
+                // 重置手机号码时的验证码发送
+                requestVerifyCodeForResetPhone();
+            } else {
+                // 其他验证码发送
+                requestVerifyCode();
+            }
         }
         super.permissionGrantFailed(requestCode);
+    }
+
+    /**
+     * 重置手机号码时发送验证码
+     */
+    private void requestVerifyCodeForResetPhone() {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    startTimeCounter();
+                }
+            }
+        }).getCaptchaToResetPhone(verifyPhone);
     }
 
     // 请求验证码
