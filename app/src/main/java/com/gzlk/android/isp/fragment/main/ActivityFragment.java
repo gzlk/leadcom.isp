@@ -125,7 +125,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
             return null;
         }
         for (RecentContact r : contacts) {
-            if (r.getFromAccount().equals(tid)) {
+            if (r.getContactId().equals(tid)) {
                 return r;
             }
         }

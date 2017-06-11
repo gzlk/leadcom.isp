@@ -167,7 +167,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }
         String json = Json.gson().toJson(members, new TypeToken<ArrayList<SubMember>>() {
         }.getType());
-        openActivity(OrganizationContactPickFragment.class.getName(), format("%s,true,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
+        openActivity(OrganizationContactPickFragment.class.getName(), format("%s,true,false,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
     }
 
     @Override
@@ -325,7 +325,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onBindViewHolder(ContactViewHolder holder, int position) {
             Member member = list.get(position);
-            boolean isManager = member.getUserId().equals(Cache.cache().userId) && isMaster;
+            boolean isManager = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId) && isMaster;
             // 管理者不需要踢出
             holder.showButton2(!isManager);
             holder.showContent(member, "");
