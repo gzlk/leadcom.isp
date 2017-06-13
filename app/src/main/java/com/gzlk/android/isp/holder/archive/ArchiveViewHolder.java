@@ -8,10 +8,9 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
@@ -73,14 +72,8 @@ public class ArchiveViewHolder extends BaseViewHolder {
             Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != object && object instanceof Archive) {
                 Archive archive = (Archive) object;
-                if (isEmpty(archive.getContent())) {
-                    ToastHelper.make().showMsg(R.string.ui_text_home_archive_content_empty);
-                } else {
-                    int type = StringHelper.isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                    openActivity(ArchiveDetailsWebViewFragment.class.getName(),
-                            format("%d,%s,%s", type, archive.isManager(), archive.getId()),
-                            BaseFragment.REQUEST_CHANGE, true, false);
-                }
+                int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archive.getId()), BaseFragment.REQUEST_CHANGE, true, false);
             }
         } else if (null != mOnViewHolderClickListener) {
             mOnViewHolderClickListener.onClick(getAdapterPosition());

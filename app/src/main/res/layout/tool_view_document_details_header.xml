@@ -11,19 +11,18 @@
         android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
         android:orientation="vertical"
+        app:cv_background="@android:color/transparent"
+        app:cv_background_active="@android:color/transparent"
+        app:cv_background_type="fill"
         app:cv_border_size="@dimen/ui_static_dp_zero">
 
         <include
             android:id="@+id/ui_tool_view_document_details_header_title"
             layout="@layout/holder_view_simple_clickable_gravity_left" />
 
-        <include layout="@layout/tool_view_half_line_horizontal" />
-
         <include
             android:id="@+id/ui_tool_view_document_details_header_source"
             layout="@layout/holder_view_simple_clickable_gravity_left" />
-
-        <include layout="@layout/tool_view_half_line_horizontal" />
 
         <include
             android:id="@+id/ui_tool_view_document_details_header_time"
@@ -36,21 +35,11 @@
 
     </com.hlk.hlklib.lib.view.CorneredView>
 
-    <com.hlk.hlklib.lib.view.CorneredView
+    <WebView
+        android:id="@+id/ui_holder_view_document_details_content"
         android:layout_width="match_parent"
+        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:cv_border_size="@dimen/ui_static_dp_zero">
+        android:background="@android:color/white" />
 
-        <com.gzlk.android.isp.lib.view.ExpandableTextView
-            android:id="@+id/ui_holder_view_document_details_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/ui_static_dp_5"
-            android:textColor="@color/textColorHintDark"
-            android:textSize="@dimen/ui_base_text_size_small"
-            app:lessText="@string/ui_base_text_collapse"
-            app:moreText="@string/ui_base_text_expand" />
-
-    </com.hlk.hlklib.lib.view.CorneredView>
 </LinearLayout>

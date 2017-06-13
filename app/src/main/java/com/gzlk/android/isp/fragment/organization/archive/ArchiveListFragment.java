@@ -6,9 +6,8 @@ import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -164,13 +163,8 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 // 待审核档案
                 openActivity(ArchiveHandlerFragment.class.getName(), format("%d,%s,", ArchiveHandlerFragment.TYPE_APPROVE, acv.getId()), true, false);
             } else {
-                if (isEmpty(acv.getContent())) {
-                    ToastHelper.make().showMsg(R.string.ui_text_home_archive_content_empty);
-                } else {
-                    // 打开详情页
-                    openActivity(ArchiveDetailsWebViewFragment.class.getName(), format("%d,%s,%s", Archive.Type.GROUP, acv.isManager(), acv.getId()), true, false);
-                    //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
-                }
+                // 打开详情页
+                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
             }
         }
     };

@@ -104,6 +104,11 @@
     <string name="ui_text_document_details_fragment_title">档案内容</string>
     <string name="ui_text_document_details_not_exists">非法的传入参数：档案不存在</string>
     <string name="ui_text_document_details_delete">删除档案将会一同删除其下所有附件、评论等相关信息，您确定要继续吗？</string>
+    <string name="ui_text_document_details_loading_comments">正在加载评论列表，请稍候&#8230;</string>
+    <string name="ui_text_document_details_deleting_comment">正在删除评论，请稍候&#8230;</string>
+    <string name="ui_text_document_details_deleting_document">正在删除本档案，请稍候&#8230;</string>
+    <string name="ui_text_document_details_loading_document_content">正在加载档案内容，请稍候&#8230;</string>
+    <string name="ui_text_document_details_commenting">正在提交您的评论，请稍候&#8230;</string>
     <string name="ui_text_document_comment_content" formatted="false"><![CDATA[<font color="#3cbaff">%s</font>：%s]]></string>
     <string-array name="ui_document_details_item">
         <item>0|题名：|%s|0</item>

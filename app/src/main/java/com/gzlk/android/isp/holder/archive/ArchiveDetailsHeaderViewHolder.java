@@ -1,14 +1,20 @@
 package com.gzlk.android.isp.holder.archive;
 
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
-import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -35,7 +41,7 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_tool_view_document_details_header_privacy)
     private View privacyView;
     @ViewId(R.id.ui_holder_view_document_details_content)
-    private ExpandableTextView contentView;
+    private WebView contentView;
 
     // holder
     private SimpleClickableViewHolder titleHolder;
@@ -46,9 +52,16 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
     // items
     private String[] items;
 
+    @SuppressLint("SetJavaScriptEnabled")
     public ArchiveDetailsHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        contentView.getSettings().setUseWideViewPort(true);
+        contentView.getSettings().setLoadWithOverviewMode(true);
+        contentView.getSettings().setDomStorageEnabled(true);
+        contentView.getSettings().setJavaScriptEnabled(true);
+        contentView.setWebViewClient(new MyWebViewClient());
+        contentView.setWebChromeClient(new WebChromeClient());
         initializeHolders();
     }
 
@@ -70,13 +83,53 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
         }
     }
 
-    public void showContent(Archive archive) {
+    @SuppressWarnings("ConstantConditions")
+    public void showContent(final Archive archive) {
         titleHolder.showContent(format(items[0], archive.getTitle()));
         sourceHolder.showContent(format(items[1], archive.getUserName()));
         timeHolder.showContent(format(items[2], Utils.format(archive.getHappenDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
         privacyHolder.showContent(format(items[3], ""));
-        contentView.setText(StringHelper.escapeFromHtml(archive.getContent()));
-        contentView.makeExpandable();
-        contentView.setVisibility(StringHelper.isEmpty(archive.getContent()) ? View.GONE : View.VISIBLE);
+        contentView.setVisibility(StringHelper.isEmpty(archive.getMarkdown()) ? View.GONE : View.VISIBLE);
+        if (!isEmpty(archive.getMarkdown())) {
+            int type = BuildConfig.RELEASEABLE ? 1 : 0;
+            int mType = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+            String url = format("%s?test=%d&%sDocId=%s", BASE_URL, type, (mType == Archive.Type.GROUP ? "gro" : "user"), archive.getId());
+            contentView.loadUrl(url);
+        }
+    }
+
+    private static final String BASE_URL = "http://113.108.144.2:8045/lcbase-manage/editor/md_view.html";
+
+    /**
+     * WebViewClient主要帮助WebView处理各种通知、请求事件的
+     */
+    private class MyWebViewClient extends WebViewClient {
+
+        /**
+         * 在点击请求的是链接时才会调用，重写此方法返回true表明点击网页里面的链接还是在当前的webview里跳转，不跳到浏览器那边
+         */
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+
+        /**
+         * 在页面加载开始时调用
+         */
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            ((ArchiveDetailsFragment)fragment()).showLoadingContent(true);
+        }
+
+        /**
+         * 在页面加载结束时调用
+         */
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            ((ArchiveDetailsFragment)fragment()).showLoadingContent(false);
+            super.onPageFinished(view, url);
+        }
     }
 }

@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.Api;
 import com.gzlk.android.isp.fragment.WebViewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;

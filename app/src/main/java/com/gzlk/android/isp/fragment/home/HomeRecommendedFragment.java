@@ -14,7 +14,7 @@ import com.gzlk.android.isp.api.common.RecommendRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -303,7 +303,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                     ToastHelper.make().showMsg(R.string.ui_text_home_archive_content_empty);
                 } else {
                     int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                    openActivity(ArchiveDetailsWebViewFragment.class.getName(), format("%d,%s,%s", type, arc.isManager(), arc.getId()), true, false);
+                    openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
                 }
             } else if (model instanceof PriorityPlace) {
                 // 编辑推荐

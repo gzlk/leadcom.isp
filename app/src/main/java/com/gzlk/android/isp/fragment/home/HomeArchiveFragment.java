@@ -7,7 +7,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.common.RecommendRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
@@ -123,7 +123,7 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
                 ToastHelper.make().showMsg(R.string.ui_text_home_archive_content_empty);
             } else {
                 int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                openActivity(ArchiveDetailsWebViewFragment.class.getName(), format("%d,%s,%s", type, arc.isManager(), arc.getId()), true, false);
+                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
             }
         }
     };

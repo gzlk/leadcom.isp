@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
@@ -35,8 +34,6 @@ import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.task.OrmTask;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
@@ -125,14 +122,14 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 
     // 刷新当前文档的所有属性
     private void refreshingDocument() {
-        fetchingDocument(false);
+        //fetchingDocument(true);
         fetchingRemoteComment();
         fetchingRemoteLikes();
     }
 
     @Override
     protected void onLoadingMore() {
-        loadingLocalComments();
+        fetchingRemoteComment();
     }
 
     @Override
@@ -181,7 +178,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 //        }
         // 图片和文件附件列表
         loadingAttachments(archive);
-        loadingLocalComments();
+        //loadingLocalComments();
         // 拉取远程赞列表
         fetchingRemoteLikes();
     }
@@ -231,28 +228,44 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void fetchingRemoteComment() {
+        setLoadingText(R.string.ui_text_document_details_loading_comments);
+        displayLoading(true);
         CommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
 
             @Override
             public void onResponse(List<Comment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
-                    remotePageSize = pageSize;
-                    remoteTotalPages = totalPages;
-                    remoteTotalCount = total;
-                    remotePageNumber = pageNumber;
-                    if (list.size() >= remotePageSize) {
-                        // 如果取满了一页，则下次需要拉取下一页
-                        remotePageNumber += 1;
+                    if (null != list) {
+                        if (list.size() >= pageSize) {
+                            // 如果取满了一页，则下次需要拉取下一页
+                            remotePageNumber += 1;
+                            isLoadingComplete(false);
+                        } else {
+                            isLoadingComplete(true);
+                        }
+                        if (list.size() > 0) {
+                            updateAdapter(list);
+                        }
+                    } else {
+                        isLoadingComplete(true);
                     }
-                    if (list.size() > 0) {
-                        updateAdapter(list);
-                    }
+                } else {
+                    isLoadingComplete(true);
                 }
+                displayLoading(false);
                 stopRefreshing();
                 smoothScrollToBottom(mAdapter.getItemCount() - 1);
             }
         }).list(commentType(), mQueryId, remotePageNumber);
+    }
+
+    public void showLoadingContent(boolean shown) {
+        if (shown) {
+            showImageHandlingDialog(R.string.ui_text_document_details_loading_document_content);
+        } else {
+            hideImageHandlingDialog();
+        }
     }
 
     private int commentType() {
@@ -260,38 +273,38 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     // 加载本地缓存的评论列表
-    private void loadingLocalComments() {
-        new OrmTask<Comment>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Comment>() {
-            @Override
-            public boolean isModifiable() {
-                return false;
-            }
-
-            @Override
-            public List<Comment> executing(OrmTask<Comment> task) {
-                // 分页查找
-                QueryBuilder<Comment> builder = new QueryBuilder<>(Comment.class)
-                        .whereEquals(Archive.Field.UserArchiveId, mQueryId)
-                        .orderBy(Model.Field.CreateDate)
-                        .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
-                return new Dao<>(Comment.class).query(builder);
-            }
-        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Comment>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onExecuted(boolean modified, List<Comment> result) {
-                if (null != result) {
-                    if (result.size() >= PAGE_SIZE) {
-                        // 取满一页后下一次需要取下一页
-                        localPageNumber++;
-                    }
-                    updateAdapter(result);
-                    isLoadingComplete(result.size() < PAGE_SIZE);
-                    fetchingRemoteComment();
-                }
-            }
-        }).exec();
-    }
+//    private void loadingLocalComments() {
+//        new OrmTask<Comment>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Comment>() {
+//            @Override
+//            public boolean isModifiable() {
+//                return false;
+//            }
+//
+//            @Override
+//            public List<Comment> executing(OrmTask<Comment> task) {
+//                // 分页查找
+//                QueryBuilder<Comment> builder = new QueryBuilder<>(Comment.class)
+//                        .whereEquals(Archive.Field.UserArchiveId, mQueryId)
+//                        .orderBy(Model.Field.CreateDate)
+//                        .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
+//                return new Dao<>(Comment.class).query(builder);
+//            }
+//        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Comment>() {
+//            @SuppressWarnings("unchecked")
+//            @Override
+//            public void onExecuted(boolean modified, List<Comment> result) {
+//                if (null != result) {
+//                    if (result.size() >= PAGE_SIZE) {
+//                        // 取满一页后下一次需要取下一页
+//                        localPageNumber++;
+//                    }
+//                    updateAdapter(result);
+//                    isLoadingComplete(result.size() < PAGE_SIZE);
+//                    fetchingRemoteComment();
+//                }
+//            }
+//        }).exec();
+//    }
 
     private void openEditSelector() {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
@@ -338,17 +351,16 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     }
 
     private void deleteDocument() {
+        setLoadingText(R.string.ui_text_document_details_deleting_document);
+        displayLoading(true);
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
+                displayLoading(false);
+                ToastHelper.make().showMsg(message);
                 if (success) {
-                    ToastHelper.make().showMsg(message);
-                    Dao<Archive> dao = new Dao<>(Archive.class);
-                    Archive doc = dao.query(mQueryId);
-                    if (null != doc) {
-                        dao.delete(doc);
-                    }
+                    new Dao<>(Archive.class).delete(mQueryId);
                     // 返回成功
                     finish();
                 }
@@ -370,6 +382,8 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         if (null == cmt) {
             return;
         }
+        setLoadingText(R.string.ui_text_document_details_deleting_comment);
+        displayLoading(true);
         CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
@@ -379,6 +393,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     new Dao<>(Comment.class).delete(cmt);
                     mAdapter.remove(position);
                 }
+                displayLoading(false);
             }
         }).delete(commentType(), mQueryId, cmt.getId());
     }
@@ -407,10 +422,13 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
     };
 
     private void tryComment(String text) {
+        setLoadingText(R.string.ui_text_document_details_commenting);
+        displayLoading(true);
         CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
                 super.onResponse(comment, success, message);
+                displayLoading(false);
                 if (success) {
                     if (null != comment && !StringHelper.isEmpty(comment.getId())) {
                         mAdapter.update(comment);
