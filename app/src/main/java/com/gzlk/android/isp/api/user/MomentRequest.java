@@ -105,6 +105,7 @@ public class MomentRequest extends Request<Moment> {
     }
 
     private static final String QB_TOKEN = "accessToken";
+    private static final String QB_USER_ID = "userId";
     private static final String QB_MOMENT = "momentId";
 
     private void getRequestBy(String baseUrl, String queryBy, Type resultType, String queryId, int pageNumber, String body, HttpMethods methods) {
@@ -118,8 +119,8 @@ public class MomentRequest extends Request<Moment> {
     /**
      * 查询指定用户id的说说列表
      */
-    public void list(String accessToken, int pageNumber) {
-        getRequestBy(url(LIST), QB_TOKEN, MultiMoment.class, accessToken, pageNumber, "", HttpMethods.Get);
+    public void list(String userId, int pageNumber) {
+        getRequestBy(url(LIST), QB_USER_ID, MultiMoment.class, userId, pageNumber, "", HttpMethods.Get);
     }
 
     /**

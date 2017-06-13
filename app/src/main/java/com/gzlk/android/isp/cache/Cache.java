@@ -7,6 +7,7 @@ import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
 import java.util.Date;
 
@@ -69,6 +70,7 @@ public class Cache {
             nimToken = me.getPassword();
             userName = me.getName();
             accessToken = me.getAccessToken();
+            NimSessionHelper.setAccount(userId);
             // 保存网易云登录的账户和令牌
             PreferenceHelper.save(R.string.pf_last_login_user_id, userId);
             PreferenceHelper.save(R.string.pf_last_login_user_token, accessToken);

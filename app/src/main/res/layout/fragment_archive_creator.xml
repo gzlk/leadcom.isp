@@ -33,14 +33,13 @@
     </com.hlk.hlklib.lib.view.CorneredView>
 
     <com.hlk.hlklib.lib.view.ClearEditText
-        android:id="@+id/ui_archive_creator_summary"
+        android:id="@+id/ui_archive_creator_introduction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:cet_edit_hint="@string/ui_text_document_create_content_hint"
-        app:cet_edit_max_lines="5"
-        app:cet_edit_maximum_height="@dimen/ui_static_dp_150"
-        app:cet_edit_minimum_height="@dimen/ui_static_dp_100"
+        app:cet_edit_max_lines="3"
+        app:cet_edit_maximum_height="@dimen/ui_static_dp_100"
+        app:cet_edit_minimum_height="@dimen/ui_static_dp_80"
         app:cet_edit_padding="@dimen/ui_static_dp_5" />
 
     <include layout="@layout/tool_view_divider_big" />

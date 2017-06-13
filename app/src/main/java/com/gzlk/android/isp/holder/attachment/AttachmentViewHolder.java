@@ -85,7 +85,8 @@ public class AttachmentViewHolder extends BaseViewHolder {
         iconContainer.setVisibility(attachment.isImage() ? View.GONE : View.VISIBLE);
         imageDisplayer.setVisibility(attachment.isImage() ? View.VISIBLE : View.GONE);
         if (attachment.isImage()) {
-            imageDisplayer.displayImage(attachment.getUrl(), getDimension(R.dimen.ui_static_dp_30), false, false);
+            String url = attachment.isLocalFile() ? attachment.getFullPath() : attachment.getUrl();
+            imageDisplayer.displayImage(url, getDimension(R.dimen.ui_static_dp_30), false, false);
         }
         nameTextView.setText(attachment.getName());
         pathTextView.setText(attachment.getFullPath());

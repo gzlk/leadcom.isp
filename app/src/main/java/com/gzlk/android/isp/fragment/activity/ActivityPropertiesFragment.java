@@ -32,10 +32,14 @@ import com.netease.nim.uikit.cache.SimpleCallback;
 import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.session.helper.MessageListPanelHelper;
 import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.team.model.TeamMember;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>活动属性页<br />
@@ -224,6 +228,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
     }
 
     private static final int REQUEST_NAME = ACTIVITY_BASE_REQUEST + 10;
+    private static final int REQUEST_PICK_ONE = REQUEST_NAME + 1;
 
     private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
         @Override
@@ -231,9 +236,15 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
             switch (index) {
                 case 1:
                     // 查看活动成员列表
+                case 4:
+                    // 管理权转让
                     Activity act = (Activity) mAdapter.get(0);
                     boolean isMaster = act.getCreatorId().equals(Cache.cache().userId);
-                    openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,%s", mQueryId, isMaster, act.getGroupId()), true, false);
+                    if (!isMaster && index == 4) {
+                        // 其他成员点击时，不需要打开转让活动对话框
+                        return;
+                    }
+                    openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,%s,%s", mQueryId, isMaster, act.getGroupId(), (index == 1 ? "false" : "true")), (index == 4 ? REQUEST_PICK_ONE : ACTIVITY_BASE_REQUEST), true, false);
                     break;
                 case 2:
                     // 创建者是当前登录的用户时，可以 修改群名称
@@ -282,8 +293,45 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         if (requestCode == REQUEST_NAME) {
             String result = getResultedData(data);
             tryEditActivity(ActRequest.TYPE_TITLE, result);
+        } else if (requestCode == REQUEST_PICK_ONE) {
+            // 选择了新的组群所有者
+            String account = getResultedData(data);
+            transferActivity(account);
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    private void transferActivity(String toAccount) {
+        if (isEmpty(toAccount)) {
+            ToastHelper.make().showMsg(R.string.ui_activity_property_transfer_null_account);
+        } else {
+            /*
+              拥有者将群的拥有者权限转给另外一个人，转移后，另外一个人成为拥有者。
+                  原拥有者变成普通成员。若参数quit为true，原拥有者直接退出该群。
+              @param teamId 群ID
+             * @param account 新任拥有者的用户帐号
+             * @param quit 转移时是否要同时退出该群
+             * @return InvocationFuture 可以设置回调函数，如果成功，视参数 quit 值：
+             *     quit为false：参数仅包含原拥有着和当前拥有者的(即操作者和 account)，权限已被更新。
+             *     quit为true: 参数为空。
+             */
+            NIMClient.getService(TeamService.class).transferTeam(mSessionId, toAccount, false).setCallback(new RequestCallback<List<TeamMember>>() {
+                @Override
+                public void onSuccess(List<TeamMember> teamMembers) {
+                    ToastHelper.make().showMsg(R.string.ui_activity_property_transfer_success);
+                }
+
+                @Override
+                public void onFailed(int i) {
+                    ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_activity_property_transfer_failed, i));
+                }
+
+                @Override
+                public void onException(Throwable throwable) {
+                    ToastHelper.make().showMsg(format("转让失败：" + throwable.getMessage()));
+                }
+            });
+        }
     }
 
     private void tryEditActivity(int type, String value) {

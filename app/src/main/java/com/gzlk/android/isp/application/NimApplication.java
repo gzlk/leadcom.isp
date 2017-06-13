@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.WelcomeActivity;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -139,6 +140,10 @@ public class NimApplication extends BaseActivityManagedApplication {
         String account = isForTest ? "xfeiffer" : PreferenceHelper.get(R.string.pf_last_login_user_id, "");
         String token = isForTest ? "111111" : PreferenceHelper.get(R.string.pf_last_login_user_nim_token, "");
         if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
+            if (account.equals(Cache.cache().userId)) {
+                // 设置当前登录者信息
+                NimSessionHelper.setAccount(account);
+            }
             return new LoginInfo(account, token);
         } else {
             return null;

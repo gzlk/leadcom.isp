@@ -92,6 +92,13 @@ public class NimSessionHelper {
     }
 
     /**
+     * 设置当前登录者的信息
+     */
+    public static void setAccount(String account) {
+        NimUIKit.setAccount(account);
+    }
+
+    /**
      * 设置会话中点击事件响应处理
      */
     private static void setSessionListener() {
@@ -180,8 +187,10 @@ public class NimSessionHelper {
 
     public static void startP2PSession(Context context, String account, IMMessage anchor) {
         if (!Cache.cache().userId.equals(account)) {
+            // 和别人聊天
             NimUIKit.startP2PSession(context, account, anchor);
         } else {
+            // 和我的电脑聊天
             NimUIKit.startChatting(context, account, SessionTypeEnum.P2P, getMyP2pCustomization(), anchor);
         }
     }
@@ -207,20 +216,21 @@ public class NimSessionHelper {
     private static SessionCustomization teamCustomization;
     private static SessionCustomization myP2pCustomization;
 
-    private static ArrayList<BaseAction> actions;
-
-    private static ArrayList<BaseAction> getActions() {
+    private static ArrayList<BaseAction> getActions(SessionTypeEnum type) {
         // 定制加号点开后可以包含的操作， 默认已经有图片，视频等消息了
-        if (null == actions) {
-            actions = new ArrayList<>();
+
+        ArrayList<BaseAction> actions = new ArrayList<>();
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 //                actions.add(new AVChatAction(AVChatType.AUDIO));
 //                actions.add(new AVChatAction(AVChatType.VIDEO));
 //            }
-            actions.add(new ImageAction());
-            //actions.add(new VideoAction());// 视频插件有问题，暂时不放
+        actions.add(new ImageAction());
+        //actions.add(new VideoAction());// 视频插件有问题，暂时不放
+        if (type == SessionTypeEnum.Team) {
             actions.add(new NoticeAction());
-            actions.add(new FileAction());
+        }
+        actions.add(new FileAction());
+        if (type == SessionTypeEnum.Team) {
             actions.add(new SurveyAction());
             actions.add(new IssueAction());
             actions.add(new VoteAction());
@@ -258,7 +268,7 @@ public class NimSessionHelper {
 //            p2pCustomization.backgroundUri = "file:///sdcard/Pictures/bk.png";
 //            p2pCustomization.backgroundUri = "android.resource://com.netease.nim.demo/drawable/bk"
 
-            p2pCustomization.actions = getActions();
+            p2pCustomization.actions = getActions(SessionTypeEnum.P2P);
             p2pCustomization.withSticker = true;
 
             // 定制ActionBar右边的按钮，可以加多个
@@ -288,6 +298,9 @@ public class NimSessionHelper {
         return p2pCustomization;
     }
 
+    /**
+     * 我的电脑聊天界面
+     */
     private static SessionCustomization getMyP2pCustomization() {
         if (myP2pCustomization == null) {
             myP2pCustomization = new SessionCustomization() {
@@ -323,7 +336,7 @@ public class NimSessionHelper {
 //            p2pCustomization.backgroundUri = "file:///sdcard/Pictures/bk.png";
 //            p2pCustomization.backgroundUri = "android.resource://com.netease.nim.demo/drawable/bk"
 
-            myP2pCustomization.actions = getActions();
+            myP2pCustomization.actions = getActions(SessionTypeEnum.System);
             myP2pCustomization.withSticker = false;
             // 定制ActionBar右边的按钮，可以加多个
 //            ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
@@ -365,7 +378,7 @@ public class NimSessionHelper {
                 }
             };
 
-            teamCustomization.actions = getActions();
+            teamCustomization.actions = getActions(SessionTypeEnum.Team);
 
             // 定制ActionBar右边的按钮，可以加多个
             ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
@@ -383,8 +396,8 @@ public class NimSessionHelper {
                     Team team = TeamDataCache.getInstance().getTeamById(sessionId);
                     if (team != null && team.isMyTeam()) {
                         // 打开群组属性页
-                        openGroupPropertyInfo(context, sessionId);
-                        //NimUIKit.startTeamInfo(context, sessionId);
+                        //openGroupPropertyInfo(context, sessionId);
+                        NimUIKit.startTeamInfo(context, sessionId);
                     } else {
                         Toast.makeText(context, R.string.team_invalid_tip, Toast.LENGTH_SHORT).show();
                     }

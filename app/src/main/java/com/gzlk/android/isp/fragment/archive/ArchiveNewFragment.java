@@ -107,8 +107,8 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private View timeView;
     @ViewId(R.id.ui_archive_creator_security)
     private View securityView;
-    @ViewId(R.id.ui_archive_creator_summary)
-    private ClearEditText contentView;
+    @ViewId(R.id.ui_archive_creator_introduction)
+    private ClearEditText introductionView;
     @ViewId(R.id.ui_archive_creator_attachments_layout)
     private LinearLayout attachmentLayout;
 
@@ -170,8 +170,13 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
 
     private void tryCreateDocument() {
         String title = titleHolder.getValue();
-        if (StringHelper.isEmpty(title)) {
+        if (isEmpty(title)) {
             ToastHelper.make().showMsg(R.string.ui_text_document_create_title_invalid);
+            return;
+        }
+        String introduction = introductionView.getValue();
+        if (isEmpty(introduction)) {
+            ToastHelper.make().showMsg(R.string.ui_text_document_create_introduction_invalid);
             return;
         }
         Utils.hidingInputBoard(titleInputView);
@@ -185,19 +190,19 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private void createArchive() {
         handleUploadedItems();
         String title = titleHolder.getValue();
-        String content = StringHelper.escapeToHtml(contentView.getValue());
+        String intro = StringHelper.escapeToHtml(introductionView.getValue());
         if (StringHelper.isEmpty(mQueryId)) {
-            createDocument(title, content);
+            createDocument(title, intro);
         } else {
-            editDocument(title, content);
+            editDocument(title, intro);
         }
     }
 
-    private void createDocument(String title, String content) {
+    private void createDocument(String title, String intro) {
         if (archiveType == Archive.Type.USER) {
-            createUserArchive(title, content);
+            createUserArchive(title, intro);
         } else {
-            createOrganizationArchive(title, content);
+            createOrganizationArchive(title, intro);
         }
     }
 
@@ -205,7 +210,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         return PrivacyFragment.getSeclusion(privacy);
     }
 
-    private void createUserArchive(String title, String content) {
+    private void createUserArchive(String title, String intro) {
         Seclusion seclusion = getSeclusion();
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
@@ -216,7 +221,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(title, content, seclusion.getStatus(), happenDate, labels, "", office, images, video, attach);
+        }).add(title, intro, seclusion.getStatus(), happenDate, labels, "", office, images, video, attach);
     }
 
     private ArrayList<String> labels = new ArrayList<>();
@@ -245,7 +250,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private void createOrganizationArchive(String title, String content) {
+    private void createOrganizationArchive(String title, String intro) {
         Seclusion sec = getSeclusion();
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
@@ -256,7 +261,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(archiveGroup, Archive.ArchiveType.NORMAL, title, content, happenDate,
+        }).add(archiveGroup, Archive.ArchiveType.NORMAL, title, intro, happenDate,
                 labels, sec.getUserIds(), "", office, images, video, attach);
     }
 
@@ -424,8 +429,8 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         }
         securityHolder.showContent(format(strings[3], PrivacyFragment.getPrivacy(PrivacyFragment.getSeclusion(privacy))));
 
-        // 内容
-        contentView.setValue(null == archive ? "" : StringHelper.escapeFromHtml(archive.getContent()));
+        // 简介
+        introductionView.setValue(null == archive ? "" : StringHelper.escapeFromHtml(archive.getIntro()));
 
         if (null == filePickerDialog) {
             DialogProperties properties = new DialogProperties();
@@ -537,7 +542,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
         int id = view.getId();
         switch (id) {
             case R.id.ui_tool_attachment_button:
-                Utils.hidingInputBoard(contentView);
+                Utils.hidingInputBoard(introductionView);
                 resetSelectedFiles();
                 filePickerDialog.show();
                 break;
@@ -550,7 +555,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void openDatePicker() {
-        Utils.hidingInputBoard(contentView);
+        Utils.hidingInputBoard(introductionView);
         TimePickerView tpv = new TimePickerView.Builder(Activity(), new TimePickerView.OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {

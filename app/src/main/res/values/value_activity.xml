@@ -47,6 +47,9 @@
         <item>8|查看聊天内容||1</item>
         <item>9|清空聊天记录||0</item>
     </string-array>
+    <string name="ui_activity_property_transfer_null_account">您没有选择相应的成员来完成这个操作</string>
+    <string name="ui_activity_property_transfer_success">您已经将本活动组转让给别人</string>
+    <string name="ui_activity_property_transfer_failed" formatted="false">转让失败：%d</string>
     <string name="ui_activity_property_not_exist">无效的活动或活动已结束</string>
     <string name="ui_activity_property_chat_history_title">聊天记录</string>
     <string name="ui_activity_property_chat_history_title_anchor_point">锚点记录</string>
@@ -57,6 +60,7 @@
     <string name="ui_activity_member_empty">本活动中暂时没有其他成员</string>
     <string name="ui_activity_member_invite_loading">正在向您选择的人员发送邀请&#8230;</string>
     <string name="ui_activity_member_invite_success">已向相关人员发送活动邀请</string>
+    <string name="ui_activity_member_pick_not_me">您不能选择自己</string>
 
     <string name="ui_activity_create_fragment_title">新建活动</string>
     <string name="ui_activity_create_fragment_title_edit">修改活动</string>

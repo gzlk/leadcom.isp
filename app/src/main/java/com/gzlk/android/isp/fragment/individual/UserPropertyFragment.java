@@ -29,6 +29,7 @@ import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
 import com.gzlk.android.isp.multitype.binder.SimpleClickableViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.UserHeaderBigViewBinder;
 import com.gzlk.android.isp.multitype.binder.user.UserSimpleMomentViewBinder;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
@@ -133,7 +134,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 break;
             case R.id.ui_user_information_to_chat:
                 // 到单聊页面
-                NimUIKit.startP2PSession(Activity(), mQueryId);
+                NimSessionHelper.startP2PSession(Activity(),mQueryId);
+                //NimUIKit.startP2PSession(Activity(), mQueryId);
                 //ToastHelper.make().showMsg("发消息");
                 break;
         }

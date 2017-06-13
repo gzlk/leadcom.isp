@@ -10,7 +10,6 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.api.user.UserRequest;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -72,7 +71,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        fetchingMoments();
     }
 
     @Override
@@ -92,16 +91,23 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                     if (null != list) {
                         if (list.size() >= pageSize) {
                             remotePageNumber++;
+                            isLoadingComplete(false);
+                        } else {
+                            isLoadingComplete(true);
                         }
                         mAdapter.update(list, false);
                         mAdapter.sort();
+                    } else {
+                        isLoadingComplete(true);
                     }
+                } else {
+                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 stopRefreshing();
                 displayNothing(mAdapter.getItemCount() < 1);
             }
-        }).list(Cache.cache().accessToken, remotePageNumber);
+        }).list(mQueryId, remotePageNumber);
     }
 
     private void fetchUser() {
@@ -111,7 +117,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(user, success, message);
                 if (success) {
                     if (null != user) {
-                        setCustomTitle(user.getName());
+                        setCustomTitle(user.getName() + "的动态");
                     } else {
                         ToastHelper.make().showMsg(R.string.ui_individual_moment_list_user_not_exists);
                     }

@@ -56,6 +56,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_MASTER = "amf_member_is_master";
     private static final String PARAM_GROUP_ID = "amf_group_id";
+    private static final String PARAM_FOR_PICKER = "amf_for_picker";
 
     public static ActivityMemberFragment newInstance(String params) {
         ActivityMemberFragment amf = new ActivityMemberFragment();
@@ -67,6 +68,8 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putBoolean(PARAM_MASTER, Boolean.valueOf(strings[1]));
         // 活动所属的组织id
         bundle.putString(PARAM_GROUP_ID, strings[2]);
+        // 是否成员选取
+        bundle.putBoolean(PARAM_FOR_PICKER, Boolean.valueOf(strings[3]));
         amf.setArguments(bundle);
         return amf;
     }
@@ -76,12 +79,14 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         super.getParamsFromBundle(bundle);
         isMaster = bundle.getBoolean(PARAM_MASTER, false);
         groupId = bundle.getString(PARAM_GROUP_ID, "");
+        forPicker = bundle.getBoolean(PARAM_FOR_PICKER, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_MASTER, isMaster);
+        bundle.putBoolean(PARAM_FOR_PICKER, forPicker);
         bundle.putString(PARAM_GROUP_ID, groupId);
     }
 
@@ -90,6 +95,8 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     private String groupId = "";
     // 当前登录者是否是活动的创建者
     private boolean isMaster = false;
+    // 是否是活动成员拾取
+    private boolean forPicker = false;
 
     @Override
     protected void onSwipeRefreshing() {
@@ -183,19 +190,54 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            // 打开个人属性页
-            openActivity(UserPropertyFragment.class.getName(), mAdapter.get(index).getId(), false, false, true);
+            if (forPicker) {
+                // 单选
+                pickSelected(index);
+            } else {
+                // 打开个人属性页
+                openActivity(UserPropertyFragment.class.getName(), mAdapter.get(index).getUserId(), false, false, true);
+            }
         }
     };
 
+    private void pickSelected(int index) {
+        Member m = mAdapter.get(index);
+        if (!isEmpty(m.getUserId()) && m.getUserId().equals(Cache.cache().userId)) {
+            ToastHelper.make().showMsg(R.string.ui_activity_member_pick_not_me);
+            return;
+        }
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            Member member = mAdapter.get(i);
+            member.setSelected(i == index);
+            mAdapter.notifyItemChanged(i);
+        }
+    }
+
     private void resetRightTitleIcon() {
-        setRightIcon(R.string.ui_icon_add);
+        setRightIcon(forPicker ? 0 : R.string.ui_icon_add);
+        setRightText(forPicker ? R.string.ui_base_text_confirm : 0);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                pickNewMembers(groupId);
+                if (forPicker) {
+                    resultPickedMember();
+                } else {
+                    pickNewMembers(groupId);
+                }
             }
         });
+    }
+
+    private void resultPickedMember() {
+        String account = "";
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            if (mAdapter.get(i).isSelected()) {
+                Member member = mAdapter.get(i);
+                account = member.getUserId();
+                break;
+            }
+        }
+        resultData(account);
     }
 
     private void fetchingMembers() {
@@ -282,8 +324,16 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             if (null == members || members.size() < 1) return;
 
             for (Member member : members) {
+                if (forPicker) {
+                    if (!isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId)) {
+                        member.setLocalDeleted(true);
+                    }
+                }
                 if (!list.contains(member)) {
                     list.add(member);
+                } else {
+                    int index = list.indexOf(member);
+                    list.set(index, member);
                 }
             }
             Collections.sort(mAdapter.list, new MemberComparator());
@@ -315,7 +365,8 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             int layout = R.layout.holder_view_organization_contact;
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(layout, viewGroup, false);
             ContactViewHolder holder = new ContactViewHolder(view, ActivityMemberFragment.this);
-            holder.showButton1(false);
+            // 显示拾取器
+            holder.showPicker(forPicker);
             holder.button2Text(R.string.ui_base_text_kick_out);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             holder.setOnUserDeleteListener(onUserDeleteListener);
@@ -327,9 +378,8 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             Member member = list.get(position);
             boolean isManager = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId) && isMaster;
             // 管理者不需要踢出
-            holder.showButton2(!isManager);
+            holder.showButton2(!isManager && !forPicker);
             holder.showContent(member, "");
-
             mItemManger.bindView(holder.itemView, position);
         }
 
