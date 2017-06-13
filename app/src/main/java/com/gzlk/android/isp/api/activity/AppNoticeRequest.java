@@ -71,8 +71,7 @@ public class AppNoticeRequest extends Request<AppNotice> {
         try {
             object.put("actId", activityId)
                     .put("title", title)
-                    .put("content", content)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("content", content);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -93,8 +92,7 @@ public class AppNoticeRequest extends Request<AppNotice> {
         try {
             object.put("id", noticeId)
                     .put("title", title)
-                    .put("content", content)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("content", content);
         } catch (JSONException e) {
             e.printStackTrace();
         }

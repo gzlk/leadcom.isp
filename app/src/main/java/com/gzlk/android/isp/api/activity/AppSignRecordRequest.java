@@ -78,8 +78,7 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
                     .put("lon", longitude)
                     .put("lat", latitude)
                     .put("alt", altitude)
-                    .put("imsi", imsi)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("imsi", imsi);
         } catch (JSONException e) {
             e.printStackTrace();
         }

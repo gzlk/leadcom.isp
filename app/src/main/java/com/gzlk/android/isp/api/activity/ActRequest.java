@@ -146,7 +146,7 @@ public class ActRequest extends Request<Activity> {
                     .put("img", checkNull(logo))
                     .put("beginDate", beginDate)
                     .put("site", address)
-                    .put("accessToken", Cache.cache().accessToken)
+                    //.put("accessToken", Cache.cache().accessToken)
                     //.put("memberIdArray", new JSONArray(members))
                     //.put("memberNameArray", new JSONArray(names))
                     .put("label", new JSONArray(labels))
@@ -183,7 +183,7 @@ public class ActRequest extends Request<Activity> {
                     .put("img", checkNull(logo))
                     .put("beginDate", beginDate)
                     .put("site", address)
-                    .put("accessToken", Cache.cache().accessToken)
+                    //.put("accessToken", Cache.cache().accessToken)
                     .put("label", new JSONArray(labels))
                     .put("attUrlArray", new JSONArray(Attachment.getJson(attachments)));
         } catch (JSONException e) {
@@ -200,7 +200,7 @@ public class ActRequest extends Request<Activity> {
         JSONObject object = new JSONObject();
         try {
             object.put("_id", activityId)
-                    .put("accessToken", Cache.cache().accessToken)
+                    //.put("accessToken", Cache.cache().accessToken)
                     .put("memberIdArray", new JSONArray(ids))
                     .put("memberNameArray", new JSONArray(names));
         } catch (JSONException e) {
@@ -233,7 +233,7 @@ public class ActRequest extends Request<Activity> {
 //                    .put("openStatus", openStatus)
 //                    .put("beginDate", beginDate)
 //                    .put("site", address)
-            object.put("accessToken", Cache.cache().accessToken);
+            //object.put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -254,7 +254,7 @@ public class ActRequest extends Request<Activity> {
      */
     public void exit(@NonNull String activityId) {
         // id="",accessToken=""
-        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s&accessToken=%s", url(EXIT), activityId, Cache.cache().accessToken), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(EXIT), activityId), "", HttpMethods.Get));
     }
 
     private void findInCache(String activityId) {
@@ -307,7 +307,7 @@ public class ActRequest extends Request<Activity> {
     }
 
     private void listFromRemote(String groupId) {
-        String params = format("groupId=%s&accessToken=%s", groupId, Cache.cache().accessToken);
+        String params = format("groupId=%s", groupId);
         httpRequest(getRequest(MultipleActivity.class, format("%s?%s", url(LIST), params), "", HttpMethods.Get));
     }
 
@@ -339,7 +339,7 @@ public class ActRequest extends Request<Activity> {
      * 查询我参加的活动(非实时的缓存数据)
      */
     public void joined(@NonNull String groupId) {
-        String param = format("%s?groupId=%s&accessToken=%s", url(JOINED), groupId, Cache.cache().accessToken);
+        String param = format("%s?groupId=%s", url(JOINED), groupId);
         httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 
@@ -358,7 +358,7 @@ public class ActRequest extends Request<Activity> {
      */
     public void created(@NonNull String groupId, boolean fromRemote) {
         if (fromRemote) {
-            String param = format("%s?groupId=%s&accessToken=%s", url(CREATED), groupId, Cache.cache().accessToken);
+            String param = format("%s?groupId=%s", url(CREATED), groupId);
             httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
         } else {
             loadingCreated(groupId);
@@ -369,7 +369,7 @@ public class ActRequest extends Request<Activity> {
      * 查询我参与的已结束的活动
      */
     public void ended(@NonNull String groupId) {
-        String param = format("%s?groupId=%s&accessToken=%s", url(ENDED), groupId, Cache.cache().accessToken);
+        String param = format("%s?groupId=%s", url(ENDED), groupId);
         httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 
@@ -378,14 +378,14 @@ public class ActRequest extends Request<Activity> {
      */
     @Deprecated
     public void refresh() {
-        httpRequest(getRequest(MultipleActivity.class, format("%s?accessToken=%s", url(REFRESH), Cache.cache().accessToken), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleActivity.class, format("%s", url(REFRESH)), "", HttpMethods.Get));
     }
 
     /**
      * 结束活动
      */
     public void end(@NonNull String activityId) {
-        String params = format("id=%s&accessToken=%s", activityId, Cache.cache().accessToken);
+        String params = format("id=%s", activityId);
         httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(END), params), "", HttpMethods.Get));
     }
 
@@ -393,7 +393,7 @@ public class ActRequest extends Request<Activity> {
      * 判断是否已经加入公共活动（首页推荐的）
      */
     public void isJoinPublicAct(String activityId) {
-        String params = format("actId=%s&accessToken=%s", activityId, Cache.cache().accessToken);
+        String params = format("actId=%s", activityId);
         httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(IS_JOINED), params), "", HttpMethods.Get));
     }
 }

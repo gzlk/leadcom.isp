@@ -72,8 +72,7 @@ public class ActArchiveRequest extends Request<ActArchive> {
                     .put("type", attachment.getAttachmentType())
                     .put("name", attachment.getName())
                     .put("url", attachment.getUrl())
-                    .put("pdf", attachment.getPdf())
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("pdf", attachment.getPdf());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -94,8 +93,7 @@ public class ActArchiveRequest extends Request<ActArchive> {
         try {
             object.put("_id", fileId)
                     .put("actId", activityId)
-                    .put("status", status)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("status", status);
         } catch (JSONException e) {
             e.printStackTrace();
         }

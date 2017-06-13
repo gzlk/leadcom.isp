@@ -84,8 +84,7 @@ public class AppSigningRequest extends Request<AppSigning> {
                     .put("lat", latitude)
                     .put("alt", altitude)
                     .put("beginTime", beginTime)
-                    .put("endTime", endTime)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("endTime", endTime);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -125,8 +124,7 @@ public class AppSigningRequest extends Request<AppSigning> {
                     .put("lat", latitude)
                     .put("alt", altitude)
                     .put("beginTime", beginTime)
-                    .put("endTime", endTime)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("endTime", endTime);
         } catch (JSONException e) {
             e.printStackTrace();
         }
