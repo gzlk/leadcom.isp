@@ -16,15 +16,12 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseChatInputSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveAdditionalViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsHeaderViewHolder;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
-import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutedListener;
-import com.gzlk.android.isp.listener.OnLiteOrmTaskExecutingListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -33,8 +30,6 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.common.Attachment;
-import com.gzlk.android.isp.task.OrmTask;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +91,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         showAppend = false;
         showRecorder = false;
         super.doingInResume();
-        if (StringHelper.isEmpty(mQueryId)) {
+        if (isEmpty(mQueryId)) {
             closeWithWarning(R.string.ui_text_document_details_not_exists);
         } else {
             setCustomTitle(R.string.ui_text_document_details_fragment_title);
@@ -430,7 +425,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 super.onResponse(comment, success, message);
                 displayLoading(false);
                 if (success) {
-                    if (null != comment && !StringHelper.isEmpty(comment.getId())) {
+                    if (null != comment && !isEmpty(comment.getId())) {
                         mAdapter.update(comment);
                     }
                     refreshing();

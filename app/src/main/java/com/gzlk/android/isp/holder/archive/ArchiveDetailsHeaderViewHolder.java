@@ -51,11 +51,13 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
 
     // items
     private String[] items;
+    private static boolean firstEnter = true;
 
     @SuppressLint("SetJavaScriptEnabled")
     public ArchiveDetailsHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        firstEnter = true;
         contentView.getSettings().setUseWideViewPort(true);
         contentView.getSettings().setLoadWithOverviewMode(true);
         contentView.getSettings().setDomStorageEnabled(true);
@@ -120,7 +122,10 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            ((ArchiveDetailsFragment)fragment()).showLoadingContent(true);
+            if (firstEnter) {
+                firstEnter = false;
+                ((ArchiveDetailsFragment) fragment()).showLoadingContent(true);
+            }
         }
 
         /**
@@ -128,7 +133,7 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
          */
         @Override
         public void onPageFinished(WebView view, String url) {
-            ((ArchiveDetailsFragment)fragment()).showLoadingContent(false);
+            ((ArchiveDetailsFragment) fragment()).showLoadingContent(false);
             super.onPageFinished(view, url);
         }
     }
