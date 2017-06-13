@@ -34,17 +34,20 @@ public class ActivityHomeViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_home_seminar_item_title)
     private TextView textView;
 
+    private int imageWidth, imageHeight;
     //private ArchiveAdditionalViewHolder additionalViewHolder;
 
     public ActivityHomeViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        imageWidth = getDimension(R.dimen.ui_static_dp_60);
+        imageHeight = getDimension(R.dimen.ui_static_dp_60);
         container.setVisibility(View.INVISIBLE);
         //additionalViewHolder = new ArchiveAdditionalViewHolder(itemView, fragment);
     }
 
     public void showContent(Activity activity) {
-        imageDisplayer.displayImage(activity.getImg(), getDimension(R.dimen.ui_static_dp_110), getDimension(R.dimen.ui_static_dp_80), false, false);
+        imageDisplayer.displayImage(activity.getImg(), imageWidth, imageHeight, false, false);
         textView.setText(activity.getTitle());
     }
 

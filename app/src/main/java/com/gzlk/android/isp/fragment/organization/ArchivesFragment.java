@@ -81,6 +81,8 @@ public class ArchivesFragment extends BaseOrganizationFragment {
 
     @Override
     public void doingInResume() {
+        setLoadingText(R.string.ui_organization_archive_loading);
+        setNothingText(R.string.ui_organization_archive_nothing);
         if (!StringHelper.isEmpty(mQueryId)) {
             if (isNeedRefresh()) {
                 fetchingRemoteArchives();
@@ -153,6 +155,8 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     };
 
     private void fetchingRemoteArchives() {
+        displayLoading(true);
+        displayNothing(false);
         ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -163,7 +167,9 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                         mAdapter.sort();
                     }
                 }
+                displayLoading(false);
                 stopRefreshing();
+                displayNothing(mAdapter.getItemCount() < 1);
             }
         }).list(mQueryId, remotePageNumber);
     }

@@ -306,13 +306,14 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
         return null;
     }
 
-    private boolean firstInitialize = true;
-
     public void add(List<Organization> list) {
         blankTextView.setVisibility(View.GONE);
         for (Organization organization : list) {
             if (!organizations.contains(organization)) {
                 organizations.add(organization);
+            } else {
+                int index = organizations.indexOf(organization);
+                organizations.set(index, organization);
             }
         }
         Collections.sort(organizations, new Comparator<Organization>() {
@@ -323,16 +324,13 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
         });
         mAdapter.notifyDataSetChanged();
         // 第一次加载时自动触发pageChange事件
-        if (firstInitialize) {
-            if (null != onPageChangeListener) {
-                firstInitialize = false;
-                viewPager.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onPageChangeListener.onPageSelected(viewPager.getCurrentItem());
-                    }
-                });
-            }
+        if (null != onPageChangeListener) {
+            viewPager.post(new Runnable() {
+                @Override
+                public void run() {
+                    onPageChangeListener.onPageSelected(viewPager.getCurrentItem());
+                }
+            });
         }
     }
 

@@ -30,6 +30,7 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
+import com.gzlk.android.isp.model.organization.Operation;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
@@ -113,7 +114,7 @@ public class StructureFragment extends BaseOrganizationFragment {
     @Override
     protected void onSwipeRefreshing() {
         // 刷新我加入的组织列表
-        fetchingJoinedRemoteOrganizations();
+        refreshRemoteOrganizations();
     }
 
     @Override
@@ -155,6 +156,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                 ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
             }
         }
+        displayLoading(false);
         stopRefreshing();
         setSupportLoadingMore(false);
     }
@@ -165,6 +167,11 @@ public class StructureFragment extends BaseOrganizationFragment {
             mRecyclerView.setAdapter(mAdapter);
         }
         initializeItems();
+        refreshRemoteOrganizations();
+    }
+
+    private void refreshRemoteOrganizations() {
+        displayLoading(true);
         fetchingJoinedRemoteOrganizations();
     }
 
@@ -206,7 +213,9 @@ public class StructureFragment extends BaseOrganizationFragment {
 
     }
 
-    @Click({R.id.ui_popup_squad_add_layout_background, R.id.ui_dialog_button_confirm, R.id.ui_tool_image_view_delete_container})
+    @Click({R.id.ui_popup_squad_add_layout_background,
+            R.id.ui_dialog_button_confirm,
+            R.id.ui_tool_image_view_delete_container})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_popup_squad_add_layout_background:
@@ -237,6 +246,7 @@ public class StructureFragment extends BaseOrganizationFragment {
     private void addNewSquad(String name, String introduction) {
         Organization organization = concernedViewHolder.get(selectedIndex);
         final String id = organization.getId();
+        displayLoading(true);
         addNewSquadToOrganization(id, name, introduction);
     }
 
@@ -248,6 +258,7 @@ public class StructureFragment extends BaseOrganizationFragment {
             }
             initializeItems();
         }
+        displayLoading(false);
         // 重新拉取小组列表
         changeSelectedGroup();
     }
@@ -327,25 +338,25 @@ public class StructureFragment extends BaseOrganizationFragment {
         if (selectedSquadIndex < 0) return;
         Squad squad = squads.get(selectedSquadIndex);
         // 如果我不在本地小组成员列表里，则拉取远程小组成员列表
-        if (isMember(Cache.cache().userId, squad.getGroupId(), squad.getId())) {
+        if (Member.isMemberInLocal(Cache.cache().userId, squad.getGroupId(), squad.getId())) {
             openSquadContact(squad.getGroupId(), squad.getId());
             selectedSquadIndex = -1;
         } else {
-            if (!isTryGoingToSquad) {
-                isTryGoingToSquad = true;
-                // 拉取该小组的成员列表并查询我是否在里面
-                fetchingRemoteMembers(squad.getGroupId(), squad.getId());
-            } else {
-                isMeInSquad(squad.getId(), squad.getName());
-            }
+            //if (!isTryGoingToSquad) {
+            //    isTryGoingToSquad = true;
+            // 拉取该小组的成员列表并查询我是否在里面
+            //    fetchingRemoteMembers(squad.getGroupId(), squad.getId());
+            //} else {
+            isMeInSquad(squad.getId(), squad.getName());
+            //}
         }
     }
 
-    @Override
-    protected void onFetchingRemoteMembersComplete(List<Member> list) {
-        super.onFetchingRemoteMembersComplete(list);
-        tryGoingToSquad();
-    }
+//    @Override
+//    protected void onFetchingRemoteMembersComplete(List<Member> list) {
+//        super.onFetchingRemoteMembersComplete(list);
+//        tryGoingToSquad();
+//    }
 
     // 查询我是否在选中的小组中
     private void isMeInSquad(final String squadId, final String squadName) {
@@ -411,18 +422,29 @@ public class StructureFragment extends BaseOrganizationFragment {
         }
     };
 
+    /**
+     * 当前登录用户在本组织内的角色
+     */
+    static Member my;
+
     public void changeSelectedGroup() {
         if (selectedIndex < 0) return;
         Organization organization = concernedViewHolder.get(selectedIndex);
+        if (null != organization) {
+            my = organization.getGroMember();
+        }
         // 更改标题栏上的文字和icon
         if (null != organizationChangedListener) {
             organizationChangedListener.onChanged(organization);
         }
         // 本组织下的小组列表
-        fetchingGroupSquads(organization.getId());
+        if (null != organization) {
+            fetchingGroupSquads(organization.getId());
+        }
     }
 
     private void fetchingGroupSquads(String groupId) {
+        displayLoading(true);
         // 清空已经显示了的小组列表
         for (Squad squad : squads) {
             mAdapter.remove(squad);
@@ -451,6 +473,7 @@ public class StructureFragment extends BaseOrganizationFragment {
             sortSquads();
             initializeItems();
         }
+        displayLoading(false);
     }
 
     private void sortSquads() {
@@ -475,13 +498,20 @@ public class StructureFragment extends BaseOrganizationFragment {
                     if (null == concernedViewHolder) {
                         concernedViewHolder = new OrganizationStructureConcernedViewHolder(itemView, fragment);
                         concernedViewHolder.setPageChangeListener(onPageChangeListener);
-                        concernedViewHolder.loadingLocal();
+                        //concernedViewHolder.loadingLocal();
                     }
                     return concernedViewHolder;
                 case VT_DIVIDER:
                     return new TextViewHolder(itemView, fragment);
                 case VT_FOOTER:
-                    return new SquadAddViewHolder(itemView, fragment);
+                    SquadAddViewHolder adder = new SquadAddViewHolder(itemView, fragment);
+                    if (null != my) {
+                        // 有权限增加小组时，才显示添加小组按钮
+                        if (my.hasOperation(Operation.SQUAD_ADDABLE)) {
+                            adder.showAddContainer(true);
+                        }
+                    }
+                    return adder;
                 default:
                     SimpleClickableViewHolder holder = new SimpleClickableViewHolder(itemView, fragment);
                     holder.addOnViewHolderClickListener(holderClickListener);

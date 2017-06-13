@@ -6,11 +6,16 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.model.organization.Role;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>组织相关api集合<br />
@@ -59,6 +64,39 @@ public class OrgRequest extends Request<Organization> {
     public OrgRequest setOnMultipleRequestListener(OnMultipleRequestListener<Organization> listListener) {
         onMultipleRequestListener = listListener;
         return this;
+    }
+
+    private Dao<Role> roleDao = new Dao<>(Role.class);
+    private Dao<Member> memberDao = new Dao<>(Member.class);
+
+    private void saveMyGroupMember(Member member) {
+        if (null != member) {
+            if (null != member.getGroRole()) {
+                Role role = member.getGroRole();
+                member.setRoleId(role.getId());
+                member.setRoleName(role.getRoleName());
+                // 保存角色的权限列表
+                role.savePermissionIds();
+                roleDao.save(role);
+            }
+            memberDao.save(member);
+        }
+    }
+
+    @Override
+    protected void save(Organization organization) {
+        saveMyGroupMember(organization.getGroMember());
+        super.save(organization);
+    }
+
+    @Override
+    protected void save(List<Organization> list) {
+        if (null != list && list.size() > 0) {
+            for (Organization organization : list) {
+                saveMyGroupMember(organization.getGroMember());
+            }
+        }
+        super.save(list);
     }
 
     /**

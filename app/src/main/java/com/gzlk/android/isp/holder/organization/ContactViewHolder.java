@@ -34,10 +34,14 @@ public class ContactViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_contact_swipe_layout)
     private SwipeLayout swipeLayout;
+    @ViewId(R.id.ui_tool_view_contact_button0)
+    private TextView buttonTransferManager;
+    @ViewId(R.id.ui_tool_view_contact_button0d5)
+    private TextView buttonArchiveManager;
     @ViewId(R.id.ui_tool_view_contact_button1)
-    private TextView button1;
+    private TextView buttonSetToManager;
     @ViewId(R.id.ui_tool_view_contact_button2)
-    private TextView button2;
+    private TextView buttonKickOut;
     @ViewId(R.id.ui_holder_view_contact_header)
     private ImageDisplayer headerView;
     @ViewId(R.id.ui_holder_view_contact_name)
@@ -46,14 +50,16 @@ public class ContactViewHolder extends BaseViewHolder {
     private TextView phoneView;
     @ViewId(R.id.ui_holder_view_contact_myself)
     private TextView myselfView;
-    @ViewId(R.id.ui_holder_view_contact_button)
-    private CorneredButton button;
+    @ViewId(R.id.ui_holder_view_contact_manager)
+    private TextView managerView;
+    @ViewId(R.id.ui_holder_view_contact_invite_button)
+    private CorneredButton buttonInvite;
     @ViewId(R.id.ui_holder_view_contact_picker)
     private CustomTextView iconPicker;
     @ViewId(R.id.ui_holder_view_contact_locked)
     private CustomTextView lockFlag;
 
-    private boolean buttonVisible = false;
+    private boolean buttonInviteVisible = false;
     private boolean pickerVisible = false;
     private int imageSize;
 
@@ -64,25 +70,63 @@ public class ContactViewHolder extends BaseViewHolder {
     }
 
     /**
-     * 滑动后第一个按钮是否可见
+     * 转让管理权
      */
-    public void showButton1(boolean shown) {
-        button1.setVisibility(shown ? View.VISIBLE : View.GONE);
+    public void showButton0(boolean shown) {
+        buttonTransferManager.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+
+    public void button0Text(int text) {
+        buttonTransferManager.setText(text);
+    }
+
+    public void button0Text(String text) {
+        buttonTransferManager.setText(text);
     }
 
     /**
-     * 滑动后第二个按钮是否可见
+     * 设为档案管理员
+     */
+    public void showButton0d5(boolean shown) {
+        buttonArchiveManager.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+
+    public void button0d5Text(int text) {
+        buttonArchiveManager.setText(text);
+    }
+
+    public void button0d5Text(String text) {
+        buttonArchiveManager.setText(text);
+    }
+
+    /**
+     * 设为管理员
+     */
+    public void showButton1(boolean shown) {
+        buttonSetToManager.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+
+    public void button1Text(int text) {
+        buttonSetToManager.setText(text);
+    }
+
+    public void button1Text(String text) {
+        buttonSetToManager.setText(text);
+    }
+
+    /**
+     * 删除
      */
     public void showButton2(boolean shown) {
-        button2.setVisibility(shown ? View.VISIBLE : View.GONE);
+        buttonKickOut.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     public void button2Text(int text) {
-        button2.setText(text);
+        buttonKickOut.setText(text);
     }
 
     public void button2Text(String text) {
-        button2.setText(text);
+        buttonKickOut.setText(text);
     }
 
     public SwipeLayout getSwipeLayout() {
@@ -114,19 +158,21 @@ public class ContactViewHolder extends BaseViewHolder {
         headerView.displayImage(member.getHeadPhoto(), imageSize, false, false);
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
-        button.setVisibility(buttonVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
+        managerView.setText(member.isOwner() ? "群主" : (member.isManager() ? "管理员" : (member.isArchiveManager() ? "档案管理员" : "")));
+        managerView.setVisibility((member.isOwner() || member.isManager() || member.isArchiveManager()) ? View.VISIBLE : View.GONE);
+        buttonInvite.setVisibility(buttonInviteVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
         lockFlag.setVisibility(member.isLocalDeleted() ? View.VISIBLE : View.GONE);
-        if (buttonVisible) {
+        if (buttonInviteVisible) {
             // 只在显示按钮的时候才进行判断加入或不加入操作
             if (!StringHelper.isEmpty(squadId)) {
                 // 小组id不为空时，判断当前成员是否已经加入本小组
                 if (!StringHelper.isEmpty(member.getSquadId()) && member.getSquadId().equals(squadId)) {
-                    button.setEnabled(false);
+                    buttonInvite.setEnabled(false);
                     // 成员已是小组的人了
-                    button.setText(R.string.ui_phone_contact_invited);
+                    buttonInvite.setText(R.string.ui_phone_contact_invited);
                 } else {
-                    button.setEnabled(!member.isSelected());
-                    button.setText(member.isSelected() ? R.string.ui_phone_contact_inviting : R.string.ui_phone_contact_invite);
+                    buttonInvite.setEnabled(!member.isSelected());
+                    buttonInvite.setText(member.isSelected() ? R.string.ui_phone_contact_inviting : R.string.ui_phone_contact_invite);
                 }
             }
         }
@@ -146,8 +192,8 @@ public class ContactViewHolder extends BaseViewHolder {
     /**
      * 是否显示“添加”按钮
      */
-    public void showButton(boolean shown) {
-        buttonVisible = shown;
+    public void showInviteButton(boolean shown) {
+        buttonInviteVisible = shown;
     }
 
     public void showPicker(boolean shown) {
@@ -155,8 +201,11 @@ public class ContactViewHolder extends BaseViewHolder {
     }
 
     @Click({R.id.ui_holder_view_contact_layout,
+            R.id.ui_tool_view_contact_button0,
+            R.id.ui_tool_view_contact_button0d5,
+            R.id.ui_tool_view_contact_button1,
             R.id.ui_tool_view_contact_button2,
-            R.id.ui_holder_view_contact_button,
+            R.id.ui_holder_view_contact_invite_button,
             R.id.ui_holder_view_contact_picker})
     private void click(View view) {
         switch (view.getId()) {
@@ -166,12 +215,31 @@ public class ContactViewHolder extends BaseViewHolder {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }
                 break;
+            case R.id.ui_tool_view_contact_button0:
+                // 转让群组
+                if (null != onTransferManagementListener) {
+                    onTransferManagementListener.onTransfer(ContactViewHolder.this);
+                }
+                break;
+            case R.id.ui_tool_view_contact_button0d5:
+                // 设为档案管理员
+                if (null != onSetArchiveManagerListener) {
+                    onSetArchiveManagerListener.onSetting(getAdapterPosition());
+                }
+                break;
+            case R.id.ui_tool_view_contact_button1:
+                // 设为管理员
+                if (null != dataHandlerBoundDataListener) {
+                    dataHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
+                }
+                break;
             case R.id.ui_tool_view_contact_button2:
+                // 删除用户
                 if (null != onUserDeleteListener) {
                     onUserDeleteListener.onDelete(ContactViewHolder.this);
                 }
                 break;
-            case R.id.ui_holder_view_contact_button:
+            case R.id.ui_holder_view_contact_invite_button:
                 if (null != dataHandlerBoundDataListener) {
                     dataHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
                 }
@@ -192,5 +260,25 @@ public class ContactViewHolder extends BaseViewHolder {
 
     public interface OnUserDeleteListener {
         void onDelete(ContactViewHolder holder);
+    }
+
+    private OnTransferManagementListener onTransferManagementListener;
+
+    public void setOnTransferManagementListener(OnTransferManagementListener l) {
+        onTransferManagementListener = l;
+    }
+
+    public interface OnTransferManagementListener {
+        void onTransfer(ContactViewHolder holder);
+    }
+
+    private OnSetArchiveManagerListener onSetArchiveManagerListener;
+
+    public void setOnSetArchiveManagerListener(OnSetArchiveManagerListener l) {
+        onSetArchiveManagerListener = l;
+    }
+
+    public interface OnSetArchiveManagerListener {
+        void onSetting(int index);
     }
 }

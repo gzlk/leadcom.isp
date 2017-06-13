@@ -170,7 +170,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                     images.clear();
                     if (null != list) {
                         images.addAll(list);
-                        resetImages();
+                        homeImagesViewHolder.addImages(images);
                     }
                 }
                 displayLoading(false);
@@ -196,14 +196,6 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private List<FocusImage> images = new ArrayList<>();
-
-    private void resetImages() {
-        ArrayList<String> strings = new ArrayList<>();
-        for (FocusImage image : images) {
-            strings.add(image.getImageUrl());
-        }
-        homeImagesViewHolder.addImages(strings);
-    }
 
     private FocusImage getImage(String imageUrl) {
         for (FocusImage image : images) {

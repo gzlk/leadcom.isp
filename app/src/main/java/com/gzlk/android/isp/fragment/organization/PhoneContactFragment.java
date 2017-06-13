@@ -34,6 +34,7 @@ import com.gzlk.android.isp.model.common.Contact;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Invitation;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.etc.Utility;
@@ -214,7 +215,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             for (Contact contact : contacts) {
                 // 检索此用户是否已被邀请
                 contact.setInvited(invited(contact.getPhone()));
-                contact.setMember(isMember(contact.getUserId(), mOrganizationId, mSquadId));
+                contact.setMember(Member.isMemberInLocal(contact.getUserId(), mOrganizationId, mSquadId));
                 mAdapter.add(contact);
                 slidView.add(contact.getSpell());
             }

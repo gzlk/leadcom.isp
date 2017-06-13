@@ -218,19 +218,6 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
     }
 
     /**
-     * 判断用户id是否为组织成员或小组成员
-     */
-    protected boolean isMember(String userId, String organizationId, String squadId) {
-
-        if (StringHelper.isEmpty(userId)) return false;
-
-        QueryBuilder<Member> query = memberBuilder(organizationId, squadId)
-                .whereAppendAnd().whereEquals(Model.Field.UserId, userId);
-        List<Member> members = new Dao<>(Member.class).query(query);
-        return null != members && members.size() > 0;
-    }
-
-    /**
      * 查询本地成员列表，按照成员名字排序
      */
     protected void loadingLocalMembers(String organizationId, String squadId) {

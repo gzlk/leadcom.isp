@@ -20,7 +20,6 @@ abstract class BaseApi implements Serializable {
     /**
      * 所有网络调用的网址前缀
      */
-    @SuppressWarnings("ConstantConditions")
     static final String URL = "http://113.108.144.2:" + (BuildConfig.RELEASEABLE ? "8044" : "8889");
 
     //"http://10.141.130.17:8888";//

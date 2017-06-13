@@ -134,7 +134,7 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         @Override
         public ContactViewHolder onCreateViewHolder(View itemView, int viewType) {
             ContactViewHolder holder = new ContactViewHolder(itemView, OrganizationContactFragment.this);
-            holder.showButton(true);
+            holder.showInviteButton(true);
             holder.setSquadId(mSquadId);
             holder.addOnHandlerBoundDataListener(onHandlerBoundDataListener);
             return holder;

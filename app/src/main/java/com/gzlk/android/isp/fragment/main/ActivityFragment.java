@@ -113,7 +113,16 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     act.setUnreadNum(contact.getUnreadCount());
                     // 最后发送消息的时间
                     act.setBeginDate(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), contact.getTime()));
-                    act.setContent(format("[%s]说：%s", contact.getFromNick(), contact.getContent()));
+                    String nick = "";
+                    try {
+                        nick = contact.getFromNick();
+                    } catch (Exception ignore) {
+                        ignore.printStackTrace();
+                    }
+                    if (isEmpty(nick)) {
+                        nick = "null";
+                    }
+                    act.setContent(format("[%s]说：%s", nick, contact.getContent()));
                     mAdapter.notifyItemChanged(i);
                 }
             }

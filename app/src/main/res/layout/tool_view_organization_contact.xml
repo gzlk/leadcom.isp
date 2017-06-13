@@ -78,8 +78,19 @@
                     android:textSize="@dimen/ui_base_text_size_small"
                     android:visibility="gone" />
 
+                <TextView
+                    android:id="@+id/ui_holder_view_contact_manager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                    android:text="@string/ui_base_text_myself"
+                    android:textColor="@color/textColorHintDark"
+                    android:textSize="@dimen/ui_base_text_size_small"
+                    android:visibility="gone" />
+
                 <com.hlk.hlklib.lib.view.CorneredButton
-                    android:id="@+id/ui_holder_view_contact_button"
+                    android:id="@+id/ui_holder_view_contact_invite_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
@@ -111,11 +122,11 @@
             android:id="@+id/ui_holder_view_contact_locked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ui_icon_lock"
-            android:layout_margin="@dimen/ui_static_dp_5"
             android:layout_alignParentEnd="true"
-            android:textSize="@dimen/ui_base_text_size_little"
-            android:textColor="@color/colorCaution" />
+            android:layout_margin="@dimen/ui_static_dp_5"
+            android:text="@string/ui_icon_lock"
+            android:textColor="@color/colorCaution"
+            android:textSize="@dimen/ui_base_text_size_little" />
     </RelativeLayout>
 
 </LinearLayout>

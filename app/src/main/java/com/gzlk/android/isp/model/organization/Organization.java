@@ -2,6 +2,7 @@ package com.gzlk.android.isp.model.organization;
 
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
@@ -73,6 +74,8 @@ public class Organization extends Model {
     private int memberNum;      //成员数
     @Column(Field.Verified)
     private boolean verified;      //是否组织认证
+    @Ignore
+    private Member groMember;      // 当前登录者在组织里的角色
 
     public String getName() {
         return name;
@@ -171,5 +174,13 @@ public class Organization extends Model {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public Member getGroMember() {
+        return groMember;
+    }
+
+    public void setGroMember(Member groMember) {
+        this.groMember = groMember;
     }
 }

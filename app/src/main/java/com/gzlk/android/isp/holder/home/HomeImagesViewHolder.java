@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.common.FocusImage;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -33,14 +35,19 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
 
     @ViewId(R.id.ui_tool_view_pager_embedded)
     private ViewPager viewPager;
+    @ViewId(R.id.ui_holder_view_home_image_title)
+    private TextView titleView;
     @ViewId(R.id.ui_holder_view_home_image_indicator)
     private LinearLayout indicator;
 
     private int currentPosition = 0;
+    private int imageHeight, imageWidth;
 
     public HomeImagesViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        imageHeight = getDimension(R.dimen.ui_static_dp_150);
+        imageWidth = fragment.getScreenWidth();
         initialize();
     }
 
@@ -52,7 +59,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         }
     }
 
-    public void addImages(List<String> list) {
+    public void addImages(List<FocusImage> list) {
         if (null != list && list.size() > 0) {
             urls.clear();
             images.clear();
@@ -69,10 +76,13 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
             }
         }
         mAdapter.notifyDataSetChanged();
+        if (urls.size() > 0) {
+            viewPager.setCurrentItem(urls.size() > 1 ? 1 : 0, false);
+        }
     }
 
     private ImageAdapter mAdapter;
-    private ArrayList<String> urls = new ArrayList<>();
+    private ArrayList<FocusImage> urls = new ArrayList<>();
     private ArrayList<ImageDisplayer> images = new ArrayList<>();
 
     @Override
@@ -83,15 +93,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     @Override
     public void onPageSelected(int position) {
         currentPosition = position;
-//        if (urls.size() > 1) {
-//            if (position < 1) {
-//                position = urls.size() - 1;
-//                viewPager.setCurrentItem(position, false);
-//            } else if (position > urls.size() - 2) {
-//                position = 1;
-//                viewPager.setCurrentItem(position, false);
-//            }
-//        }
+        titleView.setText(urls.get(currentPosition).getTitle());
     }
 
     @Override
@@ -134,7 +136,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             ImageDisplayer displayer = images.get(position);
-            displayer.displayImage(urls.get(position), fragment().getScreenWidth(), getDimension(R.dimen.ui_static_dp_140), false, false);
+            displayer.displayImage(urls.get(position).getImageUrl(), imageWidth, imageHeight, false, false);
             displayer.addOnImageClickListener(onImageClickListener);
             container.addView(displayer);
             return displayer;

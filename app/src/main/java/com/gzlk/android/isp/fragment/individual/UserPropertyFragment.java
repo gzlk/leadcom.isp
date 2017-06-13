@@ -75,6 +75,9 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         // 头像选择是需要剪切的
         isChooseImageForCrop = true;
         super.doingInResume();
+        if (null != bottomButton) {
+            bottomButton.setVisibility(View.GONE);
+        }
         setSupportLoadingMore(false);
         initializeItems();
         titleTextView.setText(null);

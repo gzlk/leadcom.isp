@@ -43,6 +43,10 @@ public class SquadAddViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
+    public void showAddContainer(boolean shown) {
+        addContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
+    }
+
     @Click({R.id.ui_holder_view_squad_add_container, R.id.ui_holder_view_squad_add_editor_confirm})
     private void click(View view) {
         switch (view.getId()) {

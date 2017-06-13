@@ -51,6 +51,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
+        setNothingText(R.string.ui_individual_moment_list_nothing);
         initializeAdapter();
     }
 
@@ -80,6 +81,9 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingMoments() {
+        setLoadingText(R.string.ui_individual_moment_list_loading);
+        displayLoading(true);
+        displayNothing(false);
         MomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Moment>() {
             @Override
             public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -93,7 +97,9 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                         mAdapter.sort();
                     }
                 }
+                displayLoading(false);
                 stopRefreshing();
+                displayNothing(mAdapter.getItemCount() < 1);
             }
         }).list(Cache.cache().accessToken, remotePageNumber);
     }

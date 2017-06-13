@@ -510,7 +510,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                         memberJson = Json.gson().toJson(selectedMembers, new TypeToken<List<SubMember>>() {
                         }.getType());
                         log(memberJson);
-                        String params = format("%s,false,%s", mGroupId, replaceJson(memberJson, false));
+                        String params = format("%s,false,false,%s", mGroupId, replaceJson(memberJson, false));
                         openActivity(OrganizationContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
                     }
                     break;

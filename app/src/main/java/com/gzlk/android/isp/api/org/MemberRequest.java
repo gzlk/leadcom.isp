@@ -6,10 +6,14 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.Special;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Role;
 import com.litesuits.http.request.param.HttpMethods;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -129,6 +133,44 @@ public class MemberRequest extends Request<Member> {
             default:
                 return "memberId";
         }
+    }
+
+    /**
+     * 更改组织成员的属性
+     *
+     * @param memberId 组织成员ID
+     * @param groupId  组织ID
+     * @param toRole   要变更成的角色
+     * @param userId   被更改的用户的id
+     */
+    public void groupMemberUpdate(String memberId, String groupId, Role toRole, String userId) {
+        // _id,groupId,accessToken,{groRole{_id:角色ID,rolCode:角色编码,rolName:角色名称}},userId
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", memberId)
+                    .put("groupId", groupId)
+                    .put("userId", userId)
+                    .put("accessToken", Cache.cache().accessToken);
+            JSONObject role = new JSONObject();
+            role.put("_id", toRole.getId())
+                    .put("rolCode", toRole.getRolCode())
+                    .put("rolName", toRole.getRoleName());
+            object.put("groRole", role);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleMember.class, url(UPDATE), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 删除组织成员
+     */
+    public void groupMemberDelete(String memberId, String groupId) {
+        // memberId,groupId
+        String param = format("/group/groMember/delete?memberId=%s&groupId=%s", memberId, groupId);
+        httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
     }
 
     /**

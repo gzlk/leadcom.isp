@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ public abstract class WebViewFragment extends BaseDownloadingUploadingSupportFra
         return R.layout.fragment_web_view;
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void doingInResume() {
         if (null == webView) {
@@ -61,6 +63,7 @@ public abstract class WebViewFragment extends BaseDownloadingUploadingSupportFra
                 webView.getSettings().setUseWideViewPort(true);
                 webView.getSettings().setLoadWithOverviewMode(true);
                 webView.getSettings().setDomStorageEnabled(true);
+                webView.getSettings().setJavaScriptEnabled(true);
                 webView.setWebViewClient(new MyWebViewClient());
                 webView.setWebChromeClient(new MyWebChromeClient());
                 webView.loadUrl(loadingUrl());

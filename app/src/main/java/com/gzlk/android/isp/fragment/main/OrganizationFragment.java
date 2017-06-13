@@ -95,6 +95,8 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
                 mainFragment.setTitleText(item.getName());
             }
             ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
+            String creatorId = item.getCreatorId();
+            ((ContactFragment) mFragments.get(1)).setIsCreator(!isEmpty(creatorId) && creatorId.equals(Cache.cache().userId));
             ((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
             ((ArchivesFragment) mFragments.get(2)).setIsManager(isManager(item));
         }

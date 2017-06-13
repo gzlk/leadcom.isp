@@ -5,14 +5,37 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/ui_tool_view_contact_button1"
+        android:id="@+id/ui_tool_view_contact_button0"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/textColorHintLight"
+        android:gravity="center"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        android:text="@string/ui_organization_contact_transfer_owner"
+        android:textColor="@color/ui_text_normal_white"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/ui_tool_view_contact_button0d5"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@color/textColorHint"
         android:gravity="center"
         android:padding="@dimen/ui_base_dimen_margin_padding"
+        android:text="@string/ui_organization_contact_set_archive_manager"
+        android:textColor="@color/ui_text_normal_white"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/ui_tool_view_contact_button1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/textColorHintDark"
+        android:gravity="center"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_squad_contact_set_to_admin"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/ui_text_normal_white"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/ui_tool_view_contact_button2"
@@ -22,5 +45,6 @@
         android:gravity="center"
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_base_text_remove"
-        android:textColor="@color/ui_text_normal_white" />
+        android:textColor="@color/ui_text_normal_white"
+        android:visibility="gone" />
 </LinearLayout>

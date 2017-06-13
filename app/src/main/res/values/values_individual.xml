@@ -41,6 +41,8 @@
     </string-array>
 
     <string name="ui_individual_moment_list_user_not_exists">该用户不存在</string>
+    <string name="ui_individual_moment_list_nothing">他目前还没有发布过任何内容</string>
+    <string name="ui_individual_moment_list_loading">正在加载动态列表，请稍候&#8230;</string>
 
     <!--个人设置功能列表-->
     <string-array name="ui_individual_settings">

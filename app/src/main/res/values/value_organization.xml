@@ -55,9 +55,36 @@
     <string name="ui_squad_contact_menu_1">组织通讯录</string>
     <string name="ui_squad_contact_menu_2">手机通讯录</string>
     <string name="ui_squad_contact_set_to_admin">设为管理员</string>
+    <string name="ui_squad_contact_unset_to_admin">撤销管理员</string>
 
     <string name="ui_organization_contact_no_member">组织目前没有其他成员</string>
+    <string name="ui_organization_contact_transfer_owner">转让群组</string>
+    <string name="ui_organization_contact_transfer_manager">转让管理权</string>
+    <string name="ui_organization_contact_set_archive_manager">设为档案管理员</string>
+    <string name="ui_organization_contact_unset_archive_manager">撤销档案管理员</string>
     <string name="ui_organization_contact_squad_no_member">小组目前没有其他成员</string>
+    <string name="ui_organization_contact_remove_member" formatted="false">
+        <![CDATA[您确定要踢出<font color="#3cbaff">%s</font>吗？]]>
+    </string>
+    <string name="ui_organization_contact_removing">正在移除成员，请稍后&#8230;</string>
+    <string name="ui_organization_contact_set_to_archive_manager">正在设置档案管理员，请稍候&#8230;</string>
+    <string name="ui_organization_contact_unset_to_archive_manager">正在取消档案管理员，请稍候&#8230;</string>
+    <string name="ui_organization_contact_set_to_manager" formatted="false">
+        <![CDATA[您确定要把<font color="#3cbaff">%s</font>升级为管理员吗？]]>
+    </string>
+    <string name="ui_organization_contact_unset_to_manager" formatted="false">
+        <![CDATA[您确定要撤销<font color="#3cbaff">%s</font>的管理员资格吗？]]>
+    </string>
+    <string name="ui_organization_contact_seting_manager">正在设置管理员，请稍候&#8230;</string>
+    <string name="ui_organization_contact_unseting_manager">正在撤销管理员，请稍候&#8230;</string>
+    <string name="ui_organization_contact_transfer_management_to" formatted="false">
+        <![CDATA[管理权移交之后您将会降级成普通成员。<br/>您确定要移交给<font color="#3cbaff">%s</font>吗？]]>
+    </string>
+    <string name="ui_organization_contact_transfer_owner_to" formatted="false">
+        <![CDATA[您是本组织的创建者或所有者，转让之后您将会降级成普通成员。<br/>您确定要将组织转让给<font color="#3cbaff">%s</font>吗？]]>
+    </string>
+    <string name="ui_organization_contact_transferring_management">正在转让您的管理权，请稍候&#8230;</string>
+    <string name="ui_organization_contact_transferring_owner">正在转让您的群组，请稍候&#8230;</string>
 
     <string name="ui_organization_contact_picker_fragment_title">选择参加人员</string>
     <string name="ui_organization_contact_picker_cannot_unpick_exists">锁定状态的成员不能在这里取消</string>
@@ -81,6 +108,9 @@
 
     <string name="ui_organization_document_new">新建档案</string>
     <string name="ui_organization_document_management">管理档案</string>
+    <string name="ui_organization_archive_loading">正在加载组织档案列表，请稍候&#8230;</string>
+    <string name="ui_organization_archive_nothing">没有更多组织档案了</string>
+    <string name="ui_organization_management_transfer_warning">您是本组织的创建者，转让管理权之后您会降级为普通成员，您确定要这样做吗？</string>
 
     <string name="ui_archive_management_title_button_1">@string/ui_base_text_all</string>
     <string name="ui_archive_management_title_button_2">未存档</string>

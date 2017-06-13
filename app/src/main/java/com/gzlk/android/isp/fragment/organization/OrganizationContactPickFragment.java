@@ -37,6 +37,7 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
     private static final String PARAM_USER_IDS = "ocpf_members";
     private static final String PARAM_SELECT_ALL = "ocpf_select_all";
     private static final String PARAM_FORCE_LOCK = "ocpf_force_to_lock";
+    private static final String PARAM_SINGLE_PICK = "ocpf_single_pick";
 
     public static OrganizationContactPickFragment newInstance(String params) {
         OrganizationContactPickFragment ocp = new OrganizationContactPickFragment();
@@ -46,8 +47,10 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
         bundle.putString(PARAM_QUERY_ID, strings[0]);
         // 是否锁定传过来的已存在项目
         bundle.putBoolean(PARAM_FORCE_LOCK, Boolean.valueOf(strings[1]));
+        // 是否单选
+        bundle.putBoolean(PARAM_SINGLE_PICK, Boolean.valueOf(strings[2]));
         // 已选中的成员列表
-        bundle.putString(PARAM_USER_IDS, replaceJson(strings[2], true));
+        bundle.putString(PARAM_USER_IDS, replaceJson(strings[3], true));
         ocp.setArguments(bundle);
         return ocp;
     }
@@ -57,6 +60,7 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
         super.getParamsFromBundle(bundle);
         isSelectAll = bundle.getBoolean(PARAM_SELECT_ALL, false);
         isLockable = bundle.getBoolean(PARAM_FORCE_LOCK, false);
+        isSinglePick = bundle.getBoolean(PARAM_SINGLE_PICK, false);
         String json = bundle.getString(PARAM_USER_IDS, "[]");
         existsUsers = Json.gson().fromJson(json, new TypeToken<ArrayList<SubMember>>() {
         }.getType());
@@ -70,14 +74,17 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_SELECT_ALL, isSelectAll);
         bundle.putBoolean(PARAM_FORCE_LOCK, isLockable);
+        bundle.putBoolean(PARAM_SINGLE_PICK, isSinglePick);
         bundle.putString(PARAM_USER_IDS, Json.gson().toJson(existsUsers));
     }
 
     // UI
+    @ViewId(R.id.ui_tool_view_select_all_root)
+    private View selectAllRoot;
     @ViewId(R.id.ui_tool_view_select_all_icon)
     private CustomTextView selectAllIcon;
 
-    private boolean isSelectAll = false, isLockable = false;
+    private boolean isSelectAll = false, isLockable = false, isSinglePick = false;
     private ContactAdapter mAdapter;
     /**
      * 已选中的用户列表
@@ -98,6 +105,7 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
     public void doingInResume() {
         enableSwipe(false);
         setSupportLoadingMore(false);
+        selectAllRoot.setVisibility(isSinglePick ? View.GONE : View.VISIBLE);
         setCustomTitle(R.string.ui_organization_contact_picker_fragment_title);
         setRightText(R.string.ui_base_text_finish);
         setRightTitleClickListener(new OnTitleButtonClickListener() {

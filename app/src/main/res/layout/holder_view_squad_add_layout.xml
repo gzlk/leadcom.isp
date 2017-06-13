@@ -51,6 +51,7 @@
         android:animateLayoutChanges="true"
         android:gravity="center"
         android:orientation="horizontal"
+        android:visibility="gone"
         app:cv_background="@color/buttonDialogNormalColor"
         app:cv_background_active="@color/buttonDialogActiveColor"
         app:cv_border_size="@dimen/ui_static_dp_zero">
