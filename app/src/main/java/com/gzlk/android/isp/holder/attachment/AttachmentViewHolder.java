@@ -12,6 +12,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -81,6 +82,7 @@ public class AttachmentViewHolder extends BaseViewHolder {
 //    }
 
     public void showContent(Attachment attachment) {
+        iconTextView.setTag(R.id.hlklib_ids_custom_view_click_tag, attachment);
         iconTextView.setText(getFileExtension(attachment.getExt()));
         iconContainer.setVisibility(attachment.isImage() ? View.GONE : View.VISIBLE);
         imageDisplayer.setVisibility(attachment.isImage() ? View.VISIBLE : View.GONE);
@@ -136,13 +138,21 @@ public class AttachmentViewHolder extends BaseViewHolder {
         return res;
     }
 
-    @Click({R.id.ui_holder_view_attachment_delete})
+    @Click({R.id.ui_holder_view_attachment_delete, R.id.ui_holder_view_attachment_content})
     private void elementClick(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.ui_holder_view_attachment_delete:
                 if (null != mOnViewHolderClickListener) {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
+                }
+                break;
+            case R.id.ui_holder_view_attachment_content:
+                // 文件预览
+                Object object = iconTextView.getTag(R.id.hlklib_ids_custom_view_click_tag);
+                if (null != object) {
+                    Attachment attachment = (Attachment) object;
+                    FilePreviewHelper.previewFile(iconTextView.getContext(), attachment.getUrl(), attachment.getName(), attachment.getExt());
                 }
                 break;
         }

@@ -41,6 +41,7 @@
         app:id_image_type="rounded" />
 
     <LinearLayout
+        android:id="@+id/ui_holder_view_attachment_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

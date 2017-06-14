@@ -1,19 +1,35 @@
 package com.gzlk.android.isp.nim.viewholder;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.BaseActivity;
+import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.nim.file.FileIcons;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 import com.netease.nim.uikit.common.util.file.AttachmentStore;
 import com.netease.nim.uikit.common.util.file.FileUtil;
 import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
+
+import java.io.File;
+import java.util.Locale;
 
 /**
  * <b>功能描述：</b>网易云信显示文件附件的Holder<br />
@@ -61,22 +77,26 @@ public class MsgViewHolderFile extends MsgViewHolderBase {
         if (!TextUtils.isEmpty(path)) {
             loadImageView();
         } else {
-            AttachStatusEnum status = message.getAttachStatus();
-            switch (status) {
-                case def:
-                    updateFileStatusLabel();
-                    break;
-                case transferring:
-                    fileStatusLabel.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
-                    int percent = (int) (getMsgAdapter().getProgress(message) * 100);
-                    progressBar.setProgress(percent);
-                    break;
-                case transferred:
-                case fail:
-                    updateFileStatusLabel();
-                    break;
-            }
+            refreshDownloadStatus(message);
+        }
+    }
+
+    private void refreshDownloadStatus(IMMessage message) {
+        AttachStatusEnum status = message.getAttachStatus();
+        switch (status) {
+            case def:
+                updateFileStatusLabel();
+                break;
+            case transferring:
+                fileStatusLabel.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                int percent = (int) (getMsgAdapter().getProgress(message) * 100);
+                progressBar.setProgress(percent);
+                break;
+            case transferred:
+            case fail:
+                updateFileStatusLabel();
+                break;
         }
     }
 
@@ -114,7 +134,14 @@ public class MsgViewHolderFile extends MsgViewHolderBase {
 
     @Override
     protected void onItemClick() {
-        //FileDownloadActivity.start(context, message);
+        if (isOriginDataHasDownloaded(message)) {
+            // 已经下载时，打开预览
+            FileAttachment attachment = (FileAttachment) message.getAttachment();
+            tryToOpenFile(attachment.getPath(), attachment.getDisplayName(), attachment.getExtension());
+        } else {
+            // 未下载时开始下载
+            downloadFile();
+        }
     }
 
     @Override
@@ -126,4 +153,36 @@ public class MsgViewHolderFile extends MsgViewHolderBase {
     protected int rightBackground() {
         return R.drawable.nim_message_right_blue_bg;
     }
+
+    // 尝试打开已经下载了的文件
+    private void tryToOpenFile(String path, String name, String extension) {
+        FilePreviewHelper.previewFile(fileIcon.getContext(), path, name, extension);
+    }
+
+    // 附件是否已经下载了
+    private boolean isOriginDataHasDownloaded(final IMMessage message) {
+        return !TextUtils.isEmpty(((FileAttachment) message.getAttachment()).getPath());
+    }
+
+    private void downloadFile() {
+        registerObservers(true);
+        NIMClient.getService(MsgService.class).downloadAttachment(message, false);
+    }
+
+    private void registerObservers(boolean register) {
+        NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(statusObserver, register);
+    }
+
+    private Observer<IMMessage> statusObserver = new Observer<IMMessage>() {
+        @Override
+        public void onEvent(IMMessage msg) {
+            if (!msg.isTheSame(message)) {
+                return;
+            }
+            refreshDownloadStatus(msg);
+            if (msg.getAttachStatus() == AttachStatusEnum.fail) {
+                ToastHelper.make().showMsg(R.string.ui_nim_attachment_download_failure);
+            }
+        }
+    };
 }

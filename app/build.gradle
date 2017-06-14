@@ -128,7 +128,8 @@ dependencies {
     compile group: 'com.sun.mail', name: 'android-mail', version: '1.6.0-rc2'
     // https://mvnrepository.com/artifact/com.sun.mail/android-activation
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
-
+    // pdf阅读器
+    compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
     // 滑动删除
     //compile(name: 'android-swipelayout-library-release', ext: 'aar')
     compile "com.daimajia.swipelayout:library:1.2.0@aar"

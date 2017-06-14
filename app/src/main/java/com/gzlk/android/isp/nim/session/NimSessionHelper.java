@@ -227,9 +227,12 @@ public class NimSessionHelper {
 //            }
         actions.add(new ImageAction());
         actions.add(new CameraAction());
-        actions.add(new VideoAction());// 视频插件有问题，暂时不放
+        actions.add(new VideoAction());
         actions.add(new FileAction());
-        actions.add(new LocationAction());
+        // 跟电脑对话时不需要发送位置
+        if (type != SessionTypeEnum.System) {
+            actions.add(new LocationAction());
+        }
         if (type == SessionTypeEnum.Team) {
             actions.add(new NoticeAction());
         }
