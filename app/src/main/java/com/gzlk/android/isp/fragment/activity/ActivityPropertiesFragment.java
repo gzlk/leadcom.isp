@@ -30,12 +30,14 @@ import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.nim.activity.SessionHistoryActivity;
 import com.netease.nim.uikit.cache.SimpleCallback;
 import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.common.util.C;
 import com.netease.nim.uikit.session.helper.MessageListPanelHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.team.TeamService;
+import com.netease.nimlib.sdk.team.constant.TeamMemberType;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 
@@ -236,15 +238,12 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
             switch (index) {
                 case 1:
                     // 查看活动成员列表
+                    Activity act = (Activity) mAdapter.get(0);
+                    openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,false", mQueryId, act.getGroupId()), true, false);
+                    break;
                 case 4:
                     // 管理权转让
-                    Activity act = (Activity) mAdapter.get(0);
-                    boolean isMaster = act.getCreatorId().equals(Cache.cache().userId);
-                    if (!isMaster && index == 4) {
-                        // 其他成员点击时，不需要打开转让活动对话框
-                        return;
-                    }
-                    openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,%s,%s", mQueryId, isMaster, act.getGroupId(), (index == 1 ? "false" : "true")), (index == 4 ? REQUEST_PICK_ONE : ACTIVITY_BASE_REQUEST), true, false);
+                    tryTransferOwner();
                     break;
                 case 2:
                     // 创建者是当前登录的用户时，可以 修改群名称
@@ -266,6 +265,23 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
             }
         }
     };
+
+    // 尝试转让活动组群
+    private void tryTransferOwner() {
+        final Activity act = (Activity) mAdapter.get(0);
+        TeamDataCache.getInstance().fetchTeamMember(act.getTid(), Cache.cache().userId, new SimpleCallback<TeamMember>() {
+            @Override
+            public void onResult(boolean success, TeamMember result) {
+                if (success && null != result) {
+                    if (result.getType() == TeamMemberType.Manager || result.getType() == TeamMemberType.Owner) {
+                        openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,true", mQueryId, act.getGroupId()), REQUEST_PICK_ONE, true, false);
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_activity_property_transfer_failed_no_permission);
+                    }
+                }
+            }
+        });
+    }
 
     private void warningClearChatHistory() {
         SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_property_clean_chat_history, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {

@@ -49,6 +49,7 @@
     </string-array>
     <string name="ui_activity_property_transfer_null_account">您没有选择相应的成员来完成这个操作</string>
     <string name="ui_activity_property_transfer_success">您已经将本活动组转让给别人</string>
+    <string name="ui_activity_property_transfer_failed_no_permission">您不是本活动的创建者或管理员</string>
     <string name="ui_activity_property_transfer_failed" formatted="false">转让失败：%d</string>
     <string name="ui_activity_property_not_exist">无效的活动或活动已结束</string>
     <string name="ui_activity_property_chat_history_title">聊天记录</string>

@@ -396,8 +396,8 @@ public class NimSessionHelper {
                     Team team = TeamDataCache.getInstance().getTeamById(sessionId);
                     if (team != null && team.isMyTeam()) {
                         // 打开群组属性页
-                        //openGroupPropertyInfo(context, sessionId);
-                        NimUIKit.startTeamInfo(context, sessionId);
+                        openGroupPropertyInfo(context, sessionId);
+                        //NimUIKit.startTeamInfo(context, sessionId);
                     } else {
                         Toast.makeText(context, R.string.team_invalid_tip, Toast.LENGTH_SHORT).show();
                     }

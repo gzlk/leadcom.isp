@@ -35,6 +35,10 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.SubMember;
+import com.netease.nim.uikit.cache.SimpleCallback;
+import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nimlib.sdk.team.constant.TeamMemberType;
+import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,12 +68,10 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         Bundle bundle = new Bundle();
         // 活动的id
         bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 当前登录者是否是管理员
-        bundle.putBoolean(PARAM_MASTER, Boolean.valueOf(strings[1]));
         // 活动所属的组织id
-        bundle.putString(PARAM_GROUP_ID, strings[2]);
+        bundle.putString(PARAM_GROUP_ID, strings[1]);
         // 是否成员选取
-        bundle.putBoolean(PARAM_FOR_PICKER, Boolean.valueOf(strings[3]));
+        bundle.putBoolean(PARAM_FOR_PICKER, Boolean.valueOf(strings[2]));
         amf.setArguments(bundle);
         return amf;
     }
@@ -118,10 +120,20 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     public void doingInResume() {
         setCustomTitle(R.string.ui_activity_member_fragment_title);
         setNothingText(R.string.ui_activity_member_empty);
-        if (isMaster) {
-            resetRightTitleIcon();
-        }
+        checkPermission();
         initializeAdapter();
+    }
+
+    private void checkPermission() {
+        TeamDataCache.getInstance().fetchTeamMember(mQueryId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
+            @Override
+            public void onResult(boolean success, TeamMember result) {
+                if (success && null != result) {
+                    isMaster = result.getType() == TeamMemberType.Owner || result.getType() == TeamMemberType.Manager;
+                }
+                resetRightTitleIcon();
+            }
+        });
     }
 
     @Override
