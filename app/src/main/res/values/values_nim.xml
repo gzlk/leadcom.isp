@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ui_nim_action_camera">相机</string>
+    <string name="ui_nim_action_camera">拍摄</string>
     <string name="ui_nim_action_file">文件</string>
     <string name="ui_nim_action_notice">通知</string>
     <string name="ui_nim_action_survey">问卷调查</string>
@@ -8,7 +8,7 @@
     <string name="ui_nim_action_vote">投票</string>
     <string name="ui_nim_action_sign">签到</string>
     <string name="ui_nim_action_minutes">会议记要</string>
-    <string name="ui_nim_action_image">图片</string>
+    <string name="ui_nim_action_image">相册</string>
     <string name="ui_nim_action_video">视频</string>
     <string name="ui_nim_action_location">位置</string>
 </resources>

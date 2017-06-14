@@ -1,7 +1,9 @@
 package com.gzlk.android.isp.nim.action;
 
 import com.gzlk.android.isp.R;
+import com.netease.nim.uikit.common.media.picker.activity.PickImageActivity;
 import com.netease.nim.uikit.session.actions.PickImageAction;
+import com.netease.nim.uikit.session.constant.RequestCode;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
@@ -25,8 +27,18 @@ public class ImageAction extends PickImageAction {
     }
 
     @Override
+    public void onClick() {
+        openGallery();
+    }
+
+    @Override
     protected void onPicked(File file) {
         IMMessage message = MessageBuilder.createImageMessage(getAccount(), getSessionType(), file, file.getName());
         sendMessage(message);
+    }
+
+    private void openGallery() {
+        int requestCode = makeRequestCode(RequestCode.PICK_IMAGE);
+        PickImageActivity.start(getActivity(), requestCode, PickImageActivity.FROM_LOCAL, tempFile(), true, PICK_IMAGE_COUNT, true, false, 0, 0);
     }
 }

@@ -24,14 +24,14 @@ import java.io.File;
  */
 public abstract class PickImageAction extends BaseAction {
 
-    private static final int PICK_IMAGE_COUNT = 9;
-    private static final int PORTRAIT_IMAGE_WIDTH = 720;
+    protected static final int PICK_IMAGE_COUNT = 9;
+    protected static final int PORTRAIT_IMAGE_WIDTH = 720;
 
     public static final String MIME_JPEG = "image/jpeg";
     public static final String JPG = ".jpg";
 
     private boolean multiSelect;
-    private boolean crop = false;
+    protected boolean crop = false;
 
     protected abstract void onPicked(File file);
 
@@ -46,7 +46,7 @@ public abstract class PickImageAction extends BaseAction {
         showSelector(getTitleId(), requestCode, multiSelect, tempFile());
     }
 
-    private String tempFile() {
+    protected String tempFile() {
         String filename = StringUtil.get32UUID() + JPG;
         return StorageUtil.getWritePath(filename, StorageType.TYPE_TEMP);
     }
