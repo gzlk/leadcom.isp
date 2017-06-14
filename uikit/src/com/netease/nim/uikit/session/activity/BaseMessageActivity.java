@@ -31,9 +31,7 @@ public abstract class BaseMessageActivity extends UI {
     private MessageFragment messageFragment;
 
     protected abstract MessageFragment fragment();
-
     protected abstract int getContentViewId();
-
     protected abstract void initToolBar();
 
     @Override

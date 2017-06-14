@@ -21,7 +21,7 @@
 
     <!-- session -->
     <string name="input_panel_photo">图 片</string>
-    <string name="input_panel_video">视 频</string>
+    <string name="input_panel_video">视频</string>
     <string name="input_panel_location">位 置</string>
     <string name="input_panel_take">拍 摄</string>
     <string name="im_choose_pic">请选择JPG PNG BMP GIF格式的图片文件</string>
@@ -175,7 +175,7 @@
     <string name="set_head_image">设置头像</string>
     <string name="team_update_cancel">取消更新</string>
     <string name="team_update_failed">群头像设置失败</string>
-
+    <string name="reach_capacity">人数已达上限</string>
     <!-- 消息搜索 -->
     <string name="message_search_no_result">无结果</string>
     <string name="message_search_title">查看聊天内容</string>

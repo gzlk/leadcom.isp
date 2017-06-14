@@ -20,11 +20,8 @@ public class VideoAction extends BaseAction {
     private transient VideoMessageHelper videoMessageHelper;
 
     public VideoAction() {
-        this(R.drawable.nim_message_plus_video_selector, R.string.input_panel_video);
-    }
+        super(R.drawable.nim_message_plus_video_selector_1, R.string.input_panel_video);
 
-    protected VideoAction(int iconResId, int titleId) {
-        super(iconResId, titleId);
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.nim.action.FileAction;
 import com.gzlk.android.isp.nim.action.ImageAction;
 import com.gzlk.android.isp.nim.action.IssueAction;
+import com.gzlk.android.isp.nim.action.LocationAction;
 import com.gzlk.android.isp.nim.action.MinutesAction;
 import com.gzlk.android.isp.nim.action.NoticeAction;
 import com.gzlk.android.isp.nim.action.SignAction;
@@ -48,7 +49,6 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -225,11 +225,12 @@ public class NimSessionHelper {
 //                actions.add(new AVChatAction(AVChatType.VIDEO));
 //            }
         actions.add(new ImageAction());
-        //actions.add(new VideoAction());// 视频插件有问题，暂时不放
+        actions.add(new VideoAction());// 视频插件有问题，暂时不放
         if (type == SessionTypeEnum.Team) {
             actions.add(new NoticeAction());
         }
         actions.add(new FileAction());
+        actions.add(new LocationAction());
         if (type == SessionTypeEnum.Team) {
             actions.add(new SurveyAction());
             actions.add(new IssueAction());
