@@ -98,6 +98,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
             imageView.setVisibility(isEmpty(path) ? View.GONE : View.VISIBLE);
             imageView.displayImage(path, getDimension(R.dimen.ui_base_dimen_button_height), false, false);
             appendIcon.setVisibility(isEmpty(path) ? View.VISIBLE : View.GONE);
+            valueTextView.setVisibility(isEmpty(path) ? View.VISIBLE : View.GONE);
         }
     }
 

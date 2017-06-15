@@ -20,7 +20,7 @@ import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.organization.OrganizationStructureConcernedViewHolder;
+import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
 import com.gzlk.android.isp.holder.organization.SquadAddViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.TextViewHolder;
@@ -30,7 +30,6 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
-import com.gzlk.android.isp.model.organization.Operation;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
@@ -70,7 +69,7 @@ public class StructureFragment extends BaseOrganizationFragment {
     private ClearEditText popupIntroducing;
 
     // Holder
-    private OrganizationStructureConcernedViewHolder concernedViewHolder;
+    private OrgStructureViewHolder concernedViewHolder;
 
     private String[] items;
     private StructureAdapter mAdapter;
@@ -425,7 +424,7 @@ public class StructureFragment extends BaseOrganizationFragment {
     /**
      * 当前登录用户在本组织内的角色
      */
-    static Member my;
+    public static Member my;
 
     public void changeSelectedGroup() {
         if (selectedIndex < 0) return;
@@ -496,7 +495,7 @@ public class StructureFragment extends BaseOrganizationFragment {
             switch (viewType) {
                 case VT_HEAD:
                     if (null == concernedViewHolder) {
-                        concernedViewHolder = new OrganizationStructureConcernedViewHolder(itemView, fragment);
+                        concernedViewHolder = new OrgStructureViewHolder(itemView, fragment);
                         concernedViewHolder.setPageChangeListener(onPageChangeListener);
                         //concernedViewHolder.loadingLocal();
                     }
@@ -507,7 +506,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                     SquadAddViewHolder adder = new SquadAddViewHolder(itemView, fragment);
                     if (null != my) {
                         // 有权限增加小组时，才显示添加小组按钮
-                        if (my.hasOperation(Operation.SQUAD_ADDABLE)) {
+                        if (my.canAddSquad()) {
                             adder.showAddContainer(true);
                         }
                     }

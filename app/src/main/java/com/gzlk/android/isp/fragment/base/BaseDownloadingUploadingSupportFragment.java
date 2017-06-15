@@ -11,6 +11,7 @@ import com.gzlk.android.isp.api.upload.Upload;
 import com.gzlk.android.isp.api.upload.UploadRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.listener.OnUploadingListener;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
@@ -254,14 +255,30 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     }
 
     /**
-     * 下载文件到本地
+     * 下载文件到本地Image目录
      */
-    protected void downloadFile(final String url) {
+    protected void downloadFile(String url) {
+        downloadFile(url, App.IMAGE_DIR);
+    }
+
+    private String callBackHost() {
+        return Integer.toHexString(hashCode());
+    }
+
+    private void removeCallback() {
+        HttpHelper.helper().removeCallback(callBackHost());
+    }
+
+    /**
+     * 下载文件到本地指定目录
+     */
+    protected void downloadFile(final String url, final String dir) {
         HttpHelper.helper().addCallback(new HttpHelper.HttpHelperCallback() {
             @Override
             public void onCancel(int current, int total) {
                 log(format("onCancel %d of %d", current, total));
                 handleMaterialHorizontalProgressBar(current, total);
+                removeCallback();
             }
 
             @Override
@@ -288,14 +305,16 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
                     int per = (int) ((current * 1.0 / total) * 100);
                     materialHorizontalProgressBar.setProgress(per);
                 }
-                onFileDownloadingComplete(url, true);
+                onFileDownloadingComplete(url, successUrl, true);
+                removeCallback();
             }
 
             @Override
             public void onFailure(int current, int total, String failureUrl) {
                 log(format("onFailure %d of %d", current, total));
                 handleMaterialHorizontalProgressBar(current, total);
-                onFileDownloadingComplete(url, false);
+                onFileDownloadingComplete(url, failureUrl, false);
+                removeCallback();
             }
 
             @Override
@@ -303,9 +322,9 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
                 log(format("onStop %d of %d", current, total));
                 hideHorizontalProgress();
                 handleMaterialHorizontalProgressBar(current, total);
+                removeCallback();
             }
-        }, Integer.toHexString(hashCode())).clearTask().addTask(url).setIgnoreExist(true).download();
-
+        }, callBackHost()).setLocalDirectory(dir).clearTask().addTask(url).setIgnoreExist(true).download();
 //        FileRequest fileRequest = new FileRequest(url, local);
 //        fileRequest.setHttpListener(new OnHttpListener<File>(true, false) {
 //            @Override
@@ -349,7 +368,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     /**
      * 指定的文件已经下载完毕，子类需要重载此方法以获取结果
      */
-    protected void onFileDownloadingComplete(String url, boolean success) {
+    protected void onFileDownloadingComplete(String url, String local, boolean success) {
     }
 
     private OnFileUploadingListener mOnFileUploadingListener;

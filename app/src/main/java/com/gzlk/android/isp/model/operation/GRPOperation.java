@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.model.organization;
+package com.gzlk.android.isp.model.operation;
 
 /**
  * <b>功能描述：</b>组织成员权限动作<br />
@@ -11,7 +11,7 @@ package com.gzlk.android.isp.model.organization;
  * <b>修改备注：</b><br />
  */
 
-public interface Operation {
+public interface GRPOperation {
     /**
      * 编辑群资料
      */
@@ -19,7 +19,11 @@ public interface Operation {
     /**
      * 审批档案
      */
-    String ARCHIVE_APPROVE = "ROLE_cc6a8131b8d447a4accd85fa3208424c";
+    String ARCHIVE_APPROVAL = "ROLE_cc6a8131b8d447a4accd85fa3208424c";
+    /**
+     * 删除档案
+     */
+    String ARCHIVE_DELETE = "ROLE_9fc02c46d90d47a2a97f9894e17d403a";
     /**
      * 删除群成员
      */
@@ -29,9 +33,13 @@ public interface Operation {
      */
     String MEMBER_ROLE = "ROLE_c2b23baf60144b14b40783bf9d9c411f";
     /**
+     * 添加成员
+     */
+    String MEMBER_ADD = "ROLE_6cf79d0502e544daa85c8e92f77d90e1";
+    /**
      * 新增小组
      */
-    String SQUAD_ADDABLE = "ROLE_d6da8ab0d82d4f5f8693abcbe07b3e5d";
+    String SQUAD_ADD = "ROLE_d6da8ab0d82d4f5f8693abcbe07b3e5d";
     /**
      * 删除小组
      */

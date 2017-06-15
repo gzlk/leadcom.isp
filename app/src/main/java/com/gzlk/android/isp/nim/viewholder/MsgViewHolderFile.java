@@ -1,18 +1,12 @@
 package com.gzlk.android.isp.nim.viewholder;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.activity.BaseActivity;
-import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.nim.file.FileIcons;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
@@ -27,9 +21,6 @@ import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-
-import java.io.File;
-import java.util.Locale;
 
 /**
  * <b>功能描述：</b>网易云信显示文件附件的Holder<br />

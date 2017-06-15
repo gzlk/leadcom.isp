@@ -14,6 +14,10 @@
         app:cv_border_size="@dimen/ui_static_dp_zero">
 
         <include
+            android:id="@+id/ui_archive_creator_cover"
+            layout="@layout/holder_view_simple_clickable" />
+
+        <include
             android:id="@+id/ui_archive_creator_title"
             layout="@layout/holder_view_simple_inputable" />
 

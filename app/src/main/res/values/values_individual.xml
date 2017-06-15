@@ -84,6 +84,7 @@
     <string name="ui_text_document_edit_not_exist">您要修改的档案不存在。\n要建一个新的吗？</string>
     <string name="ui_text_document_create_content_hint">档案简介</string>
     <string-array name="ui_individual_new_document">
+        <item>0|封面|选择封面|2</item>
         <item>题名：|%s|档案标题|[a-zA-Z0-9\u4e00-\u9fa5]+||30</item>
         <item>档案来源：|%s|来源|||10</item>
         <item>1|发生时间：|%s|1</item>

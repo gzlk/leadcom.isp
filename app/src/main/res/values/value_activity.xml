@@ -71,7 +71,7 @@
     <string name="ui_activity_create_handing_attachment_warning1" formatted="false">正在处理文件(%d/%d)请稍候&#8230;</string>
     <string name="ui_activity_create_handing_attachment_failed">文件处理失败</string>
     <string-array name="ui_activity_create_items">
-        <item>0|活动封面||2</item>
+        <item>0|活动封面|选择封面|2</item>
         <item>|%s|活动主题|[a-zA-Z0-9\u4e00-\u9fa5]+||30</item>
         <item>1|活动时间|%s|1</item>
         <item>|%s|活动地点|[a-zA-Z0-9\u4e00-\u9fa5]+||50</item>

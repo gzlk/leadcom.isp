@@ -17,7 +17,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.organization.OrganizationStructureConcernedViewHolder;
+import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
 import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -57,7 +57,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private String[] items;
     private int selectedIndex = -1;
     private ActivityAdapter mAdapter;
-    private OrganizationStructureConcernedViewHolder concernedViewHolder;
+    private OrgStructureViewHolder concernedViewHolder;
 
     public MainFragment mainFragment;
 
@@ -413,7 +413,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
             switch (viewType) {
                 case VT_HEAD:
                     if (null == concernedViewHolder) {
-                        concernedViewHolder = new OrganizationStructureConcernedViewHolder(itemView, fragment);
+                        concernedViewHolder = new OrgStructureViewHolder(itemView, fragment);
                         concernedViewHolder.setPageChangeListener(onPageChangeListener);
                         concernedViewHolder.loadingLocal();
                     }

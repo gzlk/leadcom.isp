@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_holder_view_home_images"
     android:layout_width="match_parent"
     android:layout_height="@dimen/ui_static_dp_150"
     android:layout_marginBottom="@dimen/ui_base_border_size_normal"

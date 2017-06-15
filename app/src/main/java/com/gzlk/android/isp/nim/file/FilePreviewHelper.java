@@ -8,6 +8,8 @@ import android.webkit.MimeTypeMap;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
+import com.gzlk.android.isp.etc.ImageCompress;
+import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
 import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -33,8 +35,10 @@ public class FilePreviewHelper {
      */
     public static void previewFile(Context context, String path, String fileName, String extension) {
         if (!TextUtils.isEmpty(extension) && extension.toLowerCase(Locale.getDefault()).equals("pdf")) {
-            String param = StringHelper.format("%s,%s", path, fileName);
-            BaseActivity.openActivity(context, PdfViewerFragment.class.getName(), param, true, false);
+            previewPdf(context, path, fileName);
+            return;
+        } else if (ImageCompress.isImage(extension)) {
+            previewImage(context, path);
             return;
         }
         try {
@@ -47,5 +51,14 @@ public class FilePreviewHelper {
         } catch (Exception e) {
             ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_nim_attachment_open_failure));
         }
+    }
+
+    private static void previewPdf(Context context, String path, String fileName) {
+        String param = StringHelper.format("%s,%s", path, fileName);
+        BaseActivity.openActivity(context, PdfViewerFragment.class.getName(), param, true, false);
+    }
+
+    private static void previewImage(Context context, String path) {
+        BaseActivity.openActivity(context, ImageViewerFragment.class.getName(), StringHelper.format("0,%s", path), false, false, true);
     }
 }

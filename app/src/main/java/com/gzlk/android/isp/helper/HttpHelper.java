@@ -106,7 +106,9 @@ public class HttpHelper {
      */
     private String tempDir = App.IMAGE_DIR;
 
-    @SuppressWarnings("ConstantConditions")
+    /**
+     * 设置本地缓存目录
+     */
     public HttpHelper setLocalDirectory(String dir) {
         tempDir = dir;
         return this;
@@ -143,7 +145,6 @@ public class HttpHelper {
      */
     private String handlingTask = "";
 
-    @SuppressWarnings("ConstantConditions")
     private void downloading() {
         if (canceled) {
             notifyCancel();
@@ -167,11 +168,14 @@ public class HttpHelper {
                 FileRequest request = new FileRequest(url, local).setHttpListener(fileHttpListener);
                 http().executeAsync(request);
             } else {
-                notifySuccess(url);
+                notifySuccess(local);
                 handlingIndex++;
                 // 继续下载
                 downloading();
             }
+        } else {
+            notifyStop();
+            clearTask();
         }
     }
 

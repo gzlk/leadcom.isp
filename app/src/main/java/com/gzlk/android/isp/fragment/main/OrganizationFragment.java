@@ -17,6 +17,7 @@ import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -98,13 +99,8 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             String creatorId = item.getCreatorId();
             ((ContactFragment) mFragments.get(1)).setIsCreator(!isEmpty(creatorId) && creatorId.equals(Cache.cache().userId));
             ((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
-            ((ArchivesFragment) mFragments.get(2)).setIsManager(isManager(item));
         }
     };
-
-    private boolean isManager(Organization org) {
-        return null != org && !isEmpty(org.getCreatorId()) && org.getCreatorId().equals(Cache.cache().userId);
-    }
 
     @Override
     protected void onViewPagerDisplayedChanged(boolean visible) {
@@ -141,9 +137,15 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             // 测试状态下可以添加组织
             shown = position <= 2;
         } else {
-            shown = (position == 1 || position == 2);
+            // 新增：只有当前登录用户在这个组织内可以添加成员时才显示 + 号
+            shown = (position == 1 && canAddMember()) || (position == 2);
         }
         mainFragment.showRightIcon(shown);
+    }
+
+    private boolean canAddMember() {
+        Member member = StructureFragment.my;
+        return null != member && member.canAddMember();
     }
 
     @Click({R.id.ui_tool_organization_top_channel_1, R.id.ui_tool_organization_top_channel_2,

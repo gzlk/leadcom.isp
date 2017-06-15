@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
@@ -17,7 +18,6 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -33,6 +33,8 @@ import java.util.List;
 
 public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.OnPageChangeListener {
 
+    @ViewId(R.id.ui_holder_view_home_images)
+    private RelativeLayout container;
     @ViewId(R.id.ui_tool_view_pager_embedded)
     private ViewPager viewPager;
     @ViewId(R.id.ui_holder_view_home_image_title)
@@ -77,7 +79,13 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         }
         mAdapter.notifyDataSetChanged();
         if (urls.size() > 0) {
+            container.setVisibility(View.VISIBLE);
             viewPager.setCurrentItem(urls.size() > 1 ? 1 : 0, false);
+            if (urls.size() == 1) {
+                onPageSelected(0);
+            }
+        } else {
+            container.setVisibility(View.GONE);
         }
     }
 
@@ -124,13 +132,6 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView(images.get(position));
-        }
-
-        private void clearParent(View view) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (null != parent) {
-                parent.removeView(view);
-            }
         }
 
         @Override

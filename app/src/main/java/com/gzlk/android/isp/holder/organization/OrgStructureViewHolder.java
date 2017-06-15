@@ -39,7 +39,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
+public class OrgStructureViewHolder extends BaseViewHolder {
 
     // View
     @ViewId(R.id.ui_organization_structure_concerned_container)
@@ -51,7 +51,7 @@ public class OrganizationStructureConcernedViewHolder extends BaseViewHolder {
 
     private DepthAdapter mAdapter;
 
-    public OrganizationStructureConcernedViewHolder(View itemView, BaseFragment fragment) {
+    public OrgStructureViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         initializeAdapter();

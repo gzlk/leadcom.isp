@@ -18,6 +18,7 @@ import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 
 import java.util.List;
@@ -35,8 +36,6 @@ import java.util.List;
 
 public class ArchivesFragment extends BaseOrganizationFragment {
 
-    private static final String PARAM_IS_MANAGER = "af_is_manager";
-
     public static ArchivesFragment newInstance(String params) {
         ArchivesFragment af = new ArchivesFragment();
         Bundle bundle = new Bundle();
@@ -45,22 +44,6 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         return af;
     }
 
-    @Override
-    protected void getParamsFromBundle(Bundle bundle) {
-        super.getParamsFromBundle(bundle);
-        isManager = bundle.getBoolean(PARAM_IS_MANAGER, false);
-    }
-
-    @Override
-    protected void saveParamsToBundle(Bundle bundle) {
-        super.saveParamsToBundle(bundle);
-        bundle.putBoolean(PARAM_IS_MANAGER, isManager);
-    }
-
-    /**
-     * 当前登录者是否为这个组织的管理者
-     */
-    private boolean isManager = false;
     private ArchiveAdapter mAdapter;
 
     @Override
@@ -117,18 +100,17 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         loadingLocalArchive();
     }
 
-    /**
-     * 设置当前登录用户是否为这个组织的管理者
-     */
-    public void setIsManager(boolean isManager) {
-        this.isManager = isManager;
+    // 我是否可以管理组织档案
+    private boolean isMeCanManageArchives() {
+        Member me = StructureFragment.my;
+        return null != me && (me.canApproveArchive() || me.isArchiveManager());
     }
 
     /**
      * 打开新建、管理菜单
      */
     public void openTooltipMenu(View view) {
-        int layout = isManager ? R.id.ui_tooltip_organization_document_management :
+        int layout = isMeCanManageArchives() ? R.id.ui_tooltip_organization_document_management :
                 R.id.ui_tooltip_organization_document_manage_normal;
         showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
     }

@@ -26,6 +26,7 @@ import com.gzlk.android.isp.nim.action.SurveyAction;
 import com.gzlk.android.isp.nim.action.VoteAction;
 import com.gzlk.android.isp.nim.model.NimMessageParser;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderFile;
+import com.gzlk.android.isp.nim.viewholder.MsgViewHolderTip;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.session.SessionCustomization;
@@ -249,6 +250,8 @@ public class NimSessionHelper {
     private static void registerViewHolders() {
         // 文件显示
         NimUIKit.registerMsgItemViewHolder(FileAttachment.class, MsgViewHolderFile.class);
+        // 提示类消息
+        NimUIKit.registerTipMsgViewHolder(MsgViewHolderTip.class);
     }
 
     // 定制化单聊界面。如果使用默认界面，返回null即可

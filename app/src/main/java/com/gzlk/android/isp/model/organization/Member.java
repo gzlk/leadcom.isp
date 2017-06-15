@@ -9,6 +9,7 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Leaguer;
+import com.gzlk.android.isp.model.operation.GRPOperation;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
@@ -239,42 +240,56 @@ public class Member extends Leaguer {
     /**
      * 是否可以修改组织属性
      */
-    public boolean isGroupEditable() {
-        return hasOperation(Operation.GROUP_PROPERTY);
+    public boolean canEditGroupProperty() {
+        return hasOperation(GRPOperation.GROUP_PROPERTY);
     }
 
     /**
      * 是否可以审批档案
      */
-    public boolean isApprovable() {
-        return hasOperation(Operation.ARCHIVE_APPROVE);
+    public boolean canApproveArchive() {
+        return hasOperation(GRPOperation.ARCHIVE_APPROVAL);
+    }
+
+    /**
+     * 是否可以删除档案
+     */
+    public boolean canDeleteArchive() {
+        return hasOperation(GRPOperation.ARCHIVE_DELETE);
     }
 
     /**
      * 是否可以编辑成员角色属性
      */
-    public boolean isRoleEditable() {
-        return hasOperation(Operation.MEMBER_ROLE);
+    public boolean canEditMemberRole() {
+        return hasOperation(GRPOperation.MEMBER_ROLE);
     }
 
     /**
      * 是否可以删除用户
      */
-    public boolean isMemberDeletable() {
-        return hasOperation(Operation.MEMBER_DELETE);
+    public boolean canDeleteMember() {
+        return hasOperation(GRPOperation.MEMBER_DELETE);
+    }
+
+    /**
+     * 是否可以添加用户
+     */
+    public boolean canAddMember() {
+        return hasOperation(GRPOperation.MEMBER_ADD);
     }
 
     /**
      * 是否可以添加小组
      */
-    public boolean isSquadAddable() {
-        return hasOperation(Operation.SQUAD_ADDABLE);
+    public boolean canAddSquad() {
+        return hasOperation(GRPOperation.SQUAD_ADD);
     }
 
     /**
      * 是否可以删除小组
      */
-    public boolean isSquadDeletable() {
-        return hasOperation(Operation.SQUAD_DELETE);
+    public boolean canDeleteSquad() {
+        return hasOperation(GRPOperation.SQUAD_DELETE);
     }
 }

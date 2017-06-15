@@ -64,9 +64,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
         Bundle bundle = new Bundle();
         String[] strings = splitParameters(params);
         bundle.putString(PARAM_QUERY_ID, strings[0]);
-        if (strings.length > 1) {
-            bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[1]));
-        }
+        bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[1]));
         mdf.setArguments(bundle);
         return mdf;
     }
@@ -99,7 +97,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     private CustomTextView titleRightIcon;
     @ViewId(R.id.ui_moment_details_title_image_counter)
     private TextView titleCountTextView;
-    @ViewId(R.id.ui_moment_details_image_content)
+    @ViewId(R.id.ui_tool_view_pager)
     private ViewPager detailImageContent;
     @ViewId(R.id.ui_moment_detail_content_text)
     private ExpandableTextView detailContentTextView;
@@ -286,8 +284,8 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
     }
 
     @Override
-    protected void onFileDownloadingComplete(String url, boolean success) {
-        super.onFileDownloadingComplete(url, success);
+    protected void onFileDownloadingComplete(String url, String local, boolean success) {
+        super.onFileDownloadingComplete(url, local, success);
         if (success) {
             // 下载成功之后重新另存到外置SD卡公共Picture目录
             save();

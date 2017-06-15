@@ -127,6 +127,7 @@ public class ArchiveRequest extends Request<Archive> {
     /**
      * 新增个人档案
      *
+     * @param cover        封面
      * @param title        档案标题
      * @param introduction 档案简介
      * @param authPublic   公开范围("0":私密,"1":公开)
@@ -138,7 +139,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param video        视频([{"name":"","url":""},{}])
      * @param attach       附件地址([{"name":"","url":""},{}])
      */
-    public void add(@NonNull String title, String introduction, int authPublic, String happenDate, ArrayList<String> labels, String markdown,
+    public void add(String cover, @NonNull String title, String introduction, int authPublic, String happenDate, ArrayList<String> labels, String markdown,
                     ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {title,happenDate,authPublic,tag,content,markdown,[office],[image],[video],[attach],accessToken}
 
@@ -146,6 +147,7 @@ public class ArchiveRequest extends Request<Archive> {
         JSONObject object = new JSONObject();
         try {
             object.put("title", title)
+                    .put("cover", cover)
                     .put("type", 1)
                     .put("intro", checkNull(introduction))
                     .put("authPublic", authPublic)
@@ -169,6 +171,7 @@ public class ArchiveRequest extends Request<Archive> {
      *
      * @param groupId      组织id
      * @param type         档案类型(1.普通,2.个人,3.活动){@link Archive.ArchiveType}
+     * @param cover        封面
      * @param title        档案标题
      * @param introduction 档案简介
      * @param happenDate   发生时间
@@ -180,7 +183,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param video        视频([{"name":"","url":""},{}])
      * @param attach       附件地址([{"name":"","url":""},{}])
      */
-    public void add(@NonNull String groupId, int type, @NonNull String title, String introduction, String happenDate,
+    public void add(@NonNull String groupId, int type, String cover, @NonNull String title, String introduction, String happenDate,
                     ArrayList<String> labels, ArrayList<String> authUser, String markdown,
                     ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {groupId,type,title,happenDate,tag,[authUser],content,markdown,[office],[image],[video],[attach],accessToken}
@@ -190,6 +193,7 @@ public class ArchiveRequest extends Request<Archive> {
         try {
             object.put("groupId", groupId)
                     .put("type", type)
+                    .put("cover", cover)
                     .put("title", title)
                     .put("intro", checkNull(introduction))
                     .put("happenDate", happenDate)
@@ -232,6 +236,7 @@ public class ArchiveRequest extends Request<Archive> {
      * 更新用户档案
      *
      * @param archiveId  档案id
+     * @param cover      封面
      * @param title      档案标题
      * @param intro      档案内容(html)
      * @param happenDate 发生时间
@@ -243,7 +248,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param video      视频([{"name":"","url":""},{}])
      * @param attach     附件地址([{"name":"","url":""},{}])
      */
-    public void update(String archiveId, String title, String intro, int authPublic, String happenDate, ArrayList<String> labels, String markdown,
+    public void update(String archiveId, String cover, String title, String intro, int authPublic, String happenDate, ArrayList<String> labels, String markdown,
                        ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {_id,title,happenDate,authPublic,tag,content,markdown,[office],[image],[video],[attach],accessToken}
 
@@ -251,6 +256,7 @@ public class ArchiveRequest extends Request<Archive> {
         JSONObject object = new JSONObject();
         try {
             object.put("_id", archiveId)
+                    .put("cover", cover)
                     .put("title", title)
                     .put("intro", checkNull(intro))
                     .put("authPublic", authPublic)
@@ -273,6 +279,7 @@ public class ArchiveRequest extends Request<Archive> {
      * 更改组织档案
      *
      * @param archiveId  档案id
+     * @param cover      封面
      * @param title      档案标题
      * @param intro      档案内容(html)
      * @param happenDate 发生时间
@@ -284,7 +291,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param video      视频([{"name":"","url":""},{}])
      * @param attach     附件地址([{"name":"","url":""},{}])
      */
-    public void update(String archiveId, @NonNull String title, String intro, String happenDate,
+    public void update(String archiveId, String cover, @NonNull String title, String intro, String happenDate,
                        ArrayList<String> labels, ArrayList<String> authUser, String markdown,
                        ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {_id,title,happenDate,tag,[authUser],content,markdown,[office],[image],[video],[attach],accessToken}
@@ -293,6 +300,7 @@ public class ArchiveRequest extends Request<Archive> {
         JSONObject object = new JSONObject();
         try {
             object.put("_id", archiveId)
+                    .put("cover", cover)
                     .put("title", title)
                     .put("intro", checkNull(intro))
                     .put("happenDate", happenDate)

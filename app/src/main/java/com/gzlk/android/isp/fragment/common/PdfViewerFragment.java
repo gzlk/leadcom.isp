@@ -7,13 +7,12 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
-import com.gzlk.android.isp.helper.HttpHelper;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.io.File;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>PDF文件预览<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/06/14 13:01 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -59,7 +58,7 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_pdf_viewer;
+        return R.layout.fragment_viewer_pdf;
     }
 
     @Override
@@ -90,17 +89,15 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
                 materialHorizontalProgressBar.setVisibility(View.VISIBLE);
             }
             // 先下载然后再预览
-            downloadFile(mQueryId);
+            downloadFile(mQueryId, App.CACHE_DIR);
         }
     }
 
     @Override
-    protected void onFileDownloadingComplete(String url, boolean success) {
-        super.onFileDownloadingComplete(url, success);
+    protected void onFileDownloadingComplete(String url, String local, boolean success) {
         if (success) {
-            String localPath = HttpHelper.helper().getLocalFilePath(mQueryId, App.CACHE_DIR);
-            if (!isEmpty(localPath)) {
-                loadLocalPdfDocument(localPath);
+            if (!isEmpty(local)) {
+                loadLocalPdfDocument(local);
             }
         }
         if (null != materialHorizontalProgressBar) {

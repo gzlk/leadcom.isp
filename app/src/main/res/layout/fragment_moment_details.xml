@@ -5,10 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/ui_moment_details_image_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <include layout="@layout/tool_view_view_pager" />
 
     <com.gzlk.android.isp.lib.view.ExpandableTextView
         android:id="@+id/ui_moment_detail_content_text"
