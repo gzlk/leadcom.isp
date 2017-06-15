@@ -14,6 +14,7 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseChatInputSupportFragment;
+import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -30,6 +31,8 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.organization.Member;
+import com.netease.nim.uikit.common.util.C;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,9 +145,18 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         }
     }
 
+    private boolean isManagerOrMe(Archive archive) {
+        boolean isMe = !isEmpty(archive.getUserId()) && archive.getUserId().equals(Cache.cache().userId);
+        if (archiveType == Archive.Type.GROUP) {
+            Member member = StructureFragment.my;
+            return isMe || (null != member && member.canApproveArchive());
+        }
+        return isMe;
+    }
+
     private void resetRightTitleButton(@NonNull Archive archive) {
-        // 档案创建者可以编辑
-        if (archive.getUserId().equals(Cache.cache().userId)) {
+        // 档案创建者、组织档案管理者可以编辑
+        if (isManagerOrMe(archive)) {
             //setRightIcon(R.string.ui_icon_more);
             // 个人档案可以编辑、未审核的档案可以编辑
             //if (archive.getType() == Archive.Type.USER || archive.getStatus() <= Archive.ArchiveStatus.APPROVED) {
@@ -173,7 +185,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 //        }
         // 图片和文件附件列表
         loadingAttachments(archive);
-        //loadingLocalComments();
+        fetchingRemoteComment();
         // 拉取远程赞列表
         fetchingRemoteLikes();
     }
@@ -267,39 +279,10 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         return archiveType == Archive.Type.USER ? Comment.Type.USER : Comment.Type.GROUP;
     }
 
-    // 加载本地缓存的评论列表
-//    private void loadingLocalComments() {
-//        new OrmTask<Comment>().addOnLiteOrmTaskExecutingListener(new OnLiteOrmTaskExecutingListener<Comment>() {
-//            @Override
-//            public boolean isModifiable() {
-//                return false;
-//            }
-//
-//            @Override
-//            public List<Comment> executing(OrmTask<Comment> task) {
-//                // 分页查找
-//                QueryBuilder<Comment> builder = new QueryBuilder<>(Comment.class)
-//                        .whereEquals(Archive.Field.UserArchiveId, mQueryId)
-//                        .orderBy(Model.Field.CreateDate)
-//                        .limit(localPageNumber * PAGE_SIZE, PAGE_SIZE);
-//                return new Dao<>(Comment.class).query(builder);
-//            }
-//        }).addOnLiteOrmTaskExecutedListener(new OnLiteOrmTaskExecutedListener<Comment>() {
-//            @SuppressWarnings("unchecked")
-//            @Override
-//            public void onExecuted(boolean modified, List<Comment> result) {
-//                if (null != result) {
-//                    if (result.size() >= PAGE_SIZE) {
-//                        // 取满一页后下一次需要取下一页
-//                        localPageNumber++;
-//                    }
-//                    updateAdapter(result);
-//                    isLoadingComplete(result.size() < PAGE_SIZE);
-//                    fetchingRemoteComment();
-//                }
-//            }
-//        }).exec();
-//    }
+    private boolean archiveDeletable() {
+        Member member = StructureFragment.my;
+        return null != member && member.canDeleteArchive();
+    }
 
     private void openEditSelector() {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
@@ -327,7 +310,11 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                         openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
                         break;
                     case R.id.ui_dialog_button_editor_to_delete:
-                        warningDeleteDocument();
+                        if (archiveType == Archive.Type.USER || archiveDeletable()) {
+                            warningDeleteDocument();
+                        } else {
+                            ToastHelper.make().showMsg(R.string.ui_text_document_details_delete_no_permission);
+                        }
                         break;
                 }
                 return true;

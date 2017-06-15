@@ -503,14 +503,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                 case VT_DIVIDER:
                     return new TextViewHolder(itemView, fragment);
                 case VT_FOOTER:
-                    SquadAddViewHolder adder = new SquadAddViewHolder(itemView, fragment);
-                    if (null != my) {
-                        // 有权限增加小组时，才显示添加小组按钮
-                        if (my.canAddSquad()) {
-                            adder.showAddContainer(true);
-                        }
-                    }
-                    return adder;
+                    return new SquadAddViewHolder(itemView, fragment);
                 default:
                     SimpleClickableViewHolder holder = new SimpleClickableViewHolder(itemView, fragment);
                     holder.addOnViewHolderClickListener(holderClickListener);
@@ -557,6 +550,8 @@ public class StructureFragment extends BaseOrganizationFragment {
                 } else if (item instanceof Squad) {
                     scvh.showContent((Squad) item);
                 }
+            } else if (holder instanceof SquadAddViewHolder) {
+                ((SquadAddViewHolder) holder).showAddContainer(null != my && my.canAddSquad());
             }
         }
 

@@ -316,12 +316,6 @@ public class OrgStructureViewHolder extends BaseViewHolder {
                 organizations.set(index, organization);
             }
         }
-        Collections.sort(organizations, new Comparator<Organization>() {
-            @Override
-            public int compare(Organization o1, Organization o2) {
-                return o1.getCreateDate().compareTo(o2.getCreateDate());
-            }
-        });
         mAdapter.notifyDataSetChanged();
         // 第一次加载时自动触发pageChange事件
         if (null != onPageChangeListener) {

@@ -107,6 +107,7 @@
 
     <string name="ui_text_document_details_fragment_title">档案内容</string>
     <string name="ui_text_document_details_not_exists">非法的传入参数：档案不存在</string>
+    <string name="ui_text_document_details_delete_no_permission">您没有权限删除这个档案</string>
     <string name="ui_text_document_details_delete">删除档案将会一同删除其下所有附件、评论等相关信息，您确定要继续吗？</string>
     <string name="ui_text_document_details_loading_comments">正在加载评论列表，请稍候&#8230;</string>
     <string name="ui_text_document_details_deleting_comment">正在删除评论，请稍候&#8230;</string>
