@@ -113,7 +113,8 @@ public class VideoMessageHelper {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(activity, R.string.gallery_invalid, Toast.LENGTH_SHORT).show();
         } catch (SecurityException e) {
-
+            e.printStackTrace();
+            Toast.makeText(activity, "看起来您的手机无法浏览视频文件，请联系开发人员", Toast.LENGTH_SHORT).show();
         }
     }
 

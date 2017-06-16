@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.common.RecommendRequest;
+import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -13,9 +13,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
-import com.gzlk.android.isp.model.common.RecommendContent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,7 +46,7 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
     protected void onViewPagerDisplayedChanged(boolean visible) {
         super.onViewPagerDisplayedChanged(visible);
         if (visible) {
-            fetchingRecommendedActivity();
+            fetchingPublicArchives();
         }
     }
 
@@ -64,12 +62,12 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        fetchingRecommendedActivity();
+        fetchingPublicArchives();
     }
 
     @Override
     protected void onLoadingMore() {
-        fetchingRecommendedActivity();
+        fetchingPublicArchives();
     }
 
     @Override
@@ -77,12 +75,12 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
-    private void fetchingRecommendedActivity() {
+    private void fetchingPublicArchives() {
         displayLoading(true);
         displayNothing(false);
-        RecommendRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendContent>() {
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
-            public void onResponse(List<RecommendContent> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     if (null != list) {
@@ -92,26 +90,20 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
                         } else {
                             isLoadingComplete(true);
                         }
-                        ArrayList<Archive> temp = new ArrayList<>();
-                        for (RecommendContent content : list) {
-                            if (content.getSourceType() == RecommendContent.SourceType.ARCHIVE && null != content.getGroDoc()) {
-                                temp.add(content.getGroDoc());
-                            }
-                        }
                         initializeAdapter();
-                        mAdapter.update(temp);
-                        mAdapter.sort();
+                        mAdapter.update(list, false);
+                        //mAdapter.sort();
                     } else {
                         isLoadingComplete(true);
                     }
-                    displayNothing(mAdapter.getItemCount() < 1);
                 } else {
                     isLoadingComplete(true);
                 }
+                displayNothing(mAdapter.getItemCount() < 1);
                 stopRefreshing();
                 displayLoading(false);
             }
-        }).list(RecommendContent.SourceType.ARCHIVE);
+        }).listPublic(remotePageNumber);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
@@ -119,12 +111,8 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             // 到档案详情
             Archive arc = mAdapter.get(index);
-            if (isEmpty(arc.getContent())) {
-                ToastHelper.make().showMsg(R.string.ui_text_home_archive_content_empty);
-            } else {
-                int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
-            }
+            int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
         }
     };
 

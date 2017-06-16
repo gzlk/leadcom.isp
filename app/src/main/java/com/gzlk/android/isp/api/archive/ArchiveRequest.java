@@ -488,4 +488,13 @@ public class ArchiveRequest extends Request<Archive> {
         String params = format("/group/groDocApprove/list?groupId=%s&pageNumber=%d", groupId, pageNumber);
         httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
     }
+
+    /**
+     * 查询公开的组织档案列表
+     */
+    public void listPublic(int pageNumber) {
+        // abstrSize,abstrRow,pageSize,pageNumber
+        String params = format("/group/groDoc/listPublic?%s&pageNumber=%d", SUMMARY, pageNumber);
+        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
+    }
 }

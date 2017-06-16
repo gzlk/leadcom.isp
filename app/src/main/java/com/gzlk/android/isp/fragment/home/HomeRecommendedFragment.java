@@ -299,12 +299,8 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
             } else if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
-                if (isEmpty(arc.getContent())) {
-                    ToastHelper.make().showMsg(R.string.ui_text_home_archive_content_empty);
-                } else {
-                    int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                    openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
-                }
+                int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
             } else if (model instanceof PriorityPlace) {
                 // 编辑推荐
                 PriorityPlace place = (PriorityPlace) model;

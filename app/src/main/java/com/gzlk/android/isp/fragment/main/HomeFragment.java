@@ -68,8 +68,10 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ALL)));
-        mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ACTIVITY)));
-        mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ARCHIVE)));
+        // 首页公开的活动列表
+        mFragments.add(new HomeActivityFragment());
+        // 首页公开的档案列表
+        mFragments.add(new HomeArchiveFragment());
         mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_EDITOR)));
         //mFragments.add(new MomentFragment());
     }

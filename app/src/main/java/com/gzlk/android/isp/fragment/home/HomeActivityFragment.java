@@ -6,7 +6,6 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
-import com.gzlk.android.isp.api.common.RecommendRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
@@ -14,10 +13,8 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.home.ActivityHomeViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
-import com.gzlk.android.isp.model.common.RecommendContent;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +47,7 @@ public class HomeActivityFragment extends BaseSwipeRefreshSupportFragment {
     protected void onViewPagerDisplayedChanged(boolean visible) {
         super.onViewPagerDisplayedChanged(visible);
         if (visible) {
-            fetchingRecommendedActivity();
+            fetchingPublicActivity();
         }
     }
 
@@ -66,12 +63,12 @@ public class HomeActivityFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        fetchingRecommendedActivity();
+        fetchingPublicActivity();
     }
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        fetchingPublicActivity();
     }
 
     @Override
@@ -79,34 +76,35 @@ public class HomeActivityFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
-    private void fetchingRecommendedActivity() {
+    private void fetchingPublicActivity() {
         displayLoading(true);
         displayNothing(false);
-        RecommendRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendContent>() {
+        ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
             @Override
-            public void onResponse(List<RecommendContent> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     if (null != list) {
                         if (list.size() >= pageSize) {
                             remotePageNumber++;
-                        }
-                        ArrayList<Activity> temp = new ArrayList<>();
-                        for (RecommendContent content : list) {
-                            if (content.getSourceType() == RecommendContent.SourceType.ACTIVITY && null != content.getActivity()) {
-                                temp.add(content.getActivity());
-                            }
+                            isLoadingComplete(false);
+                        } else {
+                            isLoadingComplete(true);
                         }
                         initializeAdapter();
-                        mAdapter.update(temp);
-                        mAdapter.sort();
+                        mAdapter.update(list, false);
+                        //mAdapter.sort();
+                    } else {
+                        isLoadingComplete(true);
                     }
-                    displayNothing(mAdapter.getItemCount() < 1);
+                } else {
+                    isLoadingComplete(true);
                 }
+                displayNothing(mAdapter.getItemCount() < 1);
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).list(RecommendContent.SourceType.ACTIVITY);
+        }).allOpenActivities(remotePageNumber);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

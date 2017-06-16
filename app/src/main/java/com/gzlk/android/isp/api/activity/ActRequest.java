@@ -135,7 +135,7 @@ public class ActRequest extends Request<Activity> {
      * @param attachments 附件列表
      */
     public void add(@NonNull String title, String content, int openStatus, String address,
-                    String beginDate, @NonNull String groupId, String logo,ArrayList<String> labels, ArrayList<Attachment> attachments) {
+                    String beginDate, @NonNull String groupId, String logo, ArrayList<String> labels, ArrayList<Attachment> attachments) {
         // {title:"",[label]:"",content:"",openStatus："",groupId:"",accessToken:"",memberIdArray:"",beginDate:"",site:"",attUrlArray:""}
         JSONObject object = new JSONObject();
         try {
@@ -395,5 +395,12 @@ public class ActRequest extends Request<Activity> {
     public void isJoinPublicAct(String activityId) {
         String params = format("actId=%s", activityId);
         httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(IS_JOINED), params), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询所有公开的活动列表
+     */
+    public void allOpenActivities(int pageNumber) {
+        httpRequest(getRequest(MultipleActivity.class, format("%s/allOpenActivities?pageNumber=%d", url(LIST), pageNumber), "", HttpMethods.Get));
     }
 }
