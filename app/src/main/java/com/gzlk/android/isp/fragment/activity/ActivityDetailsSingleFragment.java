@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -29,7 +30,7 @@ import com.hlk.hlklib.lib.view.CorneredButton;
  * <b>修改备注：</b><br />
  */
 
-public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragment {
+public class ActivityDetailsSingleFragment extends BaseDownloadingUploadingSupportFragment {
 
     public static ActivityDetailsSingleFragment newInstance(String params) {
         ActivityDetailsSingleFragment adsf = new ActivityDetailsSingleFragment();
@@ -82,10 +83,12 @@ public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragmen
     private void elementClick(View view) {
         endButton.setEnabled(false);
         // 结束该活动
+        showImageHandlingDialog(R.string.ui_activity_details_ending);
         ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
             @Override
             public void onResponse(Activity activity, boolean success, String message) {
                 super.onResponse(activity, success, message);
+                hideImageHandlingDialog();
                 if (success) {
                     endButton.setEnabled(false);
                     endButton.setText(R.string.ui_activity_details_ended_activity);
@@ -129,10 +132,12 @@ public class ActivityDetailsSingleFragment extends BaseTransparentSupportFragmen
     }
 
     private void loadingActivity() {
+        showImageHandlingDialog(R.string.ui_activity_details_loading_details);
         ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
             @Override
             public void onResponse(Activity activity, boolean success, String message) {
                 super.onResponse(activity, success, message);
+                hideImageHandlingDialog();
                 if (success) {
                     if (null != activity) {
                         display(activity);

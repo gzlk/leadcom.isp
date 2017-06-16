@@ -10,6 +10,8 @@ import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
@@ -140,12 +142,14 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void reject() {
+        showImageHandlingDialog(R.string.ui_activity_entrance_disagreeing);
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
+                hideImageHandlingDialog();
+                ToastHelper.make().showMsg(message);
                 if (success) {
-                    ToastHelper.make().showMsg(message);
                     finish();
                 }
             }
@@ -153,18 +157,35 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void agree() {
+        showImageHandlingDialog(R.string.ui_activity_entrance_agreeing);
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
+                hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
-                    finish();
-                    // 报名成功之后打开群聊页面
-                    NimSessionHelper.startTeamSession(Activity(), tid);
+                    warningApproveSuccess();
                 }
             }
         }).activityApprove(tid);
+    }
+
+    private void warningApproveSuccess() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_entrance_agreed, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                finish();
+                // 报名成功之后打开群聊页面
+                NimSessionHelper.startTeamSession(Activity(), tid);
+                return true;
+            }
+        }, new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                finish();
+            }
+        });
     }
 
     private void fetchActivity() {
