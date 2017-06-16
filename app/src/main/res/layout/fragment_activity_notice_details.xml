@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/ui_activity_notice_details_title"
+                layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+            <include
+                android:id="@+id/ui_activity_notice_details_author"
+                layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+            <include
+                android:id="@+id/ui_activity_notice_details_time"
+                layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+            <com.gzlk.android.isp.lib.view.ExpandableTextView
+                android:id="@+id/ui_activity_notice_details_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+                android:background="@android:color/white"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                android:textColor="@color/textColorHintDark"
+                android:textSize="@dimen/ui_base_text_size_small"
+                app:lessText="@string/ui_base_text_collapse"
+                app:moreText="@string/ui_base_text_expand" />
+        </LinearLayout>
+    </ScrollView>
+
+    <include layout="@layout/tool_view_loading" />
+
+    <include layout="@layout/tool_view_nothing" />
+</RelativeLayout>

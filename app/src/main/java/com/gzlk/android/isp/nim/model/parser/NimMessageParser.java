@@ -1,5 +1,6 @@
-package com.gzlk.android.isp.nim.model;
+package com.gzlk.android.isp.nim.model.parser;
 
+import com.gzlk.android.isp.nim.model.NimMessage;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachmentParser;
 
@@ -44,7 +45,7 @@ public class NimMessageParser implements MsgAttachmentParser {
         return null;
     }
 
-    static String packData(NimMessage msg) {
+    public static String packData(NimMessage msg) {
         JSONObject object = new JSONObject();
         try {
             object.put(KEY_TYPE, msg.getType());

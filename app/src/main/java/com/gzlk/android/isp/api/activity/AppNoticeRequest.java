@@ -71,6 +71,7 @@ public class AppNoticeRequest extends Request<AppNotice> {
         try {
             object.put("actId", activityId)
                     .put("title", title)
+                    .put("creatorName", Cache.cache().userName)
                     .put("content", content);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -105,7 +106,15 @@ public class AppNoticeRequest extends Request<AppNotice> {
      */
     public void find(String noticeId) {
         // id=""
-        httpRequest(getRequest(SingleNotice.class, format("%s?id=%s", url(UPDATE), noticeId), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleNotice.class, format("%s?id=%s", url(FIND), noticeId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 通过tid查找活动详情
+     */
+    public void findByTid(String tid) {
+        // tid
+        httpRequest(getRequest(SingleNotice.class, format("%s?tid=%s", "", tid), "", HttpMethods.Get));
     }
 
     /**
@@ -113,6 +122,6 @@ public class AppNoticeRequest extends Request<AppNotice> {
      */
     public void list(String activityId) {
         // actId=""
-        httpRequest(getRequest(MultipleNotice.class, format("%s?actId=%s", url(UPDATE), activityId), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleNotice.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
     }
 }

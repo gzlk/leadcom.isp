@@ -173,7 +173,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 返回上一页Activity并指定要返回的数据内容，以便上一页通过onActivityResult捕获消息
      */
     public void resultData(String data) {
-        if (StringHelper.isEmpty(data)) {
+        if (isEmpty(data)) {
             Activity().setResult(Activity.RESULT_OK);
         } else {
             Intent intent = new Intent();
@@ -183,7 +183,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         finish();
     }
 
-    protected String getResultedData(Intent data) {
+    public static String getResultedData(Intent data) {
         if (null == data) return null;
         return data.getStringExtra(RESULT_STRING);
     }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start|top"
+    android:background="@drawable/nim_message_item_round_bg"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/message_item_notice_icon_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/ui_static_dp_5"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_notice_square" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/message_item_notice_icon_image"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/message_item_notice_title_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_static_dp_2"
+            android:autoLink="none"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/app_name_default" />
+
+        <TextView
+            android:id="@+id/message_item_notice_content_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="none"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+    </LinearLayout>
+
+</RelativeLayout>

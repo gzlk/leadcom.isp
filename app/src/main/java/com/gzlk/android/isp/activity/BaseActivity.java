@@ -277,6 +277,6 @@ public class BaseActivity extends AppCompatActivity {
         b.putBoolean(ContainerActivity.REQUEST_BACK_KEY, supportBackKey);
         b.putBoolean(ContainerActivity.REQUEST_TRANSPARENT_STATUS_BAR, transparentStatusBar);
         intent.putExtra(ContainerActivity.EXTRA_BUNDLE, b);
-        context.startActivity(intent);
+        ((Activity) context).startActivityForResult(intent, requestCode);
     }
 }

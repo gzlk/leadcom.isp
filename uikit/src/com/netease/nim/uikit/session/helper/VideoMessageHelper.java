@@ -52,13 +52,13 @@ public class VideoMessageHelper {
         this.captureRequestCode = capture;
         CustomAlertDialog dialog = new CustomAlertDialog(activity);
         dialog.setTitle(activity.getString(R.string.input_panel_video));
-        dialog.addItem("拍摄视频",new CustomAlertDialog.onSeparateItemClickListener(){
+        dialog.addItem("拍摄视频", new CustomAlertDialog.onSeparateItemClickListener() {
             @Override
             public void onClick() {
                 chooseVideoFromCamera();
             }
         });
-        dialog.addItem("从相册中选择视频",new CustomAlertDialog.onSeparateItemClickListener() {
+        dialog.addItem("从相册中选择视频", new CustomAlertDialog.onSeparateItemClickListener() {
             @Override
             public void onClick() {
                 chooseVideoFromLocal();
@@ -67,12 +67,17 @@ public class VideoMessageHelper {
         dialog.show();
     }
 
+    public void setVideoSources(int local, int capture) {
+        this.localRequestCode = local;
+        this.captureRequestCode = capture;
+    }
+
     /************************************************* 视频操作S *******************************************/
 
     /**
      * 拍摄视频
      */
-    protected void chooseVideoFromCamera() {
+    public void chooseVideoFromCamera() {
         if (!StorageUtil.hasEnoughSpaceForWrite(activity,
                 StorageType.TYPE_VIDEO, true)) {
             return;
@@ -89,7 +94,7 @@ public class VideoMessageHelper {
     /**
      * 从本地相册中选择视频
      */
-    protected void chooseVideoFromLocal() {
+    public void chooseVideoFromLocal() {
         if (Build.VERSION.SDK_INT >= 19) {
             chooseVideoFromLocalKitKat();
         } else {
@@ -181,6 +186,7 @@ public class VideoMessageHelper {
 
     /**
      * 获取文件路径
+     *
      * @param data intent数据
      * @return
      */
@@ -188,7 +194,7 @@ public class VideoMessageHelper {
         Uri uri = data.getData();
 
         try {
-            Cursor cursor = activity.getContentResolver().query(uri, null, null, null,  null);
+            Cursor cursor = activity.getContentResolver().query(uri, null, null, null, null);
             if (cursor == null) {
                 //miui 2.3 有可能为null
                 return uri.getPath();
@@ -203,6 +209,7 @@ public class VideoMessageHelper {
 
     /**
      * 检查文件
+     *
      * @param file 视频文件
      * @return boolean
      */

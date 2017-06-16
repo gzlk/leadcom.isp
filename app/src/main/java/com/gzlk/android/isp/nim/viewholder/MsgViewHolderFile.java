@@ -147,7 +147,7 @@ public class MsgViewHolderFile extends MsgViewHolderBase {
 
     // 尝试打开已经下载了的文件
     private void tryToOpenFile(String path, String name, String extension) {
-        FilePreviewHelper.previewFile(fileIcon.getContext(), path, name, extension);
+        FilePreviewHelper.previewFile(context, path, name, extension);
     }
 
     // 附件是否已经下载了

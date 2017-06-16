@@ -169,6 +169,16 @@ public class Attachment extends Model {
         }.getType());
     }
 
+    public static Attachment fromJson(String json) {
+        return Json.gson().fromJson(json, new TypeToken<Attachment>() {
+        }.getType());
+    }
+
+    public static ArrayList<Attachment> fromJsons(String json) {
+        return Json.gson().fromJson(json, new TypeToken<ArrayList<Attachment>>() {
+        }.getType());
+    }
+
     // 序列化 Attachment 类时的排除策略
     private static ExclusionStrategy strategy = new ExclusionStrategy() {
 

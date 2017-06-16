@@ -31,6 +31,9 @@
         <item>3|活动类型：%s||0</item>
         <item>4|活动发起者：%s||0</item>
     </string-array>
+    <string name="ui_activity_entrance_agreed">您已加入该活动，现在要进入活动现场吗？</string>
+    <string name="ui_activity_entrance_agreeing">正在报名请稍候&#8230;</string>
+    <string name="ui_activity_entrance_disagreeing">正在处理您的选择请稍候&#8230;</string>
 
     <string name="ui_activity_property_button_text">退出活动</string>
     <string name="ui_activity_property_exit_warning">您确定不再留恋就此退出这个活动吗？</string>
@@ -135,6 +138,8 @@
     <string name="ui_activity_details_invalid_parameter">无效的活动</string>
     <string name="ui_activity_details_ended_activity">活动已结束</string>
     <string name="ui_activity_details_button_close_text">结束活动</string>
+    <string name="ui_activity_details_loading_details">正在加载活动详细内容&#8230;</string>
+    <string name="ui_activity_details_ending">正在结束活动，请稍候&#8230;</string>
 
     <string name="ui_activity_details_statistics_text">统计</string>
 
@@ -152,4 +157,19 @@
     <string name="ui_activity_archiving_save_to_archive">存为档案</string>
     <string name="ui_activity_archiving_selected_too_much">目前未存档的文件有点多，全选后存档会耗费更多的时间</string>
     <string name="ui_activity_archiving_update">正在存档您选中的文件，请稍后&#8230;</string>
+
+    <string name="ui_activity_notice_creator_fragment_title">@string/ui_nim_action_notice</string>
+    <string name="ui_activity_notice_creator_title">|%s|通知标题|[a-zA-Z0-9\u4e00-\u9fa5]+||30</string>
+    <string name="ui_activity_notice_creator_content_hint">添加内容</string>
+    <string name="ui_activity_notice_creator_title_invalid">通知标题不符合要求</string>
+    <string name="ui_activity_notice_creator_content_invalid">通知内容不符合要求</string>
+    <string name="ui_activity_notice_creator_creating">正在发布通知，请稍候&#8238;</string>
+    <string name="ui_activity_notice_nim_view_holder_title" formatted="false">【通知】%s</string>
+    <string name="ui_activity_notice_details_loading">正在加载通知内容，请稍候&#8230;</string>
+    <string name="ui_activity_notice_details_not_exists">通知不存在或已经被删除</string>
+    <string-array name="ui_activity_notice_details_items">
+        <item>0|标题：|%s|0</item>
+        <item>1|来源：|%s|0</item>
+        <item>2|时间：|%s|0</item>
+    </string-array>
 </resources>

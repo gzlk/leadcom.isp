@@ -23,16 +23,20 @@ import com.gzlk.android.isp.nim.action.MinutesAction;
 import com.gzlk.android.isp.nim.action.NoticeAction;
 import com.gzlk.android.isp.nim.action.SignAction;
 import com.gzlk.android.isp.nim.action.SurveyAction;
+import com.gzlk.android.isp.nim.action.VideoCaptureAction;
+import com.gzlk.android.isp.nim.action.VideoChooseAction;
 import com.gzlk.android.isp.nim.action.VoteAction;
-import com.gzlk.android.isp.nim.model.NimMessageParser;
+import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
+import com.gzlk.android.isp.nim.model.parser.NimMessageParser;
+import com.gzlk.android.isp.nim.model.parser.NoticeAttachmentParser;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderFile;
+import com.gzlk.android.isp.nim.viewholder.MsgViewHolderNotice;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderTip;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.session.SessionCustomization;
 import com.netease.nim.uikit.session.SessionEventListener;
 import com.netease.nim.uikit.session.actions.BaseAction;
-import com.netease.nim.uikit.session.actions.VideoAction;
 import com.netease.nim.uikit.session.helper.MessageHelper;
 import com.netease.nim.uikit.session.module.MsgForwardFilter;
 import com.netease.nim.uikit.session.module.MsgRevokeFilter;
@@ -68,8 +72,8 @@ public class NimSessionHelper {
 
     public static void init() {
 
-        // 注册自定义消息解析器
-        NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
+        // 注册各种消息的解析器
+        registerParsers();
 
         // 注册各种聊天内容ViewHolder
         registerViewHolders();
@@ -98,6 +102,14 @@ public class NimSessionHelper {
      */
     public static void setAccount(String account) {
         NimUIKit.setAccount(account);
+    }
+
+    private static void registerParsers() {
+        // 注册自定义通知消息解析器
+        NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
+        // 注册通知类消息解析器
+        NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NoticeAttachmentParser());
+
     }
 
     /**
@@ -226,9 +238,14 @@ public class NimSessionHelper {
 //                actions.add(new AVChatAction(AVChatType.AUDIO));
 //                actions.add(new AVChatAction(AVChatType.VIDEO));
 //            }
+        // 相册选择图片
         actions.add(new ImageAction());
+        // 相机拍摄照片
         actions.add(new CameraAction());
-        actions.add(new VideoAction());
+        // 相机录制视频
+        actions.add(new VideoCaptureAction());
+        // 相册选择视频
+        actions.add(new VideoChooseAction());
         actions.add(new FileAction());
         // 跟电脑对话时不需要发送位置
         if (type != SessionTypeEnum.System) {
@@ -250,6 +267,8 @@ public class NimSessionHelper {
     private static void registerViewHolders() {
         // 文件显示
         NimUIKit.registerMsgItemViewHolder(FileAttachment.class, MsgViewHolderFile.class);
+        // 通知
+        NimUIKit.registerMsgItemViewHolder(NoticeAttachment.class, MsgViewHolderNotice.class);
         // 提示类消息
         NimUIKit.registerTipMsgViewHolder(MsgViewHolderTip.class);
     }
