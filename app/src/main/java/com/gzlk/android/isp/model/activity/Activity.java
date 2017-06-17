@@ -89,6 +89,13 @@ public class Activity extends Model {
         return new Dao<>(Member.class).query(Field.ActivityId, activityId);
     }
 
+    /**
+     * 根据tid反查活动详情
+     */
+    public static Activity getByTid(String tid) {
+        return new Dao<>(Activity.class).querySingle(Field.NimId, tid);
+    }
+
     //标题
     @Column(Archive.Field.Title)
     private String title;

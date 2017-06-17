@@ -35,6 +35,7 @@ public class BaiduLocation extends BaseModel implements Parcelable {
     private String describe;
     private double latitude;
     private double longitude;
+    private double altitude;
     private float radius;
     private float direction;
     private List<Poi> poiList;
@@ -52,6 +53,7 @@ public class BaiduLocation extends BaseModel implements Parcelable {
         describe = in.readString();
         latitude = in.readDouble();
         longitude = in.readDouble();
+        altitude = in.readDouble();
         radius = in.readFloat();
         direction = in.readFloat();
         poiList = in.createTypedArrayList(Poi.CREATOR);
@@ -87,6 +89,7 @@ public class BaiduLocation extends BaseModel implements Parcelable {
         dest.writeString(streetNumber);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
+        dest.writeDouble(altitude);
         dest.writeFloat(radius);
         dest.writeDouble(direction);
         dest.writeList(poiList);
@@ -109,6 +112,7 @@ public class BaiduLocation extends BaseModel implements Parcelable {
     private void setParameters(BDLocation location) {
         latitude = 0.0;
         longitude = 0.0;
+        altitude = 0.0;
         if (null == location) return;
         city = location.getCity();
         cityCode = location.getCityCode();
@@ -120,6 +124,9 @@ public class BaiduLocation extends BaseModel implements Parcelable {
         }
         if (!Double.isNaN(location.getLongitude())) {
             longitude = location.getLongitude();
+        }
+        if (!Double.isNaN(location.getAltitude())) {
+            altitude = location.getAltitude();
         }
         province = location.getProvince();
         street = location.getStreet();
@@ -224,6 +231,14 @@ public class BaiduLocation extends BaseModel implements Parcelable {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public double getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(double altitude) {
+        this.altitude = altitude;
     }
 
     public float getRadius() {

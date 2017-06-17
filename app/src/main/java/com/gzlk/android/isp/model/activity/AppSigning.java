@@ -31,7 +31,7 @@ public class AppSigning extends Sign {
     private String endTime;
     //签到人数(按user对象的id过滤，避免一个用户多次签到后被重复计数)
     @Column(Field.SignInNum)
-    private String signInNum;
+    private int signInNum;
 
     public String getActId() {
         return actId;
@@ -65,11 +65,11 @@ public class AppSigning extends Sign {
         this.modifyDate = modifyDate;
     }
 
-    public String getSignInNum() {
+    public int getSignInNum() {
         return signInNum;
     }
 
-    public void setSignInNum(String signInNum) {
+    public void setSignInNum(int signInNum) {
         this.signInNum = signInNum;
     }
 }

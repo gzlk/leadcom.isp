@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model.activity;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 
 /**
  * <b>功能描述：</b>签到应用的基类<br />
@@ -48,6 +49,8 @@ public class Sign extends Model {
     //海拔
     @Column(Field.Altitude)
     private String alt;
+    @Ignore
+    private String address;
     //创建者的id
     @Column(Model.Field.CreatorId)
     private String creatorId;
@@ -59,6 +62,9 @@ public class Sign extends Model {
     protected String createDate;
 
     public String getTitle() {
+        if (isEmpty(title)) {
+            title = "";
+        }
         return title;
     }
 
@@ -96,6 +102,17 @@ public class Sign extends Model {
 
     public void setAlt(String alt) {
         this.alt = alt;
+    }
+
+    public String getAddress() {
+        if (isEmpty(address)) {
+            address = "";
+        }
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getCreatorId() {

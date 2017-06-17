@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+        android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
+        android:orientation="horizontal">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/ui_icon_location"
+            android:textColor="@color/colorPrimary" />
+
+        <TextView
+            android:id="@+id/ui_map_picker_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_small" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/ui_map_picker_map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true" />
+
+        <LinearLayout
+            android:id="@+id/ui_map_picker_center_pointer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/ui_static_dp_35"
+                android:layout_height="@dimen/ui_static_dp_35"
+                android:contentDescription="@string/app_name_default"
+                android:src="@drawable/ic_location_point" />
+
+            <ImageView
+                android:layout_width="@dimen/ui_static_dp_35"
+                android:layout_height="@dimen/ui_static_dp_35"
+                android:layout_marginTop="-5dp"
+                android:contentDescription="@string/app_name_default"
+                android:src="@drawable/ic_location_point"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:id="@+id/ui_map_picker_relocation"
+            android:layout_width="@dimen/ui_static_dp_35"
+            android:layout_height="@dimen/ui_static_dp_35"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center"
+            android:translationZ="@dimen/ui_base_translationZ_small"
+            app:cv_background="@android:color/white"
+            app:cv_background_active="@android:color/white"
+            app:cv_background_type="fill"
+            app:cv_border_size="@dimen/ui_static_dp_zero"
+            app:cv_corner_size="@dimen/ui_static_dp_20">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_gps"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/ui_base_text_size_big" />
+        </com.hlk.hlklib.lib.view.CorneredView>
+    </RelativeLayout>
+</LinearLayout>

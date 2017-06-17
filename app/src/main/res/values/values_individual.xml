@@ -50,7 +50,7 @@
         <item>1|消息管理|</item>
         <item>2|关于我们|</item>
     </string-array>
-    <string name="ui_text_setting_fragment_title">设置</string>
+    <string name="ui_text_setting_fragment_title">@string/ui_base_text_setting</string>
     <string name="ui_text_setting_sign_out">退出登录</string>
 
     <string name="ui_text_edit_password_fragment_title">修改密码</string>

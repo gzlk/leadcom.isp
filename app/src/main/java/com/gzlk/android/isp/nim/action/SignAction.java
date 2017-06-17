@@ -1,6 +1,8 @@
 package com.gzlk.android.isp.nim.action;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.BaseActivity;
+import com.gzlk.android.isp.fragment.activity.sign.SignListFragment;
 import com.netease.nim.uikit.session.actions.BaseAction;
 
 /**
@@ -22,6 +24,7 @@ public class SignAction extends BaseAction {
 
     @Override
     public void onClick() {
-
+        // 打开发布签到页面
+        BaseActivity.openActivity(getActivity(), SignListFragment.class.getName(), getAccount(), 0, true, true);
     }
 }

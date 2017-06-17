@@ -16,4 +16,8 @@ public class RequestCode {
      * 发布了群通知
      */
     public static final int REQ_NOTICE = 20;
+    /**
+     * 发送位置信息
+     */
+    public static final int REQ_LOCATION = REQ_NOTICE + 1;
 }

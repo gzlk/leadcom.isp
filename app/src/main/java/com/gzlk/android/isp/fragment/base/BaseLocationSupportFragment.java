@@ -1,5 +1,11 @@
 package com.gzlk.android.isp.fragment.base;
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.gzlk.android.isp.helper.BaiduHelper;
 import com.gzlk.android.isp.model.common.BaiduLocation;
 
@@ -65,4 +71,47 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
     protected void onFetchingLocationComplete(boolean success, BaiduLocation location) {
 
     }
+
+
+    //***********************************反转地址服务
+    // 地址反转服务
+    protected GeoCoder mGeoCoder;
+
+    /**
+     * 反转编码地理位置
+     */
+    protected void tryReverseGeoCode(LatLng location) {
+        if (null == mGeoCoder) {
+            // 创建GeoCoder实例对象
+            mGeoCoder = GeoCoder.newInstance();
+            // 设置查询结果监听者
+            mGeoCoder.setOnGetGeoCodeResultListener(geoCoderResultListener);
+        }
+        displayLoading(true);
+        // 发起反地理编码请求(经纬度->地址信息)
+        ReverseGeoCodeOption reverseGeoCodeOption = new ReverseGeoCodeOption();
+        // 设置反地理编码位置坐标
+        reverseGeoCodeOption.location(location);
+        mGeoCoder.reverseGeoCode(reverseGeoCodeOption);
+    }
+
+    private OnGetGeoCoderResultListener geoCoderResultListener = new OnGetGeoCoderResultListener() {
+        @Override
+        public void onGetGeoCodeResult(GeoCodeResult geoCodeResult) {
+
+        }
+
+        @Override
+        public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
+            onReverseGeoCodeComplete(reverseGeoCodeResult);
+            displayLoading(false);
+        }
+    };
+
+    /**
+     * 反转地址编码的回调
+     */
+    protected void onReverseGeoCodeComplete(ReverseGeoCodeResult reverseGeoCodeResult) {
+    }
+
 }

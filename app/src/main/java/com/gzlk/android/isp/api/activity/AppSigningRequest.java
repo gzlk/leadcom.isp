@@ -151,7 +151,6 @@ public class AppSigningRequest extends Request<AppSigning> {
     /**
      * 查询活动中的签到应用列表
      */
-    @Deprecated
     public void list(@NonNull String activityId) {
         // actId=""
         httpRequest(getRequest(MultipleSigning.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));

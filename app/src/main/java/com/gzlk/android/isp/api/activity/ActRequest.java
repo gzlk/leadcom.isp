@@ -280,6 +280,25 @@ public class ActRequest extends Request<Activity> {
     }
 
     /**
+     * 通过tid反查
+     */
+    public void findByTid(String tid) {
+        Activity act = Activity.getByTid(tid);
+        if (null == act) {
+            findTid(tid);
+        } else {
+            fireOnSingleRequestListener(act);
+        }
+    }
+
+    /**
+     * 通过网络异步查询tid
+     */
+    private void findTid(String tid) {
+        httpRequest(getRequest(SingleActivity.class, format("%s/byTid?tid=%s", url(FIND), tid), "", HttpMethods.Get));
+    }
+
+    /**
      * 查询单个活动
      *
      * @param activityId 活动的id

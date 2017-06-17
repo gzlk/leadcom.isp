@@ -11,7 +11,6 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.AppNotice;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -100,7 +99,7 @@ public class NoticeCreatorFragment extends BaseTransparentSupportFragment {
         titleHolder.showContent(format(getString(R.string.ui_activity_notice_creator_title), mTitle));
 
         if (isEmpty(activityId)) {
-            Activity act = new Dao<>(Activity.class).querySingle(Activity.Field.NimId, mQueryId);
+            Activity act = Activity.getByTid(mQueryId);
             if (null != act) {
                 activityId = act.getId();
             }

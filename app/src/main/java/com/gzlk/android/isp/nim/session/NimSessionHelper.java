@@ -72,6 +72,9 @@ public class NimSessionHelper {
 
     public static void init() {
 
+        // 注册位置提供者
+        NimUIKit.setLocationProvider(new BaiduLocationProvider());
+
         // 注册各种消息的解析器
         registerParsers();
 

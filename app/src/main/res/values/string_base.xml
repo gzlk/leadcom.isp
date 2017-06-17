@@ -72,6 +72,7 @@
     <string name="ui_base_text_not_set">未设置</string>
     <string name="ui_base_text_have_set">已设置</string>
 
+    <string name="ui_base_text_setting">设置</string>
     <string name="ui_base_text_login">登录</string>
     <string name="ui_base_text_confirm">确定</string>
     <string name="ui_base_text_commit">提交</string>
@@ -82,6 +83,7 @@
     <string name="ui_base_text_ok_ba">好吧</string>
     <string name="ui_base_text_think_again">再想想</string>
     <string name="ui_base_text_new">新建</string>
+    <string name="ui_base_text_launch">发起</string>
     <string name="ui_base_text_management">管理</string>
     <string name="ui_base_text_yes">是的</string>
     <string name="ui_base_text_no_need">不用了</string>

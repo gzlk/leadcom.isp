@@ -47,7 +47,11 @@ public class ActivityHomeViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Activity activity) {
-        imageDisplayer.displayImage(activity.getImg(), imageWidth, imageHeight, false, false);
+        String image = activity.getImg();
+        if (isEmpty(image)) {
+            image = "drawable://" + R.mipmap.img_image_loading_fail;
+        }
+        imageDisplayer.displayImage(image, imageWidth, imageHeight, false, false);
         textView.setText(activity.getTitle());
     }
 
