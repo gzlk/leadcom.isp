@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_system_message_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -10,7 +11,8 @@
     android:paddingTop="@dimen/ui_static_dp_5"
     app:cv_active_border="@color/colorPrimary"
     app:cv_background="@android:color/white"
-    app:cv_background_type="border"
+    app:cv_background_active="@android:color/white"
+    app:cv_background_type="fill"
     app:cv_normal_border="@android:color/white">
 
     <com.hlk.hlklib.lib.view.CorneredView
@@ -47,22 +49,20 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/ui_holder_view_system_message_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="系统消息" />
-
-            <TextView
-                android:id="@+id/ui_holder_view_system_message_time"
+                android:id="@+id/ui_holder_view_system_message_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="05月25日"
+                android:text="@string/app_name_default" />
+
+            <TextView
+                android:id="@+id/ui_holder_view_system_message_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name_default"
                 android:textColor="@color/textColorHint"
                 android:textSize="@dimen/ui_base_text_size_small" />
         </LinearLayout>
@@ -71,9 +71,8 @@
             android:id="@+id/ui_holder_view_system_message_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
             android:singleLine="true"
-            android:text="您有0个审核未处理"
+            android:text="@string/app_name_default"
             android:textColor="@color/textColorHint"
             android:textSize="@dimen/ui_base_text_size_small" />
     </LinearLayout>

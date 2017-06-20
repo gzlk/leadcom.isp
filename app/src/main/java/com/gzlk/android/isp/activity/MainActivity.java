@@ -14,15 +14,17 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.JoinGroup;
-import com.gzlk.android.isp.nim.model.NimMessage;
+import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
@@ -134,6 +136,7 @@ public class MainActivity extends TitleActivity {
             if (!StringHelper.isEmpty(json)) {
                 NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
                 if (null != msg) {
+                    new Dao<>(NimMessage.class).save(msg);
                     handleNimMessageDetails(msg);
                 }
             }
@@ -157,8 +160,11 @@ public class MainActivity extends TitleActivity {
                         break;
                 }
                 if (message.getMsgType() == MsgTypeEnum.custom) {
-                    NimMessage nim = (NimMessage) message.getAttachment();
-                    handleNimMessageDetails(nim);
+                    MsgAttachment attachment = message.getAttachment();
+                    if (attachment instanceof NimMessage) {
+                        NimMessage nim = (NimMessage) attachment;
+                        handleNimMessageDetails(nim);
+                    }
                 }
             } else if (intent.hasExtra(EXTRA_NOTIFICATION)) {
                 // 自定义系统通知

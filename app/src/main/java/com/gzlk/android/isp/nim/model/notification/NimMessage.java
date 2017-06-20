@@ -1,6 +1,11 @@
-package com.gzlk.android.isp.nim.model;
+package com.gzlk.android.isp.nim.model.notification;
 
-import com.gzlk.android.isp.nim.model.parser.NimMessageParser;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.archive.Archive;
+import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Table;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 
 /**
@@ -14,7 +19,22 @@ import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
  * <b>修改备注：</b><br />
  */
 
+@Table(NimMessage.PARAM.TABLE)
 public class NimMessage implements MsgAttachment {
+
+    interface PARAM {
+        String TABLE = "notification";
+        String HANDLED = "handled";
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return null != object && (getClass() == object.getClass()) && (object instanceof NimMessage) && equals((NimMessage) object);
+    }
+
+    public boolean equals(NimMessage msg) {
+        return null != msg && msg.getId() == getId();
+    }
 
     /**
      * 自定义消息类型
@@ -45,6 +65,10 @@ public class NimMessage implements MsgAttachment {
          */
         int DISAGREE_TO_GROUP = 10;
         /**
+         * 活动成员邀请
+         */
+        int ACTIVITY_INVITE = 16;
+        /**
          * 小组成员邀请小组外人员加入小组
          */
         int INVITE_TO_SQUAD = 19;
@@ -56,16 +80,63 @@ public class NimMessage implements MsgAttachment {
          * 被邀请者拒绝加入小组
          */
         int DISAGREE_TO_SQUAD = 21;
+        /**
+         * 活动通知
+         */
+        int ACTIVITY_NOTIFICATION = 22;
+        /**
+         * 自定义系统通知
+         */
+        int SYSTEM_NOTIFICATION = 23;
     }
 
+    /**
+     * 获取类型文字
+     */
+    public static String getType(int type) {
+        switch (type) {
+            case Type.JOIN_TO_GROUP:
+                return "申请加入组织";
+            case Type.INVITE_TO_GROUP:
+                return "邀请加入组织";
+            case Type.ACTIVITY_INVITE:
+                return "邀请加入活动";
+            case Type.INVITE_TO_SQUAD:
+                return "邀请加入小组";
+            case Type.ACTIVITY_NOTIFICATION:
+                return "活动通知";
+            case Type.SYSTEM_NOTIFICATION:
+                return "系统通知";
+            default:
+                return StringHelper.format("不晓得什么通知(%d)", type);
+        }
+    }
+
+    @Column(Model.Field.Id)
+    private long id = Utils.timestamp();
     // 自定义消息类型
+    @Column(Archive.Field.Type)
     private int type;
     // 自定义消息标题
+    @Column(Archive.Field.Title)
     private String msgTitle;
     // 自定义消息内容
+    @Column(Archive.Field.Content)
     private String msgContent;
     // 自定义消息id
+    @Column(Model.Field.UUID)
     private String uuid;
+
+    @Column(PARAM.HANDLED)
+    private boolean handled;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public int getType() {
         return type;
@@ -97,6 +168,14 @@ public class NimMessage implements MsgAttachment {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public boolean isHandled() {
+        return handled;
+    }
+
+    public void setHandled(boolean handled) {
+        this.handled = handled;
     }
 
     @Override

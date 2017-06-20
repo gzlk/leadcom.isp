@@ -9,7 +9,7 @@ import com.gzlk.android.isp.crash.system.SysInfoUtil;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.NotificationHelper;
 import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.nim.model.NimMessage;
+import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 
