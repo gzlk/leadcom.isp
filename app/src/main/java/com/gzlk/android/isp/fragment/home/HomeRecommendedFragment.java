@@ -13,6 +13,7 @@ import com.gzlk.android.isp.api.common.FocusImageRequest;
 import com.gzlk.android.isp.api.common.RecommendRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -231,7 +232,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
     private void openDefaultWeb(String url) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        if (!url.startsWith("http://")) {
+        if (!Utils.isUrl(url)) {
             url = "http://" + url;
         }
         Uri content_url = Uri.parse(url);

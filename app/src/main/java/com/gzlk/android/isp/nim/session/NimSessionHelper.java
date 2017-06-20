@@ -26,11 +26,13 @@ import com.gzlk.android.isp.nim.action.SurveyAction;
 import com.gzlk.android.isp.nim.action.VideoCaptureAction;
 import com.gzlk.android.isp.nim.action.VideoChooseAction;
 import com.gzlk.android.isp.nim.action.VoteAction;
+import com.gzlk.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
-import com.gzlk.android.isp.nim.model.parser.NimMessageParser;
-import com.gzlk.android.isp.nim.model.parser.NoticeAttachmentParser;
+import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
+import com.gzlk.android.isp.nim.model.notification.NimMessageParser;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderFile;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderNotice;
+import com.gzlk.android.isp.nim.viewholder.MsgViewHolderSignNotify;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderTip;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.TeamDataCache;
@@ -110,9 +112,19 @@ public class NimSessionHelper {
     private static void registerParsers() {
         // 注册自定义通知消息解析器
         NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
-        // 注册通知类消息解析器
-        NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NoticeAttachmentParser());
+        // 注册通消息解析器
+        NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new BaseAttachmentParser());
+    }
 
+    private static void registerViewHolders() {
+        // 文件显示
+        NimUIKit.registerMsgItemViewHolder(FileAttachment.class, MsgViewHolderFile.class);
+        // 通知
+        NimUIKit.registerMsgItemViewHolder(NoticeAttachment.class, MsgViewHolderNotice.class);
+        // 签到提醒通知
+        NimUIKit.registerMsgItemViewHolder(SigningNotifyAttachment.class, MsgViewHolderSignNotify.class);
+        // 提示类消息
+        NimUIKit.registerTipMsgViewHolder(MsgViewHolderTip.class);
     }
 
     /**
@@ -265,15 +277,6 @@ public class NimSessionHelper {
             actions.add(new MinutesAction());
         }
         return actions;
-    }
-
-    private static void registerViewHolders() {
-        // 文件显示
-        NimUIKit.registerMsgItemViewHolder(FileAttachment.class, MsgViewHolderFile.class);
-        // 通知
-        NimUIKit.registerMsgItemViewHolder(NoticeAttachment.class, MsgViewHolderNotice.class);
-        // 提示类消息
-        NimUIKit.registerTipMsgViewHolder(MsgViewHolderTip.class);
     }
 
     // 定制化单聊界面。如果使用默认界面，返回null即可

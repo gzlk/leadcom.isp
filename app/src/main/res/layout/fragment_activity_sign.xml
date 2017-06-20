@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/ui_map_picker_map_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clickable="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+                android:background="@android:color/white"
+                android:minHeight="@dimen/ui_base_dimen_button_height"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/ui_static_dp_5">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ui_static_dp_5"
+                        android:text="@string/ui_icon_material_timer"
+                        android:textColor="@color/textColorHintDark"
+                        app:ctv_source="material_icon" />
+
+                    <TextView
+                        android:id="@+id/ui_activity_sign_timer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/textColorHintDark"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/ui_static_dp_5">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ui_static_dp_5"
+                        android:text="@string/ui_icon_location"
+                        android:textColor="@color/textColorHintDark" />
+
+                    <TextView
+                        android:id="@+id/ui_activity_sign_address"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="middle"
+                        android:maxLines="2"
+                        android:textColor="@color/textColorHintDark"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_base_border_size_normal"
+                android:background="@android:color/white"
+                android:gravity="center_vertical"
+                android:minHeight="@dimen/ui_base_dimen_simple_item_height"
+                android:orientation="horizontal">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/ui_static_dp_5"
+                    android:text="@string/ui_icon_location"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/ui_base_text_size_huge" />
+
+                <TextView
+                    android:id="@+id/ui_activity_signed_address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
+                    android:layout_weight="1" />
+
+                <com.hlk.hlklib.lib.view.CorneredButton
+                    android:id="@+id/ui_activity_sign_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:minHeight="@dimen/ui_base_dimen_simple_item_height"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                    android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+                    android:text="@string/ui_nim_action_sign"
+                    android:textColor="@android:color/white"
+                    app:active_color="@color/colorAccent"
+                    app:background_type="fill"
+                    app:normal_color="@color/colorPrimary" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/ui_activity_sign_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/ui_static_dp_5"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHintDark"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <include layout="@layout/tool_view_loading" />
+</RelativeLayout>

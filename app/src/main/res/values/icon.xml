@@ -66,4 +66,12 @@
     <string name="ui_icon_attachment_zip">&#xe623;</string>
     <string name="ui_icon_attachment_text">&#xe65c;</string>
     <string name="ui_icon_attachment_video">&#xe610;</string>
+
+    <string name="ui_icon_material_timer">&#xE855;</string>
+    <string name="ui_icon_material_timer_1">&#xE425;</string>
+    <string name="ui_icon_material_location">&#xE55F;</string>
+    <string name="ui_icon_material_location_sign">&#xE568;</string>
+    <string name="ui_icon_material_location_off">&#xE0C7;</string>
+    <string name="ui_icon_material_volume_up">&#xE050;</string>
+
 </resources>

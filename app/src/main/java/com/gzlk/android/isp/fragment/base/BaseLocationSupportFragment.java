@@ -37,6 +37,10 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
         fetchingLocateWithBaiduApi(interval, stoppable);
     }
 
+    protected void stopFetchingLocation() {
+        BaiduHelper.Instance().stop();
+    }
+
     /**
      * 初始化百度定位
      */

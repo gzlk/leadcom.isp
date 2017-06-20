@@ -32,7 +32,6 @@ import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Member;
-import com.netease.nim.uikit.common.util.C;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -23,6 +23,7 @@ import java.util.Locale;
 
 public class BaiduLocation extends BaseModel implements Parcelable {
 
+    private String time;
     private String address;
     private String country;
     private String countryCode;
@@ -41,6 +42,7 @@ public class BaiduLocation extends BaseModel implements Parcelable {
     private List<Poi> poiList;
 
     protected BaiduLocation(Parcel in) {
+        time = in.readString();
         address = in.readString();
         country = in.readString();
         countryCode = in.readString();
@@ -78,6 +80,7 @@ public class BaiduLocation extends BaseModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(time);
         dest.writeString(address);
         dest.writeString(country);
         dest.writeString(countryCode);
@@ -114,6 +117,7 @@ public class BaiduLocation extends BaseModel implements Parcelable {
         longitude = 0.0;
         altitude = 0.0;
         if (null == location) return;
+        time = location.getTime();
         city = location.getCity();
         cityCode = location.getCityCode();
         country = location.getCountry();
@@ -135,6 +139,14 @@ public class BaiduLocation extends BaseModel implements Parcelable {
         setAddress(location.getAddrStr());
         describe = location.getLocationDescribe().replace("在", "").replace("附近", "");
         setPoiList(location.getPoiList());
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getAddress() {

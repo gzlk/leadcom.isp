@@ -68,8 +68,11 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
      * @param latitude  目的地纬度
      * @param altitude  目的地海拔高度
      * @param imsi      手机识别码
+     * @param content   留言内容
+     * @param address   签到的详细地址
      */
-    public void add(@NonNull String signId, double longitude, double latitude, double altitude, String imsi) {
+    public void add(@NonNull String signId, double longitude, double latitude, double altitude, String imsi,
+                    String content, String address) {
         // {actId:"",setupId:"",lon:"",lat:"",alt:"",imsi:""accessToken：""}
 
         JSONObject object = new JSONObject();
@@ -78,7 +81,30 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
                     .put("lon", longitude)
                     .put("lat", latitude)
                     .put("alt", altitude)
-                    .put("imsi", imsi);
+                    .put("imsi", imsi)
+                    .put("creatorName", Cache.cache().userName)
+                    .put("title", content)
+                    .put("desc", address);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleRecord.class, url(ADD), object.toString(), HttpMethods.Post));
+    }
+
+    public void add(AppSignRecord record) {
+        // {actId:"",setupId:"",lon:"",lat:"",alt:"",imsi:""accessToken：""}
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("setupId", record.getSetupId())
+                    .put("lon", record.getLon())
+                    .put("lat", record.getLat())
+                    .put("alt", record.getAlt())
+                    .put("imsi", record.getImsi())
+                    .put("creatorName", record.getCreatorName())
+                    .put("title", record.getTitle())
+                    .put("desc", record.getAddress());
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -60,6 +60,27 @@ public class AppSigningRequest extends Request<AppSigning> {
     }
 
     /**
+     * 添加新的活动签到条目
+     */
+    public void add(AppSigning signing) {
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("actId", signing.getActId())
+                    .put("title", signing.getTitle())
+                    .put("desc", signing.getDesc())
+                    .put("lon", signing.getLon())
+                    .put("lat", signing.getLat())
+                    .put("alt", signing.getAlt())
+                    .put("beginTime", signing.getBeginTime())
+                    .put("endTime", signing.getEndTime());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleSigning.class, url(ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
      * 增加活动签到条目
      *
      * @param activityId  活动id

@@ -2,6 +2,8 @@ package com.gzlk.android.isp.nim.model.extension;
 
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 
+import org.json.JSONObject;
+
 /**
  * <b>功能描述：</b>消息基类<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -13,36 +15,30 @@ import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseAttachment implements MsgAttachment{
+public abstract class BaseAttachment implements MsgAttachment {
 
-    // id
-    private String id;
-    // accessToken
-    private String accessToken;
-    // 创建时间
-    private String createDate;
+    protected int type;
 
-    public String getId() {
-        return id;
+    public BaseAttachment(int type) {
+        this.type = type;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public int getType() {
+        return type;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public void fromJson(JSONObject data) {
+        if (data != null) {
+            parseData(data);
+        }
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    @Override
+    public String toJson(boolean send) {
+        return BaseAttachmentParser.packData(type, packData());
     }
 
-    public String getCreateDate() {
-        return createDate;
-    }
+    protected abstract void parseData(JSONObject data);
 
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
-    }
+    protected abstract JSONObject packData();
 }

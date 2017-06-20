@@ -36,10 +36,10 @@ public class AppNotice extends Model {
     private String creatorName;
     //创建时间
     @Column(Field.CreateDate)
-    protected String createDate;
+    private String createDate;
     //修改时间
     @Column(Organization.Field.ModifyDate)
-    protected String modifyDate;
+    private String modifyDate;
 
     public String getActId() {
         return actId;

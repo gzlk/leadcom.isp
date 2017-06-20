@@ -209,32 +209,36 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_activity_entrance_items);
         }
-        imageView.displayImage(activity.getImg(), getScreenWidth(), getDimension(R.dimen.ui_static_dp_200), false, false);
+        String img = (null != activity && !isEmpty(activity.getImg())) ? activity.getImg() : ("drawable://" + R.mipmap.img_image_loading_fail);
+        imageView.displayImage(img, getScreenWidth(), getDimension(R.dimen.ui_static_dp_200), false, false);
 
         if (null == titleHolder) {
             titleHolder = new SimpleClickableViewHolder(titleView, this);
         }
-        titleHolder.showContent(format(items[0], activity.getTitle()));
+        img = null == activity ? "" : activity.getTitle();
+        titleHolder.showContent(format(items[0], img));
 
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
         }
-        timeHolder.showContent(format(items[1], formatDateTime(activity.getBeginDate())));
+        img = (null != activity && !isEmpty(activity.getBeginDate())) ? activity.getBeginDate() : "";
+        timeHolder.showContent(format(items[1], (isEmpty(img) ? "" : formatDateTime(img))));
 
         if (null == addressHolder) {
             addressHolder = new SimpleClickableViewHolder(addressView, this);
         }
-        addressHolder.showContent(format(items[2], activity.getSite()));
+        img = null == activity ? "" : activity.getSite();
+        addressHolder.showContent(format(items[2], img));
 
         if (null == labelHolder) {
             labelHolder = new SimpleClickableViewHolder(labelView, this);
         }
-        labelHolder.showContent(format(items[3], getLabels(activity.getLabels())));
+        labelHolder.showContent(format(items[3], getLabels(null == activity ? null : activity.getLabels())));
 
         if (null == creatorHolder) {
             creatorHolder = new SimpleClickableViewHolder(creatorView, this);
         }
-        creatorHolder.showContent(format(items[4], activity.getCreatorName()));
+        creatorHolder.showContent(format(items[4], null == activity ? "" : activity.getCreatorName()));
     }
 
     private String getLabels(List<Label> list) {
@@ -256,6 +260,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         if (null == mAdapter) {
             mAdapter = new AttachmentAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            initializeHolders(null);
             fetchActivity();
         }
     }

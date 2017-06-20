@@ -14,5 +14,5 @@
     <integer name="integer_group_description_max_length">200</integer>
     <integer name="integer_activity_introduction_max_length">1000</integer>
     <integer name="integer_activity_label_name_max_length">10</integer>
-    <integer name="integer_activity_entrance_memo_max_length">50</integer>
+    <integer name="integer_activity_entrance_memo_max_length">@integer/integer_max_squad_introduction_size</integer>
 </resources>

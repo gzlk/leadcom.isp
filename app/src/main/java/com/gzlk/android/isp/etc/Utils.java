@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.github.promeg.pinyinhelper.Pinyin;
+import com.gzlk.android.isp.helper.StringHelper;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
@@ -17,6 +18,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 一些常用的方法集合
@@ -52,8 +55,7 @@ public class Utils {
     public static final String FMT_YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
 
     public static String formatDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(FMT_YYYYMMDDHHMMSS,
-                Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(FMT_YYYYMMDDHHMMSS, Locale.getDefault());
         return sdf.format(date);
     }
 
@@ -262,11 +264,30 @@ public class Utils {
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + digitalUnits[digitGroups];
     }
 
+    public static String formatDistance(double distance) {
+        if (distance < 999) {
+            return StringHelper.format("%.2f米", distance);
+        } else {
+            return StringHelper.format("%.2f公里", distance / 1000.0);
+        }
+    }
+
     /**
      * 获取当前时间戳
      */
     public static long timestamp() {
         return new Date().getTime();
+    }
+
+    private static final String REGEX_HTTP = "^((http[s]{0,1})|ftp)://";
+
+    /**
+     * 判断字符串是否是url，http/https/ftp开头的
+     */
+    public static boolean isUrl(String url) {
+        Pattern pattern = Pattern.compile(REGEX_HTTP);
+        Matcher matcher = pattern.matcher(url);
+        return matcher.find();
     }
 
     /**

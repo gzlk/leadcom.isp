@@ -108,7 +108,7 @@ public class NoticeCreatorFragment extends BaseTransparentSupportFragment {
 
     private void tryPublishNotice() {
         if (isEmpty(activityId)) {
-            ToastHelper.make().showMsg("无法找到活动的id");
+            ToastHelper.make().showMsg(R.string.ui_activity_details_invalid_parameter);
             return;
         }
         mTitle = titleHolder.getValue();

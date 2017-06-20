@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
@@ -24,9 +25,6 @@ import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * <b>功能描述：</b>图片显示工具<br />
@@ -236,6 +234,9 @@ public class ImageDisplayer extends RelativeLayout {
         showDelete = deletable;
         showSelect = selectable;
         displayUrl = url;
+        if (StringHelper.isEmpty(displayUrl)) {
+            displayUrl = "drawable://" + R.mipmap.img_image_loading_fail;
+        }
         displayImage2();
     }
 
@@ -256,15 +257,6 @@ public class ImageDisplayer extends RelativeLayout {
 
     private boolean isNullUrl() {
         return TextUtils.isEmpty(displayUrl) || displayUrl.length() < 5;
-    }
-
-    private static final String REGEX_HTTP = "^((http[s]{0,1})|ftp)://";
-
-    // 判断字符串是否是url，http/https/ftp开头的
-    private boolean isUrl(String http) {
-        Pattern pattern = Pattern.compile(REGEX_HTTP);
-        Matcher matcher = pattern.matcher(http);
-        return matcher.find();
     }
 
     @SuppressWarnings("ConstantConditions")

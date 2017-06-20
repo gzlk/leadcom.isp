@@ -32,6 +32,7 @@ public class Sign extends Model {
          * 签到人数
          */
         String SignInNum = "signInNum";
+        String Distance = "distance";
     }
 
     //标题
@@ -59,7 +60,7 @@ public class Sign extends Model {
     private String creatorName;
     //创建时间
     @Column(Model.Field.CreateDate)
-    protected String createDate;
+    private String createDate;
 
     public String getTitle() {
         if (isEmpty(title)) {
@@ -124,6 +125,9 @@ public class Sign extends Model {
     }
 
     public String getCreatorName() {
+        if (isEmpty(creatorName)) {
+            creatorName = NO_NAME;
+        }
         return creatorName;
     }
 

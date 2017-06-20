@@ -33,16 +33,6 @@ public class MsgViewHolderNotice extends MsgViewHolderBase {
     }
 
     @Override
-    protected int leftBackground() {
-        return R.drawable.nim_message_left_white_bg;
-    }
-
-    @Override
-    protected int rightBackground() {
-        return R.drawable.nim_message_right_blue_bg;
-    }
-
-    @Override
     protected int getContentResId() {
         return R.layout.nim_msg_view_holder_notice;
     }

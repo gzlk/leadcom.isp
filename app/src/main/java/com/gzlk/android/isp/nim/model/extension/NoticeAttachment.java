@@ -1,6 +1,6 @@
 package com.gzlk.android.isp.nim.model.extension;
 
-import com.gzlk.android.isp.nim.model.parser.NoticeAttachmentParser;
+import org.json.JSONObject;
 
 /**
  * <b>功能描述：</b>通知消息类实体<br />
@@ -13,7 +13,11 @@ import com.gzlk.android.isp.nim.model.parser.NoticeAttachmentParser;
  * <b>修改备注：</b><br />
  */
 
-public class NoticeAttachment extends BaseAttachment {
+public class NoticeAttachment extends CustomAttachment {
+
+    public NoticeAttachment() {
+        super(AttachmentType.NOTICE);
+    }
 
     // 所属活动的id
     private String actId;
@@ -21,12 +25,6 @@ public class NoticeAttachment extends BaseAttachment {
     private String title;
     // 通知内容
     private String content;
-    //创建者Id
-    private String creatorId;
-    //创建者名称
-    private String creatorName;
-    //修改时间
-    private String modifyDate;
 
     public String getActId() {
         return actId;
@@ -52,32 +50,34 @@ public class NoticeAttachment extends BaseAttachment {
         this.content = content;
     }
 
-    public String getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    public String getCreatorName() {
-        return creatorName;
-    }
-
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName;
-    }
-
-    public String getModifyDate() {
-        return modifyDate;
-    }
-
-    public void setModifyDate(String modifyDate) {
-        this.modifyDate = modifyDate;
+    @Override
+    protected void parseData(JSONObject data) {
+        super.parseData(data);
+        try {
+            if (data.has("actId")) {
+                actId = data.getString("actId");
+            }
+            if (data.has("title")) {
+                title = data.getString("title");
+            }
+            if (data.has("content")) {
+                content = data.getString("content");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public String toJson(boolean b) {
-        return NoticeAttachmentParser.packData(this);
+    protected JSONObject packData() {
+        JSONObject object = super.packData();
+        try {
+            object.put("actId", actId)
+                    .put("title", title)
+                    .put("content", content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return object;
     }
 }

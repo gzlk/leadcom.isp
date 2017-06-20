@@ -1,9 +1,11 @@
 package com.gzlk.android.isp.fragment.activity.sign;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
@@ -11,8 +13,10 @@ import com.gzlk.android.isp.api.activity.AppSigningRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.activity.SingingViewHolder;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
@@ -50,6 +54,8 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
+    private static final int REQ_CREATOR = ACTIVITY_BASE_REQUEST + 10;
+
     @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_activity_sign_creator_fragment_title);
@@ -58,12 +64,20 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onClick() {
                 // 发布一个新的签到应用
-                openActivity(SignCreatorFragment.class.getName(), mQueryId, true, true);
+                openActivity(SignCreatorFragment.class.getName(), mQueryId, REQ_CREATOR, true, true);
             }
         });
         setLoadingText(R.string.ui_activity_sign_list_loading);
         setNothingText(R.string.ui_activity_sign_list_nothing);
         initializeAdapter();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQ_CREATOR) {
+            loadingSignings();
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     @Override
@@ -83,7 +97,7 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onLoadingMore() {
-
+        isLoadingComplete(true);
     }
 
     @Override
@@ -124,6 +138,7 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
                     }
                     displayLoading(false);
                     displayNothing(mAdapter.getItemCount() < 1);
+                    stopRefreshing();
                 }
             }).list(activityId);
         }
@@ -140,7 +155,11 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-
+            AppSigning signing = mAdapter.get(index);
+            String json = Json.gson().toJson(signing, new TypeToken<AppSigning>() {
+            }.getType());
+            // 打开查看签到应用详情
+            openActivity(SignDetailsFragment.class.getName(), format("%s,%s", mQueryId, StringHelper.replaceJson(json, false)), true, false);
         }
     };
 

@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model;
 
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
@@ -36,6 +37,7 @@ public class Model extends BaseModel {
     }
 
     public static final String DFT_DATE = "1970-01-01 00:00:01";
+    protected static final String NO_NAME = StringHelper.getString(R.string.ui_organization_member_no_name);
 
     protected static boolean isEmpty(String string) {
         return StringHelper.isEmpty(string);

@@ -667,7 +667,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 // 显示设为管理员或取消管理员
                 holder.button1Text(member.isManager() ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
                 // 我是群主或管理员且有编辑成员角色属性时，可以设置
-                holder.showButton1(!isMe && (null != me) && (me.isOwner() || me.isManager()) && me.canEditMemberRole() && !(member.isManager() || member.isOwner()));
+                holder.showButton1(!isMe && (null != me) && (me.isOwner() || me.isManager()) && me.canEditMemberRole() && !(member.isOwner()));
             } else {
                 holder.showButton1(false);
             }

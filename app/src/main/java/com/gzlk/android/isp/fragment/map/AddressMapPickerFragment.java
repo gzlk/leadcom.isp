@@ -197,7 +197,7 @@ public class AddressMapPickerFragment extends BaseLocationSupportFragment {
     protected void onFetchingLocationComplete(boolean success, BaiduLocation location) {
         if (success) {
             addressView.setText(location.getAddress());
-            address.setAddress(location.getAddress());
+            address.setAddress(location.getAddress() + location.getDescribe());
             address.setLatitude(location.getLatitude());
             address.setLongitude(location.getLongitude());
             address.setAltitude(location.getAltitude());
@@ -230,7 +230,7 @@ public class AddressMapPickerFragment extends BaseLocationSupportFragment {
         LatLng latLng = reverseGeoCodeResult.getLocation();
         address.setLongitude(latLng.longitude);
         address.setLatitude(latLng.latitude);
-        address.setAddress(reverseGeoCodeResult.getAddress());
+        address.setAddress(reverseGeoCodeResult.getAddress() + reverseGeoCodeResult.getSematicDescription());
         addressView.setText(address.getAddress());
     }
 

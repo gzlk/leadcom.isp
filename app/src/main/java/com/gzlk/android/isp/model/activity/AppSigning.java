@@ -1,8 +1,15 @@
 package com.gzlk.android.isp.model.activity;
 
+import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
+
+import java.util.Date;
 
 /**
  * <b>功能描述：</b>活动应用：签到<br />
@@ -32,6 +39,26 @@ public class AppSigning extends Sign {
     //签到人数(按user对象的id过滤，避免一个用户多次签到后被重复计数)
     @Column(Field.SignInNum)
     private int signInNum;
+    @Ignore
+    private int notifyBeginTime;
+
+    /**
+     * 是否可以签到
+     */
+    public boolean couldSignable(String date) {
+        String fmt = StringHelper.getString(R.string.ui_base_text_date_time_format);
+        long posTime = Utils.parseDate(fmt, date).getTime();
+        long beginTime = Utils.parseDate(fmt, getBeginTime()).getTime();
+        long endTime = Utils.parseDate(fmt, getEndTime()).getTime();
+        if (posTime < beginTime) {
+            ToastHelper.make().showMsg(R.string.ui_activity_sign_not_start);
+            return false;
+        } else if (posTime > endTime) {
+            ToastHelper.make().showMsg(R.string.ui_activity_sign_has_been_ended);
+            return false;
+        }
+        return true;
+    }
 
     public String getActId() {
         return actId;
@@ -71,5 +98,13 @@ public class AppSigning extends Sign {
 
     public void setSignInNum(int signInNum) {
         this.signInNum = signInNum;
+    }
+
+    public int getNotifyBeginTime() {
+        return notifyBeginTime;
+    }
+
+    public void setNotifyBeginTime(int notifyBeginTime) {
+        this.notifyBeginTime = notifyBeginTime;
     }
 }

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/ui_activity_sign_details_title"
+        layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+    <com.gzlk.android.isp.lib.view.ExpandableTextView
+        android:id="@+id/ui_activity_sign_details_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        android:textColor="@color/textColorHintDark"
+        android:textSize="@dimen/ui_base_text_size_small"
+        app:lessText="@string/ui_base_text_collapse"
+        app:moreText="@string/ui_base_text_expand" />
+
+    <LinearLayout
+        android:id="@+id/ui_activity_sign_details_notify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.hlk.hlklib.lib.view.CorneredView
+                android:id="@+id/ui_activity_sign_details_notify_end_selector_1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                app:cv_active_border="@color/colorPrimary"
+                app:cv_background="@android:color/white"
+                app:cv_background_active="@color/buttonDialogActiveColor"
+                app:cv_background_type="fill"
+                app:cv_border_size="@dimen/ui_base_border_size_normal"
+                app:cv_normal_border="@android:color/white">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:id="@+id/ui_activity_sign_details_notify_end_icon_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
+                    android:text="@string/ui_icon_select_solid"
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_activity_sign_details_end_notify1" />
+            </com.hlk.hlklib.lib.view.CorneredView>
+
+            <com.hlk.hlklib.lib.view.CorneredView
+                android:id="@+id/ui_activity_sign_details_notify_end_selector_2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+                android:layout_marginStart="@dimen/ui_base_border_size_normal"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                app:cv_active_border="@color/colorPrimary"
+                app:cv_background="@android:color/white"
+                app:cv_background_active="@color/buttonDialogActiveColor"
+                app:cv_background_type="fill"
+                app:cv_border_size="@dimen/ui_base_border_size_normal"
+                app:cv_normal_border="@android:color/white">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:id="@+id/ui_activity_sign_details_notify_end_icon_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
+                    android:text="@string/ui_icon_select_solid"
+                    android:textColor="@color/textColorHintLightLight" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_activity_sign_details_end_notify2" />
+            </com.hlk.hlklib.lib.view.CorneredView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.hlk.hlklib.lib.view.CorneredView
+                android:id="@+id/ui_activity_sign_details_notify_end_selector_3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                app:cv_active_border="@color/colorPrimary"
+                app:cv_background="@android:color/white"
+                app:cv_background_active="@color/buttonDialogActiveColor"
+                app:cv_background_type="fill"
+                app:cv_border_size="@dimen/ui_base_border_size_normal"
+                app:cv_normal_border="@android:color/white">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:id="@+id/ui_activity_sign_details_notify_end_icon_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
+                    android:text="@string/ui_icon_select_solid"
+                    android:textColor="@color/textColorHintLightLight" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_activity_sign_details_end_notify3" />
+            </com.hlk.hlklib.lib.view.CorneredView>
+
+            <com.hlk.hlklib.lib.view.CorneredView
+                android:id="@+id/ui_activity_sign_details_notify_end_selector_4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+                android:layout_marginStart="@dimen/ui_base_border_size_normal"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                app:cv_active_border="@color/colorPrimary"
+                app:cv_background="@android:color/white"
+                app:cv_background_active="@color/buttonDialogActiveColor"
+                app:cv_background_type="fill"
+                app:cv_border_size="@dimen/ui_base_border_size_normal"
+                app:cv_normal_border="@android:color/white">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:id="@+id/ui_activity_sign_details_notify_end_icon_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
+                    android:text="@string/ui_icon_select_solid"
+                    android:textColor="@color/textColorHintLightLight" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_activity_sign_details_end_notify4" />
+            </com.hlk.hlklib.lib.view.CorneredView>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.hlk.hlklib.lib.view.CorneredButton
+                android:id="@+id/ui_activity_sign_details_notify_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/ui_activity_sign_details_notify_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignStart="@+id/ui_activity_sign_details_notify_layout"
+                android:layout_alignTop="@+id/ui_activity_sign_details_notify_content"
+                android:clickable="true"
+                android:gravity="center"
+                android:minHeight="@dimen/ui_base_dimen_button_height"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                android:textColor="@android:color/white"
+                app:active_color="@color/buttonActivityColor"
+                app:corner_size="@dimen/ui_static_dp_zero"
+                app:normal_color="@color/buttonNormalColor" />
+
+            <com.hlk.hlklib.lib.view.CorneredView
+                android:id="@+id/ui_activity_sign_details_notify_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/ui_activity_sign_details_notify_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/ui_activity_sign_details_notify_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+                app:cv_background="@android:color/transparent"
+                app:cv_background_active="@android:color/transparent"
+                app:cv_background_type="fill"
+                app:cv_border_size="@dimen/ui_static_dp_zero">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_icon_material_timer"
+                    android:textColor="@android:color/white"
+                    app:ctv_source="material_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ui_static_dp_5"
+                    android:text="@string/ui_base_text_notification"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+            </com.hlk.hlklib.lib.view.CorneredView>
+
+            <com.hlk.hlklib.lib.view.ClearEditText
+                android:id="@+id/ui_activity_sign_details_notify_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/ui_activity_sign_details_notify_button"
+                app:cet_edit_count_input="true"
+                app:cet_edit_count_input_text_color="@color/textColorHint"
+                app:cet_edit_count_input_text_size="@dimen/ui_base_text_size_tiny"
+                app:cet_edit_gravity="center_vertical"
+                app:cet_edit_hint="@string/ui_activity_sign_details_notify_hint"
+                app:cet_edit_max_lines="2"
+                app:cet_edit_maximum_height="@dimen/ui_static_dp_50"
+                app:cet_edit_minimum_height="@dimen/ui_static_dp_50"
+                app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
+                app:cet_edit_text_size="@dimen/ui_base_text_size_small"
+                app:cet_edit_value_extract_regex="@string/regex_normal_long_input_filter"
+                app:cet_edit_value_max_length="@integer/integer_max_squad_introduction_size"
+                app:cet_edit_value_verify_regex="@string/regex_normal_long_input_verify" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+        android:layout_weight="1">
+
+        <include layout="@layout/tool_view_recycler_view_swipe_refreshable" />
+    </LinearLayout>
+</LinearLayout>

@@ -170,7 +170,7 @@ public class MemberRequest extends Request<Member> {
     public void groupMemberDelete(String memberId, String groupId) {
         // memberId,groupId
         String param = format("/group/groMember/delete?memberId=%s&groupId=%s", memberId, groupId);
-        httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
     /**

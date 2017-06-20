@@ -66,7 +66,7 @@ public class PriorityPlace extends Model {
 
     public String getCreaterName() {
         if (isEmpty(createrName)) {
-            createrName = "无名氏";
+            createrName = NO_NAME;
         }
         return createrName;
     }
