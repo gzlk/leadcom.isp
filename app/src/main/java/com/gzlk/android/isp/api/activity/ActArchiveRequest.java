@@ -108,9 +108,9 @@ public class ActArchiveRequest extends Request<ActArchive> {
      * @param attachmentType 筛选文件类型(不传[所有],1.文档,2.图片,3.视频) {@link com.gzlk.android.isp.model.common.Attachment.AttachmentType}
      * @see com.gzlk.android.isp.model.common.Attachment.AttachmentType
      */
-    public void list(String activityId, int attachmentType) {
+    public void list(String activityId, int attachmentType, int pageNumber) {
         // actId,type
-        String param = format("actId=%s%s", activityId, (0 == attachmentType ? "" : format("&type=%d", attachmentType)));
+        String param = format("actId=%s%s&pageNumber=%d", activityId, (0 == attachmentType ? "" : format("&type=%d", attachmentType)), pageNumber);
         httpRequest(getRequest(MultipleActivityArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
 

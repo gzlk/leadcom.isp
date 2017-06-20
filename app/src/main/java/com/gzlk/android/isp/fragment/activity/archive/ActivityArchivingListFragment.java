@@ -160,7 +160,7 @@ public class ActivityArchivingListFragment extends BaseSwipeRefreshSupportFragme
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() <= 0);
             }
-        }).list(mQueryId, aType);
+        }).list(mQueryId, aType, remotePageNumber);
     }
 
     private void updateAdapter(List<ActArchive> list) {

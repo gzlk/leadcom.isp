@@ -313,7 +313,7 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                 displayNothing(mAdapter.getItemCount() < 1);
                 stopRefreshing();
             }
-        }).list(mQueryId, 0);
+        }).list(mQueryId, 0, remotePageNumber);
     }
 
     private void addIntoList(List<ActArchive> list) {
