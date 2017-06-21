@@ -124,6 +124,9 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         channel2.setTextColor(position == 1 ? color2 : color1);
         channel3.setTextColor(position == 2 ? color2 : color1);
         channel4.setTextColor(position == 3 ? color2 : color1);
+        for (int i = 0; i < mFragments.size(); i++) {
+            mFragments.get(i).setViewPagerDisplayedCurrent(i == position);
+        }
         if (getUserVisibleHint()) {
             resetRightIcon();
         }

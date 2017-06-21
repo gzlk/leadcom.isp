@@ -52,7 +52,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_TYPE = "dnf_type";
     private static final String PARAM_GROUP = "dnf_group";
@@ -62,8 +62,8 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_SOURCE = "dnf_source";
     private static final String PARAM_COVER = "anf_cover";
 
-    public static ArchiveNewFragment newInstance(String params) {
-        ArchiveNewFragment dnf = new ArchiveNewFragment();
+    public static ArchiveCreatorFragment newInstance(String params) {
+        ArchiveCreatorFragment dnf = new ArchiveCreatorFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 档案类型，群档案或个人档案
@@ -201,10 +201,12 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private void createArchive() {
         handleUploadedItems();
         String title = titleHolder.getValue();
-        String intro = StringHelper.escapeToHtml(introductionView.getValue());
+        String intro = introductionView.getValue();
         if (StringHelper.isEmpty(mQueryId)) {
+            showImageHandlingDialog(R.string.ui_text_document_create_creating);
             createDocument(title, intro);
         } else {
+            showImageHandlingDialog(R.string.ui_text_document_create_editing);
             editDocument(title, intro);
         }
     }
@@ -227,6 +229,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
+                hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
                     finish();
@@ -267,6 +270,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
+                hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
                     finish();
@@ -290,6 +294,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
+                hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
                     finish();
@@ -304,6 +309,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
+                hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
                     finish();
@@ -632,7 +638,7 @@ public class ArchiveNewFragment extends BaseSwipeRefreshSupportFragment {
     private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
         @Override
         public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
-            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveNewFragment.this);
+            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveCreatorFragment.this);
             holder.addOnViewHolderClickListener(attachmentViewHolderClickListener);
             return holder;
         }

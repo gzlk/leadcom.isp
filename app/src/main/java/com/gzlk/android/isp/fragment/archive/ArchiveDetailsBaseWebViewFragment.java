@@ -89,7 +89,7 @@ public class ArchiveDetailsBaseWebViewFragment extends BaseWebViewFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, mQueryId), true, true);
+                openActivity(ArchiveCreatorFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, mQueryId), true, true);
             }
         });
     }

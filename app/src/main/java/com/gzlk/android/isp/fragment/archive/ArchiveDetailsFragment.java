@@ -306,7 +306,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 switch (id) {
                     case R.id.ui_dialog_button_editor_to_change:
                         //openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
-                        openActivity(ArchiveNewFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
+                        openActivity(ArchiveCreatorFragment.class.getName(), format("%d,%s", archiveType, mQueryId), true, true);
                         break;
                     case R.id.ui_dialog_button_editor_to_delete:
                         if (archiveType == Archive.Type.USER || archiveDeletable()) {

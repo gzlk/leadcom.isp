@@ -9,17 +9,15 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
-import com.gzlk.android.isp.fragment.archive.ArchiveNewFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveCreatorFragment;
 import com.gzlk.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Member;
-import com.gzlk.android.isp.model.organization.Organization;
 
 import java.util.List;
 
@@ -53,7 +51,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        fetchingRemoteArchives();
     }
 
     @Override
@@ -66,11 +64,22 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     public void doingInResume() {
         setLoadingText(R.string.ui_organization_archive_loading);
         setNothingText(R.string.ui_organization_archive_nothing);
+        refreshArchives();
+    }
+
+    @Override
+    protected void onViewPagerDisplayedChanged(boolean visible) {
+        super.onViewPagerDisplayedChanged(visible);
+        if (visible) {
+            refreshArchives();
+        }
+    }
+
+    private void refreshArchives() {
         if (!StringHelper.isEmpty(mQueryId)) {
             if (isNeedRefresh()) {
                 fetchingRemoteArchives();
             }
-            loadingLocalArchive();
         }
     }
 
@@ -97,7 +106,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
             return;
         }
         mQueryId = queryId;
-        loadingLocalArchive();
+        initializeAdapter();
     }
 
     // 我是否可以管理组织档案
@@ -125,7 +134,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                         ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
                     } else {
                         // 新建组织档案
-                        openActivity(ArchiveNewFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), true, true);
+                        openActivity(ArchiveCreatorFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), true, true);
                     }
                     break;
                 case R.id.ui_tooltip_menu_organization_document_manage:
@@ -145,29 +154,25 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     if (null != list) {
+                        if (list.size() >= pageSize) {
+                            remotePageNumber++;
+                            isLoadingComplete(false);
+                        } else {
+                            isLoadingComplete(true);
+                        }
                         mAdapter.update(list);
                         mAdapter.sort();
+                    } else {
+                        isLoadingComplete(true);
                     }
+                } else {
+                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 stopRefreshing();
                 displayNothing(mAdapter.getItemCount() < 1);
             }
         }).list(mQueryId, remotePageNumber);
-    }
-
-    private Dao<Archive> dao;
-
-    private void loadingLocalArchive() {
-        initializeAdapter();
-        if (null == dao) {
-            dao = new Dao<>(Archive.class);
-        }
-        List<Archive> temp = dao.query(Organization.Field.GroupId, mQueryId);
-        if (null != temp) {
-            mAdapter.update(temp);
-            mAdapter.sort();
-        }
     }
 
     private void initializeAdapter() {
