@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.activity.archive;
+package com.gzlk.android.isp.fragment.organization.archive;
 
 import android.graphics.Color;
 import android.os.Bundle;

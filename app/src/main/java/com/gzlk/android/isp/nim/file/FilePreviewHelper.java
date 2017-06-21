@@ -11,8 +11,10 @@ import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
 import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
+import com.gzlk.android.isp.fragment.common.InnerWebViewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.common.Attachment;
 
 import java.io.File;
 import java.util.Locale;
@@ -34,12 +36,18 @@ public class FilePreviewHelper {
      * 根据文件类型打开相应的文件预览
      */
     public static void previewFile(Context context, String path, String fileName, String extension) {
-        if (!TextUtils.isEmpty(extension) && extension.toLowerCase(Locale.getDefault()).equals("pdf")) {
-            previewPdf(context, path, fileName);
-            return;
-        } else if (ImageCompress.isImage(extension)) {
-            previewImage(context, path);
-            return;
+        if (!TextUtils.isEmpty(extension)) {
+            String ext = extension.toLowerCase(Locale.getDefault());
+            if (ext.equals("pdf")) {
+                previewPdf(context, path, fileName);
+                return;
+            } else if (ImageCompress.isImage(ext)) {
+                previewImage(context, path);
+                return;
+            } else if (Attachment.isOffice(ext)) {
+                previewOnlineOffice(context, path, fileName);
+                return;
+            }
         }
         try {
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
@@ -53,12 +61,26 @@ public class FilePreviewHelper {
         }
     }
 
+    /**
+     * 预览在线或本地PDF文档
+     */
     private static void previewPdf(Context context, String path, String fileName) {
         String param = StringHelper.format("%s,%s", path, fileName);
         BaseActivity.openActivity(context, PdfViewerFragment.class.getName(), param, true, false);
     }
 
+    /**
+     * 预览在线或本地图片
+     */
     private static void previewImage(Context context, String path) {
         BaseActivity.openActivity(context, ImageViewerFragment.class.getName(), StringHelper.format("0,%s", path), false, false, true);
+    }
+
+    /**
+     * 预览在线Office文档
+     */
+    private static void previewOnlineOffice(Context context, String path, String fileName) {
+        String param = StringHelper.format("https://view.officeapps.live.com/op/view.aspx?src=%s,%s", path, fileName);
+        BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), param, true, false);
     }
 }

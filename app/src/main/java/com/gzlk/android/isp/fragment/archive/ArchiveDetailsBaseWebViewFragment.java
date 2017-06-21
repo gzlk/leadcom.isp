@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.WebViewFragment;
+import com.gzlk.android.isp.fragment.common.BaseWebViewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -20,13 +20,13 @@ import com.gzlk.android.isp.model.archive.Archive;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveDetailsWebViewFragment extends WebViewFragment {
+public class ArchiveDetailsBaseWebViewFragment extends BaseWebViewFragment {
 
     private static final String PARAM_TYPE = "adwvf_type";
     private static final String PARAM_MANAGER = "adwvf_manager";
 
-    public static ArchiveDetailsWebViewFragment newInstance(String params) {
-        ArchiveDetailsWebViewFragment adf = new ArchiveDetailsWebViewFragment();
+    public static ArchiveDetailsBaseWebViewFragment newInstance(String params) {
+        ArchiveDetailsBaseWebViewFragment adf = new ArchiveDetailsBaseWebViewFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 档案类型：个人、组织，

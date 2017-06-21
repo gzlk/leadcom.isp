@@ -8,6 +8,7 @@ import android.media.MediaMetadataRetriever;
 import android.text.TextUtils;
 
 import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -150,6 +151,7 @@ public final class ImageCompress {
      * 指定路径的文件是否为图片格式
      */
     public static boolean isImage(String extension) {
+        if (StringHelper.isEmpty(extension)) return false;
         switch (extension.toLowerCase(Locale.getDefault())) {
             case "gif":
             case "jpg":

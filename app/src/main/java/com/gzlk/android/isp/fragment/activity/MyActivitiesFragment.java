@@ -8,8 +8,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.fragment.activity.archive.ActivityArchivingManagementFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.activity.ActivityManagementViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -267,20 +265,22 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 // 未参加的打开参加页面
                 openActivity(ActivityEntranceFragment.class.getName(), format("%s,%s", act.getId(), act.getTid()), true, false);
             } else {
-                // 已参加的活动
-                // 已结束的活动
-                if (act.getStatus() == Activity.Status.ENDED) {
-                    // 如果是我自己创建的，打开改活动待存档文件管理页面
-                    if (act.getCreatorId().equals(Cache.cache().userId)) {
-                        openActivity(ActivityArchivingManagementFragment.class.getName(), act.getId(), true, false);
-                    } else {
-                        // 不是我创建的则打开详情页
-                        openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
-                    }
-                } else {
-                    // 已参加的打开活动详情页面
-                    openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
-                }
+                // 已参加的活动，打开活动详情页（2017-06-21 11:20）
+                // 已结束的活动不在这里存档内容，需要在组织档案管理页面未存档里找
+                openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
+//                // 已结束的活动
+//                if (act.getStatus() == Activity.Status.ENDED) {
+//                    // 如果是我自己创建的，打开改活动待存档文件管理页面
+//                    if (act.getCreatorId().equals(Cache.cache().userId)) {
+//                        openActivity(ActivityArchivingManagementFragment.class.getName(), act.getId(), true, false);
+//                    } else {
+//                        // 不是我创建的则打开详情页
+//                        openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
+//                    }
+//                } else {
+//                    // 已参加的打开活动详情页面
+//                    openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
+//                }
             }
         }
     };

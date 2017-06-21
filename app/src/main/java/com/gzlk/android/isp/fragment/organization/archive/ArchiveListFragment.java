@@ -151,11 +151,13 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
         public void onClick(int index) {
             Archive acv = (Archive) mAdapter.get(index);
             if (mType == TYPE_ARCHIVING) {
+                // 待存档档案，打开活动存档页面（2017-06-21 11:30）
+                openActivity(ActivityArchivingManagementFragment.class.getName(), acv.getId(), true, false);
                 // 只有活动的档案才会出现未存档
                 // 打开未存档档案页，将其存档
-                String json = Json.gson().toJson(acv, new TypeToken<Archive>() {
-                }.getType());
-                openActivity(ArchiveHandlerFragment.class.getName(), format("%d,%s,%s", ArchiveHandlerFragment.TYPE_ARCHIVE, acv.getId(), replaceJson(json, false)), true, false);
+//                String json = Json.gson().toJson(acv, new TypeToken<Archive>() {
+//                }.getType());
+//                openActivity(ArchiveHandlerFragment.class.getName(), format("%d,%s,%s", ArchiveHandlerFragment.TYPE_ARCHIVE, acv.getId(), replaceJson(json, false)), true, false);
                 // 打开档案详细页，存档或
                 //openActivity(ActivityArchivingManagementFragment.class.getName(), acv.getActId(), true, false);
                 //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
@@ -163,7 +165,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 // 待审核档案
                 openActivity(ArchiveHandlerFragment.class.getName(), format("%d,%s,", ArchiveHandlerFragment.TYPE_APPROVE, acv.getId()), true, false);
             } else {
-                // 打开详情页
+                // 全部页面中，打开档案详情页
                 openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
             }
         }

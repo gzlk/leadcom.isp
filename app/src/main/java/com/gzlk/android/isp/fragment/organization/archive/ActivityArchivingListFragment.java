@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.activity.archive;
+package com.gzlk.android.isp.fragment.organization.archive;
 
 import android.os.Bundle;
 
@@ -6,10 +6,11 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.ActArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.organization.archive.ArchiveAdapter;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.ActArchive;
+import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class ActivityArchivingListFragment extends BaseSwipeRefreshSupportFragme
     public static final int VIDEOS = 3;
 
     private static final String PARAM_TYPE = "_aaf_approving_type_";
+    private static final String PARAM_EDITING = "aalf_is_it_editing";
 
     public static ActivityArchivingListFragment newInstance(String params) {
         ActivityArchivingListFragment aaf = new ActivityArchivingListFragment();
@@ -47,18 +49,22 @@ public class ActivityArchivingListFragment extends BaseSwipeRefreshSupportFragme
      * 当前查看的档案类别
      */
     private int aType = ALL;
+    // 是否在编辑状态
+    private boolean isEditing = false;
     private ArchiveAdapter mAdapter;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         aType = bundle.getInt(PARAM_TYPE, ARCHIVES);
+        isEditing = bundle.getBoolean(PARAM_EDITING, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_TYPE, aType);
+        bundle.putBoolean(PARAM_EDITING, isEditing);
     }
 
     @Override
@@ -182,12 +188,16 @@ public class ActivityArchivingListFragment extends BaseSwipeRefreshSupportFragme
         @Override
         public void onClick(int index) {
             // 点击一个审批一个
-            ToastHelper.make().showMsg("预览文件");
-//            ActArchive archive = (ActArchive) mAdapter.get(index);
-//            if(archive.getStatus()== Attachment.AttachmentStatus.ARCHIVING){
-//                archive.setSelected(true);
-//                mAdapter.notifyItemChanged(index);
-//            }
+//            ToastHelper.make().showMsg("预览文件");
+            ActArchive archive = (ActArchive) mAdapter.get(index);
+            if (isEditing) {
+                if (archive.getStatus() == Attachment.AttachmentStatus.ARCHIVING) {
+                    archive.setSelected(true);
+                    mAdapter.notifyItemChanged(index);
+                }
+            } else {
+                FilePreviewHelper.previewFile(Activity(), archive.getUrl(), archive.getName(), Attachment.getExtension(archive.getUrl()));
+            }
             //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, mAdapter.get(index).getId()), true, false);
         }
     };

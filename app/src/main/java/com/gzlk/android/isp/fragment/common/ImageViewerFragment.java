@@ -154,7 +154,7 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
     private List<String> images = new ArrayList<>();
 
     private void changePosition() {
-        titleTextView.setText(format("%d/%d", selectedIndex + 1, images.size()));
+        //titleTextView.setText(format("%d/%d", selectedIndex + 1, images.size()));
     }
 
     private class ImageAdapter extends PagerAdapter {

@@ -10,7 +10,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.fragment.BaseTransparentPropertyFragment;
+import com.gzlk.android.isp.fragment.common.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;

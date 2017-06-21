@@ -1,9 +1,8 @@
-package com.gzlk.android.isp.fragment.home;
+package com.gzlk.android.isp.fragment.common;
 
 import android.os.Bundle;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.fragment.WebViewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 
 /**
@@ -17,7 +16,7 @@ import com.gzlk.android.isp.helper.StringHelper;
  * <b>修改备注：</b><br />
  */
 
-public class InnerWebViewFragment extends WebViewFragment {
+public class InnerWebViewFragment extends BaseWebViewFragment {
 
     private static final String PARAM_TITLE = "iwvf_title";
 
@@ -25,7 +24,9 @@ public class InnerWebViewFragment extends WebViewFragment {
         InnerWebViewFragment iwvf = new InnerWebViewFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
+        // url地址
         bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 标题
         bundle.putString(PARAM_TITLE, strings[1]);
         iwvf.setArguments(bundle);
         return iwvf;

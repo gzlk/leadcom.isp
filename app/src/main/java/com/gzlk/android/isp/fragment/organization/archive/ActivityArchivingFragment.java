@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.activity.archive;
+package com.gzlk.android.isp.fragment.organization.archive;
 
 import android.os.Bundle;
 import android.view.View;
@@ -10,12 +10,10 @@ import com.gzlk.android.isp.api.activity.ActArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.organization.archive.ArchiveAdapter;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.Click;

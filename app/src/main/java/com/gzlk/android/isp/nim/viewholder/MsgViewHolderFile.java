@@ -7,7 +7,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.nim.file.FileIcons;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
@@ -128,7 +130,10 @@ public class MsgViewHolderFile extends MsgViewHolderBase {
         if (isOriginDataHasDownloaded(message)) {
             // 已经下载时，打开预览
             FileAttachment attachment = (FileAttachment) message.getAttachment();
-            tryToOpenFile(attachment.getPath(), attachment.getDisplayName(), attachment.getExtension());
+            // 如果是Office文档或图片，则取url地址，否则取本地缓存目录地址
+            String ext = attachment.getExtension();
+            String url = (Attachment.isOffice(ext) || ImageCompress.isImage(ext)) ? attachment.getUrl() : attachment.getPath();
+            tryToOpenFile(url, attachment.getDisplayName(), attachment.getExtension());
         } else {
             // 未下载时开始下载
             downloadFile();

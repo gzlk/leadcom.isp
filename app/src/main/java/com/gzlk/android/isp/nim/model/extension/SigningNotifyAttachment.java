@@ -22,9 +22,9 @@ public class SigningNotifyAttachment extends CustomAttachment {
     /**
      * 提醒类型：
      * <ul>
-     * <li>1=准备签到提醒（不能点击进入签到）</li>
-     * <li>2=开始签到提醒（点击进入签到页面）</li>
-     * <li>3=签到结束提醒（点击进入签到页面）</li>
+     * <li>1=准备签到提醒（比如提前5分钟提醒大家签到）</li>
+     * <li>2=开始签到提醒</li>
+     * <li>3=签到即将结束提醒</li>
      * <li>4=签到已结束（预览签到成果）</li>
      * </ul>
      */
@@ -35,7 +35,9 @@ public class SigningNotifyAttachment extends CustomAttachment {
     private String setupId;
     // 提醒内容
     private String content;
+    // 开始时间
     private long beginTime;
+    // 结束时间
     private long endTime;
 
     public int getNotifyType() {

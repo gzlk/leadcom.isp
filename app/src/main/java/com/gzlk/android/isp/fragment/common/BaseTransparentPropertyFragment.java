@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment;
+package com.gzlk.android.isp.fragment.common;
 
 import android.view.View;
 import android.widget.LinearLayout;

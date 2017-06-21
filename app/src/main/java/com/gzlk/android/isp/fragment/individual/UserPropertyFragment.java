@@ -13,7 +13,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
-import com.gzlk.android.isp.fragment.BaseTransparentPropertyFragment;
+import com.gzlk.android.isp.fragment.common.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.gzlk.android.isp.fragment.login.CodeVerifyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -33,7 +33,6 @@ import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
-import com.netease.nim.uikit.NimUIKit;
 
 import java.util.ArrayList;
 import java.util.Calendar;

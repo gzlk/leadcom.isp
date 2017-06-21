@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment;
+package com.gzlk.android.isp.fragment.common;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -29,7 +29,7 @@ import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
  * <b>修改备注：</b><br />
  */
 
-public abstract class WebViewFragment extends BaseDownloadingUploadingSupportFragment {
+public abstract class BaseWebViewFragment extends BaseDownloadingUploadingSupportFragment {
 
     private static final String PARAM_LOADED = "wvf_loaded";
 
@@ -127,7 +127,7 @@ public abstract class WebViewFragment extends BaseDownloadingUploadingSupportFra
         @Override
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
-            setCustomTitle(title);
+            //setCustomTitle(title);
         }
     }
 }
