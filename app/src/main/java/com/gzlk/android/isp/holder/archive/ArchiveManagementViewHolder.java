@@ -93,6 +93,7 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         statusView.setText(StringHelper.getString(R.string.ui_archive_management_list_item_status, Attachment.getAttachmentStatus(archive.getStatus())));
         Attachment attachment = new Attachment();
         attachment.setUrl(archive.getUrl());
+        attachment.setName(archive.getName());
         attachment.resetInformation();
         switch (archive.getType()) {
             case Attachment.AttachmentType.IMAGE:

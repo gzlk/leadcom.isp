@@ -305,7 +305,11 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                             isLoadingComplete(true);
                         }
                         addIntoList(list);
+                    } else {
+                        isLoadingComplete(true);
                     }
+                } else {
+                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
@@ -315,14 +319,18 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void addIntoList(List<ActArchive> list) {
-        archives.clear();
+        //archives.clear();
         for (ActArchive archive : list) {
+            // 未存档
+            archive.setSelectable(true);
+            // 已存档的设置成选中状态
+            archive.setSelected(archive.getStatus() > Attachment.AttachmentStatus.ARCHIVING);
+
             if (!archives.contains(archive)) {
-                // 为存档
-                archive.setSelectable(true);
-                // 已存档的设置成选中状态
-                archive.setSelected(archive.getStatus() > Attachment.AttachmentStatus.ARCHIVING);
                 archives.add(archive);
+            } else {
+                int index = archives.indexOf(archive);
+                archives.set(index, archive);
             }
         }
         loadLocalArchives();

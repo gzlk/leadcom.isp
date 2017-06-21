@@ -145,7 +145,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
 
     private boolean canAddMember() {
         Member member = StructureFragment.my;
-        return null != member && member.canAddMember();
+        return null != member && member.memberInvitable();
     }
 
     @Click({R.id.ui_tool_organization_top_channel_1, R.id.ui_tool_organization_top_channel_2,

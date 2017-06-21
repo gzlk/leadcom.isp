@@ -103,7 +103,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     // 我是否可以管理组织档案
     private boolean isMeCanManageArchives() {
         Member me = StructureFragment.my;
-        return null != me && (me.canApproveArchive() || me.isArchiveManager());
+        return null != me && (me.archiveApprovable() || me.isArchiveManager());
     }
 
     /**

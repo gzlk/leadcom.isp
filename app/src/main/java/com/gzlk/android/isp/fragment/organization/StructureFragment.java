@@ -551,7 +551,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                     scvh.showContent((Squad) item);
                 }
             } else if (holder instanceof SquadAddViewHolder) {
-                ((SquadAddViewHolder) holder).showAddContainer(null != my && my.canAddSquad());
+                ((SquadAddViewHolder) holder).showAddContainer(null != my && my.squadAddable());
             }
         }
 

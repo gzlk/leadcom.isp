@@ -291,7 +291,8 @@ public class Attachment extends Model {
     public void resetInformation() {
         setId(url);
         fullPath = url;
-        ext = getExtension(url);
+        // 网易云只能通过文件名获取扩展名
+        ext = getExtension(url.contains("netease.com") ? name : url);
         type = getAttachmentType();
     }
 

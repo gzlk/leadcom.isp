@@ -240,56 +240,91 @@ public class Member extends Leaguer {
     /**
      * 是否可以修改组织属性
      */
-    public boolean canEditGroupProperty() {
+    public boolean groupPropertyEditable() {
         return hasOperation(GRPOperation.GROUP_PROPERTY);
     }
 
     /**
-     * 是否可以审批档案
+     * 是否可以关联组织
      */
-    public boolean canApproveArchive() {
-        return hasOperation(GRPOperation.ARCHIVE_APPROVAL);
-    }
-
-    /**
-     * 是否可以删除档案
-     */
-    public boolean canDeleteArchive() {
-        return hasOperation(GRPOperation.ARCHIVE_DELETE);
+    public boolean groupAssociatable() {
+        return hasOperation(GRPOperation.GROUP_ASSOCIATION);
     }
 
     /**
      * 是否可以编辑成员角色属性
      */
-    public boolean canEditMemberRole() {
+    public boolean memberRoleEditable() {
         return hasOperation(GRPOperation.MEMBER_ROLE);
     }
 
     /**
      * 是否可以删除用户
      */
-    public boolean canDeleteMember() {
+    public boolean memberDeletable() {
         return hasOperation(GRPOperation.MEMBER_DELETE);
     }
 
     /**
      * 是否可以添加用户
      */
-    public boolean canAddMember() {
+    public boolean memberInvitable() {
         return hasOperation(GRPOperation.MEMBER_ADD);
+    }
+
+    /**
+     * 是否可以审批档案
+     */
+    public boolean archiveApprovable() {
+        return hasOperation(GRPOperation.ARCHIVE_APPROVAL);
+    }
+
+    /**
+     * 是否可以修改档案
+     */
+    public boolean archiveEditable() {
+        return hasOperation(GRPOperation.ARCHIVE_EDIT);
+    }
+
+    /**
+     * 是否可以删除档案
+     */
+    public boolean archiveDeletable() {
+        return hasOperation(GRPOperation.ARCHIVE_DELETE);
     }
 
     /**
      * 是否可以添加小组
      */
-    public boolean canAddSquad() {
+    public boolean squadAddable() {
         return hasOperation(GRPOperation.SQUAD_ADD);
     }
 
     /**
      * 是否可以删除小组
      */
-    public boolean canDeleteSquad() {
+    public boolean squadDeletable() {
         return hasOperation(GRPOperation.SQUAD_DELETE);
+    }
+
+    /**
+     * 是否可以编辑小组属性
+     */
+    public boolean squadEditable() {
+        return hasOperation(GRPOperation.SQUAD_PROPERTY);
+    }
+
+    /**
+     * 是否可以邀请成员加入小组
+     */
+    public boolean squadMemberInvitable() {
+        return hasOperation(GRPOperation.SQUAD_MEMBER_INVITE);
+    }
+
+    /**
+     * 是否可以删除小组成员
+     */
+    public boolean squadMemberDeletable() {
+        return hasOperation(GRPOperation.SQUAD_MEMBER_DELETE);
     }
 }

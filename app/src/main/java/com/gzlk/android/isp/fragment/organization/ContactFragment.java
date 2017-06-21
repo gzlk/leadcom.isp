@@ -658,7 +658,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 // 组织内可以显示设为档案管理员或取消档案管理员
                 // 对方不是管理员且不是档案管理员时，可以将其设为档案管理员
                 holder.button0d5Text(member.isArchiveManager() ? R.string.ui_organization_contact_unset_archive_manager : R.string.ui_organization_contact_set_archive_manager);
-                holder.showButton0d5(!isMe && (null != me) && me.canEditMemberRole() && !(member.isManager() || member.isOwner()));
+                holder.showButton0d5(!isMe && (null != me) && me.memberRoleEditable() && !(member.isManager() || member.isOwner()));
             } else {
                 holder.showButton0d5(false);
             }
@@ -667,13 +667,13 @@ public class ContactFragment extends BaseOrganizationFragment {
                 // 显示设为管理员或取消管理员
                 holder.button1Text(member.isManager() ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
                 // 我是群主或管理员且有编辑成员角色属性时，可以设置
-                holder.showButton1(!isMe && (null != me) && (me.isOwner() || me.isManager()) && me.canEditMemberRole() && !(member.isOwner()));
+                holder.showButton1(!isMe && (null != me) && (me.isOwner() || me.isManager()) && me.memberRoleEditable() && !(member.isOwner()));
             } else {
                 holder.showButton1(false);
             }
 
             // 我且具有删除成员权限，且对方是普通成员时显示删除按钮
-            holder.showButton2(!isMe && (null != me) && me.canDeleteMember() && member.isMember());
+            holder.showButton2(!isMe && (null != me) && me.memberDeletable() && member.isMember());
 
             holder.showContent(member, searchingText);
             mItemManger.bindView(holder.itemView, position);

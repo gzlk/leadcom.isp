@@ -148,7 +148,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         boolean isMe = !isEmpty(archive.getUserId()) && archive.getUserId().equals(Cache.cache().userId);
         if (archiveType == Archive.Type.GROUP) {
             Member member = StructureFragment.my;
-            return isMe || (null != member && member.canApproveArchive());
+            return isMe || (null != member && member.archiveApprovable());
         }
         return isMe;
     }
@@ -280,7 +280,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
 
     private boolean archiveDeletable() {
         Member member = StructureFragment.my;
-        return null != member && member.canDeleteArchive();
+        return null != member && member.archiveDeletable();
     }
 
     private void openEditSelector() {

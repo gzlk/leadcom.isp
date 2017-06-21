@@ -196,7 +196,10 @@ public class ActivityArchivingListFragment extends BaseSwipeRefreshSupportFragme
                     mAdapter.notifyItemChanged(index);
                 }
             } else {
-                FilePreviewHelper.previewFile(Activity(), archive.getUrl(), archive.getName(), Attachment.getExtension(archive.getUrl()));
+                String url = archive.getUrl();
+                String name = archive.getName();
+                String ext = Attachment.getExtension(url.contains("netease.com") ? name : url);
+                FilePreviewHelper.previewFile(Activity(), url, name, ext);
             }
             //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, mAdapter.get(index).getId()), true, false);
         }

@@ -166,7 +166,8 @@ public abstract class Request<T> {
             @Override
             public void onSucceed(Api<T> data, Response<Api<T>> response) {
                 super.onSucceed(data, response);
-                log(format("url(%s): %s\nbody: %s\nsuccess: %s(%s,%s)", methods, url, body, data.success(), data.getCode(), data.getMsg()));
+                log(format("url(%s): %s\naccessToken: %s\n%ssuccess: %s(%s,%s)", methods, url, Cache.cache().accessToken,
+                        (isEmpty(body) ? "" : format("body: %s\n", body)), data.success(), data.getCode(), data.getMsg()));
                 if (data.success()) {
                     if (data instanceof Query) {
                         if (null != onMultipleRequestListener) {
@@ -200,7 +201,8 @@ public abstract class Request<T> {
             @Override
             public void onFailed() {
                 super.onFailed();
-                log(format("url(%s): %s\nbody: %s\nsuccess: failed", methods, url, body));
+                log(format("url(%s): %s\naccessToken: %s%ssuccess: failed", methods, url,Cache.cache().accessToken,
+                        (isEmpty(body) ? "" : format("body: %s\n", body))));
                 fireFailedListenerEvents("");
             }
         }).addHeader("accessToken", Cache.cache().accessToken).setHttpBody(new JsonBody(body), methods);
