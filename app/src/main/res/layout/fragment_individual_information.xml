@@ -23,7 +23,7 @@
             android:layout_height="wrap_content">
 
             <com.hlk.hlklib.lib.view.CorneredView
-                android:id="@+id/ui_transparent_title_property_button"
+                android:id="@+id/ui_user_information_to_archive"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ui_base_dimen_margin_padding"
@@ -33,6 +33,8 @@
                 android:visibility="gone"
                 app:cv_active_border="@color/colorCaution"
                 app:cv_background="@color/colorPrimary"
+                app:cv_background_active="@color/colorCaution"
+                app:cv_background_type="fill"
                 app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size"
                 app:cv_normal_border="@color/colorPrimary">
 
@@ -52,6 +54,9 @@
                 android:gravity="center"
                 android:padding="@dimen/ui_base_dimen_margin_padding"
                 app:cv_active_border="@color/colorCaution"
+                app:cv_background="@android:color/white"
+                app:cv_background_active="@color/colorCaution"
+                app:cv_background_type="fill"
                 app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size"
                 app:cv_normal_border="@color/textColorHintLight">
 

@@ -79,5 +79,5 @@ public interface GRPOperation {
     /**
      * 删除小组
      */
-    String SQUAD_MEMBER_DELETE = " ROLE_4d90a8ecec404d1280112fd907c6ae73";
+    String SQUAD_MEMBER_DELETE = "ROLE_4d90a8ecec404d1280112fd907c6ae73";
 }

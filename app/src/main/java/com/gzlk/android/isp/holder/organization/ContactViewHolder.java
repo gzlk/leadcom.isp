@@ -158,15 +158,19 @@ public class ContactViewHolder extends BaseViewHolder {
         headerView.displayImage(member.getHeadPhoto(), imageSize, false, false);
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
-        managerView.setText(member.isOwner() ? "群主" : (member.isManager() ? "管理员" : (member.isArchiveManager() ? "档案管理员" : "")));
-        managerView.setVisibility((member.isOwner() || member.isManager() || member.isArchiveManager()) ? View.VISIBLE : View.GONE);
+
+        managerView.setText(member.isManager() ? Member.Code.GROUP_MANAGER_ROLE_NAME :
+                (member.isArchiveManager() ? Member.Code.GROUP_DOC_MANAGER_ROLE_NAME :
+                        (member.isSquadManager() ? Member.Code.GROUP_SQUAD_MANAGER_ROLE_NAME : "")));
+        managerView.setVisibility((member.isManager() || member.isArchiveManager() || member.isSquadManager()) ? View.VISIBLE : View.GONE);
+
         buttonInvite.setVisibility(buttonInviteVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
         lockFlag.setVisibility(member.isLocalDeleted() ? View.VISIBLE : View.GONE);
         if (buttonInviteVisible) {
             // 只在显示按钮的时候才进行判断加入或不加入操作
-            if (!StringHelper.isEmpty(squadId)) {
+            if (!isEmpty(squadId)) {
                 // 小组id不为空时，判断当前成员是否已经加入本小组
-                if (!StringHelper.isEmpty(member.getSquadId()) && member.getSquadId().equals(squadId)) {
+                if (!isEmpty(member.getSquadId()) && member.getSquadId().equals(squadId)) {
                     buttonInvite.setEnabled(false);
                     // 成员已是小组的人了
                     buttonInvite.setText(R.string.ui_phone_contact_invited);

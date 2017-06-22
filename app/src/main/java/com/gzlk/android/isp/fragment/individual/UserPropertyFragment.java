@@ -64,6 +64,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     // UI
     @ViewId(R.id.ui_ui_custom_title_right_text)
     private TextView rightTextView;
+    @ViewId(R.id.ui_user_information_to_archive)
+    private CorneredView toArchive;
     @ViewId(R.id.ui_user_information_to_chat)
     private CorneredView toChat;
 
@@ -75,9 +77,6 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         // 头像选择是需要剪切的
         isChooseImageForCrop = true;
         super.doingInResume();
-        if (null != bottomButton) {
-            bottomButton.setVisibility(View.GONE);
-        }
         setSupportLoadingMore(false);
         initializeItems();
         titleTextView.setText(null);

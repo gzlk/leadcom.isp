@@ -2,6 +2,7 @@ package com.gzlk.android.isp.model.organization;
 
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
@@ -37,6 +38,8 @@ public class Squad extends Model {
 
     @Column(Organization.Field.MemberNumber)
     private String memberNum;      //成员数
+    @Ignore
+    private Role groRole;      // 当前登录者在组织里的角色
 
     public String getGroupId() {
         return groupId;
@@ -95,5 +98,13 @@ public class Squad extends Model {
 
     public void setMemberNum(String memberNum) {
         this.memberNum = memberNum;
+    }
+
+    public Role getGroRole() {
+        return groRole;
+    }
+
+    public void setGroRole(Role groRole) {
+        this.groRole = groRole;
     }
 }

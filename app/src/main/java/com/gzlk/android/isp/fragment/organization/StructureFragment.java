@@ -20,13 +20,12 @@ import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
-import com.gzlk.android.isp.holder.organization.SquadAddViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.TextViewHolder;
+import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
+import com.gzlk.android.isp.holder.organization.SquadAddViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
@@ -325,6 +324,8 @@ public class StructureFragment extends BaseOrganizationFragment {
                 isTryGoingToSquad = false;
                 //tryGoingToSquad();
                 Squad squad = squads.get(selectedSquadIndex);
+                // 当前登录者的角色
+                ContactFragment.squadRole = squad.getGroRole();
                 openSquadContact(squad.getGroupId(), squad.getId());
             }
         }
@@ -451,12 +452,12 @@ public class StructureFragment extends BaseOrganizationFragment {
         squads.clear();
         initializeItems();
         // 查询本地小组列表
-        List<Squad> temp = new Dao<>(Squad.class).query(Organization.Field.GroupId, groupId);
-        if (null != temp && temp.size() > 0) {
-            squads.addAll(temp);
-            sortSquads();
-            initializeItems();
-        }
+//        List<Squad> temp = new Dao<>(Squad.class).query(Organization.Field.GroupId, groupId);
+//        if (null != temp && temp.size() > 0) {
+//            squads.addAll(temp);
+//            sortSquads();
+//            initializeItems();
+//        }
         // 拉取远程的小组列表
         fetchingRemoteSquads(groupId);
     }
@@ -467,6 +468,9 @@ public class StructureFragment extends BaseOrganizationFragment {
             for (Squad squad : list) {
                 if (!squads.contains(squad)) {
                     squads.add(squad);
+                } else {
+                    int index = squads.indexOf(squad);
+                    squads.set(index, squad);
                 }
             }
             sortSquads();

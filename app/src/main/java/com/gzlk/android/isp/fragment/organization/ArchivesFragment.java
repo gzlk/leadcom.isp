@@ -64,7 +64,8 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     public void doingInResume() {
         setLoadingText(R.string.ui_organization_archive_loading);
         setNothingText(R.string.ui_organization_archive_nothing);
-        refreshArchives();
+        initializeAdapter();
+        fetchingRemoteArchives();
     }
 
     @Override
@@ -106,7 +107,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
             return;
         }
         mQueryId = queryId;
-        initializeAdapter();
+        fetchingRemoteArchives();
     }
 
     // 我是否可以管理组织档案
@@ -160,8 +161,10 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                         } else {
                             isLoadingComplete(true);
                         }
-                        mAdapter.update(list);
-                        mAdapter.sort();
+                        if (null != mAdapter) {
+                            mAdapter.update(list);
+                            mAdapter.sort();
+                        }
                     } else {
                         isLoadingComplete(true);
                     }
@@ -170,7 +173,9 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                 }
                 displayLoading(false);
                 stopRefreshing();
-                displayNothing(mAdapter.getItemCount() < 1);
+                if (null != mAdapter) {
+                    displayNothing(mAdapter.getItemCount() < 1);
+                }
             }
         }).list(mQueryId, remotePageNumber);
     }
@@ -178,8 +183,6 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new ArchiveAdapter();
-        }
-        if (null != mRecyclerView) {
             mRecyclerView.setAdapter(mAdapter);
         }
     }

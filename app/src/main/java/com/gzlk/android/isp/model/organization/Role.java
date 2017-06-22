@@ -130,6 +130,19 @@ public class Role extends Model {
     }
 
     /**
+     * 角色是否具有某项操作权限
+     */
+    public boolean hasOperation(String operation) {
+        if (null == getPerList() || getPerList().size() < 1) return false;
+        for (Permission per : getPerList()) {
+            if (per.getPerCode().contains(operation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 保存角色的权限列表以便以后再查询
      */
     public void savePermissionIds() {

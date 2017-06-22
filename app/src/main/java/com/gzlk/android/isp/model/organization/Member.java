@@ -33,20 +33,20 @@ public class Member extends Leaguer {
 
     public interface Code {
         //组织成员角色ID
-        String GROUP_OWNER_ROLE_ID = "592fbf5e311dca041cd64953";            //群主
-        String GROUP_MANAGER_ROLE_ID = "592fc0d0cb220a23640a0395";          //群管理员
+        String GROUP_MANAGER_ROLE_ID = "592fc0d0cb220a23640a0395";          //组织管理员
         String GROUP_COMMON_MEMBER_ROLE_ID = "592fc373cb220a23640a039a";    //普通成员
         String GROUP_DOC_MANAGER_ROLE_ID = "592fce2dcb220a32d8c88f52";      //档案管理员
+        String GROUP_SQUAD_MANAGER_ROLE_ID = "594a0d0031bbf76228c90e62";    //小组管理员
         //组织成员角色编码
-        String GROUP_OWNER_ROLE_CODE = "7490b1dc542e4d4da72c1bfb5da453bc";        //群创建者
-        String GROUP_MANAGER_ROLE_CODE = "f43c7aedfe22410ea885e707aa79ac6a";        //群管理员
+        String GROUP_MANAGER_ROLE_CODE = "f43c7aedfe22410ea885e707aa79ac6a";        //组织管理员
         String GROUP_COMMON_MEMBER_ROLE_CODE = "a498fcf70a4c48178ee72726be47ce13";  //普通成员
         String GROUP_DOC_MANAGER_ROLE_CODE = "66a2932a2d5c435bb95a3dc42b435f4e";    //档案管理员
+        String GROUP_SQUAD_MANAGER_ROLE_CODE = "b76a597176ba465e8fd306bb91cb7f3c";  //小组管理员
         //组织成员角色名称
-        String GROUP_OWNER_ROLE_NAME = "群创建者";
         String GROUP_MANAGER_ROLE_NAME = "群管理员";
         String GROUP_COMMON_MEMBER_ROLE_NAME = "普通成员";
         String GROUP_DOC_MANAGER_ROLE_NAME = "档案管理员";
+        String GROUP_SQUAD_MANAGER_ROLE_NAME = "小组管理员";
     }
 
     /**
@@ -198,15 +198,15 @@ public class Member extends Leaguer {
     /**
      * 是否具有某个操作权限
      */
-    public boolean hasOperation(String operation) {
-        if (null == getGroRole()) return false;
-        if (null == getGroRole().getPerList() || getGroRole().getPerList().size() < 1) return false;
-        for (Permission per : getGroRole().getPerList()) {
-            if (per.getPerCode().equals(operation)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean hasOperation(String operation) {
+        return null != getGroRole() && getGroRole().hasOperation(operation);
+//        if (null == getGroRole().getPerList() || getGroRole().getPerList().size() < 1) return false;
+//        for (Permission per : getGroRole().getPerList()) {
+//            if (per.getPerCode().equals(operation)) {
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
     /**
@@ -217,11 +217,18 @@ public class Member extends Leaguer {
     }
 
     /**
+     * 是否小组管理员
+     */
+    public boolean isSquadManager() {
+        return null != getGroRole() && getGroRole().getId().equals(Code.GROUP_SQUAD_MANAGER_ROLE_ID);
+    }
+
+    /*
      * 是否是群主
      */
-    public boolean isOwner() {
-        return null != getGroRole() && getGroRole().getId().equals(Code.GROUP_OWNER_ROLE_ID);
-    }
+//    public boolean isOwner() {
+//        return null != getGroRole() && getGroRole().getId().equals(Code.GROUP_OWNER_ROLE_ID);
+//    }
 
     /**
      * 是否普通成员

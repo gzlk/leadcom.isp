@@ -14,6 +14,7 @@ import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.SystemMessageViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 
 import java.util.ArrayList;
@@ -118,10 +119,18 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         SimpleDialogHelper.init(Activity()).show(R.string.ui_system_message_delete_warning, R.string.ui_base_text_yes, R.string.cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
+                long id = messages.get(holder.getAdapterPosition()).getId();
                 mAdapter.delete(holder);
+                removeCache(id);
                 return true;
             }
         }, null);
+    }
+
+    private void removeCache(long id) {
+        Dao<NimMessage> dao = new Dao<>(NimMessage.class);
+        NimMessage msg = dao.querySingle(Model.Field.Id, id);
+        dao.delete(msg);
     }
 
     private ArrayList<NimMessage> messages = new ArrayList<>();
@@ -132,6 +141,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             mItemManger.removeShownLayouts(holder.getSwipeLayout());
             int pos = holder.getAdapterPosition();
             messages.remove(pos);
+            notifyItemRemoved(pos);
             mItemManger.closeAllItems();
         }
 

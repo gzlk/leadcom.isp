@@ -136,7 +136,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         // 如果当前显示的是组织页面才控制右上角的 + 显示与否
         int position = getDisplayedPage();
         boolean shown;
-        if (BuildConfig.DEBUG) {
+        if (!BuildConfig.RELEASEABLE) {
             // 测试状态下可以添加组织
             shown = position <= 2;
         } else {
@@ -173,7 +173,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     public void rightIconClick(View view) {
         if (getDisplayedPage() == 0) {
             // 新建组织
-            if (BuildConfig.DEBUG) {
+            if (!BuildConfig.RELEASEABLE) {
                 String string = PreferenceHelper.get(R.string.pf_static_temp_organization_create_alert, "");
                 if (isEmpty(string)) {
                     // 提醒测试人员这个功能目前只是为了测试方便而设置，release版本会取消

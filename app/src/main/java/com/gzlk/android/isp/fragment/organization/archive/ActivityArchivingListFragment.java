@@ -6,7 +6,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.ActArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.common.Attachment;
@@ -198,7 +197,7 @@ public class ActivityArchivingListFragment extends BaseSwipeRefreshSupportFragme
             } else {
                 String url = archive.getUrl();
                 String name = archive.getName();
-                String ext = Attachment.getExtension(url.contains("netease.com") ? name : url);
+                String ext = Attachment.getExtension(url.contains(FilePreviewHelper.NIM) ? name : url);
                 FilePreviewHelper.previewFile(Activity(), url, name, ext);
             }
             //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, mAdapter.get(index).getId()), true, false);
