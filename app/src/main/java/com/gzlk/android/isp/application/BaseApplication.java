@@ -115,6 +115,10 @@ public class BaseApplication extends Application {
      */
     public static final String CACHE_DIR = "cache";
     /**
+     * 本地Office文档缓存路径
+     */
+    public static final String ARCHIVE_DIR = "archive";
+    /**
      * 本地数据库缓存目录
      */
     public static final String DB_DIR = "database";
@@ -184,7 +188,7 @@ public class BaseApplication extends Application {
      */
     public String getCachePath(String dir) {
         StringBuilder sb = new StringBuilder();
-        if (!BuildConfig.DEBUG && dir.equals(DB_DIR)) {
+        if (BuildConfig.RELEASEABLE && dir.equals(DB_DIR)) {
             // release时，db文件放在内置私有目录下
             sb.append(gotCacheDir());
         } else {

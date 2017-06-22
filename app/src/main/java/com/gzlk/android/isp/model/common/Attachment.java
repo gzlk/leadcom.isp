@@ -9,6 +9,7 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.litesuits.http.data.TypeToken;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
@@ -292,7 +293,7 @@ public class Attachment extends Model {
         setId(url);
         fullPath = url;
         // 网易云只能通过文件名获取扩展名
-        ext = getExtension(url.contains("netease.com") ? name : url);
+        ext = getExtension(url.contains(FilePreviewHelper.NIM) ? name : url);
         type = getAttachmentType();
     }
 

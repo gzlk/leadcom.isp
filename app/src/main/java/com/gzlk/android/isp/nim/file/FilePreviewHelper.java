@@ -10,8 +10,8 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
+import com.gzlk.android.isp.fragment.common.OfficeOnlinePreviewFragment;
 import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
-import com.gzlk.android.isp.fragment.common.InnerWebViewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.common.Attachment;
@@ -32,6 +32,9 @@ import java.util.Locale;
 
 public class FilePreviewHelper {
 
+    public static final String NIM = "netease.com";
+    private static final String OFFICE_PREVIEW = "https://view.officeapps.live.com/op/view.aspx?src=";
+
     /**
      * 根据文件类型打开相应的文件预览
      */
@@ -48,7 +51,12 @@ public class FilePreviewHelper {
                 previewOnlineOffice(context, path, fileName);
                 return;
             }
+            previewMimeFile(context, path, extension);
         }
+    }
+
+    /**根据指定文件扩展名用本地第三方app打开文档*/
+    public static void previewMimeFile(Context context, String path, String extension) {
         try {
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
             File file = new File(path);
@@ -80,7 +88,8 @@ public class FilePreviewHelper {
      * 预览在线Office文档
      */
     private static void previewOnlineOffice(Context context, String path, String fileName) {
-        String param = StringHelper.format("https://view.officeapps.live.com/op/view.aspx?src=%s,%s", path, fileName);
-        BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), param, true, false);
+        String url = path.contains(NIM) ? StringHelper.format("%s%s", OFFICE_PREVIEW, path) : path;
+        String param = StringHelper.format("%s,%s", url, fileName);
+        BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), param, true, false);
     }
 }

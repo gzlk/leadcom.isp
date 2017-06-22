@@ -89,7 +89,7 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
                 materialHorizontalProgressBar.setVisibility(View.VISIBLE);
             }
             // 先下载然后再预览
-            downloadFile(mQueryId, App.CACHE_DIR);
+            downloadFile(mQueryId, App.ARCHIVE_DIR);
         }
     }
 
