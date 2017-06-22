@@ -39,7 +39,7 @@ public abstract class Request<T> {
      */
     public static final int PAGE_SIZE = 10;
 
-    private static final String URL = BaseApi.URL;
+    protected static final String URL = BaseApi.URL;
     /**
      * 新增
      */

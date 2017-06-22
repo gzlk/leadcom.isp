@@ -18,10 +18,6 @@ public class Api<T> extends BaseApi {
     // 成功或失败的消息描述
     private String msg;
 
-    public static String apiUrl() {
-        return URL;
-    }
-
     /**
      * 网络调用状态（true=成功，false=失败）
      */

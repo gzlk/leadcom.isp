@@ -151,10 +151,10 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         public void onResponse(Upload upload, boolean success, String message) {
             super.onResponse(upload, success, message);
             String uploadedFile = waitingForUploadFiles.get(uploadingIndex);
-            log(format("upload %s %s: %s", uploadedFile, success, upload));
+            log(format("upload %s success: %s", uploadedFile, success));
             if (success) {
                 // 默认为档案的附件
-                Attachment attachment = new Attachment(Attachment.Type.ARCHIVE, "", uploadedFile, upload.getResult(), upload.getResult2());
+                Attachment attachment = new Attachment(Attachment.Type.ARCHIVE, "", upload.getName(), upload.getUrl(), "");
                 uploadedFiles.add(attachment);
                 uploadingIndex++;
                 // 继续上传下一张图片

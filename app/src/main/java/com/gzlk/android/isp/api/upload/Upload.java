@@ -2,6 +2,9 @@ package com.gzlk.android.isp.api.upload;
 
 import com.gzlk.android.isp.api.Api;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * <b>功能描述：</b>文件上传返回的结果<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -15,34 +18,51 @@ import com.gzlk.android.isp.api.Api;
 
 public class Upload extends Api {
 
-    private String result;
-    private String result2;
+    private JSONObject result;
+    private String name;
+    private String url;
+
+    /**
+     * 分离文件名和url
+     */
+    void departData() {
+        if (null != result) {
+            try {
+                name = result.names().getString(0);
+                url = result.getString(name);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * 文件上传之后的url
      */
-    public String getResult() {
+    public JSONObject getResult() {
         return result;
     }
 
     /**
      * 文件上传之后的url
      */
-    public void setResult(String result) {
+    public void setResult(JSONObject result) {
         this.result = result;
     }
 
-    /**
-     * Office 文档的pdf预览文件
-     */
-    public String getResult2() {
-        return result2;
+    public String getName() {
+        return name;
     }
 
-    /**
-     * Office 文档的pdf预览文件
-     */
-    public void setResult2(String result2) {
-        this.result2 = result2;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

@@ -1,19 +1,24 @@
 package com.gzlk.android.isp.api.upload;
 
+import com.google.gson.internal.Excluder;
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.api.Api;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.listener.OnUploadingListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnHttpListener;
-import com.gzlk.android.isp.model.common.Attachment;
 import com.litesuits.http.request.AbstractRequest;
 import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.multi.FilePart;
 import com.litesuits.http.request.content.multi.MultipartBody;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
+
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -34,12 +39,7 @@ public class UploadRequest extends Request<Upload> {
         return new UploadRequest();
     }
 
-//    private static class SingleFile extends Api<Upload> {
-//    }
-
-    private static final String SINGLE_UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFile.do";
-    private static final String MULTI_UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFiles.do";
-    private static final String OFFICE_UPLOAD = "http://113.108.144.2:8045/lcbase-manage/upload/uploadFilePDF.do";
+    private static final String UPLOAD = "/upload/uploadFile";
 
     @Override
     protected String url(String action) {
@@ -73,22 +73,24 @@ public class UploadRequest extends Request<Upload> {
 
     private OnUploadingListener<String> onUploadingListener;
 
-    // 根据文件扩展名是否为office文档更改上传路径
-    private String path(String file) {
-        //return (Attachment.isOffice(Attachment.getExtension(file))) ? OFFICE_UPLOAD : SINGLE_UPLOAD;
-        return SINGLE_UPLOAD;
-    }
-
-    private JsonRequest<Api<Upload>> request(final String file) {
+    private JsonRequest<Upload> request(final String file) {
         MultipartBody body = new MultipartBody().addPart(new FilePart("file", new File(file)));
-        return new JsonRequest<Api<Upload>>(path(file), Upload.class).setHttpListener(new OnHttpListener<Api<Upload>>(true, true) {
+        String path = format("%s%s", URL, UPLOAD);
+        log(format("upload file %s\nto %s", file, path));
+        return new JsonRequest<Upload>(path, Upload.class).setHttpListener(new OnHttpListener<Upload>(true, true) {
             @Override
-            public void onSucceed(Api<Upload> data, Response<Api<Upload>> response) {
+            public void onSucceed(Upload data, Response<Upload> response) {
                 super.onSucceed(data, response);
                 if (data.success()) {
-                    Upload upload = (Upload) data;
-                    if (null != onSingleRequestListener) {
-                        onSingleRequestListener.onResponse(upload, data.success(), data.getMsg());
+                    try {
+                        JSONObject object = new JSONObject(response.getRawString());
+                        data.setResult(object.getJSONObject("result"));
+                        data.departData();
+                        if (null != onSingleRequestListener) {
+                            onSingleRequestListener.onResponse(data, data.success(), data.getMsg());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 } else {
                     log(format("upload response fail %s", data.getMsg()));
@@ -104,13 +106,13 @@ public class UploadRequest extends Request<Upload> {
             }
 
             @Override
-            public void onUploading(AbstractRequest<Api<Upload>> request, long total, long len) {
+            public void onUploading(AbstractRequest<Upload> request, long total, long len) {
                 super.onUploading(request, total, len);
                 if (null != onUploadingListener) {
                     onUploadingListener.onUploading(file, total, len);
                 }
             }
-        }).setHttpBody(body, HttpMethods.Post);
+        }).addHeader("accessToken", Cache.cache().accessToken).setHttpBody(body, HttpMethods.Post);
     }
 
     /**
