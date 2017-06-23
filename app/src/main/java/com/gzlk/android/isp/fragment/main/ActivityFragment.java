@@ -214,9 +214,21 @@ public class ActivityFragment extends BaseOrganizationFragment {
         super.onFetchingUnHandledActivityInviteComplete(list);
         int cnt = null == list ? 0 : list.size();
         String string = format(items[1], cnt);
-        SimpleClickableItem item = (SimpleClickableItem) mAdapter.get(1);
+        SimpleClickableItem item = new SimpleClickableItem(string);//(SimpleClickableItem) mAdapter.get(1);
         item.setSource(string);
-        mAdapter.notifyItemChanged(1);
+        if (cnt > 0) {
+            // 有未处理的活动请求时才显示活动，否则隐藏
+            if (mAdapter.exist(item)) {
+                mAdapter.update(item);
+            } else {
+                mAdapter.add(item, 1);
+            }
+            //mAdapter.notifyItemChanged(1);
+        } else {
+            if (mAdapter.exist(item)) {
+                mAdapter.remove(item);
+            }
+        }
         displayLoading(false);
     }
 
@@ -282,7 +294,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     text = format(string, 0);
                 } else {
                     // 议题
-                    text = format(string, 0);
+                    text = "";//format(string, 0);
                 }
             } else {
                 text = string;

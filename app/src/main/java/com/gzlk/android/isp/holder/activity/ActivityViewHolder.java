@@ -36,6 +36,8 @@ import java.util.List;
 
 public class ActivityViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_activity_item_container)
+    private CorneredView rootContainer;
     @ViewId(R.id.ui_holder_view_activity_item_icon_container)
     private CorneredView iconContainer;
     @ViewId(R.id.ui_holder_view_activity_item_headers)
@@ -65,7 +67,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         descView.setText(strings[3]);
         headers.setVisibility(View.GONE);
         iconText.setVisibility(View.VISIBLE);
-        flagView.setVisibility(strings[3].startsWith("0个") ? View.GONE : View.VISIBLE);
+        flagView.setVisibility(strings[3].charAt(0) == '0' ? View.GONE : View.VISIBLE);
         iconContainer.setBackground(getColor(text.charAt(0) == '1' ? R.color.color_fe4848 : R.color.color_faaa2d));
     }
 

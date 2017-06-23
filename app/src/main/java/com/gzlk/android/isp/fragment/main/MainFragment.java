@@ -158,6 +158,20 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
         iconView4.setTextColor(position == 3 ? color2 : color1);
         textView4.setTextColor(position == 3 ? color2 : color1);
+        switch (position) {
+            case 0:
+                // 首页
+                toolBarTitleText.setText(R.string.app_name_default);
+                break;
+            case 1:
+                // 活动
+                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_2);
+                break;
+            case 3:
+                // 个人
+                toolBarTitleText.setText(null);
+                break;
+        }
 
         if (position != 2) {
             restoreTitleText();

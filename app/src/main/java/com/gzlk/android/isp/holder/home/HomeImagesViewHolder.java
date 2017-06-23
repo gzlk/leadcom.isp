@@ -63,7 +63,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
      */
     private void calculateImageHeight() {
         float scale = (imageWidth * 1.0F / WIDTH);
-        imageHeight = (int) (HEIGHT * scale);
+        imageHeight = imageWidth / 2;//(int) (HEIGHT * scale);
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) container.getLayoutParams();
         params.height = imageHeight;
         container.setLayoutParams(params);
