@@ -148,7 +148,8 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         boolean isMe = !isEmpty(archive.getUserId()) && archive.getUserId().equals(Cache.cache().userId);
         if (archiveType == Archive.Type.GROUP) {
             Member member = StructureFragment.my;
-            return isMe || (null != member && member.archiveApprovable());
+            // 我在组织内的角色可以编辑档案的话，显示编辑按钮
+            return isMe || (null != member && member.archiveEditable());
         }
         return isMe;
     }

@@ -523,12 +523,13 @@ public class ContactFragment extends BaseOrganizationFragment {
         Member member = mAdapter.get(index);
         setLoadingText(member.isManager() ? R.string.ui_organization_contact_unseting_manager : R.string.ui_organization_contact_seting_manager);
         displayLoading(true);
+        boolean isManager = member.isManager();
         Role role = new Role();
-        role.setId(member.isManager() ? Member.Code.GROUP_COMMON_MEMBER_ROLE_ID :
+        role.setId(isManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_ID :
                 showType == TYPE_ORG ? Member.Code.GROUP_MANAGER_ROLE_ID : Member.Code.GROUP_SQUAD_MANAGER_ROLE_ID);
-        role.setRoleName(member.isManager() ? Member.Code.GROUP_COMMON_MEMBER_ROLE_NAME :
+        role.setRoleName(isManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_NAME :
                 showType == TYPE_ORG ? Member.Code.GROUP_MANAGER_ROLE_NAME : Member.Code.GROUP_SQUAD_MANAGER_ROLE_NAME);
-        role.setRolCode(member.isManager() ? Member.Code.GROUP_COMMON_MEMBER_ROLE_CODE :
+        role.setRolCode(isManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_CODE :
                 showType == TYPE_ORG ? Member.Code.GROUP_MANAGER_ROLE_CODE : Member.Code.GROUP_SQUAD_MANAGER_ROLE_CODE);
         updateMember(member, role, false);
     }
@@ -548,9 +549,10 @@ public class ContactFragment extends BaseOrganizationFragment {
         setLoadingText(member.isArchiveManager() ? R.string.ui_organization_contact_unset_to_archive_manager : R.string.ui_organization_contact_set_to_archive_manager);
         displayLoading(true);
         Role role = new Role();
-        role.setId(member.isArchiveManager() ? Member.Code.GROUP_COMMON_MEMBER_ROLE_ID : Member.Code.GROUP_DOC_MANAGER_ROLE_ID);
-        role.setRolCode(member.isArchiveManager() ? Member.Code.GROUP_COMMON_MEMBER_ROLE_CODE : Member.Code.GROUP_DOC_MANAGER_ROLE_CODE);
-        role.setRoleName(member.isArchiveManager() ? Member.Code.GROUP_COMMON_MEMBER_ROLE_NAME : Member.Code.GROUP_DOC_MANAGER_ROLE_NAME);
+        boolean isArchiveManager = member.isArchiveManager();
+        role.setId(isArchiveManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_ID : Member.Code.GROUP_DOC_MANAGER_ROLE_ID);
+        role.setRolCode(isArchiveManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_CODE : Member.Code.GROUP_DOC_MANAGER_ROLE_CODE);
+        role.setRoleName(isArchiveManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_NAME : Member.Code.GROUP_DOC_MANAGER_ROLE_NAME);
         updateMember(member, role, false);
     }
 

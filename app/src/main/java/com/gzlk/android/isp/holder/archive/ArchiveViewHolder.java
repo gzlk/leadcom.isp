@@ -61,7 +61,7 @@ public class ArchiveViewHolder extends BaseViewHolder {
         userName.setText(archive.getUserName());
         createTime.setText(Utils.format(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format)));
         documentTitle.setText(Html.fromHtml(archive.getTitle()));
-        documentContentText.setText(StringHelper.escapeFromHtml(archive.getContent()));
+        documentContentText.setText(StringHelper.escapeFromHtml(archive.getIntro()));
         documentContentText.makeExpandable();
         additionalViewHolder.showContent(archive);
     }
