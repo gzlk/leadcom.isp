@@ -24,13 +24,32 @@ import com.hlk.hlklib.lib.inject.ViewId;
 
 public class ActivityArchivingManagementFragment extends BaseViewPagerSupportFragment {
 
+    private static final String PARAM_ARCHIVE_ID = "aamf_archive_id";
+
     public static ActivityArchivingManagementFragment newInstance(String params) {
         ActivityArchivingManagementFragment af = new ActivityArchivingManagementFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 传过来的活动的id
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 文档的id
+        bundle.putString(PARAM_ARCHIVE_ID, strings[1]);
         af.setArguments(bundle);
         return af;
+    }
+
+    private String mArchiveId;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        mArchiveId = bundle.getString(PARAM_ARCHIVE_ID, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_ARCHIVE_ID, mArchiveId);
     }
 
     @ViewId(R.id.ui_tool_view_archive_approving_title_1)
@@ -55,7 +74,7 @@ public class ActivityArchivingManagementFragment extends BaseViewPagerSupportFra
             @Override
             public void onClick() {
                 // 打开活动文档的存档页面
-                openActivity(ActivityArchivingFragment.class.getName(), mQueryId, true, false);
+                openActivity(ActivityArchivingFragment.class.getName(), format("%s,%s", mQueryId, mArchiveId), true, false);
             }
         });
         super.doingInResume();

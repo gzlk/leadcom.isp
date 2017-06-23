@@ -429,7 +429,7 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 存档组织档案
+     * 存档组织档案(活动结束后生成的档案)
      *
      * @param archiveId 档案id
      * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveStatus}

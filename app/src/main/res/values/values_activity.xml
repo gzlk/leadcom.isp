@@ -150,7 +150,12 @@
     <string name="ui_activity_archive_nothing_all">活动中没有更多未审核的文档了</string>
     <string name="ui_activity_archive_nothing_archive">活动中没有更多未审核的文档了</string>
     <string name="ui_activity_archive_nothing_image">活动中没有更多图片了</string>
-    <string name="ui_activity_archive_nothing_video">活动中没有更视频了</string>
+    <string name="ui_activity_archive_nothing_video">活动中没有更多视频了</string>
+    <string name="ui_activity_archive_archiving_file">正在存档文件&#8230;</string>
+    <string name="ui_activity_archive_archived_file">该文件已经存档了</string>
+    <string name="ui_activity_archive_file_complete">已将选中文件存为档案</string>
+    <string name="ui_activity_archive_no_more_file">没有更多可以存档的文件了</string>
+    <string name="ui_activity_archive_archiving_activity">正在将活动存为文档&#8230;</string>
 
     <string name="ui_activity_archiving_no_attachment_name">[没有文件名]</string>
     <string name="ui_activity_archiving_source">来源：%s</string>

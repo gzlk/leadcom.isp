@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.ActArchiveRequest;
+import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -15,6 +16,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.ActArchive;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -39,23 +41,29 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_SELECT_ALL = "aaf_select_all_";
     private static final String PARAM_SEARCHED = "aaf_last_searched";
+    private static final String PARAM_ARCHIVE_ID = "aaf_archive_id";
 
     public static ActivityArchivingFragment newInstance(String params) {
         ActivityArchivingFragment af = new ActivityArchivingFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 活动的id
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 活动档案的id
+        bundle.putString(PARAM_ARCHIVE_ID, strings[1]);
         af.setArguments(bundle);
         return af;
     }
 
     private String searchedText = "";
+    private String mArchiveId = "";
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         isSelectAll = bundle.getBoolean(PARAM_SELECT_ALL, false);
         searchedText = bundle.getString(PARAM_SEARCHED, "");
+        mArchiveId = bundle.getString(PARAM_ARCHIVE_ID, "");
     }
 
     @Override
@@ -63,6 +71,7 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_SELECT_ALL, isSelectAll);
         bundle.putString(PARAM_SEARCHED, searchedText);
+        bundle.putString(PARAM_ARCHIVE_ID, mArchiveId);
     }
 
     @ViewId(R.id.ui_tool_view_select_all_root)
@@ -151,16 +160,18 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
     private int archivingIndex = 0;
 
     /**
-     * 存档全选的文件
+     * 开始存档全选的文件
      */
     private void archiveSelectedArchives() {
         if (getUnArchived() > 0) {
-            showImageHandlingDialog(R.string.ui_activity_archiving_update);
+            setLoadingText(R.string.ui_activity_archiving_update);
             archivingIndex = 0;
             archivingArchive();
         } else {
-            ToastHelper.make().showMsg("没有更多可以存档的文件了");
+            ToastHelper.make().showMsg(R.string.ui_activity_archive_no_more_file);
             rejectView.setEnabled(false);
+            // 没有文件可以存档，此时将活动存为档案
+            archivingActivityAsArchive();
         }
     }
 
@@ -189,17 +200,38 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                 archivingArchive();
             }
         } else {
-            hideImageHandlingDialog();
-            ToastHelper.make().showMsg("已将选中文件存为档案");
+            // 文件存档完毕，把活动存为档案
+            ToastHelper.make().showMsg(R.string.ui_activity_archive_file_complete);
             rejectView.setEnabled(false);
-            finish();
+            archivingActivityAsArchive();
         }
+    }
+
+    /**
+     * 将本活动当作文档存档
+     */
+    private void archivingActivityAsArchive() {
+        setLoadingText(R.string.ui_activity_archive_archiving_activity);
+        displayLoading(true);
+        displayNothing(false);
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                displayLoading(false);
+                if (success) {
+                    finish();
+                } else {
+                    rejectView.setEnabled(true);
+                    ToastHelper.make().showMsg(message);
+                }
+            }
+        }).archive(mArchiveId, Archive.ArchiveStatus.APPROVED);
     }
 
     // 重置全选或全不选状态
     private void resetSelectAll() {
         selectAllIcon.setTextColor(getColor(isSelectAll ? R.color.colorPrimary : R.color.textColorHintLight));
-        boolean isSelectedSomeThing = false;
         int selectedCount = 0;
         for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
             ActArchive archive = (ActArchive) mAdapter.get(i);
@@ -207,13 +239,12 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                 archive.setSelected(isSelectAll);
                 mAdapter.notifyItemChanged(i);
                 if (archive.isSelected()) {
-                    isSelectedSomeThing = true;
                     selectedCount++;
                 }
             }
         }
         // 全选选中了东西之后才可以显示更新
-        rejectView.setEnabled(isSelectedSomeThing);
+        //rejectView.setEnabled(isSelectedSomeThing);
         if (selectedCount > 10) {
             ToastHelper.make().showMsg(R.string.ui_activity_archiving_selected_too_much);
         }
@@ -227,7 +258,7 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                 // 没有存档则存档
                 archiveActivityArchive(archive.getId(), archive.getActId(), index);
             } else {
-                ToastHelper.make().showMsg("该文件已经存档了");
+                ToastHelper.make().showMsg(R.string.ui_activity_archive_archived_file);
             }
         }
     };
@@ -236,13 +267,17 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
      * 存档活动里的文件
      */
     private void archiveActivityArchive(String fileId, String actId, final int index) {
+        setLoadingText(R.string.ui_activity_archive_archiving_file);
+        displayLoading(true);
+        displayNothing(false);
         ActArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ActArchive>() {
             @Override
             public void onResponse(ActArchive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
+                displayLoading(false);
                 if (success) {
                     //mAdapter.remove(index);
-                    rejectView.setEnabled(getUnArchived() > 0);
+                    //rejectView.setEnabled(getUnArchived() > 0);
                     ActArchive acv = (ActArchive) mAdapter.get(index);
                     // 存档成功
                     acv.setStatus(Attachment.AttachmentStatus.ARCHIVED);
@@ -254,9 +289,7 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                         archivingArchive();
                     }
                 } else {
-                    if (isSelectAll) {
-                        hideImageHandlingDialog();
-                    }
+                    ToastHelper.make().showMsg(message);
                 }
             }
         }).update(fileId, actId, Attachment.AttachmentStatus.ARCHIVED);
@@ -267,7 +300,6 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new ArchiveAdapter(this);
             mAdapter.setOnViewHolderClickListener(onViewHolderClickListener);
             mRecyclerView.setAdapter(mAdapter);
-            rejectView.setEnabled(false);
         }
         if (null == searchableViewHolder) {
             searchableViewHolder = new SearchableViewHolder(mRootView, this);
@@ -290,6 +322,7 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
     };
 
     private void fetchingUnArchived() {
+        setLoadingText(R.string.ui_activity_archive_loading_all);
         displayLoading(true);
         displayNothing(false);
         ActArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<ActArchive>() {

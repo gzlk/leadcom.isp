@@ -2,13 +2,11 @@ package com.gzlk.android.isp.fragment.organization.archive;
 
 import android.os.Bundle;
 
-import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
-import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
 
@@ -152,7 +150,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
             Archive acv = (Archive) mAdapter.get(index);
             if (mType == TYPE_ARCHIVING) {
                 // 待存档档案，打开活动存档页面（2017-06-21 11:30）
-                openActivity(ActivityArchivingManagementFragment.class.getName(), acv.getActId(), true, false);
+                openActivity(ActivityArchivingManagementFragment.class.getName(), format("%s,%s", acv.getActId(), acv.getId()), true, false);
                 // 只有活动的档案才会出现未存档
                 // 打开未存档档案页，将其存档
 //                String json = Json.gson().toJson(acv, new TypeToken<Archive>() {
