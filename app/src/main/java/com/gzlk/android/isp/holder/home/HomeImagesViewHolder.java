@@ -2,6 +2,7 @@ package com.gzlk.android.isp.holder.home;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -42,15 +43,30 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     @ViewId(R.id.ui_holder_view_home_image_indicator)
     private LinearLayout indicator;
 
+    /**
+     * 默认图片宽高尺寸
+     */
+    private static final int WIDTH = 750, HEIGHT = 370;
     private int currentPosition = 0;
     private int imageHeight, imageWidth;
 
     public HomeImagesViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
-        imageHeight = getDimension(R.dimen.ui_static_dp_150);
         imageWidth = fragment.getScreenWidth();
+        calculateImageHeight();
         initialize();
+    }
+
+    /**
+     * 根据手机屏幕分辨率计算焦点图的高度
+     */
+    private void calculateImageHeight() {
+        float scale = (imageWidth * 1.0F / WIDTH);
+        imageHeight = (int) (HEIGHT * scale);
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) container.getLayoutParams();
+        params.height = imageHeight;
+        container.setLayoutParams(params);
     }
 
     private void initialize() {
