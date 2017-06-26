@@ -3,7 +3,9 @@ package com.gzlk.android.isp.nim.model.notification;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
@@ -25,6 +27,7 @@ public class NimMessage implements MsgAttachment {
     interface PARAM {
         String TABLE = "notification";
         String HANDLED = "handled";
+        String HANDLE_STATE = "handleState";
     }
 
     @Override
@@ -98,11 +101,11 @@ public class NimMessage implements MsgAttachment {
             case Type.JOIN_TO_GROUP:
                 return "申请加入组织";
             case Type.INVITE_TO_GROUP:
-                return "邀请加入组织";
+                return "邀请您加入组织";
             case Type.ACTIVITY_INVITE:
-                return "邀请加入活动";
+                return "邀请您加入活动";
             case Type.INVITE_TO_SQUAD:
-                return "邀请加入小组";
+                return "邀请您加入小组";
             case Type.ACTIVITY_NOTIFICATION:
                 return "活动通知";
             case Type.SYSTEM_NOTIFICATION:
@@ -126,9 +129,18 @@ public class NimMessage implements MsgAttachment {
     // 自定义消息id
     @Column(Model.Field.UUID)
     private String uuid;
-
+    // 活动的tid
+    @Column(Activity.Field.NimId)
+    private String tid;
+    // 活动所属的组织
+    @Column(Organization.Field.GroupId)
+    private String groupId;
+    // 是否已处理
     @Column(PARAM.HANDLED)
     private boolean handled;
+    // 处理状态，true=已处理，false=已拒绝
+    @Column(PARAM.HANDLE_STATE)
+    private boolean handleState;
 
     public long getId() {
         return id;
@@ -170,12 +182,36 @@ public class NimMessage implements MsgAttachment {
         this.uuid = uuid;
     }
 
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
     public boolean isHandled() {
         return handled;
     }
 
     public void setHandled(boolean handled) {
         this.handled = handled;
+    }
+
+    public boolean isHandleState() {
+        return handleState;
+    }
+
+    public void setHandleState(boolean handleState) {
+        this.handleState = handleState;
     }
 
     @Override

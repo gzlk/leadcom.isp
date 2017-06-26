@@ -34,8 +34,8 @@
             android:layout_alignBottom="@+id/ui_tool_individual_main_functions_2_text"
             android:layout_toEndOf="@+id/ui_tool_individual_main_functions_2_text"
             android:rotation="90"
-            android:textSize="@dimen/ui_base_text_size_little"
-            android:text="@string/ui_icon_right" />
+            android:text="@string/ui_icon_right"
+            android:textSize="@dimen/ui_base_text_size_little" />
     </RelativeLayout>
 
     <TextView
@@ -51,6 +51,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center" />
+        android:gravity="center"
+        android:visibility="gone" />
 
 </LinearLayout>

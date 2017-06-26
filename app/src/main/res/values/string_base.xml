@@ -3,7 +3,7 @@
 
     <string name="app_name">@string/app_name_default</string>
     <string name="app_sms_stuff_header">历康科技</string>
-    <string name="app_company_name">广州历康信息科技股份有限公</string>
+    <string name="app_company_name">广州历康信息科技股份有限公司</string>
     <string name="app_company_website">www.leadcom.net.cn</string>
 
     <string name="ui_base_text_welcome_button">立即进入</string>

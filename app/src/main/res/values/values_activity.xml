@@ -2,7 +2,7 @@
 <resources>
 
     <string name="ui_activity_manage_tooltip_menu_1">活动管理</string>
-    <string name="ui_activity_manage_tooltip_menu_2">添加活动</string>
+    <string name="ui_activity_manage_tooltip_menu_2">新建活动</string>
 
     <string name="ui_activity_base_not_join_in">未参加</string>
 
@@ -80,7 +80,7 @@
         <item>|%s|活动地点|[a-zA-Z0-9\u4e00-\u9fa5]+||50</item>
         <item>2|活动类型|%s|1</item>
         <item>3|公开范围|%s|1</item>
-        <item>4|参与人员|%s|2</item>
+        <item>4|邀请参与人|%s|2</item>
         <item>|%s|填写活动说明|||50</item>
     </string-array>
     <string-array name="ui_activity_open_status">

@@ -1,14 +1,18 @@
 package com.gzlk.android.isp.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.GroupJoinRequest;
 import com.gzlk.android.isp.api.org.InvitationRequest;
+import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -136,8 +140,8 @@ public class MainActivity extends TitleActivity {
             if (!StringHelper.isEmpty(json)) {
                 NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
                 if (null != msg) {
-                    new Dao<>(NimMessage.class).save(msg);
-                    handleNimMessageDetails(msg);
+                    //new Dao<>(NimMessage.class).save(msg);
+                    handleNimMessageDetails(MainActivity.this, msg);
                 }
             }
         }
@@ -163,18 +167,18 @@ public class MainActivity extends TitleActivity {
                     MsgAttachment attachment = message.getAttachment();
                     if (attachment instanceof NimMessage) {
                         NimMessage nim = (NimMessage) attachment;
-                        handleNimMessageDetails(nim);
+                        handleNimMessageDetails(this, nim);
                     }
                 }
             } else if (intent.hasExtra(EXTRA_NOTIFICATION)) {
                 // 自定义系统通知
                 NimMessage msg = (NimMessage) intent.getSerializableExtra(EXTRA_NOTIFICATION);
-                handleNimMessageDetails(msg);
+                handleNimMessageDetails(this, msg);
             }
         }
     }
 
-    private void handleNimMessageDetails(final NimMessage msg) {
+    public static void handleNimMessageDetails(final AppCompatActivity activity, final NimMessage msg) {
         String yes = "", no = "";
         switch (msg.getType()) {
             case NimMessage.Type.JOIN_TO_GROUP:
@@ -209,9 +213,17 @@ public class MainActivity extends TitleActivity {
                 // 新成员同意或不同意邀请，邀请方都只有一个按钮“知道了”
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
+            case NimMessage.Type.ACTIVITY_INVITE:
+                // 活动邀请，下一步打开未处理活动页面
+                yes = StringHelper.getString(R.string.ui_base_text_next_step);
+                break;
+            case NimMessage.Type.SYSTEM_NOTIFICATION:
+                // 系统通知，只提醒就可以了
+                yes = StringHelper.getString(R.string.ui_base_text_i_known);
+                break;
         }
         if (!StringHelper.isEmpty(yes)) {
-            SimpleDialogHelper.init(this).show(msg.getMsgContent(), yes, no, new DialogHelper.OnDialogConfirmListener() {
+            SimpleDialogHelper.init(activity).show(msg.getMsgContent(), yes, no, new DialogHelper.OnDialogConfirmListener() {
                 @Override
                 public boolean onConfirm() {
                     switch (msg.getType()) {
@@ -226,6 +238,9 @@ public class MainActivity extends TitleActivity {
                         case NimMessage.Type.INVITE_TO_SQUAD:
                             // 通过别人的邀请加入组织
                             inviteToSquadPassed(msg);
+                            break;
+                        case NimMessage.Type.ACTIVITY_INVITE:
+                            openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s", msg.getTid()), true, false);
                             break;
                     }
                     return true;
@@ -252,14 +267,24 @@ public class MainActivity extends TitleActivity {
         }
     }
 
+    private static void saveMessage(NimMessage msg, boolean handled, boolean state) {
+        msg.setHandled(handled);
+        msg.setHandleState(state);
+        new Dao<>(NimMessage.class).save(msg);
+    }
+
     /**
      * 处理申请入群的审批操作
      */
-    private void joinIntoGroupPassed(NimMessage msg) {
+    private static void joinIntoGroupPassed(final NimMessage msg) {
         GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
             @Override
             public void onResponse(JoinGroup joinGroup, boolean success, String message) {
                 super.onResponse(joinGroup, success, message);
+                if (success) {
+                    // 处理成功之后保存当前消息状态
+                    saveMessage(msg, true, true);
+                }
             }
         }).approveJoin(msg.getUuid(), "");
     }
@@ -267,11 +292,15 @@ public class MainActivity extends TitleActivity {
     /**
      * 处理申请入群的拒绝操作
      */
-    private void joinIntoGroupDenied(NimMessage msg) {
+    private static void joinIntoGroupDenied(final NimMessage msg) {
         GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
             @Override
             public void onResponse(JoinGroup joinGroup, boolean success, String message) {
                 super.onResponse(joinGroup, success, message);
+                if (success) {
+                    // 处理成功之后保存当前消息状态
+                    saveMessage(msg, true, false);
+                }
             }
         }).rejectJoin(msg.getUuid(), "");
     }
@@ -279,11 +308,15 @@ public class MainActivity extends TitleActivity {
     /**
      * 处理受邀入群的审批操作
      */
-    private void inviteToGroupPassed(NimMessage msg) {
+    private static void inviteToGroupPassed(final NimMessage msg) {
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
+                if (success) {
+                    // 处理成功之后保存当前消息状态
+                    saveMessage(msg, true, true);
+                }
             }
         }).agreeInviteToGroup(msg.getUuid(), "");
     }
@@ -291,11 +324,15 @@ public class MainActivity extends TitleActivity {
     /**
      * 处理受邀入群的拒绝操作
      */
-    private void inviteToGroupDenied(NimMessage msg) {
+    private static void inviteToGroupDenied(final NimMessage msg) {
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
+                if (success) {
+                    // 处理成功之后保存当前消息状态
+                    saveMessage(msg, true, false);
+                }
             }
         }).disagreeInviteToGroup(msg.getUuid(), "");
     }
@@ -303,11 +340,15 @@ public class MainActivity extends TitleActivity {
     /**
      * 接受邀请加入小组
      */
-    private void inviteToSquadPassed(NimMessage msg) {
+    private static void inviteToSquadPassed(final NimMessage msg) {
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
+                if (success) {
+                    // 处理成功之后保存当前消息状态
+                    saveMessage(msg, true, true);
+                }
             }
         }).agreeInviteToSquad(msg.getUuid(), "");
     }
@@ -315,11 +356,15 @@ public class MainActivity extends TitleActivity {
     /**
      * 拒绝加入小组
      */
-    private void inviteToSquadDenied(NimMessage msg) {
+    private static void inviteToSquadDenied(final NimMessage msg) {
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
+                if (success) {
+                    // 处理成功之后保存当前消息状态
+                    saveMessage(msg, true, false);
+                }
             }
         }).disagreeInviteToSquad(msg.getUuid(), "");
     }

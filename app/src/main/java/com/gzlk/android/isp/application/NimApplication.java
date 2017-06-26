@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.application;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
@@ -7,12 +8,18 @@ import android.text.TextUtils;
 
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.activity.WelcomeActivity;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.crash.system.SysInfoUtil;
 import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.helper.NotificationHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
@@ -22,7 +29,9 @@ import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 /**
@@ -55,6 +64,8 @@ public class NimApplication extends BaseActivityManagedApplication {
             NimSessionHelper.init();
 
             handleUserOnlineStatus();
+
+            observeCustomNotification();
         }
     }
 
@@ -164,6 +175,29 @@ public class NimApplication extends BaseActivityManagedApplication {
                 } else if (status.shouldReLogin()) {
                     if (StatusCode.typeOfValue(status.getValue()) == StatusCode.NET_BROKEN) {
                         ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_net_broken);
+                    }
+                }
+            }
+        }, true);
+    }
+
+    private void observeCustomNotification() {
+        // 如果有自定义通知是作用于全局的，不依赖某个特定的 Activity，那么这段代码应该在 Application 的 onCreate 中就调用
+        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
+            @Override
+            public void onEvent(CustomNotification message) {
+                LogHelper.log("demo", "custom notification: " + message.getContent() + " from :" + message.getSessionId() + "/" + message.getSessionType());
+                // 在这里处理自定义通知。
+                String json = message.getContent();
+                if (!StringHelper.isEmpty(json)) {
+                    NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
+                    if (null != msg) {
+                        new Dao<>(NimMessage.class).save(msg);
+                        if (!SysInfoUtil.isAppOnForeground(NimApplication.this)) {
+                            // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
+                            Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
+                            NotificationHelper.helper(NimApplication.this).show("通知", msg.getMsgContent(), extra);
+                        }
                     }
                 }
             }

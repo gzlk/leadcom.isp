@@ -55,7 +55,9 @@ public class SystemMessageViewHolder extends BaseViewHolder {
     public void showContent(NimMessage msg) {
         titleView.setText(getTitle(msg));
         descView.setText(msg.getMsgContent());
-        timeView.setText(Utils.formatTimeAgo(new Date(msg.getId())));
+        String time = Utils.formatTimeAgo(new Date(msg.getId()));
+        String handled = !isEmpty(msg.getMsgTitle()) ? "" : (msg.isHandled() ? (msg.isHandleState() ? "(已同意)" : "(已拒绝)") : "(未处理)");
+        timeView.setText(format("%s%s", time, handled));
     }
 
     private String getTitle(NimMessage msg) {
@@ -69,11 +71,13 @@ public class SystemMessageViewHolder extends BaseViewHolder {
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_holder_view_system_message_container:
+                // 打开查看详情
                 if (null != mOnViewHolderClickListener) {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }
                 break;
             case R.id.ui_holder_view_system_message_delete:
+                // 删除
                 if (null != dataHandlerBoundDataListener) {
                     dataHandlerBoundDataListener.onHandlerBoundData(SystemMessageViewHolder.this);
                 }

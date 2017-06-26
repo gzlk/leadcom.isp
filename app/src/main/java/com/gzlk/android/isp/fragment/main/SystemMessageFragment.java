@@ -7,15 +7,22 @@ import android.view.ViewGroup;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.MainActivity;
+import com.gzlk.android.isp.api.activity.ActRequest;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.SystemMessageViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +94,9 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void loadingLocalMessages() {
-        List<NimMessage> list = new Dao<>(NimMessage.class).query();
+        QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
+                .appendOrderDescBy(Model.Field.Id);
+        List<NimMessage> list = new Dao<>(NimMessage.class).query(builder);
         if (null != list) {
             for (NimMessage msg : list) {
                 if (!messages.contains(msg)) {
@@ -103,6 +112,11 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             // 点击查看通知
+            NimMessage msg = messages.get(index);
+            //if (isEmpty(msg.getMsgTitle())) {
+                MainActivity.handleNimMessageDetails(Activity(), msg);
+            //} else {
+            //}
         }
     };
 

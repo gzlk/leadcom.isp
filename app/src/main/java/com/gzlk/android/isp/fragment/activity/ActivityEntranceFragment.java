@@ -49,6 +49,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         Bundle bundle = new Bundle();
         // 活动的id
         bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 活动的tid
         bundle.putString(PARAM_TID, strings[1]);
         siaf.setArguments(bundle);
         return siaf;
@@ -115,7 +116,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        fetchActivity();
+        fetchingActivity();
     }
 
     @Override
@@ -188,6 +189,14 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         });
     }
 
+    private void fetchingActivity() {
+        if (isEmpty(mQueryId)) {
+            fetchingActivityByTid();
+        } else {
+            fetchActivity();
+        }
+    }
+
     private void fetchActivity() {
         displayLoading(true);
         ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
@@ -203,6 +212,23 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
             }
         }).find(mQueryId);
+    }
+
+    private void fetchingActivityByTid() {
+        displayLoading(true);
+        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+            @Override
+            public void onResponse(Activity activity, boolean success, String message) {
+                super.onResponse(activity, success, message);
+                if (success) {
+                    if (null != activity) {
+                        initializeHolders(activity);
+                        initializeAttachments(activity.getAttUrlArray());
+                    }
+                }
+                displayLoading(false);
+            }
+        }).findByTid(tid);
     }
 
     private void initializeHolders(Activity activity) {
@@ -261,7 +287,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new AttachmentAdapter();
             mRecyclerView.setAdapter(mAdapter);
             initializeHolders(null);
-            fetchActivity();
+            fetchingActivity();
         }
     }
 
