@@ -193,7 +193,7 @@ public class NimApplication extends BaseActivityManagedApplication {
                     NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
                     if (null != msg) {
                         new Dao<>(NimMessage.class).save(msg);
-                        if (!SysInfoUtil.isAppOnForeground(NimApplication.this)) {
+                        if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
                             // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
                             Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
                             NotificationHelper.helper(NimApplication.this).show("通知", msg.getMsgContent(), extra);

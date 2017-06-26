@@ -17,10 +17,12 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Invitation;
+import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -151,6 +153,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 hideImageHandlingDialog();
                 ToastHelper.make().showMsg(message);
                 if (success) {
+                    handleHandledActivity(false);
                     finish();
                 }
             }
@@ -165,11 +168,22 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(invitation, success, message);
                 hideImageHandlingDialog();
                 if (success) {
+                    handleHandledActivity(true);
                     ToastHelper.make().showMsg(message);
                     warningApproveSuccess();
                 }
             }
         }).activityApprove(tid);
+    }
+
+    private void handleHandledActivity(boolean agree) {
+        Dao<NimMessage> dao = new Dao<>(NimMessage.class);
+        NimMessage msg = dao.querySingle(Activity.Field.NimId, tid);
+        if (null != msg) {
+            msg.setHandled(true);
+            msg.setHandleState(agree);
+            dao.save(msg);
+        }
     }
 
     private void warningApproveSuccess() {

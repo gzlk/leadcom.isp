@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,10 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.GroupJoinRequest;
 import com.gzlk.android.isp.api.org.InvitationRequest;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -94,6 +93,20 @@ public class MainActivity extends TitleActivity {
         //registerUpgradeListener();
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    protected void onStart() {
+        super.onStart();
+        App.app().setAppStayInBackground(false);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    protected void onStop() {
+        App.app().setAppStayInBackground(true);
+        super.onStop();
+    }
+
     @Override
     protected boolean onBackKeyEvent(int keyCode, KeyEvent event) {
         return mainFragment.onBackKeyEvent();
@@ -133,6 +146,7 @@ public class MainActivity extends TitleActivity {
 
     // 自定义系统通知类
     Observer<CustomNotification> customNotificationObserver = new Observer<CustomNotification>() {
+        @SuppressWarnings("ConstantConditions")
         @Override
         public void onEvent(CustomNotification message) {
             // 在这里处理自定义通知。
@@ -141,7 +155,9 @@ public class MainActivity extends TitleActivity {
                 NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
                 if (null != msg) {
                     //new Dao<>(NimMessage.class).save(msg);
-                    handleNimMessageDetails(MainActivity.this, msg);
+                    if (!App.app().isAppStayInBackground()) {
+                        handleNimMessageDetails(MainActivity.this, msg);
+                    }
                 }
             }
         }
@@ -215,7 +231,8 @@ public class MainActivity extends TitleActivity {
                 break;
             case NimMessage.Type.ACTIVITY_INVITE:
                 // 活动邀请，下一步打开未处理活动页面
-                yes = StringHelper.getString(R.string.ui_base_text_next_step);
+                yes = StringHelper.getString(R.string.ui_base_text_have_a_look);
+                no = msg.isHandled() ? "" : StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
             case NimMessage.Type.SYSTEM_NOTIFICATION:
                 // 系统通知，只提醒就可以了
@@ -240,7 +257,13 @@ public class MainActivity extends TitleActivity {
                             inviteToSquadPassed(msg);
                             break;
                         case NimMessage.Type.ACTIVITY_INVITE:
-                            openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s", msg.getTid()), true, false);
+                            if (msg.isHandled()) {
+                                // 如果消息已经处理过了，则直接打开群聊页面
+                                NimUIKit.startTeamSession(activity, msg.getTid());
+                            } else {
+                                // 消息没有处理过则打开加入活动页面
+                                openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s", msg.getTid()), true, false);
+                            }
                             break;
                     }
                     return true;
