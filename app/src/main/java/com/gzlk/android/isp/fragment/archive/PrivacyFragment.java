@@ -121,7 +121,7 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
                 return StringHelper.getString(R.string.ui_base_text_public);
             case Seclusion.Type.Group:
                 // 组织内公开
-                return StringHelper.getString(R.string.ui_security_force_to_group, seclusion.getGroupNames().get(0));
+                return StringHelper.getString(R.string.ui_security_force_to_group);
             case Seclusion.Type.Specify:
                 // 对指定人公开
                 return StringHelper.getString(R.string.ui_security_force_to_user, names);
@@ -239,43 +239,51 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
             }
         } else {
             // 重置为基本选项
+            int index = 0;
             int size = mAdapter.getItemCount();
-            while (!(mAdapter.get(size - 1) instanceof Security)) {
-                mAdapter.remove(size - 1);
-                size = mAdapter.getItemCount();
+            while (index < size) {
+                Model model = mAdapter.get(index);
+                if (model instanceof Security) {
+                    // 保留基本选项
+                    index++;
+                } else {
+                    // 删除其余所有选项
+                    mAdapter.remove(index);
+                    size = mAdapter.getItemCount();
+                }
             }
         }
     }
 
     // 单选
-    private void resetSingleSelect(int securityId) {
+    private void resetSingleSelect(Security selected) {
         // 重置基础的3个选项
-        if (securityId == 1) {
-            resetStaticItems();
-        }
+        //if (selected.getIndex() == 1) {
+        resetStaticItems();
+        //}
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
             Model model = mAdapter.get(i);
             if (model instanceof Security) {
                 Security security = (Security) model;
-                security.setSelected(security.getIndex() == securityId);
+                security.setSelected(security.getIndex() == selected.getIndex());
                 mAdapter.notifyItemChanged(i);
             }
         }
-        if (securityId == 2) {
+        if (selected.getIndex() > 2) {
             // 增加其他选项
-            resetGroupSelections();
+            resetGroupSelections(selected);
         }
     }
 
     // 重置组织列表
-    private void resetGroupSelections() {
+    private void resetGroupSelections(Security selected) {
         // 查找我所在的组织列表
         List<String> groups = getMyOrganizations();
         if (groups.size() > 0) {
             QueryBuilder<Organization> query = new QueryBuilder<>(Organization.class).whereIn(Model.Field.Id, groups.toArray());
             List<Organization> organizations = new Dao<>(Organization.class).query(query);
             if (null != organizations && organizations.size() > 0) {
-                int index = 2;
+                int index = mAdapter.indexOf(selected) + 1;
                 for (Organization organization : organizations) {
                     mAdapter.add(organization, index);
                     index++;
@@ -386,7 +394,7 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
             Model model = mAdapter.get(index);
             if (model instanceof Security) {
                 // 重置基本选项
-                resetSingleSelect(((Security) model).getIndex());
+                resetSingleSelect((Security) model);
             } else if (model instanceof Organization) {
                 // 选中了组织部分，组织可多选
                 clearMemberSelections(index);
