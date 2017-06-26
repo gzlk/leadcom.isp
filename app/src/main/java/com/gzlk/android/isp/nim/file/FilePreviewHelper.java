@@ -15,6 +15,7 @@ import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.nim.activity.VideoPlayerActivity;
 
 import java.io.File;
 import java.util.Locale;
@@ -50,12 +51,17 @@ public class FilePreviewHelper {
             } else if (Attachment.isOffice(ext)) {
                 previewOnlineOffice(context, path, fileName);
                 return;
+            } else if (ImageCompress.isVideo(ext)) {
+                previewVideo(context, path, fileName, extension);
+                return;
             }
             previewMimeFile(context, path, extension);
         }
     }
 
-    /**根据指定文件扩展名用本地第三方app打开文档*/
+    /**
+     * 根据指定文件扩展名用本地第三方app打开文档
+     */
     public static void previewMimeFile(Context context, String path, String extension) {
         try {
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
@@ -82,6 +88,13 @@ public class FilePreviewHelper {
      */
     private static void previewImage(Context context, String path) {
         BaseActivity.openActivity(context, ImageViewerFragment.class.getName(), StringHelper.format("0,%s", path), false, false, true);
+    }
+
+    /**
+     * 预览在线视频
+     */
+    private static void previewVideo(Context context, String onlinePath, String fileName, String extension) {
+        VideoPlayerActivity.start(context, onlinePath);
     }
 
     /**

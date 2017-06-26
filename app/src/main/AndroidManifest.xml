@@ -109,11 +109,15 @@
             android:windowSoftInputMode="adjustPan|stateUnspecified" />
 
         <!--历史记录锚点显示页面-->
-        <activity android:name=".nim.searching.DisplayMessageActivity"
+        <activity
+            android:name=".nim.searching.DisplayMessageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
+        <activity
+            android:name=".nim.activity.VideoPlayerActivity"
+            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize" />
         <!--第三方相册-->
         <activity
             android:name="com.yanzhenjie.album.AlbumActivity"

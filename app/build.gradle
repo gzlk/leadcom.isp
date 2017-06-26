@@ -93,7 +93,8 @@ repositories {
         //url 'https://repo1.maven.org/maven2/com/github/hsiangleekwok/hlklib/'
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
-    maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
+    // 视频播放器
+    maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
     flatDir {
         dirs 'libs'
     }
@@ -130,6 +131,8 @@ dependencies {
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
     // pdf阅读器
     compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
+    // 视频播放器
+    compile 'com.afollestad:easyvideoplayer:0.3.0'
     // 滑动删除
     //compile(name: 'android-swipelayout-library-release', ext: 'aar')
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
@@ -165,15 +168,6 @@ dependencies {
     //compile 'com.netease.nimlib:rts:3.7.0'
     // 全文检索服务需要
     //compile 'com.netease.nimlib:lucene:3.7.0'
-
-    // 以下为视频缩略图获取必须的
-    //compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
-    //compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi:1.0.14'
-    //compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi-v7a:1.0.14'
-    //compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-x86:1.0.14'
-    //compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-mips:1.0.14'
-    //compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-x86_64:1.0.14'
-    //compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-arm64-v8a:1.0.14'
 
     testCompile 'junit:junit:4.12'
 }
