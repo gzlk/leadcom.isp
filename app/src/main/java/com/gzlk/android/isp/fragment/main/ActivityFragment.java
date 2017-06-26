@@ -215,13 +215,13 @@ public class ActivityFragment extends BaseOrganizationFragment {
         int cnt = null == list ? 0 : list.size();
         String string = format(items[1], cnt);
         SimpleClickableItem item = new SimpleClickableItem(string);//(SimpleClickableItem) mAdapter.get(1);
-        item.setSource(string);
+        //item.setSource(string);
         if (cnt > 0) {
             // 有未处理的活动请求时才显示活动，否则隐藏
             if (mAdapter.exist(item)) {
                 mAdapter.update(item);
             } else {
-                mAdapter.add(item, 1);
+                mAdapter.add(item, item.getIndex());
             }
             //mAdapter.notifyItemChanged(1);
         } else {
@@ -301,7 +301,11 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
             if (!isEmpty(text)) {
                 SimpleClickableItem item = new SimpleClickableItem(text);
-                mAdapter.update(item);
+                if (mAdapter.exist(item)) {
+                    mAdapter.update(item);
+                } else {
+                    mAdapter.add(item, item.getIndex());
+                }
             }
         }
     }
@@ -311,6 +315,9 @@ public class ActivityFragment extends BaseOrganizationFragment {
         for (Activity activity : list) {
             if (!activities.contains(activity)) {
                 activities.add(activity);
+            } else {
+                int pos = activities.indexOf(activity);
+                activities.set(pos, activity);
             }
         }
         Collections.sort(activities, new Comparator<Activity>() {

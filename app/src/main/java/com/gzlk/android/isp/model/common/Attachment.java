@@ -188,6 +188,7 @@ public class Attachment extends Model {
             // Attachment 中上传到服务器上时不需要的字段
             return f.getName().equals("id") ||          // id
                     f.getName().equals("type") ||       // type
+                    f.getName().contains("pdf") ||      // pdf
                     f.getName().equals("archiveId") ||  // archiveId
                     f.getName().contains("fullPath") || // fullPath
                     f.getName().contains("ext") ||      // ext

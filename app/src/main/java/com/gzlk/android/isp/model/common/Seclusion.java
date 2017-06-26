@@ -29,9 +29,13 @@ public class Seclusion extends Model {
          */
         int Public = 1;
         /**
+         * 组织内可见
+         */
+        int Group = 2;
+        /**
          * 指定部分人可查看
          */
-        int Specify = 2;
+        int Specify = 3;
     }
 
     public Seclusion() {

@@ -114,10 +114,16 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
         String names = getSecurityNames(seclusion.getUserNames());
         switch (seclusion.getStatus()) {
             case Seclusion.Type.Private:
+                // 只能自己可见
                 return StringHelper.getString(R.string.ui_base_text_private);
             case Seclusion.Type.Public:
+                // 对所有人公开
                 return StringHelper.getString(R.string.ui_base_text_public);
+            case Seclusion.Type.Group:
+                // 组织内公开
+                return StringHelper.getString(R.string.ui_security_force_to_group, seclusion.getGroupNames().get(0));
             case Seclusion.Type.Specify:
+                // 对指定人公开
                 return StringHelper.getString(R.string.ui_security_force_to_user, names);
         }
         return StringHelper.getString(R.string.ui_security_fragment_title);
@@ -269,8 +275,10 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
             QueryBuilder<Organization> query = new QueryBuilder<>(Organization.class).whereIn(Model.Field.Id, groups.toArray());
             List<Organization> organizations = new Dao<>(Organization.class).query(query);
             if (null != organizations && organizations.size() > 0) {
+                int index = 2;
                 for (Organization organization : organizations) {
-                    mAdapter.add(organization);
+                    mAdapter.add(organization, index);
+                    index++;
                 }
             }
         }
