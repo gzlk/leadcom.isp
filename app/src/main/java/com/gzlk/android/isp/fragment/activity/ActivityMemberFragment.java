@@ -25,7 +25,6 @@ import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
-import com.gzlk.android.isp.fragment.organization.GroupContactPickFragment;
 import com.gzlk.android.isp.fragment.organization.GroupSquadContactPickerFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.activity.ActivityMemberViewHolder;

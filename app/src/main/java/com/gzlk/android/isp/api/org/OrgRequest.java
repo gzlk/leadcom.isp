@@ -222,4 +222,21 @@ public class OrgRequest extends Request<Organization> {
     public void findUpper(String groupId) {
         httpRequest(getRequest(SingleGroup.class, format("%s?upId=%s", url(FIND_UPPER), groupId), "", HttpMethods.Get));
     }
+
+    /**
+     * 查询感兴趣的组织列表
+     */
+    public void listInteresting() {
+    }
+
+    /**
+     * 关注组织
+     *
+     * @param groupId        当前所在组织
+     * @param concernGroupId 被关注的组织
+     * @param type           关注类型
+     */
+    public void concern(String groupId, String concernGroupId, int type) {
+
+    }
 }

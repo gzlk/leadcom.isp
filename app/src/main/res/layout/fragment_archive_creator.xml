@@ -15,7 +15,8 @@
 
         <include
             android:id="@+id/ui_archive_creator_cover"
-            layout="@layout/holder_view_simple_clickable" />
+            layout="@layout/holder_view_simple_clickable"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/ui_archive_creator_title"

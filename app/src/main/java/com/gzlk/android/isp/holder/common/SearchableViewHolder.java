@@ -2,9 +2,12 @@ package com.gzlk.android.isp.holder.common;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
@@ -32,8 +35,12 @@ public class SearchableViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_searchable_input)
     private CorneredEditText searchInput;
-    @ViewId(R.id.ui_holder_view_searchable_icon)
-    private CustomTextView searchIcon;
+    @ViewId(R.id.ui_holder_view_searchable_icon_container)
+    private LinearLayout hintContainer;
+    @ViewId(R.id.ui_holder_view_searchable_hint_text)
+    private TextView hintText;
+    @ViewId(R.id.ui_holder_view_searchable_clear_icon)
+    private CustomTextView clearIcon;
 
     public SearchableViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -47,8 +54,7 @@ public class SearchableViewHolder extends BaseViewHolder {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int len = s.length();
-                int icon = len > 0 ? R.string.ui_icon_clear : R.string.ui_icon_search;
-                searchIcon.setText(icon);
+                clearIcon.setVisibility(len > 0 ? View.VISIBLE : View.GONE);
                 if (null != onSearchingListener) {
                     onSearchingListener.onSearching(s.toString());
                 }
@@ -74,12 +80,36 @@ public class SearchableViewHolder extends BaseViewHolder {
                 return false;
             }
         });
+        searchInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                resetHintContainer(hasFocus);
+            }
+        });
     }
 
-    @Click({R.id.ui_holder_view_searchable_icon})
+    private void resetHintContainer(boolean hasFocus) {
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) hintContainer.getLayoutParams();
+        params.addRule(RelativeLayout.CENTER_IN_PARENT, hasFocus ? 0 : RelativeLayout.TRUE);
+        int textLength = searchInput.getText().length();
+        hintText.setVisibility(hasFocus ? View.GONE : (textLength > 0 ? View.GONE : View.VISIBLE));
+        if (hasFocus) {
+            // 有焦点时，如果text为空则显示hint
+            searchInput.setHint(R.string.ui_base_text_search);
+        } else {
+            // 失去焦点时，不显示hint
+            searchInput.setHint(null);
+        }
+    }
+
+    public void clearFocus() {
+        searchInput.clearFocus();
+    }
+
+    @Click({R.id.ui_holder_view_searchable_clear_icon})
     private void onClick(View view) {
         switch (view.getId()) {
-            case R.id.ui_holder_view_searchable_icon:
+            case R.id.ui_holder_view_searchable_clear_icon:
                 searchInput.setText("");
                 break;
         }

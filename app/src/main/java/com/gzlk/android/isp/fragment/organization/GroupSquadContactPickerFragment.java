@@ -346,20 +346,48 @@ public class GroupSquadContactPickerFragment extends BaseOrganizationFragment {
         }
     }
 
+    private boolean isExistsInAdapter(String groupId, String squadId) {
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            Model model = mAdapter.get(i);
+            if (model instanceof Member) {
+                Member member = (Member) model;
+                if (!isEmpty(squadId)) {
+                    if (!isEmpty(member.getSquadId()) && member.getSquadId().equals(squadId)) {
+                        return true;
+                    }
+                } else {
+                    if (member.getGroupId().equals(groupId) && isEmpty(member.getSquadId())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     // 全选
     private BaseViewHolder.OnHandlerBoundDataListener<Model> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
         @Override
         public Model onHandlerBoundData(BaseViewHolder holder) {
             int position = holder.getAdapterPosition();
             Model model = mAdapter.get(position);
-            model.setSelectable(!model.isSelectable());
-            mAdapter.notifyItemChanged(position);
             if (model instanceof Organization) {
-                // 全选或取消全选组织的成员
-                resetSelectAll(model.getId(), "", model.isSelectable());
+                // adapter里有当前组织成员时说明是展开状态，此时可以全选
+                if (isExistsInAdapter(model.getId(), "")) {
+                    model.setSelectable(!model.isSelectable());
+                    mAdapter.notifyItemChanged(position);
+                    // 全选或取消全选组织的成员
+                    resetSelectAll(model.getId(), "", model.isSelectable());
+                }
             } else if (model instanceof Squad) {
-                // 全选或取消全选小组的成员
-                resetSelectAll(((Squad) model).getGroupId(), model.getId(), model.isSelectable());
+                Squad squad = (Squad) model;
+                // adapter里有当前小组成员时说明小组是展开状态，此时可以全选
+                if (isExistsInAdapter(squad.getGroupId(), squad.getId())) {
+                    model.setSelectable(!model.isSelectable());
+                    mAdapter.notifyItemChanged(position);
+                    // 全选或取消全选小组的成员
+                    resetSelectAll(squad.getGroupId(), squad.getId(), squad.isSelectable());
+                }
             }
             return null;
         }

@@ -122,7 +122,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     if (isEmpty(nick)) {
                         nick = "null";
                     }
-                    act.setContent(format("[%s]说：%s", nick, contact.getContent()));
+                    act.setContent(format("[%s]:%s", nick, contact.getContent()));
                     mAdapter.notifyItemChanged(i);
                 }
             }
@@ -308,6 +308,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 }
             }
         }
+        fetchingUnHandledActivityInvite(mQueryId);
     }
 
     private void updateActivityList(List<Activity> list) {

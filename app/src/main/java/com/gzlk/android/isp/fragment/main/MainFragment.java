@@ -102,7 +102,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         leftIcon.setText(R.string.ui_icon_query);
         leftText.setText(null);
         rightIconContainer.setVisibility(View.GONE);
-        ((IndividualFragmentMultiType) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
+        //((IndividualFragmentMultiType) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
     }
 
     @Override
@@ -196,7 +196,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         if (needHandleTitleBar) {
             handleTitleBar(position);
         } else if (position != 3) {
-            transparentTitleText(false);
+            //transparentTitleText(false);
         }
     }
 
@@ -311,7 +311,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 .alpha(transparent ? 0 : 1)
                 .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();
-        transparentTitleText(transparent);
+        //transparentTitleText(transparent);
         displayRightIcon(transparent);
     }
 

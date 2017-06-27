@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/ui_base_dimen_button_height"
     android:background="@color/color_f5f7f9"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:gravity="center_vertical"
     android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
     android:paddingStart="@dimen/ui_base_dimen_margin_padding">
@@ -16,12 +18,11 @@
         android:layout_centerVertical="true"
         android:background="@android:color/white"
         android:gravity="center_vertical"
-        android:hint="@string/ui_base_text_search"
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:maxLines="1"
         android:paddingEnd="@dimen/ui_static_dp_33"
-        android:paddingStart="@dimen/ui_static_dp_15"
+        android:paddingStart="@dimen/ui_static_dp_30"
         android:singleLine="true"
         android:textColorHint="@color/textColorHint"
         app:cet_border_size="0dp"
@@ -29,13 +30,37 @@
         app:cet_max_length="10" />
 
     <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_holder_view_searchable_icon"
+        android:id="@+id/ui_holder_view_searchable_clear_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/ui_static_dp_15"
-        android:text="@string/ui_icon_search"
-        android:textColor="@color/textColorHintDark" />
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:text="@string/ui_icon_clear"
+        android:textColor="@color/textColorHintDark"
+        android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/ui_holder_view_searchable_icon_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/ui_static_dp_15"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_icon_search"
+            android:textColor="@color/textColorHintDark" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_searchable_hint_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_static_dp_5"
+            android:text="@string/ui_base_text_search"
+            android:textColor="@color/textColorHint" />
+    </LinearLayout>
 </RelativeLayout>

@@ -476,11 +476,11 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
             }
             scrolledY += dy;
             if (scrolledY >= 0 && scrolledY <= 500) {
-                float alpha = scrolledY * 0.005f;
-                if (null != toolBarView && null != toolBarView.get()) {
-                    toolBarView.get().setAlpha(alpha);
-                    isTitleBarShown = toolBarView.get().getAlpha() >= 1;
-                }
+//                float alpha = scrolledY * 0.005f;
+//                if (null != toolBarView && null != toolBarView.get()) {
+//                    toolBarView.get().setAlpha(alpha);
+//                    isTitleBarShown = toolBarView.get().getAlpha() >= 1;
+//                }
 //                if (null != textView && null != textView.get()) {
 //                    textView.get().setAlpha(alpha);
 //                }

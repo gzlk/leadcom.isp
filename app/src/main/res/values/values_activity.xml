@@ -131,9 +131,9 @@
     <string name="ui_activity_details_deleted">您已删除本活动</string>
 
     <string-array name="ui_activity_details_items">
-        <item>0|活动主题：|%s|0</item>
-        <item>1|活动时间：|%s|1</item>
-        <item>2|活动地点：|%s|0</item>
+        <item>0|活动主题：%s||0</item>
+        <item>1|活动时间：%s||1</item>
+        <item>2|活动地点：%s||0</item>
     </string-array>
     <string name="ui_activity_details_invalid_parameter">无效的活动</string>
     <string name="ui_activity_details_ended_activity">活动已结束</string>

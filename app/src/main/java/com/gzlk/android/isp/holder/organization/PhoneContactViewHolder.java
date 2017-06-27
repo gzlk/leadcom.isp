@@ -49,7 +49,7 @@ public class PhoneContactViewHolder extends BaseViewHolder {
             button.setText(R.string.ui_phone_contact_invited);
         } else {
             button.setEnabled(!contact.isInvited());
-            button.setText(StringHelper.getString(contact.isInvited() ? R.string.ui_phone_contact_inviting : R.string.ui_phone_contact_invite));
+            button.setText(StringHelper.getString(contact.isInvited() ? R.string.ui_phone_contact_inviting : R.string.ui_phone_contact_add));
         }
     }
 
