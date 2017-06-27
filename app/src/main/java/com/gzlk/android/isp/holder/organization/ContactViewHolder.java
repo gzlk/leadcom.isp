@@ -233,8 +233,8 @@ public class ContactViewHolder extends BaseViewHolder {
                 break;
             case R.id.ui_tool_view_contact_button1:
                 // 设为管理员
-                if (null != dataHandlerBoundDataListener) {
-                    dataHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
+                if (null != mOnHandlerBoundDataListener) {
+                    mOnHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
                 }
                 break;
             case R.id.ui_tool_view_contact_button2:
@@ -244,8 +244,8 @@ public class ContactViewHolder extends BaseViewHolder {
                 }
                 break;
             case R.id.ui_holder_view_contact_invite_button:
-                if (null != dataHandlerBoundDataListener) {
-                    dataHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
+                if (null != mOnHandlerBoundDataListener) {
+                    mOnHandlerBoundDataListener.onHandlerBoundData(ContactViewHolder.this);
                 }
                 break;
             case R.id.ui_holder_view_contact_picker:

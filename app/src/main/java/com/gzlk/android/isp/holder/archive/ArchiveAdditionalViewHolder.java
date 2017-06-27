@@ -93,8 +93,8 @@ public class ArchiveAdditionalViewHolder extends BaseViewHolder {
     }
 
     private void tryLike() {
-        if (null != dataHandlerBoundDataListener) {
-            Model model = (Model) dataHandlerBoundDataListener.onHandlerBoundData(this);
+        if (null != mOnHandlerBoundDataListener) {
+            Model model = (Model) mOnHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != model) {
                 likeModel(model);
             }
@@ -186,8 +186,8 @@ public class ArchiveAdditionalViewHolder extends BaseViewHolder {
     }
 
     private void tryCollect() {
-        if (null != dataHandlerBoundDataListener) {
-            Model model = (Archive) dataHandlerBoundDataListener.onHandlerBoundData(this);
+        if (null != mOnHandlerBoundDataListener) {
+            Model model = (Archive) mOnHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != model) {
                 if (model instanceof Archive) {
                     collectArchive((Archive) model);

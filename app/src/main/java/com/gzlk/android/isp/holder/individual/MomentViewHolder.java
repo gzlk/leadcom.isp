@@ -231,8 +231,8 @@ public class MomentViewHolder extends BaseViewHolder {
     }
 
     private Moment getFromAdapter() {
-        if (null != dataHandlerBoundDataListener) {
-            Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
+        if (null != mOnHandlerBoundDataListener) {
+            Object object = mOnHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != object && object instanceof Moment) {
                 return (Moment) object;
             }

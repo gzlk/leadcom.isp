@@ -78,8 +78,8 @@ public class SystemMessageViewHolder extends BaseViewHolder {
                 break;
             case R.id.ui_holder_view_system_message_delete:
                 // 删除
-                if (null != dataHandlerBoundDataListener) {
-                    dataHandlerBoundDataListener.onHandlerBoundData(SystemMessageViewHolder.this);
+                if (null != mOnHandlerBoundDataListener) {
+                    mOnHandlerBoundDataListener.onHandlerBoundData(SystemMessageViewHolder.this);
                 }
                 break;
         }

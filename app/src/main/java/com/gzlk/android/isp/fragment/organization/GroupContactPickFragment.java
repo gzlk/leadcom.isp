@@ -32,15 +32,15 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class OrganizationContactPickFragment extends BaseOrganizationFragment {
+public class GroupContactPickFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_USER_IDS = "ocpf_members";
     private static final String PARAM_SELECT_ALL = "ocpf_select_all";
     private static final String PARAM_FORCE_LOCK = "ocpf_force_to_lock";
     private static final String PARAM_SINGLE_PICK = "ocpf_single_pick";
 
-    public static OrganizationContactPickFragment newInstance(String params) {
-        OrganizationContactPickFragment ocp = new OrganizationContactPickFragment();
+    public static GroupContactPickFragment newInstance(String params) {
+        GroupContactPickFragment ocp = new GroupContactPickFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 组织的id
@@ -236,7 +236,7 @@ public class OrganizationContactPickFragment extends BaseOrganizationFragment {
 
         @Override
         public ContactViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ContactViewHolder holder = new ContactViewHolder(itemView, OrganizationContactPickFragment.this);
+            ContactViewHolder holder = new ContactViewHolder(itemView, GroupContactPickFragment.this);
             holder.showPicker(true);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             return holder;

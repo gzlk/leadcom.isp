@@ -14,13 +14,12 @@ import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.activity.ActArchiveRequest;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.organization.OrganizationContactPickFragment;
+import com.gzlk.android.isp.fragment.organization.GroupContactPickFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -31,7 +30,6 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Invitation;
@@ -511,7 +509,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
                         }.getType());
                         log(memberJson);
                         String params = format("%s,false,false,%s", mGroupId, replaceJson(memberJson, false));
-                        openActivity(OrganizationContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
+                        openActivity(GroupContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
                     }
                     break;
             }

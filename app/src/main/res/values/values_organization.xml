@@ -52,6 +52,8 @@
         <![CDATA[您还不是<font color="#3cbaff">%s</font>的小组成员。<br/>现在要加入吗？]]>
     </string>
 
+    <string name="ui_organization_squad_contact_loading_squads">正在加载小组列表&#8230;</string>
+
     <string name="ui_squad_contact_menu_1">组织通讯录</string>
     <string name="ui_squad_contact_menu_2">手机通讯录</string>
     <string name="ui_squad_contact_set_to_admin">设为管理员</string>
@@ -89,6 +91,9 @@
     <string name="ui_organization_contact_picker_fragment_title">选择参加人员</string>
     <string name="ui_organization_contact_picker_cannot_unpick_exists">锁定状态的成员不能在这里取消</string>
     <string name="ui_organization_contact_loading_text">正在加载成员列表，请稍候&#8230;</string>
+    <string name="ui_organization_contact_picker_nothing_picked">
+        <![CDATA[<b>您没有选中任何人员</b><br/><br/>您确定要使用一个空白记录吗？<br/>在<font color="#db7763">展开</font>的<font color="#3cbaff">组织或小组</font>列表里进行<font color="#3cbaff">全选或点选</font>，收起来的列表会被忽略。]]>
+    </string>
 
     <string name="ui_organization_member_no_name">无名氏</string>
     <string name="ui_organization_member_no_phone">未提供手机号码</string>

@@ -177,13 +177,13 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     /**
      * 获取当前正在处理的数据对象的回调
      */
-    protected OnHandlerBoundDataListener dataHandlerBoundDataListener;
+    protected OnHandlerBoundDataListener mOnHandlerBoundDataListener;
 
     /**
      * 添加数据处理回调
      */
     public void addOnHandlerBoundDataListener(OnHandlerBoundDataListener l) {
-        dataHandlerBoundDataListener = l;
+        mOnHandlerBoundDataListener = l;
     }
 
     /**

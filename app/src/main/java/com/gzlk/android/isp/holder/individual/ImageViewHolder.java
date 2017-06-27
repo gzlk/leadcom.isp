@@ -34,8 +34,8 @@ public class ImageViewHolder extends BaseViewHolder {
         imageDisplayer.addOnDeleteClickListener(new ImageDisplayer.OnDeleteClickListener() {
             @Override
             public void onDeleteClick(String url) {
-//                if (null != dataHandlerBoundDataListener) {
-//                    String string = (String) dataHandlerBoundDataListener.onHandlerBoundData(ImageViewHolder.this);
+//                if (null != mOnHandlerBoundDataListener) {
+//                    String string = (String) mOnHandlerBoundDataListener.onHandlerBoundData(ImageViewHolder.this);
 //                    log(format("try to delete %s, in position is: %s", url, string));
 //                }
                 if (null != _outerDeleteClickListener) {
@@ -85,8 +85,8 @@ public class ImageViewHolder extends BaseViewHolder {
 
 //    @Click({R.id.ui_holder_view_image})
 //    private void elementClick(View view) {
-//        if (null != dataHandlerBoundDataListener) {
-//            dataHandlerBoundDataListener.onHandlerBoundData(this);
+//        if (null != mOnHandlerBoundDataListener) {
+//            mOnHandlerBoundDataListener.onHandlerBoundData(this);
 //        }
 //    }
 

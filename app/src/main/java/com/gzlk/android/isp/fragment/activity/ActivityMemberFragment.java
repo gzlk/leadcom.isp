@@ -25,7 +25,8 @@ import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
-import com.gzlk.android.isp.fragment.organization.OrganizationContactPickFragment;
+import com.gzlk.android.isp.fragment.organization.GroupContactPickFragment;
+import com.gzlk.android.isp.fragment.organization.GroupSquadContactPickerFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.activity.ActivityMemberViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
@@ -186,7 +187,8 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }
         String json = Json.gson().toJson(members, new TypeToken<ArrayList<SubMember>>() {
         }.getType());
-        openActivity(OrganizationContactPickFragment.class.getName(), format("%s,true,false,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
+        //openActivity(GroupContactPickFragment.class.getName(), format("%s,true,false,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
+        openActivity(GroupSquadContactPickerFragment.class.getName(), format("%s,true,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
     }
 
     @Override

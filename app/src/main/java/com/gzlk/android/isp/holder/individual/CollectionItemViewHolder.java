@@ -118,8 +118,8 @@ public class CollectionItemViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_collection_content_cover})
     private void click(View view) {
-        if (null != dataHandlerBoundDataListener) {
-            Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
+        if (null != mOnHandlerBoundDataListener) {
+            Object object = mOnHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != object && object instanceof Collection) {
                 openActivity(CollectionDetailsFragment.class.getName(), ((Collection) object).getId(), true, false);
             }

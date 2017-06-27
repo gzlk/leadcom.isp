@@ -68,8 +68,8 @@ public class ArchiveViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_document_content_container})
     private void elementClick(View view) {
-        if (null != dataHandlerBoundDataListener) {
-            Object object = dataHandlerBoundDataListener.onHandlerBoundData(this);
+        if (null != mOnHandlerBoundDataListener) {
+            Object object = mOnHandlerBoundDataListener.onHandlerBoundData(this);
             if (null != object && object instanceof Archive) {
                 Archive archive = (Archive) object;
                 int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;

@@ -48,6 +48,9 @@
     <string name="ui_icon_location">&#xe616;</string>
     <string name="ui_icon_gps">&#xe6d9;</string>
     <string name="ui_icon_signing">&#xe69d;</string>
+    <string name="ui_icon_triangle">&#xe690;</string>
+    <string name="ui_icon_checkbox_unchecked">&#xe648;</string>
+    <string name="ui_icon_checkbox_checked">&#xe994;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>
@@ -73,5 +76,8 @@
     <string name="ui_icon_material_location_sign">&#xE568;</string>
     <string name="ui_icon_material_location_off">&#xE0C7;</string>
     <string name="ui_icon_material_volume_up">&#xE050;</string>
+    <string name="ui_icon_material_group">&#xE7EB;</string>
+    <string name="ui_icon_material_squad">&#xE7FC;</string>
+    <string name="ui_icon_material_person">&#xE7FD;</string>
 
 </resources>
