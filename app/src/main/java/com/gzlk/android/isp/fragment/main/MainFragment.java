@@ -14,7 +14,6 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -129,17 +128,17 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     }
 
     public void setTitleText(String text) {
-        if (StringHelper.isEmpty(oldTitleText)) {
-            oldTitleText = toolBarTitleText.getText().toString();
-        }
-        toolBarTitleText.setText(text);
+//        if (StringHelper.isEmpty(oldTitleText)) {
+//            oldTitleText = toolBarTitleText.getText().toString();
+//        }
+//        toolBarTitleText.setText(text);
     }
 
     public void restoreTitleText() {
-        if (!StringHelper.isEmpty(oldTitleText)) {
-            toolBarTitleText.setText(oldTitleText);
-            oldTitleText = "";
-        }
+//        if (!StringHelper.isEmpty(oldTitleText)) {
+//            toolBarTitleText.setText(oldTitleText);
+//            oldTitleText = "";
+//        }
     }
 
     @Override
@@ -167,9 +166,13 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 // 活动
                 toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_2);
                 break;
+            case 2:
+                // 组织
+                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_3);
+                break;
             case 3:
                 // 个人
-                toolBarTitleText.setText(null);
+                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_4);
                 break;
         }
 

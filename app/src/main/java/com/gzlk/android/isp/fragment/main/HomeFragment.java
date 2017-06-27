@@ -72,7 +72,7 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
         mFragments.add(new HomeActivityFragment());
         // 首页公开的档案列表
         mFragments.add(new HomeArchiveFragment());
-        mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_EDITOR)));
+        //mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_EDITOR)));
         //mFragments.add(new MomentFragment());
     }
 
@@ -125,7 +125,7 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
                 setDisplayPage(2);
                 break;
             case R.id.ui_tool_home_top_channel_4:
-                setDisplayPage(3);
+                //setDisplayPage(3);
                 break;
         }
     }

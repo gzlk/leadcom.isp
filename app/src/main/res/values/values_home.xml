@@ -2,9 +2,9 @@
 <resources>
 
     <string name="ui_text_home_top_channel_full">全部选项</string>
-    <string name="ui_text_home_top_channel_1">推荐</string>
-    <string name="ui_text_home_top_channel_2">活动</string>
-    <string name="ui_text_home_top_channel_3">@string/ui_organization_top_channel_3</string>
+    <string name="ui_text_home_top_channel_1">简讯</string>
+    <string name="ui_text_home_top_channel_2">人物</string>
+    <string name="ui_text_home_top_channel_3">点评</string>
     <string name="ui_text_home_top_channel_4">编辑位</string>
 
     <string name="ui_text_home_activity_nothing">暂时没有更多活动了</string>

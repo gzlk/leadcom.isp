@@ -43,7 +43,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/ui_text_home_top_channel_4" />
+            android:text="@string/ui_text_home_top_channel_4"
+            android:visibility="gone" />
     </LinearLayout>
 
     <com.hlk.hlklib.lib.view.CustomTextView
@@ -56,5 +57,6 @@
         android:paddingEnd="@dimen/ui_static_dp_16"
         android:paddingStart="@dimen/ui_static_dp_16"
         android:rotation="-90"
-        android:text="@string/ui_icon_left" />
+        android:text="@string/ui_icon_left"
+        android:visibility="gone" />
 </RelativeLayout>

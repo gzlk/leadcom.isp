@@ -481,9 +481,9 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                     toolBarView.get().setAlpha(alpha);
                     isTitleBarShown = toolBarView.get().getAlpha() >= 1;
                 }
-                if (null != textView && null != textView.get()) {
-                    textView.get().setAlpha(alpha);
-                }
+//                if (null != textView && null != textView.get()) {
+//                    textView.get().setAlpha(alpha);
+//                }
             }
         }
     };
