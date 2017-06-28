@@ -171,7 +171,10 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
                 super.onResponse(signing, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_activity_sign_creator_published);
-                    resultSucceededActivity();
+                    if (null != signing) {
+                        resultData(Json.gson().toJson(signing, new TypeToken<AppSigning>() {
+                        }.getType()));
+                    }
                 } else {
                     ToastHelper.make().showMsg(message);
                 }

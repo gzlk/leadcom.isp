@@ -13,6 +13,10 @@ package com.gzlk.android.isp.nim.constant;
 
 public class SigningNotifyType {
     /**
+     * 新建的签到
+     */
+    public static final int NEW = 0;
+    /**
      * 签到快开始的提醒
      */
     public static final int ALMOST_START = 1;

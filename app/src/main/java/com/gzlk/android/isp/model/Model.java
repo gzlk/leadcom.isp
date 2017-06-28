@@ -34,6 +34,7 @@ public class Model extends BaseModel {
         public static final String CreatorName = "creatorName";
         public static final String UUID = "uuid";
         public static final String AccessToken = "accessToken";
+        public static final String HasRead = "hasRead";
     }
 
     public static final String DFT_DATE = "1970-01-01 00:00:01";
@@ -50,6 +51,9 @@ public class Model extends BaseModel {
 
     @Column(Model.Field.AccessToken)
     private String accessToken;        //用户令牌
+
+    @Column(Field.HasRead)
+    private boolean isRead;
 
     @Ignore
     private boolean localDeleted;
@@ -72,6 +76,14 @@ public class Model extends BaseModel {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 
     /**

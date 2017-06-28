@@ -358,6 +358,14 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     /**
+     * 格式化xxx时间之前
+     */
+    public String formatTimeAgo(String time) {
+        if (isEmpty(time)) return "";
+        return Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), time);
+    }
+
+    /**
      * 子类重载此方法判断是否正处于编辑状态
      */
     protected boolean checkStillEditing() {

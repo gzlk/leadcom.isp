@@ -64,7 +64,8 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onClick() {
                 // 发布一个新的签到应用
-                openActivity(SignCreatorFragment.class.getName(), mQueryId, REQ_CREATOR, true, true);
+                resultSucceededActivity();
+                //openActivity(SignCreatorFragment.class.getName(), mQueryId, REQ_CREATOR, true, true);
             }
         });
         setLoadingText(R.string.ui_activity_sign_list_loading);

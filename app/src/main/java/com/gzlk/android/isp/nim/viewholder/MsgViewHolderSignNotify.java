@@ -64,6 +64,7 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
         switch (notify.getNotifyType()) {
             case SigningNotifyType.ALMOST_START:
                 return R.string.ui_icon_material_timer;
+            case SigningNotifyType.NEW:
             case SigningNotifyType.STARTED:
                 return R.string.ui_icon_material_location_sign;
             case SigningNotifyType.ALMOST_END:
@@ -77,6 +78,7 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
         switch (notify.getNotifyType()) {
             case SigningNotifyType.ALMOST_START:
                 return R.color.color_faaa2d;
+            case SigningNotifyType.NEW:
             case SigningNotifyType.STARTED:
                 return R.color.color_3eb135;
             case SigningNotifyType.ALMOST_END:

@@ -177,6 +177,8 @@
         <item>1|来源：|%s|0</item>
         <item>2|时间：|%s|0</item>
     </string-array>
+    <string name="ui_activity_notice_list_fragment_title">@string/ui_nim_action_notice</string>
+    <string name="ui_activity_notice_list_loading_notices">正在加载通知列表&#8230;</string>
 
     <string name="ui_activity_sign_map_picker_fragment_title">选择地址</string>
     <string name="ui_activity_sing_map_picker_locate_failure">

@@ -251,6 +251,8 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         if (null == signing) {
             signing = Json.gson().fromJson(StringHelper.replaceJson(pojo, true), new TypeToken<AppSigning>() {
             }.getType());
+            setCustomTitle(signing.getTitle());
+            resetNotifyContent();
         }
         boolean isMe = signing.getCreatorId().equals(Cache.cache().userId);
         notifyContainer.setVisibility(isMe && signing.couldSignable(Utils.formatDateTime(new Date())) ? View.VISIBLE : View.GONE);

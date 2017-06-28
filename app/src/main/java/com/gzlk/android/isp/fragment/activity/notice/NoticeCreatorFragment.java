@@ -83,6 +83,12 @@ public class NoticeCreatorFragment extends BaseTransparentSupportFragment {
     }
 
     @Override
+    protected boolean checkStillEditing() {
+        // 标题或内容不为空时提醒正在编辑
+        return !isEmpty(titleHolder.getValue()) || !isEmpty(contentView.getValue());
+    }
+
+    @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return true;
     }

@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.fragment.activity.notice.NoticeCreatorFragment;
+import com.gzlk.android.isp.fragment.activity.notice.NoticeListFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.lib.Json;
@@ -36,22 +37,31 @@ public class NoticeAction extends BaseAction {
 
     @Override
     public void onClick() {
-        // 打开发布通知页面
-        int requestCode = makeRequestCode(RequestCode.REQ_NOTICE);
-        BaseActivity.openActivity(getActivity(), NoticeCreatorFragment.class.getName(), getAccount(), requestCode, true, true);
+        // 打开通知列表页面
+        int requestCode = makeRequestCode(RequestCode.REQ_NOTICE_LIST);
+        NoticeListFragment.open(getActivity(), requestCode, getAccount());
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == RequestCode.REQ_NOTICE) {
-            // 群发通知
-            String result = BaseFragment.getResultedData(data);
-            LogHelper.log("NoticeAction", result);
-            IMMessage message;
-            NoticeAttachment notice = Json.gson().fromJson(result, new TypeToken<NoticeAttachment>() {
-            }.getType());
-            message = MessageBuilder.createCustomMessage(getAccount(), SessionTypeEnum.Team, notice.getTitle(), notice);
-            sendMessage(message);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case RequestCode.REQ_NOTICE_LIST:
+                    // 要创建新的通知
+                    int code = makeRequestCode(RequestCode.REQ_NOTICE_NEW);
+                    BaseActivity.openActivity(getActivity(), NoticeCreatorFragment.class.getName(), getAccount(), code, true, true);
+                    break;
+                case RequestCode.REQ_NOTICE_NEW:
+                    // 群发通知
+                    String result = BaseFragment.getResultedData(data);
+                    LogHelper.log("NoticeAction", result);
+                    IMMessage message;
+                    NoticeAttachment notice = Json.gson().fromJson(result, new TypeToken<NoticeAttachment>() {
+                    }.getType());
+                    message = MessageBuilder.createCustomMessage(getAccount(), SessionTypeEnum.Team, notice.getTitle(), notice);
+                    sendMessage(message);
+                    break;
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

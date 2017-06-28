@@ -1098,6 +1098,9 @@ public class MessageListPanelEx {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
+        if (null == data) {
+            return;
+        }
         final ArrayList<String> selected = data.getStringArrayListExtra(ContactSelectActivity.RESULT_DATA);
         if (selected != null && !selected.isEmpty()) {
             switch (requestCode) {

@@ -12,12 +12,21 @@ package com.gzlk.android.isp.nim.constant;
  */
 
 public class RequestCode {
+    private static final int BASE_NIM_REQ = 10;
     /**
-     * 发布了群通知
+     * 到群通知列表
      */
-    public static final int REQ_NOTICE = 20;
+    public static final int REQ_NOTICE_LIST = BASE_NIM_REQ;
     /**
-     * 发送位置信息
+     * 创建新的群通知
      */
-    public static final int REQ_LOCATION = REQ_NOTICE + 1;
+    public static final int REQ_NOTICE_NEW = BASE_NIM_REQ + 1;
+    /**
+     * 到签到列表
+     */
+    public static final int REQ_SIGN_LIST = BASE_NIM_REQ + 2;
+    /**
+     * 创建新的签到应用
+     */
+    public static final int REQ_SIGN_NEW = BASE_NIM_REQ + 3;
 }

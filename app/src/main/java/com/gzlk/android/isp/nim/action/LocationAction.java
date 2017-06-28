@@ -36,28 +36,5 @@ public class LocationAction extends BaseAction {
                 }
             });
         }
-        // 打开发布通知页面
-//        int requestCode = makeRequestCode(RequestCode.REQ_LOCATION);
-//        BaseActivity.openActivity(getActivity(), AddressMapPickerFragment.class.getName(), getAccount(), requestCode, true, true);
     }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode == Activity.RESULT_OK && requestCode == RequestCode.REQ_LOCATION) {
-//            String json = BaseFragment.getResultedData(data);
-//            if (!TextUtils.isEmpty(json)) {
-//                Address address = Address.fromJson(json);
-//                if (null != address) {
-//                    IMMessage message = MessageBuilder.createLocationMessage(getAccount(), getSessionType(),
-//                            address.getLatitude(), address.getLongitude(), address.getAddress());
-//                    sendMessage(message);
-//                } else {
-//                    ToastHelper.make().showMsg(R.string.ui_activity_sign_map_picker_location_invalid);
-//                }
-//            } else {
-//                ToastHelper.make().showMsg(R.string.ui_activity_sign_map_picker_location_invalid);
-//            }
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
 }
