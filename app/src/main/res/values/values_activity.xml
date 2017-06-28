@@ -230,4 +230,5 @@
     <string name="ui_activity_sign_details_notify_hint">输入在群聊内显示的提醒内容</string>
     <string name="ui_activity_sign_details_no_sign_records">没有签到记录</string>
     <string name="ui_activity_sign_details_loading_sign_records">正在加载签到成员列表&#8230;</string>
+    <string name="ui_activity_sing_details_delete_warning">您将要删除本签到应用以及其下所有的签到记录，确定要继续吗？</string>
 </resources>

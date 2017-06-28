@@ -11,16 +11,21 @@ import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.AppSignRecordRequest;
+import com.gzlk.android.isp.api.activity.AppSigningRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.map.AddressMapPickerFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.activity.SingingViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
+import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.AppSignRecord;
 import com.gzlk.android.isp.model.activity.AppSigning;
@@ -246,6 +251,37 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         }).list(signing.getId());
     }
 
+    private void setRightIconEvent() {
+        setRightText(R.string.ui_base_text_delete);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                warningDelete();
+            }
+        });
+    }
+
+    private void warningDelete() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_sing_details_delete_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                delete();
+                return true;
+            }
+        }, null);
+    }
+
+    private void delete() {
+        AppSigningRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppSigning>() {
+            @Override
+            public void onResponse(AppSigning signing, boolean success, String message) {
+                super.onResponse(signing, success, message);
+                if(success){
+                    finish();
+                }
+            }
+        }).delete(signing.getId());
+    }
 
     private void initializeHolder() {
         if (null == signing) {
@@ -259,6 +295,9 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
         if (null == titleHolder) {
             titleHolder = new SimpleClickableViewHolder(titleView, SignDetailsFragment.this);
+            if (isMe) {
+                setRightIconEvent();
+            }
         }
         titleHolder.showContent(format(getString(R.string.ui_activity_sign_details_title), signing.getTitle()));
 
