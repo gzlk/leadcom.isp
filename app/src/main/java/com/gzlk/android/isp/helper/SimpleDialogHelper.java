@@ -2,6 +2,7 @@ package com.gzlk.android.isp.helper;
 
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
@@ -93,6 +94,7 @@ public class SimpleDialogHelper {
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
                 TextView textView = (TextView) dialogView.findViewById(R.id.ui_custom_dialog_text);
+                textView.setMovementMethod(new ScrollingMovementMethod());
                 // 显示html富文本
                 textView.setText(Html.fromHtml(text));
             }
