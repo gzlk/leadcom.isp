@@ -54,14 +54,14 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
     /**
      * 查询当前用户加入的组织列表
      */
-    protected void fetchingJoinedRemoteOrganizations() {
+    protected void fetchingJoinedRemoteOrganizations(int ope) {
         OrgRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Organization>() {
             @Override
             public void onResponse(List<Organization> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingJoinedRemoteOrganizationsComplete(list);
             }
-        }).list(remotePageNumber);
+        }).list(ope, remotePageNumber);
     }
 
     /**

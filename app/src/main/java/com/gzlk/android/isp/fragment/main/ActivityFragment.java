@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
@@ -173,7 +174,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     private void refreshingItems() {
         displayLoading(true);
-        fetchingJoinedRemoteOrganizations();
+        fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_ACTIVITY);
         if (!isEmpty(mQueryId)) {
             fetchingJoinedActivity(true);
         } else {

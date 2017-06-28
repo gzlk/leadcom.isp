@@ -191,11 +191,23 @@ public class OrgRequest extends Request<Organization> {
     }
 
     /**
-     * 默认查询当前用户授权范围内的组织列表
+     * 加入的组织列表
      */
-    public void list(int pageNumber) {
+    public static final int GROUP_LIST_OPE_JOINED = 0;
+    /**
+     * 参加的活动相关连的组织列表
+     */
+    public static final int GROUP_LIST_OPE_ACTIVITY = 1;
+
+    /**
+     * 默认查询当前用户授权范围内的组织列表
+     *
+     * @param ope        0=返回当前用户参加的组织列表，1=返回活动里的组织列表（不一定是当前用户参加的）
+     * @param pageNumber 页码
+     */
+    public void list(int ope, int pageNumber) {
         // accessToken,pageSize,pageNumber
-        httpRequest(getRequest(MultipleGroup.class, format("%s?pageNumber=%d&accessToken=%s", url(LIST), pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleGroup.class, format("%s?ope=%d&pageNumber=%d&accessToken=%s", url(LIST), ope, pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     /**
