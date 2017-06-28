@@ -3,6 +3,7 @@ package com.gzlk.android.isp.fragment.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
@@ -88,6 +89,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
     private SimpleClickableViewHolder titleHolder, timeHolder, addressHolder, labelHolder, creatorHolder;
 
     private String[] items;
+    private int imageWidth, imageHeight;
     private AttachmentAdapter mAdapter;
 
     @Override
@@ -245,12 +247,21 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         }).findByTid(tid);
     }
 
+    private void resetImageViewSize() {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageView.getLayoutParams();
+        imageWidth = getScreenWidth();
+        imageHeight = imageWidth / 2;
+        params.height = imageHeight;
+        imageView.setLayoutParams(params);
+    }
+
     private void initializeHolders(Activity activity) {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_activity_entrance_items);
+            resetImageViewSize();
         }
         String img = (null != activity && !isEmpty(activity.getImg())) ? activity.getImg() : ("drawable://" + R.mipmap.img_image_loading_fail);
-        imageView.displayImage(img, getScreenWidth(), getDimension(R.dimen.ui_static_dp_200), false, false);
+        imageView.displayImage(img, imageWidth, imageHeight, false, false);
 
         if (null == titleHolder) {
             titleHolder = new SimpleClickableViewHolder(titleView, this);

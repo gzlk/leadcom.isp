@@ -30,12 +30,22 @@ import java.util.ArrayList;
 public class CoverPickFragment extends BaseImageSelectableSupportFragment {
 
     private static final String PARAM_IMAGE = "cpf_selected_image";
+    private static final String PARAM_CROP = "cpf_is_for_crop";
+    private static final String PARAM_ASPECT_X = "cpf_aspect_x";
+    private static final String PARAM_ASPECT_Y = "cpf_aspect_y";
 
     public static CoverPickFragment newInstance(String params) {
         CoverPickFragment cpf = new CoverPickFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 传过来的params也即queryId就是已经设置好了的封面地址
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 是否需要裁剪图片
+        bundle.putBoolean(PARAM_CROP, Boolean.valueOf(strings[1]));
+        // 裁剪图片宽高比
+        bundle.putInt(PARAM_ASPECT_X, Integer.valueOf(strings[2]));
+        // 裁剪图片宽高比
+        bundle.putInt(PARAM_ASPECT_Y, Integer.valueOf(strings[3]));
         cpf.setArguments(bundle);
         return cpf;
     }
@@ -46,12 +56,18 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         selectedImage = bundle.getString(PARAM_IMAGE, "");
+        isChooseImageForCrop = bundle.getBoolean(PARAM_CROP, false);
+        croppedAspectX = bundle.getInt(PARAM_ASPECT_X, 1);
+        croppedAspectY = bundle.getInt(PARAM_ASPECT_Y, 1);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_IMAGE, selectedImage);
+        bundle.putBoolean(PARAM_CROP, isChooseImageForCrop);
+        bundle.putInt(PARAM_ASPECT_X, croppedAspectX);
+        bundle.putInt(PARAM_ASPECT_Y, croppedAspectY);
     }
 
     // view
@@ -79,15 +95,18 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
     public void doingInResume() {
         // 只能选择一张图片
         maxSelectable = 1;
+        isChooseImageForCrop = true;
+        croppedAspectX = 2;
+        croppedAspectY = 1;
         setCustomTitle(R.string.ui_activity_cover_picker_fragment_title);
-        setRightText(R.string.ui_base_text_confirm);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                // 确定的时候上传封面并返回到上一层
-                confirmCover();
-            }
-        });
+//        setRightText(R.string.ui_base_text_confirm);
+//        setRightTitleClickListener(new OnTitleButtonClickListener() {
+//            @Override
+//            public void onClick() {
+//                // 确定的时候上传封面并返回到上一层
+//                confirmCover();
+//            }
+//        });
         initializeHolders();
         addOnImageSelectedListener(imageSelectedListener);
         setOnFileUploadingListener(onFileUploadingListener);
@@ -124,6 +143,7 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
                 selectedImage = selected.get(0);
                 galleryHolder.showContent(format(items[0], ""));
                 galleryHolder.showImage(selectedImage);
+                confirmCover();
             }
         }
     };

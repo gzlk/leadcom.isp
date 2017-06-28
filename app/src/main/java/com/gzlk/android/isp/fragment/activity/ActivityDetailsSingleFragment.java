@@ -3,6 +3,7 @@ package com.gzlk.android.isp.fragment.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.ActRequest;
@@ -56,6 +57,7 @@ public class ActivityDetailsSingleFragment extends BaseDownloadingUploadingSuppo
     private SimpleClickableViewHolder titleHolder, timeHolder, addressHolder;
 
     private String[] items;
+    private int imageWidth, imageHeight;
 
     public ActivityDetailsMainFragment manager;
 
@@ -112,13 +114,22 @@ public class ActivityDetailsSingleFragment extends BaseDownloadingUploadingSuppo
         }
         if (null == addressHolder) {
             addressHolder = new SimpleClickableViewHolder(addressView, this);
+            resetImageViewSize();
             imageDisplayer.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
             loadingActivity();
         }
     }
 
+    private void resetImageViewSize() {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageDisplayer.getLayoutParams();
+        imageWidth = getScreenWidth();
+        imageHeight = imageWidth / 2;
+        params.height = imageHeight;
+        imageDisplayer.setLayoutParams(params);
+    }
+
     private void display(Activity activity) {
-        imageDisplayer.displayImage(activity.getImg(), getScreenWidth(), getDimension(R.dimen.ui_static_dp_200), false, false);
+        imageDisplayer.displayImage(activity.getImg(), imageWidth, imageHeight, false, false);
         titleHolder.showContent(format(items[0], activity.getTitle()));
         timeHolder.showContent(format(items[1], formatDate(activity.getBeginDate())));
         addressHolder.showContent(format(items[2], activity.getContent()));

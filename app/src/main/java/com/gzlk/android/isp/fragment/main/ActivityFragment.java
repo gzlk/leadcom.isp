@@ -9,7 +9,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
-import com.gzlk.android.isp.fragment.activity.CreateActivityFragment;
+import com.gzlk.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.gzlk.android.isp.fragment.activity.UnApprovedInviteFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
@@ -264,7 +264,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     if (isEmpty(mQueryId)) {
                         ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
                     } else {
-                        openActivity(CreateActivityFragment.class.getName(), format(",%s", mQueryId), true, true);
+                        openActivity(ActivityCreatorFragment.class.getName(), format(",%s", mQueryId), true, true);
                     }
                     break;
                 case R.id.ui_tooltip_menu_activity_manage:

@@ -55,7 +55,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
+public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_GROUP = "caf_group_id_params";
     private static final String PARAM_MEMBERS = "caf_members";
@@ -68,8 +68,8 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_OPEN_STATUS = "caf_open_status";
     private static final String PARAM_ATTACHMENTS = "caf_attachments";
 
-    public static CreateActivityFragment newInstance(String params) {
-        CreateActivityFragment caf = new CreateActivityFragment();
+    public static ActivityCreatorFragment newInstance(String params) {
+        ActivityCreatorFragment caf = new ActivityCreatorFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 活动id，如果不为空则说明是修改活动的属性
@@ -485,7 +485,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
             switch (index) {
                 case 0:
                     // 到活动封面拾取器
-                    openActivity(CoverPickFragment.class.getName(), cover, REQ_COVER, true, false);
+                    openActivity(CoverPickFragment.class.getName(), format("%s,true,2,1", cover), REQ_COVER, true, false);
                     break;
                 case 1:
                     // 选择活动时间
@@ -785,7 +785,7 @@ public class CreateActivityFragment extends BaseSwipeRefreshSupportFragment {
     private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
         @Override
         public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
-            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, CreateActivityFragment.this);
+            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ActivityCreatorFragment.this);
             holder.addOnViewHolderClickListener(attachmentViewHolderClickListener);
             return holder;
         }

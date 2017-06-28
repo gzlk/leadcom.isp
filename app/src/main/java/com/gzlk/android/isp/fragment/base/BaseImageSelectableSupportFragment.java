@@ -221,6 +221,13 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         if (0 == mCompressedImageWidth) {
             mCompressedImageWidth = getScreenWidth();
         }
+        if (isChooseImageForCrop) {
+            // 需要裁剪图片时，重新定义宽高尺寸
+            if (mCompressedImageWidth > mCompressedImageHeight) {
+                mCompressedImageWidth = mCompressedImageHeight;
+            }
+            mCompressedImageHeight = (int) (croppedAspectY * 1.0 / croppedAspectX * 1.0 * mCompressedImageWidth);
+        }
     }
 
     // 重置已选择了的文件列表
@@ -361,9 +368,9 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         // 设置为裁剪动作
         intent.putExtra("crop", "true");
         // 裁剪宽高比
-        intent.putExtra("croppedAspectX", aspectX);
+        intent.putExtra("aspectX", aspectX);
         // 裁剪宽高比
-        intent.putExtra("croppedAspectY", aspectY);
+        intent.putExtra("aspectY", aspectY);
         // 输出图片宽度，单位像素
         intent.putExtra("outputX", outputWidth);
         // 输出图片高度，单位像素
