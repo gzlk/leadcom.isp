@@ -282,7 +282,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param happenDate 发生时间
      * @param labels     标签
      * @param authUser   授权的指定用户ID(Json数组)
-     * @param authPublic   档案内容(markdown)
+     * @param authPublic 档案内容(markdown)
      * @param office     文档({"name":"","url":"","pdf":""},{})
      * @param image      图片([{"name":"","url":""},{}])
      * @param video      视频([{"name":"","url":""},{}])
@@ -435,6 +435,13 @@ public class ArchiveRequest extends Request<Archive> {
         // groDocArchiveId,status,accessToken
         String params = format("/group/groDocArchive/archive?groDocArchiveId=%s&status=%d&accessToken=%s", archiveId, status, Cache.cache().accessToken);
         httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+    }
+
+    /**
+     * 查找单个需存档的活动文档记录
+     */
+    public void archiveFind(String archiveId) {
+        httpRequest(getRequest(SingleArchive.class, format("/group/groDocArchive/find?groDocArchiveId=%s", archiveId), "", HttpMethods.Get));
     }
 
     /**

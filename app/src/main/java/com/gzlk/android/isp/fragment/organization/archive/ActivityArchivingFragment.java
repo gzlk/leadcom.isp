@@ -148,8 +148,11 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                 resetSelectAll();
                 break;
             case R.id.ui_archive_approve_reject:
-                // 存档文件
-                archiveSelectedArchives();
+                if (rejectView.isEnabled()) {
+                    rejectView.setEnabled(false);
+                    // 存档文件
+                    archiveSelectedArchives();
+                }
                 break;
             case R.id.ui_archive_approve_passed:
                 // 本页面没有用到这个按钮
@@ -220,7 +223,8 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(archive, success, message);
                 displayLoading(false);
                 if (success) {
-                    finish();
+                    // 存档完毕后返回上一页
+                    resultSucceededActivity();
                 } else {
                     rejectView.setEnabled(true);
                     ToastHelper.make().showMsg(message);

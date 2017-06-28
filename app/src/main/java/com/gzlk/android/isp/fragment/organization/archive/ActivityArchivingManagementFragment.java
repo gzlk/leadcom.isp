@@ -25,6 +25,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 public class ActivityArchivingManagementFragment extends BaseViewPagerSupportFragment {
 
     private static final String PARAM_ARCHIVE_ID = "aamf_archive_id";
+    private static boolean firstEnter = true;
 
     public static ActivityArchivingManagementFragment newInstance(String params) {
         ActivityArchivingManagementFragment af = new ActivityArchivingManagementFragment();
@@ -35,6 +36,7 @@ public class ActivityArchivingManagementFragment extends BaseViewPagerSupportFra
         // 文档的id
         bundle.putString(PARAM_ARCHIVE_ID, strings[1]);
         af.setArguments(bundle);
+        firstEnter = true;
         return af;
     }
 
@@ -69,15 +71,14 @@ public class ActivityArchivingManagementFragment extends BaseViewPagerSupportFra
     @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_archive_management_title_button_2);
-        setRightText(R.string.ui_base_text_edit);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                // 打开活动文档的存档页面
-                openActivity(ActivityArchivingFragment.class.getName(), format("%s,%s", mQueryId, mArchiveId), true, false);
-            }
-        });
         super.doingInResume();
+        if (firstEnter) {
+            firstEnter = false;
+            setRightEvent(true);
+        } else {
+            setRightEvent(false);
+        }
+        //loadingArchive();
     }
 
     @Override
@@ -137,4 +138,28 @@ public class ActivityArchivingManagementFragment extends BaseViewPagerSupportFra
                 break;
         }
     }
+
+    private void setRightEvent(boolean handleable) {
+        setRightText(handleable ? R.string.ui_base_text_edit : 0);
+        setRightTitleClickListener(handleable ? new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                // 打开活动文档的存档页面
+                openActivity(ActivityArchivingFragment.class.getName(), format("%s,%s", mQueryId, mArchiveId), true, false);
+            }
+        } : null);
+    }
+
+    // 拉取本档案的详情，按照审核状态显示是否需要编辑
+//    private void loadingArchive() {
+//        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+//            @Override
+//            public void onResponse(Archive archive, boolean success, String message) {
+//                super.onResponse(archive, success, message);
+//                if (success && null != archive) {
+//                    setRightEvent(archive.getStatus() <= Archive.ArchiveStatus.APPROVING);
+//                }
+//            }
+//        }).find(Archive.Type.GROUP, mArchiveId, false);
+//    }
 }

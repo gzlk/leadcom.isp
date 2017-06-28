@@ -136,13 +136,13 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         // 如果当前显示的是组织页面才控制右上角的 + 显示与否
         int position = getDisplayedPage();
         boolean shown;
-        if (!BuildConfig.RELEASEABLE) {
-            // 测试状态下可以添加组织
-            shown = position <= 2;
-        } else {
-            // 新增：只有当前登录用户在这个组织内可以添加成员时才显示 + 号
-            shown = (position == 1 && canAddMember()) || (position == 2);
-        }
+        //if (!BuildConfig.RELEASEABLE) {
+        // 测试状态下可以添加组织
+        //    shown = position <= 2;
+        //} else {
+        // 新增：只有当前登录用户在这个组织内可以添加成员时才显示 + 号
+        shown = (position == 1 && canAddMember()) || (position == 2);
+        //}
         mainFragment.showRightIcon(shown);
     }
 
