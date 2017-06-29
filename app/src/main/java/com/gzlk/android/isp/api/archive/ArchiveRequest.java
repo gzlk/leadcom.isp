@@ -131,14 +131,13 @@ public class ArchiveRequest extends Request<Archive> {
      * @param title        档案标题
      * @param introduction 档案简介
      * @param authPublic   公开范围("0":私密,"1":公开)
-     * @param happenDate   发生时间
      * @param labels       标签
      * @param office       文档({"name":"","url":"","pdf":""},{})
      * @param image        图片([{"name":"","url":""},{}])
      * @param video        视频([{"name":"","url":""},{}])
      * @param attach       附件地址([{"name":"","url":""},{}])
      */
-    public void add(String cover, @NonNull String title, String introduction, int authPublic, String happenDate, ArrayList<String> labels,
+    public void add(String cover, @NonNull String title, String introduction, int authPublic, ArrayList<String> labels,
                     ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {title,happenDate,authPublic,tag,content,markdown,[office],[image],[video],[attach],accessToken}
 
@@ -150,7 +149,6 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("type", 1)
                     .put("intro", checkNull(introduction))
                     .put("authPublic", authPublic)
-                    .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
                     .put("office", new JSONArray(Attachment.getJson(office)))
                     .put("image", new JSONArray(Attachment.getJson(image)))
@@ -172,7 +170,6 @@ public class ArchiveRequest extends Request<Archive> {
      * @param cover        封面
      * @param title        档案标题
      * @param introduction 档案简介
-     * @param happenDate   发生时间
      * @param labels       档案标签(Json数组)
      * @param authUser     授权的指定用户ID(Json数组)
      * @param authPublic   授权范围(1.公开,2.组织内可见,3.指定个人可见)
@@ -181,7 +178,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param video        视频([{"name":"","url":""},{}])
      * @param attach       附件地址([{"name":"","url":""},{}])
      */
-    public void add(@NonNull String groupId, int type, String cover, @NonNull String title, String introduction, String happenDate,
+    public void add(@NonNull String groupId, int type, String cover, @NonNull String title, String introduction,
                     ArrayList<String> labels, ArrayList<String> authUser, int authPublic,
                     ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {groupId,type,title,happenDate,tag,[authUser],content,markdown,[office],[image],[video],[attach],accessToken}
@@ -194,7 +191,6 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("cover", cover)
                     .put("title", title)
                     .put("intro", checkNull(introduction))
-                    .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
                     .put("authUser", new JSONArray(authUser))
                     .put("authPublic", authPublic)
@@ -237,7 +233,6 @@ public class ArchiveRequest extends Request<Archive> {
      * @param cover      封面
      * @param title      档案标题
      * @param intro      档案内容(html)
-     * @param happenDate 发生时间
      * @param labels     标签
      * @param authPublic 公开范围("0":私密,"1":公开)
      * @param office     文档({"name":"","url":"","pdf":""},{})
@@ -245,7 +240,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param video      视频([{"name":"","url":""},{}])
      * @param attach     附件地址([{"name":"","url":""},{}])
      */
-    public void update(String archiveId, String cover, String title, String intro, int authPublic, String happenDate, ArrayList<String> labels,
+    public void update(String archiveId, String cover, String title, String intro, int authPublic, ArrayList<String> labels,
                        ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {_id,title,happenDate,authPublic,tag,content,markdown,[office],[image],[video],[attach],accessToken}
 
@@ -257,9 +252,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("title", title)
                     .put("intro", checkNull(intro))
                     .put("authPublic", authPublic)
-                    .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
-                    //.put("markdown", checkNull(markdown))
                     .put("office", new JSONArray(Attachment.getJson(office)))
                     .put("image", new JSONArray(Attachment.getJson(image)))
                     .put("video", new JSONArray(Attachment.getJson(video)))
@@ -279,7 +272,6 @@ public class ArchiveRequest extends Request<Archive> {
      * @param cover      封面
      * @param title      档案标题
      * @param intro      档案内容(html)
-     * @param happenDate 发生时间
      * @param labels     标签
      * @param authUser   授权的指定用户ID(Json数组)
      * @param authPublic 档案内容(markdown)
@@ -288,7 +280,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param video      视频([{"name":"","url":""},{}])
      * @param attach     附件地址([{"name":"","url":""},{}])
      */
-    public void update(String archiveId, String cover, @NonNull String title, String intro, String happenDate,
+    public void update(String archiveId, String cover, @NonNull String title, String intro,
                        ArrayList<String> labels, ArrayList<String> authUser, int authPublic,
                        ArrayList<Attachment> office, ArrayList<Attachment> image, ArrayList<Attachment> video, ArrayList<Attachment> attach) {
         // {_id,title,happenDate,tag,[authUser],content,markdown,[office],[image],[video],[attach],accessToken}
@@ -300,7 +292,6 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("cover", cover)
                     .put("title", title)
                     .put("intro", checkNull(intro))
-                    .put("happenDate", happenDate)
                     .put("label", new JSONArray(labels))
                     .put("authUser", new JSONArray(authUser))
                     .put("authPublic", authPublic)

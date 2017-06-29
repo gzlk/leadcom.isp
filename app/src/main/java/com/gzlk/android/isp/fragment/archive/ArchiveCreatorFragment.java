@@ -235,7 +235,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(cover, title, intro, seclusion.getStatus(), happenDate, labels, office, images, video, attach);
+        }).add(cover, title, intro, seclusion.getStatus(), labels, office, images, video, attach);
     }
 
     private ArrayList<String> labels = new ArrayList<>();
@@ -276,7 +276,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(archiveGroup, Archive.ArchiveType.NORMAL, cover, title, intro, happenDate,
+        }).add(archiveGroup, Archive.ArchiveType.NORMAL, cover, title, intro,
                 labels, sec.getUserIds(), sec.getStatus(), office, images, video, attach);
     }
 
@@ -300,7 +300,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, cover, title, content, seclusion.getStatus(), happenDate, labels, office, images, video, attach);
+        }).update(mQueryId, cover, title, content, seclusion.getStatus(), labels, office, images, video, attach);
     }
 
     private void editOrganizationArchive(String title, String content) {
@@ -315,7 +315,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, cover, title, content, happenDate, labels, seclusion.getUserIds(), seclusion.getStatus(), office, images, video, attach);
+        }).update(mQueryId, cover, title, content, labels, seclusion.getUserIds(), seclusion.getStatus(), office, images, video, attach);
     }
 
     @Override
