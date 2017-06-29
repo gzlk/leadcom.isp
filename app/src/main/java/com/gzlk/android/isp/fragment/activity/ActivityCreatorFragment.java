@@ -19,7 +19,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.organization.GroupContactPickFragment;
+import com.gzlk.android.isp.fragment.organization.GroupSquadContactPickerFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -507,9 +507,10 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     } else {
                         memberJson = Json.gson().toJson(selectedMembers, new TypeToken<List<SubMember>>() {
                         }.getType());
-                        log(memberJson);
-                        String params = format("%s,false,false,%s", mGroupId, replaceJson(memberJson, false));
-                        openActivity(GroupContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
+                        //String params = format("%s,false,false,%s", mGroupId, replaceJson(memberJson, false));
+                        //openActivity(GroupContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
+                        String params = format("%s,false,%s", mGroupId, replaceJson(memberJson, false));
+                        openActivity(GroupSquadContactPickerFragment.class.getName(), params, REQ_MEMBER, true, false);
                     }
                     break;
             }
