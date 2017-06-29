@@ -23,6 +23,7 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CorneredView;
 
 import java.util.ArrayList;
 
@@ -66,6 +67,8 @@ public class ArchiveHandlerFragment extends BaseSwipeRefreshSupportFragment {
     private LinearLayout chatContainer;
     @ViewId(R.id.ui_archive_approve_container)
     private LinearLayout approveContainer;
+    @ViewId(R.id.ui_archive_approve_reject)
+    private CorneredView rejectView;
     @ViewId(R.id.ui_archive_approve_reject_text)
     private TextView rejectTextView;
     @ViewId(R.id.ui_archive_approve_passed_text)
@@ -99,6 +102,7 @@ public class ArchiveHandlerFragment extends BaseSwipeRefreshSupportFragment {
         chatContainer.setVisibility(View.GONE);
         approveContainer.setVisibility(View.VISIBLE);
         rejectTextView.setText(mType == TYPE_APPROVE ? "审核不通过" : "放弃存档");
+        rejectView.setVisibility(mType == TYPE_APPROVE ? View.VISIBLE : View.GONE);
         passedTextView.setText(mType == TYPE_APPROVE ? "审核通过" : "存为档案");
 
         if (StringHelper.isEmpty(mQueryId)) {

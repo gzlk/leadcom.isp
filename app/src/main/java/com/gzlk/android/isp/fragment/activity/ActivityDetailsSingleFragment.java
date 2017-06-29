@@ -131,7 +131,7 @@ public class ActivityDetailsSingleFragment extends BaseDownloadingUploadingSuppo
     private void display(Activity activity) {
         imageDisplayer.displayImage(activity.getImg(), imageWidth, imageHeight, false, false);
         titleHolder.showContent(format(items[0], activity.getTitle()));
-        timeHolder.showContent(format(items[1], formatDate(activity.getBeginDate())));
+        timeHolder.showContent(format(items[1], formatDateTime(activity.getBeginDate())));
         addressHolder.showContent(format(items[2], activity.getContent()));
         boolean isManager = activity.getCreatorId().equals(Cache.cache().userId);
         endButton.setVisibility(isManager ? View.VISIBLE : View.GONE);

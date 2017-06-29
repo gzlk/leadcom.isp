@@ -26,7 +26,8 @@
 
         <include
             android:id="@+id/ui_tool_view_document_details_header_time"
-            layout="@layout/holder_view_simple_clickable_gravity_left" />
+            layout="@layout/holder_view_simple_clickable_gravity_left"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/ui_tool_view_document_details_header_privacy"
@@ -38,8 +39,8 @@
     <WebView
         android:id="@+id/ui_holder_view_document_details_content"
         android:layout_width="match_parent"
-        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
         android:background="@android:color/white" />
 
 </LinearLayout>

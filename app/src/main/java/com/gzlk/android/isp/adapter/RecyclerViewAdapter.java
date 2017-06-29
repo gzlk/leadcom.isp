@@ -208,8 +208,8 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
      */
     @Override
     public void update(T item) {
-        if (exist(item)) {
-            int index = indexOf(item);
+        int index = indexOf(item);
+        if (index >= 0) {
             innerList.set(index, item);
             notifyItemChanged(index);
         } else {

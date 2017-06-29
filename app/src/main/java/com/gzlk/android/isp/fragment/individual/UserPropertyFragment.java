@@ -124,11 +124,15 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     }
 
     @Click({R.id.ui_ui_custom_title_right_container,
+            R.id.ui_user_information_to_archive,
             R.id.ui_user_information_to_chat})
     private void click(View view) {
         switch (view.getId()) {
             case R.id.ui_ui_custom_title_right_container:
                 //toEdit();
+                break;
+            case R.id.ui_user_information_to_archive:
+                onBottomButtonClicked();
                 break;
             case R.id.ui_user_information_to_chat:
                 // 到单聊页面
@@ -142,7 +146,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     @Override
     protected void onBottomButtonClicked() {
         // 查看档案
-        ToastHelper.make().showMsg("查看档案");
+        ToastHelper.make().showMsg("目前没有查看个人档案的UI页面");
     }
 
 //    private void toEdit() {
@@ -221,7 +225,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
     private void checkUser(final User user) {
         // 自己和自己不能聊天
-        toChat.setVisibility(isMe() ? View.GONE : View.VISIBLE);
+        //toChat.setVisibility(isMe() ? View.GONE : View.VISIBLE);
+        toChat.setVisibility(View.GONE);
 
         final String invalid = StringHelper.getString(R.string.ui_base_text_not_set);
         // 头像部分

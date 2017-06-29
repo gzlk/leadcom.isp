@@ -23,6 +23,8 @@
     <string name="ui_icon_qr_code">&#xe63b;</string>
     <string name="ui_icon_right">&#xe6f2;</string>
     <string name="ui_icon_add">&#xe604;</string>
+    <string name="ui_icon_add_solid">&#xe61a;</string>
+    <string name="ui_icon_subtract_solid">&#xe7dd;</string>
     <string name="ui_icon_more">&#xe608;</string>
     <string name="ui_icon_refresh">&#xe79c;</string>
     <string name="ui_icon_camera">&#xe64b;</string>

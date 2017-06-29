@@ -29,7 +29,8 @@
 
         <include
             android:id="@+id/ui_archive_creator_happen_date"
-            layout="@layout/holder_view_simple_clickable" />
+            layout="@layout/holder_view_simple_clickable"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/ui_archive_creator_security"
