@@ -56,7 +56,11 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
     }
 
     public void showContent(User user) {
-        nameTextView.setText(user.getName());
+        String name = user.getName();
+        if (isEmpty(name)) {
+            name = StringHelper.getString(R.string.ui_text_user_information_name_empty);
+        }
+        nameTextView.setText(name);
         headerImage.displayImage(user.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_100), false, false);
         nameIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
         headerIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
