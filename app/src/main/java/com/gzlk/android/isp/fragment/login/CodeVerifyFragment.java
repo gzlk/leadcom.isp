@@ -188,12 +188,31 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                     // 更改手机号码时验证手机号码
                     tryModifyMyPhoneNumber();
                 } else {
-                    String clazz = verifyType == VT_PASSWORD ? ResetPasswordFragment.class.getName() : SignUpFragment.class.getName();
-                    String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, code);
-                    openActivity(clazz, params, true, true);
+                    if (verifyType == VT_PASSWORD) {
+                        // 重置密码时需要先校验验证码是否正确
+                        verifyCaptcha();
+                    } else {
+                        String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, code);
+                        openActivity(SignUpFragment.class.getName(), params, true, true);
+                    }
                 }
                 break;
         }
+    }
+
+    private void verifyCaptcha() {
+        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, "");
+                    openActivity(ResetPasswordFragment.class.getName(), params, true, true);
+                } else {
+                    ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_error);
+                }
+            }
+        }).verifyCaptcha(verifyPhone, super.verifyCode);
     }
 
     @SuppressWarnings("ConstantConditions")

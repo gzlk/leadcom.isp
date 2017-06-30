@@ -41,6 +41,7 @@ public class SystemRequest extends Request<User> {
     private static final String SYNC = SYSTEM + "/sync";
     private static final String CAPTCHA = SYSTEM + "/getCaptchaTo";
     private static final String PASSWORD = SYSTEM + "/resetPwd";
+    private static final String VERIFY_CAPTCHA = SYSTEM + "/verifyCaptcha";
     private static final String INVITE_TO_GROUP = SYSTEM + "/sms/invToJoinGroup";
     private static final String INVITE_TO_SQUAD = SYSTEM + "/sms/invToJoinSquad";
 
@@ -119,15 +120,31 @@ public class SystemRequest extends Request<User> {
     }
 
     /**
-     * 重置密码
+     * 登录前修改密码校验验证码
      */
-    public void resetPassword(String loginId, @NonNull String phone, @NonNull String captcha, @NonNull String password) {
+    public void verifyCaptcha(@NonNull String phone, @NonNull String captcha) {
+        // {phone,captcha}
+        JSONObject object = new JSONObject();
+        try {
+            object.put("phone", phone)
+                    .put("captcha", captcha);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(Register.class, VERIFY_CAPTCHA, object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 登陆前重置密码<br/>
+     * 不再需要传captcha，上一步已经验证了(2017/06/30 12:00)
+     */
+    public void resetPassword(String loginId, @NonNull String phone, @NonNull String password) {
         // {loginId:"",password:"",phone:"",captcha:""}
         JSONObject object = new JSONObject();
         try {
             object.put("phone", phone)
                     .put("loginId", checkNull(loginId))
-                    .put("captcha", captcha)
                     .put("password", password);
         } catch (JSONException e) {
             e.printStackTrace();
