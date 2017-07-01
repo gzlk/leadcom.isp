@@ -232,6 +232,8 @@
     <string name="ui_activity_sign_details_loading_sign_records">正在加载签到成员列表&#8230;</string>
     <string name="ui_activity_sing_details_delete_warning">您将要删除本签到应用以及其下所有的签到记录，确定要继续吗？</string>
 
+    <string name="ui_activity_vote_list_loading_vote">正在加载投票列表&#8230;</string>
+    <string name="ui_activity_vote_list_no_vote">活动中暂时没有更多投票应用</string>
     <string name="ui_activity_vote_publish_text">发布投票</string>
     <string name="ui_activity_vote_creator_fragment_title">发起投票</string>
     <string name="ui_activity_vote_creator_content_hint">输入投票内容</string>
@@ -239,16 +241,43 @@
     <string-array name="ui_activity_vote_creator_items">
         <item>|%s|投票标题|[a-zA-Z0-9\u4e00-\u9fa5]+||30</item>
         <item>0|投票类型|%s|1</item>
-        <item>1|结束时间|%s|1</item>
-        <item>2|提醒|%s|1</item>
+        <item>1|最多可选择|%s|1</item>
+        <item>2|结束时间|%s|1</item>
+        <item>3|提醒|%s|1</item>
     </string-array>
+    <string name="ui_activity_vote_creator_max_selectable" formatted="false">%d个选项</string>
     <string-array name="ui_activity_vote_types">
         <item></item>
         <item>单选</item>
         <item>多选</item>
     </string-array>
+    <string name="ui_activity_vote_item_hint">投票选项</string>
     <string-array name="ui_activity_vote_default_options">
         <item>选项%d</item>
         <item>添加选项</item>
     </string-array>
+    <string name="ui_activity_vote_creator_invalid_activity">无效的活动</string>
+    <string name="ui_activity_vote_creator_title_invalid">投票标题不符合要求</string>
+    <string name="ui_activity_vote_creator_desc_invalid">投票内容不符合要求</string>
+    <string name="ui_activity_vote_creator_options_invalid">投票选项不符合要求</string>
+    <string name="ui_activity_vote_creator_publishing">正在创建投票，请稍候&#8230;</string>
+    <string name="ui_activity_vote_creator_publish_vote_item">正在添加投票选项&#8239;</string>
+
+    <string name="ui_activity_vote_details_fragment_title">投票详情</string>
+    <string name="ui_activity_vote_details_has_ended">投票终止，查看结果</string>
+    <string name="ui_activity_vote_details_status_voting">进行中</string>
+    <string name="ui_activity_vote_details_status_ended">已结束</string>
+    <string name="ui_activity_vote_details_button_reject">弃权</string>
+    <string name="ui_activity_vote_details_button_vote">投票</string>
+    <string name="ui_activity_vote_details_number" formatted="false">%d票</string>
+    <string name="ui_activity_vote_details_loading">正在加载投票详情&#8230;</string>
+    <string name="ui_activity_vote_details_end_time" formatted="false">投票截止时间：%s</string>
+    <string name="ui_activity_vote_details_nothing_selected">请选择选项之后再进行投票</string>
+    <string name="ui_activity_vote_details_voting">正在处理您投票选项&#8230;</string>
+    <string name="ui_activity_vote_details_voting_failed">投票失败</string>
+    <string name="ui_activity_vote_details_delete">
+        <![CDATA[删除投票应用将会删除其下所有投票选项以及已有的投票记录。<br/>您确定要继续吗？]]>
+    </string>
+    <string name="ui_activity_vote_details_deleting">正在删除此投票应用&#8230;</string>
+
 </resources>

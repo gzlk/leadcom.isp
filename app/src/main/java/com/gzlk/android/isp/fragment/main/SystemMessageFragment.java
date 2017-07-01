@@ -89,8 +89,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new MessageAdapter();
             mAdapter.setMode(Attributes.Mode.Single);
             mRecyclerView.setAdapter(mAdapter);
-            loadingLocalMessages();
         }
+        loadingLocalMessages();
     }
 
     private void loadingLocalMessages() {
@@ -102,6 +102,10 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 if (!messages.contains(msg)) {
                     messages.add(msg);
                     mAdapter.notifyItemInserted(messages.size() - 1);
+                } else {
+                    int index = messages.indexOf(msg);
+                    messages.set(index, msg);
+                    mAdapter.notifyItemChanged(index);
                 }
             }
         }
@@ -114,7 +118,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             // 点击查看通知
             NimMessage msg = messages.get(index);
             //if (isEmpty(msg.getMsgTitle())) {
-                MainActivity.handleNimMessageDetails(Activity(), msg);
+            MainActivity.handleNimMessageDetails(Activity(), msg);
             //} else {
             //}
         }

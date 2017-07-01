@@ -29,11 +29,13 @@ import com.gzlk.android.isp.nim.action.VoteAction;
 import com.gzlk.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
+import com.gzlk.android.isp.nim.model.extension.VoteAttachment;
 import com.gzlk.android.isp.nim.model.notification.NimMessageParser;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderFile;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderNotice;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderSignNotify;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderTip;
+import com.gzlk.android.isp.nim.viewholder.MsgViewHolderVote;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.session.SessionCustomization;
@@ -123,6 +125,8 @@ public class NimSessionHelper {
         NimUIKit.registerMsgItemViewHolder(NoticeAttachment.class, MsgViewHolderNotice.class);
         // 签到提醒通知
         NimUIKit.registerMsgItemViewHolder(SigningNotifyAttachment.class, MsgViewHolderSignNotify.class);
+        // 投票
+        NimUIKit.registerMsgItemViewHolder(VoteAttachment.class, MsgViewHolderVote.class);
         // 提示类消息
         NimUIKit.registerTipMsgViewHolder(MsgViewHolderTip.class);
     }

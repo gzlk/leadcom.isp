@@ -36,6 +36,9 @@ public class BaseAttachmentParser implements MsgAttachmentParser {
                 case AttachmentType.SIGN_NOTIFY:
                     attachment = new SigningNotifyAttachment();
                     break;
+                case AttachmentType.VOTE:
+                    attachment = new VoteAttachment();
+                    break;
             }
             if (null != attachment) {
                 attachment.fromJson(data);

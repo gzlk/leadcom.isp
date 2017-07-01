@@ -18,11 +18,6 @@ import com.litesuits.orm.db.annotation.Ignore;
 
 public class Sign extends Model {
 
-    public interface Table {
-        String SIGNING = "actSign";
-        String SIGN_RECORD = "actSignRecord";
-    }
-
     public interface Field {
         String Longitude = "longitude";
         String Latitude = "latitude";
@@ -39,7 +34,7 @@ public class Sign extends Model {
     @Column(Archive.Field.Title)
     private String title;
     //描述
-    @Column(Vote.Field.Description)
+    @Column(AppVote.Field.Description)
     private String desc;
     //地理经度
     @Column(Field.Longitude)

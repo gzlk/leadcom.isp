@@ -9,8 +9,6 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
-import java.util.Date;
-
 /**
  * <b>功能描述：</b>活动应用：签到<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -21,7 +19,7 @@ import java.util.Date;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Sign.Table.SIGNING)
+@Table(Activity.Table.SIGN)
 public class AppSigning extends Sign {
 
     //活动Id
@@ -31,10 +29,10 @@ public class AppSigning extends Sign {
     @Column(Organization.Field.ModifyDate)
     private String modifyDate;
     //签到开始时间
-    @Column(Vote.Field.BeginTime)
+    @Column(AppVote.Field.BeginTime)
     private String beginTime;
     //签到结束时间
-    @Column(Vote.Field.EndTime)
+    @Column(AppVote.Field.EndTime)
     private String endTime;
     //签到人数(按user对象的id过滤，避免一个用户多次签到后被重复计数)
     @Column(Field.SignInNum)

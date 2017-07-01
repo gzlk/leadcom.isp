@@ -29,4 +29,12 @@ public class RequestCode {
      * 创建新的签到应用
      */
     public static final int REQ_SIGN_NEW = BASE_NIM_REQ + 3;
+    /**
+     * 到投票列表
+     */
+    public static final int REQ_VOTE_LIST = BASE_NIM_REQ + 4;
+    /**
+     * 创建新的投票应用
+     */
+    public static final int REQ_VOTE_NEW = BASE_NIM_REQ + 5;
 }

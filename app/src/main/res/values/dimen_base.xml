@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="ui_base_text_size">@dimen/ui_static_sp_16</dimen>
+    <dimen name="ui_base_text_size_max">@dimen/ui_static_sp_28</dimen>
     <dimen name="ui_base_text_size_huge">@dimen/ui_static_sp_24</dimen>
     <dimen name="ui_base_text_size_big">@dimen/ui_static_sp_18</dimen>
     <dimen name="ui_base_text_size_small">@dimen/ui_static_sp_14</dimen>
@@ -21,4 +22,6 @@
 
     <dimen name="ui_base_translationZ">@dimen/ui_static_dp_3</dimen>
     <dimen name="ui_base_translationZ_small">@dimen/ui_static_dp_1</dimen>
+
+    <dimen name="ui_base_user_header_image_size">@dimen/ui_static_dp_40</dimen>
 </resources>

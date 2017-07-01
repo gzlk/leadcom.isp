@@ -53,6 +53,8 @@
     <string name="ui_icon_triangle">&#xe690;</string>
     <string name="ui_icon_checkbox_unchecked">&#xe648;</string>
     <string name="ui_icon_checkbox_checked">&#xe994;</string>
+    <string name="ui_icon_radio_selected">&#xe61b;</string>
+    <string name="ui_icon_radio_unselected">&#xe645;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>
@@ -81,5 +83,6 @@
     <string name="ui_icon_material_group">&#xE7EB;</string>
     <string name="ui_icon_material_squad">&#xE7FC;</string>
     <string name="ui_icon_material_person">&#xE7FD;</string>
+    <string name="ui_icon_material_list_numbered">&#xE242;</string>
 
 </resources>

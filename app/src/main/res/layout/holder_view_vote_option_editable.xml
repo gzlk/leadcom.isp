@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/ui_base_dimen_button_height"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+    android:background="@android:color/white"
+    android:gravity="center_vertical">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_vote_option_editable_icon"
+        android:layout_width="@dimen/ui_base_dimen_button_height"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/ui_icon_add_solid"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/ui_base_text_size_big" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_vote_option_editable_text"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:visibility="gone" />
+
+    <com.hlk.hlklib.lib.view.ClearEditText
+        android:id="@+id/ui_holder_view_vote_option_editable_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_weight="1"
+        app:cet_edit_active_border="@color/textColorHintLightLight"
+        app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
+        app:cet_edit_gravity="center_vertical"
+        app:cet_edit_hint="@string/ui_activity_vote_item_hint"
+        app:cet_edit_icon_clear="@string/ui_icon_clear"
+        app:cet_edit_normal_border="@android:color/white"
+        app:cet_edit_padding_bottom="@dimen/ui_static_dp_5"
+        app:cet_edit_padding_left="@dimen/ui_base_dimen_margin_padding"
+        app:cet_edit_padding_right="@dimen/ui_static_dp_30"
+        app:cet_edit_padding_top="@dimen/ui_static_dp_5"
+        app:cet_edit_value_max_length="@integer/integer_activity_vote_option_max_length" />
+
+</LinearLayout>

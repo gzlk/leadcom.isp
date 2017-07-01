@@ -23,7 +23,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-@Table(Sign.Table.SIGN_RECORD)
+@Table(Activity.Table.SIGN_RECORD)
 public class AppSignRecord extends Sign {
 
     public static String toJson(AppSignRecord record) {
@@ -52,7 +52,7 @@ public class AppSignRecord extends Sign {
     private String setupId;
 
     //手机设备号
-    @Column(Vote.Field.IMSI)
+    @Column(AppVote.Field.IMSI)
     private String imsi;
 
     @Ignore

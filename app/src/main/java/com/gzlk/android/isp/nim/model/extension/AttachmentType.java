@@ -20,4 +20,8 @@ public interface AttachmentType {
      * 群签到提醒
      */
     int SIGN_NOTIFY = 2;
+    /**
+     * 投票
+     */
+    int VOTE = 3;
 }

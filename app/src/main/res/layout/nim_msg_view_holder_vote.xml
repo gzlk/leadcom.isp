@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start|top"
+    android:background="@drawable/nim_message_item_round_bg"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/message_item_vote_icon"
+        android:layout_width="@dimen/ui_static_dp_50"
+        android:layout_height="@dimen/ui_static_dp_50"
+        android:layout_marginEnd="@dimen/ui_static_dp_5"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="@color/colorPrimary"
+        android:gravity="center">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_icon_material_list_numbered"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ui_base_text_size_max"
+            app:ctv_source="material_icon" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/message_item_vote_icon"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/message_item_vote_title_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_static_dp_2"
+            android:autoLink="none"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:maxWidth="@dimen/ui_nim_max_text_bubble_width"
+            android:text="@string/app_name_default"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+        <LinearLayout
+            android:id="@+id/message_item_vote_item_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/message_item_vote_item_1_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:text="@string/ui_icon_checkbox_checked"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+
+            <TextView
+                android:id="@+id/message_item_vote_item_1_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/message_item_vote_item_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/message_item_vote_item_2_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:text="@string/ui_icon_radio_unselected"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+
+            <TextView
+                android:id="@+id/message_item_vote_item_2_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/message_item_vote_item_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/message_item_vote_item_3_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:text="@string/ui_icon_radio_unselected"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+
+            <TextView
+                android:id="@+id/message_item_vote_item_3_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

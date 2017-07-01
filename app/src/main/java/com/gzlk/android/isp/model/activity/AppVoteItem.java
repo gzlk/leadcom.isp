@@ -15,16 +15,16 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改备注：</b><br />
  */
 @Table(Activity.Table.VOTE_ITEM)
-public class VoteItem extends Model {
+public class AppVoteItem extends Model {
 
     //投票设置对象的id
-    @Column(Vote.Field.VoteId)
+    @Column(AppVote.Field.VoteId)
     private String setupId;
     //投票选项的描述
-    @Column(Vote.Field.Description)
+    @Column(AppVote.Field.Description)
     private String desc;
     //该投票选项的投票得票数
-    @Column(Vote.Field.Num)
+    @Column(AppVote.Field.Num)
     private int num = 0;
     //该投票项的创建时间
     @Column(Field.CreateDate)

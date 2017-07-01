@@ -87,7 +87,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 格式化字符串
      */
-    public String format(String format, Object... args) {
+    public static String format(String format, Object... args) {
         return String.format(Locale.getDefault(), format, args);
     }
 

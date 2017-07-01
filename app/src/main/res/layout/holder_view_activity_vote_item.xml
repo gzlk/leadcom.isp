@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding">
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:id="@+id/ui_holder_view_activity_vote_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        app:cv_active_border="@color/colorPrimary"
+        app:cv_background="@android:color/white"
+        app:cv_background_active="@android:color/white"
+        app:cv_background_type="border"
+        app:cv_border_size="@dimen/ui_base_border_size_normal"
+        app:cv_corner_size="@dimen/ui_static_dp_zero"
+        app:cv_normal_border="@android:color/white">
+
+        <include layout="@layout/tool_view_individual_header_small" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_activity_vote_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_static_dp_5"
+            android:text="@string/app_name_default" />
+
+        <com.gzlk.android.isp.lib.view.ExpandableTextView
+            android:id="@+id/ui_holder_view_activity_vote_item_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_static_dp_5"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHintDark"
+            android:textSize="@dimen/ui_base_text_size_small"
+            app:lessText="@string/ui_base_text_collapse"
+            app:moreText="@string/ui_base_text_expand" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_static_dp_5"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ui_holder_view_activity_vote_item_status_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ui_activity_vote_details_has_ended"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <TextView
+                android:id="@+id/ui_holder_view_activity_vote_item_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHintLight"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+    <TextView
+        android:id="@+id/ui_holder_view_activity_vote_item_status_flag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/ui_base_border_size_normal"
+        android:background="@color/textColorHintLight"
+        android:paddingBottom="@dimen/ui_static_dp_5"
+        android:paddingEnd="@dimen/ui_static_dp_15"
+        android:paddingStart="@dimen/ui_static_dp_15"
+        android:paddingTop="@dimen/ui_static_dp_5"
+        android:text="@string/app_name_default"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ui_base_text_size_small" />
+</RelativeLayout>

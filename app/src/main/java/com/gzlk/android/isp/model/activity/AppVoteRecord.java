@@ -16,26 +16,26 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改备注：</b><br />
  */
 @Table(Activity.Table.VOTE_RECORD)
-public class VoteRecord extends Model {
+public class AppVoteRecord extends Model {
 
     //活动Id
     @Column(Activity.Field.ActivityId)
     private String actId;
     //投票设置的id(用于把签到记录和签到设置关联起来)
-    @Column(Vote.Field.VoteId)
+    @Column(AppVote.Field.VoteId)
     private String setupId;
     //投票选择项的id
-    @Column(Vote.Field.VoteItemId)
-    private String choiceId;
+    @Column(AppVote.Field.VoteItemId)
+    private String itemId;
     //手机设备号
-    @Column(Vote.Field.IMSI)
+    @Column(AppVote.Field.IMSI)
     private String imsi;
     //创建者名称
-    @Column(Archive.Field.CreatorName)
-    private String creatorName;
+    @Column(Field.UserName)
+    private String userName;
     //创建者的id
-    @Column(Archive.Field.CreatorId)
-    private String creatorId;
+    @Column(Field.UserId)
+    private String userId;
     //创建时间
     @Column(Field.CreateDate)
     protected String createDate;
@@ -56,12 +56,12 @@ public class VoteRecord extends Model {
         this.setupId = setupId;
     }
 
-    public String getChoiceId() {
-        return choiceId;
+    public String getItemId() {
+        return itemId;
     }
 
-    public void setChoiceId(String choiceId) {
-        this.choiceId = choiceId;
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     public String getImsi() {
@@ -72,20 +72,20 @@ public class VoteRecord extends Model {
         this.imsi = imsi;
     }
 
-    public String getCreatorName() {
-        return creatorName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getCreatorId() {
-        return creatorId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getCreateDate() {

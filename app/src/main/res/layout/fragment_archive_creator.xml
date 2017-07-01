@@ -42,11 +42,15 @@
         android:id="@+id/ui_archive_creator_introduction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cet_edit_count_input="true"
+        app:cet_edit_count_input_text_color="@color/textColorHint"
+        app:cet_edit_count_input_text_size="@dimen/ui_base_text_size_tiny"
         app:cet_edit_hint="@string/ui_text_document_create_content_hint"
         app:cet_edit_max_lines="3"
         app:cet_edit_maximum_height="@dimen/ui_static_dp_100"
         app:cet_edit_minimum_height="@dimen/ui_static_dp_80"
-        app:cet_edit_padding="@dimen/ui_static_dp_5" />
+        app:cet_edit_padding="@dimen/ui_static_dp_5"
+        app:cet_edit_value_max_length="@integer/integer_group_description_max_length" />
 
     <include layout="@layout/tool_view_divider_big" />
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.hlk.hlklib.lib.view.CorneredButton
+        android:id="@+id/ui_tool_view_bottom_buttons_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/ui_static_dp_5"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        android:text="@string/app_name_default"
+        android:textColor="@color/ui_text_normal_primary"
+        app:active_color="@color/colorPrimary"
+        app:corner_size="@dimen/ui_base_dimen_button_corner_size"
+        app:normal_color="@android:color/white" />
+
+    <com.hlk.hlklib.lib.view.CorneredButton
+        android:id="@+id/ui_tool_view_bottom_buttons_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/ui_static_dp_5"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        android:text="@string/app_name_default"
+        android:textColor="@color/ui_text_normal_white"
+        app:active_color="@color/colorAccent"
+        app:corner_size="@dimen/ui_base_dimen_button_corner_size"
+        app:normal_color="@color/colorPrimary" />
+
+</LinearLayout>

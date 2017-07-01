@@ -33,9 +33,11 @@ public class Activity extends Model {
         String CHARACTER = "character";
         String LABEL = "activityLabel";
         String NOTICE = "activityNotice";
-        String VOTE = "vote";
-        String VOTE_ITEM = "voteItem";
-        String VOTE_RECORD = "voteRecord";
+        String SIGN = "activitySign";
+        String SIGN_RECORD = "activitySignRecord";
+        String VOTE = "activityVote";
+        String VOTE_ITEM = "activityVoteItem";
+        String VOTE_RECORD = "activityVoteRecord";
     }
 
     public interface Field {

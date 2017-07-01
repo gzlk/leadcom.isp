@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_vote_option"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/ui_base_dimen_button_height"
+    android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+    android:background="@android:color/white"
+    android:orientation="horizontal"
+    app:cv_background="@android:color/white"
+    app:cv_background_active="@color/textColorHintLight"
+    app:cv_background_type="fill"
+    app:cv_border_size="@dimen/ui_static_dp_zero">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_vote_option_icon"
+        android:layout_width="@dimen/ui_base_dimen_button_height"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/ui_icon_radio_selected"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/ui_base_text_size_big" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_vote_option_text"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:text="@string/app_name_default" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_vote_option_number"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:gravity="center_vertical"
+        android:text="@string/app_name_default"
+        android:textColor="@color/textColorHint"
+        android:textSize="@dimen/ui_base_text_size_small" />
+
+</com.hlk.hlklib.lib.view.CorneredView>
