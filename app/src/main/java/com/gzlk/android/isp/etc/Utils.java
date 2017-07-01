@@ -48,9 +48,11 @@ public class Utils {
     public static final String FMT_YMD = "yyyy/MM/dd";
     public static final String FMT_YMD2 = "yyyy-MM-dd";
     public static final String FMT_YMD3 = "yyyy年MM月dd日";
-    public static final String FMT_YMDHM = "yyyy年MM月dd日 HH:mm";
+    public static final String FMT_YMDHM = "yyyy年MM月dd日HH:mm";
     public static final String FMT_HHMMSS = "yyyy/MM/dd HH:mm:ss";
     public static final String FMT_MMDD = "MM月dd日";
+    private static final String FMT_HHMM1 = "HH:mm";
+    private static final String FMT_MMDDHHMM = "MM月dd日HH:mm";
     public static final String FMT_YYYYMMDDHHMM = "yyyyMMddHHmm";
     public static final String FMT_YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
 
@@ -233,9 +235,9 @@ public class Utils {
         } else if (diff < DAY) {
             return diff / HOUR + "小时前";
         } else if (diff < 2 * DAY) {
-            return "昨天";
+            return "昨天" + format(FMT_HHMM1, time);
         } else if (diff < 3 * DAY) {
-            return "前天";
+            return "前天" + format(FMT_HHMM1, time);
         }
         Calendar year = Calendar.getInstance();
         year.set(Calendar.MONTH, Calendar.JANUARY);
@@ -247,10 +249,10 @@ public class Utils {
         long yearBeginning = year.getTimeInMillis();
         if (diff < yearBeginning) {
             // 今年的话，则格式化成 xx月xx日
-            return format(FMT_MMDD, time);
+            return format(FMT_MMDDHHMM, time);
         }
         // 去年以及以前的都格式化成 xxxx年xx月xx日
-        return format(FMT_YMD3, time);
+        return format(FMT_YMDHM, time);
     }
 
     private static final String[] digitalUnits = new String[]{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "DB", "NB"};

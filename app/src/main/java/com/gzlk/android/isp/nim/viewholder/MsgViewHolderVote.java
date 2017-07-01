@@ -87,7 +87,7 @@ public class MsgViewHolderVote extends MsgViewHolderBase {
 
     @Override
     protected void onItemClick() {
-        String params = StringHelper.format("%s,%s", message.getSessionId(), vote.getVoteId());
+        String params = StringHelper.format("%s,%s", vote.getVoteId(), message.getSessionId());
         BaseActivity.openActivity(context, VoteDetailsFragment.class.getName(), params, true, false);
     }
 }
