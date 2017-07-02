@@ -20,7 +20,7 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
-import com.gzlk.android.isp.model.activity.AppSigning;
+import com.gzlk.android.isp.model.activity.sign.AppSigning;
 
 import java.util.List;
 

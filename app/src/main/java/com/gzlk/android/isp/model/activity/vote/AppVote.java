@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.model.activity;
+package com.gzlk.android.isp.model.activity.vote;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
@@ -7,6 +7,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;

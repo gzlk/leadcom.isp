@@ -4,13 +4,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
-import com.gzlk.android.isp.model.activity.AppVote;
+import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;

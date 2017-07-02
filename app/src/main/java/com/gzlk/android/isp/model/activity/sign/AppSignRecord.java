@@ -1,10 +1,12 @@
-package com.gzlk.android.isp.model.activity;
+package com.gzlk.android.isp.model.activity.sign;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;

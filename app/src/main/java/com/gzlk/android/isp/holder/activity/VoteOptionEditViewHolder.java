@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.model.activity.AppVoteItem;
+import com.gzlk.android.isp.model.activity.vote.AppVoteItem;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;

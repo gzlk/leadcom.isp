@@ -1,7 +1,7 @@
-package com.gzlk.android.isp.model.activity;
+package com.gzlk.android.isp.model.activity.vote;
 
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 

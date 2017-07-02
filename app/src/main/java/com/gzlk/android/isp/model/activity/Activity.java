@@ -38,6 +38,8 @@ public class Activity extends Model {
         String VOTE = "activityVote";
         String VOTE_ITEM = "activityVoteItem";
         String VOTE_RECORD = "activityVoteRecord";
+        String SURVEY = "activitySurvey";
+        String SURVEY_ITEM = "activitySurveyItem";
     }
 
     public interface Field {
@@ -47,6 +49,7 @@ public class Activity extends Model {
         String NimId = "nimId";
         String BeginDate = "beginDate";
         String Site = "site";
+        String Sequence = "sequence";
         String ActivityId = "activityId";
         String ActivityName = "activityName";
         String ActivityImage = "activityImage";

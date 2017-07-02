@@ -5,7 +5,7 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.model.activity.AppVote;
+import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;

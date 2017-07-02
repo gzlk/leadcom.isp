@@ -1,7 +1,6 @@
 package com.gzlk.android.isp.fragment.activity.sign;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -27,8 +26,8 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.activity.AppSignRecord;
-import com.gzlk.android.isp.model.activity.AppSigning;
+import com.gzlk.android.isp.model.activity.sign.AppSignRecord;
+import com.gzlk.android.isp.model.activity.sign.AppSigning;
 import com.gzlk.android.isp.model.common.Address;
 import com.gzlk.android.isp.nim.constant.SigningNotifyType;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;

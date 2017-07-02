@@ -16,7 +16,7 @@ import com.gzlk.android.isp.holder.activity.VoteViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
-import com.gzlk.android.isp.model.activity.AppVote;
+import com.gzlk.android.isp.model.activity.vote.AppVote;
 
 import java.util.List;
 

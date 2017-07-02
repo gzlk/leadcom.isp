@@ -1,9 +1,11 @@
-package com.gzlk.android.isp.model.activity;
+package com.gzlk.android.isp.model.activity.sign;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;

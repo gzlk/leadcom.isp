@@ -8,10 +8,9 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.model.activity.AppSignRecord;
+import com.gzlk.android.isp.model.activity.sign.AppSignRecord;
 import com.litesuits.http.request.param.HttpMethods;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

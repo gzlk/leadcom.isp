@@ -13,7 +13,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.model.activity.AppSigning;
+import com.gzlk.android.isp.model.activity.sign.AppSigning;
 import com.gzlk.android.isp.nim.constant.RequestCode;
 import com.gzlk.android.isp.nim.constant.SigningNotifyType;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
