@@ -48,7 +48,6 @@ import com.netease.nim.uikit.team.model.TeamExtras;
 import com.netease.nim.uikit.team.model.TeamRequestCode;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.avchat.model.AVChatAttachment;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
@@ -183,10 +182,7 @@ public class NimSessionHelper {
         NimUIKit.setMsgRevokeFilter(new MsgRevokeFilter() {
             @Override
             public boolean shouldIgnore(IMMessage message) {
-                if (message.getAttachment() != null
-                        && (message.getAttachment() instanceof AVChatAttachment
-                        //|| message.getAttachment() instanceof RTSAttachment
-                )) {
+                if (message.getAttachment() != null) {
                     // 视频通话消息和白板消息 不允许撤回
                     return true;
                 } else if (Cache.cache().userId.equals(message.getSessionId())) {
@@ -262,14 +258,14 @@ public class NimSessionHelper {
         // 相机拍摄照片
         actions.add(new CameraAction());
         // 相机录制视频
-        actions.add(new VideoCaptureAction());
+        //actions.add(new VideoCaptureAction());
         // 相册选择视频
-        actions.add(new VideoChooseAction());
-        actions.add(new FileAction());
+        //actions.add(new VideoChooseAction());
         // 跟电脑对话时不需要发送位置
         if (type != SessionTypeEnum.System) {
             actions.add(new LocationAction());
         }
+        actions.add(new FileAction());
         if (type == SessionTypeEnum.Team) {
             actions.add(new NoticeAction());
         }

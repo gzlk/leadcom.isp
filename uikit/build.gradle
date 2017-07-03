@@ -42,7 +42,7 @@ dependencies {
     // 基础功能 (必需)
     compile 'com.netease.nimlib:basesdk:3.8.0'
     // 音视频需要
-    compile 'com.netease.nimlib:avchat:3.8.0'
+    //compile 'com.netease.nimlib:avchat:3.8.0'
     // 全文检索服务需要
     compile 'com.netease.nimlib:lucene:3.8.0'
 

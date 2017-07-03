@@ -38,7 +38,6 @@ import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
-import com.netease.nimlib.sdk.avchat.model.AVChatAttachment;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
@@ -363,8 +362,7 @@ public class MessageListPanelEx {
             IMMessage item = items.get(index);
             item.setStatus(message.getStatus());
             item.setAttachStatus(message.getAttachStatus());
-            if (item.getAttachment() instanceof AVChatAttachment
-                    || item.getAttachment() instanceof AudioAttachment) {
+            if (item.getAttachment() instanceof AudioAttachment) {
                 item.setAttachment(message.getAttachment());
             }
 
