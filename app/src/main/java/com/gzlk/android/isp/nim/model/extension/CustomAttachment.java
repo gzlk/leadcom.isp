@@ -3,7 +3,7 @@ package com.gzlk.android.isp.nim.model.extension;
 import org.json.JSONObject;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>历康自定义消息基类<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/06/19 20:44 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />

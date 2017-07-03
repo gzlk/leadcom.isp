@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>附件消息基类的解析器<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/06/19 20:38 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -33,7 +33,7 @@ public class BaseAttachmentParser implements MsgAttachmentParser {
                 case AttachmentType.NOTICE:
                     attachment = new NoticeAttachment();
                     break;
-                case AttachmentType.SIGN_NOTIFY:
+                case AttachmentType.SIGN:
                     attachment = new SigningNotifyAttachment();
                     break;
                 case AttachmentType.VOTE:

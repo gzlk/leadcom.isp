@@ -16,12 +16,13 @@ import org.json.JSONObject;
 public class SigningNotifyAttachment extends CustomAttachment {
 
     public SigningNotifyAttachment() {
-        super(AttachmentType.SIGN_NOTIFY);
+        super(AttachmentType.SIGN);
     }
 
     /**
-     * 提醒类型：
+     * 签到提醒类型(目前提醒只是创建者手动提醒，没有自动发布提醒功能)：
      * <ul>
+     * <li>0=发布签到提醒</li>
      * <li>1=准备签到提醒（比如提前5分钟提醒大家签到）</li>
      * <li>2=开始签到提醒</li>
      * <li>3=签到即将结束提醒</li>

@@ -17,6 +17,10 @@ import org.json.JSONObject;
 
 public abstract class BaseAttachment implements MsgAttachment {
 
+    /**
+     * 消息类型
+     * @see AttachmentType
+     */
     protected int type;
 
     public BaseAttachment(int type) {
