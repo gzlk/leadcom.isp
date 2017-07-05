@@ -15,7 +15,8 @@
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="@dimen/ui_static_dp_5">
+        android:padding="@dimen/ui_static_dp_5"
+        android:visibility="gone">
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:layout_width="wrap_content"

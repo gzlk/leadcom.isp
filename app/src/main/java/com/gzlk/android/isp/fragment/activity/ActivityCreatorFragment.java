@@ -29,8 +29,10 @@ import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.SubMember;
@@ -386,7 +388,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }
-        String tmp = labelsId.size() < 1 ? "选择标签" : format("%d个标签", labelsId.size());
+        String tmp = labelsId.size() < 1 ? "选择标签" : getLabels();
         value = format(items[4], tmp);
         typeHolder.showContent(value);
 
@@ -438,6 +440,19 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         }
         updateActivityAttachment(activity);
         createFilePickerDialog();
+    }
+
+    private String getLabels() {
+        //format("%d个标签", labelsId.size()
+        String ret = "";
+        for (String id : labelsId) {
+            Label label = Label.getLabel(id);
+            if (null != label && !isEmpty(label.getName())) {
+                ret += (isEmpty(ret) ? "" : "、") + label.getName();
+            }
+        }
+        ret += format("共%d个标签", labelsId.size());
+        return ret;
     }
 
     private ArrayList<Attachment> attachments;
@@ -745,7 +760,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                finish();
+                resultSucceededActivity();
             }
         }, 300);
     }

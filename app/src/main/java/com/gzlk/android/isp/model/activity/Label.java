@@ -33,6 +33,10 @@ public class Label extends Model {
         return new ArrayList<>();
     }
 
+    public static Label getLabel(String labelId) {
+        return new Dao<>(Label.class).query(labelId);
+    }
+
     //名称
     @Column(Model.Field.Name)
     private String name;

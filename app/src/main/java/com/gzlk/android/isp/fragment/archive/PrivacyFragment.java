@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.archive.ArchiveSecurityViewHolder;
@@ -47,18 +48,35 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
 
     public static PrivacyFragment newInstance(String params) {
         PrivacyFragment ssf = new PrivacyFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
-        bundle.putString(PARAM_QUERY_ID, params);
+        isIndividual = Boolean.valueOf(strings[0]);
+        // 已选中的隐私项目
+        bundle.putString(PARAM_QUERY_ID, StringHelper.replaceJson(strings[1], true));
         ssf.setArguments(bundle);
         return ssf;
     }
 
+    /**
+     * 设置隐私
+     */
+    public static void open(BaseFragment fragment, String json, boolean individual) {
+        fragment.openActivity(PrivacyFragment.class.getName(), format("%s,%s", individual, json), REQUEST_SECURITY, true, false);
+    }
+
+    private static boolean isIndividual = false;
     private String[] items;
     private SecurityAdapter mAdapter;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        isIndividual = false;
+        super.onDestroy();
     }
 
     @Override
@@ -233,8 +251,14 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
         if (mAdapter.getItemCount() < 1) {
             // 空列表
             for (Security security : securities) {
-                if (security.isGroupVisible()) {
-                    mAdapter.update(security);
+                if (isIndividual) {
+                    if (security.isUserVisible()) {
+                        mAdapter.update(security);
+                    }
+                } else {
+                    if (security.isGroupVisible()) {
+                        mAdapter.update(security);
+                    }
                 }
             }
         } else {

@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -258,6 +259,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
         showTooltip(view, R.id.ui_tooltip_activity_management, true, TooltipHelper.TYPE_RIGHT, onClickListener);
     }
 
+    private static final int REQ_CREATE = ACTIVITY_BASE_REQUEST + 20;
+
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -266,7 +269,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     if (isEmpty(mQueryId)) {
                         ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
                     } else {
-                        openActivity(ActivityCreatorFragment.class.getName(), format(",%s", mQueryId), true, true);
+                        openActivity(ActivityCreatorFragment.class.getName(), format(",%s", mQueryId), REQ_CREATE, true, true);
                     }
                     break;
                 case R.id.ui_tooltip_menu_activity_manage:
@@ -275,6 +278,14 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQ_CREATE) {
+            fetchingJoinedActivity(true);
+        }
+        super.onActivityResult(requestCode, data);
+    }
 
     private void initializeAdapter() {
         if (null == items) {
@@ -346,9 +357,9 @@ public class ActivityFragment extends BaseOrganizationFragment {
     }
 
     private void resetTitle() {
-        if (getUserVisibleHint()) {
-            mainFragment.showRightIcon(true);
-        }
+//        if (getUserVisibleHint()) {
+//            mainFragment.showRightIcon(true);
+//        }
         changeSelectedActivity();
     }
 

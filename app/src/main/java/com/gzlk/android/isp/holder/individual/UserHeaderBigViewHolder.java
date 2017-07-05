@@ -64,7 +64,7 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         headerImage.displayImage(user.getHeadPhoto(), getDimension(R.dimen.ui_static_dp_100), false, false);
         boolean isMe = !isEmpty(user.getId()) && user.getId().equals(Cache.cache().userId);
         nameIcon.setVisibility(isMe ? View.VISIBLE : View.GONE);
-        headerIcon.setVisibility(user.isLocalDeleted() ? View.VISIBLE : View.GONE);
+        headerIcon.setVisibility(isMe ? View.VISIBLE : View.GONE);
         // 个性签名
         String signature = user.getSignature();
         if (isEmpty(signature)) {

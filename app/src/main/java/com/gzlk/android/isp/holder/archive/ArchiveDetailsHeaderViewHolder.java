@@ -15,6 +15,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -40,6 +41,8 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
     private View timeView;
     @ViewId(R.id.ui_tool_view_document_details_header_privacy)
     private View privacyView;
+    @ViewId(R.id.ui_tool_view_document_details_header_desc)
+    private ExpandableTextView descView;
     @ViewId(R.id.ui_holder_view_document_details_content)
     private WebView contentView;
 
@@ -91,6 +94,8 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
         sourceHolder.showContent(format(items[1], archive.getUserName()));
         timeHolder.showContent(format(items[2], Utils.format(archive.getHappenDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
         privacyHolder.showContent(format(items[3], ""));
+        descView.setText(StringHelper.getString(R.string.ui_text_document_details_intro, archive.getIntro()));
+        descView.makeExpandable();
         contentView.setVisibility(StringHelper.isEmpty(archive.getMarkdown()) ? View.GONE : View.VISIBLE);
         if (!isEmpty(archive.getMarkdown())) {
             int type = BuildConfig.RELEASEABLE ? 1 : 0;

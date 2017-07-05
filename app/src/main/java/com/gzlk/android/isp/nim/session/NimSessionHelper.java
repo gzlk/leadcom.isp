@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
@@ -257,10 +258,12 @@ public class NimSessionHelper {
         actions.add(new ImageAction());
         // 相机拍摄照片
         actions.add(new CameraAction());
-        // 相机录制视频
-        //actions.add(new VideoCaptureAction());
-        // 相册选择视频
-        //actions.add(new VideoChooseAction());
+        if (!BuildConfig.RELEASEABLE) {
+            // 相机录制视频
+            //actions.add(new VideoCaptureAction());
+            // 相册选择视频
+            //actions.add(new VideoChooseAction());
+        }
         // 跟电脑对话时不需要发送位置
         if (type != SessionTypeEnum.System) {
             actions.add(new LocationAction());
@@ -269,7 +272,7 @@ public class NimSessionHelper {
         if (type == SessionTypeEnum.Team) {
             actions.add(new NoticeAction());
         }
-        if (type == SessionTypeEnum.Team) {
+        if (type == SessionTypeEnum.Team && !BuildConfig.RELEASEABLE) {
             //actions.add(new SurveyAction());
             //actions.add(new IssueAction());
             actions.add(new VoteAction());

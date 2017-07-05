@@ -100,8 +100,8 @@
     <string-array name="ui_security_setting_items">
         <item>1|公开|所有人可见|1|1|1</item>
         <item>0|私密|仅自己可见|0|1|0</item>
-        <item>2|组织内公开|对组织内所有人可见|0|0|1</item>
-        <item>3|指定部分人|选中朋友可见|0|0|1</item>
+        <item>2|组织内公开|对组织内所有人可见|0|1|1</item>
+        <item>3|指定部分人|选中朋友可见|0|1|1</item>
     </string-array>
     <string name="ui_security_fragment_title">选择公开范围</string>
     <string name="ui_security_force_to_user" formatted="false">只对[%s]公开</string>
@@ -118,6 +118,7 @@
     <string name="ui_text_document_details_loading_document_content">正在加载档案内容，请稍候&#8230;</string>
     <string name="ui_text_document_details_commenting">正在提交您的评论，请稍候&#8230;</string>
     <string name="ui_text_document_comment_content" formatted="false"><![CDATA[<font color="#3cbaff">%s</font>：%s]]></string>
+    <string name="ui_text_document_details_intro" formatted="false">档案简介：%s</string>
     <string-array name="ui_document_details_item">
         <item>0|题名：|%s|0</item>
         <item>1|档案来源：|%s|0</item>

@@ -531,10 +531,12 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     // 隐私设置
                     if (archiveType == Archive.Type.USER) {
                         // 个人隐私设置
-                        openActivity(UserPrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
+                        PrivacyFragment.open(ArchiveCreatorFragment.this, StringHelper.replaceJson(json, false), true);
+                        //openActivity(UserPrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
                     } else {
                         // 组织档案隐私设置
-                        openActivity(PrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
+                        PrivacyFragment.open(ArchiveCreatorFragment.this, StringHelper.replaceJson(json, false), false);
+                        //openActivity(PrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
                     }
                     break;
             }

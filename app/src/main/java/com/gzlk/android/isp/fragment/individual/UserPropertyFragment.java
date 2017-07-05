@@ -136,7 +136,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 break;
             case R.id.ui_user_information_to_chat:
                 // 到单聊页面
-                NimSessionHelper.startP2PSession(Activity(),mQueryId);
+                NimSessionHelper.startP2PSession(Activity(), mQueryId);
                 //NimUIKit.startP2PSession(Activity(), mQueryId);
                 //ToastHelper.make().showMsg("发消息");
                 break;
@@ -264,10 +264,10 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         if (mAdapter.getItemCount() < 4) {
             mAdapter.add(new Model() {{
                 birthday = user.getBirthday();
-                setId(format(items[3], isEmpty(user.getBirthday()) ? invalid : user.getBirthday().substring(0, 10)));
+                setId(format(items[3], getBirthday(user)));
             }});
         } else {
-            mAdapter.get(3).setId(format(items[3], isEmpty(user.getBirthday()) ? invalid : user.getBirthday().substring(0, 10)));
+            mAdapter.get(3).setId(format(items[3], getBirthday(user)));
             mAdapter.notifyItemChanged(3);
         }
 
@@ -317,6 +317,12 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             mAdapter.get(8).setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
             mAdapter.notifyItemChanged(8);
         }
+    }
+
+    private String getBirthday(User user) {
+        String text = user.getBirthday();
+        final String invalid = StringHelper.getString(R.string.ui_base_text_not_set);
+        return isEmpty(user.getBirthday()) ? invalid : (text.length() < 10 ? text : text.substring(0, 10));
     }
 
     private static final int REQUEST_PHONE = ACTIVITY_BASE_REQUEST + 10;

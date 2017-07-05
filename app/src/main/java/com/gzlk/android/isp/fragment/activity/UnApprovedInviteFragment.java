@@ -84,6 +84,7 @@ public class UnApprovedInviteFragment extends BaseOrganizationFragment {
     }
 
     // 加载我未参加的活动邀请列表
+    // 改成未处理的活动邀请列表2017-07-05 16:37
     private void fetchingUnApprovedActivityInvites() {
         InvitationRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Invitation>() {
             @Override
@@ -104,7 +105,7 @@ public class UnApprovedInviteFragment extends BaseOrganizationFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
             }
-        }).activityNotApproved(mQueryId);
+        }).activityToBeHandled(mQueryId);
     }
 
     private void initializeAdapter() {

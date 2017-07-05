@@ -66,7 +66,7 @@
 
     <!-- 拍照视频 -->
     <string name="gallery_invalid">你的手机没有图库程序</string>
-    <string name="sdcard_not_enough_head_error">SD卡被拔出或存储空间不足，无法保存头像</string>
+    <string name="sdcard_not_enough_head_error">SD卡被拔出或存储空间不足，无法保存照片</string>
     <string name="sdcard_not_enough_error">存储空间不足，无法保存此次多媒体消息</string>
     <string name="download_video">正在下载视频</string>
     <string name="download_video_fail">视频下载失败,请重试</string>
