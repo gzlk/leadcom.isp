@@ -90,13 +90,14 @@ public class ImageDisplayer extends RelativeLayout {
             }
             largeImageSupport = array.getBoolean(R.styleable.ImageDisplayer_id_is_large_image, false);
             scaleType = array.getInt(R.styleable.ImageDisplayer_id_image_scale_type, 0);
+            isShowHeader = array.getBoolean(R.styleable.ImageDisplayer_id_show_header, false);
         } finally {
             array.recycle();
         }
     }
 
     private int srcDrawable = 0, scaleType;
-    private boolean largeImageSupport;
+    private boolean largeImageSupport, isShowHeader;
     private RoundedImageView imageView;
     private CircleProgressBar progressBar;
     private CorneredView selectContainer, deleteContainer;
@@ -235,7 +236,7 @@ public class ImageDisplayer extends RelativeLayout {
         showSelect = selectable;
         displayUrl = url;
         if (StringHelper.isEmpty(displayUrl)) {
-            displayUrl = "drawable://" + R.mipmap.img_image_loading_fail;
+            displayUrl = "drawable://" + (isShowHeader ? R.mipmap.img_default_user_header : R.mipmap.img_image_loading_fail);
         }
         displayImage2();
     }

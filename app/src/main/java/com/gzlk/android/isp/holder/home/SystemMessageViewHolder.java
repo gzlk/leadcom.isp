@@ -56,8 +56,17 @@ public class SystemMessageViewHolder extends BaseViewHolder {
         titleView.setText(getTitle(msg));
         descView.setText(msg.getMsgContent());
         String time = Utils.formatTimeAgo(new Date(msg.getId()));
-        String handled = !isEmpty(msg.getMsgTitle()) ? "" : (msg.isHandled() ? (msg.isHandleState() ? "(已同意)" : "(已拒绝)") : "(未处理)");
-        timeView.setText(format("%s%s", time, handled));
+        timeView.setText(format("%s%s", time, getHandleTitle(msg)));
+    }
+
+    private String getHandleTitle(NimMessage msg) {
+        switch (msg.getType()) {
+            case NimMessage.Type.ACTIVITY_NOTIFICATION:
+            case NimMessage.Type.SYSTEM_NOTIFICATION:
+                return msg.isHandled() ? "" : "(未读)";
+            default:
+                return msg.isHandled() ? (msg.isHandleState() ? "(已同意)" : "(已拒绝)") : "(未处理)";
+        }
     }
 
     private String getTitle(NimMessage msg) {

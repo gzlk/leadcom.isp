@@ -39,7 +39,7 @@ public class NoticeAction extends BaseAction {
     public void onClick() {
         // 打开通知列表页面
         int requestCode = makeRequestCode(RequestCode.REQ_NOTICE_LIST);
-        NoticeListFragment.open(getActivity(), requestCode, getAccount());
+        NoticeListFragment.open(getActivity(), requestCode, getAccount(), true);
     }
 
     @Override

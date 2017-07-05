@@ -35,5 +35,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="@string/ui_organization_top_channel_4" />
+        android:text="@string/ui_organization_top_channel_4"
+        android:visibility="gone" />
 </LinearLayout>

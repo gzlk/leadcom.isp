@@ -10,6 +10,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.fragment.activity.notice.NoticeListFragment;
 import com.gzlk.android.isp.fragment.common.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
@@ -93,6 +94,13 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // 默认先隐藏底部按钮
+        bottomButton.setVisibility(View.GONE);
+    }
+
+    @Override
     protected void onBottomButtonClicked() {
         warningExit();
     }
@@ -151,6 +159,9 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_activity_property_items);
         }
+        boolean isMe = !isEmpty(activity.getCreatorId()) && activity.getCreatorId().equals(Cache.cache().userId);
+        // 我创建的活动不能退出，只能在活动管理里结束
+        bottomButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
         int index = 0;
         for (String string : items) {
             if (string.startsWith("0|")) {
@@ -169,7 +180,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                     // 活动标题
                     text = format(string, activity.getTitle());
                     break;
-                case 6:
+                case 5:
                     // 消息免打扰
                     text = format(string, 0);
                     break;
@@ -234,24 +245,30 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
     private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
+            Activity activity = (Activity) mAdapter.get(0);
             switch (index) {
                 case 1:
                     // 查看活动成员列表
-                    Activity act = (Activity) mAdapter.get(0);
-                    openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,false", mQueryId, act.getGroupId()), true, false);
-                    break;
-                case 4:
-                    // 管理权转让
-                    tryTransferOwner();
+                    openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,false", mQueryId, activity.getGroupId()), true, false);
                     break;
                 case 2:
                     // 创建者是当前登录的用户时，可以 修改群名称
-                    Activity activity = (Activity) mAdapter.get(0);
                     if (activity.getCreatorId().equals(Cache.cache().userId)) {
                         String name = StringHelper.isEmpty(activity.getTitle()) ? "" : activity.getTitle();
                         String regex = StringHelper.getString(R.string.ui_popup_input_activity_title, name).replace("", "");
                         openActivity(BasePopupInputSupportFragment.class.getName(), regex, REQUEST_NAME, true, false);
                     }
+                    break;
+                case 3:
+                    // 管理权转让
+                    tryTransferOwner();
+                    break;
+                case 6:
+                    // 活动介绍
+                    break;
+                case 7:
+                    // 活动公告
+                    NoticeListFragment.open(ActivityPropertiesFragment.this, mSessionId, false);
                     break;
                 case 8:
                     // 查看聊天内容
@@ -265,15 +282,26 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         }
     };
 
+    private void warningTransferOwner(final String groupId) {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_property_transfer_warning, R.string.ui_base_text_i_known, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,true", mQueryId, groupId), REQUEST_PICK_ONE, true, false);
+                return true;
+            }
+        }, null);
+    }
+
     // 尝试转让活动组群
     private void tryTransferOwner() {
-        final Activity act = (Activity) mAdapter.get(0);
-        TeamDataCache.getInstance().fetchTeamMember(act.getTid(), Cache.cache().userId, new SimpleCallback<TeamMember>() {
+        Activity act = (Activity) mAdapter.get(0);
+        final String groupId = act.getGroupId();
+        TeamDataCache.getInstance().fetchTeamMember(mSessionId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
             @Override
             public void onResult(boolean success, TeamMember result) {
                 if (success && null != result) {
                     if (result.getType() == TeamMemberType.Manager || result.getType() == TeamMemberType.Owner) {
-                        openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,true", mQueryId, act.getGroupId()), REQUEST_PICK_ONE, true, false);
+                        warningTransferOwner(groupId);
                     } else {
                         ToastHelper.make().showMsg(R.string.ui_activity_property_transfer_failed_no_permission);
                     }
@@ -397,8 +425,8 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                     return VT_HEADER;
                 case 1:
                     return VT_MEMBER;
+                case 4:
                 case 5:
-                case 6:
                     return VT_TOGGLE;
                 default:
                     return VT_NORMAL;

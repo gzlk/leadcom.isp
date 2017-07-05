@@ -270,11 +270,11 @@ public class NimSessionHelper {
             actions.add(new NoticeAction());
         }
         if (type == SessionTypeEnum.Team) {
-            actions.add(new SurveyAction());
-            actions.add(new IssueAction());
+            //actions.add(new SurveyAction());
+            //actions.add(new IssueAction());
             actions.add(new VoteAction());
             actions.add(new SignAction());
-            actions.add(new MinutesAction());
+            //actions.add(new MinutesAction());
         }
         return actions;
     }

@@ -11,6 +11,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.GroupJoinRequest;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -230,9 +231,14 @@ public class MainActivity extends TitleActivity {
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
             case NimMessage.Type.ACTIVITY_INVITE:
-                // 活动邀请，下一步打开未处理活动页面
-                yes = StringHelper.getString(R.string.ui_base_text_have_a_look);
-                no = msg.isHandled() ? "" : StringHelper.getString(R.string.ui_base_text_i_known);
+                if (msg.isHandled()) {
+                    // 直接打开活动群聊页面
+                    NimUIKit.startTeamSession(activity, msg.getTid());
+                } else {
+                    // 活动邀请，下一步打开未处理活动页面
+                    yes = StringHelper.getString(R.string.ui_base_text_have_a_look);
+                    no = StringHelper.getString(R.string.ui_base_text_i_known);
+                }
                 break;
             case NimMessage.Type.SYSTEM_NOTIFICATION:
                 // 系统通知，只提醒就可以了
@@ -265,6 +271,10 @@ public class MainActivity extends TitleActivity {
                                 openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s", msg.getTid()), true, false);
                             }
                             break;
+                        case NimMessage.Type.SYSTEM_NOTIFICATION:
+                            // 系统通知的话，点击按钮设置已读标记
+                            saveMessage(msg, true, true);
+                            break;
                     }
                     return true;
                 }
@@ -294,6 +304,7 @@ public class MainActivity extends TitleActivity {
         msg.setHandled(handled);
         msg.setHandleState(state);
         new Dao<>(NimMessage.class).save(msg);
+        NimApplication.dispatchCallbacks();
     }
 
     /**

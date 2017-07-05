@@ -62,12 +62,15 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
         topPadding.setLayoutParams(params);
     }
 
-    @Click({R.id.ui_tool_individual_header_to_2d_code})
+    @Click({R.id.ui_tool_individual_header_to_2d_code, R.id.ui_holder_view_user_name})
     private void click(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.ui_tool_individual_header_to_2d_code:
-                openActivity(QRCodeFragment.class.getName(), "", false, false, true);
+                //openActivity(QRCodeFragment.class.getName(), "", false, false, true);
+                break;
+            case R.id.ui_holder_view_user_name:
+                openActivity(UserPropertyFragment.class.getName(), Cache.cache().userId, false, false, true);
                 break;
         }
     }

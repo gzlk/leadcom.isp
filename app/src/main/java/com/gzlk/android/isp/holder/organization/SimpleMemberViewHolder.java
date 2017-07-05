@@ -51,17 +51,19 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
      * 显示组织成员头像列表
      */
     public void showContent(Organization org) {
-        int size = getMembers(org.getId());
-        showHeaders(size);
+        List<Member> members = getMembers(org.getId());
+        String items = StringHelper.getStringArray(R.array.ui_organization_details_items)[1];
+        int size = null == members ? 0 : members.size();
+        showContent(new SimpleClickableItem(format(items, size)));
+        showHeaders(members);
     }
 
-    private int getMembers(String orgId) {
+    private List<Member> getMembers(String orgId) {
         QueryBuilder<Member> builder = new QueryBuilder<>(Member.class)
                 .whereEquals(Organization.Field.GroupId, orgId)
                 .whereAppendAnd()
                 .whereAppend(Organization.Field.SquadId + " IS NULL");
-        List<Member> members = new Dao<>(Member.class).query(builder);
-        return null == members ? 0 : members.size();
+        return new Dao<>(Member.class).query(builder);
     }
 
     /**

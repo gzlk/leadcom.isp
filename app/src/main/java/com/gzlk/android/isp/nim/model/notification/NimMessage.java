@@ -24,7 +24,7 @@ import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 @Table(NimMessage.PARAM.TABLE)
 public class NimMessage implements MsgAttachment {
 
-    interface PARAM {
+    public interface PARAM {
         String TABLE = "notification";
         String HANDLED = "handled";
         String HANDLE_STATE = "handleState";

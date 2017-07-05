@@ -4,6 +4,7 @@
     android:id="@+id/ui_holder_view_activity_notice_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
     android:gravity="center_vertical"
     android:minHeight="@dimen/ui_base_dimen_button_height"
     android:orientation="horizontal"

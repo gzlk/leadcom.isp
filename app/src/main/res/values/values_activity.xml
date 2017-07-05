@@ -42,16 +42,17 @@
         <item>0|||</item>
         <item>1|活动成员|%d人|1</item>
         <item>2|活动名称|%s|1</item>
-        <item>3|活动二维码|0xe63b|1</item>
-        <item>4|活动管理权转让||1</item>
-        <item>5|置顶活动组|0|</item>
-        <item>6|消息免打扰|%d|</item>
-        <item>7|聊天文件||1</item>
+        <item>3|活动管理权转让||1</item>
+        <item>4|置顶活动组|0|</item>
+        <item>5|消息免打扰|%d|</item>
+        <item>6|活动介绍||1</item>
+        <item>7|活动公告||1</item>
         <item>8|查看聊天内容||1</item>
         <item>9|清空聊天记录||0</item>
     </string-array>
     <string name="ui_activity_property_transfer_null_account">您没有选择相应的成员来完成这个操作</string>
     <string name="ui_activity_property_transfer_success">您已经将本活动组转让给别人</string>
+    <string name="ui_activity_property_transfer_warning">您已选择将本活动组群转让给他人，请选择一个成员当作转让接纳者。</string>
     <string name="ui_activity_property_transfer_failed_no_permission">您不是本活动的创建者或管理员</string>
     <string name="ui_activity_property_transfer_failed" formatted="false">转让失败：%d</string>
     <string name="ui_activity_property_not_exist">无效的活动或活动已结束</string>
@@ -88,8 +89,8 @@
         <item>向所有人公开</item>
         <item>只向组织内公开</item>
     </string-array>
-    <string name="ui_activity_create_open_status_open">向所有人公开</string>
-    <string name="ui_activity_create_open_status_close">只向组织内公开</string>
+    <string name="ui_activity_create_open_status_open">对所有人公开</string>
+    <string name="ui_activity_create_open_status_close">只对组织公开</string>
     <string name="ui_activity_create_title_invalid">活动主题无效</string>
     <string name="ui_activity_create_address_invalid">活动地点无效</string>
     <string name="ui_activity_create_content_invalid">活动简介无效</string>

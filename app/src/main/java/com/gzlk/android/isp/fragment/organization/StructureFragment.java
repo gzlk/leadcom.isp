@@ -86,6 +86,12 @@ public class StructureFragment extends BaseOrganizationFragment {
     }
 
     @Override
+    public void onDestroy() {
+        selectedGroupId = "";
+        super.onDestroy();
+    }
+
+    @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         initialized = bundle.getBoolean(PARAM_INITIALIZED, false);
@@ -427,12 +433,17 @@ public class StructureFragment extends BaseOrganizationFragment {
      * 当前登录用户在本组织内的角色
      */
     public static Member my;
+    /**
+     * 当前选中的组织的id
+     */
+    public static String selectedGroupId = "";
 
     public void changeSelectedGroup() {
         if (selectedIndex < 0) return;
         Organization organization = concernedViewHolder.get(selectedIndex);
         if (null != organization) {
             my = organization.getGroMember();
+            selectedGroupId = organization.getId();
         }
         // 更改标题栏上的文字和icon
         if (null != organizationChangedListener) {

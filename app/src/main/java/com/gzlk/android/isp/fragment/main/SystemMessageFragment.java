@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.main;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -17,6 +19,7 @@ import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.SystemMessageViewHolder;
+import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -41,6 +44,25 @@ import java.util.List;
 public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
 
     private MessageAdapter mAdapter;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        NimApplication.addNotificationChangeCallback(callback);
+    }
+
+    @Override
+    public void onDestroy() {
+        NimApplication.removeNotificationChangeCallback(callback);
+        super.onDestroy();
+    }
+
+    private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
+        @Override
+        public void onChanged() {
+            loadingLocalMessages();
+        }
+    };
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -117,6 +139,11 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             // 点击查看通知
             NimMessage msg = messages.get(index);
+            if (!msg.isHandled()) {
+                msg.setHandled(true);
+                new Dao<>(NimMessage.class).save(msg);
+                NimApplication.dispatchCallbacks();
+            }
             //if (isEmpty(msg.getMsgTitle())) {
             MainActivity.handleNimMessageDetails(Activity(), msg);
             //} else {

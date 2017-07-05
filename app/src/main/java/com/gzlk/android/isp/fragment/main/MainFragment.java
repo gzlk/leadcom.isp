@@ -10,13 +10,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
+import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
+import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>首页<br />
@@ -79,6 +85,33 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private String oldTitleText = "";
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        NimApplication.addNotificationChangeCallback(callback);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        callback.onChanged();
+    }
+
+    @Override
+    public void onDestroy() {
+        NimApplication.removeNotificationChangeCallback(callback);
+        super.onDestroy();
+    }
+
+    private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
+        @Override
+        public void onChanged() {
+            Dao<NimMessage> dao = new Dao<>(NimMessage.class);
+            List<NimMessage> msgs = dao.query(NimMessage.PARAM.HANDLED, false);
+            rightChatIconFlag.setVisibility((null != msgs && msgs.size() > 0) ? View.VISIBLE : View.GONE);
+        }
+    };
+
+    @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         oldTitleText = bundle.getString(PARAM_OLD_TITLE, "");
@@ -99,7 +132,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     public void doingInResume() {
         Activity().setRootViewPadding(toolBar, true);
         super.doingInResume();
-        leftIcon.setText(R.string.ui_icon_query);
+        leftIcon.setText(null);
+        //leftIcon.setText(R.string.ui_icon_query);
         leftText.setText(null);
         rightIconContainer.setVisibility(View.GONE);
         //((IndividualFragmentMultiType) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
@@ -161,6 +195,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             case 0:
                 // 首页
                 toolBarTitleText.setText(R.string.app_name_default);
+                showRightIcon(false);
                 break;
             case 1:
                 // 活动
@@ -173,13 +208,14 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             case 3:
                 // 个人
                 toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_4);
+                showRightIcon(false);
                 break;
         }
 
         if (position != 2) {
             restoreTitleText();
             // 活动页面也需要显示右上角的 + 用来显示活动管理菜单
-            showRightIcon(position == 1);
+            //showRightIcon(position == 1);
         } else {
             ((OrganizationFragment) mFragments.get(2)).needChangeTitle();
         }

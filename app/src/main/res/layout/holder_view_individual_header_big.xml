@@ -20,7 +20,8 @@
             android:layout_margin="@dimen/ui_base_dimen_margin_padding"
             app:id_image_src="@mipmap/img_default_user_header"
             app:id_image_type="oval"
-            app:id_nullable_drawable="true" />
+            app:id_nullable_drawable="true"
+            app:id_show_header="true" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_holder_view_user_header_icon"

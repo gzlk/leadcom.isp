@@ -1,11 +1,14 @@
 package com.gzlk.android.isp.fragment.activity.notice;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.api.activity.AppNoticeRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
@@ -34,6 +37,14 @@ public class NoticeDetailsFragment extends BaseTransparentSupportFragment {
         bundle.putString(PARAM_QUERY_ID, params);
         ndf.setArguments(bundle);
         return ndf;
+    }
+
+    public static void open(BaseFragment fragment, String noticeId) {
+        fragment.openActivity(NoticeDetailsFragment.class.getName(), noticeId, true, false);
+    }
+
+    public static void open(Context context, int requestCode, String noticeId) {
+        BaseActivity.openActivity(context, NoticeDetailsFragment.class.getName(), noticeId, requestCode, true, false);
     }
 
     private String[] items;

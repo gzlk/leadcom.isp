@@ -53,4 +53,5 @@
     <string name="ui_text_nim_pwd_error">密码错误</string>
     <string name="ui_text_nim_kick_out">您的账号已在别的设备登录，请注意账号安全</string>
     <string name="ui_text_nim_net_broken">网络掉线，重连中&#8230;</string>
+    <string name="ui_text_nim_forbidden">账号被禁止登录，请联系管理员</string>
 </resources>

@@ -80,7 +80,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             mFragments.add(new StructureFragment());
             mFragments.add(ContactFragment.newInstance(format("%d,,", ContactFragment.TYPE_ORG)));
             mFragments.add(new ArchivesFragment());
-            mFragments.add(new LivenessFragment());
+            //mFragments.add(new LivenessFragment());
             ((StructureFragment) mFragments.get(0)).mainFragment = mainFragment;
             ((StructureFragment) mFragments.get(0)).setOnOrganizationChangedListener(organizationChangedListener);
         }

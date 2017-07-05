@@ -8,6 +8,7 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.activity.AppNotice;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -41,5 +42,12 @@ public class NoticeViewHolder extends BaseViewHolder {
         timeView.setText(fragment().formatTimeAgo(notice.getCreateDate()));
         readView.setText(notice.isRead() ? R.string.ui_base_text_has_read : R.string.ui_base_text_not_read);
         readView.setTextColor(getColor(notice.isRead() ? R.color.textColorHint : R.color.colorCaution));
+    }
+
+    @Click({R.id.ui_holder_view_activity_notice_item})
+    private void click(View view) {
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        }
     }
 }

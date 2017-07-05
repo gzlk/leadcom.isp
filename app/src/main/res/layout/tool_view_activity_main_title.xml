@@ -23,6 +23,8 @@
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:animateLayoutChanges="true"
             android:gravity="center"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_static_dp_zero"
             android:text="@string/ui_icon_setting"
             android:textColor="@android:color/white"
             android:textSize="@dimen/ui_base_text_size_big" />
@@ -32,7 +34,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
-            android:clipChildren="false">
+            android:clipChildren="false"
+            android:paddingEnd="@dimen/ui_static_dp_5"
+            android:paddingStart="@dimen/ui_static_dp_zero">
 
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:id="@+id/ui_ui_custom_title_right_icon_2"
@@ -51,12 +55,13 @@
                 android:layout_alignEnd="@+id/ui_ui_custom_title_right_icon_2"
                 android:layout_marginTop="@dimen/ui_static_dp_20"
                 android:background="@drawable/ui_background_oval_primary"
-                android:padding="@dimen/ui_static_dp_half">
+                android:padding="@dimen/ui_static_dp_half"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="@dimen/ui_static_dp_5"
                     android:layout_height="@dimen/ui_static_dp_5"
-                    android:background="@drawable/ui_background_oval_white" />
+                    android:background="@drawable/ui_background_oval_caution" />
             </LinearLayout>
 
         </RelativeLayout>

@@ -158,6 +158,14 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/ui_base_text_size_small" />
         </LinearLayout>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            android:background="@color/textColorHintLight"
+            android:inputType="textPassword"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout

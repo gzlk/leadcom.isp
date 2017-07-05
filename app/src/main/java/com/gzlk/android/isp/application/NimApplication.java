@@ -18,6 +18,7 @@ import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
@@ -33,6 +34,8 @@ import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>提供网易云接口<br />
@@ -168,6 +171,8 @@ public class NimApplication extends BaseActivityManagedApplication {
                 if (status.wontAutoLogin()) {
                     if (StatusCode.typeOfValue(status.getValue()) == StatusCode.PWD_ERROR) {
                         ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_pwd_error);
+                    } else if (StatusCode.typeOfValue(status.getValue()) == StatusCode.FORBIDDEN) {
+                        ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_forbidden);
                     } else {
                         // 被踢出、账号被禁用、密码错误等情况，自动登录失败，需要返回到登录界面进行重新登录操作
                         ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_kick_out);
@@ -198,9 +203,28 @@ public class NimApplication extends BaseActivityManagedApplication {
                             Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
                             NotificationHelper.helper(NimApplication.this).show("通知", msg.getMsgContent(), extra);
                         }
+                        dispatchCallbacks();
                     }
                 }
             }
         }, true);
+    }
+
+    private static ArrayList<NotificationChangeHandleCallback> callbacks = new ArrayList<>();
+
+    public static void addNotificationChangeCallback(NotificationChangeHandleCallback callback) {
+        if (!callbacks.contains(callback)) {
+            callbacks.add(callback);
+        }
+    }
+
+    public static void removeNotificationChangeCallback(NotificationChangeHandleCallback callback) {
+        callbacks.remove(callback);
+    }
+
+    public static void dispatchCallbacks() {
+        for (int i = callbacks.size() - 1; i >= 0; i--) {
+            callbacks.get(i).onChanged();
+        }
     }
 }

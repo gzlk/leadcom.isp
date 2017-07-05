@@ -18,6 +18,8 @@
         <attr name="id_image_height" format="dimension" />
         <!--图片来源：资源-->
         <attr name="id_image_src" format="reference" />
+        <!--是否是显示头像-->
+        <attr name="id_show_header" format="boolean" />
         <!--图片来源：网址-->
         <attr name="id_image_url" format="string" />
         <!--删除按钮-->

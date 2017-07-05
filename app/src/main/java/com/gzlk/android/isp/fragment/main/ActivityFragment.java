@@ -14,6 +14,7 @@ import com.gzlk.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.gzlk.android.isp.fragment.activity.UnApprovedInviteFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
+import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
@@ -123,7 +124,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     if (isEmpty(nick)) {
                         nick = "null";
                     }
-                    act.setContent(format("[%s]:%s", nick, contact.getContent()));
+                    act.setContent(format("%s: %s", nick, contact.getContent()));
                     mAdapter.notifyItemChanged(i);
                 }
             }
@@ -331,6 +332,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
         for (Activity activity : activities) {
             mAdapter.update(activity);
         }
+        // 查询网易云信联系人列表，并更新相应的未读提示和最后发送的消息
+        resetUnreadFlags();
     }
 
     @Override
@@ -352,10 +355,18 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private ArrayList<Activity> activities = new ArrayList<>();
 
     private void changeSelectedActivity() {
-        if (selectedIndex < 0) return;
+        if (isEmpty(StructureFragment.selectedGroupId)) {
+            // 组织切换时，如果当前组织不是在组织里显示的那个，则不要显示+号
+            mainFragment.showRightIcon(false);
+        }
+        if (selectedIndex < 0) {
+            mainFragment.showRightIcon(false);
+            return;
+        }
         // 加载本地该组织的活动列表
         Organization org = concernedViewHolder.get(selectedIndex);
         if (null == org) {
+            mainFragment.showRightIcon(false);
             return;
         }
         if (isEmpty(mQueryId) || !mQueryId.equals(org.getId())) {
@@ -372,9 +383,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
             activities.clear();
             refreshingItems();
-            // 查询网易云信联系人列表，并更新相应的未读提示和最后发送的消息
-            resetUnreadFlags();
         }
+        mainFragment.showRightIcon(mOrganizationId.equals(StructureFragment.selectedGroupId));
     }
 
     private DepthViewPager.OnPageChangeListener onPageChangeListener = new DepthViewPager.OnPageChangeListener() {

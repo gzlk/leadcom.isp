@@ -3,6 +3,7 @@ package com.gzlk.android.isp.fragment.organization.archive;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
@@ -32,6 +33,8 @@ public class OrgArchiveManagementFragment extends BaseViewPagerSupportFragment {
         return mf;
     }
 
+    @ViewId(R.id.ui_ui_custom_title_left_text)
+    private TextView leftText;
     @ViewId(R.id.ui_tool_view_archive_management_title_button1)
     private CorneredButton button1;
     @ViewId(R.id.ui_tool_view_archive_management_title_button2)
@@ -48,6 +51,7 @@ public class OrgArchiveManagementFragment extends BaseViewPagerSupportFragment {
 
     @Override
     public void doingInResume() {
+        leftText.setText(null);
         super.doingInResume();
         initializeHolder();
     }

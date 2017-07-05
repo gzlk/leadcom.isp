@@ -27,7 +27,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/ui_text_home_top_channel_2" />
+            android:text="@string/ui_text_home_top_channel_2"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/ui_tool_home_top_channel_3"
@@ -35,7 +36,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/ui_text_home_top_channel_3" />
+            android:text="@string/ui_text_home_top_channel_3"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/ui_tool_home_top_channel_4"

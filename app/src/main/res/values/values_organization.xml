@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ui_organization_top_channel_1">架构</string>
+    <string name="ui_organization_top_channel_1">小组</string>
     <string name="ui_organization_top_channel_2">成员</string>
     <string name="ui_organization_top_channel_3">档案</string>
     <string name="ui_organization_top_channel_4">活跃度</string>
@@ -8,10 +8,10 @@
     <string-array name="ui_organization_structure_items">
         <item>0|||</item>
         <item>1|||</item>
-        <item>2|已关注：|%s|0</item>
-        <item>3|可能感兴趣的：|%s|1</item>
+        <item>2|您已关注的组织：||0</item>
+        <item>3|可能感兴趣的组织：||1</item>
         <item>4|||</item>
-        <item>5|活动小组(目前有%d个下级小组)||0</item>
+        <item>5|下属小组(%d个)||0</item>
         <item>6||%s|1</item>
         <item>7|||</item>
     </string-array>
@@ -47,7 +47,7 @@
     <string name="ui_organization_squad_add_name_invalid">小组名称不符合要求</string>
     <string name="ui_organization_squad_add_introduction_hint">简介(50个字以内)</string>
     <string name="ui_organization_squad_add_introduction_invalid">小组简介不符合要求</string>
-    <string name="ui_organization_squad_add_text">增加活动组</string>
+    <string name="ui_organization_squad_add_text">增加下属小组</string>
     <string name="ui_organization_squad_not_member" formatted="false">
         <![CDATA[您还不是<font color="#3cbaff">%s</font>的小组成员。<br/>现在要加入吗？]]>
     </string>
@@ -119,8 +119,8 @@
     <string name="ui_organization_management_transfer_warning">您是本组织的创建者，转让管理权之后您会降级为普通成员，您确定要这样做吗？</string>
 
     <string name="ui_archive_management_title_button_1">@string/ui_base_text_all</string>
-    <string name="ui_archive_management_title_button_2">未存档</string>
-    <string name="ui_archive_management_title_button_3">未审核</string>
+    <string name="ui_archive_management_title_button_2">未存档活动档案</string>
+    <string name="ui_archive_management_title_button_3">未审核组织档案</string>
     <string name="ui_archive_management_title_right_text">活动文件</string>
     <string name="ui_archive_management_loading_1">正在加载文档列表请稍候&#8230;</string>
     <string name="ui_archive_management_loading_2">正在加载待存档文件列表请稍候&#8230;</string>
@@ -128,7 +128,7 @@
     <string name="ui_archive_management_nothing_1">暂时没有更多档案了</string>
     <string name="ui_archive_management_nothing_2">暂时没有其他待存档的活动内容了</string>
     <string name="ui_archive_management_nothing_3">暂时没有更多需要审核的内容了</string>
-    <string name="ui_archive_management_list_item_create_date" formatted="false">日期：%s</string>
+    <string name="ui_archive_management_list_item_create_date" formatted="false">发布日期：%s</string>
     <string name="ui_archive_management_list_item_status" formatted="false">状态：%s</string>
 
     <string name="ui_archive_approving_archive_attachments" formatted="false">其中有%d个文件</string>

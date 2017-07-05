@@ -10,6 +10,7 @@ import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.AppNoticeRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.activity.NoticeViewHolder;
@@ -17,6 +18,10 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.AppNotice;
+import com.netease.nim.uikit.cache.SimpleCallback;
+import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nimlib.sdk.team.constant.TeamMemberType;
+import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.List;
 
@@ -33,21 +38,27 @@ import java.util.List;
 
 public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
 
+    private static final String PARAM_CREATABLE = "nlf_creatable";
+    private static boolean mCreatable = false;
+
     public static NoticeListFragment newInstance(String params) {
         NoticeListFragment nlf = new NoticeListFragment();
+        String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
         // 传过来的tid
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 是否允许新建通知
+        mCreatable = Boolean.valueOf(strings[1]);
         nlf.setArguments(bundle);
         return nlf;
     }
 
-    public static void open(BaseFragment fragment, String tid) {
-        fragment.openActivity(NoticeListFragment.class.getName(), tid, true, false);
+    public static void open(BaseFragment fragment, String tid, boolean creatable) {
+        fragment.openActivity(NoticeListFragment.class.getName(), format("%s,%s", tid, creatable), true, false);
     }
 
-    public static void open(Context context, int requestCode, String tid) {
-        BaseActivity.openActivity(context, NoticeListFragment.class.getName(), tid, requestCode, true, false);
+    public static void open(Context context, int requestCode, String tid, boolean creatable) {
+        BaseActivity.openActivity(context, NoticeListFragment.class.getName(), format("%s,%s", tid, creatable), requestCode, true, false);
     }
 
     private String mActivityId;
@@ -59,18 +70,18 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    public void onDestroy() {
+        mCreatable = false;
+        super.onDestroy();
+    }
+
+    @Override
     public void doingInResume() {
         // 通知列表
         setCustomTitle(R.string.ui_activity_notice_list_fragment_title);
-        setRightText(R.string.ui_base_text_new);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                resultSucceededActivity();
-                //openActivity(NoticeCreatorFragment.class.getName(), mQueryId, true, true);
-            }
-        });
-
+        if (mCreatable) {
+            tryResetRightEvent();
+        }
         initializeAdapter();
     }
 
@@ -102,6 +113,31 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected String getLocalPageTag() {
         return null;
+    }
+
+    private void tryResetRightEvent() {
+        TeamDataCache.getInstance().fetchTeamMember(mQueryId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
+            @Override
+            public void onResult(boolean success, TeamMember result) {
+                if (success && null != result) {
+                    if (result.getType() == TeamMemberType.Manager || result.getType() == TeamMemberType.Owner) {
+                        // 活动管理者或创建者可以新建通知
+                        resetRightEvent();
+                    }
+                }
+            }
+        });
+    }
+
+    private void resetRightEvent() {
+        setRightText(R.string.ui_base_text_new);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                resultSucceededActivity();
+                //openActivity(NoticeCreatorFragment.class.getName(), mQueryId, true, true);
+            }
+        });
     }
 
     private void fetchingActivity() {
@@ -155,7 +191,7 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             AppNotice notice = mAdapter.get(index);
-            openActivity(NoticeDetailsFragment.class.getName(), notice.getId(), true, false);
+            NoticeDetailsFragment.open(NoticeListFragment.this, notice.getId());
         }
     };
 

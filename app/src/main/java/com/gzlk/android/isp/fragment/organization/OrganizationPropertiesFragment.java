@@ -153,6 +153,9 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
         @Override
         public void onClick(int index) {
             switch (index) {
+                case 1:
+                    // 组织成员列表
+                    break;
                 case 2:
                     // 创建者是当前登录的用户时，可以 修改群名称
                     Organization org = (Organization) mAdapter.get(0);
@@ -204,7 +207,9 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
                     uhbvh.addOnViewHolderClickListener(viewHolderClickListener);
                     return uhbvh;
                 case VT_MEMBER:
-                    return new SimpleMemberViewHolder(itemView, fragment);
+                    SimpleMemberViewHolder holder = new SimpleMemberViewHolder(itemView, fragment);
+                    holder.addOnViewHolderClickListener(viewHolderClickListener);
+                    return holder;
                 case VT_TOGGLE:
                     return new ToggleableViewHolder(itemView, fragment);
                 default:

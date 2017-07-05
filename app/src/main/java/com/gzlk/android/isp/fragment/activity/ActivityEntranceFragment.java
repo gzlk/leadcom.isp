@@ -10,6 +10,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
+import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -185,6 +186,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
             msg.setHandled(true);
             msg.setHandleState(agree);
             dao.save(msg);
+            NimApplication.dispatchCallbacks();
         }
     }
 
