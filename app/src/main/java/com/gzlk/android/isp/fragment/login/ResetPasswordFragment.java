@@ -11,7 +11,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CleanableEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
 
 /**
@@ -39,7 +39,7 @@ public class ResetPasswordFragment extends BaseVerifyFragment {
     }
 
     @ViewId(R.id.ui_verify_reset_password_text)
-    private ClearEditText passwordText;
+    private CleanableEditText passwordText;
     @ViewId(R.id.ui_verify_reset_password_finish)
     private CorneredButton finishButton;
 
@@ -70,7 +70,10 @@ public class ResetPasswordFragment extends BaseVerifyFragment {
 
     @Click({R.id.ui_verify_reset_password_finish})
     private void elementClick(View view) {
-        String value = passwordText.getValue();
+        String value = passwordText.getText().toString();
+        if (!passwordText.verifyValue()) {
+            value = "";
+        }
         if (StringHelper.isEmpty(value)) {
             ToastHelper.make().showMsg(R.string.ui_text_reset_password_input_hint);
             return;

@@ -2,7 +2,6 @@ package com.gzlk.android.isp.fragment.login;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
@@ -18,6 +17,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CleanableEditText;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.netease.nimlib.sdk.NIMClient;
@@ -43,7 +43,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     @ViewId(R.id.ui_sign_in_account)
     private ClearEditText accountText;
     @ViewId(R.id.ui_sign_in_password)
-    private ClearEditText passwordText;
+    private CleanableEditText passwordText;
     @ViewId(R.id.ui_sign_in_to_sign_in)
     private CorneredButton signInButton;
 
@@ -125,9 +125,14 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         int id = view.getId();
         if (id == R.id.ui_sign_in_to_sign_in) {
             // 登录
-            if (TextUtils.isEmpty(accountText.getValue())) {
+            String account = accountText.getValue();
+            String pwd = passwordText.getText().toString();
+            if (!passwordText.verifyValue()) {
+                pwd = "";
+            }
+            if (isEmpty(account)) {
                 ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_account_value_incorrect);
-            } else if (TextUtils.isEmpty(passwordText.getValue())) {
+            } else if (isEmpty(pwd)) {
                 ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_password_value_incorrect);
             } else {
                 Utils.hidingInputBoard(accountText);
@@ -136,7 +141,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     signInButton.setEnabled(false);
                     signInButton.setText(R.string.ui_text_sign_in_still_processing);
                     // 开始登录
-                    signIn(accountText.getValue(), passwordText.getValue());
+                    signIn(account, pwd);
                 } else {
                     ToastHelper.make().showMsg(R.string.ui_text_sign_in_still_processing);
                 }

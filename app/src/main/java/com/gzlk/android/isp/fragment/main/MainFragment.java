@@ -64,6 +64,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
      */
     @ViewId(R.id.ui_ui_custom_title_right_container)
     private View rightIconContainer;
+    @ViewId(R.id.ui_ui_custom_title_right_icon)
+    private CustomTextView rightIcon;
 
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
     private CustomTextView iconView1;
@@ -244,7 +246,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     @Click({R.id.ui_tool_main_bottom_clickable_1, R.id.ui_tool_main_bottom_clickable_2,
             R.id.ui_tool_main_bottom_clickable_3, R.id.ui_tool_main_bottom_clickable_4,
             R.id.ui_ui_custom_title_right_icon_1, R.id.ui_ui_custom_title_right_icon_2_container,
-            R.id.ui_ui_custom_title_left_container, R.id.ui_ui_custom_title_right_container})
+            R.id.ui_ui_custom_title_left_container, R.id.ui_ui_custom_title_right_container,
+            R.id.ui_ui_custom_title_right_icon})
     private void elementClick(View view) {
         log(view.toString());
         int id = view.getId();
@@ -273,12 +276,13 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 // 搜索
                 break;
             case R.id.ui_ui_custom_title_right_container:
+            case R.id.ui_ui_custom_title_right_icon:
                 // + 号的点击
                 BaseFragment fragment = mFragments.get(getDisplayedPage());
                 if (fragment instanceof ActivityFragment) {
-                    ((ActivityFragment) fragment).rightIconClick(view);
+                    ((ActivityFragment) fragment).rightIconClick(rightIcon);
                 } else if (fragment instanceof OrganizationFragment) {
-                    ((OrganizationFragment) fragment).rightIconClick(view);
+                    ((OrganizationFragment) fragment).rightIconClick(rightIcon);
                 }
                 break;
         }

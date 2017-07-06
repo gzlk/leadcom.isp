@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.fragment.individual;
 
 import android.os.Bundle;
-import android.widget.LinearLayout;
+import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -25,9 +25,9 @@ public class SettingMessagingFragment extends BaseTransparentSupportFragment {
 
     // UI
     @ViewId(R.id.ui_setting_messaging_sound)
-    private LinearLayout soundView;
+    private View soundView;
     @ViewId(R.id.ui_setting_messaging_vibration)
-    private LinearLayout vibrationView;
+    private View vibrationView;
 
     // Holder
     private SimpleClickableViewHolder titleHolder;

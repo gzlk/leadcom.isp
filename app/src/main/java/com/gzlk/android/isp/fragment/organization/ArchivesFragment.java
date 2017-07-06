@@ -122,7 +122,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     public void openTooltipMenu(View view) {
         int layout = isMeCanManageArchives() ? R.id.ui_tooltip_organization_document_management :
                 R.id.ui_tooltip_organization_document_manage_normal;
-        showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+        showTooltip(view, layout, true, TooltipHelper.TYPE_LEFT, onClickListener);
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {

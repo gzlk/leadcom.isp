@@ -1,9 +1,6 @@
 package com.gzlk.android.isp.fragment.individual;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -14,7 +11,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CleanableEditText;
 
 /**
  * <b>功能描述：</b>个人 - 修改密码<br />
@@ -29,16 +26,12 @@ import com.hlk.hlklib.lib.view.ClearEditText;
 
 public class SettingPasswordFragment extends BaseTransparentSupportFragment {
 
-    @ViewId(R.id.ui_setting_password_old_container)
-    private LinearLayout oldContainer;
-    @ViewId(R.id.ui_setting_password_new_container)
-    private LinearLayout newContainer;
     @ViewId(R.id.ui_setting_password_old)
-    private ClearEditText oldPassword;
+    private CleanableEditText oldPassword;
     @ViewId(R.id.ui_setting_password_new)
-    private ClearEditText newPassword;
+    private CleanableEditText newPassword;
     @ViewId(R.id.ui_setting_password_confirm)
-    private ClearEditText cfmPassword;
+    private CleanableEditText cfmPassword;
 
     @Override
     public int getLayout() {
@@ -60,9 +53,6 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
                 tryEditPassword();
             }
         });
-        oldPassword.addOnFocusChangeListener(focusChangeListener);
-        newPassword.addOnFocusChangeListener(focusChangeListener);
-        cfmPassword.addOnFocusChangeListener(focusChangeListener);
     }
 
     @Override
@@ -80,37 +70,27 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
 
     }
 
-    private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            if (v == oldPassword) {
-                highlight(oldContainer, hasFocus);
-                highlight(newContainer, !hasFocus);
-            } else {
-                highlight(oldContainer, !hasFocus);
-                highlight(newContainer, hasFocus);
-            }
-        }
-    };
-
-    private void highlight(View view, boolean light) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            view.animate().translationZ(light ? getDimension(R.dimen.ui_base_translationZ) : getDimension(R.dimen.ui_base_translationZ_small)).setDuration(duration()).start();
-        }
-    }
-
     private void tryEditPassword() {
-        String old = oldPassword.getValue();
+        String old = oldPassword.getText().toString();
+        if (!oldPassword.verifyValue()) {
+            old = "";
+        }
         if (StringHelper.isEmpty(old)) {
             ToastHelper.make().showMsg(R.string.ui_text_edit_password_old_incorrect);
             return;
         }
-        String newOne = newPassword.getValue();
+        String newOne = newPassword.getText().toString();
+        if (!newPassword.verifyValue()) {
+            newOne = "";
+        }
         if (StringHelper.isEmpty(newOne)) {
             ToastHelper.make().showMsg(R.string.ui_text_edit_password_new_incorrect);
             return;
         }
-        String newConfirm = cfmPassword.getValue();
+        String newConfirm = cfmPassword.getText().toString();
+        if (!cfmPassword.verifyValue()) {
+            newConfirm = "";
+        }
         if (StringHelper.isEmpty(newConfirm) || !newConfirm.equals(newOne)) {
             ToastHelper.make().showMsg(R.string.ui_text_edit_password_new_not_equal);
             return;

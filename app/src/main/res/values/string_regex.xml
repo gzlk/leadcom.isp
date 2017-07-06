@@ -24,6 +24,17 @@
     <!--密码-->
     <string name="regex_password_filter">@string/regex_normal_input_filter_pwd_only</string>
     <string name="regex_password_verify">[a-zA-Z0-9]{6,18}</string>
+    <!--严格模式的密码验证
+    ^                   # start-of-string
+    (?=.*[0-9])         # a digit must occur at least once至少包含一个数字字符
+    (?=.*[a-z])         # a lower case letter must occur at least once至少包含一个小写字母
+    (?=.*[A-Z])         # an upper case letter must occur at least once至少包含一个大写字母
+    (?=.*[@#$%_+=])     # a special character must occur at least once you can replace with your special characters至少包含一个特殊字符
+    (?=\\S+$)           # no whitespace allowed in the entire string不能有空格
+    .{6,18}             # anything, at least six places though密码长度6-18个字符
+    $                   # end-of-string
+    -->
+    <string name="regex_password_verify_strict">^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%_+=])(?=\\S+$).{6,18}$</string>
 
     <!--中文名字-->
     <string name="regex_name_filter">[\u4E00-\u9FA5]+</string>

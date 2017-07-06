@@ -11,6 +11,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CleanableEditText;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
 /**
@@ -40,7 +41,7 @@ public class SignUpFragment extends BaseVerifyFragment {
     @ViewId(R.id.ui_sign_up_name)
     private ClearEditText nameText;
     @ViewId(R.id.ui_sign_up_password)
-    private ClearEditText passwordText;
+    private CleanableEditText passwordText;
 
     @Override
     public int getLayout() {
@@ -74,7 +75,10 @@ public class SignUpFragment extends BaseVerifyFragment {
             ToastHelper.make().showMsg(R.string.ui_text_sign_up_name_value_incorrect);
             return;
         }
-        String password = passwordText.getValue();
+        String password = passwordText.getText().toString();
+        if (!passwordText.verifyValue()) {
+            password = "";
+        }
         if (StringHelper.isEmpty(password)) {
             ToastHelper.make().showMsg(R.string.ui_text_sign_up_password_value_incorrect);
             return;

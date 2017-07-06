@@ -256,7 +256,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
     }
 
     public void rightIconClick(View view) {
-        showTooltip(view, R.id.ui_tooltip_activity_management, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+        showTooltip(view, R.id.ui_tooltip_activity_management, true, TooltipHelper.TYPE_LEFT, onClickListener);
     }
 
     private static final int REQ_CREATE = ACTIVITY_BASE_REQUEST + 20;
@@ -395,7 +395,9 @@ public class ActivityFragment extends BaseOrganizationFragment {
             activities.clear();
             refreshingItems();
         }
-        mainFragment.showRightIcon(mOrganizationId.equals(StructureFragment.selectedGroupId));
+        if (getUserVisibleHint()) {
+            mainFragment.showRightIcon(mOrganizationId.equals(StructureFragment.selectedGroupId));
+        }
     }
 
     private DepthViewPager.OnPageChangeListener onPageChangeListener = new DepthViewPager.OnPageChangeListener() {
