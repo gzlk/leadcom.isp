@@ -13,6 +13,7 @@ import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.activity.ActivityPropertiesFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
+import com.gzlk.android.isp.fragment.main.SystemMessageFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.nim.action.CameraAction;
@@ -419,13 +420,13 @@ public class NimSessionHelper {
 
             // 定制ActionBar右边的按钮，可以加多个
             ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
-//            SessionCustomization.OptionsButton cloudMsgButton = new SessionCustomization.OptionsButton() {
-//                @Override
-//                public void onClick(Context context, View view, String sessionId) {
-//                    initPopuptWindow(context, view, sessionId, SessionTypeEnum.Team);
-//                }
-//            };
-//            cloudMsgButton.iconId = R.drawable.ic_action_access_time;
+            SessionCustomization.OptionsButton chatButton = new SessionCustomization.OptionsButton() {
+                @Override
+                public void onClick(Context context, View view, String sessionId) {
+                    BaseActivity.openActivity(context, SystemMessageFragment.class.getName(), "", true, false);
+                }
+            };
+            chatButton.iconId = R.drawable.ic_action_chat;
 
             SessionCustomization.OptionsButton infoButton = new SessionCustomization.OptionsButton() {
                 @Override
@@ -442,13 +443,13 @@ public class NimSessionHelper {
             };
             infoButton.iconId = R.drawable.ic_action_group;
 
-//            buttons.add(cloudMsgButton);
             buttons.add(infoButton);
+            buttons.add(chatButton);
             teamCustomization.buttons = buttons;
 
             teamCustomization.withSticker = false;
 
-            teamCustomization.buttonSelectorResources = R.drawable.nim_nim_action_bar_button_selector;
+            teamCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector;
         }
 
         return teamCustomization;
