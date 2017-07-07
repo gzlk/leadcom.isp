@@ -59,6 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
             android:layout_weight="3"
+            android:digits="@string/regex_password_digits"
             android:hint="@string/ui_text_reset_password_input_hint"
             android:inputType="textPassword"
             android:padding="@dimen/ui_static_dp_8"

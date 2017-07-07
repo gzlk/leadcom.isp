@@ -35,6 +35,7 @@
     $                   # end-of-string
     -->
     <string name="regex_password_verify_strict">^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%_+=])(?=\\S+$).{6,18}$</string>
+    <string name="regex_password_digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ</string>
 
     <!--中文名字-->
     <string name="regex_name_filter">[\u4E00-\u9FA5]+</string>
