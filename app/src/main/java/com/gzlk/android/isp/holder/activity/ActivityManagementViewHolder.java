@@ -53,7 +53,7 @@ public class ActivityManagementViewHolder extends BaseViewHolder {
         }
         text = getSearchingText(text, searchingText);
         titleTextView.setText(Html.fromHtml(text));
-        addrTextView.setText(activity.getContent());
+        addrTextView.setText(activity.getSite());
         timeTextView.setText(fragment().formatDateTime(activity.getBeginDate()));
     }
 

@@ -137,6 +137,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         setSupportLoadingMore(false);
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_organization_structure_items);
+            mainFragment.setStructureFragment(this);
         }
         initializeAdapter();
     }
@@ -164,6 +165,10 @@ public class StructureFragment extends BaseOrganizationFragment {
         displayLoading(false);
         stopRefreshing();
         setSupportLoadingMore(false);
+    }
+
+    public boolean isConcerned(String id) {
+        return null != concernedViewHolder && concernedViewHolder.isConcerned(id);
     }
 
     private void initializeAdapter() {

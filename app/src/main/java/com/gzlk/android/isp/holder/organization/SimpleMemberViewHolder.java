@@ -16,10 +16,12 @@ import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.model.TeamMember;
+import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 import java.util.List;
 
@@ -94,8 +96,7 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
                 .setCallback(new RequestCallback<List<TeamMember>>() {
                     @Override
                     public void onSuccess(List<TeamMember> members) {
-                        //showTeamMembers(members);
-                        showHeaders(null == members ? 0 : members.size());
+                        showTeamMembers(members);
                     }
 
                     @Override
@@ -113,9 +114,11 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
     private void showTeamMembers(List<TeamMember> members) {
         int i = 0;
         for (TeamMember member : members) {
+            UserInfoProvider.UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
+            String header = null != userInfo ? userInfo.getAvatar() : "";
             ImageDisplayer displayer = (ImageDisplayer) LayoutInflater.from(headerContainer.getContext())
                     .inflate(R.layout.tool_view_small_user_header, headerContainer, false);
-            displayer.displayImage("", imageSize, false, false);
+            displayer.displayImage(header, imageSize, false, false);
             displayer.addOnImageClickListener(onImageClickListener);
             headerContainer.addView(displayer);
             if (i >= 9) {

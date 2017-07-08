@@ -63,6 +63,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private OrgStructureViewHolder concernedViewHolder;
 
     public MainFragment mainFragment;
+    public StructureFragment structureFragment;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -396,7 +397,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
             refreshingItems();
         }
         if (getUserVisibleHint()) {
-            mainFragment.showRightIcon(mOrganizationId.equals(StructureFragment.selectedGroupId));
+            // 查看当前选择的组织是否是我关注的组织
+            mainFragment.showRightIcon(null != structureFragment && structureFragment.isConcerned(mOrganizationId));
         }
     }
 

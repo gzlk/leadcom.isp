@@ -144,6 +144,8 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
                 } else {
                     initializeOrg(organization);
                 }
+                stopRefreshing();
+                isLoadingComplete(true);
             }
         }).find(mQueryId);
     }

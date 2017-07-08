@@ -48,6 +48,7 @@ public class Organization extends Model {
         public static final String PermissionId = "permissionId";
         public static final String GroupLogo = "groupLogo";
         public static final String ModifyDate = "modifyDate";
+        public static final String Concerned = "concerned";
     }
 
     @Column(Model.Field.Name)
@@ -76,6 +77,8 @@ public class Organization extends Model {
     private boolean verified;      //是否组织认证
     @Ignore
     private Member groMember;      // 当前登录者在组织里的角色
+    @Column(Field.Concerned)
+    private boolean concerned;     // 是否是我关注的组织
 
     public String getName() {
         return name;
@@ -182,5 +185,13 @@ public class Organization extends Model {
 
     public void setGroMember(Member groMember) {
         this.groMember = groMember;
+    }
+
+    public boolean isConcerned() {
+        return concerned;
+    }
+
+    public void setConcerned(boolean concerned) {
+        this.concerned = concerned;
     }
 }

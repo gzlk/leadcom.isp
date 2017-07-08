@@ -68,6 +68,9 @@ public class OrgRequest extends Request<Organization> {
 
     private Dao<Role> roleDao = new Dao<>(Role.class);
     private Dao<Member> memberDao = new Dao<>(Member.class);
+    private Dao<Organization> orgDao = new Dao<>(Organization.class);
+
+    private boolean isFetchingJoinedGroups = false;
 
     private void saveMyGroupMember(Member member) {
         if (null != member) {
@@ -83,9 +86,19 @@ public class OrgRequest extends Request<Organization> {
         }
     }
 
+    // 指定id的组织是否是我关注的组织
+    private boolean isConcerned(String id) {
+        if (isFetchingJoinedGroups) {
+            return true;
+        }
+        Organization org = orgDao.query(id);
+        return null != org && org.isConcerned();
+    }
+
     @Override
     protected void save(Organization organization) {
         saveMyGroupMember(organization.getGroMember());
+        //organization.setConcerned(isConcerned(organization.getId()));
         super.save(organization);
     }
 
@@ -93,6 +106,7 @@ public class OrgRequest extends Request<Organization> {
     protected void save(List<Organization> list) {
         if (null != list && list.size() > 0) {
             for (Organization organization : list) {
+                organization.setConcerned(isFetchingJoinedGroups);
                 saveMyGroupMember(organization.getGroMember());
             }
         }
@@ -207,6 +221,7 @@ public class OrgRequest extends Request<Organization> {
      */
     public void list(int ope, int pageNumber) {
         // accessToken,pageSize,pageNumber
+        isFetchingJoinedGroups = ope == GROUP_LIST_OPE_JOINED;
         httpRequest(getRequest(MultipleGroup.class, format("%s?ope=%d&pageNumber=%d&accessToken=%s", url(LIST), ope, pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 

@@ -15,6 +15,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
+import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
@@ -161,6 +162,10 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             ((ActivityFragment) mFragments.get(1)).mainFragment = this;
             ((OrganizationFragment) mFragments.get(2)).mainFragment = this;
         }
+    }
+
+    public void setStructureFragment(StructureFragment fragment){
+        ((ActivityFragment) mFragments.get(1)).structureFragment=fragment;
     }
 
     public void setTitleText(String text) {

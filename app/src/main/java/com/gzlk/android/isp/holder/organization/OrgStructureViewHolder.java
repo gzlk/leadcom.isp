@@ -306,6 +306,18 @@ public class OrgStructureViewHolder extends BaseViewHolder {
         return null;
     }
 
+    /**
+     * 指定id的组织是否是我关注的组织
+     */
+    public boolean isConcerned(String id) {
+        for (Organization org : organizations) {
+            if (org.getId().equals(id) && org.isConcerned()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void add(List<Organization> list) {
         blankTextView.setVisibility(View.GONE);
         for (Organization organization : list) {
