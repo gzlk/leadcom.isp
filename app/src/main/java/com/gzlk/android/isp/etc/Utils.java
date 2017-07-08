@@ -203,10 +203,32 @@ public class Utils {
         return result;
     }
 
+    /**
+     * 获取指定日期的开始时间戳
+     *
+     * @param date  日期
+     * @param begin true=指定日期的开始时间，false=指定日期的结束时间
+     */
+    public static long getDayBeginOrEndInMillis(Date date, boolean begin) {
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, begin ? 0 : 23);
+        calendar.set(Calendar.MINUTE, begin ? 0 : 59);
+        calendar.set(Calendar.SECOND, begin ? 0 : 59);
+        calendar.set(Calendar.MILLISECOND, begin ? 1 : 990);
+        return calendar.getTimeInMillis();
+    }
+
     private static final long SECOND = 1000;
     private static final long MINUTE = 60 * SECOND;
     private static final long HOUR = 60 * MINUTE;
     public static final long DAY = HOUR * 24;
+    private static final String JUST_NOW = "刚刚";
+    private static final String MINUTES = "%d分钟前";
+    private static final String HALF_HOUR = "半小时前";
+    private static final String TODAY = "今天%s";
+    private static final String YESTERDAY = "昨天%s";
+    private static final String BEFORE_YESTERDAY = "前天%s";
 
     public static String formatTimeAgo(String fmt, String time) {
         return formatTimeAgo(parseDate(fmt, time));
@@ -222,22 +244,30 @@ public class Utils {
             time *= 1000;
         }
         long now = System.currentTimeMillis();
+        long todayBegin = getDayBeginOrEndInMillis(new Date(), true);
+        long yesterdayStart = todayBegin - DAY;
+        long beforeYesterdayStart = yesterdayStart - DAY;
         if (time > now || time <= 0) {
             return null;
         }
-        final long diff = now - time;
-        if (diff < MINUTE) {
-            return "刚刚";
-        } else if (diff < 30 * MINUTE) {
-            return diff / MINUTE + "分钟前";
-        } else if (diff < 59 * MINUTE) {
-            return "半小时前";
-        } else if (diff < DAY) {
-            return diff / HOUR + "小时前";
-        } else if (diff < 2 * DAY) {
-            return "昨天" + format(FMT_HHMM1, time);
-        } else if (diff < 3 * DAY) {
-            return "前天" + format(FMT_HHMM1, time);
+        if (time > todayBegin) {
+            // 今天
+            final long diff = now - time;
+            if (diff < MINUTE) {
+                return JUST_NOW;
+            } else if (diff < 30 * MINUTE) {
+                return StringHelper.format(MINUTES, diff / MINUTE);
+            } else if (diff < 59 * MINUTE) {
+                return HALF_HOUR;
+            } else if (diff < DAY) {
+                return StringHelper.format(TODAY, format(FMT_HHMM1, time));
+            }
+        } else if (time > yesterdayStart) {
+            // 昨天
+            return StringHelper.format(YESTERDAY, format(FMT_HHMM1, time));
+        } else if (time > beforeYesterdayStart) {
+            // 前天
+            return StringHelper.format(BEFORE_YESTERDAY, format(FMT_HHMM1, time));
         }
         Calendar year = Calendar.getInstance();
         year.set(Calendar.MONTH, Calendar.JANUARY);
@@ -247,7 +277,7 @@ public class Utils {
         year.set(Calendar.SECOND, 0);
         year.set(Calendar.MILLISECOND, 1);
         long yearBeginning = year.getTimeInMillis();
-        if (diff < yearBeginning) {
+        if (time > yearBeginning) {
             // 今年的话，则格式化成 xx月xx日
             return format(FMT_MMDDHHMM, time);
         }

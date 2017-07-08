@@ -346,7 +346,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public String formatDate(String createDate) {
         if (isEmpty(createDate)) return "";
-        return Utils.format(createDate, StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs));
+        // 增加秒的格式化内容，避免ios不同的格式化公式
+        String ss = (createDate.length() < 19) ? ":00" : "";
+        return Utils.format(createDate + ss, StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs));
     }
 
     /**
@@ -354,7 +356,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public String formatDateTime(String createDate) {
         if (isEmpty(createDate)) return "";
-        return Utils.format(createDate, StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs_min));
+        // 增加秒的格式化内容，避免ios不同的格式化公式
+        String ss = (createDate.length() < 19) ? ":00" : "";
+        return Utils.format(createDate + ss, StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs_min));
     }
 
     /**
@@ -362,7 +366,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public String formatTimeAgo(String time) {
         if (isEmpty(time)) return "";
-        return Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), time);
+        // 增加秒的格式化内容，避免ios不同的格式化公式
+        String ss = (time.length() < 19) ? ":00" : "";
+        return Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), time + ss);
     }
 
     /**
