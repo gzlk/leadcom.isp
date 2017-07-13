@@ -10,6 +10,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
+import com.gzlk.android.isp.fragment.common.InnerWebViewFragment;
 import com.gzlk.android.isp.fragment.common.OfficeOnlinePreviewFragment;
 import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -49,10 +50,14 @@ public class FilePreviewHelper {
                 previewImage(context, path);
                 return;
             } else if (Attachment.isOffice(ext)) {
-                previewOnlineOffice(context, path, fileName);
+                previewOnlineOffice(context, path, fileName, ext);
                 return;
             } else if (ImageCompress.isVideo(ext)) {
                 previewVideo(context, path, fileName, extension);
+                return;
+            } else if (path.contains(NIM) && extension.contains("txt")) {
+                // 文本文件的在线预览方式
+                BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
                 return;
             }
             previewMimeFile(context, path, extension);
@@ -68,6 +73,10 @@ public class FilePreviewHelper {
             File file = new File(path);
             //String extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(file).toString());
             String mimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            if (StringHelper.isEmpty(mimetype) && extension.contains("log")) {
+                // log文件用纯文本方式打开
+                mimetype = "text/plain";
+            }
             intent.setDataAndType(Uri.fromFile(file), mimetype);
             context.startActivity(intent);
         } catch (Exception e) {
@@ -100,9 +109,9 @@ public class FilePreviewHelper {
     /**
      * 预览在线Office文档
      */
-    private static void previewOnlineOffice(Context context, String path, String fileName) {
-        String url = path.contains(NIM) ? StringHelper.format("%s%s", OFFICE_PREVIEW, path) : path;
-        String param = StringHelper.format("%s,%s", url, fileName);
+    private static void previewOnlineOffice(Context context, String path, String fileName, String extension) {
+        //String url = path.contains(NIM) ? StringHelper.format("%s%s", OFFICE_PREVIEW, path) : path;
+        String param = StringHelper.format("%s,%s,%s", path, fileName, extension);
         BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), param, true, false);
     }
 }

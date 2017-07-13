@@ -7,15 +7,32 @@
 
     <string-array name="ui_organization_structure_items">
         <item>0|||</item>
-        <item>1|||</item>
-        <item>2|您已关注的组织：||0</item>
-        <item>3|可能感兴趣的组织：||1</item>
-        <item>4|||</item>
-        <item>5|下属小组(%d个)||0</item>
-        <item>6||%s|1</item>
-        <item>7|||</item>
+        <item>1|您已关注的组织(%d个)||1</item>
+        <item>2|可能感兴趣的组织：||1</item>
+        <item>3|||</item>
+        <item>4|下属小组(%d个)||0</item>
+        <item>5|||</item>
     </string-array>
     <string name="ui_organization_structure_no_group_exist">您没有加入任何组织</string>
+    <string name="ui_organization_structure_no_permission_concern">您没有权限关联其他组织</string>
+
+    <string name="ui_organization_interesting_fragment_title">感兴趣的组织</string>
+    <string name="ui_organization_interesting_loading">正在加载感兴趣的组织&#8230;</string>
+    <string name="ui_organization_interesting_nothing">暂时没有更多组织</string>
+    <string name="ui_organization_interesting_concerning">正在关注组织</string>
+    <string name="ui_organization_interesting_concerned">已关注</string>
+    <string name="ui_organization_interesting_concern">关注</string>
+    <string name="ui_organization_interesting_cancel_concern_warning">您确定要取消关注这个组织吗？</string>
+    <string name="ui_organization_interesting_cancel_concern">正在取消关注</string>
+    <string name="ui_organization_interesting_concern_as_upper">上级组织</string>
+    <string name="ui_organization_interesting_concern_as_friend">友好组织</string>
+    <string name="ui_organization_concerned_fragment_title">已关注的组织</string>
+    <string-array name="ui_organization_concerned_type">
+        <item>-</item>
+        <item>上级</item>
+        <item>下级</item>
+        <item>友好</item>
+    </string-array>
 
     <string name="ui_organization_creator_fragment_title">增加一个组织(Debug)</string>
     <string name="ui_organization_creator_warning">敬请知悉：<br />此功能目前只为测试方便而开发，正式release版本会屏蔽。</string>

@@ -61,7 +61,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingJoinedRemoteOrganizationsComplete(list);
             }
-        }).list(ope, remotePageNumber);
+        }).list(ope);
     }
 
     /**
@@ -239,17 +239,9 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
             @Override
             public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (null != list) {
-                    if (list.size() >= pageSize) {
-                        remotePageNumber++;
-                        isLoadingComplete(false);
-                    } else {
-                        isLoadingComplete(true);
-                    }
-                }
                 onFetchingJoinedActivityComplete(list);
             }
-        }).joined(mOrganizationId);
+        }).joined(mOrganizationId, remotePageNumber);
     }
 
     protected void onFetchingJoinedActivityComplete(List<Activity> list) {

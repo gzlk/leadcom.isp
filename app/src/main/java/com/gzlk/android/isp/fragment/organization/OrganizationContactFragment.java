@@ -8,9 +8,11 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
+import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 
@@ -29,6 +31,8 @@ import java.util.List;
 
 public class OrganizationContactFragment extends BaseOrganizationFragment {
 
+    private static final String PARAM_TITLE = "ocf_param_title";
+
     public static OrganizationContactFragment newInstance(String params) {
         OrganizationContactFragment ocf = new OrganizationContactFragment();
         Bundle bundle = new Bundle();
@@ -37,10 +41,26 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         bundle.putString(PARAM_QUERY_ID, strings[0]);
         // 小组的id，要把组织的用户邀请入这个小组
         bundle.putString(PARAM_SQUAD_ID, strings[1]);
+        if (strings.length > 2) {
+            bundle.putString(PARAM_TITLE, strings[2]);
+        }
         ocf.setArguments(bundle);
         return ocf;
     }
 
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        mTitle = bundle.getString(PARAM_TITLE, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_TITLE, mTitle);
+    }
+
+    private String mTitle = "";
     private ContactAdapter mAdapter;
 
     @Override
@@ -50,7 +70,11 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_squad_contact_menu_1);
+        if (isEmpty(mTitle)) {
+            setCustomTitle(R.string.ui_squad_contact_menu_1);
+        } else {
+            setCustomTitle(mTitle);
+        }
         initializeAdapter();
     }
 
@@ -114,6 +138,14 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         }
     };
 
+    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            // 打开用户名片
+            openActivity(UserPropertyFragment.class.getName(), mAdapter.get(index).getUserId(), false, false, true);
+        }
+    };
+
     private void addMemberToSquad(Member member, final int index) {
         // 将不在小组内的组织成员添加到小组
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
@@ -134,9 +166,13 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         @Override
         public ContactViewHolder onCreateViewHolder(View itemView, int viewType) {
             ContactViewHolder holder = new ContactViewHolder(itemView, OrganizationContactFragment.this);
-            holder.showInviteButton(true);
+            holder.showInviteButton(!isEmpty(mSquadId));
             holder.setSquadId(mSquadId);
-            holder.addOnHandlerBoundDataListener(onHandlerBoundDataListener);
+            if (isEmpty(mSquadId)) {
+                holder.addOnViewHolderClickListener(onViewHolderClickListener);
+            } else {
+                holder.addOnHandlerBoundDataListener(onHandlerBoundDataListener);
+            }
             return holder;
         }
 

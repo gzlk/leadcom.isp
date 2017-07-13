@@ -9,9 +9,9 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
-import com.gzlk.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.gzlk.android.isp.fragment.activity.UnApprovedInviteFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
@@ -20,8 +20,8 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
 import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
+import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
@@ -38,8 +38,7 @@ import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -172,6 +171,9 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
+        isLoadingComplete(false);
+        setSupportLoadingMore(true);
         refreshingItems();
     }
 
@@ -201,8 +203,15 @@ public class ActivityFragment extends BaseOrganizationFragment {
     @Override
     protected void onFetchingJoinedActivityComplete(List<Activity> list) {
         if (null != list) {
+            if (list.size() >= 10) {
+                remotePageNumber++;
+                isLoadingComplete(false);
+            } else {
+                isLoadingComplete(true);
+            }
             updateActivityList(list);
         } else {
+            isLoadingComplete(true);
             // 当前显示本fragment时才提示用户
             if (getUserVisibleHint()) {
                 ToastHelper.make().showMsg(R.string.ui_activity_main_not_exist_any_more);
@@ -335,17 +344,31 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 activities.set(pos, activity);
             }
         }
-        Collections.sort(activities, new Comparator<Activity>() {
-            @Override
-            public int compare(Activity o1, Activity o2) {
-                return -o1.getCreateDate().compareTo(o2.getCreateDate());
-            }
-        });
+//        Collections.sort(activities, new Comparator<Activity>() {
+//            @Override
+//            public int compare(Activity o1, Activity o2) {
+//                return -o1.getCreateDate().compareTo(o2.getCreateDate());
+//            }
+//        });
+        clearActivities();
         for (Activity activity : activities) {
             mAdapter.update(activity);
         }
         // 查询网易云信联系人列表，并更新相应的未读提示和最后发送的消息
         resetUnreadFlags();
+    }
+
+    private void clearActivities() {
+        Iterator<Model> iterator = mAdapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof Activity) {
+                iterator.remove();
+                mAdapter.notifyItemRemoved(index);
+            }
+            index++;
+        }
     }
 
     @Override
@@ -382,6 +405,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
             return;
         }
         if (isEmpty(mQueryId) || !mQueryId.equals(org.getId())) {
+            remotePageNumber = 1;
+            setSupportLoadingMore(true);
             // 群id不一样时才刷新
             mQueryId = org.getId();
             mOrganizationId = mQueryId;

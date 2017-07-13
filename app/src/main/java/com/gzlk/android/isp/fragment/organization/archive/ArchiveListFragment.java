@@ -111,6 +111,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
         archives.clear();
         refreshArchive();
     }
@@ -230,9 +231,10 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 }
             }
         }
-        if (null == list || list.size() < 1) {
-            mAdapter.clear();
-        }
+        //if (null == list || list.size() < 1) {
+        // 清除已有的记录，以便去掉已存档了的内容
+        mAdapter.clear();
+        //}
         showArchive();
     }
 

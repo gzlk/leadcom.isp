@@ -182,8 +182,11 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
         int cnt = 0;
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
             ActArchive archive = (ActArchive) mAdapter.get(i);
-            if (archive.getStatus() <= Attachment.AttachmentStatus.ARCHIVING) {
-                cnt++;
+            if (archive.isSelected()) {
+                // 如果是选中状态则看其是否还未存档
+                if (archive.getStatus() <= Attachment.AttachmentStatus.ARCHIVING) {
+                    cnt++;
+                }
             }
         }
         return cnt;
@@ -193,10 +196,11 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
      * 递归存档所有选中的未存档内容
      */
     private void archivingArchive() {
+        // 获取选中的文件中未存档的项目统计数量
         int unarchived = getUnArchived();
         if (unarchived > 0) {
             ActArchive archive = (ActArchive) mAdapter.get(archivingIndex);
-            if (archive.getStatus() <= Attachment.AttachmentStatus.ARCHIVING) {
+            if (archive.isSelected() && archive.getStatus() <= Attachment.AttachmentStatus.ARCHIVING) {
                 archiveActivityArchive(archive.getId(), archive.getActId(), archivingIndex);
             } else {
                 archivingIndex++;

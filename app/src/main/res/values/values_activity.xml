@@ -69,7 +69,7 @@
 
     <string name="ui_activity_create_fragment_title">新建活动</string>
     <string name="ui_activity_create_fragment_title_edit">修改活动</string>
-    <string name="ui_activity_create_content_hint">填写活动说明</string>
+    <string name="ui_activity_create_content_hint">填写活动简介</string>
     <string name="ui_activity_create_handing_warning">正在发布请稍候&#8230;</string>
     <string name="ui_activity_create_handing_attachment_warning">正在处理文件请稍候&#8230;</string>
     <string name="ui_activity_create_handing_attachment_warning1" formatted="false">正在处理文件(%d/%d)请稍候&#8230;</string>

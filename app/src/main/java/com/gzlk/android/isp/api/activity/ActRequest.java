@@ -357,8 +357,8 @@ public class ActRequest extends Request<Activity> {
     /**
      * 查询我参加的活动(非实时的缓存数据)
      */
-    public void joined(@NonNull String groupId) {
-        String param = format("%s?groupId=%s", url(JOINED), groupId);
+    public void joined(@NonNull String groupId, int pageNumber) {
+        String param = format("%s?groupId=%s&pageNumber=%d", url(JOINED), groupId, pageNumber);
         httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 

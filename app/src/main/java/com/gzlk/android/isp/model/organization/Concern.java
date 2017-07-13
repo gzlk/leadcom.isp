@@ -1,8 +1,7 @@
 package com.gzlk.android.isp.model.organization;
 
-import com.gzlk.android.isp.model.Model;
-import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Table;
+import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.helper.StringHelper;
 
 /**
  * <b>功能描述：</b>关注的组织<br />
@@ -14,50 +13,20 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Organization.Table.CONCERN)
-public class Concern extends Model {
+public class Concern extends Organization {
 
-    @Column(Field.UserId)
-    private String userId;        //用户ID
+    // 关注类型：1=上级组织，2=友好组织
+    private int type;
 
-    @Column(Organization.Field.GroupId)
-    private String groupId;        //关注组织ID
-
-    @Column(Organization.Field.GroupName)
-    private String groupName;    //关注组织名称
-
-    @Column(Organization.Field.GroupLogo)
-    private String groupLogo;    //关注组织LOGO
-
-    public String getUserId() {
-        return userId;
+    public int getType() {
+        return type;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public String getGroupLogo() {
-        return groupLogo;
-    }
-
-    public void setGroupLogo(String groupLogo) {
-        this.groupLogo = groupLogo;
+    public String getTypeString() {
+        return StringHelper.getStringArray(R.array.ui_organization_concerned_type)[type];
     }
 }

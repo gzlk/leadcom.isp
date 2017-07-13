@@ -262,7 +262,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
             items = StringHelper.getStringArray(R.array.ui_activity_entrance_items);
             resetImageViewSize();
         }
-        String img = (null != activity && !isEmpty(activity.getImg())) ? activity.getImg() : ("drawable://" + R.mipmap.img_image_loading_fail);
+        String img = (null != activity && !isEmpty(activity.getImg())) ? activity.getImg() : ("drawable://" + R.drawable.img_activity_cover_1);
         imageView.displayImage(img, imageWidth, imageHeight, false, false);
 
         if (null == titleHolder) {

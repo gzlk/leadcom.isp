@@ -225,7 +225,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
      * @param mute true=静音开启（免打扰）
      */
     private void resetNotificationStatus(boolean mute) {
-        String string = items[6];
+        String string = items[5];
         string = format(string, mute ? 1 : 0);
         SimpleClickableItem item = new SimpleClickableItem(string);
         mAdapter.update(item);
@@ -324,7 +324,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
     private ToggleableViewHolder.OnViewHolderToggleChangedListener toggleChangedListener = new ToggleableViewHolder.OnViewHolderToggleChangedListener() {
         @Override
         public void onChange(int index, boolean togged) {
-            if (index == 6) {
+            if (index == 5) {
                 // 消息免打扰
                 NIMClient.getService(TeamService.class).muteTeam(mSessionId, togged);
             }

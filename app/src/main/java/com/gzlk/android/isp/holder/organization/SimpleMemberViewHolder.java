@@ -112,19 +112,25 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
     }
 
     private void showTeamMembers(List<TeamMember> members) {
-        int i = 0;
-        for (TeamMember member : members) {
-            UserInfoProvider.UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
-            String header = null != userInfo ? userInfo.getAvatar() : "";
-            ImageDisplayer displayer = (ImageDisplayer) LayoutInflater.from(headerContainer.getContext())
-                    .inflate(R.layout.tool_view_small_user_header, headerContainer, false);
-            displayer.displayImage(header, imageSize, false, false);
-            displayer.addOnImageClickListener(onImageClickListener);
-            headerContainer.addView(displayer);
-            if (i >= 9) {
-                break;
+        String items = StringHelper.getStringArray(R.array.ui_activity_property_items)[1];
+        items = format(items, null == members ? 0 : members.size());
+        // 重新显示成员数量
+        showContent(new SimpleClickableItem(items));
+        if (null != members) {
+            int i = 0;
+            for (TeamMember member : members) {
+                UserInfoProvider.UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
+                String header = null != userInfo ? userInfo.getAvatar() : "";
+                ImageDisplayer displayer = (ImageDisplayer) LayoutInflater.from(headerContainer.getContext())
+                        .inflate(R.layout.tool_view_small_user_header, headerContainer, false);
+                displayer.displayImage(header, imageSize, false, false);
+                displayer.addOnImageClickListener(onImageClickListener);
+                headerContainer.addView(displayer);
+                if (i >= 9) {
+                    break;
+                }
+                i++;
             }
-            i++;
         }
     }
 

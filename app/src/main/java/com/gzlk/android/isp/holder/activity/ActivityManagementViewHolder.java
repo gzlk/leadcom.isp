@@ -6,13 +6,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.activity.Activity;
-import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -46,7 +44,11 @@ public class ActivityManagementViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Activity activity, String searchingText) {
-        imageDisplayer.displayImage(activity.getImg(), getDimension(R.dimen.ui_static_dp_100), getDimension(R.dimen.ui_static_dp_80), false, false);
+        String img = activity.getImg();
+        if (isEmpty(img)) {
+            img = "drawable://" + R.drawable.img_default_activity_header;
+        }
+        imageDisplayer.displayImage(img, getDimension(R.dimen.ui_static_dp_100), getDimension(R.dimen.ui_static_dp_80), false, false);
         String text = activity.getTitle();
         if (isEmpty(text)) {
             text = StringHelper.getString(R.string.ui_base_text_not_set);

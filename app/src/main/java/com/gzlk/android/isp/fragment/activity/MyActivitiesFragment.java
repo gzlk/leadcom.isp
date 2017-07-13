@@ -99,12 +99,13 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
         refreshActivity();
     }
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        refreshActivity();
     }
 
     @Override
@@ -176,16 +177,19 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
 
     private void addMultipleActivity(List<Activity> list, int pageSize) {
         if (null != list) {
-//            if (pageSize > 0) {
-//                if (list.size() >= pageSize) {
-//                    remotePageNumber++;
-//                }
-//            }
+            if (list.size() >= pageSize) {
+                remotePageNumber++;
+                isLoadingComplete(false);
+            } else {
+                isLoadingComplete(true);
+            }
             for (Activity activity : list) {
                 if (!activities.contains(activity)) {
                     activities.add(activity);
                 }
             }
+        } else {
+            isLoadingComplete(true);
         }
         showActivity();
     }
@@ -198,6 +202,8 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     addMultipleActivity(list, pageSize);
+                } else {
+                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 stopRefreshing();
@@ -212,6 +218,8 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     addMultipleActivity(list, pageSize);
+                } else {
+                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 stopRefreshing();
@@ -226,11 +234,13 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     addMultipleActivity(list, pageSize);
+                } else {
+                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).joined(mQueryId);
+        }).joined(mQueryId, remotePageNumber);
     }
 
     private void loadingNotJoinActivity() {

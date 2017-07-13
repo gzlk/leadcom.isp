@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_dialog_group_interest_concern_container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/ui_base_dimen_button_height"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:cv_border_size="0dp"
+        app:cv_corner_size="@dimen/ui_base_dimen_margin_padding">
+
+        <LinearLayout
+            android:id="@+id/ui_dialog_group_interest_concern_as_upper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/ui_base_dimen_margin_padding"
+            android:paddingEnd="@dimen/ui_static_dp_20"
+            android:paddingStart="@dimen/ui_static_dp_20"
+            android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ui_organization_interesting_concern_as_upper" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_dialog_group_interest_concern_as_upper_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_radio_unselected"
+                android:textColor="@color/textColorHint" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/ui_static_dp_20"
+            android:paddingStart="@dimen/ui_static_dp_20">
+
+            <include layout="@layout/tool_view_half_line_horizontal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ui_dialog_group_interest_concern_as_friend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/ui_base_dimen_margin_padding"
+            android:paddingEnd="@dimen/ui_static_dp_20"
+            android:paddingStart="@dimen/ui_static_dp_20"
+            android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ui_organization_interesting_concern_as_friend" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_dialog_group_interest_concern_as_friend_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_radio_unselected"
+                android:textColor="@color/textColorHint" />
+        </LinearLayout>
+
+        <include layout="@layout/popup_dialog_default_buttons" />
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

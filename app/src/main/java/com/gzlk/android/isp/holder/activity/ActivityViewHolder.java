@@ -84,7 +84,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         img.add(actImg);
         headers.setAdapter(adapter);
         headers.setImagesData(img);
-        timeView.setText(Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), invitation.getCreateTime()));
+        timeView.setText(fragment().formatTimeAgo(invitation.getCreateTime()));
         headers.setVisibility(View.VISIBLE);
         iconText.setVisibility(View.GONE);
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
@@ -115,7 +115,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         headers.setAdapter(adapter);
         headers.setImagesData(img);
         flagView.setVisibility(activity.getUnreadNum() > 0 ? View.VISIBLE : View.GONE);
-        timeView.setText(Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), activity.getBeginDate()));
+        timeView.setText(fragment().formatTimeAgo(activity.getBeginDate()));
         //headers.setVisibility(hasImage ? View.VISIBLE : View.GONE);
         headers.setVisibility(View.VISIBLE);
         iconText.setVisibility(View.GONE);
@@ -139,7 +139,7 @@ public class ActivityViewHolder extends BaseViewHolder {
                         for (TeamMember member : members) {
                             UserInfoProvider.UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
                             String header = null != userInfo ? userInfo.getAvatar() : "";
-                            if (isEmpty(header)) {
+                            if (isEmpty(header) || header.contains("null")) {
                                 header = isEmpty(cover) ? "drawable://" + R.mipmap.img_default_user_header : cover;
                             }
                             list.add(header);

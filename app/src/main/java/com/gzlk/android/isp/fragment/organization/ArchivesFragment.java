@@ -46,6 +46,9 @@ public class ArchivesFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
+        setSupportLoadingMore(true);
+        //mAdapter.clear();
         fetchingRemoteArchives();
     }
 
@@ -107,7 +110,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
             return;
         }
         mQueryId = queryId;
-        fetchingRemoteArchives();
+        //fetchingRemoteArchives();
     }
 
     // 我是否可以管理组织档案
@@ -155,15 +158,19 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     if (null != list) {
+                        if (null != mAdapter) {
+                            // 覆盖方式重置list
+                            mAdapter.update(list, remotePageNumber <= 1);
+                            // 第一页的时候排序一下，把最新的放在最前面
+                            if (remotePageNumber <= 1) {
+                                mAdapter.sort();
+                            }
+                        }
                         if (list.size() >= pageSize) {
                             remotePageNumber++;
                             isLoadingComplete(false);
                         } else {
                             isLoadingComplete(true);
-                        }
-                        if (null != mAdapter) {
-                            mAdapter.update(list);
-                            mAdapter.sort();
                         }
                     } else {
                         isLoadingComplete(true);

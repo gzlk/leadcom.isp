@@ -66,7 +66,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
 
     public void showContent(Collection collection) {
         creatorName.setText(collection.getCreatorName());
-        createTime.setText(Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), collection.getCreateDate()));
+        createTime.setText(fragment().formatTimeAgo(collection.getCreateDate()));
         checkViews(collection.getType());
         showCollection(collection.getType(), collection.getContent());
     }

@@ -5,6 +5,8 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
+import java.util.ArrayList;
+
 /**
  * <b>功能描述：</b>组织<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -79,6 +81,9 @@ public class Organization extends Model {
     private Member groMember;      // 当前登录者在组织里的角色
     @Column(Field.Concerned)
     private boolean concerned;     // 是否是我关注的组织
+
+    @Ignore
+    private ArrayList<Concern> conGroup; // 关注的组织列表
 
     public String getName() {
         return name;
@@ -193,5 +198,13 @@ public class Organization extends Model {
 
     public void setConcerned(boolean concerned) {
         this.concerned = concerned;
+    }
+
+    public ArrayList<Concern> getConGroup() {
+        return conGroup;
+    }
+
+    public void setConGroup(ArrayList<Concern> conGroup) {
+        this.conGroup = conGroup;
     }
 }

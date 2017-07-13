@@ -129,7 +129,11 @@ public class ActivityDetailsSingleFragment extends BaseDownloadingUploadingSuppo
     }
 
     private void display(Activity activity) {
-        imageDisplayer.displayImage(activity.getImg(), imageWidth, imageHeight, false, false);
+        String img = activity.getImg();
+        if (isEmpty(img)) {
+            img = "drawable://" + R.drawable.img_activity_cover_1;
+        }
+        imageDisplayer.displayImage(img, imageWidth, imageHeight, false, false);
         titleHolder.showContent(format(items[0], activity.getTitle()));
         timeHolder.showContent(format(items[1], formatDateTime(activity.getBeginDate())));
         addressHolder.showContent(format(items[2], activity.getSite()));

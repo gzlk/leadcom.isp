@@ -85,7 +85,7 @@ public class CollectionDetailsFragment extends BaseTransparentSupportFragment {
     }
 
     private void showCreateTime(String create) {
-        String time = Utils.formatTimeAgo(StringHelper.getString(R.string.ui_base_text_date_time_format), create);
+        String time = formatTimeAgo(create);
         createTime.setText(StringHelper.getString(R.string.ui_text_collection_details_create_at, time));
     }
 

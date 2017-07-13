@@ -97,8 +97,10 @@ public class OrgRequest extends Request<Organization> {
 
     @Override
     protected void save(Organization organization) {
-        saveMyGroupMember(organization.getGroMember());
-        //organization.setConcerned(isConcerned(organization.getId()));
+        if (null != organization) {
+            saveMyGroupMember(organization.getGroMember());
+            //organization.setConcerned(isConcerned(organization.getId()));
+        }
         super.save(organization);
     }
 
@@ -216,13 +218,12 @@ public class OrgRequest extends Request<Organization> {
     /**
      * 默认查询当前用户授权范围内的组织列表
      *
-     * @param ope        0=返回当前用户参加的组织列表，1=返回活动里的组织列表（不一定是当前用户参加的）
-     * @param pageNumber 页码
+     * @param ope 0=返回当前用户参加的组织列表，1=返回活动里的组织列表（不一定是当前用户参加的）
      */
-    public void list(int ope, int pageNumber) {
+    public void list(int ope) {
         // accessToken,pageSize,pageNumber
         isFetchingJoinedGroups = ope == GROUP_LIST_OPE_JOINED;
-        httpRequest(getRequest(MultipleGroup.class, format("%s?ope=%d&pageNumber=%d&accessToken=%s", url(LIST), ope, pageNumber, Cache.cache().accessToken), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleGroup.class, format("%s?ope=%d&pageNumber=1&pageSize=999&accessToken=%s", url(LIST), ope, Cache.cache().accessToken), "", HttpMethods.Get));
     }
 
     /**
@@ -251,19 +252,36 @@ public class OrgRequest extends Request<Organization> {
     }
 
     /**
-     * 查询感兴趣的组织列表
+     * 返回感兴趣的组织列表（不包括当前组织和被关注的组织）(2017-06-26 21:34新增)
      */
-    public void listInteresting() {
+    public void listInteresting(String groupId, int pageNumber) {
+        httpRequest(getRequest(MultipleGroup.class, format("%s?groupId=%s&pageNumber=%d", url("/listInterest"), groupId, pageNumber), "", HttpMethods.Get));
     }
 
     /**
-     * 关注组织
+     * 关注为上级组织
+     */
+    public static final int CONCERN_UPPER = 1;
+    /**
+     * 关注为友好组织
+     */
+    public static final int CONCERN_FRIEND = 2;
+    /**
+     * 取消关注
+     */
+    public static final int CONCERN_CANCEL = 3;
+
+    /**
+     * 关注组织(2017-06-26 21:34新增)
      *
      * @param groupId        当前所在组织
      * @param concernGroupId 被关注的组织
-     * @param type           关注类型
+     * @param type           关注类型（1.关注上级组织 2.关注友好组织 3.取消关注）
      */
     public void concern(String groupId, String concernGroupId, int type) {
-
+        // groupId,conGroupId,type
+        String url = url("/concern");
+        String param = format("%s?groupId=%s&conGroupId=%s&type=%d", url, groupId, concernGroupId, type);
+        httpRequest(getRequest(SingleGroup.class, param, "", HttpMethods.Get));
     }
 }

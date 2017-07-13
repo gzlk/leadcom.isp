@@ -250,7 +250,15 @@ public class BaseApplication extends Application {
      * @param dir 文件本地缓存的目录
      */
     public String getLocalFilePath(String url, String dir) {
-        String suffix = url.substring(url.lastIndexOf('.'));
+        int dotIndex = url.lastIndexOf('.');
+        if (dotIndex < url.length() - 5) {
+            // 网易云信的文档url没有后缀名
+            dotIndex = -1;
+        }
+        String suffix = "";
+        if (dotIndex >= 0) {
+            suffix = url.substring(url.lastIndexOf('.'));
+        }
         return getCachePath(dir) + Cryptography.md5(url) + suffix;
     }
 

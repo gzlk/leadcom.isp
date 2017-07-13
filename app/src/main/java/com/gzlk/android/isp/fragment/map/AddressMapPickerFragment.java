@@ -226,7 +226,10 @@ public class AddressMapPickerFragment extends BaseLocationSupportFragment {
 
     @Override
     protected void onReverseGeoCodeComplete(ReverseGeoCodeResult reverseGeoCodeResult) {
-        if (null == reverseGeoCodeResult) return;
+        if (null == reverseGeoCodeResult || null == reverseGeoCodeResult.getLocation()) {
+            addressView.setText(R.string.ui_activity_sign_map_picker_location_invalid);
+            return;
+        }
         LatLng latLng = reverseGeoCodeResult.getLocation();
         address.setLongitude(latLng.longitude);
         address.setLatitude(latLng.latitude);

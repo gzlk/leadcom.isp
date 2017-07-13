@@ -6,18 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.api.org.OrgRequest;
-import com.gzlk.android.isp.api.org.SquadRequest;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
-import com.gzlk.android.isp.helper.DialogHelper;
-import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -26,9 +21,11 @@ import com.gzlk.android.isp.holder.common.TextViewHolder;
 import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
 import com.gzlk.android.isp.holder.organization.SquadAddViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
+import com.gzlk.android.isp.model.organization.Concern;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.organization.Squad;
@@ -38,8 +35,7 @@ import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -154,7 +150,7 @@ public class StructureFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onFetchingJoinedRemoteOrganizationsComplete(List<Organization> list) {
-        if (null != list && list.size() > 0) {
+        if (null != list) {
             concernedViewHolder.add(list);
         } else {
             // 当前显示本fragment时才提示用户
@@ -175,8 +171,8 @@ public class StructureFragment extends BaseOrganizationFragment {
         if (null == mAdapter) {
             mAdapter = new StructureAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            initializeItems();
         }
-        initializeItems();
         refreshRemoteOrganizations();
     }
 
@@ -187,36 +183,18 @@ public class StructureFragment extends BaseOrganizationFragment {
 
     private void initializeItems() {
         for (String string : items) {
-            String text = "";
-            if (string.contains("%s")) {
-                if (string.startsWith("6|")) {
-                    if (squads.size() < 1) {
-                        continue;
-                    } else {
-                        for (Squad squad : squads) {
-                            if (mAdapter.exist(squad)) {
-                                mAdapter.update(squad);
-                            } else {
-                                mAdapter.add(squad, mAdapter.getItemCount() - 1);
-                            }
-                        }
-                    }
-                } else {
-                    text = format(string, "");
-                }
-            } else if (string.contains("%d")) {
-                text = format(string, squads.size());
-            } else {
-                text = string;
+            if (string.charAt(0) == '1') {
+                // 已关注的组织数量统计
+                Organization group = null == concernedViewHolder ? null : concernedViewHolder.get(selectedIndex);
+                string = format(string, (null == group ? 0 : (null == group.getConGroup() ? 0 : group.getConGroup().size())));
+            } else if (string.charAt(0) == '4') {
+                // 下属小组
+                string = format(string, 0);
             }
-            if (!StringHelper.isEmpty(text)) {
-                SimpleClickableItem item = new SimpleClickableItem(text);
-                mAdapter.update(item);
-            }
+            SimpleClickableItem item = new SimpleClickableItem(string);
+            mAdapter.update(item);
         }
     }
-
-    private List<Squad> squads = new ArrayList<>();
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -263,14 +241,11 @@ public class StructureFragment extends BaseOrganizationFragment {
     @Override
     protected void onAddNewSquadToOrganizationComplete(Squad squad) {
         if (null != squad && !StringHelper.isEmpty(squad.getId())) {
-            if (!squads.contains(squad)) {
-                squads.add(squad);
-            }
-            initializeItems();
+            SimpleClickableItem sci = new SimpleClickableItem(items[4]);
+            int index = mAdapter.indexOf(sci);
+            mAdapter.add(squad, index + 1);
         }
         displayLoading(false);
-        // 重新拉取小组列表
-        changeSelectedGroup();
     }
 
     public void showSquadAddPopup(final boolean shown) {
@@ -328,87 +303,53 @@ public class StructureFragment extends BaseOrganizationFragment {
                 }).start();
     }
 
+    private static final int REQ_INTEREST = ACTIVITY_BASE_REQUEST + 100;
+    private static final int REQ_CONCERNED = ACTIVITY_BASE_REQUEST + 101;
     private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            if (index > 5 && index < mAdapter.getItemCount()) {
-                selectedSquadIndex = index - 6;
-                isTryGoingToSquad = false;
-                //tryGoingToSquad();
-                Squad squad = squads.get(selectedSquadIndex);
+            Model model = mAdapter.get(index);
+            if (model instanceof SimpleClickableItem) {
+                switch (((SimpleClickableItem) model).getIndex()) {
+                    case 1:
+                        if (my.groupAssociatable()) {
+                            Organization org = concernedViewHolder.get(selectedIndex);
+                            ArrayList<Concern> concerns = org.getConGroup();
+                            for (Concern concern : concerns) {
+                                concern.setConcerned(true);
+                            }
+                            String json = Json.gson().toJson(concerns, new TypeToken<ArrayList<Concern>>() {
+                            }.getType());
+                            // 已关注的组织列表
+                            ConcernedOrganizationFragment.open(StructureFragment.this, selectedGroupId, StringHelper.replaceJson(json, false), REQ_CONCERNED);
+                        } else {
+                            ToastHelper.make().showMsg(R.string.ui_organization_structure_no_permission_concern);
+                        }
+                        break;
+                    case 2:
+                        // 可能感兴趣的组织列表
+                        if (my.groupAssociatable()) {
+                            InterestingOrganizationFragment.open(StructureFragment.this, selectedGroupId, REQ_INTEREST);
+                        } else {
+                            ToastHelper.make().showMsg(R.string.ui_organization_structure_no_permission_concern);
+                        }
+                        break;
+                }
+            } else if (model instanceof Squad) {
+                Squad squad = (Squad) model;
                 // 当前登录者的角色
                 ContactFragment.squadRole = squad.getGroRole();
                 openSquadContact(squad.getGroupId(), squad.getId());
+            } else if (model instanceof Concern) {
+                Concern concern = (Concern) model;
+                String title = format("%s(%s)", concern.getName(), concern.getTypeString());
+                openActivity(OrganizationContactFragment.class.getName(), format("%s,,%s", concern.getId(), title), true, false);
             }
         }
     };
 
-    private static int selectedSquadIndex = 0;
-    private static boolean isTryGoingToSquad = false;
-
-    private void tryGoingToSquad() {
-        if (selectedSquadIndex < 0) return;
-        Squad squad = squads.get(selectedSquadIndex);
-        // 如果我不在本地小组成员列表里，则拉取远程小组成员列表
-        if (Member.isMemberInLocal(Cache.cache().userId, squad.getGroupId(), squad.getId())) {
-            openSquadContact(squad.getGroupId(), squad.getId());
-            selectedSquadIndex = -1;
-        } else {
-            //if (!isTryGoingToSquad) {
-            //    isTryGoingToSquad = true;
-            // 拉取该小组的成员列表并查询我是否在里面
-            //    fetchingRemoteMembers(squad.getGroupId(), squad.getId());
-            //} else {
-            isMeInSquad(squad.getId(), squad.getName());
-            //}
-        }
-    }
-
-//    @Override
-//    protected void onFetchingRemoteMembersComplete(List<Member> list) {
-//        super.onFetchingRemoteMembersComplete(list);
-//        tryGoingToSquad();
-//    }
-
-    // 查询我是否在选中的小组中
-    private void isMeInSquad(final String squadId, final String squadName) {
-        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
-            @Override
-            public void onResponse(Member member, boolean success, String message) {
-                super.onResponse(member, success, message);
-                if (success) {
-                    if (null != member && !isEmpty(member.getId())) {
-                        openSquadContact(member.getGroupId(), member.getSquadId());
-                    } else {
-                        warningJoinIntoSquad(squadId, squadName);
-                    }
-                }
-            }
-        }).find(Member.Type.SQUAD, squadId, Cache.cache().userId);
-    }
-
     private void openSquadContact(String groupId, String squadId) {
         openActivity(ContactFragment.class.getName(), format("%d,%s,%s", ContactFragment.TYPE_SQUAD, groupId, squadId), true, false);
-    }
-
-    private void warningJoinIntoSquad(String squadId, String squadName) {
-        SimpleDialogHelper.init(Activity()).show(StringHelper.getString(R.string.ui_organization_squad_not_member, squadName), StringHelper.getString(R.string.ui_base_text_yes), StringHelper.getString(R.string.ui_base_text_no_need), new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                //joinIntoSquad();
-                ToastHelper.make().showMsg("暂时不能申请加入小组（无api支持）");
-                return true;
-            }
-        }, null);
-    }
-
-    private void joinIntoSquad() {
-        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
-            @Override
-            public void onResponse(Squad squad, boolean success, String message) {
-                super.onResponse(squad, success, message);
-            }
-        });
     }
 
     private DepthViewPager.OnPageChangeListener onPageChangeListener = new DepthViewPager.OnPageChangeListener() {
@@ -449,61 +390,75 @@ public class StructureFragment extends BaseOrganizationFragment {
         if (null != organization) {
             my = organization.getGroMember();
             selectedGroupId = organization.getId();
+            // 显示我关注的组织列表
+            clearConcerned();
+            ArrayList<Concern> concerns = organization.getConGroup();
+            SimpleClickableItem sciConcerned = new SimpleClickableItem(format(items[1], null == concerns ? 0 : concerns.size()));
+            mAdapter.update(sciConcerned);
+            if (null != concerns) {
+                int index = mAdapter.indexOf(sciConcerned);
+                for (Concern concern : concerns) {
+                    mAdapter.add(concern, index + 1);
+                    index++;
+                }
+            }
+            SimpleClickableItem sci = new SimpleClickableItem(items[2]);
+            mAdapter.update(sci);
+            // 本组织下的小组列表
+            fetchingGroupSquads(organization.getId());
         }
         // 更改标题栏上的文字和icon
         if (null != organizationChangedListener) {
             organizationChangedListener.onChanged(organization);
         }
-        // 本组织下的小组列表
-        if (null != organization) {
-            fetchingGroupSquads(organization.getId());
+    }
+
+    private void clearConcerned() {
+        Iterator<Model> iterator = mAdapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof Concern) {
+                iterator.remove();
+                mAdapter.notifyItemRemoved(index);
+            }
+            index++;
+        }
+    }
+
+    private void clearSquads() {
+        Iterator<Model> iterator = mAdapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof Squad) {
+                iterator.remove();
+                mAdapter.notifyItemRemoved(index);
+            }
+            index++;
         }
     }
 
     private void fetchingGroupSquads(String groupId) {
         displayLoading(true);
         // 清空已经显示了的小组列表
-        for (Squad squad : squads) {
-            mAdapter.remove(squad);
-        }
-        squads.clear();
-        initializeItems();
-        // 查询本地小组列表
-//        List<Squad> temp = new Dao<>(Squad.class).query(Organization.Field.GroupId, groupId);
-//        if (null != temp && temp.size() > 0) {
-//            squads.addAll(temp);
-//            sortSquads();
-//            initializeItems();
-//        }
+        clearSquads();
         // 拉取远程的小组列表
         fetchingRemoteSquads(groupId);
     }
 
     @Override
     protected void onFetchingRemoteSquadsComplete(List<Squad> list) {
-        if (null != list && list.size() > 0) {
+        SimpleClickableItem sci = new SimpleClickableItem(format(items[4], null == list ? 0 : list.size()));
+        mAdapter.update(sci);
+        if (null != list) {
+            int index = mAdapter.indexOf(sci);
             for (Squad squad : list) {
-                if (!squads.contains(squad)) {
-                    squads.add(squad);
-                } else {
-                    int index = squads.indexOf(squad);
-                    squads.set(index, squad);
-                }
+                mAdapter.add(squad, index + 1);
+                index++;
             }
-            sortSquads();
-            initializeItems();
         }
         displayLoading(false);
-    }
-
-    private void sortSquads() {
-        // 根据创建日期排序
-        Collections.sort(squads, new Comparator<Squad>() {
-            @Override
-            public int compare(Squad o1, Squad o2) {
-                return o1.getCreateDate().compareTo(o2.getCreateDate());
-            }
-        });
     }
 
     private class StructureAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
@@ -518,7 +473,6 @@ public class StructureFragment extends BaseOrganizationFragment {
                     if (null == concernedViewHolder) {
                         concernedViewHolder = new OrgStructureViewHolder(itemView, fragment);
                         concernedViewHolder.setPageChangeListener(onPageChangeListener);
-                        //concernedViewHolder.loadingLocal();
                     }
                     return concernedViewHolder;
                 case VT_DIVIDER:
@@ -548,18 +502,16 @@ public class StructureFragment extends BaseOrganizationFragment {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == getItemCount() - 1) {
-                return VT_FOOTER;
-            }
-            switch (position) {
-                case 0:
-                    return VT_HEAD;
-                case 1:
-                case 4:
+            Model model = get(position);
+            switch (model.getId()) {
+                case "3":
                     return VT_DIVIDER;
-                default:
-                    return VT_CLICK;
+                case "0":
+                    return VT_HEAD;
+                case "5":
+                    return VT_FOOTER;
             }
+            return VT_CLICK;
         }
 
         @Override
@@ -570,6 +522,8 @@ public class StructureFragment extends BaseOrganizationFragment {
                     scvh.showContent((SimpleClickableItem) item);
                 } else if (item instanceof Squad) {
                     scvh.showContent((Squad) item);
+                } else if (item instanceof Concern) {
+                    scvh.showContent((Concern) item);
                 }
             } else if (holder instanceof SquadAddViewHolder) {
                 ((SquadAddViewHolder) holder).showAddContainer(null != my && my.squadAddable());
@@ -578,7 +532,7 @@ public class StructureFragment extends BaseOrganizationFragment {
 
         @Override
         protected int comparator(Model item1, Model item2) {
-            return item1.getId().compareTo(item2.getId());
+            return 0;
         }
     }
 }

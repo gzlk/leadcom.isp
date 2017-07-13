@@ -12,6 +12,7 @@ import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
+import com.gzlk.android.isp.model.organization.Concern;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -105,6 +106,12 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     public void showContent(Squad squad) {
         // 貌似只显示小组的名称
         showContent(0, "", squad.getName());
+    }
+
+    public void showContent(Concern concern) {
+        String name = concern.getName();
+        name += format("(%s)", concern.getTypeString());
+        showContent(0, "", name);
     }
 
     public void showContent(SimpleClickableItem item) {

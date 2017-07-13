@@ -67,6 +67,14 @@ public class ContactViewHolder extends BaseViewHolder {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageSize = getDimension(R.dimen.ui_static_dp_30);
+        headerView.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(String url) {
+                if (null != mOnViewHolderClickListener) {
+                    mOnViewHolderClickListener.onClick(getAdapterPosition());
+                }
+            }
+        });
     }
 
     /**

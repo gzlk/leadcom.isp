@@ -221,4 +221,13 @@ public class MemberRequest extends Request<Member> {
         String param = format("/activity/kick?id=%s&userId=%s", activityId, userId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
+
+    /**
+     * 从组织里添加小组成员且不需要对方同意或拒绝(2017-06-26 21:34新增)
+     */
+    public void addFromGroup(String userId, String squadId) {
+        String url = "/group/groSquMember/add/fromGroup";
+        String param = format("%s?userId=%s&squadId=%s", url, userId, squadId);
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+    }
 }
