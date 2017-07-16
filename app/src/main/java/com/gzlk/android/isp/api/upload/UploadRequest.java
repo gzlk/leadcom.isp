@@ -112,7 +112,7 @@ public class UploadRequest extends Request<Upload> {
                     onUploadingListener.onUploading(file, total, len);
                 }
             }
-        }).addHeader("accessToken", Cache.cache().accessToken).setHttpBody(body, HttpMethods.Post);
+        }).addHeader("accessToken", Cache.cache().accessToken).addHeader("charset", "GBK").setHttpBody(body, HttpMethods.Post);
     }
 
     /**

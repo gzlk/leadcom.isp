@@ -6,9 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.organization.Invitation;
@@ -93,10 +91,10 @@ public class ActivityViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Activity activity) {
-        String cover = activity.getImg();
+        String cover = activity.getCover();
         List<String> img = new ArrayList<>();
 //        if (hasImage) {
-//            img.add(activity.getImg());
+//            img.add(activity.getCover());
 //        } else {
 //
 //        }
@@ -121,7 +119,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         iconText.setVisibility(View.GONE);
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
         titleView.setText(activity.getTitle());
-        descView.setText(activity.getContent());
+        descView.setText(activity.getIntro());
     }
 
     private void showHeaders(List<String> list) {

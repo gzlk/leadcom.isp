@@ -43,7 +43,7 @@ import java.util.List;
 
 public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
 
-    private static final String PARAM_SELECTED = "lpf_selected_labels";
+    private static final String PARAM_SELECTED_NAMES = "lpf_selected_label_names";
     private static final String PARAM_ACT_ID = "lpf_activity_id";
 
     public static LabelPickFragment newInstance(String params) {
@@ -55,7 +55,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         // 活动的id
         bundle.putString(PARAM_ACT_ID, strings[1]);
         // 已选择了的标签列表
-        bundle.putString(PARAM_SELECTED, replaceJson(strings[2], true));
+        bundle.putString(PARAM_SELECTED_NAMES, replaceJson(strings[2], true));
         lpf.setArguments(bundle);
         return lpf;
     }
@@ -70,8 +70,8 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        String json = bundle.getString(PARAM_SELECTED, "[]");
-        labels = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
+        String json = bundle.getString(PARAM_SELECTED_NAMES, "[]");
+        labelNames = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
         }.getType());
         activityId = bundle.getString(PARAM_ACT_ID, "");
     }
@@ -79,12 +79,12 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putString(PARAM_SELECTED, Json.gson().toJson(labels));
+        bundle.putString(PARAM_SELECTED_NAMES, Json.gson().toJson(labelNames));
         bundle.putString(PARAM_ACT_ID, activityId);
     }
 
     private String activityId;
-    private ArrayList<String> labels;
+    private ArrayList<String> labelNames;
     private LabelAdapter mAdapter;
 
     @Override
@@ -106,16 +106,17 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resultSelected() {
-        labels.clear();
+        labelNames.clear();
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
             Model model = mAdapter.get(i);
             if (model.isSelected() && model instanceof Label) {
-                if (!labels.contains(model.getId())) {
-                    labels.add(model.getId());
+                Label label = (Label) model;
+                if (!labelNames.contains(label.getName())) {
+                    labelNames.add(label.getName());
                 }
             }
         }
-        resultData(Json.gson().toJson(labels));
+        resultData(Json.gson().toJson(labelNames));
     }
 
     @Override
@@ -178,7 +179,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     private void updateList(List<Label> list) {
         if (null != list) {
             for (Label label : list) {
-                label.setSelected(labels.contains(label.getId()));
+                label.setSelected(labelNames.contains(label.getName()));
                 // 新的标签始终加在倒数第三个位置
                 int index = mAdapter.getItemCount() - 2;
                 if (!mAdapter.exist(label)) {
@@ -194,37 +195,37 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         }});
 //        mAdapter.add(new Label() {{
 //            setId("1");
-//            setSelected(labels.contains(getId()));
+//            setSelected(labelNames.contains(getId()));
 //            setName("参政议政");
 //        }});
 //        mAdapter.add(new Label() {{
 //            setId("2");
-//            setSelected(labels.contains(getId()));
+//            setSelected(labelNames.contains(getId()));
 //            setName("学习文件精神");
 //        }});
 //        mAdapter.add(new Label() {{
 //            setId("3");
-//            setSelected(labels.contains(getId()));
+//            setSelected(labelNames.contains(getId()));
 //            setName("宣传报道");
 //        }});
 //        mAdapter.add(new Label() {{
 //            setId("4");
-//            setSelected(labels.contains(getId()));
+//            setSelected(labelNames.contains(getId()));
 //            setName("通知理论");
 //        }});
 //        mAdapter.add(new Label() {{
 //            setId("5");
-//            setSelected(labels.contains(getId()));
+//            setSelected(labelNames.contains(getId()));
 //            setName("社会实践");
 //        }});
 //        mAdapter.add(new Label() {{
 //            setId("6");
-//            setSelected(labels.contains(getId()));
+//            setSelected(labelNames.contains(getId()));
 //            setName("上山下乡");
 //        }});
 //        mAdapter.add(new Label() {{
 //            setId("7");
-//            setSelected(labels.contains(getId()));
+//            setSelected(labelNames.contains(getId()));
 //            setName("调研");
 //        }});
         mAdapter.add(new Model() {{

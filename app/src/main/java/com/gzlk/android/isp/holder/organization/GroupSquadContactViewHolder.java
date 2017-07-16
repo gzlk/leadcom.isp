@@ -8,8 +8,12 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.model.organization.Concern;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.model.organization.SimpleGroup;
+import com.gzlk.android.isp.model.organization.SimpleMember;
+import com.gzlk.android.isp.model.organization.SimpleSquad;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -70,6 +74,21 @@ public class GroupSquadContactViewHolder extends BaseViewHolder {
         showRightIconAnimate(group.isSelected());
     }
 
+    public void showContent(SimpleGroup group) {
+        // 组织不需要缩进
+        resetLeftMargin(0);
+        rightIcon.setVisibility(View.VISIBLE);
+        String name = format("%s(%s)", group.getName(), Concern.getTypeString(group.getType()));
+        titleText.setText(name);
+        selectorIcon.setText(group.isSelectable() ? R.string.ui_icon_checkbox_checked : R.string.ui_icon_checkbox_unchecked);
+        selectorIcon.setTextColor(getColor(group.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        //selectAll.setVisibility(group.isSelected() ? View.VISIBLE : View.GONE);
+        // 是否全选状态
+        //selectAllIcon.setTextColor(getColor(group.isSelectable() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        lockIcon.setVisibility(View.GONE);
+        showRightIconAnimate(group.isSelected());
+    }
+
     public void showContent(Squad squad) {
         // 小组需要1倍缩进
         resetLeftMargin(2);
@@ -84,7 +103,31 @@ public class GroupSquadContactViewHolder extends BaseViewHolder {
         showRightIconAnimate(squad.isSelected());
     }
 
+    public void showContent(SimpleSquad squad) {
+        // 小组需要1倍缩进
+        resetLeftMargin(2);
+        rightIcon.setVisibility(View.VISIBLE);
+        titleText.setText(squad.getName());
+        selectorIcon.setText(squad.isSelectable() ? R.string.ui_icon_checkbox_checked : R.string.ui_icon_checkbox_unchecked);
+        selectorIcon.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        //selectAll.setVisibility(squad.isSelected() ? View.VISIBLE : View.GONE);
+        // 是否全选状态
+        //selectAllIcon.setTextColor(getColor(squad.isSelectable() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        lockIcon.setVisibility(View.GONE);
+        showRightIconAnimate(squad.isSelected());
+    }
+
     public void showContent(Member member) {
+        resetLeftMargin(4);
+        rightIcon.setVisibility(View.GONE);
+        titleText.setText(format("%s(%s)", member.getUserName(), member.getPhone()));
+        selectorIcon.setText(R.string.ui_icon_select_solid);
+        selectorIcon.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
+        selectAll.setVisibility(View.GONE);
+        lockIcon.setVisibility(member.isLocalDeleted() ? View.VISIBLE : View.GONE);
+    }
+
+    public void showContent(SimpleMember member) {
         resetLeftMargin(4);
         rightIcon.setVisibility(View.GONE);
         titleText.setText(format("%s(%s)", member.getUserName(), member.getPhone()));

@@ -208,7 +208,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).created(mQueryId, !fromLocal);
+        }).list(mQueryId, ActRequest.LIST_CREATED, "", remotePageNumber);
     }
 
     private void loadingEndedActivity() {
@@ -224,7 +224,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).ended(mQueryId);
+        }).list(mQueryId, ActRequest.LIST_ENDED, "", remotePageNumber);
     }
 
     private void loadingJoinedActivity() {
@@ -240,7 +240,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).joined(mQueryId, remotePageNumber);
+        }).list(mQueryId, ActRequest.LIST_JOINED, "", remotePageNumber);
     }
 
     private void loadingNotJoinActivity() {

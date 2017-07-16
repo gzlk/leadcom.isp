@@ -25,7 +25,7 @@ import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
-import com.gzlk.android.isp.fragment.organization.GroupSquadContactPickerFragment;
+import com.gzlk.android.isp.fragment.organization.GroupsContactPickerFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.activity.ActivityMemberViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
@@ -180,14 +180,16 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
     // 尝试从组织通讯录里选取其他成员进本活动
     private void pickNewMembers(String groupId) {
-        ArrayList<SubMember> members = new ArrayList<>();
-        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
-            members.add(new SubMember(mAdapter.get(i)));
-        }
-        String json = Json.gson().toJson(members, new TypeToken<ArrayList<SubMember>>() {
-        }.getType());
-        //openActivity(GroupContactPickFragment.class.getName(), format("%s,true,false,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
-        openActivity(GroupSquadContactPickerFragment.class.getName(), format("%s,true,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
+        //ArrayList<SubMember> members = new ArrayList<>();
+        //for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+        //    members.add(new SubMember(mAdapter.get(i)));
+        //}
+        //String json = Json.gson().toJson(members, new TypeToken<ArrayList<SubMember>>() {
+        //}.getType());
+        ////openActivity(GroupContactPickFragment.class.getName(), format("%s,true,false,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
+        //openActivity(GroupSquadContactPickerFragment.class.getName(), format("%s,true,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
+
+        GroupsContactPickerFragment.open(this, groupId, REQ_MEMBER);
     }
 
     @Override

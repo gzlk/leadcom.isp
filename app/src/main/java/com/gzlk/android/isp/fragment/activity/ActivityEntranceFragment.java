@@ -160,7 +160,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).activityReject(tid);
+        }).activityInviteHandle(tid, InvitationRequest.INVITE_HANDLE_DISAGREE, "");
     }
 
     private void agree() {
@@ -176,7 +176,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                     warningApproveSuccess();
                 }
             }
-        }).activityApprove(tid);
+        }).activityInviteHandle(tid, InvitationRequest.INVITE_HANDLE_AGREE, "");
     }
 
     private void handleHandledActivity(boolean agree) {
@@ -224,7 +224,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     if (null != activity) {
                         initializeHolders(activity);
-                        initializeAttachments(activity.getAttUrlArray());
+                        initializeAttachments(activity.getAttachList());
                     }
                 }
                 displayLoading(false);
@@ -241,7 +241,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     if (null != activity) {
                         initializeHolders(activity);
-                        initializeAttachments(activity.getAttUrlArray());
+                        initializeAttachments(activity.getAttachList());
                     }
                 }
                 displayLoading(false);
@@ -262,7 +262,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
             items = StringHelper.getStringArray(R.array.ui_activity_entrance_items);
             resetImageViewSize();
         }
-        String img = (null != activity && !isEmpty(activity.getImg())) ? activity.getImg() : ("drawable://" + R.drawable.img_activity_cover_1);
+        String img = (null != activity && !isEmpty(activity.getCover())) ? activity.getCover() : ("drawable://" + R.drawable.img_activity_cover_1);
         imageView.displayImage(img, imageWidth, imageHeight, false, false);
 
         if (null == titleHolder) {

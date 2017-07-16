@@ -6,7 +6,6 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -92,7 +91,7 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         String text = null != activity && !isEmpty(activity.getTitle()) ? activity.getTitle() : StringHelper.getString(R.string.ui_base_text_not_set);
         nameTextView.setText(text);
         signatureTextView.setVisibility(View.GONE);
-        text = null != activity && !isEmpty(activity.getImg()) ? activity.getImg() : "";
+        text = null != activity && !isEmpty(activity.getCover()) ? activity.getCover() : "";
         headerImage.displayImage(text, getDimension(R.dimen.ui_static_dp_100), false, false);
         nameIcon.setVisibility(View.GONE);
         headerIcon.setVisibility(View.GONE);

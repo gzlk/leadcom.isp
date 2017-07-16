@@ -125,7 +125,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     if (isEmpty(nick)) {
                         nick = "null";
                     }
-                    act.setContent(format("%s: %s", nick, contact.getContent()));
+                    act.setIntro(format("%s: %s", nick, contact.getContent()));
                     mAdapter.notifyItemChanged(i);
                 }
             }

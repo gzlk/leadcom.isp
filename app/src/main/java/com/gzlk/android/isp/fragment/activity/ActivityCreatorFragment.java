@@ -19,7 +19,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.organization.GroupSquadContactPickerFragment;
+import com.gzlk.android.isp.fragment.organization.GroupsContactPickerFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -29,7 +29,6 @@ import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.Label;
@@ -83,9 +82,9 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private String memberJson = "[]", labelJson = "[]";
-    private String cover = "", title = "", address = "", content = "";
+    private String cover = "", title = "", address = "", intro = "";
     // 默认只向组织内部开放
-    private int openStatus = Activity.OpenStatus.NONE;
+    private int authPublic = Activity.OpenStatus.NONE;
     private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
     private static final int REQ_COVER = REQ_MEMBER + 1;
     private static final int REQ_LABEL = REQ_COVER + 1;
@@ -102,8 +101,8 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         happenDate = bundle.getString(PARAM_HAPPEN, "");
         title = bundle.getString(PARAM_TITLE, "");
         address = bundle.getString(PARAM_ADDR, "");
-        content = bundle.getString(PARAM_CONTENT, "");
-        openStatus = bundle.getInt(PARAM_OPEN_STATUS, Activity.OpenStatus.NONE);
+        intro = bundle.getString(PARAM_CONTENT, "");
+        authPublic = bundle.getInt(PARAM_OPEN_STATUS, Activity.OpenStatus.NONE);
         String json = bundle.getString(PARAM_ATTACHMENTS, "[]");
         attachments = Json.gson().fromJson(json, new TypeToken<ArrayList<Attachment>>() {
         }.getType());
@@ -121,9 +120,9 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_TITLE, title);
         address = addressHolder.getValue();
         bundle.putString(PARAM_ADDR, address);
-        content = contentView.getValue();
-        bundle.putString(PARAM_CONTENT, content);
-        bundle.putInt(PARAM_OPEN_STATUS, openStatus);
+        intro = introView.getValue();
+        bundle.putString(PARAM_CONTENT, intro);
+        bundle.putInt(PARAM_OPEN_STATUS, authPublic);
         bundle.putString(PARAM_ATTACHMENTS, Json.gson().toJson(attachments, new TypeToken<ArrayList<Attachment>>() {
         }.getType()));
     }
@@ -170,10 +169,10 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
 //    }
 
     private void resetLabels() {
-        labelsId = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
+        labelsNames = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
         }.getType());
-        if (null == labelsId) {
-            labelsId = new ArrayList<>();
+        if (null == labelsNames) {
+            labelsNames = new ArrayList<>();
         }
     }
 
@@ -193,7 +192,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
     @ViewId(R.id.ui_activity_creator_member)
     private View memberView;
     @ViewId(R.id.ui_activity_creator_content)
-    private ClearEditText contentView;
+    private ClearEditText introView;
 
     // holder
     private SimpleClickableViewHolder coverHolder;
@@ -209,7 +208,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
      */
     private String mGroupId = "";
     private ArrayList<SubMember> selectedMembers;
-    private ArrayList<String> labelsId;
+    private ArrayList<String> labelsNames;
     private String[] items, openStates;
 
     private FileAdapter mAdapter;
@@ -311,7 +310,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected boolean checkStillEditing() {
-        return !isEmpty(titleHolder.getValue()) || !isEmpty(addressHolder.getValue()) || !isEmpty(contentView.getValue());
+        return !isEmpty(titleHolder.getValue()) || !isEmpty(addressHolder.getValue()) || !isEmpty(introView.getValue());
     }
 
     private void initializeHolder(final Activity activity) {
@@ -330,7 +329,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         boolean non = null == activity;
         if (isEmpty(cover)) {
             if (!non) {
-                cover = activity.getImg();
+                cover = activity.getCover();
             }
         }
         String value;// = format(items[0], (isEmpty(cover) ? none : ""));
@@ -380,15 +379,15 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
             typeHolder.addOnViewHolderClickListener(onViewHolderClickListener);
             if (!non) {
                 if (null != activity.getLabel() && activity.getLabel().size() > 1) {
-                    for (String id : activity.getLabel()) {
-                        if (!labelsId.contains(id)) {
-                            labelsId.add(id);
+                    for (String name : activity.getLabel()) {
+                        if (!labelsNames.contains(name)) {
+                            labelsNames.add(name);
                         }
                     }
                 }
             }
         }
-        String tmp = labelsId.size() < 1 ? "选择标签" : getLabels();
+        String tmp = labelsNames.size() < 1 ? "选择标签" : getLabels();
         value = format(items[4], tmp);
         typeHolder.showContent(value);
 
@@ -397,12 +396,12 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
             privacyHolder = new SimpleClickableViewHolder(privacyView, this);
             privacyHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        if (openStatus == Activity.OpenStatus.NONE) {
+        if (authPublic == Activity.OpenStatus.NONE) {
             if (!non) {
-                openStatus = activity.getOpenStatus();
+                authPublic = activity.getAuthPublic();
             }
         }
-        value = format(items[5], openStates[openStatus]);
+        value = format(items[5], openStates[authPublic]);
         privacyHolder.showContent(value);
 
         // member
@@ -427,12 +426,12 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         value = format(items[6], getMembersInfo());
         memberHolder.showContent(value);
 
-        if (isEmpty(content)) {
+        if (isEmpty(intro)) {
             if (!non) {
-                content = activity.getContent();
+                intro = activity.getIntro();
             }
         }
-        contentView.setValue(content);
+        introView.setValue(intro);
         if (null == mAdapter) {
             mAdapter = new FileAdapter();
             setSupportLoadingMore(false);
@@ -443,15 +442,15 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private String getLabels() {
-        //format("%d个标签", labelsId.size()
+        //format("%d个标签", labelsNames.size()
         String ret = "";
-        for (String id : labelsId) {
-            Label label = Label.getLabel(id);
+        for (String name : labelsNames) {
+            Label label = Label.getLabel(name);
             if (null != label && !isEmpty(label.getName())) {
                 ret += (isEmpty(ret) ? "" : "、") + label.getName();
             }
         }
-        ret += format("共%d个标签", labelsId.size());
+        ret += format("共%d个标签", labelsNames.size());
         return ret;
     }
 
@@ -463,8 +462,8 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
         if (null == attachments || attachments.size() < 1) {
             attachments = new ArrayList<>();
-            if (null != activity.getAttUrlArray()) {
-                for (Attachment attachment : activity.getAttUrlArray()) {
+            if (null != activity.getAttachList()) {
+                for (Attachment attachment : activity.getAttachList()) {
                     // 将活动的id存入附件的宿主id中
                     attachment.setArchiveId(activity.getId());
                     attachments.add(attachment);
@@ -508,7 +507,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case 2:
                     // 选择活动标签
-                    labelJson = Json.gson().toJson(labelsId);
+                    labelJson = Json.gson().toJson(labelsNames);
                     String string = format("%s,%s,%s", mGroupId, mQueryId, replaceJson(labelJson, false));
                     openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
                     break;
@@ -520,12 +519,14 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     if (!isEmpty(mQueryId)) {
                         ToastHelper.make().showMsg(R.string.ui_activity_create_member_select_blocked);
                     } else {
-                        memberJson = Json.gson().toJson(selectedMembers, new TypeToken<List<SubMember>>() {
-                        }.getType());
-                        //String params = format("%s,false,false,%s", mGroupId, replaceJson(memberJson, false));
-                        //openActivity(GroupContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
-                        String params = format("%s,false,%s", mGroupId, replaceJson(memberJson, false));
-                        openActivity(GroupSquadContactPickerFragment.class.getName(), params, REQ_MEMBER, true, false);
+                        //memberJson = Json.gson().toJson(selectedMembers, new TypeToken<List<SubMember>>() {
+                        //}.getType());
+                        ////String params = format("%s,false,false,%s", mGroupId, replaceJson(memberJson, false));
+                        ////openActivity(GroupContactPickFragment.class.getName(), params, REQ_MEMBER, true, false);
+                        //String params = format("%s,false,%s", mGroupId, replaceJson(memberJson, false));
+                        //openActivity(GroupSquadContactPickerFragment.class.getName(), params, REQ_MEMBER, true, false);
+
+                        GroupsContactPickerFragment.open(ActivityCreatorFragment.this, mQueryId, REQ_MEMBER);
                     }
                     break;
             }
@@ -537,7 +538,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         int id = view.getId();
         switch (id) {
             case R.id.ui_tool_attachment_button:
-                Utils.hidingInputBoard(contentView);
+                Utils.hidingInputBoard(introView);
                 resetSelectedFiles();
                 filePickerDialog.show();
                 break;
@@ -619,12 +620,12 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
             public boolean onClick(View view) {
                 switch (view.getId()) {
                     case R.id.ui_dialog_button_activity_open_status_open:
-                        openStatus = Activity.OpenStatus.OPEN;
-                        privacyHolder.showContent(format(items[5], format("(%s)", openStates[openStatus])));
+                        authPublic = Activity.OpenStatus.OPEN;
+                        privacyHolder.showContent(format(items[5], format("(%s)", openStates[authPublic])));
                         break;
                     case R.id.ui_dialog_button_activity_open_status_close:
-                        openStatus = Activity.OpenStatus.GROUP;
-                        privacyHolder.showContent(format(items[5], format("(%s)", openStates[openStatus])));
+                        authPublic = Activity.OpenStatus.GROUP;
+                        privacyHolder.showContent(format(items[5], format("(%s)", openStates[authPublic])));
                         break;
                 }
                 return true;
@@ -640,7 +641,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void openDatePicker() {
-        Utils.hidingInputBoard(contentView);
+        Utils.hidingInputBoard(introView);
         TimePickerView tpv = new TimePickerView.Builder(Activity(), new TimePickerView.OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
@@ -675,7 +676,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_activity_create_address_invalid);
             return;
         }
-        String content = contentView.getValue();
+        String content = introView.getValue();
         if (isEmpty(content)) {
             ToastHelper.make().showMsg(R.string.ui_activity_create_content_invalid);
             return;
@@ -685,7 +686,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
 //            ToastHelper.make().showMsg(R.string.ui_activity_create_member_invalid);
 //            return;
 //        }
-        Utils.hidingInputBoard(contentView);
+        Utils.hidingInputBoard(introView);
         if (getWaitingForUploadFiles().size() > 0) {
             uploadFiles();
         } else {
@@ -698,7 +699,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         handleUploadAttachments();
         String title = titleHolder.getValue().trim();
         String address = addressHolder.getValue().trim();
-        String content = contentView.getValue().trim();
+        String content = introView.getValue().trim();
         String beginDate = isEmpty(happenDate) ? Model.DFT_DATE : happenDate;
         if (isEmpty(mQueryId)) {
             ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
@@ -716,7 +717,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                         hideImageHandlingDialog();
                     }
                 }
-            }).add(title, content, openStatus, address, beginDate, mGroupId, cover, labelsId, attachments);
+            }).add(title, content, authPublic, address, beginDate, mGroupId, cover, labelsNames, attachments);
         } else {
             ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
                 @Override
@@ -728,7 +729,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                         hideImageHandlingDialog();
                     }
                 }
-            }).update(mQueryId, title, content, openStatus, address, beginDate, cover, labelsId, attachments);
+            }).update(mQueryId, title, content, authPublic, address, beginDate, cover, labelsNames, attachments);
         }
     }
 

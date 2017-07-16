@@ -3,7 +3,7 @@ package com.gzlk.android.isp.api.org;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.Special;
+import com.gzlk.android.isp.api.OnlyQueryList;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
@@ -40,7 +40,7 @@ public class MemberRequest extends Request<Member> {
     private static class MultipleMember extends Query<Member> {
     }
 
-    private static class SpecialMember extends Special<Member> {
+    private static class OnlyQueryListMember extends OnlyQueryList<Member> {
     }
 
     // 成员
@@ -215,10 +215,26 @@ public class MemberRequest extends Request<Member> {
     }
 
     /**
+     * 加入公开的活动
+     */
+    public void joinPublicActivity(String activityId) {
+        String param = format("/activity/actMember/joinPublicAct?actId=%s", activityId);
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+    }
+
+    /**
      * 活动中踢人
      */
     public void activityKickOut(String activityId, String userId) {
         String param = format("/activity/kick?id=%s&userId=%s", activityId, userId);
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 成员退出活动
+     */
+    public void activityExit(String activityId) {
+        String param = format("/activity/actMember/exit?id=%s", activityId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 

@@ -45,7 +45,7 @@ public class Activity extends Model {
     public interface Field {
         String UseMessage = "useMessage";
         String Status = "status";
-        String OpenStatus = "openStatus";
+        String OpenStatus = "authPublic";
         String NimId = "nimId";
         String BeginDate = "beginDate";
         String Site = "site";
@@ -105,8 +105,8 @@ public class Activity extends Model {
     @Column(Archive.Field.Title)
     private String title;
     //内容
-    @Column(Archive.Field.Content)
-    private String content;
+    @Column(Organization.Field.Introduction)
+    private String intro;
     //组织id
     @Column(Organization.Field.GroupId)
     private String groupId;
@@ -120,14 +120,14 @@ public class Activity extends Model {
     @Column(Field.UseMessage)
     private boolean useMsg;
     //宣传照h
-    @Column(Archive.Field.Image)
-    private String img;
+    @Column(Archive.Field.Cover)
+    private String cover;
     //状态：1.活跃 2.结束
     @Column(Field.Status)
     private int status;
     //活动公开状态 1.向所有人公开 2。关闭（只向组织内公开） 参见ActivityConstant中的状态定义
-    @Column(Field.OpenStatus)
-    private int openStatus;
+    @Column(Archive.Field.AuthPublic)
+    private int authPublic;
     //标签
     @Column(Archive.Field.Label)
     private ArrayList<String> label;
@@ -162,7 +162,7 @@ public class Activity extends Model {
     private int unreadNum;
     //活动附件
     @Ignore
-    private ArrayList<Attachment> attUrlArray;
+    private ArrayList<Attachment> attachList;
 
     public String getTitle() {
         return title;
@@ -172,12 +172,12 @@ public class Activity extends Model {
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
+    public String getIntro() {
+        return intro;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setIntro(String intro) {
+        this.intro = intro;
     }
 
     public String getGroupId() {
@@ -215,12 +215,12 @@ public class Activity extends Model {
         this.useMsg = useMsg;
     }
 
-    public String getImg() {
-        return img;
+    public String getCover() {
+        return cover;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 
     public int getStatus() {
@@ -231,12 +231,12 @@ public class Activity extends Model {
         this.status = status;
     }
 
-    public int getOpenStatus() {
-        return openStatus;
+    public int getAuthPublic() {
+        return authPublic;
     }
 
-    public void setOpenStatus(int openStatus) {
-        this.openStatus = openStatus;
+    public void setAuthPublic(int authPublic) {
+        this.authPublic = authPublic;
     }
 
     public ArrayList<String> getLabel() {
@@ -331,18 +331,18 @@ public class Activity extends Model {
         this.unreadNum = unreadNum;
     }
 
-    public ArrayList<Attachment> getAttUrlArray() {
-        if (null == attUrlArray) {
-            attUrlArray = new ArrayList<>();
+    public ArrayList<Attachment> getAttachList() {
+        if (null == attachList) {
+            attachList = new ArrayList<>();
             List<Attachment> list = Attachment.getAttachments(getId());
             if (null != list) {
-                attUrlArray.addAll(list);
+                attachList.addAll(list);
             }
         }
-        return attUrlArray;
+        return attachList;
     }
 
-    public void setAttUrlArray(ArrayList<Attachment> attUrlArray) {
-        this.attUrlArray = attUrlArray;
+    public void setAttachList(ArrayList<Attachment> attachList) {
+        this.attachList = attachList;
     }
 }

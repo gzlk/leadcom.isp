@@ -241,7 +241,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingJoinedActivityComplete(list);
             }
-        }).joined(mOrganizationId, remotePageNumber);
+        }).list(mOrganizationId, ActRequest.LIST_JOINED, "", remotePageNumber);
     }
 
     protected void onFetchingJoinedActivityComplete(List<Activity> list) {
@@ -257,7 +257,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingUnHandledActivityInviteComplete(list);
             }
-        }).activityToBeHandled(groupId);
+        }).activityInviteNotHandled(groupId);
     }
 
     /**

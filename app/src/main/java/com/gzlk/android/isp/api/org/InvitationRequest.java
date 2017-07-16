@@ -3,7 +3,6 @@ package com.gzlk.android.isp.api.org;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.Special;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
@@ -14,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
@@ -37,7 +35,7 @@ public class InvitationRequest extends Request<Invitation> {
     private static class SingleInvite extends Output<Invitation> {
     }
 
-    private static class MultipleInvite extends Special<Invitation> {
+    private static class MultipleInvite extends Query<Invitation> {
     }
 
     // 邀请成员
@@ -184,7 +182,7 @@ public class InvitationRequest extends Request<Invitation> {
         JSONObject object = new JSONObject();
         try {
             object.put("actId", activityId)
-                    .put("inviteeIds", new JSONArray(userIds));
+                    .put("inviteeIdList", new JSONArray(userIds));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -192,34 +190,47 @@ public class InvitationRequest extends Request<Invitation> {
     }
 
     /**
-     * 指定群的未处理活动请求
+     * 同意加入活动
      */
-    public void activityToBeHandled(String groupId) {
-        String param = format("%s?groupId=%s&accessToken=%s", url(INVITE_ACTIVITY, "/list/toBeHandled"), groupId, Cache.cache().accessToken);
+    public static final int INVITE_HANDLE_AGREE = 1;
+    /**
+     * 暂不加入活动
+     */
+    public static final int INVITE_HANDLE_DISAGREE = 2;
+
+    /**
+     * 处理活动邀请
+     * <br/>(2017/07/14 17:00更改)
+     *
+     * @param tid 云信聊天群ID
+     * @param ope 操作类型(1.同意加入活动,2.暂不加入活动)
+     * @param msg 附加消息
+     */
+    public void activityInviteHandle(String tid, int ope, String msg) {
+        // tid,ope,msg
+        if (ope < INVITE_HANDLE_AGREE || ope > INVITE_HANDLE_DISAGREE) {
+            throw new IllegalArgumentException("cannot support handle ope value: " + ope);
+        }
+        String param = format("%s?tid=%s&ope=%d%s", url(INVITE_ACTIVITY, "/handle"), tid, ope, (isEmpty(msg) ? "" : format("&msg=%s", msg)));
+        httpRequest(getRequest(SingleInvite.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询未处理的活动(活动首页)
+     * <br/>(2017/07/14 17:00更改)
+     */
+    public void activityInviteNotHandled(String groupId) {
+        String param = format("%s?groupId=%s", url(INVITE_ACTIVITY, "/list/notHandle"), groupId);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 
     /**
      * 查询未参加的活动（包括暂不参加和未处理的）
+     * <br/>(2017/07/14 17:00更改)
      */
-    public void activityNotApproved(String groupId) {
-        String param = format("%s?groupId=%s", url(INVITE_ACTIVITY, "/list/notApproved/forInvitee"), groupId);
+    @Deprecated
+    public void activityInviteNotApproved(String groupId) {
+        String param = format("%s?groupId=%s", url(INVITE_ACTIVITY, "/list/notApprov"), groupId);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
-    }
-
-    /**
-     * 同意活动邀请
-     */
-    public void activityApprove(String tid) {
-        String param = format("%s?tid=%s&accessToken=%s", url(INVITE_ACTIVITY, APPROVE), tid, Cache.cache().accessToken);
-        httpRequest(getRequest(SingleInvite.class, param, "", HttpMethods.Get));
-    }
-
-    /**
-     * 拒绝活动邀请
-     */
-    public void activityReject(String tid) {
-        String param = format("%s?tid=%s&accessToken=%s", url(INVITE_ACTIVITY, REJECT), tid, Cache.cache().accessToken);
-        httpRequest(getRequest(SingleInvite.class, param, "", HttpMethods.Get));
     }
 }

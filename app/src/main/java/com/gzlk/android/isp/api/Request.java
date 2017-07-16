@@ -9,8 +9,6 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnHttpListener;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.archive.Archive;
-import com.gzlk.android.isp.model.user.Moment;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.JsonBody;
@@ -18,7 +16,6 @@ import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -178,12 +175,12 @@ public abstract class Request<T> {
                                     pagination.getTotalPages(), pagination.getPageSize(),
                                     pagination.getTotal(), pagination.getPageNumber());
                         }
-                    } else if (data instanceof Special) {
+                    } else if (data instanceof OnlyQueryList) {
                         if (null != onMultipleRequestListener) {
-                            Special<T> special = (Special<T>) data;
-                            save(special.getData());
-                            onMultipleRequestListener.onResponse(special.getData(), data.success(),
-                                    1, PAGE_SIZE, special.getData().size(), 1);
+                            OnlyQueryList<T> onlyQueryList = (OnlyQueryList<T>) data;
+                            save(onlyQueryList.getData());
+                            onMultipleRequestListener.onResponse(onlyQueryList.getData(), data.success(),
+                                    1, PAGE_SIZE, onlyQueryList.getData().size(), 1);
                         }
                     } else if (data instanceof Output) {
                         Output<T> output = (Output<T>) data;
@@ -201,7 +198,7 @@ public abstract class Request<T> {
             @Override
             public void onFailed() {
                 super.onFailed();
-                log(format("url(%s): %s\naccessToken: %s%ssuccess: failed", methods, url,Cache.cache().accessToken,
+                log(format("url(%s): %s\naccessToken: %s%s\nsuccess: failed", methods, url,Cache.cache().accessToken,
                         (isEmpty(body) ? "" : format("body: %s\n", body))));
                 fireFailedListenerEvents("");
             }

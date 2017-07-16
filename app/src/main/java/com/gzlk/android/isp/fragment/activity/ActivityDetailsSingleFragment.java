@@ -10,7 +10,6 @@ import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
-import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
@@ -129,7 +128,7 @@ public class ActivityDetailsSingleFragment extends BaseDownloadingUploadingSuppo
     }
 
     private void display(Activity activity) {
-        String img = activity.getImg();
+        String img = activity.getCover();
         if (isEmpty(img)) {
             img = "drawable://" + R.drawable.img_activity_cover_1;
         }

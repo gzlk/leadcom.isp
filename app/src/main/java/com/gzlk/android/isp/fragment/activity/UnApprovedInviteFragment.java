@@ -105,7 +105,7 @@ public class UnApprovedInviteFragment extends BaseOrganizationFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
             }
-        }).activityToBeHandled(mQueryId);
+        }).activityInviteNotHandled(mQueryId);
     }
 
     private void initializeAdapter() {

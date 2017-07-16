@@ -9,6 +9,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.activity.notice.NoticeListFragment;
 import com.gzlk.android.isp.fragment.common.BaseTransparentPropertyFragment;
@@ -28,6 +29,7 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.nim.activity.SessionHistoryActivity;
 import com.netease.nim.uikit.cache.SimpleCallback;
 import com.netease.nim.uikit.cache.TeamDataCache;
@@ -117,17 +119,17 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
 
     private void exitActivity() {
         // 退出活动
-        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onResponse(Activity activity, boolean success, String message) {
-                super.onResponse(activity, success, message);
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
                 if (success) {
                     new Dao<>(Activity.class).delete(mQueryId);
                     ToastHelper.make().showMsg(R.string.ui_activity_property_exited);
                     finish();
                 }
             }
-        }).exit(mQueryId);
+        }).activityExit(mQueryId);
     }
 
     @Override

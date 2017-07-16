@@ -63,7 +63,9 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
         MomentDetailsFragment mdf = new MomentDetailsFragment();
         Bundle bundle = new Bundle();
         String[] strings = splitParameters(params);
+        // 动态的id
         bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 选中的图片索引
         bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[1]));
         mdf.setArguments(bundle);
         return mdf;
@@ -129,7 +131,7 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
             momentUser = moment.getUserId();
             momentName = moment.getUserName();
             images.addAll(moment.getImage());
-            titleTextView.setText(Utils.format(moment.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), "yyyy年m月d日HH:mm"));
+            titleTextView.setText(Utils.format(moment.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), "yyyy年MM月dd日HH:mm"));
             detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), moment.getContent(), true));
             detailContentTextView.makeExpandable();
         }

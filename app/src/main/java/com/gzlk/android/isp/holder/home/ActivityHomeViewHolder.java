@@ -1,13 +1,11 @@
 package com.gzlk.android.isp.holder.home;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.archive.ArchiveAdditionalViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.hlk.hlklib.lib.inject.Click;
@@ -47,7 +45,7 @@ public class ActivityHomeViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Activity activity) {
-        String image = activity.getImg();
+        String image = activity.getCover();
         if (isEmpty(image)) {
             image = "drawable://" + R.mipmap.img_image_loading_fail;
         }

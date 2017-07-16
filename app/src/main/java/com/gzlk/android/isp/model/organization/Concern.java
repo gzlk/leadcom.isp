@@ -26,7 +26,10 @@ public class Concern extends Organization {
         this.type = type;
     }
 
-    public String getTypeString() {
+    /**
+     * 获取关注的组织类型
+     */
+    public static String getTypeString(int type) {
         return StringHelper.getStringArray(R.array.ui_organization_concerned_type)[type];
     }
 }

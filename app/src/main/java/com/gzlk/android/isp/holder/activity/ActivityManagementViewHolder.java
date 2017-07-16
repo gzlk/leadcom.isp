@@ -44,7 +44,7 @@ public class ActivityManagementViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Activity activity, String searchingText) {
-        String img = activity.getImg();
+        String img = activity.getCover();
         if (isEmpty(img)) {
             img = "drawable://" + R.drawable.img_default_activity_header;
         }

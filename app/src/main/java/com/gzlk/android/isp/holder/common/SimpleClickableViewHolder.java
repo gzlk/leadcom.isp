@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Model;
@@ -110,7 +109,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
 
     public void showContent(Concern concern) {
         String name = concern.getName();
-        name += format("(%s)", concern.getTypeString());
+        name += format("(%s)", Concern.getTypeString(concern.getType()));
         showContent(0, "", name);
     }
 

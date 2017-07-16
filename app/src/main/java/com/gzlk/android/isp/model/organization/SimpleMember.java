@@ -18,6 +18,8 @@ public class SimpleMember extends Model {
     private String userName;
     private String userId;
     private String phone;
+    // 上级组织或小组的id
+    private String supperId;
 
     public String getUserName() {
         return userName;
@@ -41,5 +43,13 @@ public class SimpleMember extends Model {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getSupperId() {
+        return supperId;
+    }
+
+    public void setSupperId(String supperId) {
+        this.supperId = supperId;
     }
 }

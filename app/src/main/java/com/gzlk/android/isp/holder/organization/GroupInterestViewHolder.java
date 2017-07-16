@@ -49,7 +49,7 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         if (organization instanceof Concern) {
             Concern concern = (Concern) organization;
             if (concern.getType() > 0) {
-                name += format("(%s)", concern.getTypeString());
+                name += format("(%s)", Concern.getTypeString(concern.getType()));
             }
         }
         nameView.setText(name);

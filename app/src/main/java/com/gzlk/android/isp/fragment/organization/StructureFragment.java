@@ -9,7 +9,10 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.OrgRequest;
+import com.gzlk.android.isp.api.org.SimpleOrgRequest;
+import com.gzlk.android.isp.api.org.SimpleOutput;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
@@ -116,6 +119,16 @@ public class StructureFragment extends BaseOrganizationFragment {
     protected void onSwipeRefreshing() {
         // 刷新我加入的组织列表
         refreshRemoteOrganizations();
+        listAllMembers();
+    }
+
+    private void listAllMembers() {
+        SimpleOrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<SimpleOutput>() {
+            @Override
+            public void onResponse(SimpleOutput simpleOutput, boolean success, String message) {
+                super.onResponse(simpleOutput, success, message);
+            }
+        }).listAllMember(selectedGroupId);
     }
 
     @Override
@@ -342,7 +355,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                 openSquadContact(squad.getGroupId(), squad.getId());
             } else if (model instanceof Concern) {
                 Concern concern = (Concern) model;
-                String title = format("%s(%s)", concern.getName(), concern.getTypeString());
+                String title = format("%s(%s)", concern.getName(), Concern.getTypeString(concern.getType()));
                 openActivity(OrganizationContactFragment.class.getName(), format("%s,,%s", concern.getId(), title), true, false);
             }
         }
