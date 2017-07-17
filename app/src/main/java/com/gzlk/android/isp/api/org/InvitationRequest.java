@@ -230,7 +230,7 @@ public class InvitationRequest extends Request<Invitation> {
      */
     @Deprecated
     public void activityInviteNotApproved(String groupId) {
-        String param = format("%s?groupId=%s", url(INVITE_ACTIVITY, "/list/notApprov"), groupId);
+        String param = format("%s?groupId=%s", url(INVITE_ACTIVITY, "/list/notApprove"), groupId);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 }

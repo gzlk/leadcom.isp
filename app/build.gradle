@@ -155,7 +155,9 @@ dependencies {
     // 扁平图片
     compile 'com.makeramen:roundedimageview:2.2.1'
     // 相册
-    compile 'com.yanzhenjie:album:1.0.6'
+    compile 'com.yanzhenjie:album:1.0.7'
+    // 图片剪切
+    compile 'com.yanzhenjie:durban:1.0.1'
     // 多模式adapter
     compile 'me.drakeet.multitype:multitype:2.5.0'
     // 横向、圆形progressbar

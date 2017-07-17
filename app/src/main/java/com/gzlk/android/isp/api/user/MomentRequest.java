@@ -7,8 +7,6 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.Moment;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -43,7 +41,7 @@ public class MomentRequest extends Request<Moment> {
     private static class MultiMoment extends Query<Moment> {
     }
 
-    private static final String MOMENT = "/user/moment";
+    private static final String MOMENT = "/user/userMmt";
     private static final String GROUPS = "/groList";
 
     @Override
@@ -89,14 +87,20 @@ public class MomentRequest extends Request<Moment> {
     /**
      * 添加Moment
      */
-    public void add(String location, String content, ArrayList<String> image) {
-        // {location,content,[image],accessToken}
+    public void add(String location, String content, ArrayList<String> image, String videoUrl) {
+        // {location,content,[image],video,type}
         JSONObject object = new JSONObject();
         try {
-            object.put("location", checkNull(location))
-                    .put("content", checkNull(content))
-                    .put("accessToken", Cache.cache().accessToken)
-                    .put("image", new JSONArray(image));
+            object.put("location", checkNull(location));
+            if (!isEmpty(content)) {
+                object.put("content", checkNull(content));
+            }
+            if (null != image && image.size() > 1) {
+                object.put("image", new JSONArray(image));
+            }
+            if (!isEmpty(videoUrl)) {
+                object.put("video", checkNull(videoUrl));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -140,7 +144,8 @@ public class MomentRequest extends Request<Moment> {
     /**
      * 查找同一组别的用户发布的说说列表
      */
-    public void groupList(@NonNull String accessToken, int pageNumber) {
-        getRequestBy(url(GROUPS), QB_TOKEN, MultiMoment.class, accessToken, pageNumber, "", HttpMethods.Get);
+    public void groupList(int pageNumber) {
+        String params = format("%s?pageNumber=%d", url(GROUPS), pageNumber);
+        httpRequest(getRequest(SingleMoment.class, params, "", HttpMethods.Get));
     }
 }

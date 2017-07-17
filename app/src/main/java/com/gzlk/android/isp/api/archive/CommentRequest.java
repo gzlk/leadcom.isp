@@ -7,7 +7,6 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -39,7 +38,7 @@ public class CommentRequest extends Request<Comment> {
 
     private static final String USER = "/user/userDocCmt";
     private static final String GROUP = "/group/groDocCmt";
-    private static final String MOMENT = "/user/momentCmt";
+    private static final String MOMENT = "/user/userMmtCmt";
 
     @Override
     protected String url(String action) {
@@ -123,8 +122,7 @@ public class CommentRequest extends Request<Comment> {
         JSONObject object = new JSONObject();
         try {
             object.put(getArchiveId(type), archiveId)
-                    .put("content", checkNull(content))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("content", checkNull(content));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -43,3 +43,12 @@
 -keep class com.baidu.** {*;}
 -keep class vi.com.** {*;}
 -dontwarn com.baidu.**
+
+# 图库
+-dontwarn com.yanzhenjie.album.**
+-keep class com.yanzhenjie.album.**{*;}
+# 图片剪切类
+-dontwarn com.yanzhenjie.curban.**
+-keep class com.yanzhenjie.curban.**{*;}
+-dontwarn com.yanzhenjie.loading.**
+-keep class com.yanzhenjie.loading.**{*;}

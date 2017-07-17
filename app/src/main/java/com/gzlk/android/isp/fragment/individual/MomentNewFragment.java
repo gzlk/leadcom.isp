@@ -183,7 +183,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(address, content, images);
+        }).add(address, content, images, "");
     }
 
     @Override

@@ -12,11 +12,14 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -25,6 +28,8 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTaskPreparedListener;
 import com.gzlk.android.isp.task.CompressImageTask;
 import com.yanzhenjie.album.Album;
+import com.yanzhenjie.durban.Controller;
+import com.yanzhenjie.durban.Durban;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -177,6 +182,9 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                 }
                 break;
             case REQUEST_CROP:
+                if (chooseImageByAlbum()) {
+                    croppedImagePath = Durban.parseResult(data).get(0);
+                }
                 if (!TextUtils.isEmpty(croppedImagePath)) {
                     // 裁剪后的图片也需要压缩
                     waitingFroCompressImages.clear();
@@ -197,9 +205,23 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
             ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_invalid_camera_path);
         } else {
             adjustWannaToImageSize();
-            cropImageUri(Uri.fromFile(new File(cameraPicturePath)),
-                    Uri.fromFile(new File(croppedImagePath)), REQUEST_CROP,
-                    croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
+
+            if (chooseImageByAlbum()) {
+                cropImageBy3rdPart(cameraPicturePath, REQUEST_CROP, croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
+            } else {
+                cropImageUri(getUriFromFile(cameraPicturePath), getUriFromFile(croppedImagePath), REQUEST_CROP,
+                        croppedAspectX, croppedAspectY, mCompressedImageWidth, mCompressedImageHeight);
+            }
+        }
+    }
+
+    // 处理Android 7.0+的Uri问题
+    private Uri getUriFromFile(String filePath) {
+        if (Build.VERSION.SDK_INT >= 24) {
+            File tempFile = new File(filePath);
+            return FileProvider.getUriForFile(Activity(), format("%s.fileProvider", BuildConfig.APPLICATION_ID), tempFile);
+        } else {
+            return Uri.fromFile(new File(filePath));
         }
     }
 
@@ -343,6 +365,42 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     }
 
     /**
+     * 通过第三方控件剪切照片
+     */
+    @SuppressWarnings("ConstantConditions")
+    private void cropImageBy3rdPart(String imagePath, int requestCode, int aspectX, int aspectY, int outputWidth, int outputHeight) {
+        Durban.with(this)
+                // Che title of the UI.
+                .title(getString(R.string.ui_base_text_crop_image))
+                .statusBarColor(getColor(R.color.colorPrimary))
+                .toolBarColor(getColor(R.color.colorPrimary))
+                //.navigationBarColor(getColor(R.color.colorPrimary))
+                // Image path list/array.
+                .inputImagePaths(imagePath)
+                // Image output directory.
+                .outputDirectory(App.app().getCachePath(App.CROPPED_DIR))
+                // Image size limit.
+                .maxWidthHeight(outputWidth, outputHeight)
+                // Aspect ratio.
+                .aspectRatio(aspectX, aspectY)
+                // Output format: JPEG, PNG.
+                .compressFormat(Durban.COMPRESS_JPEG)
+                // Compress quality, see Bitmap#compress(Bitmap.CompressFormat, int, OutputStream)
+                .compressQuality(100)
+                // Gesture: ROTATE, SCALE, ALL, NONE.
+                .gesture(Durban.GESTURE_SCALE)
+                .controller(Controller.newBuilder() // Create Builder of Controller.
+                        .enable(true) // Enable the control panel.
+                        .rotation(true) // Rotation button.
+                        .rotationTitle(true) // Rotation button title.
+                        .scale(true) // Scale button.
+                        .scaleTitle(true) // Scale button title.
+                        .build()) // Create Controller Config.
+                .requestCode(requestCode)
+                .start();
+    }
+
+    /**
      * 启动裁剪图片界面
      *
      * @param sourceUri    被裁剪的原始文件uri
@@ -363,6 +421,12 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         }
 
         Intent intent = new Intent("com.android.camera.action.CROP");
+        if (Build.VERSION.SDK_INT >= 24) {
+            //Android N need set permission to uri otherwise system
+            //camera don't has permission to access file wait crop
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
         // 设置裁剪方式为image
         intent.setDataAndType(sourceUri, "image/*");
         // 设置为裁剪动作

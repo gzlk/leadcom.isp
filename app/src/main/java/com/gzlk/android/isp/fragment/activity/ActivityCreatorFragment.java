@@ -526,7 +526,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                         //String params = format("%s,false,%s", mGroupId, replaceJson(memberJson, false));
                         //openActivity(GroupSquadContactPickerFragment.class.getName(), params, REQ_MEMBER, true, false);
 
-                        GroupsContactPickerFragment.open(ActivityCreatorFragment.this, mQueryId, REQ_MEMBER);
+                        GroupsContactPickerFragment.open(ActivityCreatorFragment.this, mGroupId, REQ_MEMBER);
                     }
                     break;
             }

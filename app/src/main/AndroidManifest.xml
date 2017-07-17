@@ -125,6 +125,16 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
 
+        <!--Android 7.0+的uri权限-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${APP_PKG_NAME}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/image_file_pathes" />
+        </provider>
     </application>
 
 </manifest>

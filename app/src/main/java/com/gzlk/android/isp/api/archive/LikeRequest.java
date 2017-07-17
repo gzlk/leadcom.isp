@@ -39,7 +39,7 @@ public class LikeRequest extends Request<ArchiveLike> {
 
     private static final String USER = "/user/userDocLike";
     private static final String GROUP = "/group/groDocLike";
-    private static final String MOMENT = "/user/momentLike";
+    private static final String MOMENT = "/user/userMmtLike";
 
     @Override
     protected String url(String action) {
@@ -87,8 +87,7 @@ public class LikeRequest extends Request<ArchiveLike> {
         // {groDocId,accessToken}
         JSONObject object = new JSONObject();
         try {
-            object.put(CommentRequest.getArchiveId(type), archiveId)
-                    .put("accessToken", Cache.cache().accessToken);
+            object.put(CommentRequest.getArchiveId(type), archiveId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -104,7 +103,7 @@ public class LikeRequest extends Request<ArchiveLike> {
         // momentId,accessToken
         // userDocId,accessToken
         // groDocId,accessToken
-        String params = format("%s=%s&accessToken=%s", CommentRequest.getArchiveId(type), archiveId, Cache.cache().accessToken);
+        String params = format("%s=%s", CommentRequest.getArchiveId(type), archiveId);
         httpRequest(getRequest(SingleLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
     }
 
@@ -132,10 +131,9 @@ public class LikeRequest extends Request<ArchiveLike> {
         // userDocId,accessToken
         // groDocId,accessToken
         httpRequest(getRequest(SingleLike.class,
-                format("%s?%s=%s&accessToken=%s",
+                format("%s?%s=%s",
                         url(type, "/isExist"),
                         CommentRequest.getArchiveId(type),
-                        archiveId,
-                        Cache.cache().accessToken), "", HttpMethods.Get));
+                        archiveId), "", HttpMethods.Get));
     }
 }

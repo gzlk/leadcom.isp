@@ -19,6 +19,7 @@
     <string name="ui_base_text_choose_image" formatted="false">选择照片(最多能选%d张)</string>
     <string name="ui_base_text_invalid_camera_path">无效的照片，请从相机拍照或从相册中选取照片</string>
     <string name="ui_base_text_invalid_crop_path">数据丢失，无法保存裁剪的照片</string>
+    <string name="ui_base_text_crop_image">裁剪</string>
     <string name="ui_base_text_cannot_create_image_in_dcim">无法在您的相册中创建照片</string>
     <string name="ui_base_text_image_cannot_attach_more">您不能再选择更多的照片了</string>
     <string name="ui_base_text_compressing">正在处理请稍候&#8230;</string>
