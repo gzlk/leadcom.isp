@@ -119,22 +119,22 @@ public class NimMessage implements MsgAttachment {
     private long id = Utils.timestamp();
     // 自定义消息类型
     @Column(Archive.Field.Type)
-    private int type;
+    private int type;// 原有属性
     // 自定义消息标题
     @Column(Archive.Field.Title)
-    private String msgTitle;
+    private String msgTitle;// 原有属性
     // 自定义消息内容
     @Column(Archive.Field.Content)
-    private String msgContent;
+    private String msgContent;// 原有属性
     // 自定义消息id
     @Column(Model.Field.UUID)
-    private String uuid;
+    private String uuid;// 原有属性
     // 活动的tid
     @Column(Activity.Field.NimId)
-    private String tid;
+    private String tid;// 原有属性
     // 活动所属的组织
     @Column(Organization.Field.GroupId)
-    private String groupId;
+    private String groupId;// 原有属性
     // 是否已处理
     @Column(PARAM.HANDLED)
     private boolean handled;

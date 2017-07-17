@@ -9,21 +9,16 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.MainActivity;
-import com.gzlk.android.isp.api.activity.ActRequest;
-import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.application.NimApplication;
-import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.SystemMessageViewHolder;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
@@ -139,7 +134,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             // 点击查看通知
             NimMessage msg = messages.get(index);
-            if (!msg.isHandled()) {
+            if (!isEmpty(msg.getMsgTitle()) && !msg.isHandled()) {
                 msg.setHandled(true);
                 new Dao<>(NimMessage.class).save(msg);
                 NimApplication.dispatchCallbacks();
