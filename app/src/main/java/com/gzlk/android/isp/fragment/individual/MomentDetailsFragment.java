@@ -130,7 +130,9 @@ public class MomentDetailsFragment extends BaseDelayRefreshSupportFragment {
         } else {
             momentUser = moment.getUserId();
             momentName = moment.getUserName();
-            images.addAll(moment.getImage());
+            if (null != moment.getImage()) {
+                images.addAll(moment.getImage());
+            }
             titleTextView.setText(Utils.format(moment.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), "yyyy年MM月dd日HH:mm"));
             detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), moment.getContent(), true));
             detailContentTextView.makeExpandable();

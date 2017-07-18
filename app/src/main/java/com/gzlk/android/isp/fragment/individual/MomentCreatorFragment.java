@@ -46,7 +46,7 @@ import java.util.ArrayList;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
+public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_IMAGE = "mnf_initialized_image";
     private static final String PARAM_ADDRESS = "mnf_fetched_address";
@@ -62,8 +62,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private String privacy = "";
     private String imageJson = "[]";
 
-    public static MomentNewFragment newInstance(String params) {
-        MomentNewFragment mnf = new MomentNewFragment();
+    public static MomentCreatorFragment newInstance(String params) {
+        MomentCreatorFragment mnf = new MomentCreatorFragment();
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_IMAGE, params);
         mnf.setArguments(bundle);
@@ -84,10 +84,10 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         ArrayList<String> images = Json.gson().fromJson(imageJson, new TypeToken<ArrayList<String>>() {
         }.getType());
         if (images.size() > 0) {
-            //getSelectedImages().clear();
-            //getSelectedImages().addAll(images);
-            getWaitingForUploadFiles().clear();
-            getWaitingForUploadFiles().addAll(images);
+            waitingFroCompressImages.clear();
+            waitingFroCompressImages.addAll(images);
+//            getWaitingForUploadFiles().clear();
+//            getWaitingForUploadFiles().addAll(images);
         }
         imageJson = "[]";
         privacy = bundle.getString(PARAM_PRIVACY, "");
@@ -147,14 +147,24 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         Utils.hidingInputBoard(momentContent);
-        if (getWaitingForUploadFiles().size() > 0) {
+        //if (getWaitingForUploadFiles().size() > 0) {
+        if (waitingFroCompressImages.size() > 0) {
             // 如果选择了的图片大于1张，则需要压缩图片并且上传
-            //compressImage();
-            uploadFiles();
-        } else {
+            compressImage();
+            //uploadFiles();
+        } else
+
+        {
             addMoment(null);
         }
     }
+
+    private OnImageCompressedListener onImageCompressedListener = new OnImageCompressedListener() {
+        @Override
+        public void onCompressed(ArrayList<String> compressed) {
+            uploadFiles();
+        }
+    };
 
     private OnFileUploadingListener mOnFileUploadingListener = new OnFileUploadingListener() {
         @Override
@@ -213,7 +223,7 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         if (null == privacyHolder) {
-            privacyHolder = new SimpleClickableViewHolder(mRootView, MomentNewFragment.this);
+            privacyHolder = new SimpleClickableViewHolder(mRootView, MomentCreatorFragment.this);
             privacyHolder.addOnViewHolderClickListener(privacyListener);
         }
         privacyHolder.showContent(format(textItems[1], PrivacyFragment.getPrivacy(PrivacyFragment.getSeclusion(privacy))));
@@ -221,12 +231,11 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
-            // 这里不需要直接上传，只需要把选择的图片传递给新建动态页面即可，上传在那里实现
-            isSupportDirectlyUpload = true;
+            isSupportCompress = true;
             // 图片选择后的回调
             addOnImageSelectedListener(albumImageSelectedListener);
             // 图片压缩完毕后的回调处理
-            //setOnImageCompressedListener(imageCompressedListener);
+            setOnImageCompressedListener(onImageCompressedListener);
             // 文件上传完毕后的回调处理
             setOnFileUploadingListener(mOnFileUploadingListener);
             // 不需要下拉加载更多
@@ -235,7 +244,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new ImageAdapter();
             mRecyclerView.setAdapter(mAdapter);
             // 初始化时为空白
-            resetImages(getWaitingForUploadFiles());
+            //resetImages(getWaitingForUploadFiles());
+            resetImages(waitingFroCompressImages);
         }
     }
 
@@ -294,7 +304,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
     private ImageDisplayer.OnDeleteClickListener imageDeleteClickListener = new ImageDisplayer.OnDeleteClickListener() {
         @Override
         public void onDeleteClick(String url) {
-            getWaitingForUploadFiles().remove(url);
+            //getWaitingForUploadFiles().remove(url);
+            waitingFroCompressImages.remove(url);
             mAdapter.remove(url);
             appendAttacher();
         }
@@ -312,7 +323,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onImageClick(String url) {
             // 相册预览
-            startGalleryPreview(getWaitingForUploadFiles().indexOf(url));
+            //startGalleryPreview(getWaitingForUploadFiles().indexOf(url));
+            startGalleryPreview(waitingFroCompressImages.indexOf(url));
         }
     };
 
@@ -381,8 +393,8 @@ public class MomentNewFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             gotSize();
-            return viewType == VT_IMAGE ? new ImageViewHolder(itemView, MomentNewFragment.this) :
-                    new AttacherItemViewHolder(itemView, MomentNewFragment.this)
+            return viewType == VT_IMAGE ? new ImageViewHolder(itemView, MomentCreatorFragment.this) :
+                    new AttacherItemViewHolder(itemView, MomentCreatorFragment.this)
                             .setSize(width, height).setOnViewHolderClickListener(imagePickClickListener);
         }
 

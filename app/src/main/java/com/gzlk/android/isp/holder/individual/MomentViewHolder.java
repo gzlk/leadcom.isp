@@ -246,7 +246,7 @@ public class MomentViewHolder extends BaseViewHolder {
         if (null != moment) {
             // 点击打开新窗口查看详情
             if (moment.getId().contains(todayId)) {
-                ((BaseImageSelectableSupportFragment) fragment()).openImageSelector();
+                ((BaseImageSelectableSupportFragment) fragment()).openImageSelector(true);
             } else {
                 // 默认显示第一张图片
                 openActivity(MomentDetailsFragment.class.getName(), format("%s,0", moment.getId()), false, false, true);

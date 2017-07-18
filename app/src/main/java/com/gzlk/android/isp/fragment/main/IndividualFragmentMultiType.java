@@ -13,7 +13,7 @@ import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.individual.MomentNewFragment;
+import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentViewHolder;
@@ -104,8 +104,6 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
 
     @Override
     public void doingInResume() {
-        // 这里不缓存选择了的图片，选择了一张图片之后就立即打开新发布窗口
-        isSupportCacheSelected = false;
         initializeAdapter();
         //autoRefreshing();
         // 先加载本地缓存
@@ -456,7 +454,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         @Override
         public void onImageSelected(ArrayList<String> selected) {
             // 打开新建动态页面
-            openActivity(MomentNewFragment.class.getName(), Json.gson().toJson(selected), true, true);
+            openActivity(MomentCreatorFragment.class.getName(), Json.gson().toJson(selected), true, true);
         }
     };
 

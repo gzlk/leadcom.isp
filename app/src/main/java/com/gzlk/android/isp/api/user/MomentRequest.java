@@ -95,7 +95,7 @@ public class MomentRequest extends Request<Moment> {
             if (!isEmpty(content)) {
                 object.put("content", checkNull(content));
             }
-            if (null != image && image.size() > 1) {
+            if (null != image && image.size() > 0) {
                 object.put("image", new JSONArray(image));
             }
             if (!isEmpty(videoUrl)) {

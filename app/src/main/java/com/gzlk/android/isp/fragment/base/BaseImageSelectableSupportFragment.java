@@ -54,8 +54,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     private static final String KEY_FOR_CROP = "is_for_crop";
     private static final String KEY_CROPPED_PATH = "cropped_path";
     private static final String KEY_CAMERA_PATH = "camera_path";
-    private static final String KEY_CACHEABLE = "is_cacheable";
     private static final String KEY_CHOOSED_IMAGES = "choosed_images";
+    private static final String KEY_DIRECT_COMPRESS = "is_compress_directly";
     /**
      * 通过系统相机拍摄的照片的路径
      */
@@ -82,14 +82,13 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     //private String compressed = null;
 
     /**
-     * 是否缓存已选择了的图片列表
-     */
-    protected boolean isSupportCacheSelected = true;
-
-    /**
      * 图片文件是否支持压缩
      */
     protected boolean isSupportCompress = false;
+    /**
+     * 是否支持选择图片后直接压缩
+     */
+    protected boolean isCompressDirectly = false;
 
     /*
       最大可选择的图片数量
@@ -118,7 +117,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         croppedImagePath = bundle.getString(KEY_CROPPED_PATH);
         cameraPicturePath = bundle.getString(KEY_CAMERA_PATH);
         isChooseImageForCrop = bundle.getBoolean(KEY_FOR_CROP);
-        isSupportCacheSelected = bundle.getBoolean(KEY_CACHEABLE, true);
+        isCompressDirectly = bundle.getBoolean(KEY_DIRECT_COMPRESS, false);
         String string = bundle.getString(KEY_CHOOSED_IMAGES, "[]");
         waitingFroCompressImages = Json.gson().fromJson(string, new TypeToken<List<String>>() {
         }.getType());
@@ -130,7 +129,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         bundle.putString(KEY_CROPPED_PATH, croppedImagePath);
         bundle.putString(KEY_CAMERA_PATH, cameraPicturePath);
         bundle.putBoolean(KEY_FOR_CROP, isChooseImageForCrop);
-        bundle.putBoolean(KEY_CACHEABLE, isSupportCacheSelected);
+        bundle.putBoolean(KEY_DIRECT_COMPRESS, isCompressDirectly);
         bundle.putString(KEY_CHOOSED_IMAGES, Json.gson().toJson(waitingFroCompressImages));
     }
 
@@ -143,7 +142,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     /**
      * 等待压缩的图片列表
      */
-    private ArrayList<String> waitingFroCompressImages = new ArrayList<>();
+    protected ArrayList<String> waitingFroCompressImages = new ArrayList<>();
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
@@ -268,10 +267,16 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
             //getWaitingForUploadFiles().addAll(waitingFroCompressImages);
             resetSelectedImage();
         }
+        // 图片选择事件处理
         if (null != mOnImageSelectedListener) {
             mOnImageSelectedListener.onImageSelected(isSupportCompress ? waitingFroCompressImages : getWaitingForUploadFiles());
         } else {
             log("no image selected callback exists.");
+        }
+        // 是否支持选择图片后直接压缩
+        if (isCompressDirectly) {
+            // 直接压缩
+            compressImage();
         }
     }
 
@@ -289,14 +294,18 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     protected void compressImage() {
         if (isSupportCompress) {
             adjustWannaToImageSize();
-            new CompressImageTask()
-                    .setDebuggable(true)
-                    .addOnTaskPreparedListener(taskPreparedListener)
-                    .addOnCompressCompleteListener(compressCompleteListener)
-                    .exec(Json.gson().toJson(waitingFroCompressImages),
-                            Activity().app().getLocalImageDir(),
-                            String.valueOf(mCompressedImageWidth),
-                            String.valueOf(mCompressedImageHeight));
+            if (waitingFroCompressImages.size() < 1) {
+                throw new IllegalArgumentException("no image(s) is waiting for compress");
+            } else {
+                new CompressImageTask()
+                        .setDebuggable(true)
+                        .addOnTaskPreparedListener(taskPreparedListener)
+                        .addOnCompressCompleteListener(compressCompleteListener)
+                        .exec(Json.gson().toJson(waitingFroCompressImages),
+                                Activity().app().getLocalImageDir(),
+                                String.valueOf(mCompressedImageWidth),
+                                String.valueOf(mCompressedImageHeight));
+            }
         } else {
             if (isSupportDirectlyUpload) {
                 uploadFiles();
@@ -328,13 +337,6 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
             }
         }
     };
-
-    /**
-     * 已选择了的本地原始图片地址列表
-     */
-//    protected ArrayList<String> getSelectedImages() {
-//        return waitingFroCompressImages;
-//    }
 
     /**
      * 删除指定的文件
@@ -673,6 +675,17 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     private View imageSelector;
 
     private DialogHelper dialogHelper;
+
+    public void clearCachedImages() {
+        waitingFroCompressImages.clear();
+    }
+
+    public void openImageSelector(boolean clearFirst) {
+        if (clearFirst) {
+            waitingFroCompressImages.clear();
+        }
+        openImageSelector();
+    }
 
     /**
      * 打开图片选择菜单

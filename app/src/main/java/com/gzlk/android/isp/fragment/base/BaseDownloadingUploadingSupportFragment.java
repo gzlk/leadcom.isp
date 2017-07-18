@@ -106,7 +106,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     }
 
     private void onImageUploading(int index, String file, long size, long uploaded) {
-        log(format("index: %d, file: %s, size: %d, uploaded: %d", index, file, size, uploaded));
+        //log(format("index: %d, file: %s, size: %d, uploaded: %d", index, file, size, uploaded));
         if (null != mOnFileUploadingListener) {
             mOnFileUploadingListener.onUploading(getWaitingForUploadFiles().size(), index + 1, file, size, uploaded);
         }
@@ -150,17 +150,21 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         @Override
         public void onResponse(Upload upload, boolean success, String message) {
             super.onResponse(upload, success, message);
-            String uploadedFile = waitingForUploadFiles.get(uploadingIndex);
-            log(format("upload %s success: %s", uploadedFile, success));
-            if (success) {
-                // 默认为档案的附件
-                Attachment attachment = new Attachment(Attachment.Type.ARCHIVE, "", upload.getName(), upload.getUrl(), "");
-                uploadedFiles.add(attachment);
-                uploadingIndex++;
-                // 继续上传下一张图片
-                uploading();
+            if (uploadingIndex < waitingForUploadFiles.size()) {
+                String uploadedFile = waitingForUploadFiles.get(uploadingIndex);
+                log(format("upload %s success: %s", uploadedFile, success));
+                if (success) {
+                    // 默认为档案的附件
+                    Attachment attachment = new Attachment(Attachment.Type.ARCHIVE, "", upload.getName(), upload.getUrl(), "");
+                    uploadedFiles.add(attachment);
+                    uploadingIndex++;
+                    // 继续上传下一张图片
+                    uploading();
+                } else {
+                    // 上传失败时停止上传
+                    hideImageHandlingDialog();
+                }
             } else {
-                // 上传失败时停止上传
                 hideImageHandlingDialog();
             }
         }
