@@ -191,7 +191,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
                 stopRefreshing();
             }
-        }).list(Cache.cache().accessToken, remotePageNumber);
+        }).list(Cache.cache().userId, remotePageNumber);
     }
 
     /**
@@ -234,7 +234,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 }
                 stopRefreshing();
             }
-        }).list(Cache.cache().accessToken, remotePageNumber);
+        }).list(remotePageNumber);
     }
 
     private void adjustRemotePages(int fetchedCount, int pageSize, int pageNumber, int total, int totalPages) {

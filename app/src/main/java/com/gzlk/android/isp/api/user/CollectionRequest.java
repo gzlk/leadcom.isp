@@ -102,8 +102,7 @@ public class CollectionRequest extends Request<Collection> {
                     .put("source", new JSONObject(source.toString()))
                     .put("content", checkNull(content))
                     .put("creatorId", checkNull(creatorId))
-                    .put("creatorName", checkNull(creatorName))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("creatorName", checkNull(creatorName));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -127,8 +126,7 @@ public class CollectionRequest extends Request<Collection> {
         JSONObject object = new JSONObject();
         try {
             object.put("_id", collectionId)
-                    .put("content", content)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("content", content);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -147,18 +145,18 @@ public class CollectionRequest extends Request<Collection> {
     /**
      * 查找指定用户的收藏内容
      */
-    public void list(String accessToken, int pageNumber) {
+    public void list(int pageNumber) {
         // accessToken
         httpRequest(getRequest(MultipleCollection.class,
-                format("%s?pageNumber=%d&accessToken=%s", url(LIST), pageNumber, accessToken), "", HttpMethods.Get));
+                format("%s?pageNumber=%d", url(LIST), pageNumber), "", HttpMethods.Get));
     }
 
     /**
      * 搜索指定用户的搜藏内容
      */
-    public void search(String accessToken, String info) {
+    public void search(String info) {
         // info,accessToken
-        String params = format("%s?info=%s&accessToken=%s", url(SEARCH), accessToken, info);
+        String params = format("%s?info=%s", url(SEARCH), info);
         httpRequest(getRequest(MultipleCollection.class, params, "", HttpMethods.Get));
     }
 }

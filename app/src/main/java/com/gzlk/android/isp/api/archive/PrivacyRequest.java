@@ -7,7 +7,6 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.user.Privacy;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -75,8 +74,7 @@ public class PrivacyRequest extends Request<Privacy> {
 
         JSONObject object = new JSONObject();
         try {
-            object.put("accessToken", Cache.cache().accessToken)
-                    .put("status", status)
+            object.put("status", status)
                     .put("source", source)
                     .put("sourceId", sourceId)
                     .put("groupId", checkNull(groupId))
@@ -93,7 +91,7 @@ public class PrivacyRequest extends Request<Privacy> {
      */
     public void list() {
         // accessToken:""
-        httpRequest(getRequest(MultiplePrivacy.class, format("%s?accessToken=%s", url(LIST), Cache.cache().accessToken), "", HttpMethods.Get));
+        httpRequest(getRequest(MultiplePrivacy.class, url(LIST), "", HttpMethods.Get));
     }
 
     /**

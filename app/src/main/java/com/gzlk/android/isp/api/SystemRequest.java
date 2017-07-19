@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.http.request.param.HttpMethods;
@@ -179,8 +178,7 @@ public class SystemRequest extends Request<User> {
         JSONObject object = new JSONObject();
         try {
             object.put("toPhoneArr", new JSONArray(phones))
-                    .put("toGroupId", groupId)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("toGroupId", groupId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -198,8 +196,7 @@ public class SystemRequest extends Request<User> {
         JSONObject object = new JSONObject();
         try {
             object.put("toPhoneArr", new JSONArray(phones))
-                    .put("toSquadId", squadId)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("toSquadId", squadId);
         } catch (JSONException e) {
             e.printStackTrace();
         }

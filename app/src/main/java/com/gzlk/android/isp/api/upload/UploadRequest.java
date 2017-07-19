@@ -1,15 +1,10 @@
 package com.gzlk.android.isp.api.upload;
 
-import com.google.gson.internal.Excluder;
-import com.google.gson.reflect.TypeToken;
-import com.gzlk.android.isp.api.Api;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.listener.OnUploadingListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnHttpListener;
 import com.litesuits.http.request.AbstractRequest;
 import com.litesuits.http.request.JsonRequest;
@@ -112,7 +107,7 @@ public class UploadRequest extends Request<Upload> {
                     onUploadingListener.onUploading(file, total, len);
                 }
             }
-        }).addHeader("accessToken", Cache.cache().accessToken).addHeader("charset", "GBK").setHttpBody(body, HttpMethods.Post);
+        }).addHeader("accessToken", accessToken).addHeader("charset", "GBK").setHttpBody(body, HttpMethods.Post);
     }
 
     /**

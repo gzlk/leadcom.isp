@@ -1,12 +1,11 @@
 package com.gzlk.android.isp.api.org;
 
+import com.gzlk.android.isp.api.OnlyQueryList;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.OnlyQueryList;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Role;
@@ -150,8 +149,7 @@ public class MemberRequest extends Request<Member> {
         try {
             object.put("_id", memberId)
                     .put("groupId", groupId)
-                    .put("userId", userId)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("userId", userId);
             JSONObject role = new JSONObject();
             role.put("_id", toRole.getId())
                     .put("rolCode", toRole.getRolCode())

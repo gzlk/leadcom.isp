@@ -36,7 +36,7 @@ public abstract class Request<T> {
      */
     public static final int PAGE_SIZE = 10;
 
-    protected static final String URL = BaseApi.URL;
+    protected static final String URL = format("%s/%s", BaseApi.URL, BaseApi.API_VER);
     /**
      * 新增
      */
@@ -84,10 +84,13 @@ public abstract class Request<T> {
      */
     protected LiteHttp liteHttp;
 
+    protected String accessToken;
+
     public Request() {
         liteHttp = LiteHttp.build(App.app()).create();
         // 10秒网络超时
         liteHttp.getConfig().setConnectTimeout(5000);
+        accessToken = Cache.cache().accessToken;
         initializeDao();
     }
 
@@ -163,8 +166,8 @@ public abstract class Request<T> {
             @Override
             public void onSucceed(Api<T> data, Response<Api<T>> response) {
                 super.onSucceed(data, response);
-                log(format("url(%s): %s\naccessToken: %s\n%ssuccess: %s(%s,%s)", methods, url, Cache.cache().accessToken,
-                        (isEmpty(body) ? "" : format("body: %s\n", body)), data.success(), data.getCode(), data.getMsg()));
+                log(format("url(%s): %s\naccessToken: %s\n%ssuccess: %s(%s,%s)", methods, url, accessToken,
+                        (isEmpty(body) ? "" : format("\nbody: %s\n", body)), data.success(), data.getCode(), data.getMsg()));
                 if (data.success()) {
                     if (data instanceof Query) {
                         if (null != onMultipleRequestListener) {
@@ -198,11 +201,11 @@ public abstract class Request<T> {
             @Override
             public void onFailed() {
                 super.onFailed();
-                log(format("url(%s): %s\naccessToken: %s%s\nsuccess: failed", methods, url,Cache.cache().accessToken,
+                log(format("url(%s): %s\naccessToken: %s%s\nsuccess: failed", methods, url, accessToken,
                         (isEmpty(body) ? "" : format("body: %s\n", body))));
                 fireFailedListenerEvents("");
             }
-        }).addHeader("accessToken", Cache.cache().accessToken).setHttpBody(new JsonBody(body), methods);
+        }).addHeader("accessToken", accessToken).setHttpBody(new JsonBody(body), methods);
     }
 
     /**

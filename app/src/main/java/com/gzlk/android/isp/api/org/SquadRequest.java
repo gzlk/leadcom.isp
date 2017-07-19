@@ -5,7 +5,6 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.Squad;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -65,8 +64,7 @@ public class SquadRequest extends Request<Squad> {
         try {
             object.put("groupId", groupId)
                     .put("name", squadName)
-                    .put("intro", checkNull(introduction))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("intro", checkNull(introduction));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -84,8 +82,7 @@ public class SquadRequest extends Request<Squad> {
         try {
             object.put("squadId", squadId)
                     .put("name", squadName)
-                    .put("intro", checkNull(introduction))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("intro", checkNull(introduction));
         } catch (JSONException e) {
             e.printStackTrace();
         }

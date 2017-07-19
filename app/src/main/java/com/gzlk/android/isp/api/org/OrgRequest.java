@@ -5,7 +5,6 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
@@ -129,8 +128,7 @@ public class OrgRequest extends Request<Organization> {
         try {
             object.put("name", groupName)
                     .put("logo", checkNull(groupLogo))
-                    .put("intro", introduction)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("intro", introduction);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -153,8 +151,7 @@ public class OrgRequest extends Request<Organization> {
             object.put("_id", groupId)
                     .put("name", checkNull(groupName))
                     .put("logo", checkNull(groupLogo))
-                    .put("intro", checkNull(introduction))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("intro", checkNull(introduction));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -184,7 +181,6 @@ public class OrgRequest extends Request<Organization> {
                     object.put("intro", checkNull(value));
                     break;
             }
-            object.put("accessToken", Cache.cache().accessToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -223,7 +219,7 @@ public class OrgRequest extends Request<Organization> {
     public void list(int ope) {
         // accessToken,pageSize,pageNumber
         isFetchingJoinedGroups = ope == GROUP_LIST_OPE_JOINED;
-        httpRequest(getRequest(MultipleGroup.class, format("%s?ope=%d&pageNumber=1&pageSize=999&accessToken=%s", url(LIST), ope, Cache.cache().accessToken), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleGroup.class, format("%s?ope=%d&pageNumber=1&pageSize=999", url(LIST), ope), "", HttpMethods.Get));
     }
 
     /**
@@ -240,7 +236,7 @@ public class OrgRequest extends Request<Organization> {
     public void search(String groupName, int pageNumber) {
         // info,accessToken,pageSize,pageNumber
         httpRequest(getRequest(MultipleGroup.class,
-                format("%s?pageNumber=%d&info=%s&accessToken=%s", url(SEARCH), pageNumber, groupName, Cache.cache().accessToken),
+                format("%s?pageNumber=%d&info=%s", url(SEARCH), pageNumber, groupName),
                 "", HttpMethods.Get));
     }
 

@@ -4,7 +4,6 @@ import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.JoinGroup;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -69,8 +68,7 @@ public class GroupJoinRequest extends Request<JoinGroup> {
                     .put("groupName", groupName)
                     .put("inviteeId", inviteeId)
                     .put("inviteeName", inviteeName)
-                    .put("msg", checkNull(message))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("msg", checkNull(message));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -102,8 +100,7 @@ public class GroupJoinRequest extends Request<JoinGroup> {
         JSONObject object = new JSONObject();
         try {
             object.put("uuid", uuid)
-                    .put("msg", checkNull(message))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("msg", checkNull(message));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -2,19 +2,14 @@ package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.gzlk.android.isp.api.Output;
 import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
-import com.litesuits.http.data.TypeToken;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -153,8 +148,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("office", new JSONArray(Attachment.getJson(office)))
                     .put("image", new JSONArray(Attachment.getJson(image)))
                     .put("video", new JSONArray(Attachment.getJson(video)))
-                    .put("attach", new JSONArray(Attachment.getJson(attach)))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("attach", new JSONArray(Attachment.getJson(attach)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -197,8 +191,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("office", new JSONArray(Attachment.getJson(office)))
                     .put("image", new JSONArray(Attachment.getJson(image)))
                     .put("video", new JSONArray(Attachment.getJson(video)))
-                    .put("attach", new JSONArray(Attachment.getJson(attach)))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("attach", new JSONArray(Attachment.getJson(attach)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -256,8 +249,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("office", new JSONArray(Attachment.getJson(office)))
                     .put("image", new JSONArray(Attachment.getJson(image)))
                     .put("video", new JSONArray(Attachment.getJson(video)))
-                    .put("attach", new JSONArray(Attachment.getJson(attach)))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("attach", new JSONArray(Attachment.getJson(attach)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -298,8 +290,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("office", new JSONArray(Attachment.getJson(office)))
                     .put("image", new JSONArray(Attachment.getJson(image)))
                     .put("video", new JSONArray(Attachment.getJson(video)))
-                    .put("attach", new JSONArray(Attachment.getJson(attach)))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("attach", new JSONArray(Attachment.getJson(attach)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -343,7 +334,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param info 档案的标题
      */
     public void search(String info) {
-        httpRequest(getRequest(MultipleArchive.class, format("%s?info=%s&accessToken=%s", url(SEARCH), info, Cache.cache().accessToken), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleArchive.class, format("%s?info=%s", url(SEARCH), info), "", HttpMethods.Get));
     }
 
     /**
@@ -365,7 +356,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void list(int pageNumber, String userId) {
         // abstrSize,abstrRow,pageNumber,accessToken
-        String param = format("%s&pageNumber=%d&accessToken=%s&userId=%s", SUMMARY, pageNumber, Cache.cache().accessToken, userId);
+        String param = format("%s&pageNumber=%d&userId=%s", SUMMARY, pageNumber, userId);
         httpRequest(getRequest(MultipleArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
 
@@ -377,7 +368,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void list(String organizationId, int pageNumber) {
         //groupId,abstrSize,abstrRow,pageNumber
-        String param = format("?%s&groupId=%s&pageNumber=%d&accessToken=%s", SUMMARY, organizationId, pageNumber, Cache.cache().accessToken);
+        String param = format("?%s&groupId=%s&pageNumber=%d", SUMMARY, organizationId, pageNumber);
         httpRequest(getRequest(MultipleArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
     }
 
@@ -396,8 +387,7 @@ public class ArchiveRequest extends Request<Archive> {
         JSONObject object = new JSONObject();
         try {
             object.put("id", requestId)
-                    .put("msg", message)
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("msg", message);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -424,7 +414,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void archive(String archiveId, int status) {
         // groDocArchiveId,status,accessToken
-        String params = format("/group/groDocArchive/archive?groDocArchiveId=%s&status=%d&accessToken=%s", archiveId, status, Cache.cache().accessToken);
+        String params = format("/group/groDocArchive/archive?groDocArchiveId=%s&status=%d", archiveId, status);
         httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
     }
 
@@ -462,7 +452,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void approve(String archiveId, int status) {
         // groDocApproveId,status,accessToken
-        String params = format("/group/groDocApprove/approve?groDocApproveId=%s&status=%d&accessToken=%s", archiveId, status, Cache.cache().accessToken);
+        String params = format("/group/groDocApprove/approve?groDocApproveId=%s&status=%d", archiveId, status);
         httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
     }
 

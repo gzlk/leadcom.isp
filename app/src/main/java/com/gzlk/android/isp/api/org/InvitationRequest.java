@@ -5,7 +5,6 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -91,8 +90,7 @@ public class InvitationRequest extends Request<Invitation> {
         try {
             object.put("groupId", groupId)
                     .put("inviteeId", inviteeId)
-                    .put("msg", checkNull(message))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("msg", checkNull(message));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -113,8 +111,7 @@ public class InvitationRequest extends Request<Invitation> {
         try {
             object.put("groSquId", squadId)
                     .put("inviteeId", inviteeId)
-                    .put("msg", checkNull(message))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("msg", checkNull(message));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -166,8 +163,7 @@ public class InvitationRequest extends Request<Invitation> {
         JSONObject object = new JSONObject();
         try {
             object.put("uuid", uuid)
-                    .put("msg", checkNull(message))
-                    .put("accessToken", Cache.cache().accessToken);
+                    .put("msg", checkNull(message));
         } catch (JSONException e) {
             e.printStackTrace();
         }

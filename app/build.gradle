@@ -24,6 +24,7 @@ android {
         }
         manifestPlaceholders = [APP_PKG_NAME: applicationId]
         resValue "string", "app_internal_version", getInternalVersion()
+        resValue "string", "app_api_version", "v1"
         resValue "string", "app_name_default", "树脉"
         resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
         // 正式(leadcom): e0535dd95633dfa23a6aba3a06628a55
@@ -134,7 +135,7 @@ dependencies {
     // 动画集合
     compile 'com.daimajia.easing:library:2.0@aar'
     compile 'com.daimajia.androidanimations:library:2.2@aar'
-    
+
     // pdf阅读器
     compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
     // 视频播放器

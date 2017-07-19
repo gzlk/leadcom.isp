@@ -5,7 +5,6 @@ import com.gzlk.android.isp.api.Query;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -97,7 +96,6 @@ public class UserRequest extends Request<User> {
         // {password,headPhoto,name,phone,email,idNum,birthday,company,position,isAuth,sex,accessToken}
         JSONObject object = new JSONObject();
         try {
-            object.put("accessToken", Cache.cache().accessToken);
             switch (type) {
                 case UPDATE_BIRTHDAY:
                     object.put("birthday", value);
