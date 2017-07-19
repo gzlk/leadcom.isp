@@ -232,8 +232,10 @@ public class MainActivity extends TitleActivity {
                 break;
             case NimMessage.Type.ACTIVITY_INVITE:
                 if (msg.isHandled()) {
-                    // 直接打开活动群聊页面
-                    NimUIKit.startTeamSession(activity, msg.getTid());
+                    if (msg.isHandleState()) {
+                        // 直接打开活动群聊页面
+                        NimUIKit.startTeamSession(activity, msg.getTid());
+                    }
                 } else {
                     // 活动邀请，下一步打开未处理活动页面
                     yes = StringHelper.getString(R.string.ui_base_text_have_a_look);
@@ -268,7 +270,7 @@ public class MainActivity extends TitleActivity {
                                 NimUIKit.startTeamSession(activity, msg.getTid());
                             } else {
                                 // 消息没有处理过则打开加入活动页面
-                                openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s", msg.getTid()), true, false);
+                                openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%d", msg.getTid(), msg.getId()), true, false);
                             }
                             break;
                         case NimMessage.Type.SYSTEM_NOTIFICATION:

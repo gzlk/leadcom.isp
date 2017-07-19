@@ -37,7 +37,6 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -331,19 +330,21 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 }
             }
         }
-        fetchingUnHandledActivityInvite(mQueryId);
+        if (!isEmpty(mQueryId)) {
+            fetchingJoinedActivity(true);
+        }
     }
 
     private void updateActivityList(List<Activity> list) {
         if (null == list) return;
-        for (Activity activity : list) {
-            if (!activities.contains(activity)) {
-                activities.add(activity);
-            } else {
-                int pos = activities.indexOf(activity);
-                activities.set(pos, activity);
-            }
-        }
+//        for (Activity activity : list) {
+//            if (!activities.contains(activity)) {
+//                activities.add(activity);
+//            } else {
+//                int pos = activities.indexOf(activity);
+//                activities.set(pos, activity);
+//            }
+//        }
 //        Collections.sort(activities, new Comparator<Activity>() {
 //            @Override
 //            public int compare(Activity o1, Activity o2) {
@@ -351,7 +352,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
 //            }
 //        });
         clearActivities();
-        for (Activity activity : activities) {
+        for (Activity activity : list) {
             mAdapter.update(activity);
         }
         // 查询网易云信联系人列表，并更新相应的未读提示和最后发送的消息
@@ -387,7 +388,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
         changeSelectedActivity();
     }
 
-    private ArrayList<Activity> activities = new ArrayList<>();
+    //private ArrayList<Activity> activities = new ArrayList<>();
 
     private void changeSelectedActivity() {
         if (isEmpty(StructureFragment.selectedGroupId)) {
@@ -415,10 +416,11 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
                 mainFragment.setTitleText(org.getName());
             }
-            for (Activity activity : activities) {
-                mAdapter.remove(activity);
-            }
-            activities.clear();
+//            for (Activity activity : activities) {
+//                mAdapter.remove(activity);
+//            }
+//            activities.clear();
+            clearActivities();
             refreshingItems();
         }
         if (getUserVisibleHint()) {

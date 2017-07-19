@@ -20,6 +20,7 @@ import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.common.Attachment;
@@ -46,6 +47,7 @@ import java.util.List;
 public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_TID = "aef_param_tid";
+    private static final String PARAM_MSG_ID = "aef_param_msg_id";
 
     public static ActivityEntranceFragment newInstance(String params) {
         ActivityEntranceFragment siaf = new ActivityEntranceFragment();
@@ -55,22 +57,29 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_QUERY_ID, strings[0]);
         // 活动的tid
         bundle.putString(PARAM_TID, strings[1]);
+        // nim 消息id
+        if (strings.length > 2) {
+            bundle.putLong(PARAM_MSG_ID, Long.valueOf(strings[2]));
+        }
         siaf.setArguments(bundle);
         return siaf;
     }
 
     private String tid = "";
+    private long nimId = 0L;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         tid = bundle.getString(PARAM_TID, "");
+        nimId = bundle.getLong(PARAM_MSG_ID, 0L);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_TID, tid);
+        bundle.putLong(PARAM_MSG_ID, nimId);
     }
 
     // view
@@ -181,7 +190,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
 
     private void handleHandledActivity(boolean agree) {
         Dao<NimMessage> dao = new Dao<>(NimMessage.class);
-        NimMessage msg = dao.querySingle(Activity.Field.NimId, tid);
+        NimMessage msg = dao.querySingle(Model.Field.Id, nimId);
         if (null != msg) {
             msg.setHandled(true);
             msg.setHandleState(agree);

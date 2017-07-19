@@ -4,16 +4,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.text.TextUtils;
 
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.task.AsyncExecutableTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 /**
  * <b>功能描述：</b>图片压缩类<br />
@@ -191,50 +195,66 @@ public final class ImageCompress {
     }
 
     /**
+     * 获取视频缩略图的task
+     */
+    private static class VideoThumbnailTask extends AsyncExecutableTask<String, Void, Bitmap> {
+        @Override
+        protected Bitmap doInTask(String... params) {
+            Bitmap bitmap = null;
+            FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
+            try {
+                fmmr.setDataSource(params[0]);
+                bitmap = fmmr.getFrameAtTime();
+
+                if (bitmap != null) {
+                    Bitmap b2 = fmmr.getFrameAtTime(2000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+                    if (b2 != null) {
+                        bitmap = b2;
+                    }
+                    if (bitmap.getWidth() > 640) {// 如果图片宽度规格超过640px,则进行压缩
+                        bitmap = ThumbnailUtils.extractThumbnail(bitmap, 640, 480, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+                    }
+                }
+            } catch (IllegalArgumentException ex) {
+                ex.printStackTrace();
+            } finally {
+                fmmr.release();
+            }
+            return bitmap;
+        }
+    }
+
+    /**
      * 获取视频的缩略图，默认获取视频1s时的帧
      *
      * @param filePath 本地视频文件路径
      */
     public static Bitmap getVideoThumbnail(String filePath) {
-        Bitmap bitmap = null;
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
-            retriever.setDataSource(filePath);
-            bitmap = retriever.getFrameAtTime();
-        } catch (RuntimeException e) {
+            return new VideoThumbnailTask().execute(filePath).get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                retriever.release();
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
         }
-        return getVideoThumbnail(filePath, 1000);
-    }
-
-    /**
-     * 获取视频的缩略图
-     *
-     * @param filePath 本地视频文件路径
-     * @param atTime   指定时间点
-     */
-    public static Bitmap getVideoThumbnail(String filePath, long atTime) {
-        Bitmap bitmap = null;
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(filePath);
-            bitmap = retriever.getFrameAtTime(atTime);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                retriever.release();
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
-        }
-        return bitmap;
+        return null;
+//        Bitmap bitmap = null;
+//        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//        try {
+//            if (filePath.startsWith("http")) {
+//                retriever.setDataSource(filePath, new HashMap<String, String>());
+//            } else {
+//                retriever.setDataSource(filePath);
+//            }
+//            bitmap = retriever.getFrameAtTime();
+//        } catch (RuntimeException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                retriever.release();
+//            } catch (RuntimeException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return bitmap;
     }
 
     /**

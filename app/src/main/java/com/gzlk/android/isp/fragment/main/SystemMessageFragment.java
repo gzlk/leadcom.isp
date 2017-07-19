@@ -139,10 +139,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 new Dao<>(NimMessage.class).save(msg);
                 NimApplication.dispatchCallbacks();
             }
-            //if (isEmpty(msg.getMsgTitle())) {
             MainActivity.handleNimMessageDetails(Activity(), msg);
-            //} else {
-            //}
         }
     };
 
@@ -171,6 +168,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         Dao<NimMessage> dao = new Dao<>(NimMessage.class);
         NimMessage msg = dao.querySingle(Model.Field.Id, id);
         dao.delete(msg);
+        NimApplication.dispatchCallbacks();
     }
 
     private ArrayList<NimMessage> messages = new ArrayList<>();

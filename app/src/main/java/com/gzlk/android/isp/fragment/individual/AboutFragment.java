@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.fragment.individual;
 
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -72,7 +73,9 @@ public class AboutFragment extends BaseLayoutSupportFragment {
     private void initializeHolders() {
         if (null == strings) {
             String buildType = StringHelper.getString(R.string.app_build_type);
-            versionTextView.setText(StringHelper.getString(R.string.ui_text_about_version, buildType, App.app().version()));
+            String internal = getString(R.string.app_internal_version);
+            String api = getString(R.string.app_api_version);
+            versionTextView.setText(Html.fromHtml(StringHelper.getString(R.string.ui_text_about_version, buildType, App.app().version(), internal, api)));
             strings = StringHelper.getStringArray(R.array.ui_about);
         }
         if (null == evaluateHolder) {

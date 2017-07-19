@@ -70,7 +70,9 @@
     <string name="ui_text_setting_messaging_fragment_title">消息通知</string>
 
     <string name="ui_text_about_fragment_title">关于</string>
-    <string name="ui_text_about_version" formatted="false">Android %s %s</string>
+    <string name="ui_text_about_version" formatted="false">
+        <![CDATA[Android %s %s<br/>rev: %s<br/>api: %s]]>
+    </string>
     <string-array name="ui_about">
         <item>0|去评分||0</item>
         <item>1|意见反馈||0</item>
