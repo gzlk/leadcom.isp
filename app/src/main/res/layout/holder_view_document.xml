@@ -31,12 +31,42 @@
             android:id="@+id/ui_holder_view_document_content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ui_static_dp_3">
+            android:layout_marginTop="@dimen/ui_static_dp_3"
+            android:orientation="horizontal">
+
+            <com.gzlk.android.isp.lib.view.ImageDisplayer
+                android:id="@+id/ui_holder_view_document_content_image"
+                android:layout_width="@dimen/ui_static_dp_80"
+                android:layout_height="@dimen/ui_static_dp_70"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:visibility="gone"
+                app:id_image_scale_type="centerCrop"
+                app:id_image_src="@mipmap/img_image_default" />
+
+            <com.hlk.hlklib.lib.view.CorneredView
+                android:id="@+id/ui_holder_view_document_content_icon_container"
+                android:layout_width="@dimen/ui_static_dp_50"
+                android:layout_height="@dimen/ui_static_dp_50"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:gravity="center"
+                android:visibility="gone"
+                app:cv_background="@color/colorPrimary"
+                app:cv_border_size="@dimen/ui_static_dp_zero">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:id="@+id/ui_holder_view_document_content_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_icon_attachment_video"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/ui_base_text_size_huge" />
+            </com.hlk.hlklib.lib.view.CorneredView>
 
             <com.gzlk.android.isp.lib.view.ExpandableTextView
                 android:id="@+id/ui_holder_view_document_content_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/app_name_default"
                 android:textColor="@color/textColorHintDark"
                 android:textSize="@dimen/ui_base_text_size_small"
                 app:lessText="@string/ui_base_text_collapse"

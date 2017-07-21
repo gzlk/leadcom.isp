@@ -218,14 +218,15 @@ public class ContactViewHolder extends BaseViewHolder {
             R.id.ui_tool_view_contact_button1,
             R.id.ui_tool_view_contact_button2,
             R.id.ui_holder_view_contact_invite_button,
-            R.id.ui_holder_view_contact_picker})
+            R.id.ui_holder_view_contact_picker,
+            R.id.ui_holder_view_contact_phone})
     private void click(View view) {
         switch (view.getId()) {
             case R.id.ui_holder_view_contact_layout:
                 // 点击了整个item view，打开用户详情页
-                if (null != mOnViewHolderClickListener) {
-                    mOnViewHolderClickListener.onClick(getAdapterPosition());
-                }
+//                if (null != mOnViewHolderClickListener) {
+//                    mOnViewHolderClickListener.onClick(getAdapterPosition());
+//                }
                 break;
             case R.id.ui_tool_view_contact_button0:
                 // 转让群组
@@ -261,7 +262,25 @@ public class ContactViewHolder extends BaseViewHolder {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }
                 break;
+            case R.id.ui_holder_view_contact_phone:
+                if (null != onPhoneDialListener) {
+                    onPhoneDialListener.onDial(getAdapterPosition());
+                }
+                break;
         }
+    }
+
+    /**
+     * 点击手机号码进行拨号
+     */
+    public interface OnPhoneDialListener {
+        void onDial(int index);
+    }
+
+    private OnPhoneDialListener onPhoneDialListener;
+
+    public void setOnPhoneDialListener(OnPhoneDialListener l) {
+        onPhoneDialListener = l;
     }
 
     private OnUserDeleteListener onUserDeleteListener;

@@ -56,6 +56,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_TYPE = "_cf_type_";
     private static final String PARAM_CREATOR = "_cf_manager_";
+    private static final String PARAM_DIAL_INDEX = "_cf_dial_index";
     /**
      * 没有查询任何数据
      */
@@ -92,6 +93,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         super.getParamsFromBundle(bundle);
         showType = bundle.getInt(PARAM_TYPE, TYPE_NONE);
         isCreator = bundle.getBoolean(PARAM_CREATOR, false);
+        dialIndex = bundle.getInt(PARAM_DIAL_INDEX, -1);
     }
 
     @Override
@@ -99,6 +101,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_TYPE, showType);
         bundle.putBoolean(PARAM_CREATOR, isCreator);
+        bundle.putInt(PARAM_DIAL_INDEX, dialIndex);
     }
 
     // view
@@ -118,6 +121,7 @@ public class ContactFragment extends BaseOrganizationFragment {
      * 当前登录者是否是组织的创建者
      */
     private boolean isCreator = false;
+    private int dialIndex = -1;
 
     @Override
     public int getLayout() {
@@ -556,6 +560,38 @@ public class ContactFragment extends BaseOrganizationFragment {
         updateMember(member, role, false);
     }
 
+    private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
+        @Override
+        public void onDial(int index) {
+            dialIndex = index;
+            requestPhoneCallPermission();
+        }
+    };
+
+    @Override
+    public void permissionGranted(String[] permissions, int requestCode) {
+        super.permissionGranted(permissions, requestCode);
+        if (requestCode == GRANT_PHONE_CALL) {
+            warningDial();
+        }
+    }
+
+    private void warningDial() {
+        if (dialIndex < 0) return;
+        final String text = mAdapter.get(dialIndex).getPhone();
+        if (!isEmpty(text)) {
+            String yes = getString(R.string.ui_base_text_dial);
+            String no = getString(R.string.ui_base_text_cancel);
+            SimpleDialogHelper.init(Activity()).show(text, yes, no, new DialogHelper.OnDialogConfirmListener() {
+                @Override
+                public boolean onConfirm() {
+                    dialPhone(text);
+                    return true;
+                }
+            }, null);
+        }
+    }
+
     public static Role squadRole;
 
     private class ContactAdapter extends RecyclerSwipeAdapter<ContactViewHolder> {
@@ -644,6 +680,8 @@ public class ContactFragment extends BaseOrganizationFragment {
             holder.setOnTransferManagementListener(transferManagementListener);
             // 设置档案管理员
             holder.setOnSetArchiveManagerListener(archiveManagerListener);
+            // 点击拨号
+            holder.setOnPhoneDialListener(onPhoneDialListener);
             return holder;
         }
 

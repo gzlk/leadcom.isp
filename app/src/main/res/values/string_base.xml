@@ -112,6 +112,7 @@
     <string name="ui_base_text_private">私密</string>
     <string name="ui_base_text_publish">发布</string>
     <string name="ui_base_text_kick_out">踢出</string>
+    <string name="ui_base_text_dial">呼叫</string>
 
     <string name="ui_base_text_not_read">未读</string>
     <string name="ui_base_text_has_read">已读</string>

@@ -224,7 +224,7 @@ public class MemberRequest extends Request<Member> {
      * 活动中踢人
      */
     public void activityKickOut(String activityId, String userId) {
-        String param = format("/activity/kick?id=%s&userId=%s", activityId, userId);
+        String param = format("/activity/actMember/delete?id=%s&userId=%s", activityId, userId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 

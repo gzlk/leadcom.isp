@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.api;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.application.App;
@@ -36,7 +37,8 @@ public abstract class Request<T> {
      */
     public static final int PAGE_SIZE = 10;
 
-    protected static final String URL = format("%s/%s", BaseApi.URL, BaseApi.API_VER);
+    protected static final String URL = BuildConfig.RELEASEABLE ? BaseApi.URL :
+            format("%s/%s", BaseApi.URL, BaseApi.API_VER);
     /**
      * 新增
      */
@@ -161,6 +163,7 @@ public abstract class Request<T> {
      */
     protected JsonRequest<Api<T>> getRequest(Type resultType, String action, final String body, final HttpMethods methods) {
         final String url = format("%s%s", URL, action);
+        final String accessToken = Cache.cache().accessToken;
         return new JsonRequest<Api<T>>(url, resultType).setHttpListener(new OnHttpListener<Api<T>>() {
 
             @Override

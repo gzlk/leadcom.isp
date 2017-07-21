@@ -2,7 +2,9 @@ package com.gzlk.android.isp.fragment.base;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -86,11 +88,28 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
     /**
      * 尝试获取拨打电话的运行时权限
      */
-//    public void requestPhoneCallPermission() {
-//        String warning = StringHelper.getString(R.string.ui_grant_permission_phone_call);
-//        String denied = StringHelper.getString(R.string.ui_denied_permission_phone_call);
-//        tryGrantPermission(Manifest.permission.CALL_PHONE, BaseFragment.GRANT_PHONE_CALL, warning, denied);
-//    }
+    public void requestPhoneCallPermission() {
+        String warning = StringHelper.getString(R.string.ui_grant_permission_phone_call);
+        String denied = StringHelper.getString(R.string.ui_denied_permission_phone_call);
+        tryGrantPermission(Manifest.permission.CALL_PHONE, BaseFragment.GRANT_PHONE_CALL, warning, denied);
+    }
+
+    /**
+     * 转到拨号界面，不直接拨打
+     */
+    public void dialPhone(String phone) {
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    /**
+     * 跳蛛拿到拨号界面并且直接拨打电话
+     */
+    public void dialPhoneDirectly(String phone) {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+        startActivity(intent);
+    }
 
     /**
      * 尝试申请运行时权限
@@ -179,9 +198,7 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
      * 子类需要重载此方法以便处理权限申请成功之后的事情
      */
     public void permissionGranted(String[] permissions, int requestCode) {
-        if (requestCode == GRANT_PHONE_CALL) {
-            ToastHelper.make(mActivity).showMsg("您已进行授权，请重新点击拨号。");
-        }
+
     }
 
     /**

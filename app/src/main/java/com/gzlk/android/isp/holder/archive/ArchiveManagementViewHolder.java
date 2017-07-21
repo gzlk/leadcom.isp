@@ -100,13 +100,13 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
                 showImage(archive.getUrl());
                 break;
             case Attachment.AttachmentType.OFFICE:
-                showOffice(attachment);
+                showIcon(attachment);
                 break;
             case Attachment.AttachmentType.OTHER:
-                showOther(attachment);
+                showIcon(attachment);
                 break;
             case Attachment.AttachmentType.VIDEO:
-                showVideo(attachment);
+                showIcon(attachment);
                 break;
             default:
                 imageView.setVisibility(View.GONE);
@@ -141,13 +141,13 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         Attachment attachment = firstOf(archive.getVideo());
         if (null != attachment && !isEmpty(attachment.getUrl())) {
             // 显示视频图片或默认视频图片
-            showVideo(attachment);
+            showIcon(attachment);
             return;
         }
         // office 文档
         attachment = firstOf(archive.getOffice());
         if (null != attachment && !isEmpty(attachment.getUrl())) {
-            showOffice(attachment);
+            showIcon(attachment);
             return;
         }
         // 图片
@@ -159,7 +159,7 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         // 其他附件
         attachment = firstOf(archive.getAttach());
         if (null != attachment && !isEmpty(attachment.getUrl())) {
-            showOther(attachment);
+            showIcon(attachment);
             return;
         }
         // 什么附件都没有则不显示图标
@@ -174,22 +174,7 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         imageView.displayImage(url, imageSize, false, false);
     }
 
-    private void showVideo(Attachment attachment) {
-        imageView.displayImage("drawable://" + R.drawable.img_image_video, imageSize, false, false);
-        imageView.setVisibility(View.GONE);
-        iconContainer.setVisibility(View.VISIBLE);
-        iconContainer.setNormalColor(getColor(attachment.iconColor()));
-        iconView.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
-    }
-
-    private void showOffice(Attachment attachment) {
-        imageView.setVisibility(View.GONE);
-        iconContainer.setVisibility(View.VISIBLE);
-        iconContainer.setNormalColor(getColor(attachment.iconColor()));
-        iconView.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
-    }
-
-    private void showOther(Attachment attachment) {
+    private void showIcon(Attachment attachment){
         imageView.setVisibility(View.GONE);
         iconContainer.setVisibility(View.VISIBLE);
         iconContainer.setNormalColor(getColor(attachment.iconColor()));

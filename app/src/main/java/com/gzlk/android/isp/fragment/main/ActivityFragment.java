@@ -7,6 +7,8 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.activity.ActRequest;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityCreatorFragment;
@@ -180,7 +182,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
         displayLoading(true);
         fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_ACTIVITY);
         if (!isEmpty(mQueryId)) {
-            fetchingJoinedActivity(true);
+            fetchingActivities();
         } else {
             displayLoading(false);
         }
@@ -188,7 +190,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onFetchingJoinedRemoteOrganizationsComplete(List<Organization> list) {
-        if (null != list && list.size() > 0) {
+        if (null != list) {
             concernedViewHolder.add(list);
         } else {
             // 当前显示本fragment时才提示用户
@@ -199,26 +201,42 @@ public class ActivityFragment extends BaseOrganizationFragment {
         stopRefreshing();
     }
 
-    @Override
-    protected void onFetchingJoinedActivityComplete(List<Activity> list) {
-        if (null != list) {
-            if (list.size() >= 10) {
-                remotePageNumber++;
-                isLoadingComplete(false);
-            } else {
-                isLoadingComplete(true);
+    private void fetchingActivities() {
+        setLoadingText(R.string.ui_activity_fetching_front_list);
+        displayLoading(true);
+        ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
+            @Override
+            public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (remotePageNumber <= 1) {
+                    // 第一页时，清理已显示的活动列表
+                    clearActivities();
+                }
+                if (success) {
+                    if (null != list) {
+                        if (list.size() >= pageSize) {
+                            remotePageNumber++;
+                            isLoadingComplete(false);
+                        } else {
+                            isLoadingComplete(true);
+                        }
+                    } else {
+                        isLoadingComplete(true);
+                        // 当前显示本fragment时才提示用户
+                        if (getUserVisibleHint()) {
+                            ToastHelper.make().showMsg(R.string.ui_activity_main_not_exist_any_more);
+                        }
+                    }
+                } else {
+                    isLoadingComplete(true);
+                }
+                updateActivityList(list);
+                displayLoading(false);
+                stopRefreshing();
+                // 拉取我未处理的群活动邀请
+                fetchingUnHandledActivityInvite(mQueryId);
             }
-            updateActivityList(list);
-        } else {
-            isLoadingComplete(true);
-            // 当前显示本fragment时才提示用户
-            if (getUserVisibleHint()) {
-                ToastHelper.make().showMsg(R.string.ui_activity_main_not_exist_any_more);
-            }
-        }
-        stopRefreshing();
-        // 拉取我未处理的群活动邀请
-        fetchingUnHandledActivityInvite(mQueryId);
+        }).listFront(mQueryId, remotePageNumber);
     }
 
     @Override
@@ -246,7 +264,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onLoadingMore() {
-        fetchingJoinedActivity(true);
+        fetchingActivities();
     }
 
     @Override
@@ -291,7 +309,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         if (requestCode == REQ_CREATE) {
-            fetchingJoinedActivity(true);
+            fetchingActivities();
         }
         super.onActivityResult(requestCode, data);
     }
@@ -310,14 +328,10 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private void initializeItems() {
         for (String string : items) {
             String text;
-            if (string.contains("%d")) {
-                // 未参加的活动
-                if (string.charAt(0) == '1') {
-                    text = format(string, 0);
-                } else {
-                    // 议题
-                    text = "";//format(string, 0);
-                }
+            // 未参加的数量、议题、空活动列表默认不显示
+            if (string.contains("%d") || string.charAt(0) == '3') {
+                // 默认不显示未参加的活动和议题两个item
+                text = "";
             } else {
                 text = string;
             }
@@ -331,32 +345,44 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
         }
         if (!isEmpty(mQueryId)) {
-            fetchingJoinedActivity(true);
+            fetchingActivities();
+        }
+    }
+
+    private boolean hasActivity() {
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            if (mAdapter.get(i) instanceof Activity) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void refreshNothingItem() {
+        // 没有活动的提醒item
+        SimpleClickableItem sci = new SimpleClickableItem(items[3]);
+        if (hasActivity()) {
+            if (mAdapter.exist(sci)) {
+                mAdapter.remove(sci);
+            }
+        } else {
+            if (!mAdapter.exist(sci)) {
+                mAdapter.add(sci);
+            }
         }
     }
 
     private void updateActivityList(List<Activity> list) {
-        if (null == list) return;
-//        for (Activity activity : list) {
-//            if (!activities.contains(activity)) {
-//                activities.add(activity);
-//            } else {
-//                int pos = activities.indexOf(activity);
-//                activities.set(pos, activity);
-//            }
-//        }
-//        Collections.sort(activities, new Comparator<Activity>() {
-//            @Override
-//            public int compare(Activity o1, Activity o2) {
-//                return -o1.getCreateDate().compareTo(o2.getCreateDate());
-//            }
-//        });
-        clearActivities();
+        if (null == list) {
+            refreshNothingItem();
+            return;
+        }
         for (Activity activity : list) {
             mAdapter.update(activity);
         }
         // 查询网易云信联系人列表，并更新相应的未读提示和最后发送的消息
         resetUnreadFlags();
+        refreshNothingItem();
     }
 
     private void clearActivities() {
@@ -388,8 +414,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
         changeSelectedActivity();
     }
 
-    //private ArrayList<Activity> activities = new ArrayList<>();
-
     private void changeSelectedActivity() {
         if (isEmpty(StructureFragment.selectedGroupId)) {
             // 组织切换时，如果当前组织不是在组织里显示的那个，则不要显示+号
@@ -416,10 +440,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
                 mainFragment.setTitleText(org.getName());
             }
-//            for (Activity activity : activities) {
-//                mAdapter.remove(activity);
-//            }
-//            activities.clear();
             clearActivities();
             refreshingItems();
         }
@@ -468,9 +488,15 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
                 }
             } else if (model instanceof SimpleClickableItem) {
+                SimpleClickableItem sci = (SimpleClickableItem) model;
                 // 打开未参加的活动列表
-                if (index == 1) {
-                    openActivity(UnApprovedInviteFragment.class.getName(), mQueryId, true, false);
+                switch (sci.getIndex()) {
+                    case 1:
+                        openActivity(UnApprovedInviteFragment.class.getName(), mQueryId, true, false);
+                        break;
+                    case 2:
+                        // 议题列表
+                        break;
                 }
             }
         }
@@ -488,7 +514,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     if (null == concernedViewHolder) {
                         concernedViewHolder = new OrgStructureViewHolder(itemView, fragment);
                         concernedViewHolder.setPageChangeListener(onPageChangeListener);
-                        concernedViewHolder.loadingLocal();
                     }
                     return concernedViewHolder;
                 default:

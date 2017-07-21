@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.organization;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -102,6 +103,19 @@ public class ArchivesFragment extends BaseOrganizationFragment {
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_DELETE) {
+            String id = getResultedData(data);
+            if (!isEmpty(id)) {
+                Archive archive = new Archive();
+                archive.setId(id);
+                mAdapter.remove(archive);
+            }
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
     /**
      * 设置新的组织id并查找该组织的档案列表
      */
@@ -199,7 +213,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
             Archive archive = mAdapter.get(index);
-            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, archive.getId()), true, false);
+            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, archive.getId()), REQUEST_DELETE, true, false);
         }
     };
 

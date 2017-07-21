@@ -37,7 +37,7 @@ public class AppNoticeRequest extends Request<AppNotice> {
 
     @Override
     protected String url(String action) {
-        return format("/activity/notice%s", action);
+        return format("/activity/actNotice%s", action);
     }
 
     @Override
@@ -65,13 +65,12 @@ public class AppNoticeRequest extends Request<AppNotice> {
      * @param content    通知内容
      */
     public void add(String activityId, String title, String content) {
-        // {title:"",content:"",accessToken:"",actId:""}
+        // {title:"",content:"",actId:""}
 
         JSONObject object = new JSONObject();
         try {
             object.put("actId", activityId)
                     .put("title", title)
-                    .put("creatorName", Cache.cache().userName)
                     .put("content", content);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -88,7 +87,7 @@ public class AppNoticeRequest extends Request<AppNotice> {
      * @param content  通知内容
      */
     public void update(String noticeId, String title, String content) {
-        // {id:"",title:"",content:"",accessToken:""}
+        // {id:"",title:"",content:""}
         JSONObject object = new JSONObject();
         try {
             object.put("id", noticeId)
@@ -99,6 +98,13 @@ public class AppNoticeRequest extends Request<AppNotice> {
         }
 
         httpRequest(getRequest(SingleNotice.class, url(UPDATE), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 删除一个通知
+     */
+    public void delete(String noticeId) {
+        httpRequest(getRequest(SingleNotice.class, format("%s?id=%s", url(DELETE), noticeId), "", HttpMethods.Get));
     }
 
     /**

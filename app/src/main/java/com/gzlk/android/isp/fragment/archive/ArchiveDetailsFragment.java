@@ -344,7 +344,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                 if (success) {
                     new Dao<>(Archive.class).delete(mQueryId);
                     // 返回成功
-                    finish();
+                    resultData(mQueryId);
                 }
             }
         }).delete(archiveType, mQueryId);

@@ -8,8 +8,11 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.api.activity.AppNoticeRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
@@ -69,13 +72,6 @@ public class NoticeDetailsFragment extends BaseTransparentSupportFragment {
         setCustomTitle(R.string.ui_activity_notice_creator_fragment_title);
         setLoadingText(R.string.ui_activity_notice_details_loading);
         setNothingText(R.string.ui_activity_notice_details_not_exists);
-        setRightIcon(R.string.ui_icon_refresh);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                loadingNotice();
-            }
-        });
         initializeHolders();
     }
 
@@ -114,6 +110,41 @@ public class NoticeDetailsFragment extends BaseTransparentSupportFragment {
         timeHolder.showContent(format(items[2], formatDateTime(notice.getCreateDate())));
         contentView.setText(notice.getContent());
         contentView.makeExpandable();
+        if (!isEmpty(notice.getCreatorId()) && notice.getCreatorId().equals(Cache.cache().userId)) {
+            setRightIconEvent();
+        }
+    }
+
+    private void setRightIconEvent() {
+        setRightText(R.string.ui_base_text_delete);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                warningDelete();
+            }
+        });
+    }
+
+    private void warningDelete() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_sing_details_delete_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                delete();
+                return true;
+            }
+        }, null);
+    }
+
+    private void delete() {
+        AppNoticeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppNotice>() {
+            @Override
+            public void onResponse(AppNotice notice, boolean success, String message) {
+                super.onResponse(notice, success, message);
+                if (success) {
+                    finish();
+                }
+            }
+        }).delete(mQueryId);
     }
 
     private void loadingNotice() {

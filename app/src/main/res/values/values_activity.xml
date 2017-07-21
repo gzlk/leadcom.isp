@@ -7,15 +7,15 @@
     <string name="ui_activity_base_not_join_in">未参加</string>
 
     <string name="ui_activity_main_not_exist_any_more">没有更多的活动了</string>
-    <string name="ui_activity_main_not_joined_text" formatted="false">1|未参加|未参加的活动|%d个活动未参加</string>
-    <string name="ui_activity_main_issue_text" formatted="false">2|议题|议题|%d个议题</string>
     <string-array name="ui_activity_home_page_items">
         <item>0|||</item>
-        <item>@string/ui_activity_main_not_joined_text</item>
-        <item>@string/ui_activity_main_issue_text</item>
+        <item>1|未参加|未参加的活动|%d个活动未参加</item>
+        <item>2|议题|议题|%d个议题</item>
+        <item>3|活动|目前没有活动|没有可参与的活动</item>
     </string-array>
 
     <string name="ui_activity_un_handled_invite_fragment_title">@string/ui_activity_base_not_join_in</string>
+    <string name="ui_activity_fetching_front_list">正在加载活动列表&#8230;</string>
     <string name="ui_activity_unhandled_invite_nothing">目前没有更多待处理的内容</string>
     <string name="ui_activity_unhandled_invite_loading">正在加载未处理的活动邀请，请稍候&#8230;</string>
 

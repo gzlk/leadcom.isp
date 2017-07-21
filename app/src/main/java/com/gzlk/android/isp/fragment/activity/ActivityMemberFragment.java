@@ -26,6 +26,8 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.organization.GroupsContactPickerFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.activity.ActivityMemberViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
@@ -61,6 +63,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_MASTER = "amf_member_is_master";
     private static final String PARAM_GROUP_ID = "amf_group_id";
     private static final String PARAM_FOR_PICKER = "amf_for_picker";
+    private static final String PARAM_DIAL_INDEX = "amf_dial_index";
 
     public static ActivityMemberFragment newInstance(String params) {
         ActivityMemberFragment amf = new ActivityMemberFragment();
@@ -82,6 +85,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         isMaster = bundle.getBoolean(PARAM_MASTER, false);
         groupId = bundle.getString(PARAM_GROUP_ID, "");
         forPicker = bundle.getBoolean(PARAM_FOR_PICKER, false);
+        dialIndex = bundle.getInt(PARAM_DIAL_INDEX, -1);
     }
 
     @Override
@@ -90,6 +94,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putBoolean(PARAM_MASTER, isMaster);
         bundle.putBoolean(PARAM_FOR_PICKER, forPicker);
         bundle.putString(PARAM_GROUP_ID, groupId);
+        bundle.putInt(PARAM_DIAL_INDEX, dialIndex);
     }
 
     private MembersAdapter mAdapter;
@@ -99,6 +104,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     private boolean isMaster = false;
     // 是否是活动成员拾取
     private boolean forPicker = false;
+    private int dialIndex = -1;
 
     @Override
     protected void onSwipeRefreshing() {
@@ -321,6 +327,38 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }).activityKickOut(member.getActId(), member.getUserId());
     }
 
+    private ContactViewHolder.OnPhoneDialListener phoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
+        @Override
+        public void onDial(int index) {
+            dialIndex = index;
+            requestPhoneCallPermission();
+        }
+    };
+
+    @Override
+    public void permissionGranted(String[] permissions, int requestCode) {
+        super.permissionGranted(permissions, requestCode);
+        if (requestCode == GRANT_PHONE_CALL) {
+            warningDial();
+        }
+    }
+
+    private void warningDial() {
+        if (dialIndex < 0) return;
+        final String text = mAdapter.get(dialIndex).getPhone();
+        if (!isEmpty(text)) {
+            String yes = getString(R.string.ui_base_text_dial);
+            String no = getString(R.string.ui_base_text_cancel);
+            SimpleDialogHelper.init(Activity()).show(text, yes, no, new DialogHelper.OnDialogConfirmListener() {
+                @Override
+                public boolean onConfirm() {
+                    dialPhone(text);
+                    return true;
+                }
+            }, null);
+        }
+    }
+
     /**
      * 根据加入时间排序
      */
@@ -383,8 +421,12 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             // 显示拾取器
             holder.showPicker(forPicker);
             holder.button2Text(R.string.ui_base_text_kick_out);
+            // 打开个人名片
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
+            // 踢出成员
             holder.setOnUserDeleteListener(onUserDeleteListener);
+            // 拨号
+            holder.setOnPhoneDialListener(phoneDialListener);
             return holder;
         }
 

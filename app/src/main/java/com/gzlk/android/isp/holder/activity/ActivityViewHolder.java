@@ -70,10 +70,11 @@ public class ActivityViewHolder extends BaseViewHolder {
         titleView.setText(strings[2]);
         timeView.setText(null);
         descView.setText(strings[3]);
+        descView.setVisibility(isEmpty(strings[3]) ? View.GONE : View.VISIBLE);
         headers.setVisibility(View.GONE);
         iconText.setVisibility(View.VISIBLE);
-        flagView.setVisibility(strings[3].charAt(0) == '0' ? View.GONE : View.VISIBLE);
-        iconContainer.setBackground(getColor(text.charAt(0) == '1' ? R.color.color_fe4848 : R.color.color_faaa2d));
+        flagView.setVisibility(strings[3].charAt(0) == '0' ? View.GONE : (text.charAt(0) == '3' ? View.GONE : View.VISIBLE));
+        iconContainer.setBackground(getColor(text.charAt(0) == '2' ? R.color.color_faaa2d : R.color.color_fe4848));
     }
 
     public void showContent(Invitation invitation) {
