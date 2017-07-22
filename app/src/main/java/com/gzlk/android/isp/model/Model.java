@@ -44,6 +44,10 @@ public class Model extends BaseModel {
         return StringHelper.isEmpty(string);
     }
 
+    protected static String format(String fmt, Object... args) {
+        return StringHelper.format(fmt, args);
+    }
+
     @PrimaryKey(AssignType.BY_MYSELF)
     @NotNull
     @Column(Field.Id)

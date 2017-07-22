@@ -53,6 +53,8 @@ public class Activity extends Model {
         String ActivityId = "activityId";
         String ActivityName = "activityName";
         String ActivityImage = "activityImage";
+        String IsLocalStorage="isLocalStorage";
+        String UsedTimes="usedTimes";
     }
 
     /**
@@ -250,7 +252,7 @@ public class Activity extends Model {
 
     private void fetchingLabels() {
         if (null == labels) {
-            labels = (ArrayList<Label>) Label.getLabels(label);
+            labels = (ArrayList<Label>) Label.getLabelsById(label);
         }
     }
 

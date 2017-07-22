@@ -12,12 +12,14 @@ import com.github.angads25.filepicker.controller.DialogSelectionListener;
 import com.github.angads25.filepicker.model.DialogConfigs;
 import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.CoverPickFragment;
+import com.gzlk.android.isp.fragment.activity.LabelPickFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -26,8 +28,11 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.common.Seclusion;
@@ -61,6 +66,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_TITLE = "dnf_title";
     private static final String PARAM_SOURCE = "dnf_source";
     private static final String PARAM_COVER = "anf_cover";
+    private static final String PARAM_LABEL = "anf_label";
 
     public static ArchiveCreatorFragment newInstance(String params) {
         ArchiveCreatorFragment dnf = new ArchiveCreatorFragment();
@@ -87,6 +93,8 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
         title = bundle.getString(PARAM_TITLE, "");
         source = bundle.getString(PARAM_SOURCE, "");
         cover = bundle.getString(PARAM_COVER, "");
+        labelJson = bundle.getString(PARAM_LABEL, "[]");
+        resetLabels();
     }
 
     @Override
@@ -100,6 +108,15 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
         source = sourceHolder.getValue();
         bundle.putString(PARAM_SOURCE, source);
         bundle.putString(PARAM_COVER, cover);
+        bundle.putString(PARAM_LABEL, labelJson);
+    }
+
+    private void resetLabels() {
+        labels = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
+        }.getType());
+        if (null == labels) {
+            labels = new ArrayList<>();
+        }
     }
 
     // UI
@@ -113,6 +130,8 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private View timeView;
     @ViewId(R.id.ui_archive_creator_security)
     private View securityView;
+    @ViewId(R.id.ui_archive_creator_label)
+    private View labelView;
     @ViewId(R.id.ui_archive_creator_introduction)
     private ClearEditText introductionView;
     @ViewId(R.id.ui_archive_creator_attachments_layout)
@@ -124,13 +143,14 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private SimpleInputableViewHolder sourceHolder;
     private SimpleClickableViewHolder timeHolder;
     private SimpleClickableViewHolder securityHolder;
+    private SimpleClickableViewHolder labelHolder;
 
     // data
     private String[] strings;
     private FileAdapter mAdapter;
     private int archiveType;
     private String archiveGroup;
-    private String privacy, title, source, cover;
+    private String privacy, title, source, cover, labelJson = "[]";
     // 文件选择
     private FilePickerDialog filePickerDialog;
 
@@ -140,14 +160,22 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private static final int REQ_COVER = ACTIVITY_BASE_REQUEST + 11;
+    private static final int REQ_LABEL = REQ_COVER + 1;
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == PrivacyFragment.REQUEST_SECURITY) {
-            // 隐私设置返回了
-            privacy = getResultedData(data);
-        } else if (requestCode == REQ_COVER) {
-            cover = getResultedData(data);
+        switch (requestCode) {
+            case PrivacyFragment.REQUEST_SECURITY:
+                // 隐私设置返回了
+                privacy = getResultedData(data);
+                break;
+            case REQ_COVER:
+                cover = getResultedData(data);
+                break;
+            case REQ_LABEL:
+                labelJson = getResultedData(data);
+                resetLabels();
+                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -235,7 +263,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(cover, title, intro, seclusion.getStatus(), labels, office, images, video, attach);
+        }).add(cover, title, intro, seclusion.getStatus(), happenDate, labels, office, images, video, attach);
     }
 
     private ArrayList<String> labels = new ArrayList<>();
@@ -276,7 +304,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).add(archiveGroup, Archive.ArchiveType.NORMAL, cover, title, intro,
+        }).add(archiveGroup, Archive.ArchiveType.NORMAL, cover, title, intro, happenDate,
                 labels, sec.getUserIds(), sec.getStatus(), office, images, video, attach);
     }
 
@@ -300,7 +328,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, cover, title, content, seclusion.getStatus(), labels, office, images, video, attach);
+        }).update(mQueryId, cover, title, content, seclusion.getStatus(), happenDate, labels, office, images, video, attach);
     }
 
     private void editOrganizationArchive(String title, String content) {
@@ -315,7 +343,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).update(mQueryId, cover, title, content, labels, seclusion.getUserIds(), seclusion.getStatus(), office, images, video, attach);
+        }).update(mQueryId, cover, title, content, labels, seclusion.getUserIds(), seclusion.getStatus(), happenDate, office, images, video, attach);
     }
 
     @Override
@@ -394,7 +422,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 档案发生时间
      */
-    private String happenDate = "";
+    private String happenDate = Model.DFT_DATE;
 
     private void initializeHolders(Archive archive) {
         happenDate = null == archive ? "" : archive.getHappenDate();
@@ -441,7 +469,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
         }
         sourceHolder.showContent(format(strings[2], source));
 
-        // 时间
+        // 发生时间
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
             timeHolder.addOnViewHolderClickListener(viewHolderClickListener);
@@ -454,6 +482,17 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
             securityHolder.addOnViewHolderClickListener(viewHolderClickListener);
         }
         securityHolder.showContent(format(strings[4], PrivacyFragment.getPrivacy(PrivacyFragment.getSeclusion(privacy))));
+
+        // 标签
+        if (null == labelHolder) {
+            labelHolder = new SimpleClickableViewHolder(labelView, this);
+            labelHolder.addOnViewHolderClickListener(viewHolderClickListener);
+            if (null != archive) {
+                labels = Label.getLabelNames(archive.getLabel());
+            }
+        }
+        String tmp = labels.size() < 1 ? "选择标签" : Label.getLabelDesc(labels);
+        labelHolder.showContent(format(strings[5], tmp));
 
         // 简介
         introductionView.setValue(null == archive ? "" : StringHelper.escapeFromHtml(archive.getIntro()));
@@ -538,6 +577,13 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                         PrivacyFragment.open(ArchiveCreatorFragment.this, StringHelper.replaceJson(json, false), false);
                         //openActivity(PrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
                     }
+                    break;
+                case 3:
+                    // 标签
+                    labelJson = Json.gson().toJson(labels);
+                    String string = replaceJson(labelJson, false);
+                    LabelPickFragment.open(ArchiveCreatorFragment.this, REQ_LABEL, archiveGroup, "", LabelPickFragment.TYPE_ARCHIVE, string);
+                    //openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
                     break;
             }
         }

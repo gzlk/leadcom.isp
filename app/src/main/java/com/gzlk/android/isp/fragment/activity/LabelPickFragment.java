@@ -14,11 +14,12 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActLabelRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.activity.ActivityLabelViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.activity.ActivityLabelViewHolder;
 import com.gzlk.android.isp.holder.common.TextViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
@@ -45,6 +46,16 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_SELECTED_NAMES = "lpf_selected_label_names";
     private static final String PARAM_ACT_ID = "lpf_activity_id";
+    private static final String PARAM_LABEL_TYPE = "lpf_label_type";
+
+    /**
+     * 活动标签
+     */
+    public static final int TYPE_ACTIVITY = 1;
+    /**
+     * 档案标签
+     */
+    public static final int TYPE_ARCHIVE = 2;
 
     public static LabelPickFragment newInstance(String params) {
         LabelPickFragment lpf = new LabelPickFragment();
@@ -54,10 +65,17 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_QUERY_ID, strings[0]);
         // 活动的id
         bundle.putString(PARAM_ACT_ID, strings[1]);
+        // 标签类型
+        bundle.putInt(PARAM_LABEL_TYPE, Integer.valueOf(strings[2]));
         // 已选择了的标签列表
-        bundle.putString(PARAM_SELECTED_NAMES, replaceJson(strings[2], true));
+        bundle.putString(PARAM_SELECTED_NAMES, replaceJson(strings[3], true));
         lpf.setArguments(bundle);
         return lpf;
+    }
+
+    public static void open(BaseFragment fragment, int req, String groupId, String activityId, int type, String selected) {
+        String params = format("%s,%s,%d,%s", groupId, activityId, type, selected);
+        fragment.openActivity(LabelPickFragment.class.getName(), params, req, true, false);
     }
 
     @Override
@@ -74,6 +92,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         labelNames = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
         }.getType());
         activityId = bundle.getString(PARAM_ACT_ID, "");
+        mType = bundle.getInt(PARAM_LABEL_TYPE, TYPE_ACTIVITY);
     }
 
     @Override
@@ -81,11 +100,13 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_SELECTED_NAMES, Json.gson().toJson(labelNames));
         bundle.putString(PARAM_ACT_ID, activityId);
+        bundle.putInt(PARAM_LABEL_TYPE, mType);
     }
 
     private String activityId;
     private ArrayList<String> labelNames;
     private LabelAdapter mAdapter;
+    private int mType;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -94,7 +115,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_activity_label_picker_fragment_title);
+        setCustomTitle(mType == TYPE_ACTIVITY ? R.string.ui_activity_label_picker_fragment_title : R.string.ui_text_document_label_picker_fragment_title);
         setRightText(R.string.ui_base_text_finish);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
@@ -114,6 +135,9 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 if (!labelNames.contains(label.getName())) {
                     labelNames.add(label.getName());
                 }
+                // 使用次数加1
+                label.setSignaNum(label.getSignaNum() + 1);
+                Label.save(label);
             }
         }
         resultData(Json.gson().toJson(labelNames));
@@ -187,54 +211,32 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }
+        readLocals();
     }
 
     private void setTestData() {
         mAdapter.add(new Model() {{
             setId("热门标签");
         }});
-//        mAdapter.add(new Label() {{
-//            setId("1");
-//            setSelected(labelNames.contains(getId()));
-//            setName("参政议政");
-//        }});
-//        mAdapter.add(new Label() {{
-//            setId("2");
-//            setSelected(labelNames.contains(getId()));
-//            setName("学习文件精神");
-//        }});
-//        mAdapter.add(new Label() {{
-//            setId("3");
-//            setSelected(labelNames.contains(getId()));
-//            setName("宣传报道");
-//        }});
-//        mAdapter.add(new Label() {{
-//            setId("4");
-//            setSelected(labelNames.contains(getId()));
-//            setName("通知理论");
-//        }});
-//        mAdapter.add(new Label() {{
-//            setId("5");
-//            setSelected(labelNames.contains(getId()));
-//            setName("社会实践");
-//        }});
-//        mAdapter.add(new Label() {{
-//            setId("6");
-//            setSelected(labelNames.contains(getId()));
-//            setName("上山下乡");
-//        }});
-//        mAdapter.add(new Label() {{
-//            setId("7");
-//            setSelected(labelNames.contains(getId()));
-//            setName("调研");
-//        }});
         mAdapter.add(new Model() {{
             setId("其他");
         }});
         mAdapter.add(new Label() {{
             setId("0");
-            setName("自定义");
+            setName("+自定义");
         }});
+    }
+
+    private void readLocals() {
+        List<Label> locals = Label.getLocal();
+        if (null != locals) {
+            for (Label label : locals) {
+                label.setSelected(labelNames.contains(label.getName()));
+                if (!mAdapter.exist(label)) {
+                    mAdapter.add(label);
+                }
+            }
+        }
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
@@ -271,7 +273,6 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     private ClearEditText labelName;
 
     private void openCreateDialog() {
-        ToastHelper.make().showMsg("目前api暂时不能添加自定义标签");
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override
             public View onInitializeView() {
@@ -280,6 +281,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                             .inflate(R.layout.popup_dialog_activity_label_creator, null, false);
                     labelName = (ClearEditText) dialogView.findViewById(R.id.ui_dialog_activity_label_creator_name);
                 }
+                labelName.setValue("");
                 return dialogView;
             }
 
@@ -290,13 +292,9 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
+                Utils.hidingInputBoard(labelName);
                 createLabel();
                 return true;
-            }
-        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
-            @Override
-            public void onDismiss() {
-                Utils.hidingInputBoard(labelName);
             }
         }).setPopupType(DialogHelper.TYPE_SLID).show();
     }
@@ -307,10 +305,13 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 ToastHelper.make().showMsg("无效的活动类型");
                 return;
             }
-            mAdapter.add(new Label() {{
-                setId(String.valueOf(mAdapter.getItemCount() - 2));
-                setName(labelName.getValue());
-            }}, mAdapter.getItemCount() - 2);
+            Label label = new Label();
+            label.setId(String.valueOf(Utils.timestamp()));
+            // 本地新建的标签
+            label.setLocal(true);
+            label.setName(labelName.getValue());
+            Label.save(label);
+            mAdapter.add(label);
         }
     }
 
@@ -338,6 +339,18 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
+        public int getItemSpanSize(int position) {
+//            Model model = get(position);
+//            if (model instanceof Label) {
+//                Label label = (Label) model;
+//                return (!isEmpty(label.getName()) && label.getName().length() > 4) ? 2 : 1;
+//            } else {
+//                return 1;
+//            }
+            return super.getItemSpanSize(position);
+        }
+
+        @Override
         public int getItemViewType(int position) {
             return (get(position) instanceof Label) ? VT_LABEL : VT_TITLE;
         }
@@ -347,12 +360,12 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
             return viewType == VT_LABEL ? R.layout.holder_view_activity_label : R.layout.holder_view_text_olny;
         }
 
-        private void resizeWidth(View itemView) {
+        private void resizeWidth(View itemView, int position) {
             int dimen = getDimension(R.dimen.ui_base_border_size_normal);
             int margin = getDimension(R.dimen.ui_static_dp_1);
             int width = (getScreenWidth() - (dimen * gridSpanCount) - margin * 8) / gridSpanCount;
             ViewGroup.LayoutParams params = itemView.getLayoutParams();
-            params.width = width;
+            params.width = width * getItemSpanSize(position);
             itemView.setLayoutParams(params);
         }
 
@@ -364,7 +377,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 assert item != null;
                 ((TextViewHolder) holder).showContent(item.getId());
             }
-            resizeWidth(holder.itemView);
+            resizeWidth(holder.itemView, position);
         }
 
         @Override

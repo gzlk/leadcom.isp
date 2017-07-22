@@ -9,7 +9,7 @@
     <string name="ui_activity_main_not_exist_any_more">没有更多的活动了</string>
     <string-array name="ui_activity_home_page_items">
         <item>0|||</item>
-        <item>1|未参加|未参加的活动|%d个活动未参加</item>
+        <item>1|待处理|待处理活动|%d个待处理活动</item>
         <item>2|议题|议题|%d个议题</item>
         <item>3|活动|目前没有活动|没有可参与的活动</item>
     </string-array>
@@ -194,6 +194,7 @@
     <string name="ui_activity_sign_creator_content_invalid">签到描述不符合要求</string>
     <string name="ui_activity_sign_creator_begin_time_invalid">请提供签到开始时间</string>
     <string name="ui_activity_sign_creator_end_time_invalid">请提供签到截止时间</string>
+    <string name="ui_activity_sign_creator_end_time_invalid1">签到开始和截止时间不符合要求</string>
     <string name="ui_activity_sign_creator_notify_times_not_need">不需要提醒</string>
     <string name="ui_activity_sign_creator_notify_times" formatted="false">%d分钟</string>
     <string-array name="ui_activity_sign_creator_items">

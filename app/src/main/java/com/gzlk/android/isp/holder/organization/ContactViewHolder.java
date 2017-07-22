@@ -184,7 +184,7 @@ public class ContactViewHolder extends BaseViewHolder {
                     buttonInvite.setText(R.string.ui_phone_contact_invited);
                 } else {
                     buttonInvite.setEnabled(!member.isSelected());
-                    buttonInvite.setText(member.isSelected() ? R.string.ui_phone_contact_inviting : R.string.ui_phone_contact_invite);
+                    buttonInvite.setText(member.isSelected() ? R.string.ui_phone_contact_invited : R.string.ui_phone_contact_add);
                 }
             }
         }

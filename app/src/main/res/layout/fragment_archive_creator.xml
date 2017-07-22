@@ -29,11 +29,14 @@
 
         <include
             android:id="@+id/ui_archive_creator_happen_date"
-            layout="@layout/holder_view_simple_clickable"
-            android:visibility="gone" />
+            layout="@layout/holder_view_simple_clickable" />
 
         <include
             android:id="@+id/ui_archive_creator_security"
+            layout="@layout/holder_view_simple_clickable" />
+
+        <include
+            android:id="@+id/ui_archive_creator_label"
             layout="@layout/holder_view_simple_clickable" />
 
     </com.hlk.hlklib.lib.view.CorneredView>

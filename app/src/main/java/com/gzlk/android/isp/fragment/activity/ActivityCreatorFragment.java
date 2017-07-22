@@ -378,16 +378,10 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
             typeHolder = new SimpleClickableViewHolder(typeView, this);
             typeHolder.addOnViewHolderClickListener(onViewHolderClickListener);
             if (!non) {
-                if (null != activity.getLabel() && activity.getLabel().size() > 1) {
-                    for (String name : activity.getLabel()) {
-                        if (!labelsNames.contains(name)) {
-                            labelsNames.add(name);
-                        }
-                    }
-                }
+                labelsNames = Label.getLabelNames(activity.getLabel());
             }
         }
-        String tmp = labelsNames.size() < 1 ? "选择标签" : getLabels();
+        String tmp = labelsNames.size() < 1 ? "选择标签" : Label.getLabelDesc(labelsNames);
         value = format(items[4], tmp);
         typeHolder.showContent(value);
 
@@ -439,19 +433,6 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         }
         updateActivityAttachment(activity);
         createFilePickerDialog();
-    }
-
-    private String getLabels() {
-        //format("%d个标签", labelsNames.size()
-        String ret = "";
-        for (String name : labelsNames) {
-            Label label = Label.getLabel(name);
-            if (null != label && !isEmpty(label.getName())) {
-                ret += (isEmpty(ret) ? "" : "、") + label.getName();
-            }
-        }
-        ret += format("共%d个标签", labelsNames.size());
-        return ret;
     }
 
     private ArrayList<Attachment> attachments;
@@ -508,8 +489,9 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 case 2:
                     // 选择活动标签
                     labelJson = Json.gson().toJson(labelsNames);
-                    String string = format("%s,%s,%s", mGroupId, mQueryId, replaceJson(labelJson, false));
-                    openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
+                    String json = replaceJson(labelJson, false);
+                    LabelPickFragment.open(ActivityCreatorFragment.this, REQ_LABEL, mGroupId, mQueryId, LabelPickFragment.TYPE_ACTIVITY, json);
+                    //openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
                     break;
                 case 3:
                     // 选择公开范围

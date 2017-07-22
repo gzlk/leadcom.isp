@@ -91,8 +91,10 @@
         <item>档案来源：|%s|来源|||10</item>
         <item>1|发生时间：|%s|1</item>
         <item>2|公开|%s|1</item>
+        <item>3|标签|%s|1</item>
     </string-array>
     <string name="ui_text_document_picker_title">请选择：</string>
+    <string name="ui_text_document_label_picker_fragment_title">标签</string>
     <string name="ui_text_document_create_title_invalid">标题不能为空</string>
     <string name="ui_text_document_create_introduction_invalid">写点简介吧</string>
     <string name="ui_text_document_create_creating">正在创建新档案，请稍候&#8230;</string>

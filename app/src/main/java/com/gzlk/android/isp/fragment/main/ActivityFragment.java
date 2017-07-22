@@ -253,11 +253,14 @@ public class ActivityFragment extends BaseOrganizationFragment {
             } else {
                 mAdapter.add(item, item.getIndex());
             }
+            // 有待处理活动时，删除没有活动的提醒
+            resetNothingItem(true);
             //mAdapter.notifyItemChanged(1);
         } else {
             if (mAdapter.exist(item)) {
                 mAdapter.remove(item);
             }
+            refreshNothingItem();
         }
         displayLoading(false);
     }
@@ -359,9 +362,13 @@ public class ActivityFragment extends BaseOrganizationFragment {
     }
 
     private void refreshNothingItem() {
+        resetNothingItem(hasActivity());
+    }
+
+    private void resetNothingItem(boolean remove) {
         // 没有活动的提醒item
         SimpleClickableItem sci = new SimpleClickableItem(items[3]);
-        if (hasActivity()) {
+        if (remove) {
             if (mAdapter.exist(sci)) {
                 mAdapter.remove(sci);
             }
@@ -374,15 +381,14 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     private void updateActivityList(List<Activity> list) {
         if (null == list) {
-            refreshNothingItem();
             return;
         }
+        //list.clear();
         for (Activity activity : list) {
             mAdapter.update(activity);
         }
         // 查询网易云信联系人列表，并更新相应的未读提示和最后发送的消息
         resetUnreadFlags();
-        refreshNothingItem();
     }
 
     private void clearActivities() {

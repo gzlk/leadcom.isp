@@ -9,6 +9,8 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
@@ -32,6 +34,7 @@ import java.util.List;
 public class OrganizationContactFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_TITLE = "ocf_param_title";
+    private static final String PARAM_DIAL_INDEX = "ocf_dial_index";
 
     public static OrganizationContactFragment newInstance(String params) {
         OrganizationContactFragment ocf = new OrganizationContactFragment();
@@ -52,15 +55,18 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mTitle = bundle.getString(PARAM_TITLE, "");
+        dialIndex = bundle.getInt(PARAM_DIAL_INDEX, -1);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_TITLE, mTitle);
+        bundle.putInt(PARAM_DIAL_INDEX, dialIndex);
     }
 
     private String mTitle = "";
+    private int dialIndex = -1;
     private ContactAdapter mAdapter;
 
     @Override
@@ -161,6 +167,38 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         }).inviteToSquad(mSquadId, member.getUserId(), "");
     }
 
+    private ContactViewHolder.OnPhoneDialListener phoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
+        @Override
+        public void onDial(int index) {
+            dialIndex = index;
+            requestPhoneCallPermission();
+        }
+    };
+
+    @Override
+    public void permissionGranted(String[] permissions, int requestCode) {
+        super.permissionGranted(permissions, requestCode);
+        if (requestCode == GRANT_PHONE_CALL) {
+            warningDial();
+        }
+    }
+
+    private void warningDial() {
+        if (dialIndex < 0) return;
+        final String text = mAdapter.get(dialIndex).getPhone();
+        if (!isEmpty(text)) {
+            String yes = getString(R.string.ui_base_text_dial);
+            String no = getString(R.string.ui_base_text_cancel);
+            SimpleDialogHelper.init(Activity()).show(text, yes, no, new DialogHelper.OnDialogConfirmListener() {
+                @Override
+                public boolean onConfirm() {
+                    dialPhone(text);
+                    return true;
+                }
+            }, null);
+        }
+    }
+
     private class ContactAdapter extends RecyclerViewAdapter<ContactViewHolder, Member> {
 
         @Override
@@ -172,6 +210,10 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
                 holder.addOnViewHolderClickListener(onViewHolderClickListener);
             } else {
                 holder.addOnHandlerBoundDataListener(onHandlerBoundDataListener);
+            }
+            if (!isEmpty(mTitle)) {
+                // 关注的组织成员列表时，可以拨号
+                holder.setOnPhoneDialListener(phoneDialListener);
             }
             return holder;
         }

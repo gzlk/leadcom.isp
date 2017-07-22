@@ -159,6 +159,12 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_creator_end_time_invalid);
             return;
         }
+        long begin = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getBeginTime()).getTime();
+        long end = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getEndTime()).getTime();
+        if (end < begin) {
+            ToastHelper.make().showMsg(R.string.ui_activity_sign_creator_end_time_invalid1);
+            return;
+        }
         publishSign();
     }
 

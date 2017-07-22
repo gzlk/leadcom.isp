@@ -5,6 +5,7 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +23,11 @@ import java.util.List;
 @Table(Activity.Table.LABEL)
 public class Label extends Model {
 
-    public static List<Label> getLabels(String activityId) {
+    public static List<Label> getLabelsByActivityId(String activityId) {
         return new Dao<>(Label.class).query(Activity.Field.ActivityId, activityId);
     }
 
-    public static List<Label> getLabels(List<String> ids) {
+    public static List<Label> getLabelsById(List<String> ids) {
         if (null != ids && ids.size() > 0) {
             return new Dao<>(Label.class).in(Model.Field.Id, ids);
         }
@@ -35,6 +36,47 @@ public class Label extends Model {
 
     public static Label getLabel(String labelName) {
         return new Dao<>(Label.class).querySingle(Field.Name, labelName);
+    }
+
+    /**
+     * 查找本地保存的自定义标签列表(使用次数最多的10个)
+     */
+    public static List<Label> getLocal() {
+        QueryBuilder<Label> builder = new QueryBuilder<>(Label.class)
+                .whereEquals(Activity.Field.IsLocalStorage, true)
+                .appendOrderDescBy(Activity.Field.UsedTimes).limit(0, 10);
+        return new Dao<>(Label.class).query(builder);
+    }
+
+    public static void save(Label label) {
+        new Dao<>(Label.class).save(label);
+    }
+
+    public static ArrayList<String> getLabelNames(ArrayList<String> labels) {
+        ArrayList<String> list = new ArrayList<>();
+        if (null != labels && labels.size() > 0) {
+            for (String label : labels) {
+                if (!list.contains(label)) {
+                    list.add(label);
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 获取指定标签的说明文字（如xxx、xxx等x个标签）
+     */
+    public static String getLabelDesc(ArrayList<String> labels) {
+        String ret = "";
+        for (String name : labels) {
+            Label label = Label.getLabel(name);
+            if (null != label && !isEmpty(label.getName())) {
+                ret += (isEmpty(ret) ? "" : "、") + label.getName();
+            }
+        }
+        ret += format("共%d个标签", labels.size());
+        return ret;
     }
 
     //名称
@@ -46,7 +88,11 @@ public class Label extends Model {
     //活动id
     @Column(Activity.Field.ActivityId)
     private String actId;
-
+    //是否本地保存的标签
+    @Column(Activity.Field.IsLocalStorage)
+    private boolean isLocal;
+    // 使用次数
+    @Column(Activity.Field.UsedTimes)
     private int signaNum;
 
     public String getName() {
@@ -79,5 +125,13 @@ public class Label extends Model {
 
     public void setSignaNum(int signaNum) {
         this.signaNum = signaNum;
+    }
+
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(boolean local) {
+        isLocal = local;
     }
 }
