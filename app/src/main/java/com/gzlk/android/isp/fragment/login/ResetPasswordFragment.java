@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.SystemRequest;
+import com.gzlk.android.isp.api.common.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;

@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.SystemRequest;
+import com.gzlk.android.isp.api.common.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.DialogHelper;

@@ -6,10 +6,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.SystemRequest;
+import com.gzlk.android.isp.api.common.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.user.UserRequest;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.TimeCounter;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
