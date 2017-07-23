@@ -47,6 +47,9 @@ public class Moment extends Additional {
     //图片
     @Column(Archive.Field.Image)
     private ArrayList<String> image;
+    // 我是否已赞
+    @Ignore
+    private boolean myPraised;
 
     public String getUserId() {
         return userId;
@@ -114,5 +117,13 @@ public class Moment extends Additional {
 
     public void setImage(ArrayList<String> image) {
         this.image = image;
+    }
+
+    public boolean isMyPraised() {
+        return myPraised;
+    }
+
+    public void setMyPraised(boolean myPraised) {
+        this.myPraised = myPraised;
     }
 }

@@ -56,6 +56,7 @@
     <string name="ui_icon_radio_selected">&#xe61b;</string>
     <string name="ui_icon_radio_unselected">&#xe645;</string>
     <string name="ui_icon_radio_disabled">&#xe6e5;</string>
+    <string name="ui_icon_heart">&#xe681;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>

@@ -95,6 +95,20 @@ public abstract class BaseTitleSupportFragment extends BaseFragment {
     }
 
     /**
+     * 设置小标题文字
+     */
+    public void setSubTitle(int resId) {
+        ((TitleActivity) Activity()).setSubTitle(resId);
+    }
+
+    /**
+     * 设置小标题文字
+     */
+    public void setSubTitle(String title) {
+        ((TitleActivity) Activity()).setSubTitle(title);
+    }
+
+    /**
      * 设置标题栏右边文字
      */
     public void setRightText(int resId) {

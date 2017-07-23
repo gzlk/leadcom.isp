@@ -43,7 +43,7 @@ public class Member extends Leaguer {
         String GROUP_DOC_MANAGER_ROLE_CODE = "66a2932a2d5c435bb95a3dc42b435f4e";    //档案管理员
         String GROUP_SQUAD_MANAGER_ROLE_CODE = "b76a597176ba465e8fd306bb91cb7f3c";  //小组管理员
         //组织成员角色名称
-        String GROUP_MANAGER_ROLE_NAME = "群管理员";
+        String GROUP_MANAGER_ROLE_NAME = "组织管理员";
         String GROUP_COMMON_MEMBER_ROLE_NAME = "普通成员";
         String GROUP_DOC_MANAGER_ROLE_NAME = "档案管理员";
         String GROUP_SQUAD_MANAGER_ROLE_NAME = "小组管理员";

@@ -9,7 +9,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
-import com.gzlk.android.isp.fragment.individual.MomentDetailsFragment;
+import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
@@ -249,7 +249,7 @@ public class MomentViewHolder extends BaseViewHolder {
                 ((BaseImageSelectableSupportFragment) fragment()).openImageSelector(true);
             } else {
                 // 默认显示第一张图片
-                openActivity(MomentDetailsFragment.class.getName(), format("%s,0", moment.getId()), false, false, true);
+                openActivity(MomentImagesFragment.class.getName(), format("%s,0", moment.getId()), true, false);
             }
         }
     }

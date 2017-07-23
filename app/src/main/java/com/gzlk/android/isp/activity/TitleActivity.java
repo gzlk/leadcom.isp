@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -49,6 +50,8 @@ public class TitleActivity extends BaseActivity {
     public CustomTextView mRightIcon;
     @ViewId(R.id.ui_ui_custom_title_text)
     public TextView mTitle;
+    @ViewId(R.id.ui_ui_custom_title_text_sub)
+    public TextView mSubTitle;
 
     /**
      * 是否支持Toolbar
@@ -308,6 +311,37 @@ public class TitleActivity extends BaseActivity {
     private void setTitleText(String text) {
         if (null != mTitle) {
             mTitle.setText(text);
+        }
+    }
+
+    /**
+     * 设置小标题文字
+     */
+    public void setSubTitle(int resId) {
+        if (resId == 0) {
+            setSubTitleText(null);
+        } else {
+            setSubTitle(getString(resId));
+        }
+    }
+
+    /**
+     * 设置小标题文字
+     */
+    public void setSubTitle(String title) {
+        if (null == mSubTitle) {
+            tryBindViews();
+        }
+        setSubTitleText(title);
+    }
+
+    /**
+     * 设置小标题文字
+     */
+    private void setSubTitleText(String text) {
+        if (null != mSubTitle) {
+            mSubTitle.setText(text);
+            mSubTitle.setVisibility(StringHelper.isEmpty(text) ? View.GONE : View.VISIBLE);
         }
     }
 

@@ -24,7 +24,11 @@
 
     <include layout="@layout/tool_view_divider_big" />
 
-    <include layout="@layout/tool_view_half_line_horizontal" />
+    <include
+        layout="@layout/tool_view_half_line_horizontal"
+        android:visibility="gone" />
 
-    <include layout="@layout/holder_view_simple_clickable" />
+    <include
+        layout="@layout/holder_view_simple_clickable"
+        android:visibility="gone" />
 </LinearLayout>

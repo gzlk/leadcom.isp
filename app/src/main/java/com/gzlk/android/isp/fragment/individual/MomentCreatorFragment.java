@@ -103,7 +103,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_moment_new;
+        return R.layout.fragment_individual_moment_creator;
     }
 
     @Override
@@ -162,7 +162,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private OnImageCompressedListener onImageCompressedListener = new OnImageCompressedListener() {
         @Override
         public void onCompressed(ArrayList<String> compressed) {
-            uploadFiles();
+            //uploadFiles();
         }
     };
 
@@ -235,7 +235,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             // 图片选择后的回调
             addOnImageSelectedListener(albumImageSelectedListener);
             // 图片压缩完毕后的回调处理
-            setOnImageCompressedListener(onImageCompressedListener);
+            //setOnImageCompressedListener(onImageCompressedListener);
             // 文件上传完毕后的回调处理
             setOnFileUploadingListener(mOnFileUploadingListener);
             // 不需要下拉加载更多

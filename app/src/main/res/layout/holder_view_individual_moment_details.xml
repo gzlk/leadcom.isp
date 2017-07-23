@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/ui_base_dimen_margin_padding">
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_holder_view_moment_details_header"
+        android:layout_width="@dimen/ui_base_user_header_image_size"
+        android:layout_height="@dimen/ui_base_user_header_image_size"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        app:id_image_scale_type="centerCrop"
+        app:id_image_src="@mipmap/img_default_user_header"
+        app:id_image_type="normal"
+        app:id_show_header="true" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ui_holder_view_moment_details_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name_default" />
+
+        <com.gzlk.android.isp.lib.view.ExpandableTextView
+            android:id="@+id/ui_holder_view_moment_details_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name_default"
+            android:textSize="@dimen/ui_base_text_size_small"
+            app:lessText="@string/ui_base_text_collapse"
+            app:moreText="@string/ui_base_text_expand" />
+
+        <LinearLayout
+            android:id="@+id/ui_holder_view_moment_details_images1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+
+        <LinearLayout
+            android:id="@+id/ui_holder_view_moment_details_images2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+
+        <LinearLayout
+            android:id="@+id/ui_holder_view_moment_details_images3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ui_holder_view_moment_details_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_holder_view_moment_details_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_more"
+                android:textColor="@color/textColorHint" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
