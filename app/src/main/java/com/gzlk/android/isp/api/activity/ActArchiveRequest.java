@@ -1,11 +1,10 @@
 package com.gzlk.android.isp.api.activity;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.activity.ActArchive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.litesuits.http.request.param.HttpMethods;
@@ -30,10 +29,10 @@ public class ActArchiveRequest extends Request<ActArchive> {
         return new ActArchiveRequest();
     }
 
-    private static class SingleActivityArchive extends Output<ActArchive> {
+    private static class SingleActivityArchive extends SingleQuery<ActArchive> {
     }
 
-    private static class MultipleActivityArchive extends Query<ActArchive> {
+    private static class MultipleActivityArchive extends PaginationQuery<ActArchive> {
     }
 
     private static final String DOC = "/activity/actDoc";

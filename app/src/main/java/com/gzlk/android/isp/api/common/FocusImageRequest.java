@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api.common;
 
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.OnlyQueryList;
+import com.gzlk.android.isp.api.query.ListQuery;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.model.common.FocusImage;
@@ -24,7 +24,7 @@ public class FocusImageRequest extends Request<FocusImage> {
         return new FocusImageRequest();
     }
 
-    private static class MultiImage extends OnlyQueryList<FocusImage> {
+    private static class MultiImage extends ListQuery<FocusImage> {
     }
 
     @Override

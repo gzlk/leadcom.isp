@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api.user;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -34,10 +34,10 @@ public class UserRequest extends Request<User> {
         return new UserRequest();
     }
 
-    private static class SingleUser extends Output<User> {
+    private static class SingleUser extends SingleQuery<User> {
     }
 
-    private static class MultipleUser extends Query<User> {
+    private static class MultipleUser extends PaginationQuery<User> {
     }
 
     private static final String USER = "/user/user";

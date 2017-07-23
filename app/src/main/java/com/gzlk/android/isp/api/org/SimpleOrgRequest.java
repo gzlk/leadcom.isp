@@ -1,6 +1,6 @@
 package com.gzlk.android.isp.api.org;
 
-import com.gzlk.android.isp.api.Output;
+import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -23,7 +23,7 @@ public class SimpleOrgRequest extends Request<SimpleOutput> {
         return new SimpleOrgRequest();
     }
 
-    private static class SingleRequest extends Output<SimpleOutput> {
+    private static class SingleRequest extends SingleQuery<SimpleOutput> {
     }
 
     @Override

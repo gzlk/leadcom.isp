@@ -2,8 +2,8 @@ package com.gzlk.android.isp.api.activity;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -31,10 +31,10 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
         return new AppSignRecordRequest();
     }
 
-    private static class SingleRecord extends Output<AppSignRecord> {
+    private static class SingleRecord extends SingleQuery<AppSignRecord> {
     }
 
-    private static class MultipleRecord extends Query<AppSignRecord> {
+    private static class MultipleRecord extends PaginationQuery<AppSignRecord> {
     }
 
     @Override

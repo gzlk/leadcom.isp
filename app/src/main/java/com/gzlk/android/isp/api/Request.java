@@ -3,6 +3,10 @@ package com.gzlk.android.isp.api;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.BoolQuery;
+import com.gzlk.android.isp.api.query.ListQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
+import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.LogHelper;
@@ -172,27 +176,32 @@ public abstract class Request<T> {
                 log(format("url(%s): %s\naccessToken: %s\n%ssuccess: %s(%s,%s)", methods, url, accessToken,
                         (isEmpty(body) ? "" : format("body: %s\n", body)), data.success(), data.getCode(), data.getMsg()));
                 if (data.success()) {
-                    if (data instanceof Query) {
+                    if (data instanceof PaginationQuery) {
                         if (null != onMultipleRequestListener) {
-                            Query<T> query = (Query<T>) data;
-                            Pagination<T> pagination = query.getData();
+                            PaginationQuery<T> paginationQuery = (PaginationQuery<T>) data;
+                            Pagination<T> pagination = paginationQuery.getData();
                             save(pagination.getList());
                             onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
                                     pagination.getTotalPages(), pagination.getPageSize(),
                                     pagination.getTotal(), pagination.getPageNumber());
                         }
-                    } else if (data instanceof OnlyQueryList) {
+                    } else if (data instanceof ListQuery) {
                         if (null != onMultipleRequestListener) {
-                            OnlyQueryList<T> onlyQueryList = (OnlyQueryList<T>) data;
-                            save(onlyQueryList.getData());
-                            onMultipleRequestListener.onResponse(onlyQueryList.getData(), data.success(),
-                                    1, PAGE_SIZE, onlyQueryList.getData().size(), 1);
+                            ListQuery<T> listQuery = (ListQuery<T>) data;
+                            save(listQuery.getData());
+                            onMultipleRequestListener.onResponse(listQuery.getData(), data.success(),
+                                    1, PAGE_SIZE, listQuery.getData().size(), 1);
                         }
-                    } else if (data instanceof Output) {
-                        Output<T> output = (Output<T>) data;
-                        save(output.getData());
+                    } else if (data instanceof SingleQuery) {
+                        SingleQuery<T> singleQuery = (SingleQuery<T>) data;
+                        save(singleQuery.getData());
                         if (null != onSingleRequestListener) {
-                            onSingleRequestListener.onResponse(((Output<T>) data).getData(), data.success(), data.getMsg());
+                            onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), data.getMsg());
+                        }
+                    } else if (data instanceof BoolQuery) {
+                        BoolQuery<T> boolQuery = (BoolQuery<T>) data;
+                        if (null != onSingleRequestListener) {
+                            onSingleRequestListener.onResponse(null, boolQuery.getData(), data.getMsg());
                         }
                     }
                 } else {

@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api.org;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -28,10 +28,10 @@ public class SquadRequest extends Request<Squad> {
         return new SquadRequest();
     }
 
-    private static class SingleSquad extends Output<Squad> {
+    private static class SingleSquad extends SingleQuery<Squad> {
     }
 
-    private static class MultipleSquad extends Query<Squad> {
+    private static class MultipleSquad extends PaginationQuery<Squad> {
     }
 
     private static final String SQUAD = "/group/groSquad";

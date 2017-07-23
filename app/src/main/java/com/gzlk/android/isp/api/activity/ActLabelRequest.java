@@ -2,10 +2,10 @@ package com.gzlk.android.isp.api.activity;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
-import com.gzlk.android.isp.api.OnlyQueryList;
+import com.gzlk.android.isp.api.query.ListQuery;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.model.activity.Label;
@@ -31,13 +31,13 @@ public class ActLabelRequest extends Request<Label> {
         return new ActLabelRequest();
     }
 
-    private static class SingleLabel extends Output<Label> {
+    private static class SingleLabel extends SingleQuery<Label> {
     }
 
-    private static class MultipleLabel extends Query<Label> {
+    private static class MultipleLabel extends PaginationQuery<Label> {
     }
 
-    private static class OnlyQueryListLabel extends OnlyQueryList<Label> {
+    private static class ListQueryLabel extends ListQuery<Label> {
     }
 
     @Override
@@ -92,6 +92,6 @@ public class ActLabelRequest extends Request<Label> {
      * 获取服务器上的热门标签
      */
     public void getTopLabels(int topSet) {
-        httpRequest(getRequest(OnlyQueryListLabel.class, format("%s?top=%d", "/ontolog/getLabelTop", topSet), "", HttpMethods.Get));
+        httpRequest(getRequest(ListQueryLabel.class, format("%s?top=%d", "/ontolog/getLabelTop", topSet), "", HttpMethods.Get));
     }
 }

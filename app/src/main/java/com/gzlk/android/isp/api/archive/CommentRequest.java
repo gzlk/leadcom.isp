@@ -2,8 +2,8 @@ package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -30,10 +30,10 @@ public class CommentRequest extends Request<Comment> {
         return new CommentRequest();
     }
 
-    private static class SingleComment extends Output<Comment> {
+    private static class SingleComment extends SingleQuery<Comment> {
     }
 
-    private static class MultiComment extends Query<Comment> {
+    private static class MultiComment extends PaginationQuery<Comment> {
     }
 
     private static final String USER = "/user/userDocCmt";

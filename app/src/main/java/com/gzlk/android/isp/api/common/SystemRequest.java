@@ -1,9 +1,11 @@
-package com.gzlk.android.isp.api;
+package com.gzlk.android.isp.api.common;
 
 import android.support.annotation.NonNull;
 
+import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.http.request.param.HttpMethods;
@@ -31,7 +33,7 @@ public class SystemRequest extends Request<User> {
         return new SystemRequest();
     }
 
-    private static class Register extends Output<User> {
+    private static class Register extends SingleQuery<User> {
     }
 
     private static final String SYSTEM = "/system";

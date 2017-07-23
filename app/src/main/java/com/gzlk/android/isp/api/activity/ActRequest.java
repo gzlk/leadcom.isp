@@ -2,17 +2,15 @@ package com.gzlk.android.isp.api.activity;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.Label;
-import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.http.request.param.HttpMethods;
@@ -42,10 +40,10 @@ public class ActRequest extends Request<Activity> {
         return new ActRequest();
     }
 
-    private static class SingleActivity extends Output<Activity> {
+    private static class SingleActivity extends SingleQuery<Activity> {
     }
 
-    private static class MultipleActivity extends Query<Activity> {
+    private static class MultipleActivity extends PaginationQuery<Activity> {
     }
 
     private static final String JOINED = "/list/joined";

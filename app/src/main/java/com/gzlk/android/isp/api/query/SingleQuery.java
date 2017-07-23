@@ -1,4 +1,6 @@
-package com.gzlk.android.isp.api;
+package com.gzlk.android.isp.api.query;
+
+import com.gzlk.android.isp.api.Api;
 
 /**
  * <b>功能描述：</b>网络请求返回的数据基类<br />
@@ -11,7 +13,7 @@ package com.gzlk.android.isp.api;
  * <b>修改备注：</b><br />
  */
 
-public class Output<T> extends Api<T> {
+public class SingleQuery<T> extends Api<T> {
 
     protected T data;
 

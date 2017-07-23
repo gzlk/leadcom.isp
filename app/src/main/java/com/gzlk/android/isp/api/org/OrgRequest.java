@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api.org;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -33,10 +33,10 @@ public class OrgRequest extends Request<Organization> {
         return new OrgRequest();
     }
 
-    private static class SingleGroup extends Output<Organization> {
+    private static class SingleGroup extends SingleQuery<Organization> {
     }
 
-    private static class MultipleGroup extends Query<Organization> {
+    private static class MultipleGroup extends PaginationQuery<Organization> {
     }
 
     private static final String ORG = "/group/group";

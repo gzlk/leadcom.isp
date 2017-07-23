@@ -1,12 +1,11 @@
 package com.gzlk.android.isp.api.archive;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.BoolQuery;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.litesuits.http.request.param.HttpMethods;
@@ -31,10 +30,13 @@ public class LikeRequest extends Request<ArchiveLike> {
         return new LikeRequest();
     }
 
-    private static class SingleLike extends Output<ArchiveLike> {
+    private static class SingleLike extends SingleQuery<ArchiveLike> {
     }
 
-    private static class MultiLike extends Query<ArchiveLike> {
+    private static class MultiLike extends PaginationQuery<ArchiveLike> {
+    }
+
+    private static class BoolLike extends BoolQuery<ArchiveLike> {
     }
 
     private static final String USER = "/user/userDocLike";
@@ -130,7 +132,7 @@ public class LikeRequest extends Request<ArchiveLike> {
         // momentId,accessToken
         // userDocId,accessToken
         // groDocId,accessToken
-        httpRequest(getRequest(SingleLike.class,
+        httpRequest(getRequest(BoolLike.class,
                 format("%s?%s=%s",
                         url(type, "/isExist"),
                         CommentRequest.getArchiveId(type),

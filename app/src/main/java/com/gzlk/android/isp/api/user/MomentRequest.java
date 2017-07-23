@@ -2,8 +2,8 @@ package com.gzlk.android.isp.api.user;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -35,10 +35,10 @@ public class MomentRequest extends Request<Moment> {
         return new MomentRequest();
     }
 
-    private static class SingleMoment extends Output<Moment> {
+    private static class SingleMoment extends SingleQuery<Moment> {
     }
 
-    private static class MultiMoment extends Query<Moment> {
+    private static class MultiMoment extends PaginationQuery<Moment> {
     }
 
     private static final String MOMENT = "/user/userMmt";

@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api.activity;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -28,10 +28,10 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
         return new AppVoteRecordRequest();
     }
 
-    private class SingleVoteRecord extends Output<AppVoteRecord> {
+    private class SingleVoteRecord extends SingleQuery<AppVoteRecord> {
     }
 
-    private class MultipleVoteRecord extends Query<AppVoteRecord> {
+    private class MultipleVoteRecord extends PaginationQuery<AppVoteRecord> {
     }
 
     private static final String RECORD = "/activity/actVote";

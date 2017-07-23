@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api.activity;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -28,10 +28,10 @@ public class AppVoteItemRequest extends Request<AppVoteItem> {
         return new AppVoteItemRequest();
     }
 
-    private static class SingleVoteItem extends Output<AppVoteItem> {
+    private static class SingleVoteItem extends SingleQuery<AppVoteItem> {
     }
 
-    private static class MultipleVoteItem extends Query<AppVoteItem> {
+    private static class MultipleVoteItem extends PaginationQuery<AppVoteItem> {
     }
 
     private static final String VOTE = "/activity/actVoteItem";

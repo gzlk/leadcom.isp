@@ -1,4 +1,6 @@
-package com.gzlk.android.isp.api;
+package com.gzlk.android.isp.api.query;
+
+import com.gzlk.android.isp.api.Pagination;
 
 /**
  * <b>功能描述：</b>分页查询请求<br />
@@ -11,5 +13,5 @@ package com.gzlk.android.isp.api;
  * <b>修改备注：</b><br />
  */
 
-public class Query<T> extends Output<Pagination<T>> {
+public class PaginationQuery<T> extends SingleQuery<Pagination<T>> {
 }

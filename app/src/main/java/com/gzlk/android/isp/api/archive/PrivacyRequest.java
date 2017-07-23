@@ -2,8 +2,8 @@ package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -30,10 +30,10 @@ public class PrivacyRequest extends Request<Privacy> {
         return new PrivacyRequest();
     }
 
-    private static class SinglePrivacy extends Output<Privacy> {
+    private static class SinglePrivacy extends SingleQuery<Privacy> {
     }
 
-    private static class MultiplePrivacy extends Query<Privacy> {
+    private static class MultiplePrivacy extends PaginationQuery<Privacy> {
     }
 
     @Override

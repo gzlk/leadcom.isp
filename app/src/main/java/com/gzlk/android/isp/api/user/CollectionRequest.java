@@ -2,12 +2,11 @@ package com.gzlk.android.isp.api.user;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.archive.ArchiveSource;
 import com.gzlk.android.isp.model.user.Collection;
 import com.litesuits.http.request.param.HttpMethods;
@@ -34,10 +33,10 @@ public class CollectionRequest extends Request<Collection> {
         return new CollectionRequest();
     }
 
-    private static class SingleCollection extends Output<Collection> {
+    private static class SingleCollection extends SingleQuery<Collection> {
     }
 
-    private static class MultipleCollection extends Query<Collection> {
+    private static class MultipleCollection extends PaginationQuery<Collection> {
     }
 
     private static final String COL = "/user/userCol";

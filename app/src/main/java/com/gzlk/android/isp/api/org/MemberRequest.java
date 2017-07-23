@@ -1,8 +1,8 @@
 package com.gzlk.android.isp.api.org;
 
-import com.gzlk.android.isp.api.OnlyQueryList;
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.ListQuery;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -33,13 +33,13 @@ public class MemberRequest extends Request<Member> {
         return new MemberRequest();
     }
 
-    private static class SingleMember extends Output<Member> {
+    private static class SingleMember extends SingleQuery<Member> {
     }
 
-    private static class MultipleMember extends Query<Member> {
+    private static class MultipleMember extends PaginationQuery<Member> {
     }
 
-    private static class OnlyQueryListMember extends OnlyQueryList<Member> {
+    private static class ListQueryMember extends ListQuery<Member> {
     }
 
     // 成员

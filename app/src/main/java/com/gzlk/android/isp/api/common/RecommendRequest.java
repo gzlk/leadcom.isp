@@ -1,6 +1,6 @@
 package com.gzlk.android.isp.api.common;
 
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -9,7 +9,6 @@ import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.RecommendContent;
 import com.litesuits.http.request.param.HttpMethods;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class RecommendRequest extends Request<RecommendContent> {
         return new RecommendRequest();
     }
 
-    private static class MultiRecommend extends Query<RecommendContent> {
+    private static class MultiRecommend extends PaginationQuery<RecommendContent> {
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api.org;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -31,10 +31,10 @@ public class InvitationRequest extends Request<Invitation> {
         return new InvitationRequest();
     }
 
-    private static class SingleInvite extends Output<Invitation> {
+    private static class SingleInvite extends SingleQuery<Invitation> {
     }
 
-    private static class MultipleInvite extends Query<Invitation> {
+    private static class MultipleInvite extends PaginationQuery<Invitation> {
     }
 
     // 邀请成员

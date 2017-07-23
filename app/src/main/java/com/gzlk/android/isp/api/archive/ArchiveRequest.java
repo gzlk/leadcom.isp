@@ -2,8 +2,8 @@ package com.gzlk.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -36,10 +36,10 @@ public class ArchiveRequest extends Request<Archive> {
         return new ArchiveRequest();
     }
 
-    private static class SingleArchive extends Output<Archive> {
+    private static class SingleArchive extends SingleQuery<Archive> {
     }
 
-    private static class MultipleArchive extends Query<Archive> {
+    private static class MultipleArchive extends PaginationQuery<Archive> {
     }
 
 //    private static class SpecialArchive extends Special<Archive> {

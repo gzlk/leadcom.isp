@@ -1,4 +1,6 @@
-package com.gzlk.android.isp.api;
+package com.gzlk.android.isp.api.query;
+
+import com.gzlk.android.isp.api.Api;
 
 import java.util.List;
 
@@ -13,7 +15,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class OnlyQueryList<T> extends Api<T> {
+public class ListQuery<T> extends Api<T> {
 
     private List<T> data;
 

@@ -1,7 +1,7 @@
 package com.gzlk.android.isp.api.user;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -25,10 +25,10 @@ public class RoleRequest extends Request<Role> {
         return new RoleRequest();
     }
 
-    private static class SingleRole extends Output<Role> {
+    private static class SingleRole extends SingleQuery<Role> {
     }
 
-    private static class MultipleRole extends Query<Role> {
+    private static class MultipleRole extends PaginationQuery<Role> {
     }
 
     @Override

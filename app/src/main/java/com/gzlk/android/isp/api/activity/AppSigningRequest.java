@@ -2,8 +2,8 @@ package com.gzlk.android.isp.api.activity;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.Output;
-import com.gzlk.android.isp.api.Query;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -30,10 +30,10 @@ public class AppSigningRequest extends Request<AppSigning> {
         return new AppSigningRequest();
     }
 
-    private static class SingleSigning extends Output<AppSigning> {
+    private static class SingleSigning extends SingleQuery<AppSigning> {
     }
 
-    private static class MultipleSigning extends Query<AppSigning> {
+    private static class MultipleSigning extends PaginationQuery<AppSigning> {
     }
 
     @Override
