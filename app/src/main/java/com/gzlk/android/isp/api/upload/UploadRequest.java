@@ -72,6 +72,7 @@ public class UploadRequest extends Request<Upload> {
         MultipartBody body = new MultipartBody().addPart(new FilePart("file", new File(file)));
         String path = format("%s%s", URL, UPLOAD);
         log(format("upload file %s\nto %s", file, path));
+        final String fileName = file.substring(file.lastIndexOf('/') + 1);
         return new JsonRequest<Upload>(path, Upload.class).setHttpListener(new OnHttpListener<Upload>(true, true) {
             @Override
             public void onSucceed(Upload data, Response<Upload> response) {
@@ -81,6 +82,7 @@ public class UploadRequest extends Request<Upload> {
                         JSONObject object = new JSONObject(response.getRawString());
                         data.setResult(object.getJSONObject("result"));
                         data.departData();
+                        data.setName(fileName);
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.onResponse(data, data.success(), data.getMsg());
                         }
@@ -107,7 +109,7 @@ public class UploadRequest extends Request<Upload> {
                     onUploadingListener.onUploading(file, total, len);
                 }
             }
-        }).addHeader("accessToken", accessToken).addHeader("charset", "GBK").setHttpBody(body, HttpMethods.Post);
+        }).addHeader("accessToken", accessToken).setHttpBody(body, HttpMethods.Post);
     }
 
     /**

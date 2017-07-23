@@ -17,24 +17,24 @@ import java.nio.charset.Charset;
  * <b>修改备注：</b><br />
  */
 
-public class FileParts extends FilePart {
+class FileParts extends FilePart {
 
-    public FileParts(String key, File file) {
+    FileParts(String key, File file) {
         this(key, file, "application/octet-stream");
     }
 
-    public FileParts(String key, File file, String mimeType) {
+    private FileParts(String key, File file, String mimeType) {
         super(key, file, mimeType);
     }
 
     @Override
     protected byte[] createContentType() {
-        return StringCodingUtils.getBytes("Content-Type: " + this.mimeType + "\r\n", Charset.forName("utf-8"));
+        return StringCodingUtils.getBytes("Content-Type: " + this.mimeType + "\r\n", infoCharset);
     }
 
     @Override
     protected byte[] createContentDisposition() {
         String dis = "Content-Disposition: form-data; name=\"" + this.key;
-        return StringCodingUtils.getBytes(dis + "\"; filename=\"" + (this.file.getName()) + "\"\r\n", Charset.forName("utf-8"));
+        return StringCodingUtils.getBytes(dis + "\"; filename=\"" + (this.file.getName()) + "\"\r\n", infoCharset);
     }
 }
