@@ -25,6 +25,8 @@ import java.util.List;
  */
 @Table(Activity.Table.ACTIVITY)
 public class Activity extends Model {
+    /**其他组织的Id*/
+    public static final String OTHER_ID = "ad912b3b344f426a93860248ffd3c715";
 
     public interface Table {
         String ACTIVITY = "activity";
@@ -53,8 +55,8 @@ public class Activity extends Model {
         String ActivityId = "activityId";
         String ActivityName = "activityName";
         String ActivityImage = "activityImage";
-        String IsLocalStorage="isLocalStorage";
-        String UsedTimes="usedTimes";
+        String IsLocalStorage = "isLocalStorage";
+        String UsedTimes = "usedTimes";
     }
 
     /**

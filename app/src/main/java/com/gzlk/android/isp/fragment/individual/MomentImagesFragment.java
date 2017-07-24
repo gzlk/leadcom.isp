@@ -236,7 +236,9 @@ public class MomentImagesFragment extends BaseDelayRefreshSupportFragment {
                 super.onResponse(archiveLike, success, message);
                 if (success) {
                     mMoment.setMyPraised(false);
-                    mMoment.setLikeNum(mMoment.getLikeNum() - 1);
+                    if (mMoment.getLikeNum() > 0) {
+                        mMoment.setLikeNum(mMoment.getLikeNum() - 1);
+                    }
                     resetPraiseStatus();
                 }
             }

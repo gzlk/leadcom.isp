@@ -43,7 +43,8 @@ public class TooltipHelper {
             R.id.ui_tooltip_menu_organization_document_new_normal,
             // 活动管理菜单
             R.id.ui_tooltip_menu_activity_add,
-            R.id.ui_tooltip_menu_activity_manage
+            R.id.ui_tooltip_menu_activity_manage,
+            R.id.ui_tooltip_menu_activity_manage_normal
     };
 
     public static PopupWindow showTooltip(final View anchorView, int viewLayout, boolean belowAnchor, int arrowType, View.OnClickListener onClickListener) {

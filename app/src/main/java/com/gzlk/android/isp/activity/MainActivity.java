@@ -243,7 +243,9 @@ public class MainActivity extends TitleActivity {
                 }
                 break;
             case NimMessage.Type.SYSTEM_NOTIFICATION:
+            case NimMessage.Type.INVITE_TO_SQUAD_ALERT:
                 // 系统通知，只提醒就可以了
+                // 提醒加入小组
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
         }

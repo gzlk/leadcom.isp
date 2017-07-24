@@ -122,7 +122,7 @@ public class Leaguer extends Model {
 
     public String getSpell() {
         if (StringHelper.isEmpty(spell)) {
-            spell = Utils.transformPinyin(userName);
+            spell = Utils.transformPinyin(getUserName());
         }
         return spell;
     }

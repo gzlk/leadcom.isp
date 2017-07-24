@@ -286,7 +286,11 @@ public class ActivityFragment extends BaseOrganizationFragment {
     }
 
     public void rightIconClick(View view) {
-        showTooltip(view, R.id.ui_tooltip_activity_management, true, TooltipHelper.TYPE_LEFT, onClickListener);
+        if (mQueryId.equals(Activity.OTHER_ID)) {
+            showTooltip(view, R.id.ui_tooltip_activity_management_normal, true, TooltipHelper.TYPE_LEFT, onClickListener);
+        } else {
+            showTooltip(view, R.id.ui_tooltip_activity_management, true, TooltipHelper.TYPE_LEFT, onClickListener);
+        }
     }
 
     private static final int REQ_CREATE = ACTIVITY_BASE_REQUEST + 20;
@@ -303,6 +307,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     }
                     break;
                 case R.id.ui_tooltip_menu_activity_manage:
+                case R.id.ui_tooltip_menu_activity_manage_normal:
                     openActivity(ActivityManagementFragment.class.getName(), mQueryId, false, false);
                     break;
             }
@@ -451,7 +456,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
         }
         if (getUserVisibleHint()) {
             // 查看当前选择的组织是否是我关注的组织
-            mainFragment.showRightIcon(null != structureFragment && structureFragment.isConcerned(mOrganizationId));
+            //mainFragment.showRightIcon(null != structureFragment && structureFragment.isConcerned(mOrganizationId));
+            mainFragment.showRightIcon(true);
         }
     }
 

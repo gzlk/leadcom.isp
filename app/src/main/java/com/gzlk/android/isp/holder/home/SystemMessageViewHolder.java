@@ -63,6 +63,7 @@ public class SystemMessageViewHolder extends BaseViewHolder {
         switch (msg.getType()) {
             case NimMessage.Type.ACTIVITY_NOTIFICATION:
             case NimMessage.Type.SYSTEM_NOTIFICATION:
+            case NimMessage.Type.INVITE_TO_SQUAD_ALERT:
                 return msg.isHandled() ? "" : "(未读)";
             default:
                 return msg.isHandled() ? (msg.isHandleState() ? "(已同意)" : "(已拒绝)") : "(未处理)";

@@ -50,6 +50,8 @@
         <include layout="@layout/tooltip_org_archive_management_normal" />
 
         <include layout="@layout/tooltip_activity_management" />
+
+        <include layout="@layout/tooltip_activity_management_normal" />
     </com.hlk.hlklib.lib.view.CorneredView>
 
     <ImageView

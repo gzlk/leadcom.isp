@@ -96,7 +96,7 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        fetchingRemoteMembers(mOrganizationId, mSquadId);
+        fetchingRemoteMembers(mOrganizationId, "");
     }
 
     @Override
@@ -114,21 +114,17 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
             mAdapter = new ContactAdapter();
             mRecyclerView.setAdapter(mAdapter);
             // 查找本地该组织名下所有成员
-            loadingLocalMembers(mOrganizationId, "");
+            fetchingRemoteMembers(mOrganizationId, "");
         }
-    }
-
-    @Override
-    protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
-        if (null != list && list.size() > 0) {
-            mAdapter.add(list, false);
-        }
-        fetchingRemoteMembers(organizationId, squadId);
     }
 
     @Override
     protected void onFetchingRemoteMembersComplete(List<Member> list) {
         if (null != list && list.size() > 0) {
+            for (Member member : list) {
+                member.setSquadId(mSquadId);
+                member.setSelected(Member.isMemberInLocal(member.getUserId(), mOrganizationId, mSquadId));
+            }
             mAdapter.add(list, false);
             mAdapter.sort();
         }

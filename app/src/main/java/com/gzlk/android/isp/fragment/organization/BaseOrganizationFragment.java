@@ -213,7 +213,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
         } else {
             query = query.whereAppendAnd().whereEquals(Organization.Field.SquadId, squadId);
         }
-        query = query.whereAppendAnd().whereAnd(Activity.Field.ActivityId + " IS NULL");
+        query = query.whereAnd(Activity.Field.ActivityId + " IS NULL");
         return query;
     }
 

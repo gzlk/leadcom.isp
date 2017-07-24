@@ -91,6 +91,10 @@ public class NimMessage implements MsgAttachment {
          * 自定义系统通知
          */
         int SYSTEM_NOTIFICATION = 23;
+        /**
+         * 邀请到小组（仅通知）
+         */
+        int INVITE_TO_SQUAD_ALERT = 24;
     }
 
     /**
@@ -110,6 +114,8 @@ public class NimMessage implements MsgAttachment {
                 return "活动通知";
             case Type.SYSTEM_NOTIFICATION:
                 return "系统通知";
+            case Type.INVITE_TO_SQUAD_ALERT:
+                return "加入小组";
             default:
                 return StringHelper.format("不晓得什么通知(%d)", type);
         }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_tooltip_activity_management_normal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/ui_tooltip_menu_activity_manage_normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/ui_static_dp_5"
+        android:text="@string/ui_activity_manage_tooltip_menu_1"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>
