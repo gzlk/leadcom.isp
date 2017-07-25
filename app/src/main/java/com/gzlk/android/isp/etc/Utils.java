@@ -323,6 +323,17 @@ public class Utils {
     }
 
     /**
+     * 判断字符串是否全为数字
+     */
+    public static boolean isNumber(String text) {
+        return text.matches("[0-9]+");
+    }
+
+    public static boolean isItMobilePhone(String phone) {
+        return Pattern.compile("^((\\+86)|(86))?[1][\\d]{10}$").matcher(phone).matches();
+    }
+
+    /**
      * 查看指定的包是否已安装
      */
     public static PackageInfo isInstalled(Context context, String packageName) {
@@ -381,7 +392,11 @@ public class Utils {
         }
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
-            buffer.append(Pinyin.toPinyin(text.charAt(i)));
+            if (text.charAt(i) == '曾') {
+                buffer.append("ZENG");
+            } else {
+                buffer.append(Pinyin.toPinyin(text.charAt(i)));
+            }
         }
         return buffer.toString();
     }

@@ -43,7 +43,9 @@ public class PhoneContactViewHolder extends BaseViewHolder {
         String text = contact.getName();
         text = getSearchingText(text, searchingText);
         nameView.setText(Html.fromHtml(text));
-        phoneView.setText(contact.getPhone());
+        text = contact.getPhone();
+        text = getSearchingText(text, searchingText);
+        phoneView.setText(Html.fromHtml(text));
         if (contact.isMember()) {
             button.setEnabled(false);
             button.setText(R.string.ui_phone_contact_invited);

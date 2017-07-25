@@ -134,7 +134,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/image_file_pathes" />
+                android:resource="@xml/external_file_path" />
         </provider>
     </application>
 

@@ -115,6 +115,10 @@ public class SearchableViewHolder extends BaseViewHolder {
         }
     }
 
+    public void setMaxInputLength(int maxInputLength) {
+        searchInput.setMaxLength(maxInputLength);
+    }
+
     private OnSearchingListener onSearchingListener;
 
     public void setOnSearchingListener(OnSearchingListener l) {

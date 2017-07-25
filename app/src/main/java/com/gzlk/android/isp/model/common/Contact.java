@@ -55,7 +55,6 @@ public class Contact extends Model {
 
     public void setName(String name) {
         this.name = name;
-        setId(Cryptography.md5(this.name));
         setSpell(Utils.transformPinyin(this.name));
     }
 
@@ -65,6 +64,7 @@ public class Contact extends Model {
 
     public void setPhone(String phone) {
         this.phone = phone;
+        setId(Cryptography.md5(this.phone));
     }
 
     public String getSpell() {

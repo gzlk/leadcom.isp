@@ -3,12 +3,17 @@ package com.gzlk.android.isp.nim.file;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.ImageCompress;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
 import com.gzlk.android.isp.fragment.common.InnerWebViewFragment;
 import com.gzlk.android.isp.fragment.common.OfficeOnlinePreviewFragment;
@@ -16,6 +21,7 @@ import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.organization.Concern;
 import com.gzlk.android.isp.nim.activity.VideoPlayerActivity;
 
 import java.io.File;
@@ -57,11 +63,26 @@ public class FilePreviewHelper {
                 return;
             } else if (path.contains(NIM) && extension.contains("txt")) {
                 // 文本文件的在线预览方式
-                BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
+                //BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
+                previewOnline(context, path, fileName);
                 return;
             }
-            previewMimeFile(context, path, extension);
+            // 如果path是网址，则打开内置在线预览
+            if (Utils.isUrl(path)) {
+                previewOnline(context, path, fileName);
+            } else {
+                // 如果是本地文件，则尝试使用第三方app打开
+                previewMimeFile(context, path, extension);
+            }
         }
+    }
+
+    /**
+     * 尝试在线预览方式打开其余类型的文件
+     */
+    private static void previewOnline(Context context, String path, String fileName) {
+        // 尝试在线预览方式
+        BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
     }
 
     /**
@@ -69,18 +90,31 @@ public class FilePreviewHelper {
      */
     public static void previewMimeFile(Context context, String path, String extension) {
         try {
-            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-            File file = new File(path);
-            //String extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(file).toString());
             String mimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
             if (StringHelper.isEmpty(mimetype) && extension.contains("log")) {
                 // log文件用纯文本方式打开
                 mimetype = "text/plain";
             }
-            intent.setDataAndType(Uri.fromFile(file), mimetype);
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+            intent.setDataAndType(getUriFromFile(path), mimetype);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             context.startActivity(intent);
         } catch (Exception e) {
+            e.printStackTrace();
             ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_nim_attachment_open_failure));
+        }
+    }
+
+    // 处理Android 7.0+的Uri问题
+    public static Uri getUriFromFile(String filePath) {
+        return getUriFromFile(new File(filePath));
+    }
+
+    public static Uri getUriFromFile(File file) {
+        if (Build.VERSION.SDK_INT >= 24) {
+            return FileProvider.getUriForFile(App.app(), StringHelper.format("%s.fileProvider", BuildConfig.APPLICATION_ID), file);
+        } else {
+            return Uri.fromFile(file);
         }
     }
 

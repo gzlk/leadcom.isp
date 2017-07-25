@@ -22,17 +22,18 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.common.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.organization.PhoneContactViewHolder;
 import com.gzlk.android.isp.holder.common.SearchableViewHolder;
+import com.gzlk.android.isp.holder.organization.PhoneContactViewHolder;
 import com.gzlk.android.isp.lib.view.SlidView;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.common.Contact;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.common.Contact;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
@@ -80,7 +81,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     // holder
     private SearchableViewHolder searchableViewHolder;
-
+    private ArrayList<Contact> contacts = new ArrayList<>();
     private ContactAdapter mAdapter;
 
     @Override
@@ -178,6 +179,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         if (null == searchableViewHolder) {
             searchableViewHolder = new SearchableViewHolder(mRootView, this);
             searchableViewHolder.setOnSearchingListener(searchingListener);
+            searchableViewHolder.setMaxInputLength(11);
             slidView.setOnSlidChangedListener(onSlidChangedListener);
             slidView.clearIndex();
         }
@@ -186,7 +188,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             mRecyclerView.addItemDecoration(new StickDecoration());
             mRecyclerView.setAdapter(mAdapter);
             // 读取缓存中已经处理过的联系人列表
-            gotContactFromCache("");
+            gotContactFromCache();
             // 尝试读取手机联系人并更新当前列表
             new ContactTask().exec();
         }
@@ -197,17 +199,51 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     private SearchableViewHolder.OnSearchingListener searchingListener = new SearchableViewHolder.OnSearchingListener() {
         @Override
         public void onSearching(String text) {
-            searchingText = StringHelper.isEmpty(text) ? "" : text;
-            gotContactFromCache(searchingText);
+            if (!isEmpty(text) && Utils.isNumber(text)) {
+                if (text.length() > 3) {
+                    searchingText = text;
+                    resetContactAdapter();
+                }
+            } else {
+                searchingText = isEmpty(text) ? "" : text;
+                resetContactAdapter();
+            }
         }
     };
+
+    private void gotContactFromCache() {
+        List<Contact> list = new Dao<>(Contact.class).query();
+        if (null != list) {
+            for (Contact contact : list) {
+                // 检索此用户是否已被邀请
+                contact.setInvited(invited(contact.getPhone()));
+                contact.setMember(Member.isMemberInLocal(contact.getUserId(), mOrganizationId, mSquadId));
+            }
+            contacts.clear();
+            contacts.addAll(list);
+        }
+        resetContactAdapter();
+    }
+
+    private void resetContactAdapter() {
+        mAdapter.clear();
+        for (Contact contact : contacts) {
+            // 搜索时
+            if (!isEmpty(searchingText) && !(contact.getName().contains(searchingText) || contact.getPhone().contains(searchingText))) {
+                continue;
+            }
+            mAdapter.add(contact);
+            slidView.add(contact.getSpell());
+        }
+        mAdapter.sort();
+    }
 
     private void gotContactFromCache(String searchingText) {
         mAdapter.clear();
         QueryBuilder<Contact> query = new QueryBuilder<>(Contact.class);
         if (!StringHelper.isEmpty(searchingText)) {
             String like = "%" + searchingText + "%";
-            query = query.where(Model.Field.Name + " LIKE ?", like);
+            query = query.where(Model.Field.Name + " LIKE " + like);
         }
         query = query.orderBy(Model.Field.Name);
         List<Contact> contacts = new Dao<>(Contact.class).query(query);
@@ -224,8 +260,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     }
 
     private User getUser(String phone) {
-        List<User> users = new Dao<>(User.class).query(User.Field.Phone, phone);
-        return (null == users || users.size() < 1) ? null : users.get(0);
+        return new Dao<>(User.class).querySingle(User.Field.Phone, phone);
     }
 
     private boolean invited(String phone) {
@@ -285,7 +320,11 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         public void onClick(int index) {
             // 添加指定index的联系人到小组或组织
             Contact contact = mAdapter.get(index);
-            invite(contact.getPhone());
+            String phone = contact.getPhone();
+            if (phone.length() > 11) {
+                phone = phone.substring(phone.length() - 11);
+            }
+            invite(phone);
         }
     };
 
@@ -478,7 +517,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             displayLoading(false);
             //displayNothing(mAdapter.getItemCount() <= 0);
             materialHorizontalProgressBar.setVisibility(View.GONE);
-            gotContactFromCache("");
+            gotContactFromCache();
         }
 
         @Override
@@ -521,14 +560,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                             if (!StringHelper.isEmpty(phone)) {
                                 phone = Utility.filterNumbers(phone);
                             }
+//                            if (phone.charAt(0) == '8' && phone.charAt(1) == '6') {
+//                                phone = phone.substring(2);
+//                            }
                             // 名字不为空且号码为手机号码时才加入缓存
-                            if (!StringHelper.isEmpty(name) && Utility.isItMobilePhone(phone, true)) {
+                            if (!StringHelper.isEmpty(name) && Utils.isItMobilePhone(phone)) {
                                 contacts.add(new String[]{name, phone});
                             }
                             index++;
-                            if (BuildConfig.DEBUG) {
-                                Thread.sleep(3);
-                            }
+                            log(format("read progress, index: %d, name: %s, phone: %s", index, name, phone));
                             publishProgress(0, index, max);
                         }
                     } finally {
@@ -558,17 +598,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 for (String[] strings : contacts) {
                     String name = strings[0];
                     String phone = strings[1];
+                    // contact 主键为 phone 的 md5 值
                     Contact contact = new Contact();
                     contact.setUserId(getUserId(phone, udao));
                     contact.setName(name);
                     contact.setPhone(phone);
                     contact.setInvited(false);
                     dao.save(contact);
-                    // 逐条插入
-                    if (BuildConfig.DEBUG) {
-                        Thread.sleep(3);
-                    }
                     index++;
+                    log(format("handle progress, index: %d, name: %s, phone: %s", index, name, phone));
                     publishProgress(1, index, max);
                 }
             } catch (Exception ignore) {
