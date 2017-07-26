@@ -52,6 +52,10 @@
         <include layout="@layout/tooltip_activity_management" />
 
         <include layout="@layout/tooltip_activity_management_normal" />
+
+        <include layout="@layout/tooltip_moment_comment_praisable" />
+
+        <include layout="@layout/tooltip_moment_comment_praised" />
     </com.hlk.hlklib.lib.view.CorneredView>
 
     <ImageView

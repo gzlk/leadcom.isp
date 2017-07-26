@@ -241,6 +241,10 @@ public class ImageDisplayer extends RelativeLayout {
         displayImage2();
     }
 
+    public void setShowHeader(boolean showHeader) {
+        isShowHeader = showHeader;
+    }
+
     private void calculateSize() {
         if (imageWidth <= 0 || imageHeight <= 0) {
             this.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);

@@ -18,9 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:background="@color/transparent_40"
             android:ellipsize="end"
             android:maxLines="5"
-            android:background="@color/transparent_40"
             android:padding="@dimen/ui_base_dimen_margin_padding"
             android:scrollbars="vertical"
             android:singleLine="false"
@@ -48,11 +48,15 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <LinearLayout
+        <com.hlk.hlklib.lib.view.CorneredView
             android:id="@+id/ui_moment_detail_praise_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            app:cv_background="@android:color/transparent"
+            app:cv_background_active="@color/transparent_40_white"
+            app:cv_background_type="fill"
+            app:cv_border_size="@dimen/ui_static_dp_zero">
 
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:id="@+id/ui_moment_detail_praise_icon"
@@ -60,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/ui_static_dp_5"
                 android:layout_marginStart="@dimen/ui_static_dp_10"
-                android:text="@string/ui_icon_heart"
+                android:text="@string/ui_icon_heart_hollow"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/ui_base_text_size_big" />
 
@@ -71,7 +75,7 @@
                 android:text="@string/ui_base_text_praise"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/ui_base_text_size_small" />
-        </LinearLayout>
+        </com.hlk.hlklib.lib.view.CorneredView>
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:layout_width="wrap_content"
@@ -79,11 +83,15 @@
             android:text="@string/ui_icon_vertical_bar"
             android:textSize="@dimen/ui_base_text_size_big" />
 
-        <LinearLayout
+        <com.hlk.hlklib.lib.view.CorneredView
             android:id="@+id/ui_moment_detail_comment_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            app:cv_background="@android:color/transparent"
+            app:cv_background_active="@color/transparent_40_white"
+            app:cv_background_type="fill"
+            app:cv_border_size="@dimen/ui_static_dp_zero">
 
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:layout_width="wrap_content"
@@ -100,26 +108,36 @@
                 android:text="@string/ui_base_text_comment"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/ui_base_text_size_small" />
-        </LinearLayout>
+        </com.hlk.hlklib.lib.view.CorneredView>
 
         <View
             android:layout_width="0dp"
             android:layout_height="@dimen/ui_static_dp_5"
             android:layout_weight="1" />
 
-        <LinearLayout
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_icon_vertical_bar"
+            android:textSize="@dimen/ui_base_text_size_big" />
+
+        <com.hlk.hlklib.lib.view.CorneredView
             android:id="@+id/ui_moment_detail_switch_more_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            app:cv_background="@android:color/transparent"
+            app:cv_background_active="@color/transparent_40_white"
+            app:cv_background_type="fill"
+            app:cv_border_size="@dimen/ui_static_dp_zero">
 
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/ui_static_dp_5"
                 android:layout_marginStart="@dimen/ui_static_dp_10"
-                android:text="@string/ui_icon_heart"
+                android:text="@string/ui_icon_heart_hollow"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/ui_base_text_size_big" />
 
@@ -145,6 +163,6 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/ui_base_text_size_small" />
-        </LinearLayout>
+        </com.hlk.hlklib.lib.view.CorneredView>
     </LinearLayout>
 </LinearLayout>

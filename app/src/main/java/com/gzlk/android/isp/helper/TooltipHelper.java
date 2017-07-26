@@ -44,7 +44,13 @@ public class TooltipHelper {
             // 活动管理菜单
             R.id.ui_tooltip_menu_activity_add,
             R.id.ui_tooltip_menu_activity_manage,
-            R.id.ui_tooltip_menu_activity_manage_normal
+            R.id.ui_tooltip_menu_activity_manage_normal,
+            // 说说评论菜单
+            R.id.ui_tooltip_menu_moment_praise,
+            R.id.ui_tooltip_menu_moment_comment,
+            // 说说评论菜单（已赞）
+            R.id.ui_tooltip_menu_moment_praised,
+            R.id.ui_tooltip_menu_moment_comment1
     };
 
     public static PopupWindow showTooltip(final View anchorView, int viewLayout, boolean belowAnchor, int arrowType, View.OnClickListener onClickListener) {

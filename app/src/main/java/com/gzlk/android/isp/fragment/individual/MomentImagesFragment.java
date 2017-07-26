@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.individual;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
@@ -10,14 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.api.archive.LikeRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
-import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
-import com.gzlk.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -56,7 +54,7 @@ import java.util.ArrayList;
  * <b>修改备注：</b><br />
  */
 
-public class MomentImagesFragment extends BaseDelayRefreshSupportFragment {
+public class MomentImagesFragment extends BaseMomentFragment {
 
     private static final String PARAM_SELECTED = "mdf_moment_selected";
     private static final String PARAM_USER_ID = "mdf_moment_user_id";
@@ -126,14 +124,12 @@ public class MomentImagesFragment extends BaseDelayRefreshSupportFragment {
         });
         if (null == images) {
             images = new ArrayList<>();
-            mMoment = new Dao<>(Moment.class).query(mQueryId);
+            //mMoment = new Dao<>(Moment.class).query(mQueryId);
             displayMomentDetails();
         }
         detailContentTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         initializeAdapter();
     }
-
-    private Moment mMoment;
 
     private void displayMomentDetails() {
         if (null == mMoment) {
@@ -144,46 +140,36 @@ public class MomentImagesFragment extends BaseDelayRefreshSupportFragment {
             if (null != mMoment.getImage()) {
                 images.addAll(mMoment.getImage());
             }
+            if (null != mAdapter) {
+                mAdapter.notifyDataSetChanged();
+            }
             setCustomTitle(Utils.format(mMoment.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), "yyyy年MM月dd日HH:mm"));
             detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), mMoment.getContent(), true));
             detailContentTextView.makeExpandable();
-            checkPraise();
+            checkIsMyPraised();
         }
     }
 
-    /**
-     * 拉取远程服务器上的说说
-     */
-    private void fetchingMoment() {
-        MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
-            @Override
-            public void onResponse(Moment moment, boolean success, String message) {
-                super.onResponse(moment, success, message);
-                if (success) {
-                    // 拉取回来之后立即显示
-                    mMoment = moment;
-                    displayMomentDetails();
-                }
-            }
-        }).find(mQueryId);
+    @Override
+    protected void onFetchingMomentComplete(Moment moment, boolean success) {
+        if (success) {
+            // 拉取回来之后立即显示
+            mMoment = moment;
+            displayMomentDetails();
+        }
     }
 
-    private void deleteMoment() {
-        MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
-            @Override
-            public void onResponse(Moment moment, boolean success, String message) {
-                super.onResponse(moment, success, message);
-                if (success) {
-                    // 本地已删除
-                    Dao<Moment> dao = new Dao<>(Moment.class);
-                    Moment deleted = dao.query(mQueryId);
-                    if (deleted != null) {
-                        dao.delete(deleted);
-                    }
-                    finish();
-                }
+    @Override
+    protected void onDeleteMomentComplete(Moment moment, boolean success, String message) {
+        if (success) {
+            // 本地已删除
+            Dao<Moment> dao = new Dao<>(Moment.class);
+            Moment deleted = dao.query(mQueryId);
+            if (deleted != null) {
+                dao.delete(deleted);
             }
-        }).delete(mQueryId);
+            finish();
+        }
     }
 
     private void resetPraiseStatus() {
@@ -194,65 +180,42 @@ public class MomentImagesFragment extends BaseDelayRefreshSupportFragment {
         commentNum.setText(format("%d", mMoment.getCmtNum()));
     }
 
-    /**
-     * 我是否已赞
-     */
-    private void checkPraise() {
-        LikeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveLike>() {
-            @Override
-            public void onResponse(ArchiveLike archiveLike, boolean success, String message) {
-                super.onResponse(archiveLike, success, message);
-                mMoment.setMyPraised(success);
-                resetPraiseStatus();
-            }
-        }).isExist(Comment.Type.MOMENT, mQueryId);
+    @Override
+    protected void onCheckIsMyPraisedComplete(boolean success) {
+        mMoment.setMyPraised(success);
+        resetPraiseStatus();
     }
 
-    /**
-     * 赞某个说说
-     */
-    private void praiseMoment() {
-        LikeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveLike>() {
-            @Override
-            public void onResponse(ArchiveLike archiveLike, boolean success, String message) {
-                super.onResponse(archiveLike, success, message);
-                if (success) {
-                    // 赞+1
-                    mMoment.setMyPraised(true);
-                    mMoment.setLikeNum(mMoment.getLikeNum() + 1);
-                    resetPraiseStatus();
-                }
-            }
-        }).add(Comment.Type.MOMENT, mQueryId);
+    @Override
+    protected void onPraiseMomentComplete(ArchiveLike archiveLike, boolean success) {
+        if (success) {
+            // 赞+1
+            mMoment.setMyPraised(true);
+            fetchingMoment();
+        }
     }
 
-    /**
-     * 取消赞
-     */
-    private void deletePraise() {
-        LikeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveLike>() {
-            @Override
-            public void onResponse(ArchiveLike archiveLike, boolean success, String message) {
-                super.onResponse(archiveLike, success, message);
-                if (success) {
-                    mMoment.setMyPraised(false);
-                    if (mMoment.getLikeNum() > 0) {
-                        mMoment.setLikeNum(mMoment.getLikeNum() - 1);
-                    }
-                    resetPraiseStatus();
-                }
-            }
-        }).delete(Comment.Type.MOMENT, mQueryId);
+    @Override
+    protected void onDeletePraiseMomentComplete(boolean success) {
+        if (success) {
+            mMoment.setMyPraised(false);
+            fetchingMoment();
+        }
+    }
+
+    @Override
+    protected void onCommentMomentComplete(Comment comment, boolean success) {
+        if (success) {
+            mMoment.setCmtNum(mMoment.getCmtNum() + 1);
+            resetPraiseStatus();
+            // 评论成功，转到说收详情页查看评论
+            MomentDetailsFragment.open(MomentImagesFragment.this, mQueryId);
+        }
     }
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return true;
-    }
-
-    @Override
-    protected void destroyView() {
-
     }
 
     private boolean isPraising = false;
@@ -268,7 +231,7 @@ public class MomentImagesFragment extends BaseDelayRefreshSupportFragment {
                     isPraising = true;
                     // 赞、取消赞
                     if (mMoment.isMyPraised()) {
-                        deletePraise();
+                        deletePraiseMoment();
                     } else {
                         praiseMoment();
                     }
@@ -282,12 +245,25 @@ public class MomentImagesFragment extends BaseDelayRefreshSupportFragment {
                 break;
             case R.id.ui_moment_detail_comment_container:
                 // 评论
+                MomentCommentFragment.open(MomentImagesFragment.this);
                 break;
             case R.id.ui_moment_detail_switch_more_container:
                 // 打开更多详情页面
                 MomentDetailsFragment.open(MomentImagesFragment.this, mQueryId);
                 break;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == MomentCommentFragment.REQ_COMMENT) {
+            // 发布对本说说的评论
+            String result = getResultedData(data);
+            if (!isEmpty(result)) {
+                commentMoment(result);
+            }
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     private View dialogView;
@@ -475,11 +451,6 @@ public class MomentImagesFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private MomentDetailsAdapter mAdapter;
-
-    @Override
-    protected void onDelayRefreshComplete(@DelayType int type) {
-
-    }
 
     private class MomentDetailsAdapter extends PagerAdapter {
 

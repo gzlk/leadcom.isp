@@ -3,11 +3,14 @@ package com.gzlk.android.isp.holder.individual;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 
 import java.util.ArrayList;
 
@@ -24,29 +27,64 @@ import java.util.ArrayList;
 
 public class ImageLineViewHolder extends BaseViewHolder {
 
-    private ViewGroup root;
-    private int layout, imageSize;
+    @ViewId(R.id.ui_holder_view_individual_moment_image_1)
+    private ImageDisplayer displayer1;
+    @ViewId(R.id.ui_holder_view_individual_moment_image_2)
+    private ImageDisplayer displayer2;
+    @ViewId(R.id.ui_holder_view_individual_moment_image_3)
+    private ImageDisplayer displayer3;
+
+    private int imageSize, bottomMargin;
 
     public ImageLineViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
-        root = (ViewGroup) itemView;
-        layout = R.layout.holder_view_individual_moment_image;
+        ViewUtility.bind(this, itemView);
         imageSize = getDimension(R.dimen.ui_base_image_line_image_size);
+        bottomMargin = getDimension(R.dimen.ui_static_dp_5);
     }
 
     public void clearImages() {
-        root.removeAllViews();
+        displayer1.setVisibility(View.GONE);
+        displayer2.setVisibility(View.GONE);
+        displayer3.setVisibility(View.GONE);
+    }
+
+    public void showBottomMargin(boolean shown) {
+        showBottomMargin(displayer1, shown);
+        showBottomMargin(displayer2, shown);
+        showBottomMargin(displayer3, shown);
+    }
+
+    private void showBottomMargin(ImageDisplayer displayer, boolean shown) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) displayer.getLayoutParams();
+        params.bottomMargin = shown ? bottomMargin : 0;
+        displayer.setLayoutParams(params);
     }
 
     public void showContent(ArrayList<String> images, int start) {
         for (int i = start, size = images.size(); i < size; i++) {
-            showContent(images.get(i));
+            switch (i - start) {
+                case 0:
+                    showContent(displayer1, images.get(i));
+                    break;
+                case 1:
+                    showContent(displayer2, images.get(i));
+                    break;
+                case 2:
+                    showContent(displayer3, images.get(i));
+                    break;
+            }
         }
     }
 
-    private void showContent(String image) {
-        ImageDisplayer displayer = (ImageDisplayer) LayoutInflater.from(root.getContext()).inflate(layout, null);
+    public void setOnImageClickListener(ImageDisplayer.OnImageClickListener listener) {
+        displayer1.addOnImageClickListener(listener);
+        displayer2.addOnImageClickListener(listener);
+        displayer3.addOnImageClickListener(listener);
+    }
+
+    private void showContent(ImageDisplayer displayer, String image) {
+        displayer.setVisibility(View.VISIBLE);
         displayer.displayImage(image, imageSize, false, false);
-        root.addView(displayer);
     }
 }

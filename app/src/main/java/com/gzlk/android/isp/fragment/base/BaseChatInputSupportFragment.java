@@ -119,6 +119,18 @@ public abstract class BaseChatInputSupportFragment extends BaseSwipeRefreshSuppo
         }
     }
 
+    protected void setSendText(int text) {
+        if (null != _inputSend) {
+            _inputSend.setText(text);
+        }
+    }
+
+    protected void setSendText(String text) {
+        if (null != _inputSend) {
+            _inputSend.setText(text);
+        }
+    }
+
     /**
      * 当BackKey触发时，查看表情框是否显示，此时优先隐藏表情框
      */
