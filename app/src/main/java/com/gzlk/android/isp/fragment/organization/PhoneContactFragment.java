@@ -32,7 +32,6 @@ import com.gzlk.android.isp.holder.organization.PhoneContactViewHolder;
 import com.gzlk.android.isp.lib.view.SlidView;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.Contact;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
@@ -64,7 +63,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         PhoneContactFragment pcf = new PhoneContactFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
+        // 组织的id
         bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 小组的id
         bundle.putString(PARAM_SQUAD_ID, strings[1]);
         pcf.setArguments(bundle);
         return pcf;
@@ -82,6 +83,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     // holder
     private SearchableViewHolder searchableViewHolder;
     private ArrayList<Contact> contacts = new ArrayList<>();
+    private ArrayList<Member> members = new ArrayList<>();
     private ContactAdapter mAdapter;
 
     @Override
@@ -187,11 +189,33 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             mAdapter = new ContactAdapter();
             mRecyclerView.addItemDecoration(new StickDecoration());
             mRecyclerView.setAdapter(mAdapter);
+            // 加载本地成员列表
+            loadingLocalMembers(mOrganizationId, mSquadId);
             // 读取缓存中已经处理过的联系人列表
             gotContactFromCache();
             // 尝试读取手机联系人并更新当前列表
             new ContactTask().exec();
         }
+    }
+
+    @Override
+    protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
+        members.clear();
+        if (null != list) {
+            members.addAll(list);
+        }
+    }
+
+    /**
+     * 查找成员中是否有人具有相同的手机号码
+     */
+    private boolean isMemberExists(String phone) {
+        for (Member member : members) {
+            if (!isEmpty(member.getPhone()) && member.getPhone().equals(phone)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String searchingText = "";
@@ -217,7 +241,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             for (Contact contact : list) {
                 // 检索此用户是否已被邀请
                 contact.setInvited(invited(contact.getPhone()));
-                contact.setMember(Member.isMemberInLocal(contact.getUserId(), mOrganizationId, mSquadId));
+                contact.setMember(isMemberExists(contact.getPhone()));
             }
             contacts.clear();
             contacts.addAll(list);
@@ -238,29 +262,10 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         mAdapter.sort();
     }
 
-    private void gotContactFromCache(String searchingText) {
-        mAdapter.clear();
-        QueryBuilder<Contact> query = new QueryBuilder<>(Contact.class);
-        if (!StringHelper.isEmpty(searchingText)) {
-            String like = "%" + searchingText + "%";
-            query = query.where(Model.Field.Name + " LIKE " + like);
-        }
-        query = query.orderBy(Model.Field.Name);
-        List<Contact> contacts = new Dao<>(Contact.class).query(query);
-        if (null != contacts) {
-            for (Contact contact : contacts) {
-                // 检索此用户是否已被邀请
-                contact.setInvited(invited(contact.getPhone()));
-                contact.setMember(Member.isMemberInLocal(contact.getUserId(), mOrganizationId, mSquadId));
-                mAdapter.add(contact);
-                slidView.add(contact.getSpell());
-            }
-            mAdapter.sort();
-        }
-    }
+    Dao<User> userDao = new Dao<>(User.class);
 
     private User getUser(String phone) {
-        return new Dao<>(User.class).querySingle(User.Field.Phone, phone);
+        return userDao.querySingle(User.Field.Phone, phone);
     }
 
     private boolean invited(String phone) {

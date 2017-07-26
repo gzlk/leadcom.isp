@@ -107,8 +107,8 @@ public class Member extends Leaguer {
     /**
      * 查询指定用户是否在本地缓存中的某个组织或小组里
      */
-    public static boolean isMemberInLocal(String userId, String groupId, String squadId) {
-        if (isEmpty(userId) || isEmpty(groupId)) return false;
+    public static boolean isMemberInLocal(String phone, String groupId, String squadId) {
+        if (isEmpty(phone) || isEmpty(groupId)) return false;
         QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
                 .whereEquals(Organization.Field.GroupId, groupId);
         if (isEmpty(squadId)) {
@@ -116,7 +116,7 @@ public class Member extends Leaguer {
         } else {
             query = query.whereAppendAnd().whereEquals(Organization.Field.SquadId, squadId);
         }
-        query = query.whereAppendAnd().whereEquals(Model.Field.UserId, userId);
+        query = query.whereAppendAnd().whereEquals(User.Field.Phone, phone);
         List<Member> list = new Dao<>(Member.class).query(query);
         return !(null == list || list.size() < 1);
     }
@@ -124,12 +124,12 @@ public class Member extends Leaguer {
     /**
      * 查询指定用户是否在本地缓存中的某个活动里
      */
-    public static boolean isMemberInLocal(String userId, String activityId) {
-        if (isEmpty(userId) || isEmpty(activityId)) return false;
+    public static boolean isMemberInLocal(String phone, String activityId) {
+        if (isEmpty(phone) || isEmpty(activityId)) return false;
 
         QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
                 .whereEquals(Activity.Field.ActivityId, activityId)
-                .whereAppendAnd().whereEquals(Model.Field.UserId, userId);
+                .whereAppendAnd().whereEquals(User.Field.Phone, phone);
         List<Member> list = new Dao<>(Member.class).query(query);
         return !(null == list || list.size() < 1);
     }

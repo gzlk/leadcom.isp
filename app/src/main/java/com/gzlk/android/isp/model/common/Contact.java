@@ -59,6 +59,11 @@ public class Contact extends Model {
     }
 
     public String getPhone() {
+        if (!isEmpty(phone)) {
+            if (phone.length() > 11) {
+                phone = phone.substring(phone.length() - 11);
+            }
+        }
         return phone;
     }
 

@@ -123,7 +123,7 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         if (null != list && list.size() > 0) {
             for (Member member : list) {
                 member.setSquadId(mSquadId);
-                member.setSelected(Member.isMemberInLocal(member.getUserId(), mOrganizationId, mSquadId));
+                member.setSelected(Member.isMemberInLocal(member.getPhone(), mOrganizationId, mSquadId));
             }
             mAdapter.add(list, false);
             mAdapter.sort();
