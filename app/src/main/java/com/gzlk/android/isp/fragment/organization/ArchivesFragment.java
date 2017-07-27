@@ -105,13 +105,19 @@ public class ArchivesFragment extends BaseOrganizationFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQUEST_DELETE) {
-            String id = getResultedData(data);
-            if (!isEmpty(id)) {
-                Archive archive = new Archive();
-                archive.setId(id);
-                mAdapter.remove(archive);
-            }
+        switch (requestCode) {
+            case REQUEST_DELETE:
+                String id = getResultedData(data);
+                if (!isEmpty(id)) {
+                    Archive archive = new Archive();
+                    archive.setId(id);
+                    mAdapter.remove(archive);
+                }
+                break;
+            case REQUEST_CHANGE:
+                // 新增组织档案、组织档案管理页面返回时，重新刷新第一页
+                onSwipeRefreshing();
+                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -152,12 +158,12 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                         ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
                     } else {
                         // 新建组织档案
-                        openActivity(ArchiveCreatorFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), true, true);
+                        openActivity(ArchiveCreatorFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), REQUEST_CHANGE, true, true);
                     }
                     break;
                 case R.id.ui_tooltip_menu_organization_document_manage:
                     // 管理组织档案
-                    openActivity(OrgArchiveManagementFragment.class.getName(), mQueryId, false, false);
+                    openActivity(OrgArchiveManagementFragment.class.getName(), mQueryId, REQUEST_CHANGE, false, false);
                     break;
             }
         }

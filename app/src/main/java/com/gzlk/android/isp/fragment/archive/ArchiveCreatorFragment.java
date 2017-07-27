@@ -67,6 +67,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_SOURCE = "dnf_source";
     private static final String PARAM_COVER = "anf_cover";
     private static final String PARAM_LABEL = "anf_label";
+    private static final String PARAM_INTRO = "anf_intro";
 
     public static ArchiveCreatorFragment newInstance(String params) {
         ArchiveCreatorFragment dnf = new ArchiveCreatorFragment();
@@ -93,6 +94,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
         title = bundle.getString(PARAM_TITLE, "");
         source = bundle.getString(PARAM_SOURCE, "");
         cover = bundle.getString(PARAM_COVER, "");
+        intro = bundle.getString(PARAM_INTRO, "");
         labelJson = bundle.getString(PARAM_LABEL, "[]");
         resetLabels();
     }
@@ -109,6 +111,8 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_SOURCE, source);
         bundle.putString(PARAM_COVER, cover);
         bundle.putString(PARAM_LABEL, labelJson);
+        intro = introductionView.getValue();
+        bundle.putString(PARAM_INTRO, intro);
     }
 
     private void resetLabels() {
@@ -150,7 +154,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private FileAdapter mAdapter;
     private int archiveType;
     private String archiveGroup;
-    private String privacy, title, source, cover, labelJson = "[]";
+    private String privacy, title, source, cover, labelJson = "[]", intro;
     // 文件选择
     private FilePickerDialog filePickerDialog;
 
@@ -260,7 +264,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
-                    finish();
+                    resultSucceededActivity();
                 }
             }
         }).add(cover, title, intro, seclusion.getStatus(), happenDate, labels, office, images, video, attach);
@@ -301,7 +305,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
-                    finish();
+                    resultSucceededActivity();
                 }
             }
         }).add(archiveGroup, Archive.ArchiveType.NORMAL, cover, title, intro, happenDate,
@@ -325,7 +329,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
-                    finish();
+                    resultSucceededActivity();
                 }
             }
         }).update(mQueryId, cover, title, content, seclusion.getStatus(), happenDate, labels, office, images, video, attach);
@@ -340,7 +344,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(message);
-                    finish();
+                    resultSucceededActivity();
                 }
             }
         }).update(mQueryId, cover, title, content, labels, seclusion.getUserIds(), seclusion.getStatus(), happenDate, office, images, video, attach);
@@ -495,7 +499,10 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
         labelHolder.showContent(format(strings[5], tmp));
 
         // 简介
-        introductionView.setValue(null == archive ? "" : StringHelper.escapeFromHtml(archive.getIntro()));
+        if (isEmpty(intro)) {
+            intro = null == archive ? "" : archive.getIntro();
+        }
+        introductionView.setValue(intro);
 
         if (null == filePickerDialog) {
             DialogProperties properties = new DialogProperties();

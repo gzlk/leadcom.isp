@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.organization.archive;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -54,6 +55,7 @@ public class OrgArchiveManagementFragment extends BaseViewPagerSupportFragment {
         leftText.setText(null);
         super.doingInResume();
         initializeHolder();
+        Activity().setResult(Activity.RESULT_OK);
     }
 
     @Override
