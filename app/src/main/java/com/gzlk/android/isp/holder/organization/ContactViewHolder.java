@@ -177,15 +177,8 @@ public class ContactViewHolder extends BaseViewHolder {
         if (buttonInviteVisible) {
             // 只在显示按钮的时候才进行判断加入或不加入操作
             if (!isEmpty(squadId)) {
-                // 小组id不为空时，判断当前成员是否已经加入本小组
-                if (!isEmpty(member.getSquadId()) && member.getSquadId().equals(squadId)) {
-                    buttonInvite.setEnabled(false);
-                    // 成员已是小组的人了
-                    buttonInvite.setText(R.string.ui_phone_contact_invited);
-                } else {
-                    buttonInvite.setEnabled(!member.isSelected());
-                    buttonInvite.setText(member.isSelected() ? R.string.ui_phone_contact_invited : R.string.ui_phone_contact_add);
-                }
+                buttonInvite.setEnabled(!member.isSelected());
+                buttonInvite.setText(member.isSelected() ? R.string.ui_phone_contact_invited : R.string.ui_phone_contact_add);
             }
         }
         iconPicker.setVisibility(pickerVisible ? View.VISIBLE : View.GONE);

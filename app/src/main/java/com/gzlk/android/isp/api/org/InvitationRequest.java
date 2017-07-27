@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.api.org;
 
+import android.support.annotation.NonNull;
+
 import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
@@ -38,22 +40,17 @@ public class InvitationRequest extends Request<Invitation> {
     }
 
     // 邀请成员
-    private static final String INVITE_GROUP = "/group/groInvt";
-    private static final String INVITE_SQUAD = "/group/groSquInvt";
-    private static final String INVITE_ACTIVITY = "/activity/actInvt";
+    private static final String INVITE_INTO_GROUP = "/group/groInvt";
+    private static final String INVITE_INTO_GROUP_REG = "/group/groRegInvt";
+    private static final String INVITE_INTO_SQUAD = "/group/groSquInvt";
+    private static final String INVITE_INTO_ACTIVITY = "/activity/actInvt";
 
-    /**
-     * 同意
-     */
-    static final String APPROVE = "/approve";
-    /**
-     * 拒绝
-     */
-    static final String REJECT = "/reject";
+    // action
+    private static final String HANDLE = "/handle";
 
     @Override
     protected String url(String action) {
-        return format("%s%s", INVITE_GROUP, action);
+        return format("%s%s", INVITE_INTO_GROUP, action);
     }
 
     private String url(String path, String action) {
@@ -95,28 +92,23 @@ public class InvitationRequest extends Request<Invitation> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleInvite.class, url(INVITE_GROUP, ADD), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_GROUP, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
-     * 邀请某人加入小组
-     *
-     * @param squadId   要加入的小组的id
-     * @param inviteeId 被邀请人的userId
-     * @param message   申请、审核人的留言
+     * 从手机通讯录里添加成员到组织
      */
-    public void inviteToSquad(String squadId, String inviteeId, String message) {
-        // {groSquId,inviteeId,msg}
+    public void inviteToGroupFromPhoneContact(@NonNull String phone, @NonNull String groupId) {
+        // {groupId,phone,msg}
         JSONObject object = new JSONObject();
         try {
-            object.put("groSquId", squadId)
-                    .put("inviteeId", inviteeId)
-                    .put("msg", checkNull(message));
+            object.put("phone", phone)
+                    .put("groupId", groupId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleInvite.class, url(INVITE_SQUAD, ADD), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_GROUP_REG, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -126,7 +118,7 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message    留言
      */
     public void agreeInviteToGroup(String inviteUUID, String message) {
-        handle(INVITE_GROUP, INVITE_AGREE, inviteUUID, message);
+        handle(INVITE_INTO_GROUP, INVITE_AGREE, inviteUUID, message);
     }
 
     /**
@@ -136,7 +128,24 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message    留言
      */
     public void disagreeInviteToGroup(String inviteUUID, String message) {
-        handle(INVITE_GROUP, INVITE_DISAGREE, inviteUUID, message);
+        handle(INVITE_INTO_GROUP, INVITE_DISAGREE, inviteUUID, message);
+    }
+
+    /**
+     * 从手机通讯录中添加成员到小组
+     */
+    public void inviteToSquadFromPhoneContact(@NonNull String phone, @NonNull String groupId, @NonNull String squadId) {
+        // {groupId,squadId,phone,msg}
+        JSONObject object = new JSONObject();
+        try {
+            object.put("phone", phone)
+                    .put("groupId", groupId)
+                    .put("squadId", squadId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_SQUAD, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -146,7 +155,7 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message    留言
      */
     public void agreeInviteToSquad(String inviteUUID, String message) {
-        handle(INVITE_SQUAD, INVITE_AGREE, inviteUUID, message);
+        handle(INVITE_INTO_SQUAD, INVITE_AGREE, inviteUUID, message);
     }
 
     /**
@@ -156,7 +165,7 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message    留言
      */
     public void disagreeInviteToSquad(String inviteUUID, String message) {
-        handle(INVITE_SQUAD, INVITE_DISAGREE, inviteUUID, message);
+        handle(INVITE_INTO_SQUAD, INVITE_DISAGREE, inviteUUID, message);
     }
 
     private void handle(String path, int ope, String uuid, String message) {
@@ -168,7 +177,7 @@ public class InvitationRequest extends Request<Invitation> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleInvite.class, format("%s/handle", path), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleInvite.class, url(path, HANDLE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -183,7 +192,7 @@ public class InvitationRequest extends Request<Invitation> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleInvite.class, url(INVITE_ACTIVITY, ADD), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_ACTIVITY, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -208,7 +217,7 @@ public class InvitationRequest extends Request<Invitation> {
         if (ope < INVITE_AGREE || ope > INVITE_DISAGREE) {
             throw new IllegalArgumentException("cannot support handle ope value: " + ope);
         }
-        String param = format("%s?tid=%s&ope=%d%s", url(INVITE_ACTIVITY, "/handle"), tid, ope, (isEmpty(msg) ? "" : format("&msg=%s", msg)));
+        String param = format("%s?tid=%s&ope=%d%s", url(INVITE_INTO_ACTIVITY, "/handle"), tid, ope, (isEmpty(msg) ? "" : format("&msg=%s", msg)));
         httpRequest(getRequest(SingleInvite.class, param, "", HttpMethods.Get));
     }
 
@@ -218,7 +227,7 @@ public class InvitationRequest extends Request<Invitation> {
      * <br/>(2017/07/27 11:00更改)
      */
     public void activityInviteNotHandled(String groupId, int pageNumber) {
-        String param = format("%s?groupId=%s&pageNumber=%d&pageSize=100", url(INVITE_ACTIVITY, "/list/notHandle"), groupId, pageNumber);
+        String param = format("%s?groupId=%s&pageNumber=%d&pageSize=100", url(INVITE_INTO_ACTIVITY, "/list/notHandle"), groupId, pageNumber);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 
@@ -227,7 +236,7 @@ public class InvitationRequest extends Request<Invitation> {
      * <br/>(2017/07/27 11:00新增)
      */
     public void activityInviteList(String activityId, int pageNumber) {
-        String param = format("%s?actId=%s&pageNumber=%d&pageSize=100", url(INVITE_ACTIVITY, "/list/actId"), activityId, pageNumber);
+        String param = format("%s?actId=%s&pageNumber=%d&pageSize=100", url(INVITE_INTO_ACTIVITY, "/list/actId"), activityId, pageNumber);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 
@@ -238,7 +247,7 @@ public class InvitationRequest extends Request<Invitation> {
      */
     @Deprecated
     public void activityInviteNotApproved(String groupId, int pageNumber) {
-        String param = format("%s?groupId=%s&pageNumber=%d", url(INVITE_ACTIVITY, "/list/notApprove"), groupId, pageNumber);
+        String param = format("%s?groupId=%s&pageNumber=%d", url(INVITE_INTO_ACTIVITY, "/list/notApprove"), groupId, pageNumber);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 }

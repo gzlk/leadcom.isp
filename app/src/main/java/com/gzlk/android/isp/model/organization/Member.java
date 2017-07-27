@@ -118,7 +118,7 @@ public class Member extends Leaguer {
         }
         query = query.whereAppendAnd().whereEquals(User.Field.Phone, phone);
         List<Member> list = new Dao<>(Member.class).query(query);
-        return !(null == list || list.size() < 1);
+        return (null != list && list.size() > 0);
     }
 
     /**

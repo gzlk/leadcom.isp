@@ -10,11 +10,8 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.http.request.param.HttpMethods;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>系统相关api<br />
@@ -39,12 +36,9 @@ public class SystemRequest extends Request<User> {
     private static final String SYSTEM = "/system";
     private static final String SIGN_UP = SYSTEM + "/regist";
     private static final String SIGN_IN = SYSTEM + "/login";
-    private static final String SYNC = SYSTEM + "/sync";
     private static final String CAPTCHA = SYSTEM + "/getCaptchaTo";
     private static final String PASSWORD = SYSTEM + "/resetPwd";
     private static final String VERIFY_CAPTCHA = SYSTEM + "/verifyCaptcha";
-    private static final String INVITE_TO_GROUP = SYSTEM + "/sms/regInvt/add";
-    private static final String INVITE_TO_SQUAD = SYSTEM + "/sms/squInvt/add";
 
     @Override
     protected String url(String action) {
@@ -101,13 +95,6 @@ public class SystemRequest extends Request<User> {
 
         httpRequest(getRequest(Register.class, SIGN_IN, object.toString(), HttpMethods.Post));
     }
-
-    /*
-      同步用户信息
-     */
-//    public void sync() {
-//        httpRequest(getRequest(Register.class, format("%s?accessToken=%s", SYNC, Cache.cache().accessToken), "", HttpMethods.Get));
-//    }
 
     /**
      * 获取验证码
@@ -168,40 +155,5 @@ public class SystemRequest extends Request<User> {
     public void resetPhone(String phone, String captcha) {
         String param = format("/system/resetPhone?phone=%s&captcha=%s", phone, captcha);
         httpRequest(getRequest(Register.class, param, "", HttpMethods.Get));
-    }
-
-    /**
-     * 邀请手机通讯录好友加入组织
-     * <br/>(2017/07/27 11:00更改)
-     */
-    public void inviteJoinIntoGroup(@NonNull String phone, @NonNull String groupId) {
-        // {groupId,phone,msg}
-        JSONObject object = new JSONObject();
-        try {
-            object.put("phone", phone)
-                    .put("groupId", groupId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        httpRequest(getRequest(Register.class, INVITE_TO_GROUP, object.toString(), HttpMethods.Post));
-    }
-
-    /**
-     * 邀请手机通讯录好友加入小组
-     * <br/>(2017/07/27 11:00更改)
-     */
-    public void inviteJoinIntoSquad(@NonNull String phone, @NonNull String groupId, @NonNull String squadId) {
-        // {groupId,squadId,phone,msg}
-        JSONObject object = new JSONObject();
-        try {
-            object.put("phone", phone)
-                    .put("groupId", groupId)
-                    .put("squadId", squadId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        httpRequest(getRequest(Register.class, INVITE_TO_SQUAD, object.toString(), HttpMethods.Post));
     }
 }

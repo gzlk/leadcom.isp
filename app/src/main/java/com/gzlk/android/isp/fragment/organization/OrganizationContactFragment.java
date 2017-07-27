@@ -7,7 +7,7 @@ import android.view.View;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.org.InvitationRequest;
+import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -15,7 +15,6 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 
 import java.util.List;
@@ -150,17 +149,17 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
 
     private void addMemberToSquad(Member member, final int index) {
         // 将不在小组内的组织成员添加到小组
-        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onResponse(Invitation invitation, boolean success, String message) {
-                super.onResponse(invitation, success, message);
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
                 if (success) {
                     mAdapter.get(index).setSelected(true);
                     mAdapter.notifyItemChanged(index);
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).inviteToSquad(mSquadId, member.getUserId(), "");
+        }).addToSquadFromGroup(member.getUserId(), mSquadId);
     }
 
     private ContactViewHolder.OnPhoneDialListener phoneDialListener = new ContactViewHolder.OnPhoneDialListener() {

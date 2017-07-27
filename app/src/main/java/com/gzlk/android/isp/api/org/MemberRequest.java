@@ -239,8 +239,8 @@ public class MemberRequest extends Request<Member> {
     /**
      * 从组织里添加小组成员且不需要对方同意或拒绝(2017-06-26 21:34新增)
      */
-    public void addFromGroup(String userId, String squadId) {
-        String url = "/group/groSquMember/add/fromGroup";
+    public void addToSquadFromGroup(String userId, String squadId) {
+        String url = url(Member.Type.SQUAD, ADD);
         String param = format("%s?userId=%s&squadId=%s", url, userId, squadId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }

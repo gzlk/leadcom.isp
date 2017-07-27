@@ -21,6 +21,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.common.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -346,28 +347,46 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     // 邀请进小组
     private void inviteToSquad(String phone) {
-        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
-            public void onResponse(User user, boolean success, String message) {
-                super.onResponse(user, success, message);
+            public void onResponse(Invitation invitation, boolean success, String message) {
+                super.onResponse(invitation, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
-        }).inviteJoinIntoSquad(phone, mOrganizationId, mSquadId);
+        }).inviteToSquadFromPhoneContact(phone, mOrganizationId, mSquadId);
+//        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+//            @Override
+//            public void onResponse(User user, boolean success, String message) {
+//                super.onResponse(user, success, message);
+//                if (success) {
+//                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
+//                }
+//            }
+//        }).inviteJoinIntoSquad(phone, mOrganizationId, mSquadId);
     }
 
     // 邀请进组织
     private void inviteToOrganization(String phone) {
-        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
-            public void onResponse(User user, boolean success, String message) {
-                super.onResponse(user, success, message);
+            public void onResponse(Invitation invitation, boolean success, String message) {
+                super.onResponse(invitation, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
-        }).inviteJoinIntoGroup(phone, mOrganizationId);
+        }).inviteToGroupFromPhoneContact(phone, mOrganizationId);
+//        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+//            @Override
+//            public void onResponse(User user, boolean success, String message) {
+//                super.onResponse(user, success, message);
+//                if (success) {
+//                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
+//                }
+//            }
+//        }).inviteJoinIntoGroup(phone, mOrganizationId);
     }
 
     private void warningNoContact() {
