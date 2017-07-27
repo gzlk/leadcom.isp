@@ -1,8 +1,13 @@
 package com.gzlk.android.isp.nim.action;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
+
 import com.gzlk.android.isp.R;
 import com.netease.nim.uikit.LocationProvider;
 import com.netease.nim.uikit.NimUIKit;
+import com.netease.nim.uikit.permission.MPermission;
 import com.netease.nim.uikit.session.actions.BaseAction;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
@@ -26,12 +31,27 @@ public class LocationAction extends BaseAction {
 
     @Override
     public void onClick() {
+        // 是否有定位权限
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            requestLocation();
+        } else {
+            requestPermission();
+        }
+    }
+
+    private void requestPermission() {
+        MPermission
+                .with(getActivity())
+                .permissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                .setRequestCode(100).request();
+    }
+
+    private void requestLocation() {
         if (NimUIKit.getLocationProvider() != null) {
             NimUIKit.getLocationProvider().requestLocation(getActivity(), new LocationProvider.Callback() {
                 @Override
                 public void onSuccess(double longitude, double latitude, String address) {
-                    IMMessage message = MessageBuilder.createLocationMessage(getAccount(), getSessionType(), latitude, longitude,
-                            address);
+                    IMMessage message = MessageBuilder.createLocationMessage(getAccount(), getSessionType(), latitude, longitude, address);
                     sendMessage(message);
                 }
             });
