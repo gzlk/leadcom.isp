@@ -46,10 +46,6 @@ public class ActRequest extends Request<Activity> {
     private static class MultipleActivity extends PaginationQuery<Activity> {
     }
 
-    private static final String JOINED = "/list/joined";
-    private static final String CREATED = "/list/created";
-    private static final String ENDED = "/list/ended";
-    private static final String REFRESH = "/list/refresh";
     private static final String END = "/end";
     private static final String IS_JOINED = "/joinPublicAct";
 

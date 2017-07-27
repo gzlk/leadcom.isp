@@ -8,7 +8,6 @@ import android.view.KeyEvent;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.org.GroupJoinRequest;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.application.NimApplication;
@@ -20,7 +19,6 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.organization.Invitation;
-import com.gzlk.android.isp.model.organization.JoinGroup;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
@@ -315,32 +313,34 @@ public class MainActivity extends TitleActivity {
      * 处理申请入群的审批操作
      */
     private static void joinIntoGroupPassed(final NimMessage msg) {
-        GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
-            @Override
-            public void onResponse(JoinGroup joinGroup, boolean success, String message) {
-                super.onResponse(joinGroup, success, message);
-                if (success) {
-                    // 处理成功之后保存当前消息状态
-                    saveMessage(msg, true, true);
-                }
-            }
-        }).approveJoin(msg.getUuid(), "");
+        throw new IllegalArgumentException("Cannot support join into group now.");
+//        GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
+//            @Override
+//            public void onResponse(JoinGroup joinGroup, boolean success, String message) {
+//                super.onResponse(joinGroup, success, message);
+//                if (success) {
+//                    // 处理成功之后保存当前消息状态
+//                    saveMessage(msg, true, true);
+//                }
+//            }
+//        }).approveJoin(msg.getUuid(), "");
     }
 
     /**
      * 处理申请入群的拒绝操作
      */
     private static void joinIntoGroupDenied(final NimMessage msg) {
-        GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
-            @Override
-            public void onResponse(JoinGroup joinGroup, boolean success, String message) {
-                super.onResponse(joinGroup, success, message);
-                if (success) {
-                    // 处理成功之后保存当前消息状态
-                    saveMessage(msg, true, false);
-                }
-            }
-        }).rejectJoin(msg.getUuid(), "");
+        throw new IllegalArgumentException("Cannot support join into group now.");
+//        GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
+//            @Override
+//            public void onResponse(JoinGroup joinGroup, boolean success, String message) {
+//                super.onResponse(joinGroup, success, message);
+//                if (success) {
+//                    // 处理成功之后保存当前消息状态
+//                    saveMessage(msg, true, false);
+//                }
+//            }
+//        }).rejectJoin(msg.getUuid(), "");
     }
 
     /**

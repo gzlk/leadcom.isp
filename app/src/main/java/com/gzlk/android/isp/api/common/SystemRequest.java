@@ -43,8 +43,8 @@ public class SystemRequest extends Request<User> {
     private static final String CAPTCHA = SYSTEM + "/getCaptchaTo";
     private static final String PASSWORD = SYSTEM + "/resetPwd";
     private static final String VERIFY_CAPTCHA = SYSTEM + "/verifyCaptcha";
-    private static final String INVITE_TO_GROUP = SYSTEM + "/sms/invToJoinGroup";
-    private static final String INVITE_TO_SQUAD = SYSTEM + "/sms/invToJoinSquad";
+    private static final String INVITE_TO_GROUP = SYSTEM + "/sms/regInvt/add";
+    private static final String INVITE_TO_SQUAD = SYSTEM + "/sms/squInvt/add";
 
     @Override
     protected String url(String action) {
@@ -172,15 +172,14 @@ public class SystemRequest extends Request<User> {
 
     /**
      * 邀请手机通讯录好友加入组织
+     * <br/>(2017/07/27 11:00更改)
      */
     public void inviteJoinIntoGroup(@NonNull String phone, @NonNull String groupId) {
-        // {toPhoneArr:['1591111111','186111111'],accessToken:"",toGroupId:""}
-        ArrayList<String> phones = new ArrayList<>();
-        phones.add(phone);
+        // {groupId,phone,msg}
         JSONObject object = new JSONObject();
         try {
-            object.put("toPhoneArr", new JSONArray(phones))
-                    .put("toGroupId", groupId);
+            object.put("phone", phone)
+                    .put("groupId", groupId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -190,15 +189,15 @@ public class SystemRequest extends Request<User> {
 
     /**
      * 邀请手机通讯录好友加入小组
+     * <br/>(2017/07/27 11:00更改)
      */
-    public void inviteJoinIntoSquad(@NonNull String phone, @NonNull String squadId) {
-        // {toPhoneArr:['1591111111','186111111'],accessToken:"",toSquadId:""}
-        ArrayList<String> phones = new ArrayList<>();
-        phones.add(phone);
+    public void inviteJoinIntoSquad(@NonNull String phone, @NonNull String groupId, @NonNull String squadId) {
+        // {groupId,squadId,phone,msg}
         JSONObject object = new JSONObject();
         try {
-            object.put("toPhoneArr", new JSONArray(phones))
-                    .put("toSquadId", squadId);
+            object.put("phone", phone)
+                    .put("groupId", groupId)
+                    .put("squadId", squadId);
         } catch (JSONException e) {
             e.printStackTrace();
         }

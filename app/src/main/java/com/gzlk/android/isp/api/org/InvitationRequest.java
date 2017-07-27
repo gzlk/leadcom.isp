@@ -38,9 +38,9 @@ public class InvitationRequest extends Request<Invitation> {
     }
 
     // 邀请成员
-    private static final String INVITE_GROUP = "/group/groInv";
-    private static final String INVITE_SQUAD = "/group/groSquInv";
-    private static final String INVITE_ACTIVITY = "/activity/invitation";
+    private static final String INVITE_GROUP = "/group/groInvt";
+    private static final String INVITE_SQUAD = "/group/groSquInvt";
+    private static final String INVITE_ACTIVITY = "/activity/actInvt";
 
     /**
      * 同意
@@ -85,7 +85,7 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message   申请、审核人的留言
      */
     public void inviteToGroup(String groupId, String inviteeId, String message) {
-        //{groupId,inviteeId,msg,accessToken}
+        // {groupId,inviteeId,msg}
         JSONObject object = new JSONObject();
         try {
             object.put("groupId", groupId)
@@ -106,7 +106,7 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message   申请、审核人的留言
      */
     public void inviteToSquad(String squadId, String inviteeId, String message) {
-        // {groSquId,inviteeId,msg,accessToken}
+        // {groSquId,inviteeId,msg}
         JSONObject object = new JSONObject();
         try {
             object.put("groSquId", squadId)
@@ -126,7 +126,7 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message    留言
      */
     public void agreeInviteToGroup(String inviteUUID, String message) {
-        handle(INVITE_GROUP, APPROVE, inviteUUID, message);
+        handle(INVITE_GROUP, INVITE_AGREE, inviteUUID, message);
     }
 
     /**
@@ -136,7 +136,7 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message    留言
      */
     public void disagreeInviteToGroup(String inviteUUID, String message) {
-        handle(INVITE_GROUP, REJECT, inviteUUID, message);
+        handle(INVITE_GROUP, INVITE_DISAGREE, inviteUUID, message);
     }
 
     /**
@@ -146,7 +146,7 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message    留言
      */
     public void agreeInviteToSquad(String inviteUUID, String message) {
-        handle(INVITE_SQUAD, APPROVE, inviteUUID, message);
+        handle(INVITE_SQUAD, INVITE_AGREE, inviteUUID, message);
     }
 
     /**
@@ -156,18 +156,19 @@ public class InvitationRequest extends Request<Invitation> {
      * @param message    留言
      */
     public void disagreeInviteToSquad(String inviteUUID, String message) {
-        handle(INVITE_SQUAD, REJECT, inviteUUID, message);
+        handle(INVITE_SQUAD, INVITE_DISAGREE, inviteUUID, message);
     }
 
-    private void handle(String path, String action, String uuid, String message) {
+    private void handle(String path, int ope, String uuid, String message) {
         JSONObject object = new JSONObject();
         try {
             object.put("uuid", uuid)
+                    .put("ope", ope)
                     .put("msg", checkNull(message));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleInvite.class, url(path, action), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleInvite.class, format("%s/handle", path), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -188,11 +189,11 @@ public class InvitationRequest extends Request<Invitation> {
     /**
      * 同意加入活动
      */
-    public static final int INVITE_HANDLE_AGREE = 1;
+    public static final int INVITE_AGREE = 1;
     /**
      * 暂不加入活动
      */
-    public static final int INVITE_HANDLE_DISAGREE = 2;
+    public static final int INVITE_DISAGREE = 2;
 
     /**
      * 处理活动邀请
@@ -204,7 +205,7 @@ public class InvitationRequest extends Request<Invitation> {
      */
     public void activityInviteHandle(String tid, int ope, String msg) {
         // tid,ope,msg
-        if (ope < INVITE_HANDLE_AGREE || ope > INVITE_HANDLE_DISAGREE) {
+        if (ope < INVITE_AGREE || ope > INVITE_DISAGREE) {
             throw new IllegalArgumentException("cannot support handle ope value: " + ope);
         }
         String param = format("%s?tid=%s&ope=%d%s", url(INVITE_ACTIVITY, "/handle"), tid, ope, (isEmpty(msg) ? "" : format("&msg=%s", msg)));
@@ -214,19 +215,30 @@ public class InvitationRequest extends Request<Invitation> {
     /**
      * 查询未处理的活动(活动首页)
      * <br/>(2017/07/14 17:00更改)
+     * <br/>(2017/07/27 11:00更改)
      */
-    public void activityInviteNotHandled(String groupId) {
-        String param = format("%s?groupId=%s", url(INVITE_ACTIVITY, "/list/notHandle"), groupId);
+    public void activityInviteNotHandled(String groupId, int pageNumber) {
+        String param = format("%s?groupId=%s&pageNumber=%d&pageSize=100", url(INVITE_ACTIVITY, "/list/notHandle"), groupId, pageNumber);
+        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询指定活动中未同意的邀请
+     * <br/>(2017/07/27 11:00新增)
+     */
+    public void activityInviteList(String activityId, int pageNumber) {
+        String param = format("%s?actId=%s&pageNumber=%d&pageSize=100", url(INVITE_ACTIVITY, "/list/actId"), activityId, pageNumber);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 
     /**
      * 查询未参加的活动（包括暂不参加和未处理的）
      * <br/>(2017/07/14 17:00更改)
+     * <br/>(2017/07/27 11:00更改)
      */
     @Deprecated
-    public void activityInviteNotApproved(String groupId) {
-        String param = format("%s?groupId=%s", url(INVITE_ACTIVITY, "/list/notApprove"), groupId);
+    public void activityInviteNotApproved(String groupId, int pageNumber) {
+        String param = format("%s?groupId=%s&pageNumber=%d", url(INVITE_ACTIVITY, "/list/notApprove"), groupId, pageNumber);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 }

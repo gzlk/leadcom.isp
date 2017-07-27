@@ -257,7 +257,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingUnHandledActivityInviteComplete(list);
             }
-        }).activityInviteNotHandled(groupId);
+        }).activityInviteNotHandled(groupId, 1);
     }
 
     /**

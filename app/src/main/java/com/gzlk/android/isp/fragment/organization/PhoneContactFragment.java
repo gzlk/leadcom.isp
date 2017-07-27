@@ -354,7 +354,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
-        }).inviteJoinIntoSquad(phone, mSquadId);
+        }).inviteJoinIntoSquad(phone, mOrganizationId, mSquadId);
     }
 
     // 邀请进组织

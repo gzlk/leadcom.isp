@@ -169,7 +169,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).activityInviteHandle(tid, InvitationRequest.INVITE_HANDLE_DISAGREE, "");
+        }).activityInviteHandle(tid, InvitationRequest.INVITE_DISAGREE, "");
     }
 
     private void agree() {
@@ -185,7 +185,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                     warningApproveSuccess();
                 }
             }
-        }).activityInviteHandle(tid, InvitationRequest.INVITE_HANDLE_AGREE, "");
+        }).activityInviteHandle(tid, InvitationRequest.INVITE_AGREE, "");
     }
 
     private void handleHandledActivity(boolean agree) {
