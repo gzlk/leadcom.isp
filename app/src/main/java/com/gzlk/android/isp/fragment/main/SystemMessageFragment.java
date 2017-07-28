@@ -10,9 +10,11 @@ import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.application.NimApplication;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.SystemMessageViewHolder;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
@@ -20,7 +22,12 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.team.TeamService;
+import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,9 +146,46 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 new Dao<>(NimMessage.class).save(msg);
                 NimApplication.dispatchCallbacks();
             }
-            MainActivity.handleNimMessageDetails(Activity(), msg);
+            if (msg.getType() == NimMessage.Type.ACTIVITY_INVITE && msg.isHandled()) {
+                // 活动邀请且已处理过的话
+                if (msg.isHandleState()) {
+                    checkTeamMember(msg.getTid());
+                }
+            } else {
+                MainActivity.handleNimMessageDetails(Activity(), msg);
+            }
         }
     };
+
+    private void checkTeamMember(final String tid) {
+        displayLoading(true);
+        NIMClient.getService(TeamService.class).queryTeamMember(tid, Cache.cache().userId).setCallback(new RequestCallback<TeamMember>() {
+            @Override
+            public void onSuccess(TeamMember teamMember) {
+                displayLoading(false);
+                // 查找当前用户是否已经在群内
+                if (null != teamMember) {
+                    if (teamMember.isInTeam()) {
+                        // 已经是群内的成员, 直接打开群聊页面
+                        NimSessionHelper.startTeamSession(Activity(), tid);
+                    } else {
+                        // 已经退出群了
+                        ToastHelper.make().showMsg(R.string.ui_activity_property_exited);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailed(int i) {
+                displayLoading(false);
+            }
+
+            @Override
+            public void onException(Throwable throwable) {
+                displayLoading(false);
+            }
+        });
+    }
 
     private BaseViewHolder.OnHandlerBoundDataListener<NimMessage> handlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<NimMessage>() {
         @Override

@@ -13,6 +13,8 @@ import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
+import com.gzlk.android.isp.fragment.organization.ContactFragment;
+import com.gzlk.android.isp.fragment.organization.OrganizationPropertiesFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -210,8 +212,14 @@ public class MainActivity extends TitleActivity {
                 break;
             case NimMessage.Type.INVITE_TO_GROUP:
                 // 受邀者出现的对话框是“好”,“不用了”
-                yes = StringHelper.getString(R.string.ui_base_text_ok);
-                no = StringHelper.getString(R.string.ui_base_text_no_need);
+                if (msg.isHandled()) {
+                    if (msg.isHandleState()) {
+                        openActivity(activity, OrganizationPropertiesFragment.class.getName(), msg.getGroupId(), false, false, true);
+                    }
+                } else {
+                    yes = StringHelper.getString(R.string.ui_base_text_ok);
+                    no = StringHelper.getString(R.string.ui_base_text_no_need);
+                }
                 break;
             case NimMessage.Type.AGREE_TO_GROUP:
             case NimMessage.Type.DISAGREE_TO_GROUP:
@@ -241,11 +249,22 @@ public class MainActivity extends TitleActivity {
                 }
                 break;
             case NimMessage.Type.SYSTEM_NOTIFICATION:
-            case NimMessage.Type.INVITE_TO_SQUAD_ALERT:
                 // 系统通知，只提醒就可以了
-                // 提醒加入小组
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
+            case NimMessage.Type.INVITE_TO_SQUAD_ALERT:
+//                if (msg.isHandled()) {
+//                    if (msg.isHandleState()) {
+//                        // 直接打开小组成员
+//                        //openActivity(activity, ContactFragment.class.getName(),
+//                        //        StringHelper.format("%d,,%s", ContactFragment.TYPE_SQUAD, msg.getGroupId()), true, false);
+//                    }
+//                } else {
+                    // 提醒加入小组
+                    yes = StringHelper.getString(R.string.ui_base_text_i_known);
+//                }
+                break;
+
         }
         if (!StringHelper.isEmpty(yes)) {
             SimpleDialogHelper.init(activity).show(msg.getMsgContent(), yes, no, new DialogHelper.OnDialogConfirmListener() {
@@ -276,6 +295,11 @@ public class MainActivity extends TitleActivity {
                         case NimMessage.Type.SYSTEM_NOTIFICATION:
                             // 系统通知的话，点击按钮设置已读标记
                             saveMessage(msg, true, true);
+                            break;
+                        case NimMessage.Type.INVITE_TO_SQUAD_ALERT:
+                            saveMessage(msg, true, true);
+                            //openActivity(activity, ContactFragment.class.getName(),
+                            //        StringHelper.format("%d,,%s", ContactFragment.TYPE_SQUAD, msg.getGroupId()), true, false);
                             break;
                     }
                     return true;

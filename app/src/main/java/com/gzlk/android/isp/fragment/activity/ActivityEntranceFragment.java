@@ -11,6 +11,7 @@ import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.application.NimApplication;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -29,6 +30,12 @@ import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.team.TeamService;
+import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,12 +155,68 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_activity_entrance_reject:
-                reject();
+                checkIsInTeam(false);
+//                if (isMeInTeamNow()) {
+//                    handleHandledActivity(false);
+//                    // 如果已经是活动的成员，则提示不能继续操作
+//                    ToastHelper.make().showMsg(R.string.ui_activity_entrance_disagree_failed);
+//                } else {
+//                    reject();
+//                }
                 break;
             case R.id.ui_activity_entrance_agree:
-                agree();
+                checkIsInTeam(true);
+//                if (isMeInTeamNow()) {
+//                    handleHandledActivity(true);
+//                    // 如果已经是活动内的成员，则直接打开活动群聊窗口
+//                    openTeamSession();
+//                } else {
+//                    agree();
+//                }
                 break;
         }
+    }
+
+    private void checkIsInTeam(final boolean agree) {
+        NIMClient.getService(TeamService.class).queryTeamMember(tid, Cache.cache().userId).setCallback(new RequestCallback<TeamMember>() {
+            @Override
+            public void onSuccess(TeamMember teamMember) {
+                // 查找当前用户是否已经在群内
+                if (null != teamMember) {
+                    handleHandledActivity(agree);
+                    if (teamMember.isInTeam()) {
+                        // 已经是群内的成员
+                        if (agree) {
+                            // 如果已经是活动内的成员，则直接打开活动群聊窗口
+                            openTeamSession();
+                        } else {
+                            // 如果已经是活动的成员，则提示不能继续操作
+                            ToastHelper.make().showMsg(R.string.ui_activity_entrance_disagree_failed);
+                        }
+                    } else {
+                        // 已经退出群了
+                        ToastHelper.make().showMsg(R.string.ui_activity_property_exited);
+                        finish();
+                    }
+                } else {
+                    if (agree) {
+                        agree();
+                    } else {
+                        reject();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailed(int i) {
+
+            }
+
+            @Override
+            public void onException(Throwable throwable) {
+
+            }
+        });
     }
 
     private void reject() {
@@ -203,9 +266,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_entrance_agreed, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                finish();
-                // 报名成功之后打开群聊页面
-                NimSessionHelper.startTeamSession(Activity(), tid);
+                openTeamSession();
                 return true;
             }
         }, new DialogHelper.OnDialogCancelListener() {
@@ -214,6 +275,12 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 finish();
             }
         });
+    }
+
+    private void openTeamSession() {
+        finish();
+        // 报名成功之后打开群聊页面
+        NimSessionHelper.startTeamSession(Activity(), tid);
     }
 
     private void fetchingActivity() {
