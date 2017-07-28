@@ -123,12 +123,14 @@ public class StructureFragment extends BaseOrganizationFragment {
     }
 
     private void listAllMembers() {
-        SimpleOrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<SimpleOutput>() {
-            @Override
-            public void onResponse(SimpleOutput simpleOutput, boolean success, String message) {
-                super.onResponse(simpleOutput, success, message);
-            }
-        }).listAllMember(selectedGroupId);
+        if (!isEmpty(selectedGroupId)) {
+            SimpleOrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<SimpleOutput>() {
+                @Override
+                public void onResponse(SimpleOutput simpleOutput, boolean success, String message) {
+                    super.onResponse(simpleOutput, success, message);
+                }
+            }).listAllMember(selectedGroupId);
+        }
     }
 
     @Override

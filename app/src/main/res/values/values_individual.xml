@@ -80,6 +80,7 @@
     </string-array>
     <string name="ui_text_feedback_fragment_title">意见反馈</string>
     <string name="ui_text_feedback_content_hint">请输入您的宝贵意见，我们会及时查看，谢谢！</string>
+    <string name="ui_text_feedback_content_empty">请先输入您的意见！</string>
     <string name="ui_text_feedback_committed">谢谢您的参与</string>
 
     <string name="ui_text_document_create_fragment_title">新建档案</string>

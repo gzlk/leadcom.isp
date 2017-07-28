@@ -281,9 +281,6 @@ public class ContactFragment extends BaseOrganizationFragment {
      * 加载查询的对象
      */
     private void loadingQueryItem() {
-        if (StringHelper.isEmpty(mQueryId)) {
-            return;
-        }
         switch (showType) {
             case TYPE_ORG:
                 fetchingRemoteMembers(mQueryId, "");
@@ -295,7 +292,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     }
 
     private void loadingSquad() {
-        Squad squad = new Dao<>(Squad.class).query(mQueryId);
+        Squad squad = new Dao<>(Squad.class).query(mSquadId);
         if (null == squad) {
             fetchingRemoteSquad(mSquadId);
         } else {
@@ -406,12 +403,14 @@ public class ContactFragment extends BaseOrganizationFragment {
         setLoadingText(R.string.ui_organization_contact_removing);
         displayLoading(true);
         Member member = mAdapter.get(index);
+        final String id = member.getId();
         MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
             public void onResponse(Member member, boolean success, String message) {
                 super.onResponse(member, success, message);
                 if (success) {
                     members.remove(index);
+                    new Dao<>(Member.class).delete(id);
                     searching(searchingText);
                 }
                 ToastHelper.make().showMsg(message);

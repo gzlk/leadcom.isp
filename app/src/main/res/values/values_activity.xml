@@ -34,6 +34,7 @@
     <string name="ui_activity_entrance_agreed">您已加入该活动，现在要进入活动现场吗？</string>
     <string name="ui_activity_entrance_agreeing">正在报名请稍候&#8230;</string>
     <string name="ui_activity_entrance_disagreeing">正在处理您的选择请稍候&#8230;</string>
+    <string name="ui_activity_entrance_disagree_failed">您已经加入了这个活动，要退出请在活动内进行</string>
 
     <string name="ui_activity_property_button_text">退出活动</string>
     <string name="ui_activity_property_exit_warning">您确定不再留恋就此退出这个活动吗？</string>

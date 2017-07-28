@@ -168,16 +168,10 @@ public class InvitationRequest extends Request<Invitation> {
         handle(INVITE_INTO_SQUAD, INVITE_DISAGREE, inviteUUID, message);
     }
 
+    // 改成了params传值方式
     private void handle(String path, int ope, String uuid, String message) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("uuid", uuid)
-                    .put("ope", ope)
-                    .put("msg", checkNull(message));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        httpRequest(getRequest(SingleInvite.class, url(path, HANDLE), object.toString(), HttpMethods.Post));
+        String params = format("%s%s?uuid=%s&ope=%d%s", path, HANDLE, uuid, ope, (isEmpty(message) ? "" : format("", message)));
+        httpRequest(getRequest(SingleInvite.class, params, "", HttpMethods.Get));
     }
 
     /**

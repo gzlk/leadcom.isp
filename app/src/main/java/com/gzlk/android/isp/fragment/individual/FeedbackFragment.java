@@ -3,8 +3,11 @@ package com.gzlk.android.isp.fragment.individual;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.common.AdviceRequest;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.common.Advice;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -47,7 +50,24 @@ public class FeedbackFragment extends BaseTransparentSupportFragment {
 
     @Click({R.id.ui_feedback_commit})
     private void elementClick(View view) {
-        finish();
-        ToastHelper.make().showMsg(R.string.ui_text_feedback_committed);
+        String content = contentText.getValue();
+        if (!isEmpty(content)) {
+            commitAdvice(content);
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_text_feedback_content_empty);
+        }
+    }
+
+    private void commitAdvice(String content) {
+        AdviceRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Advice>() {
+            @Override
+            public void onResponse(Advice advice, boolean success, String message) {
+                super.onResponse(advice, success, message);
+                if (success) {
+                    finish();
+                    ToastHelper.make().showMsg(R.string.ui_text_feedback_committed);
+                }
+            }
+        }).add(content);
     }
 }

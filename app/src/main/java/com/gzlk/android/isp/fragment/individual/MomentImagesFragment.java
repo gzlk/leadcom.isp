@@ -142,6 +142,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
             }
             if (null != mAdapter) {
                 mAdapter.notifyDataSetChanged();
+                changedPosition(selected);
             }
             setCustomTitle(Utils.format(mMoment.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), "yyyy年MM月dd日HH:mm"));
             detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), mMoment.getContent(), true));

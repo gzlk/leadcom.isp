@@ -330,63 +330,49 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             if (phone.length() > 11) {
                 phone = phone.substring(phone.length() - 11);
             }
-            invite(phone);
+            invite(phone, index);
         }
     };
 
     // 发起邀请
-    private void invite(String phone) {
+    private void invite(String phone, int index) {
         if (!StringHelper.isEmpty(mSquadId)) {
             // 添加到小组
-            inviteToSquad(phone);
+            inviteToSquad(phone, index);
         } else {
             // 添加到组织
-            inviteToOrganization(phone);
+            inviteToOrganization(phone, index);
         }
     }
 
     // 邀请进小组
-    private void inviteToSquad(String phone) {
+    private void inviteToSquad(String phone, final int index) {
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
                 if (success) {
+                    mAdapter.get(index).setInvited(true);
+                    mAdapter.notifyItemChanged(index);
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
         }).inviteToSquadFromPhoneContact(phone, mOrganizationId, mSquadId);
-//        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
-//            @Override
-//            public void onResponse(User user, boolean success, String message) {
-//                super.onResponse(user, success, message);
-//                if (success) {
-//                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
-//                }
-//            }
-//        }).inviteJoinIntoSquad(phone, mOrganizationId, mSquadId);
     }
 
     // 邀请进组织
-    private void inviteToOrganization(String phone) {
+    private void inviteToOrganization(String phone, final int index) {
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
                 if (success) {
+                    mAdapter.get(index).setInvited(true);
+                    mAdapter.notifyItemChanged(index);
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
         }).inviteToGroupFromPhoneContact(phone, mOrganizationId);
-//        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
-//            @Override
-//            public void onResponse(User user, boolean success, String message) {
-//                super.onResponse(user, success, message);
-//                if (success) {
-//                    ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
-//                }
-//            }
-//        }).inviteJoinIntoGroup(phone, mOrganizationId);
     }
 
     private void warningNoContact() {
@@ -584,15 +570,12 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                             if (!StringHelper.isEmpty(phone)) {
                                 phone = Utility.filterNumbers(phone);
                             }
-//                            if (phone.charAt(0) == '8' && phone.charAt(1) == '6') {
-//                                phone = phone.substring(2);
-//                            }
                             // 名字不为空且号码为手机号码时才加入缓存
                             if (!StringHelper.isEmpty(name) && Utils.isItMobilePhone(phone)) {
                                 contacts.add(new String[]{name, phone});
                             }
                             index++;
-                            log(format("read progress, index: %d, name: %s, phone: %s", index, name, phone));
+                            //log(format("read progress, index: %d, name: %s, phone: %s", index, name, phone));
                             publishProgress(0, index, max);
                         }
                     } finally {
@@ -630,7 +613,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                     contact.setInvited(false);
                     dao.save(contact);
                     index++;
-                    log(format("handle progress, index: %d, name: %s, phone: %s", index, name, phone));
+                    //log(format("handle progress, index: %d, name: %s, phone: %s", index, name, phone));
                     publishProgress(1, index, max);
                 }
             } catch (Exception ignore) {

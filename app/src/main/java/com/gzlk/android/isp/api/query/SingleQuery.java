@@ -1,6 +1,9 @@
 package com.gzlk.android.isp.api.query;
 
 import com.gzlk.android.isp.api.Api;
+import com.gzlk.android.isp.model.user.SimpleMoment;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>网络请求返回的数据基类<br />
@@ -16,6 +19,7 @@ import com.gzlk.android.isp.api.Api;
 public class SingleQuery<T> extends Api<T> {
 
     protected T data;
+    private ArrayList<SimpleMoment> userMmt;
 
     public T getData() {
         return data;
@@ -23,5 +27,13 @@ public class SingleQuery<T> extends Api<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public ArrayList<SimpleMoment> getUserMmt() {
+        return userMmt;
+    }
+
+    public void setUserMmt(ArrayList<SimpleMoment> userMmt) {
+        this.userMmt = userMmt;
     }
 }

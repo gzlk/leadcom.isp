@@ -37,7 +37,7 @@ public class Model extends BaseModel {
         public static final String HasRead = "hasRead";
     }
 
-    public static final String DFT_DATE = "1970-01-01 00:00:01";
+    public static final String DFT_DATE = StringHelper.getString(R.string.ui_base_text_date_default);
     protected static final String NO_NAME = StringHelper.getString(R.string.ui_organization_member_no_name);
 
     protected static boolean isEmpty(String string) {

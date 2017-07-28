@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.api.listener;
 
+import com.gzlk.android.isp.api.query.SingleQuery;
+
 /**
  * <b>功能描述：</b>网络请求成功的回调<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -12,6 +14,11 @@ package com.gzlk.android.isp.api.listener;
  */
 
 public abstract class OnSingleRequestListener<Data> {
+
+    /**
+     * 网络返回的原始数据
+     */
+    public SingleQuery<Data> query;
 
     /**
      * 网络调用成功

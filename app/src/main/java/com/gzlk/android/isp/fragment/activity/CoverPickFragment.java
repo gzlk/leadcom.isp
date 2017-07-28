@@ -96,6 +96,7 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
         // 只能选择一张图片
         maxSelectable = 1;
         isChooseImageForCrop = true;
+        isSupportCompress = true;
         croppedAspectX = 2;
         croppedAspectY = 1;
         setCustomTitle(R.string.ui_activity_cover_picker_fragment_title);
@@ -132,7 +133,7 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
 
         @Override
         public void onUploadingComplete(ArrayList<Attachment> uploaded) {
-            resultData(uploaded.get(0).getUrl());
+            resultData(uploaded.get(uploaded.size() - 1).getUrl());
         }
     };
 
@@ -143,7 +144,7 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
                 selectedImage = selected.get(0);
                 galleryHolder.showContent(format(items[0], ""));
                 galleryHolder.showImage(selectedImage);
-                confirmCover();
+                compressImage();
             }
         }
     };

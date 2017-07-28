@@ -3,32 +3,34 @@ package com.gzlk.android.isp.fragment.individual;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
-import com.gzlk.android.isp.fragment.common.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
+import com.gzlk.android.isp.fragment.common.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.login.CodeVerifyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.individual.UserHeaderBigViewHolder;
+import com.gzlk.android.isp.holder.individual.UserSimpleMomentViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
+import com.gzlk.android.isp.model.user.SimpleMoment;
 import com.gzlk.android.isp.model.user.User;
-import com.gzlk.android.isp.multitype.adapter.BaseMultiTypeAdapter;
-import com.gzlk.android.isp.multitype.binder.SimpleClickableViewBinder;
-import com.gzlk.android.isp.multitype.binder.user.UserHeaderBigViewBinder;
-import com.gzlk.android.isp.multitype.binder.user.UserSimpleMomentViewBinder;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -70,21 +72,13 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     private CorneredView toChat;
 
     private String[] items;
-    private MyAdapter mAdapter;
+    private MyPropertyAdapter mAdapter;
 
     @Override
     public void doingInResume() {
-        // 头像选择是需要剪切的
-        isChooseImageForCrop = true;
         super.doingInResume();
-        setSupportLoadingMore(false);
         initializeItems();
         titleTextView.setText(null);
-
-        // 图片选择后的回调
-        addOnImageSelectedListener(albumImageSelectedListener);
-        // 文件上传完毕后的回调处理
-        setOnFileUploadingListener(mOnFileUploadingListener);
     }
 
     // 相册选择返回了
@@ -104,7 +98,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
         @Override
         public void onUploadingComplete(ArrayList<Attachment> uploaded) {
-            tryEditUserInfo(UserRequest.UPDATE_PHOTO, uploaded.get(0).getUrl());
+            int size = uploaded.size();
+            tryEditUserInfo(UserRequest.UPDATE_PHOTO, uploaded.get(size - 1).getUrl());
         }
     };
 
@@ -115,12 +110,12 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-
+        fetchingRemoteUserInfo();
     }
 
     @Override
     protected void onLoadingMore() {
-
+        isLoadingComplete(true);
     }
 
     @Click({R.id.ui_ui_custom_title_right_container,
@@ -163,15 +158,21 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
     private void initializeItems() {
         if (null == items) {
+            setSupportLoadingMore(false);
             items = StringHelper.getStringArray(R.array.ui_text_my_setting_items);
+            // 头像选择是需要剪切的
+            isChooseImageForCrop = true;
+            // 头像是需要压缩的
+            isSupportCompress = true;
+            // 图片选择后的回调
+            addOnImageSelectedListener(albumImageSelectedListener);
+            // 文件上传完毕后的回调处理
+            setOnFileUploadingListener(mOnFileUploadingListener);
         }
         if (null == mAdapter) {
-            mAdapter = new MyAdapter();
-            mAdapter.register(User.class, new UserHeaderBigViewBinder(onViewHolderClickListener).setFragment(this));
-            mAdapter.register(SimpleClickableItem.class, new UserSimpleMomentViewBinder(onViewHolderClickListener).setFragment(this));
-            mAdapter.register(Model.class, new SimpleClickableViewBinder(onViewHolderClickListener).setFragment(this));
+            mAdapter = new MyPropertyAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            fetchingUser();
+            fetchingRemoteUserInfo();
         }
     }
 
@@ -190,14 +191,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }
     };
 
-    private void fetchingUser() {
-        User user = new Dao<>(User.class).query(mQueryId);
-        if (null == user) {
-            fetchingRemoteUserInfo();
-        } else {
-            checkUser(user);
-        }
-    }
+    private ArrayList<SimpleMoment> simpleMoments = new ArrayList<>();
 
     private void fetchingRemoteUserInfo() {
         setLoadingText(R.string.ui_text_user_information_loading);
@@ -207,6 +201,10 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
+                    if (null != query && null != query.getUserMmt()) {
+                        simpleMoments.clear();
+                        simpleMoments.addAll(query.getUserMmt());
+                    }
                     if (null != user) {
                         if (isMe()) {
                             // 随时更新我的信息
@@ -261,9 +259,9 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }
 
         // 生日
+        birthday = user.getBirthday();
         if (mAdapter.getItemCount() < 4) {
             mAdapter.add(new Model() {{
-                birthday = user.getBirthday();
                 setId(format(items[3], getBirthday(user)));
             }});
         } else {
@@ -548,7 +546,63 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }
     }
 
-    private class MyAdapter extends BaseMultiTypeAdapter<Model> {
+    private class MyPropertyAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+
+        private static final int VT_HEADER = 0, VT_MOMENT = 1, VT_CLICK = 2;
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            switch (viewType) {
+                case VT_HEADER:
+                    UserHeaderBigViewHolder uhbvh = new UserHeaderBigViewHolder(itemView, UserPropertyFragment.this);
+                    uhbvh.addOnViewHolderClickListener(onViewHolderClickListener);
+                    return uhbvh;
+                case VT_MOMENT:
+                    UserSimpleMomentViewHolder usmvh = new UserSimpleMomentViewHolder(itemView, UserPropertyFragment.this);
+                    usmvh.addOnViewHolderClickListener(onViewHolderClickListener);
+                    return usmvh;
+                default:
+                    SimpleClickableViewHolder scvh = new SimpleClickableViewHolder(itemView, UserPropertyFragment.this);
+                    scvh.addOnViewHolderClickListener(onViewHolderClickListener);
+                    return scvh;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            switch (position) {
+                case 0:
+                    return VT_HEADER;
+                case 1:
+                    return VT_MOMENT;
+                default:
+                    return VT_CLICK;
+            }
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            switch (viewType) {
+                case VT_HEADER:
+                    return R.layout.holder_view_individual_header_big;
+                case VT_MOMENT:
+                    return R.layout.holder_view_user_simple_moment;
+                default:
+                    return R.layout.holder_view_simple_clickable;
+            }
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof UserHeaderBigViewHolder) {
+                ((UserHeaderBigViewHolder) holder).showContent((User) item);
+            } else if (holder instanceof UserSimpleMomentViewHolder) {
+                ((UserSimpleMomentViewHolder) holder).showContent(simpleMoments);
+            } else if (holder instanceof SimpleClickableViewHolder) {
+                ((SimpleClickableViewHolder) holder).showContent(item);
+            }
+        }
+
         @Override
         protected int comparator(Model item1, Model item2) {
             return 0;

@@ -41,7 +41,9 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
         ImageViewerFragment ivf = new ImageViewerFragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
+        // 选中的图片
         bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[0]));
+        // 要显示的图片列表
         bundle.putString(PARAM_QUERY_ID, StringHelper.replaceJson(strings[1], true));
         ivf.setArguments(bundle);
         return ivf;
@@ -57,7 +59,7 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
             mQueryId = EMPTY_ARRAY;
         }
         if (mQueryId.charAt(0) == '[') {
-            images = Json.gson().fromJson(mQueryId, new TypeToken<ArrayList<String>>() {
+            images = Json.gson().fromJson(StringHelper.replaceJson(mQueryId, true), new TypeToken<ArrayList<String>>() {
             }.getType());
             if (null == images) {
                 images = new ArrayList<>();
@@ -107,7 +109,7 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
         tryPaddingContent(titleContainer, false);
         titleLeftText.setText(null);
         titleTextView.setText(null);
-        titleRightIcon.setText(R.string.ui_icon_more);
+        //titleRightIcon.setText(R.string.ui_icon_more);
         if (images.size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_viewer_image_nothing);
         } else {
@@ -154,7 +156,9 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
     private List<String> images = new ArrayList<>();
 
     private void changePosition() {
-        //titleTextView.setText(format("%d/%d", selectedIndex + 1, images.size()));
+        if (images.size() > 1) {
+            titleTextView.setText(format("%d/%d", selectedIndex + 1, images.size()));
+        }
     }
 
     private class ImageAdapter extends PagerAdapter {

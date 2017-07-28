@@ -5,14 +5,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentCommentViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentPraiseViewHolder;
+import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
@@ -277,6 +282,16 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         }
     };
 
+    private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
+        @Override
+        public void onImageClick(String url) {
+            int index = mMoment.getImage().indexOf(url);
+            String json = StringHelper.replaceJson(Json.gson().toJson(mMoment.getImage(), new TypeToken<ArrayList<String>>() {
+            }.getType()), false);
+            openActivity(ImageViewerFragment.class.getName(), format("%d,%s", index, json), false, false, true);
+        }
+    };
+
     private class MomentDetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_MOMENT = 0, VT_PRAISE = 1, VT_COMMENT = 2;
@@ -288,6 +303,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     MomentDetailsViewHolder holder = new MomentDetailsViewHolder(itemView, MomentDetailsFragment.this);
                     // 赞、评论快捷菜单
                     holder.setOnMoreClickListener(onMoreClickListener);
+                    // 图片点击
+                    holder.setOnImageClickListener(onImageClickListener);
                     return holder;
                 case VT_PRAISE:
                     if (null == praiseViewHolder) {

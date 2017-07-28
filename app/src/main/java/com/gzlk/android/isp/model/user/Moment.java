@@ -23,6 +23,24 @@ import java.util.ArrayList;
 @Table(Archive.Table.USER_MOMENT)
 public class Moment extends Additional {
 
+    /**
+     * 说说类型
+     */
+    public interface Type {
+        /**
+         * 纯文本
+         */
+        int TEXT = 1;
+        /**
+         * 图片
+         */
+        int IMAGE = 2;
+        /**
+         * 视频
+         */
+        int VIDEO = 3;
+    }
+
     //用户姓名
     @Column(Model.Field.UserId)
     private String userId;

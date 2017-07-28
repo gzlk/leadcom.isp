@@ -91,16 +91,20 @@ public class MomentRequest extends Request<Moment> {
         // {location,content,[image],video,type}
         JSONObject object = new JSONObject();
         try {
+            int type = Moment.Type.TEXT;
             object.put("location", checkNull(location));
             if (!isEmpty(content)) {
                 object.put("content", checkNull(content));
             }
             if (null != image && image.size() > 0) {
+                type = Moment.Type.IMAGE;
                 object.put("image", new JSONArray(image));
             }
             if (!isEmpty(videoUrl)) {
+                type = Moment.Type.VIDEO;
                 object.put("video", checkNull(videoUrl));
             }
+            object.put("type", type);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -108,7 +112,6 @@ public class MomentRequest extends Request<Moment> {
         httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
-    private static final String QB_TOKEN = "accessToken";
     private static final String QB_USER_ID = "userId";
     private static final String QB_MOMENT = "momentId";
 
