@@ -7,7 +7,6 @@ import android.support.v4.content.ContextCompat;
 import com.gzlk.android.isp.R;
 import com.netease.nim.uikit.LocationProvider;
 import com.netease.nim.uikit.NimUIKit;
-import com.netease.nim.uikit.permission.MPermission;
 import com.netease.nim.uikit.session.actions.BaseAction;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
@@ -35,15 +34,8 @@ public class LocationAction extends BaseAction {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             requestLocation();
         } else {
-            requestPermission();
+            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-    }
-
-    private void requestPermission() {
-        MPermission
-                .with(getActivity())
-                .permissions(Manifest.permission.ACCESS_FINE_LOCATION)
-                .setRequestCode(100).request();
     }
 
     private void requestLocation() {

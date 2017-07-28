@@ -12,12 +12,10 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
-import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -27,6 +25,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTaskPreparedListener;
 import com.gzlk.android.isp.task.CompressImageTask;
+import com.netease.nim.uikit.NimUIKit;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.durban.Controller;
 import com.yanzhenjie.durban.Durban;
@@ -216,12 +215,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
 
     // 处理Android 7.0+的Uri问题
     private Uri getUriFromFile(String filePath) {
-        if (Build.VERSION.SDK_INT >= 24) {
-            File tempFile = new File(filePath);
-            return FileProvider.getUriForFile(Activity(), format("%s.fileProvider", BuildConfig.APPLICATION_ID), tempFile);
-        } else {
-            return Uri.fromFile(new File(filePath));
-        }
+        return NimUIKit.getUriFromFile(Activity(), filePath);
     }
 
     /**
@@ -646,7 +640,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                         if (null != picture) {
                             cameraPicturePath = picture.getAbsolutePath();
                             // 存储相机照片的预定路径
-                            Uri uri = Uri.fromFile(picture);
+                            Uri uri = NimUIKit.getUriFromFile(Activity(), cameraPicturePath);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                             startActivityForResult(intent, REQUEST_CAMERA);
                         } else {

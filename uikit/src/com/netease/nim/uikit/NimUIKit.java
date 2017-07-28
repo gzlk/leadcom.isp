@@ -2,6 +2,9 @@ package com.netease.nim.uikit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -44,6 +47,7 @@ import com.netease.nimlib.sdk.team.constant.TeamTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -97,6 +101,9 @@ public final class NimUIKit {
 
     // 在线状态变化监听
     private static List<OnlineStateChangeListener> onlineStateChangeListeners;
+
+    // Android 7.0+文件提供者
+    private static String fileProviderAuthority;
 
     /**
      * 初始化UIKit, 用户信息、联系人信息使用 {@link DefaultUserInfoProvider}，{@link DefaultContactProvider}
@@ -161,6 +168,26 @@ public final class NimUIKit {
         }
 
         NimUIKit.contactProvider = contactProvider;
+    }
+
+    // Uri文件提供者
+    public static void setFileProviderAuthority(String authority) {
+        fileProviderAuthority = authority;
+    }
+
+    /**
+     * Uri.fromFile
+     */
+    public static Uri getUriFromFile(Context context, String filePath) {
+        if (TextUtils.isEmpty(fileProviderAuthority)) {
+            throw new IllegalArgumentException("please set file provider authority first.");
+        }
+        if (Build.VERSION.SDK_INT >= 24) {
+            File tempFile = new File(filePath);
+            return FileProvider.getUriForFile(context, fileProviderAuthority, tempFile);
+        } else {
+            return Uri.fromFile(new File(filePath));
+        }
     }
 
     // 初始化会话定制，群、P2P

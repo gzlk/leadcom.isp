@@ -19,14 +19,9 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.nim.action.CameraAction;
 import com.gzlk.android.isp.nim.action.FileAction;
 import com.gzlk.android.isp.nim.action.ImageAction;
-import com.gzlk.android.isp.nim.action.IssueAction;
 import com.gzlk.android.isp.nim.action.LocationAction;
-import com.gzlk.android.isp.nim.action.MinutesAction;
 import com.gzlk.android.isp.nim.action.NoticeAction;
 import com.gzlk.android.isp.nim.action.SignAction;
-import com.gzlk.android.isp.nim.action.SurveyAction;
-import com.gzlk.android.isp.nim.action.VideoCaptureAction;
-import com.gzlk.android.isp.nim.action.VideoChooseAction;
 import com.gzlk.android.isp.nim.action.VoteAction;
 import com.gzlk.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
@@ -103,6 +98,9 @@ public class NimSessionHelper {
 
         // 群聊UI定制
         NimUIKit.setCommonTeamSessionCustomization(getTeamCustomization());
+
+        // 文件提供者
+        NimUIKit.setFileProviderAuthority(StringHelper.format("%s.fileProvider", BuildConfig.APPLICATION_ID));
     }
 
     /**

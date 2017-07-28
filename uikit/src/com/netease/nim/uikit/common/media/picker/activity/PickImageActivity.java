@@ -12,6 +12,7 @@ import android.provider.MediaStore.Images;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.media.picker.model.PhotoInfo;
@@ -114,6 +115,7 @@ public class PickImageActivity extends UI {
                     .show();
             finish();
         } catch (Exception e) {
+            e.printStackTrace();
             Toast.makeText(this, R.string.sdcard_not_enough_head_error,
                     Toast.LENGTH_LONG).show();
             finish();
@@ -130,11 +132,12 @@ public class PickImageActivity extends UI {
             }
             File outputFile = new File(outPath);
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outputFile));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, NimUIKit.getUriFromFile(this, outPath));
             startActivityForResult(intent, REQUEST_CODE_CAMERA);
         } catch (ActivityNotFoundException e) {
             finish();
         } catch (Exception e) {
+            e.printStackTrace();
             Toast.makeText(this, R.string.sdcard_not_enough_head_error, Toast.LENGTH_LONG).show();
             finish();
         }

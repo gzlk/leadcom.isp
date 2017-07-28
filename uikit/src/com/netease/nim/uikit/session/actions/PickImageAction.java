@@ -46,6 +46,7 @@ public abstract class PickImageAction extends BaseAction {
         showSelector(getTitleId(), requestCode, multiSelect, tempFile());
     }
 
+    // /storage/emulated/0/com.leadcom.android.isp/temp/fc59c783bd3d4292b3f1a451c2b56a96.jpg
     protected String tempFile() {
         String filename = StringUtil.get32UUID() + JPG;
         return StorageUtil.getWritePath(filename, StorageType.TYPE_TEMP);

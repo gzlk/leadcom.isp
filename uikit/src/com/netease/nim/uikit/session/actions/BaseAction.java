@@ -3,6 +3,7 @@ package com.netease.nim.uikit.session.actions;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.netease.nim.uikit.permission.MPermission;
 import com.netease.nim.uikit.session.module.Container;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
@@ -83,4 +84,13 @@ public abstract class BaseAction implements Serializable {
         this.index = index;
     }
 
+    /**
+     * 申请权限
+     */
+    protected void requestPermission(String permission) {
+        MPermission
+                .with(getActivity())
+                .permissions(permission)
+                .setRequestCode(100).request();
+    }
 }

@@ -3,12 +3,9 @@ package com.gzlk.android.isp.nim.file;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
-import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
-import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.application.App;
@@ -21,10 +18,9 @@ import com.gzlk.android.isp.fragment.common.PdfViewerFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.common.Attachment;
-import com.gzlk.android.isp.model.organization.Concern;
 import com.gzlk.android.isp.nim.activity.VideoPlayerActivity;
+import com.netease.nim.uikit.NimUIKit;
 
-import java.io.File;
 import java.util.Locale;
 
 /**
@@ -107,15 +103,7 @@ public class FilePreviewHelper {
 
     // 处理Android 7.0+的Uri问题
     public static Uri getUriFromFile(String filePath) {
-        return getUriFromFile(new File(filePath));
-    }
-
-    public static Uri getUriFromFile(File file) {
-        if (Build.VERSION.SDK_INT >= 24) {
-            return FileProvider.getUriForFile(App.app(), StringHelper.format("%s.fileProvider", BuildConfig.APPLICATION_ID), file);
-        } else {
-            return Uri.fromFile(file);
-        }
+        return NimUIKit.getUriFromFile(App.app(), filePath);
     }
 
     /**
