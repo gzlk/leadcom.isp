@@ -143,7 +143,7 @@ public class ActivityDetailsMainFragment extends BaseViewPagerSupportFragment {
                 if (success) {
                     new Dao<>(Activity.class).delete(mQueryId);
                     ToastHelper.make().showMsg(R.string.ui_activity_details_deleted);
-                    finish();
+                    resultData(mQueryId);
                 }
             }
         }).delete(mQueryId);

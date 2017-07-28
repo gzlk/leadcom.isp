@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -267,6 +268,17 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
         displayNothing(mAdapter.getItemCount() < 1);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_DELETE) {
+            Activity act = new Activity();
+            act.setId(getResultedData(data));
+            activities.remove(act);
+            mAdapter.remove(act);
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
@@ -277,7 +289,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
             } else {
                 // 已参加的活动，打开活动详情页（2017-06-21 11:20）
                 // 已结束的活动不在这里存档内容，需要在组织档案管理页面未存档里找
-                openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
+                openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), REQUEST_DELETE, false, false);
 //                // 已结束的活动
 //                if (act.getStatus() == Activity.Status.ENDED) {
 //                    // 如果是我自己创建的，打开改活动待存档文件管理页面
