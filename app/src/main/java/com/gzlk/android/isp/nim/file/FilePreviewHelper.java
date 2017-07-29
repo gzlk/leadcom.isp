@@ -1,9 +1,12 @@
 package com.gzlk.android.isp.nim.file;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 
 import com.gzlk.android.isp.R;
@@ -45,32 +48,62 @@ public class FilePreviewHelper {
     public static void previewFile(Context context, String path, String fileName, String extension) {
         if (!TextUtils.isEmpty(extension)) {
             String ext = extension.toLowerCase(Locale.getDefault());
+            Activity activity = getActivity(context);
+            if (null == activity) {
+                throw new IllegalArgumentException("cannot fetching Activity from context: " + context.toString());
+            }
             if (ext.equals("pdf")) {
-                previewPdf(context, path, fileName);
+                previewPdf(activity, path, fileName);
                 return;
             } else if (ImageCompress.isImage(ext)) {
-                previewImage(context, path);
+                previewImage(activity, path);
                 return;
             } else if (Attachment.isOffice(ext)) {
-                previewOnlineOffice(context, path, fileName, ext);
+                previewOnlineOffice(activity, path, fileName, ext);
                 return;
             } else if (ImageCompress.isVideo(ext)) {
-                previewVideo(context, path, fileName, extension);
+                previewVideo(activity, path, fileName, extension);
                 return;
             } else if (path.contains(NIM) && extension.contains("txt")) {
                 // 文本文件的在线预览方式
                 //BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
-                previewOnline(context, path, fileName);
+                previewOnline(activity, path, fileName);
                 return;
             }
             // 如果path是网址，则打开内置在线预览
             if (Utils.isUrl(path)) {
-                previewOnline(context, path, fileName);
+                previewOnline(activity, path, fileName);
             } else {
                 // 如果是本地文件，则尝试使用第三方app打开
-                previewMimeFile(context, path, extension);
+                previewMimeFile(activity, path, extension);
             }
         }
+    }
+
+    /**
+     * try get host activity from view.
+     * views hosted on floating window like dialog and toast will sure return null.
+     *
+     * @return host activity; or null if not available
+     */
+    public static Activity getActivityFromView(View view) {
+        return getActivity(view.getContext());
+    }
+
+    /**
+     * try get host activity from view.
+     * views hosted on floating window like dialog and toast will sure return null.
+     *
+     * @return host activity; or null if not available
+     */
+    public static Activity getActivity(Context context) {
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                return (Activity) context;
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 
     /**
