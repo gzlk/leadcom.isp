@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.common.UpdateRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.application.App;
@@ -88,6 +90,7 @@ public class MainActivity extends TitleActivity {
 
         if (null == mainFragment) {
             mainFragment = new MainFragment();
+            checkClientVersion();
         }
         setMainFrameLayout(mainFragment);
         parseIntent();
@@ -130,6 +133,32 @@ public class MainActivity extends TitleActivity {
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
         //PgyUpdateManager.unregister();
         super.onDestroy();
+    }
+
+    /**
+     * 检测服务器上的最新客户端版本并提示用户更新
+     */
+    private void checkClientVersion() {
+        UpdateRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<String>() {
+            @Override
+            public void onResponse(String s, boolean success, String message) {
+                super.onResponse(s, success, message);
+                if (success) {
+                    if (!StringHelper.isEmpty(s) && s.compareTo(BuildConfig.VERSION_NAME) > 0) {
+                        warningUpdatable();
+                    }
+                }
+            }
+        }).getClientVersion();
+    }
+
+    private void warningUpdatable() {
+        SimpleDialogHelper.init(this).show(R.string.ui_system_updatable, R.string.ui_base_text_ok, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                return false;
+            }
+        }, null);
     }
 
     // 自定义消息接收类
@@ -260,8 +289,8 @@ public class MainActivity extends TitleActivity {
 //                        //        StringHelper.format("%d,,%s", ContactFragment.TYPE_SQUAD, msg.getGroupId()), true, false);
 //                    }
 //                } else {
-                    // 提醒加入小组
-                    yes = StringHelper.getString(R.string.ui_base_text_i_known);
+                // 提醒加入小组
+                yes = StringHelper.getString(R.string.ui_base_text_i_known);
 //                }
                 break;
 

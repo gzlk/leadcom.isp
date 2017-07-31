@@ -20,6 +20,13 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="@dimen/ui_base_text_size_small" />
+
+        <TextView
+            android:id="@+id/ui_about_revision"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="@dimen/ui_base_text_size_little" />
     </LinearLayout>
 
     <LinearLayout

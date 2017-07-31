@@ -33,7 +33,7 @@ public class SystemRequest extends Request<User> {
     private static class Register extends SingleQuery<User> {
     }
 
-    private static final String SYSTEM = "/system";
+    static final String SYSTEM = "/system";
     private static final String SIGN_UP = SYSTEM + "/regist";
     private static final String SIGN_IN = SYSTEM + "/login";
     private static final String CAPTCHA = SYSTEM + "/getCaptchaTo";

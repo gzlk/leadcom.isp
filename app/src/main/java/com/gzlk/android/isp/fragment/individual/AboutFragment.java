@@ -5,6 +5,7 @@ import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
@@ -33,6 +34,8 @@ public class AboutFragment extends BaseLayoutSupportFragment {
     private View helpView;
     @ViewId(R.id.ui_about_version)
     private TextView versionTextView;
+    @ViewId(R.id.ui_about_revision)
+    private TextView revisionTextView;
 
     private SimpleClickableViewHolder evaluateHolder;
     private SimpleClickableViewHolder helpHolder;
@@ -72,10 +75,11 @@ public class AboutFragment extends BaseLayoutSupportFragment {
     @SuppressWarnings("ConstantConditions")
     private void initializeHolders() {
         if (null == strings) {
-            String buildType = StringHelper.getString(R.string.app_build_type);
+            String buildType = BuildConfig.BUILD_TYPE;//StringHelper.getString(R.string.app_build_type);
             String internal = getString(R.string.app_internal_version);
             String api = getString(R.string.app_api_version);
-            versionTextView.setText(Html.fromHtml(StringHelper.getString(R.string.ui_text_about_version, buildType, App.app().version(), internal, api)));
+            versionTextView.setText(Html.fromHtml(StringHelper.getString(R.string.ui_text_about_version, buildType, App.app().version())));
+            revisionTextView.setText(getString(R.string.ui_text_about_revision, api, internal));
             strings = StringHelper.getStringArray(R.array.ui_about);
         }
         if (null == evaluateHolder) {

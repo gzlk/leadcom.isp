@@ -41,8 +41,7 @@ public abstract class Request<T> {
      */
     public static final int PAGE_SIZE = 10;
 
-    protected static final String URL = BuildConfig.RELEASEABLE ? BaseApi.URL :
-            format("%s/%s", BaseApi.URL, BaseApi.API_VER);
+    protected static final String URL = format("%s/%s", BaseApi.URL, BaseApi.API_VER);
     /**
      * 新增
      */
