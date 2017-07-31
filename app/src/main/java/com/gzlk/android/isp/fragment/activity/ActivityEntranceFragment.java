@@ -178,11 +178,13 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void checkIsInTeam(final boolean agree) {
+        showImageHandlingDialog(agree ? R.string.ui_activity_entrance_agreeing : R.string.ui_activity_entrance_disagreeing);
         NIMClient.getService(TeamService.class).queryTeamMember(tid, Cache.cache().userId).setCallback(new RequestCallback<TeamMember>() {
             @Override
             public void onSuccess(TeamMember teamMember) {
                 // 查找当前用户是否已经在群内
                 if (null != teamMember) {
+                    hideImageHandlingDialog();
                     handleHandledActivity(agree);
                     if (teamMember.isInTeam()) {
                         // 已经是群内的成员
@@ -195,8 +197,13 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     } else {
                         // 已经退出群了
-                        ToastHelper.make().showMsg(R.string.ui_activity_property_exited);
-                        finish();
+                        if (agree) {
+                            agree();
+                        } else {
+                            reject();
+//                            ToastHelper.make().showMsg(R.string.ui_activity_property_exited);
+//                            finish();
+                        }
                     }
                 } else {
                     if (agree) {
@@ -209,18 +216,25 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onFailed(int i) {
-
+                hideImageHandlingDialog();
+                if (i == 404) {
+                    // 找不到成员是404？
+                    if (agree) {
+                        agree();
+                    } else {
+                        reject();
+                    }
+                }
             }
 
             @Override
             public void onException(Throwable throwable) {
-
+                hideImageHandlingDialog();
             }
         });
     }
 
     private void reject() {
-        showImageHandlingDialog(R.string.ui_activity_entrance_disagreeing);
         InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
             @Override
             public void onResponse(Invitation invitation, boolean success, String message) {
@@ -322,7 +336,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 displayLoading(false);
             }
-        }).findByTid(tid);
+        }).findTid(tid);
     }
 
     private void resetImageViewSize() {

@@ -156,7 +156,7 @@ public class MainActivity extends TitleActivity {
         SimpleDialogHelper.init(this).show(R.string.ui_system_updatable, R.string.ui_base_text_ok, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                return false;
+                return true;
             }
         }, null);
     }

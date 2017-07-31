@@ -196,6 +196,7 @@ public abstract class Request<T> {
                         save(singleQuery.getData());
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.query = singleQuery;
+                            onSingleRequestListener.actInviteStatus = singleQuery.getActInvtStatus();
                             onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), data.getMsg());
                         }
                     } else if (data instanceof BoolQuery) {

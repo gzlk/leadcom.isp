@@ -86,6 +86,7 @@
         <![CDATA[您确定要踢出<font color="#3cbaff">%s</font>吗？]]>
     </string>
     <string name="ui_organization_contact_removing">正在移除成员，请稍后&#8230;</string>
+    <string name="ui_organization_contact_removing_squad_member">正在移除小组成员，请稍后&#8230;</string>
     <string name="ui_organization_contact_set_to_archive_manager">正在设置档案管理员，请稍候&#8230;</string>
     <string name="ui_organization_contact_unset_to_archive_manager">正在撤销档案管理员，请稍候&#8230;</string>
     <string name="ui_organization_contact_set_to_manager" formatted="false">

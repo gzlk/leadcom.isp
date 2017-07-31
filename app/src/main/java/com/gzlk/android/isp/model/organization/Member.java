@@ -9,6 +9,7 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.Leaguer;
+import com.gzlk.android.isp.model.operation.ACTOperation;
 import com.gzlk.android.isp.model.operation.GRPOperation;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
@@ -47,6 +48,35 @@ public class Member extends Leaguer {
         String GROUP_COMMON_MEMBER_ROLE_NAME = "普通成员";
         String GROUP_DOC_MANAGER_ROLE_NAME = "档案管理员";
         String GROUP_SQUAD_MANAGER_ROLE_NAME = "小组管理员";
+
+        // 活动成员角色id
+        /**
+         * 活动管理员角色ID
+         */
+        String ACT_MANAGER_ROLE_ID = "58f8640fad41ef4aa0290624";
+        /**
+         * 活动成员角色ID
+         */
+        String ACT_MEMBER_ROLE_ID = "58f863fdad41ef4aa0290623";
+
+        // 活动成员角色code
+        /**
+         * 活动管理员的角色code
+         */
+        String ACT_MANAGER_ROLE_CODE = "d72e64ece64b4362bba01f43e171319a";
+        /**
+         * 活动成员角色code
+         */
+        String ACT_MEMBER_ROLE_CODE = "50d6aaf585e049fd836fc85817c29aac";
+        // 活动成员角色name
+        /**
+         * 活动管理员名称
+         */
+        String ACT_MANAGER_ROLE_NAME = "活动管理员";
+        /**
+         * 活动成员名称
+         */
+        String ACT_MEMBER_ROLE_NAME = "活动参与者";
     }
 
     /**
@@ -148,6 +178,8 @@ public class Member extends Leaguer {
     private String actId;
     @Ignore
     private Role groRole;
+    @Ignore
+    private Role actRole;
 
     public String getGroupId() {
         return groupId;
@@ -195,6 +227,14 @@ public class Member extends Leaguer {
         this.groRole = groRole;
     }
 
+    public Role getActRole() {
+        return actRole;
+    }
+
+    public void setActRole(Role actRole) {
+        this.actRole = actRole;
+    }
+
     /**
      * 是否具有某个操作权限
      */
@@ -207,6 +247,10 @@ public class Member extends Leaguer {
 //            }
 //        }
 //        return false;
+    }
+
+    private boolean hasActivityOperation(String operation) {
+        return null != getActRole() && getActRole().hasOperation(operation);
     }
 
     /**
@@ -223,6 +267,12 @@ public class Member extends Leaguer {
         return null != getGroRole() && getGroRole().getId().equals(Code.GROUP_SQUAD_MANAGER_ROLE_ID);
     }
 
+    /**
+     * 是否是活动管理员
+     */
+    public boolean isActivityManager() {
+        return null != getActRole() && !isEmpty(getActRole().getId()) && getActRole().getId().equals(Code.ACT_MANAGER_ROLE_ID);
+    }
     /*
      * 是否是群主
      */
@@ -333,5 +383,47 @@ public class Member extends Leaguer {
      */
     public boolean squadMemberDeletable() {
         return hasOperation(GRPOperation.SQUAD_MEMBER_DELETE);
+    }
+
+    /**
+     * 是否可以编辑活动的属性
+     */
+    public boolean activeEditable() {
+        return hasActivityOperation(ACTOperation.PROPERTY_EDIT);
+    }
+
+    /**
+     * 是否可以结束活动
+     */
+    public boolean activityEndable() {
+        return hasActivityOperation(ACTOperation.CLOSEABLE);
+    }
+
+    /**
+     * 是否可以删除活动
+     */
+    public boolean activityDeletable() {
+        return hasActivityOperation(ACTOperation.DELETABLE);
+    }
+
+    /**
+     * 是否可以查看活动
+     */
+    public boolean activityCheckable() {
+        return hasActivityOperation(ACTOperation.CHECKABLE);
+    }
+
+    /**
+     * 是否可以添加成员
+     */
+    public boolean activityMemberAddable() {
+        return hasActivityOperation(ACTOperation.MEMBER_ADDABLE);
+    }
+
+    /**
+     * 是否可以删除成员
+     */
+    public boolean activityMemberDeletable() {
+        return hasActivityOperation(ACTOperation.MEMBER_DELETABLE);
     }
 }

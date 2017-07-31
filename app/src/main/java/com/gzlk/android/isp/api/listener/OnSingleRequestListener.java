@@ -21,6 +21,11 @@ public abstract class OnSingleRequestListener<Data> {
     public SingleQuery<Data> query;
 
     /**
+     * 活动邀请状态
+     */
+    public int actInviteStatus;
+
+    /**
      * 网络调用成功
      */
     public void onResponse(Data data, boolean success, String message) {

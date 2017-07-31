@@ -13,6 +13,7 @@
         <item>2|议题|议题|%d个议题</item>
         <item>3|活动|目前没有活动|没有可参与的活动</item>
     </string-array>
+    <string name="ui_activity_home_no_permission_check">您没有权限查看该活动</string>
 
     <string name="ui_activity_un_handled_invite_fragment_title">@string/ui_activity_base_not_join_in</string>
     <string name="ui_activity_fetching_front_list">正在加载活动列表&#8230;</string>

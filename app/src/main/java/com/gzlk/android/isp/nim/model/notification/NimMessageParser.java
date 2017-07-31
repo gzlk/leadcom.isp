@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.nim.model.notification;
 
-import com.gzlk.android.isp.model.Dao;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachmentParser;
 
@@ -46,7 +45,7 @@ public class NimMessageParser implements MsgAttachmentParser {
             if (object.has(KEY_HANDLED)) {
                 msg.setHandled(object.getBoolean(KEY_HANDLED));
             }
-            new Dao<>(NimMessage.class).save(msg);
+            //new Dao<>(NimMessage.class).save(msg);
             return msg;
         } catch (JSONException e) {
             e.printStackTrace();

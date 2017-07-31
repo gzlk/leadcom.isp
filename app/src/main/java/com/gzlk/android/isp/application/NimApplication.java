@@ -191,7 +191,7 @@ public class NimApplication extends BaseActivityManagedApplication {
         NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
             @Override
             public void onEvent(CustomNotification message) {
-                LogHelper.log("demo", "custom notification: " + message.getContent() + " from :" + message.getSessionId() + "/" + message.getSessionType());
+                LogHelper.log("NimApp", "notification: " + message.getContent() + " from :" + message.getSessionId() + "/" + message.getSessionType());
                 // 在这里处理自定义通知。
                 String json = message.getContent();
                 if (!StringHelper.isEmpty(json)) {

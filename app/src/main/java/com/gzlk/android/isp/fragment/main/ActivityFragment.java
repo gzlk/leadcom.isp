@@ -18,6 +18,7 @@ import com.gzlk.android.isp.fragment.activity.UnApprovedInviteFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
@@ -30,6 +31,7 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Invitation;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nimlib.sdk.NIMClient;
@@ -484,20 +486,31 @@ public class ActivityFragment extends BaseOrganizationFragment {
         }
     };
 
+    /**
+     * 我在当前选中的活动中的角色
+     */
+    public static Member myActMember;
+
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
             Model model = mAdapter.get(index);
             if (model instanceof Activity) {
                 Activity act = (Activity) model;
+                myActMember = act.getActMember();
                 //openActivity(CreateActivityFragment.class.getName(), format("%s,%s", act.getId(), act.getGroupId()), true, true);
                 //openActivity(ActivityPropertiesFragment.class.getName(), act.getId(), false, false, true);
-                if (act.getStatus() == Activity.Status.ACTIVE) {
-                    // 未结束的活动打开群聊窗口
-                    NimSessionHelper.startTeamSession(Activity(), act.getTid());
+                if (null != myActMember && myActMember.activityCheckable()) {
+                    if (act.getStatus() == Activity.Status.ACTIVE) {
+                        // 未结束的活动打开群聊窗口
+                        NimSessionHelper.startTeamSession(Activity(), act.getTid());
+                    } else {
+                        // 已结束的活动打开活动详情页
+                        openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
+                    }
                 } else {
-                    // 已结束的活动打开活动详情页
-                    openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);
+                    // 无权查看活动
+                    SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_home_no_permission_check);
                 }
             } else if (model instanceof SimpleClickableItem) {
                 SimpleClickableItem sci = (SimpleClickableItem) model;

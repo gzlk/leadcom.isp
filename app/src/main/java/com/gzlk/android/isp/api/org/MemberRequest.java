@@ -138,18 +138,14 @@ public class MemberRequest extends Request<Member> {
      * 更改组织成员的属性
      *
      * @param memberId 组织成员ID
-     * @param groupId  组织ID
      * @param toRole   要变更成的角色
-     * @param userId   被更改的用户的id
      */
-    public void groupMemberUpdate(String memberId, String groupId, Role toRole, String userId) {
-        // _id,groupId,accessToken,{groRole{_id:角色ID,rolCode:角色编码,rolName:角色名称}},userId
+    public void groupMemberUpdate(String memberId, Role toRole) {
+        // _id,{groRole{_id:角色ID,rolCode:角色编码,rolName:角色名称}}
 
         JSONObject object = new JSONObject();
         try {
-            object.put("_id", memberId)
-                    .put("groupId", groupId)
-                    .put("userId", userId);
+            object.put("_id", memberId);
             JSONObject role = new JSONObject();
             role.put("_id", toRole.getId())
                     .put("rolCode", toRole.getRolCode())
@@ -165,9 +161,17 @@ public class MemberRequest extends Request<Member> {
     /**
      * 删除组织成员
      */
-    public void groupMemberDelete(String memberId, String groupId) {
+    public void groupMemberDelete(String memberId) {
         // memberId,groupId
-        String param = format("/group/groMember/delete?memberId=%s&groupId=%s", memberId, groupId);
+        String param = format("%s?memberId=%s", url(Member.Type.GROUP, DELETE), memberId);
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 删除小组成员
+     */
+    public void squadMemberDelete(String memberId) {
+        String param = format("%s?memberId=%s", url(Member.Type.SQUAD, DELETE), memberId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
@@ -216,7 +220,7 @@ public class MemberRequest extends Request<Member> {
      * 加入公开的活动
      */
     public void joinPublicActivity(String activityId) {
-        String param = format("/activity/actMember/joinPublicAct?actId=%s", activityId);
+        String param = format("%s?actId=%s", url(Member.Type.ACTIVITY, "/joinPublicAct"), activityId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
@@ -224,7 +228,7 @@ public class MemberRequest extends Request<Member> {
      * 活动中踢人
      */
     public void activityKickOut(String activityId, String userId) {
-        String param = format("/activity/actMember/delete?id=%s&userId=%s", activityId, userId);
+        String param = format("%s?id=%s&userId=%s", url(Member.Type.ACTIVITY, DELETE), activityId, userId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
@@ -232,7 +236,7 @@ public class MemberRequest extends Request<Member> {
      * 成员退出活动
      */
     public void activityExit(String activityId) {
-        String param = format("/activity/actMember/exit?id=%s", activityId);
+        String param = format("%s?id=%s", url(Member.Type.ACTIVITY, "/exit"), activityId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 

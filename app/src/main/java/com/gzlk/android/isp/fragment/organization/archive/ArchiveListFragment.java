@@ -94,8 +94,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
         setNothingText(R.string.ui_archive_approvable_nothing);
         initializeAdapter();
         if (isViewPagerDisplayedCurrent()) {
-            archives.clear();
-            loadingArchive();
+            onSwipeRefreshing();
         }
     }
 
@@ -118,7 +117,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        refreshArchive();
     }
 
     @Override
@@ -223,13 +222,20 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
             if (pageSize > 0) {
                 if (list.size() >= pageSize) {
                     remotePageNumber++;
+                    isLoadingComplete(false);
+                } else {
+                    isLoadingComplete(true);
                 }
+            } else {
+                isLoadingComplete(true);
             }
             for (Archive archive : list) {
                 if (!archives.contains(archive)) {
                     archives.add(archive);
                 }
             }
+        } else {
+            isLoadingComplete(true);
         }
         //if (null == list || list.size() < 1) {
         // 清除已有的记录，以便去掉已存档了的内容

@@ -25,7 +25,9 @@ import java.util.List;
  */
 @Table(Activity.Table.ACTIVITY)
 public class Activity extends Model {
-    /**其他组织的Id*/
+    /**
+     * 其他组织的Id
+     */
     public static final String OTHER_ID = "ad912b3b344f426a93860248ffd3c715";
 
     public interface Table {
@@ -167,6 +169,9 @@ public class Activity extends Model {
     //活动附件
     @Ignore
     private ArrayList<Attachment> attachList;
+    // 当前角色所在活动里的成员信息
+    @Ignore
+    private Member actMember;
 
     public String getTitle() {
         return title;
@@ -348,5 +353,13 @@ public class Activity extends Model {
 
     public void setAttachList(ArrayList<Attachment> attachList) {
         this.attachList = attachList;
+    }
+
+    public Member getActMember() {
+        return actMember;
+    }
+
+    public void setActMember(Member actMember) {
+        this.actMember = actMember;
     }
 }

@@ -264,7 +264,7 @@ public class ActRequest extends Request<Activity> {
      * @param activityId 活动的id
      */
     public void find(String activityId) {
-        find(activityId, false);
+        find(activityId, true);
     }
 
     /**
@@ -282,7 +282,7 @@ public class ActRequest extends Request<Activity> {
     /**
      * 通过网络异步查询tid
      */
-    private void findTid(String tid) {
+    public void findTid(String tid) {
         httpRequest(getRequest(SingleActivity.class, format("%s/tid?tid=%s", url(FIND), tid), "", HttpMethods.Get));
     }
 

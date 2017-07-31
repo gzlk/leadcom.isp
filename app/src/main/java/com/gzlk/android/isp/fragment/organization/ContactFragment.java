@@ -389,34 +389,59 @@ public class ContactFragment extends BaseOrganizationFragment {
         if (isEmpty(name)) {
             name = member.getPhone();
         }
+        final String id = member.getId();
         SimpleDialogHelper.init(Activity()).show(StringHelper.getString(R.string.ui_organization_contact_remove_member, name), StringHelper.getString(R.string.ui_base_text_yes), StringHelper.getString(R.string.ui_base_text_cancel), new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                deleteMember(index);
+                if (!isEmpty(mSquadId)) {
+                    deleteSquadMember(id);
+                } else {
+                    deleteGroupMember(id);
+                }
                 return true;
             }
         }, null);
     }
 
     // 删除成员
-    private void deleteMember(final int index) {
+    private void deleteGroupMember(final String memberId) {
         setLoadingText(R.string.ui_organization_contact_removing);
         displayLoading(true);
-        Member member = mAdapter.get(index);
-        final String id = member.getId();
         MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
             public void onResponse(Member member, boolean success, String message) {
                 super.onResponse(member, success, message);
                 if (success) {
-                    members.remove(index);
-                    new Dao<>(Member.class).delete(id);
+                    Member mbr = new Member();
+                    mbr.setId(memberId);
+                    members.remove(mbr);
+                    new Dao<>(Member.class).delete(memberId);
                     searching(searchingText);
                 }
                 ToastHelper.make().showMsg(message);
                 displayLoading(false);
             }
-        }).groupMemberDelete(member.getId(), member.getGroupId());
+        }).groupMemberDelete(memberId);
+    }
+
+    private void deleteSquadMember(final String memberId) {
+        setLoadingText(R.string.ui_organization_contact_removing_squad_member);
+        displayLoading(true);
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
+            @Override
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
+                if (success) {
+                    Member mbr = new Member();
+                    mbr.setId(memberId);
+                    members.remove(mbr);
+                    new Dao<>(Member.class).delete(memberId);
+                    searching(searchingText);
+                }
+                ToastHelper.make().showMsg(message);
+                displayLoading(false);
+            }
+        }).squadMemberDelete(memberId);
     }
 
     // 转让组群，转让管理权
@@ -483,7 +508,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 }
                 ToastHelper.make().showMsg(message);
             }
-        }).groupMemberUpdate(member.getId(), member.getGroupId(), toRole, member.getUserId());
+        }).groupMemberUpdate(member.getId(), toRole);
     }
 
     // 点击用户打开用户详情
