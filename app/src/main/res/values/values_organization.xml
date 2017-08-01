@@ -68,6 +68,9 @@
     <string name="ui_organization_squad_not_member" formatted="false">
         <![CDATA[您还不是<font color="#3cbaff">%s</font>的小组成员。<br/>现在要加入吗？]]>
     </string>
+    <string name="ui_organization_squad_delete_warning" formatted="false">
+        <![CDATA[您确定要删除小组<font color="#3cbaff">%s</font>吗？]]>
+    </string>
 
     <string name="ui_organization_squad_contact_loading_squads">正在加载小组列表&#8230;</string>
 

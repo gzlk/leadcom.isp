@@ -83,6 +83,12 @@ public class SimpleDialogHelper {
         show(text, "", "", confirmListener, cancelListener);
     }
 
+    public void show(String text, int confirm, int cancel, DialogHelper.OnDialogConfirmListener confirmListener, DialogHelper.OnDialogCancelListener cancelListener) {
+        String yes = 0 == confirm ? "" : StringHelper.getString(confirm);
+        String no = 0 == cancel ? "" : StringHelper.getString(cancel);
+        show(text, yes, no, confirmListener, cancelListener);
+    }
+
     public void show(final String text, final String confirmText, final String cancelText, DialogHelper.OnDialogConfirmListener confirmListener, DialogHelper.OnDialogCancelListener cancelListener) {
         DialogHelper.init(activity.get()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override

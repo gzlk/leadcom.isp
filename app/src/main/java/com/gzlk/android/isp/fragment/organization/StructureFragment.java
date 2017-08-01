@@ -8,14 +8,17 @@ import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.api.org.SimpleOrgRequest;
 import com.gzlk.android.isp.api.org.SimpleOutput;
+import com.gzlk.android.isp.api.org.SquadRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -23,9 +26,11 @@ import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.TextViewHolder;
 import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
 import com.gzlk.android.isp.holder.organization.SquadAddViewHolder;
+import com.gzlk.android.isp.holder.organization.SquadDeleteableViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Concern;
@@ -473,12 +478,53 @@ public class StructureFragment extends BaseOrganizationFragment {
                 index++;
             }
         }
+        notifySquadAddable();
         displayLoading(false);
     }
 
-    private class StructureAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+    private void notifySquadAddable() {
+        SimpleClickableItem sci = new SimpleClickableItem(items[5]);
+        mAdapter.update(sci);
+    }
 
-        private static final int VT_HEAD = 0, VT_DIVIDER = 1, VT_CLICK = 2, VT_FOOTER = 3;
+    private void warningDeleteSquad(final int index) {
+        Squad squad = (Squad) mAdapter.get(index);
+        String text = getString(R.string.ui_organization_squad_delete_warning, squad.getName());
+        SimpleDialogHelper.init(Activity()).show(text, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                deleteSquad(mAdapter.get(index).getId());
+                return true;
+            }
+        }, null);
+    }
+
+    private void deleteSquad(final String squadId) {
+        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
+            @Override
+            public void onResponse(Squad squad, boolean success, String message) {
+                super.onResponse(squad, success, message);
+                if (success) {
+                    Squad s = new Squad();
+                    s.setId(squadId);
+                    mAdapter.remove(s);
+                    new Dao<>(Squad.class).delete(squadId);
+                }
+            }
+        }).delete(squadId);
+    }
+
+    private BaseViewHolder.OnHandlerBoundDataListener<Squad> handlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Squad>() {
+        @Override
+        public Squad onHandlerBoundData(BaseViewHolder holder) {
+            warningDeleteSquad(holder.getAdapterPosition());
+            return null;
+        }
+    };
+
+    private class StructureAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
+
+        private static final int VT_HEAD = 0, VT_DIVIDER = 1, VT_CLICK = 2, VT_SQUAD = 3, VT_FOOTER = 4;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -494,6 +540,11 @@ public class StructureFragment extends BaseOrganizationFragment {
                     return new TextViewHolder(itemView, fragment);
                 case VT_FOOTER:
                     return new SquadAddViewHolder(itemView, fragment);
+                case VT_SQUAD:
+                    SquadDeleteableViewHolder sdvh = new SquadDeleteableViewHolder(itemView, fragment);
+                    sdvh.addOnViewHolderClickListener(holderClickListener);
+                    sdvh.addOnHandlerBoundDataListener(handlerBoundDataListener);
+                    return sdvh;
                 default:
                     SimpleClickableViewHolder holder = new SimpleClickableViewHolder(itemView, fragment);
                     holder.addOnViewHolderClickListener(holderClickListener);
@@ -501,7 +552,6 @@ public class StructureFragment extends BaseOrganizationFragment {
             }
         }
 
-        @Override
         public int itemLayout(int viewType) {
             switch (viewType) {
                 case VT_HEAD:
@@ -510,8 +560,28 @@ public class StructureFragment extends BaseOrganizationFragment {
                     return R.layout.tool_view_divider_big;
                 case VT_FOOTER:
                     return R.layout.holder_view_squad_add_layout;
+                case VT_SQUAD:
+                    return R.layout.holder_view_squad_deleteable_item;
                 default:
                     return R.layout.holder_view_simple_clickable_gravity_left;
+            }
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof SquadDeleteableViewHolder) {
+                SquadDeleteableViewHolder sdvh = (SquadDeleteableViewHolder) holder;
+                sdvh.showDelete(null != my && my.squadDeletable());
+                sdvh.showContent((Squad) item);
+            } else if (holder instanceof SimpleClickableViewHolder) {
+                SimpleClickableViewHolder scvh = (SimpleClickableViewHolder) holder;
+                if (item instanceof SimpleClickableItem) {
+                    scvh.showContent((SimpleClickableItem) item);
+                } else if (item instanceof Concern) {
+                    scvh.showContent((Concern) item);
+                }
+            } else if (holder instanceof SquadAddViewHolder) {
+                ((SquadAddViewHolder) holder).showAddContainer(null != my && my.squadAddable());
             }
         }
 
@@ -526,27 +596,20 @@ public class StructureFragment extends BaseOrganizationFragment {
                 case "5":
                     return VT_FOOTER;
             }
-            return VT_CLICK;
-        }
-
-        @Override
-        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-            if (holder instanceof SimpleClickableViewHolder) {
-                SimpleClickableViewHolder scvh = (SimpleClickableViewHolder) holder;
-                if (item instanceof SimpleClickableItem) {
-                    scvh.showContent((SimpleClickableItem) item);
-                } else if (item instanceof Squad) {
-                    scvh.showContent((Squad) item);
-                } else if (item instanceof Concern) {
-                    scvh.showContent((Concern) item);
-                }
-            } else if (holder instanceof SquadAddViewHolder) {
-                ((SquadAddViewHolder) holder).showAddContainer(null != my && my.squadAddable());
+            if (model instanceof Squad) {
+                return VT_SQUAD;
+            } else {
+                return VT_CLICK;
             }
         }
 
         @Override
         protected int comparator(Model item1, Model item2) {
+            return 0;
+        }
+
+        @Override
+        public int getSwipeLayoutResourceId(int i) {
             return 0;
         }
     }

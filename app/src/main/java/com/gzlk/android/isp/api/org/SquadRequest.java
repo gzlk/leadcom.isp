@@ -80,7 +80,7 @@ public class SquadRequest extends Request<Squad> {
         //{_id,name,intro,accessToken}
         JSONObject object = new JSONObject();
         try {
-            object.put("squadId", squadId)
+            object.put("_id", squadId)
                     .put("name", squadName)
                     .put("intro", checkNull(introduction));
         } catch (JSONException e) {

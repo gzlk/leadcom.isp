@@ -228,7 +228,7 @@ public class MemberRequest extends Request<Member> {
      * 活动中踢人
      */
     public void activityKickOut(String activityId, String userId) {
-        String param = format("%s?id=%s&userId=%s", url(Member.Type.ACTIVITY, DELETE), activityId, userId);
+        String param = format("%s?actId=%s&userId=%s", url(Member.Type.ACTIVITY, DELETE), activityId, userId);
         httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 

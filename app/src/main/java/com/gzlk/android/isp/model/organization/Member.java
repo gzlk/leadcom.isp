@@ -164,6 +164,10 @@ public class Member extends Leaguer {
         return !(null == list || list.size() < 1);
     }
 
+    public static void remove(String memberId) {
+        new Dao<>(Member.class).delete(memberId);
+    }
+
     @Column(Organization.Field.GroupId)
     private String groupId;        //群体ID
 

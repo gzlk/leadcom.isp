@@ -9,15 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
@@ -25,11 +22,11 @@ import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
+import com.gzlk.android.isp.fragment.main.ActivityFragment;
 import com.gzlk.android.isp.fragment.organization.GroupsContactPickerFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.activity.ActivityMemberViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
@@ -43,8 +40,6 @@ import com.netease.nimlib.sdk.team.constant.TeamMemberType;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -276,7 +271,14 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
                         } else {
                             isLoadingComplete(true);
                         }
-                        mAdapter.update(list);
+                        for (Member member : list) {
+                            if (forPicker) {
+                                if (!isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId)) {
+                                    member.setLocalDeleted(true);
+                                }
+                            }
+                        }
+                        mAdapter.update(list, false);
                     } else {
                         isLoadingComplete(true);
                     }
@@ -316,12 +318,14 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
     private void kickOut(final ContactViewHolder holder) {
         Member member = mAdapter.get(holder.getAdapterPosition());
+        final String memberId = member.getId();
         MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
             public void onResponse(Member member, boolean success, String message) {
                 super.onResponse(member, success, message);
                 if (success) {
                     mAdapter.delete(holder);
+                    Member.remove(memberId);
                 }
             }
         }).activityKickOut(member.getActId(), member.getUserId());
@@ -359,51 +363,11 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    /**
-     * 根据加入时间排序
-     */
-    private class MemberComparator implements Comparator<Member> {
+    private class MembersAdapter extends RecyclerViewSwipeAdapter<ContactViewHolder, Member> {
+
         @Override
-        public int compare(Member u1, Member u2) {
-            return u1.getSpell().compareTo(u2.getSpell());
-        }
-    }
-
-    private class MembersAdapter extends RecyclerSwipeAdapter<ContactViewHolder> {
-
-        private ArrayList<Member> list = new ArrayList<>();
-
-        public void update(List<Member> members) {
-            if (null == members || members.size() < 1) return;
-
-            for (Member member : members) {
-                if (forPicker) {
-                    if (!isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId)) {
-                        member.setLocalDeleted(true);
-                    }
-                }
-                if (!list.contains(member)) {
-                    list.add(member);
-                } else {
-                    int index = list.indexOf(member);
-                    list.set(index, member);
-                }
-            }
-            Collections.sort(mAdapter.list, new MemberComparator());
-            notifyItemRangeChanged(0, list.size());
-        }
-
-        public Member get(int index) {
-            return list.get(index);
-        }
-
-        private void remove(int index) {
-            list.remove(index);
-            notifyItemRemoved(index);
-        }
-
-        private void clear() {
-
+        protected int comparator(Member item1, Member item2) {
+            return 0;
         }
 
         private void delete(ContactViewHolder holder) {
@@ -414,10 +378,8 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            int layout = R.layout.holder_view_organization_contact;
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(layout, viewGroup, false);
-            ContactViewHolder holder = new ContactViewHolder(view, ActivityMemberFragment.this);
+        public ContactViewHolder onCreateViewHolder(View itemView, int viewType) {
+            ContactViewHolder holder = new ContactViewHolder(itemView, ActivityMemberFragment.this);
             // 显示拾取器
             holder.showPicker(forPicker);
             holder.button2Text(R.string.ui_base_text_kick_out);
@@ -431,18 +393,24 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onBindViewHolder(ContactViewHolder holder, int position) {
-            Member member = list.get(position);
-            boolean isManager = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId) && isMaster;
-            // 管理者不需要踢出
-            holder.showButton2(!isManager && !forPicker);
-            holder.showContent(member, "");
-            mItemManger.bindView(holder.itemView, position);
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_organization_contact;
         }
 
         @Override
-        public int getItemCount() {
-            return list.size();
+        public void onBindHolderOfView(ContactViewHolder holder, int position, @Nullable Member member) {
+            boolean isMe = null != member && !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
+            Member actMember = ActivityFragment.myActMember;
+            boolean isManager = null != actMember && actMember.activityMemberDeletable();
+            // 管理者不需要踢出
+            if (forPicker) {
+                holder.showButton2(false);
+            } else {
+                holder.showButton2(!isMe && isManager);
+            }
+            //holder.showButton2(!isManager && !forPicker);
+            holder.showContent(member, "");
+            mItemManger.bindView(holder.itemView, position);
         }
 
         @Override
@@ -452,8 +420,8 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
         private int getFirstCharCount(char chr) {
             int ret = 0;
-            for (Member member : list) {
-                if (member.getSpell().charAt(0) == chr) {
+            for (int i = 0, size = getItemCount(); i < size; i++) {
+                if (get(i).getSpell().charAt(0) == chr) {
                     ret++;
                 }
             }
@@ -542,53 +510,14 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         private void drawText(Canvas canvas, int position, float x, float y) {
-            String text = mAdapter.list.get(position).getSpell().substring(0, 1);
+            String text = mAdapter.get(position).getSpell().substring(0, 1);
             text = format(FMT, text, mAdapter.getFirstCharCount(text.charAt(0)));
             // 绘制文本
             canvas.drawText(text, x, y, textPaint);
         }
 
         private boolean isFirstInGroup(int position) {
-            return position >= 0 && (position == 0 || mAdapter.list.get(position).getSpell().charAt(0) != mAdapter.list.get(position - 1).getSpell().charAt(0));
-        }
-    }
-
-    private class MemberAdapter extends RecyclerViewAdapter<ActivityMemberViewHolder, Member> {
-
-        @Override
-        public ActivityMemberViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ActivityMemberViewHolder holder = new ActivityMemberViewHolder(itemView, ActivityMemberFragment.this);
-            holder.addOnViewHolderClickListener(onViewHolderClickListener);
-            resizeWidth(holder.itemView);
-            return holder;
-        }
-
-        @Override
-        public int itemLayout(int viewType) {
-            return R.layout.holder_view_activity_member;
-        }
-
-        private void resizeWidth(View itemView) {
-            int width = getScreenWidth() / gridSpanCount;
-            ViewGroup.LayoutParams params = itemView.getLayoutParams();
-            params.width = width;
-            itemView.setLayoutParams(params);
-        }
-
-        @Override
-        public void onBindHolderOfView(final ActivityMemberViewHolder holder, int position, @Nullable Member item) {
-            holder.showContent(item);
-//            Handler().post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    resizeWidth(holder.itemView);
-//                }
-//            });
-        }
-
-        @Override
-        protected int comparator(Member item1, Member item2) {
-            return 0;
+            return position >= 0 && (position == 0 || mAdapter.get(position).getSpell().charAt(0) != mAdapter.get(position - 1).getSpell().charAt(0));
         }
     }
 }

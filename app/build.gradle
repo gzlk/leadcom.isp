@@ -134,17 +134,18 @@ dependencies {
     // https://mvnrepository.com/artifact/com.sun.mail/android-activation
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
 
-    // 动画集合
-    compile 'com.daimajia.easing:library:2.0@aar'
-    compile 'com.daimajia.androidanimations:library:2.2@aar'
-
     // pdf阅读器
     compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
     // 视频播放器
     compile 'com.afollestad:easyvideoplayer:0.3.0'
+
     // 滑动删除
     //compile(name: 'android-swipelayout-library-release', ext: 'aar')
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    // 动画集合
+    compile 'com.daimajia.easing:library:2.0@aar'
+    compile 'com.daimajia.androidanimations:library:2.2@aar'
+
     // 文件管理器
     compile(name: 'filepicker-release', ext: 'aar')
     // TinyPinyin核心包，约80KB

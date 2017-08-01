@@ -4,17 +4,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.TitleActivity;
+import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
@@ -37,8 +36,6 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -339,16 +336,6 @@ public class ContactFragment extends BaseOrganizationFragment {
         stopRefreshing();
     }
 
-    /**
-     * 根据加入时间排序
-     */
-    private class MemberComparator implements Comparator<Member> {
-        @Override
-        public int compare(Member u1, Member u2) {
-            return u1.getSpell().compareTo(u2.getSpell());
-        }
-    }
-
     private String searchingText = "";
     private SearchableViewHolder.OnSearchingListener searchingListener = new SearchableViewHolder.OnSearchingListener() {
         @Override
@@ -357,7 +344,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 searching(text);
             } else {
                 searchingText = "";
-                mAdapter.addAll(members);
+                mAdapter.add(members);
             }
             stopRefreshing();
         }
@@ -618,9 +605,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     public static Role squadRole;
 
-    private class ContactAdapter extends RecyclerSwipeAdapter<ContactViewHolder> {
-
-        private ArrayList<Member> list = new ArrayList<>();
+    private class ContactAdapter extends RecyclerViewSwipeAdapter<ContactViewHolder, Member> {
 
         private void delete(ContactViewHolder holder) {
             mItemManger.removeShownLayouts(holder.getSwipeLayout());
@@ -629,60 +614,15 @@ public class ContactFragment extends BaseOrganizationFragment {
             mItemManger.closeAllItems();
         }
 
-        private Member get(int position) {
-            return list.get(position);
-        }
-
-        private void sort() {
-            Collections.sort(mAdapter.list, new MemberComparator());
-            notifyItemRangeChanged(0, list.size());
-        }
-
-        private void addAll(List<Member> all) {
-            if (null == all || all.size() < 1) return;
-
-            for (Member member : all) {
-                add(member);
-            }
-            sort();
-        }
-
-        private void add(Member member) {
-            int index = list.indexOf(member);
-            if (index < 0) {
-                list.add(member);
-                notifyItemChanged(list.size() - 1);
-            } else {
-                list.set(index, member);
-                notifyItemChanged(index);
-            }
-        }
-
-        private void clear() {
-            int size = list.size();
-            while (size > 0) {
-
-                remove(size - 1);
-                size = list.size();
-            }
-        }
-
-        private void remove(int index) {
-            list.remove(index);
-            notifyItemRemoved(index);
-        }
-
-        private void delete(Member member) {
-            int index = list.indexOf(member);
-            if (index >= 0) {
-                remove(index);
-            }
+        @Override
+        protected int comparator(Member item1, Member item2) {
+            return 0;
         }
 
         private int getFirstCharCount(char chr) {
             int ret = 0;
-            for (Member member : list) {
-                if (member.getSpell().charAt(0) == chr) {
+            for (int i = 0, size = getItemCount(); i < size; i++) {
+                if (get(i).getSpell().charAt(0) == chr) {
                     ret++;
                 }
             }
@@ -690,10 +630,8 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
 
         @Override
-        public ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            int layout = R.layout.holder_view_organization_contact;
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(layout, viewGroup, false);
-            ContactViewHolder holder = new ContactViewHolder(view, ContactFragment.this);
+        public ContactViewHolder onCreateViewHolder(View itemView, int viewType) {
+            ContactViewHolder holder = new ContactViewHolder(itemView, ContactFragment.this);
             // 打开用户详情页
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             // 设为管理员
@@ -710,10 +648,15 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
 
         @Override
-        public void onBindViewHolder(ContactViewHolder holder, int position) {
-            Member member = list.get(position);
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_organization_contact;
+        }
+
+        @Override
+        public void onBindHolderOfView(ContactViewHolder holder, int position, @Nullable Member member) {
             Member me = StructureFragment.my;
-            boolean isMe = (null != me) && !isEmpty(member.getId()) && !isEmpty(me.getId()) && member.getId().equals(me.getId());
+            String memberUserId = (null != member) ? member.getUserId() : null;
+            boolean isMe = (null != me) && !isEmpty(memberUserId) && !isEmpty(me.getUserId()) && memberUserId.equals(me.getUserId());
             // 转让群组或转让管理权
 //            if (showType == TYPE_ORG) {
             // 组织内转让管理权
@@ -742,24 +685,24 @@ public class ContactFragment extends BaseOrganizationFragment {
             if (showType == TYPE_ORG) {
                 // 组织内可以显示设为档案管理员或取消档案管理员
                 // 对方不是管理员且不是档案管理员时，可以将其设为档案管理员
-                holder.button0d5Text(member.isArchiveManager() ? R.string.ui_organization_contact_unset_archive_manager : R.string.ui_organization_contact_set_archive_manager);
-                holder.showButton0d5(!isMe && (null != me) && me.memberRoleEditable() && !member.isManager());
+                holder.button0d5Text((null != member && member.isArchiveManager()) ? R.string.ui_organization_contact_unset_archive_manager : R.string.ui_organization_contact_set_archive_manager);
+                holder.showButton0d5(!isMe && (null != me) && me.memberRoleEditable() && (null != member && member.isMember()));
             } else {
                 holder.showButton0d5(false);
             }
 
-            //if (showType == TYPE_ORG) {
-            // 显示设为管理员或取消管理员
-            holder.button1Text(member.isManager() ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
-            // 我是群主或管理员且有编辑成员角色属性时，可以设置
-            holder.showButton1(!isMe && (null != me) && me.memberRoleEditable());
-            //} else {
-            //    holder.showButton1(false);
-            //}
+            if (showType == TYPE_ORG) {
+                // 显示设为管理员或取消管理员
+                holder.button1Text((null != member && member.isManager()) ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
+                // 我是群主或管理员且有编辑成员角色属性时，可以设置
+                holder.showButton1(!isMe && (null != me) && me.memberRoleEditable());
+            } else {
+                holder.showButton1(false);
+            }
 
             if (showType == TYPE_ORG) {
                 // 我且具有删除成员权限，且对方是普通成员时显示删除按钮
-                holder.showButton2(!isMe && (null != me) && me.memberDeletable() && member.isMember());
+                holder.showButton2(!isMe && (null != me) && me.memberDeletable() && (null != member && member.isMember()));
             } else {
                 // 小组成员删除权限
                 holder.showButton2(!isMe && (null != squadRole && squadRole.hasOperation(GRPOperation.SQUAD_MEMBER_DELETE)));
@@ -767,11 +710,6 @@ public class ContactFragment extends BaseOrganizationFragment {
 
             holder.showContent(member, searchingText);
             mItemManger.bindView(holder.itemView, position);
-        }
-
-        @Override
-        public int getItemCount() {
-            return list.size();
         }
 
         @Override
@@ -861,14 +799,14 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
 
         private void drawText(Canvas canvas, int position, float x, float y) {
-            String text = mAdapter.list.get(position).getSpell().substring(0, 1);
+            String text = mAdapter.get(position).getSpell().substring(0, 1);
             text = format(FMT, text, mAdapter.getFirstCharCount(text.charAt(0)));
             // 绘制文本
             canvas.drawText(text, x, y, textPaint);
         }
 
         private boolean isFirstInGroup(int position) {
-            return position >= 0 && (position == 0 || mAdapter.list.get(position).getSpell().charAt(0) != mAdapter.list.get(position - 1).getSpell().charAt(0));
+            return position >= 0 && (position == 0 || mAdapter.get(position).getSpell().charAt(0) != mAdapter.get(position - 1).getSpell().charAt(0));
         }
     }
 }
