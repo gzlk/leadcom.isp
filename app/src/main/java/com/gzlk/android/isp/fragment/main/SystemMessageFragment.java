@@ -1,14 +1,13 @@
 package com.gzlk.android.isp.fragment.main;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.MainActivity;
+import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -29,7 +28,6 @@ import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -122,16 +120,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 .appendOrderDescBy(Model.Field.Id);
         List<NimMessage> list = new Dao<>(NimMessage.class).query(builder);
         if (null != list) {
-            for (NimMessage msg : list) {
-                if (!messages.contains(msg)) {
-                    messages.add(msg);
-                    mAdapter.notifyItemInserted(messages.size() - 1);
-                } else {
-                    int index = messages.indexOf(msg);
-                    messages.set(index, msg);
-                    mAdapter.notifyItemChanged(index);
-                }
-            }
+            mAdapter.update(list, false);
         }
         displayNothing(mAdapter.getItemCount() < 1);
     }
@@ -140,7 +129,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             // 点击查看通知
-            NimMessage msg = messages.get(index);
+            NimMessage msg = mAdapter.get(index);
             if (!isEmpty(msg.getMsgTitle()) && !msg.isHandled()) {
                 msg.setHandled(true);
                 new Dao<>(NimMessage.class).save(msg);
@@ -200,7 +189,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         SimpleDialogHelper.init(Activity()).show(R.string.ui_system_message_delete_warning, R.string.ui_base_text_yes, R.string.cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                long id = messages.get(holder.getAdapterPosition()).getId();
+                long id = mAdapter.get(holder.getAdapterPosition()).getId();
                 mAdapter.delete(holder);
                 removeCache(id);
                 return true;
@@ -215,23 +204,19 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         NimApplication.dispatchCallbacks();
     }
 
-    private ArrayList<NimMessage> messages = new ArrayList<>();
-
-    private class MessageAdapter extends RecyclerSwipeAdapter<SystemMessageViewHolder> {
+    private class MessageAdapter extends RecyclerViewSwipeAdapter<SystemMessageViewHolder, NimMessage> {
 
         private void delete(SystemMessageViewHolder holder) {
             mItemManger.removeShownLayouts(holder.getSwipeLayout());
             int pos = holder.getAdapterPosition();
-            messages.remove(pos);
+            remove(pos);
             notifyItemRemoved(pos);
             mItemManger.closeAllItems();
         }
 
         @Override
-        public SystemMessageViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            int layout = R.layout.holder_view_system_message_deleteable;
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(layout, viewGroup, false);
-            SystemMessageViewHolder holder = new SystemMessageViewHolder(view, SystemMessageFragment.this);
+        public SystemMessageViewHolder onCreateViewHolder(View itemView, int viewType) {
+            SystemMessageViewHolder holder = new SystemMessageViewHolder(itemView, SystemMessageFragment.this);
             // 删除
             holder.addOnHandlerBoundDataListener(handlerBoundDataListener);
             // 点击
@@ -240,13 +225,18 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onBindViewHolder(SystemMessageViewHolder holder, int i) {
-            holder.showContent(messages.get(i));
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_system_message_deleteable;
         }
 
         @Override
-        public int getItemCount() {
-            return messages.size();
+        public void onBindHolderOfView(SystemMessageViewHolder holder, int position, @Nullable NimMessage item) {
+            holder.showContent(item);
+        }
+
+        @Override
+        protected int comparator(NimMessage item1, NimMessage item2) {
+            return 0;
         }
 
         @Override

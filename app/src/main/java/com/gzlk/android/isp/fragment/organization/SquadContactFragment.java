@@ -1,10 +1,12 @@
 package com.gzlk.android.isp.fragment.organization;
 
 import android.os.Bundle;
-import android.view.ViewGroup;
+import android.support.annotation.Nullable;
+import android.view.View;
 
-import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
+import com.gzlk.android.isp.model.organization.Member;
 
 /**
  * <b>功能描述：</b>小组成员列表<br />
@@ -91,20 +93,25 @@ public class SquadContactFragment extends BaseOrganizationFragment {
         }
     }
 
-    private class ContactAdapter extends RecyclerSwipeAdapter<ContactViewHolder> {
+    private class ContactAdapter extends RecyclerViewSwipeAdapter<ContactViewHolder,Member> {
 
         @Override
-        public ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        public ContactViewHolder onCreateViewHolder(View itemView, int viewType) {
             return null;
         }
 
         @Override
-        public void onBindViewHolder(ContactViewHolder contactViewHolder, int i) {
+        public int itemLayout(int viewType) {
+            return 0;
+        }
+
+        @Override
+        public void onBindHolderOfView(ContactViewHolder holder, int position, @Nullable Member item) {
 
         }
 
         @Override
-        public int getItemCount() {
+        protected int comparator(Member item1, Member item2) {
             return 0;
         }
 
