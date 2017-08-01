@@ -216,6 +216,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                         ToastHelper.make().showMsg(message);
                     }
                 }
+                stopRefreshing();
                 displayLoading(false);
             }
         }).find(mQueryId, true);
@@ -597,6 +598,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             if (holder instanceof UserHeaderBigViewHolder) {
                 ((UserHeaderBigViewHolder) holder).showContent((User) item);
             } else if (holder instanceof UserSimpleMomentViewHolder) {
+                ((UserSimpleMomentViewHolder) holder).showContent(item);
                 ((UserSimpleMomentViewHolder) holder).showContent(simpleMoments);
             } else if (holder instanceof SimpleClickableViewHolder) {
                 ((SimpleClickableViewHolder) holder).showContent(item);

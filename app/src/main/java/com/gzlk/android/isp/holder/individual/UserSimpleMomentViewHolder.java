@@ -65,22 +65,22 @@ public class UserSimpleMomentViewHolder extends SimpleClickableViewHolder {
 
         image2.setVisibility(size >= 2 ? View.VISIBLE : View.GONE);
         if (size >= 2) {
-            displayImage(image1, moments.get(1).getUrl());
+            displayImage(image2, moments.get(1).getUrl());
         }
 
         image3.setVisibility(size >= 3 ? View.VISIBLE : View.GONE);
         if (size >= 3) {
-            displayImage(image1, moments.get(2).getUrl());
+            displayImage(image3, moments.get(2).getUrl());
         }
 
         image4.setVisibility(size >= 4 ? View.VISIBLE : View.GONE);
         if (size >= 4) {
-            displayImage(image1, moments.get(3).getUrl());
+            displayImage(image4, moments.get(3).getUrl());
         }
 
         image5.setVisibility(size >= 5 ? View.VISIBLE : View.GONE);
         if (size >= 5) {
-            displayImage(image1, moments.get(4).getUrl());
+            displayImage(image5, moments.get(4).getUrl());
         }
     }
 
