@@ -8,8 +8,6 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
-import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
@@ -230,27 +228,10 @@ public class MomentViewHolder extends BaseViewHolder {
         image4.displayImage(url, multiImageSize, false, false);
     }
 
-    private Moment getFromAdapter() {
-        if (null != mOnHandlerBoundDataListener) {
-            Object object = mOnHandlerBoundDataListener.onHandlerBoundData(this);
-            if (null != object && object instanceof Moment) {
-                return (Moment) object;
-            }
-        }
-        return null;
-    }
-
     @Click({R.id.ui_holder_view_moment_content_clicker})
     private void viewClick(View view) {
-        Moment moment = getFromAdapter();
-        if (null != moment) {
-            // 点击打开新窗口查看详情
-            if (moment.getId().contains(todayId)) {
-                ((BaseImageSelectableSupportFragment) fragment()).openImageSelector(true);
-            } else {
-                // 默认显示第一张图片
-                openActivity(MomentImagesFragment.class.getName(), format("%s,0", moment.getId()), true, false);
-            }
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(getAdapterPosition());
         }
     }
 

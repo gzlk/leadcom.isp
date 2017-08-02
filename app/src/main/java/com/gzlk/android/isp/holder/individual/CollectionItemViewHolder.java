@@ -8,8 +8,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.individual.CollectionDetailsFragment;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
@@ -118,11 +116,8 @@ public class CollectionItemViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_collection_content_cover})
     private void click(View view) {
-        if (null != mOnHandlerBoundDataListener) {
-            Object object = mOnHandlerBoundDataListener.onHandlerBoundData(this);
-            if (null != object && object instanceof Collection) {
-                openActivity(CollectionDetailsFragment.class.getName(), ((Collection) object).getId(), true, false);
-            }
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(getAdapterPosition());
         }
     }
 }

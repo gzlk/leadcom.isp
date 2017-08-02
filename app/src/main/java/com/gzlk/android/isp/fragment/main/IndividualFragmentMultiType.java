@@ -13,9 +13,12 @@ import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.individual.CollectionDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
+import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.holder.individual.CollectionItemViewHolder;
@@ -23,6 +26,7 @@ import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentViewHolder;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.user.Collection;
@@ -342,6 +346,39 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         }
     };
 
+    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Model model = adapter.get(index);
+            if (model instanceof Moment) {
+                momentClick((Moment) model);
+            } else if (model instanceof Archive) {
+                archiveClick((Archive) model);
+            } else if (model instanceof Collection) {
+                openActivity(CollectionDetailsFragment.class.getName(), model.getId(), true, false);
+            }
+        }
+    };
+
+    private void momentClick(Moment moment) {
+        if (null != moment) {
+            // 点击打开新窗口查看详情
+            if (moment.getId().contains("today's")) {
+                openImageSelector(true);
+            } else {
+                // 默认显示第一张图片
+                openActivity(MomentImagesFragment.class.getName(), format("%s,0", moment.getId()), true, false);
+            }
+        }
+    }
+
+    private void archiveClick(Archive archive) {
+        if (null != archive) {
+            int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archive.getId()), BaseFragment.REQUEST_CHANGE, true, false);
+        }
+    }
+
     private class IndividualAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_HEADER = 0, VT_FUNCTION = 1, VT_MOMENT = 2, VT_ARCHIVE = 3, VT_COLLECTION = 4;
@@ -360,16 +397,16 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                     return ifvh;
                 case VT_MOMENT:
                     MomentViewHolder mvh = new MomentViewHolder(itemView, fragment);
-                    mvh.addOnHandlerBoundDataListener(boundMomentDataListener);
+                    mvh.addOnViewHolderClickListener(onViewHolderClickListener);
                     mvh.addOnGotPositionListener(gotPositionListener);
                     return mvh;
                 case VT_ARCHIVE:
                     ArchiveViewHolder holder = new ArchiveViewHolder(itemView, fragment);
-                    holder.addOnHandlerBoundDataListener(boundDocumentListener);
+                    holder.addOnViewHolderClickListener(onViewHolderClickListener);
                     return holder;
                 case VT_COLLECTION:
                     CollectionItemViewHolder civh = new CollectionItemViewHolder(itemView, fragment);
-                    civh.addOnHandlerBoundDataListener(boundCollectionListener);
+                    civh.addOnViewHolderClickListener(onViewHolderClickListener);
                     return civh;
             }
             return null;

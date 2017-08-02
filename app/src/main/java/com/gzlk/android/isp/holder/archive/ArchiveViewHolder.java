@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -141,14 +140,7 @@ public class ArchiveViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_document_content_container})
     private void elementClick(View view) {
-        if (null != mOnHandlerBoundDataListener) {
-            Object object = mOnHandlerBoundDataListener.onHandlerBoundData(this);
-            if (null != object && object instanceof Archive) {
-                Archive archive = (Archive) object;
-                int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archive.getId()), BaseFragment.REQUEST_CHANGE, true, false);
-            }
-        } else if (null != mOnViewHolderClickListener) {
+        if (null != mOnViewHolderClickListener) {
             mOnViewHolderClickListener.onClick(getAdapterPosition());
         }
     }
