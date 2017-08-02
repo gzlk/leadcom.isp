@@ -56,6 +56,8 @@ public class BasePopupInputSupportFragment extends BaseDelayRefreshSupportFragme
         return bpisf;
     }
 
+    public static boolean allowBlank = false;
+
     private String mTitle, mHint, mValue, mExtra, mVerify, mWarning;
     private int mMaxLen, mInput;
 
@@ -137,11 +139,20 @@ public class BasePopupInputSupportFragment extends BaseDelayRefreshSupportFragme
 
     }
 
+    @Override
+    public void onDestroy() {
+        allowBlank = false;
+        super.onDestroy();
+    }
+
     private void tryResult() {
         String result = inputView.getValue();
-        if (StringHelper.isEmpty(result)) {
-            ToastHelper.make().showMsg(R.string.ui_popup_input_invalid_input);
-            return;
+        if (!allowBlank) {
+            // 不允许空白输入时检测输入
+            if (StringHelper.isEmpty(result)) {
+                ToastHelper.make().showMsg(R.string.ui_popup_input_invalid_input);
+                return;
+            }
         }
         resultData(result);
     }

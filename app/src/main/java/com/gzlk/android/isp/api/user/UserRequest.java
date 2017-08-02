@@ -93,6 +93,7 @@ public class UserRequest extends Request<User> {
     public void update(int type, String value) {
         // 这里不要直接保存返回的用户信息，里面有很多null值
         directlySave = false;
+        value = checkNull(value);
         // {password,headPhoto,name,phone,email,idNum,birthday,company,position,isAuth,sex,accessToken}
         JSONObject object = new JSONObject();
         try {

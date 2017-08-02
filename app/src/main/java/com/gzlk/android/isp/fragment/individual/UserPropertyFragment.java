@@ -354,6 +354,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 if (isEmpty(value)) {
                     value = "";
                 }
+                BasePopupInputSupportFragment.allowBlank = true;
                 openActivity(BasePopupInputSupportFragment.class.getName(), StringHelper.getString(R.string.ui_popup_input_signature, value), REQUEST_SIGNATURE, true, false);
                 break;
             case 2:
