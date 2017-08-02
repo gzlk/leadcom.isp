@@ -2,6 +2,7 @@ package com.gzlk.android.isp.fragment.individual;
 
 import android.view.View;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.common.AdviceRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -52,7 +53,12 @@ public class FeedbackFragment extends BaseTransparentSupportFragment {
     private void elementClick(View view) {
         String content = contentText.getValue();
         if (!isEmpty(content)) {
-            commitAdvice(content);
+            String buildType = BuildConfig.BUILD_TYPE;
+            String version = BuildConfig.VERSION_NAME;
+            String internal = getString(R.string.app_internal_version);
+            String api = getString(R.string.app_api_version);
+            String additional = getString(R.string.ui_text_feedback_content_version, buildType, version, api, internal);
+            commitAdvice(additional + content);
         } else {
             ToastHelper.make().showMsg(R.string.ui_text_feedback_content_empty);
         }

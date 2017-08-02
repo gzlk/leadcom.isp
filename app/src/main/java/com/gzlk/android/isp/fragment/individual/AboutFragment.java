@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseLayoutSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -72,13 +71,13 @@ public class AboutFragment extends BaseLayoutSupportFragment {
 
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void initializeHolders() {
         if (null == strings) {
-            String buildType = BuildConfig.BUILD_TYPE;//StringHelper.getString(R.string.app_build_type);
+            String buildType = BuildConfig.BUILD_TYPE;
+            String version = BuildConfig.VERSION_NAME;
             String internal = getString(R.string.app_internal_version);
             String api = getString(R.string.app_api_version);
-            versionTextView.setText(Html.fromHtml(StringHelper.getString(R.string.ui_text_about_version, buildType, App.app().version())));
+            versionTextView.setText(Html.fromHtml(StringHelper.getString(R.string.ui_text_about_version, buildType, version)));
             revisionTextView.setText(getString(R.string.ui_text_about_revision, api, internal));
             strings = StringHelper.getStringArray(R.array.ui_about);
         }

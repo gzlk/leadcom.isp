@@ -170,18 +170,24 @@ public class ContactFragment extends BaseOrganizationFragment {
     // 小组联系人列表时，需要处理标题栏
     private void initializeTitleEvent() {
         if (showType == TYPE_SQUAD) {
-            setRightIcon(R.string.ui_icon_add);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
-                @Override
-                public void onClick() {
-                    showTooltip(((TitleActivity) Activity()).getRightButton(), R.id.ui_tooltip_squad_contact_picker, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            popupMenuClickHandle(v);
-                        }
-                    });
-                }
-            });
+            // 有邀请成员到小组的权限时才显示 + 号
+            if (null != squadRole && squadRole.hasOperation(GRPOperation.SQUAD_MEMBER_INVITE)) {
+                setRightIcon(R.string.ui_icon_add);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        // + 号点击之后直接打开组织通讯录(2017/08/02 10:00)
+                        // 打开组织通讯录并尝试将里面的用户邀请到小组
+                        openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
+//                    showTooltip(((TitleActivity) Activity()).getRightButton(), R.id.ui_tooltip_squad_contact_picker, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            popupMenuClickHandle(v);
+//                        }
+//                    });
+                    }
+                });
+            }
         }
     }
 
