@@ -36,6 +36,9 @@ import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 /**
  * <b>功能描述：</b>提供网易云接口<br />
@@ -226,5 +229,13 @@ public class NimApplication extends BaseActivityManagedApplication {
         for (int i = callbacks.size() - 1; i >= 0; i--) {
             callbacks.get(i).onChanged();
         }
+        resetBadgeNumber();
+    }
+
+    private static void resetBadgeNumber() {
+        Dao<NimMessage> dao = new Dao<>(NimMessage.class);
+        List<NimMessage> msgs = dao.query(NimMessage.PARAM.HANDLED, false);
+        int size = null != msgs ? msgs.size() : 0;
+        ShortcutBadger.applyCount(App.app(), size);
     }
 }

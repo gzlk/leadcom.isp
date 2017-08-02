@@ -134,6 +134,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.sun.mail/android-activation
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
 
+    // 桌面提醒
+    compile 'me.leolin:ShortcutBadger:1.1.17'
+
     // pdf阅读器
     compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
     // 视频播放器
@@ -162,24 +165,10 @@ dependencies {
     compile 'com.yanzhenjie:album:1.0.7'
     // 图片剪切
     compile 'com.yanzhenjie:durban:1.0.1'
-    // 多模式adapter
-    compile 'me.drakeet.multitype:multitype:2.5.0'
     // 横向、圆形progressbar
     compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
     // 圆形progressbar
     compile 'com.daimajia.numberprogressbar:library:1.2@aar'
-
-    // 添加网易云信依赖。注意，版本号必须一致。
-    // 基础功能 (必需)
-    //compile 'com.netease.nimlib:basesdk:3.7.0'
-    // 音视频需要
-    //compile 'com.netease.nimlib:avchat:3.7.0'
-    // 聊天室需要
-    //compile 'com.netease.nimlib:chatroom:3.7.0'
-    // 实时会话服务需要
-    //compile 'com.netease.nimlib:rts:3.7.0'
-    // 全文检索服务需要
-    //compile 'com.netease.nimlib:lucene:3.7.0'
 
     testCompile 'junit:junit:4.12'
 }

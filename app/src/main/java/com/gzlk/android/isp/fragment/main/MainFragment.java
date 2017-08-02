@@ -96,7 +96,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        callback.onChanged();
+        NimApplication.dispatchCallbacks();
     }
 
     @Override
@@ -110,7 +110,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         public void onChanged() {
             Dao<NimMessage> dao = new Dao<>(NimMessage.class);
             List<NimMessage> msgs = dao.query(NimMessage.PARAM.HANDLED, false);
-            rightChatIconFlag.setVisibility((null != msgs && msgs.size() > 0) ? View.VISIBLE : View.GONE);
+            int size = null != msgs ? msgs.size() : 0;
+            rightChatIconFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
         }
     };
 
@@ -164,8 +165,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         }
     }
 
-    public void setStructureFragment(StructureFragment fragment){
-        ((ActivityFragment) mFragments.get(1)).structureFragment=fragment;
+    public void setStructureFragment(StructureFragment fragment) {
+        ((ActivityFragment) mFragments.get(1)).structureFragment = fragment;
     }
 
     public void setTitleText(String text) {
