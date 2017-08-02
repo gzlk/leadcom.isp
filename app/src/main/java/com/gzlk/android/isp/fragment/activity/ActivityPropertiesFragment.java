@@ -134,10 +134,10 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
 
     @Override
     protected void onSwipeRefreshing() {
-        fetchingActivity(true);
+        fetchingActivity();
     }
 
-    private void fetchingActivity(boolean fromRemote) {
+    private void fetchingActivity() {
         displayLoading(true);
         ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
             @Override
@@ -154,7 +154,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                 stopRefreshing();
                 displayLoading(false);
             }
-        }).find(mQueryId, fromRemote);
+        }).findFromRemote(mQueryId, ActRequest.ACT_OPE_MEMBERS);
     }
 
     private void initializeActivity(Activity activity) {
@@ -237,8 +237,8 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         if (null == mAdapter) {
             mAdapter = new PropertiesAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            fetchingActivity(false);
         }
+        fetchingActivity();
     }
 
     private static final int REQUEST_NAME = ACTIVITY_BASE_REQUEST + 10;
@@ -387,7 +387,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
                 super.onResponse(activity, success, message);
                 // 无论活动名称更改成功与否都重新拉取活动的信息
                 // 此时失败有可能是服务器端不能同步网易云，但实际上名称已经改了
-                fetchingActivity(true);
+                fetchingActivity();
             }
         }).update(mQueryId, type, value);
     }

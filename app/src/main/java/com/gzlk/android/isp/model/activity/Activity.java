@@ -172,6 +172,9 @@ public class Activity extends Model {
     // 当前角色所在活动里的成员信息
     @Ignore
     private Member actMember;
+    // 活动中的成员列表
+    @Ignore
+    private ArrayList<Member> actMemberList;
 
     public String getTitle() {
         return title;
@@ -361,5 +364,13 @@ public class Activity extends Model {
 
     public void setActMember(Member actMember) {
         this.actMember = actMember;
+    }
+
+    public ArrayList<Member> getActMemberList() {
+        return actMemberList;
+    }
+
+    public void setActMemberList(ArrayList<Member> actMemberList) {
+        this.actMemberList = actMemberList;
     }
 }

@@ -248,14 +248,17 @@ public class ActRequest extends Request<Activity> {
     private void findInCache(String activityId) {
         Activity activity = dao.query(activityId);
         if (null == activity) {
-            findFromRemote(activityId);
+            findFromRemote(activityId, ACT_OPE_MEMBERS);
         } else {
             fireOnSingleRequestListener(activity);
         }
     }
 
-    private void findFromRemote(String activityId) {
-        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s&ope=1", url(FIND), activityId), "", HttpMethods.Get));
+    public static final int ACT_OPE_NORMAL = 1;
+    public static final int ACT_OPE_MEMBERS = 2;
+
+    public void findFromRemote(String activityId, int ope) {
+        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s&ope=%d", url(FIND), activityId, ope), "", HttpMethods.Get));
     }
 
     /**
@@ -295,7 +298,7 @@ public class ActRequest extends Request<Activity> {
     public void find(@NonNull String activityId, boolean fromRemote) {
         // id=""
         if (fromRemote) {
-            findFromRemote(activityId);
+            findFromRemote(activityId, ACT_OPE_MEMBERS);
         } else {
             findInCache(activityId);
         }

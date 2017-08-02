@@ -16,12 +16,6 @@ import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.litesuits.orm.db.assit.QueryBuilder;
-import com.netease.nim.uikit.NimUIKit;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.team.TeamService;
-import com.netease.nimlib.sdk.team.model.TeamMember;
-import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 import java.util.List;
 
@@ -78,59 +72,12 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
     public void showContent(Activity activity) {
         headerContainer.removeAllViews();
         String items = StringHelper.getStringArray(R.array.ui_activity_property_items)[1];
-        List<Member> members = Activity.getMembers(activity.getId());
-        if (null != members && members.size() > 0) {
-            items = format(items, members.size());
-            // 重新显示成员数量
-            showContent(new SimpleClickableItem(items));
-            showHeaders(members);
-        } else {
-            // 本地没有数据是只获取成员数量即可
-            fetchingActivityMembers(activity.getTid());
-        }
-    }
-
-    private void fetchingActivityMembers(String tid) {
-        // 该操作有可能只是从本地数据库读取缓存数据，也有可能会从服务器同步新的数据，因此耗时可能会比较长。
-        NIMClient.getService(TeamService.class).queryMemberList(tid)
-                .setCallback(new RequestCallback<List<TeamMember>>() {
-                    @Override
-                    public void onSuccess(List<TeamMember> members) {
-                        showTeamMembers(members);
-                    }
-
-                    @Override
-                    public void onFailed(int i) {
-
-                    }
-
-                    @Override
-                    public void onException(Throwable throwable) {
-
-                    }
-                });
-    }
-
-    private void showTeamMembers(List<TeamMember> members) {
-        String items = StringHelper.getStringArray(R.array.ui_activity_property_items)[1];
+        List<Member> members = activity.getActMemberList();
         items = format(items, null == members ? 0 : members.size());
         // 重新显示成员数量
         showContent(new SimpleClickableItem(items));
         if (null != members) {
-            int i = 0;
-            for (TeamMember member : members) {
-                UserInfoProvider.UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
-                String header = null != userInfo ? userInfo.getAvatar() : "";
-                ImageDisplayer displayer = (ImageDisplayer) LayoutInflater.from(headerContainer.getContext())
-                        .inflate(R.layout.tool_view_small_user_header, headerContainer, false);
-                displayer.displayImage(header, imageSize, false, false);
-                displayer.addOnImageClickListener(onImageClickListener);
-                headerContainer.addView(displayer);
-                if (i >= 9) {
-                    break;
-                }
-                i++;
-            }
+            showHeaders(members);
         }
     }
 
@@ -146,22 +93,6 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
                 break;
             }
             i++;
-        }
-    }
-
-    private void showHeaders(int size) {
-        String items = StringHelper.getStringArray(R.array.ui_activity_property_items)[1];
-        items = format(items, size);
-        // 重新显示成员数量
-        showContent(new SimpleClickableItem(items));
-        for (int i = 0; i < size; i++) {
-            ImageDisplayer displayer = (ImageDisplayer) LayoutInflater.from(headerContainer.getContext())
-                    .inflate(R.layout.tool_view_small_user_header, headerContainer, false);
-            displayer.addOnImageClickListener(onImageClickListener);
-            headerContainer.addView(displayer);
-            if (i >= 9) {
-                break;
-            }
         }
     }
 
