@@ -19,6 +19,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
+import com.gzlk.android.isp.listener.OnNimMessageEvent;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
@@ -200,11 +201,16 @@ public class NimApplication extends BaseActivityManagedApplication {
                 if (!StringHelper.isEmpty(json)) {
                     NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
                     if (null != msg) {
-                        new Dao<>(NimMessage.class).save(msg);
+                        NimMessage.save(msg);
                         if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
                             // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
                             Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
                             NotificationHelper.helper(NimApplication.this).show("通知", msg.getMsgContent(), extra);
+                        } else {
+                            // 转到MainActivity处理消息
+                            if (null != messageEvent) {
+                                messageEvent.onMessageEvent(msg);
+                            }
                         }
                         dispatchCallbacks();
                     }
@@ -212,6 +218,8 @@ public class NimApplication extends BaseActivityManagedApplication {
             }
         }, true);
     }
+
+    public static OnNimMessageEvent messageEvent;
 
     private static ArrayList<NotificationChangeHandleCallback> callbacks = new ArrayList<>();
 
@@ -233,9 +241,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     }
 
     private static void resetBadgeNumber() {
-        Dao<NimMessage> dao = new Dao<>(NimMessage.class);
-        List<NimMessage> msgs = dao.query(NimMessage.PARAM.HANDLED, false);
-        int size = null != msgs ? msgs.size() : 0;
+        int size = NimMessage.getUnHandled();
         ShortcutBadger.applyCount(App.app(), size);
     }
 }

@@ -18,11 +18,8 @@ import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.SystemMessageViewHolder;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
-import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
-import com.litesuits.orm.db.assit.QueryBuilder;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.team.TeamService;
@@ -116,9 +113,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void loadingLocalMessages() {
-        QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
-                .appendOrderDescBy(Model.Field.Id);
-        List<NimMessage> list = new Dao<>(NimMessage.class).query(builder);
+        List<NimMessage> list = NimMessage.query();
         if (null != list) {
             mAdapter.update(list, false);
         }
@@ -132,7 +127,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             NimMessage msg = mAdapter.get(index);
             if (!isEmpty(msg.getMsgTitle()) && !msg.isHandled()) {
                 msg.setHandled(true);
-                new Dao<>(NimMessage.class).save(msg);
+                NimMessage.save(msg);
                 NimApplication.dispatchCallbacks();
             }
             if (msg.getType() == NimMessage.Type.ACTIVITY_INVITE && msg.isHandled()) {
@@ -198,9 +193,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void removeCache(long id) {
-        Dao<NimMessage> dao = new Dao<>(NimMessage.class);
-        NimMessage msg = dao.querySingle(Model.Field.Id, id);
-        dao.delete(msg);
+        NimMessage.delete(id);
         NimApplication.dispatchCallbacks();
     }
 

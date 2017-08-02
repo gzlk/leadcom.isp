@@ -27,7 +27,6 @@ import com.gzlk.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
 import com.gzlk.android.isp.nim.model.extension.VoteAttachment;
-import com.gzlk.android.isp.nim.model.notification.NimMessageParser;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderFile;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderNotice;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderSignNotify;
@@ -112,7 +111,7 @@ public class NimSessionHelper {
 
     private static void registerParsers() {
         // 注册自定义通知消息解析器
-        NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
+        //NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new NimMessageParser());
         // 注册通消息解析器
         NIMClient.getService(MsgService.class).registerCustomAttachmentParser(new BaseAttachmentParser());
     }

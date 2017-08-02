@@ -2,13 +2,17 @@ package com.gzlk.android.isp.nim.model.notification;
 
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.assit.QueryBuilder;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>自定义网易云信消息<br />
@@ -37,6 +41,31 @@ public class NimMessage implements MsgAttachment {
 
     public boolean equals(NimMessage msg) {
         return null != msg && msg.getId() == getId();
+    }
+
+    public static void save(NimMessage msg) {
+        new Dao<>(NimMessage.class).save(msg);
+    }
+
+    public static void delete(long msgId) {
+        Dao<NimMessage> dao = new Dao<>(NimMessage.class);
+        NimMessage msg = dao.querySingle(Model.Field.Id, msgId);
+        dao.delete(msg);
+    }
+
+    public static NimMessage query(long msgId) {
+        return new Dao<>(NimMessage.class).querySingle(Model.Field.Id, msgId);
+    }
+
+    public static List<NimMessage> query() {
+        QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
+                .appendOrderDescBy(Model.Field.Id);
+        return new Dao<>(NimMessage.class).query(builder);
+    }
+
+    public static int getUnHandled() {
+        List<NimMessage> msgs = new Dao<>(NimMessage.class).query(NimMessage.PARAM.HANDLED, false);
+        return null == msgs ? 0 : msgs.size();
     }
 
     /**

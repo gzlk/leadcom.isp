@@ -17,13 +17,10 @@ import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
-
-import java.util.List;
 
 /**
  * <b>功能描述：</b>首页<br />
@@ -108,9 +105,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            Dao<NimMessage> dao = new Dao<>(NimMessage.class);
-            List<NimMessage> msgs = dao.query(NimMessage.PARAM.HANDLED, false);
-            int size = null != msgs ? msgs.size() : 0;
+            int size = NimMessage.getUnHandled();
             rightChatIconFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
         }
     };

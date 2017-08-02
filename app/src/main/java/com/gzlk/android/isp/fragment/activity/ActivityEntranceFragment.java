@@ -20,8 +20,6 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
-import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.common.Attachment;
@@ -30,11 +28,9 @@ import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.team.TeamService;
-import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.ArrayList;
@@ -266,12 +262,11 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void handleHandledActivity(boolean agree) {
-        Dao<NimMessage> dao = new Dao<>(NimMessage.class);
-        NimMessage msg = dao.querySingle(Model.Field.Id, nimId);
+        NimMessage msg = NimMessage.query(nimId);
         if (null != msg) {
             msg.setHandled(true);
             msg.setHandleState(agree);
-            dao.save(msg);
+            NimMessage.save(msg);
             NimApplication.dispatchCallbacks();
         }
     }

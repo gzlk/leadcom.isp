@@ -21,7 +21,7 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.listener.OnNimMessageEvent;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
@@ -86,7 +86,8 @@ public class MainActivity extends TitleActivity {
         // 接收消息
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, true);
         // 接收自定义通知
-        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, true);
+        NimApplication.messageEvent = nimMessageEvent;
+        //NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, true);
 
         if (null == mainFragment) {
             mainFragment = new MainFragment();
@@ -129,7 +130,8 @@ public class MainActivity extends TitleActivity {
 
     @Override
     protected void onDestroy() {
-        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
+        NimApplication.messageEvent = null;
+        //NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
         //PgyUpdateManager.unregister();
         super.onDestroy();
@@ -161,37 +163,30 @@ public class MainActivity extends TitleActivity {
         }, null);
     }
 
-    // 自定义消息接收类
-//    Observer<List<IMMessage>> incomingMessageObserver = new Observer<List<IMMessage>>() {
+    private OnNimMessageEvent nimMessageEvent = new OnNimMessageEvent() {
+        @Override
+        public void onMessageEvent(NimMessage message) {
+            handleNimMessageDetails(MainActivity.this, message);
+        }
+    };
+
+    // 自定义系统通知类
+//    Observer<CustomNotification> customNotificationObserver = new Observer<CustomNotification>() {
+//        @SuppressWarnings("ConstantConditions")
 //        @Override
-//        public void onEvent(List<IMMessage> messages) {
-//            // 处理新收到的消息，为了上传处理方便，SDK 保证参数 messages 全部来自同一个聊天对象。
-//            for (IMMessage msg : messages) {
-//                if (msg.getMsgType() == MsgTypeEnum.custom) {
-//
+//        public void onEvent(CustomNotification message) {
+//            // 在这里处理自定义通知。
+//            String json = message.getContent();
+//            if (!StringHelper.isEmpty(json)) {
+//                NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
+//                if (null != msg) {
+//                    if (!App.app().isAppStayInBackground()) {
+//                        handleNimMessageDetails(MainActivity.this, msg);
+//                    }
 //                }
 //            }
 //        }
 //    };
-
-    // 自定义系统通知类
-    Observer<CustomNotification> customNotificationObserver = new Observer<CustomNotification>() {
-        @SuppressWarnings("ConstantConditions")
-        @Override
-        public void onEvent(CustomNotification message) {
-            // 在这里处理自定义通知。
-            String json = message.getContent();
-            if (!StringHelper.isEmpty(json)) {
-                NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
-                if (null != msg) {
-                    //new Dao<>(NimMessage.class).save(msg);
-                    if (!App.app().isAppStayInBackground()) {
-                        handleNimMessageDetails(MainActivity.this, msg);
-                    }
-                }
-            }
-        }
-    };
 
     private void parseIntent() {
         Intent intent = getIntent();
@@ -358,7 +353,7 @@ public class MainActivity extends TitleActivity {
     private static void saveMessage(NimMessage msg, boolean handled, boolean state) {
         msg.setHandled(handled);
         msg.setHandleState(state);
-        new Dao<>(NimMessage.class).save(msg);
+        NimMessage.save(msg);
         NimApplication.dispatchCallbacks();
     }
 

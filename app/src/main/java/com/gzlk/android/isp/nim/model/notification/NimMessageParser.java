@@ -45,7 +45,6 @@ public class NimMessageParser implements MsgAttachmentParser {
             if (object.has(KEY_HANDLED)) {
                 msg.setHandled(object.getBoolean(KEY_HANDLED));
             }
-            //new Dao<>(NimMessage.class).save(msg);
             return msg;
         } catch (JSONException e) {
             e.printStackTrace();
