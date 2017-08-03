@@ -34,10 +34,6 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.SubMember;
-import com.netease.nim.uikit.cache.SimpleCallback;
-import com.netease.nim.uikit.cache.TeamDataCache;
-import com.netease.nimlib.sdk.team.constant.TeamMemberType;
-import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +51,6 @@ import java.util.List;
 
 public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
-    private static final String PARAM_MASTER = "amf_member_is_master";
     private static final String PARAM_GROUP_ID = "amf_group_id";
     private static final String PARAM_FOR_PICKER = "amf_for_picker";
     private static final String PARAM_DIAL_INDEX = "amf_dial_index";
@@ -77,7 +72,6 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        isMaster = bundle.getBoolean(PARAM_MASTER, false);
         groupId = bundle.getString(PARAM_GROUP_ID, "");
         forPicker = bundle.getBoolean(PARAM_FOR_PICKER, false);
         dialIndex = bundle.getInt(PARAM_DIAL_INDEX, -1);
@@ -86,7 +80,6 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putBoolean(PARAM_MASTER, isMaster);
         bundle.putBoolean(PARAM_FOR_PICKER, forPicker);
         bundle.putString(PARAM_GROUP_ID, groupId);
         bundle.putInt(PARAM_DIAL_INDEX, dialIndex);
@@ -95,11 +88,18 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     private MembersAdapter mAdapter;
     // 活动所属的组织
     private String groupId = "";
-    // 当前登录者是否是活动的创建者
-    private boolean isMaster = false;
     // 是否是活动成员拾取
     private boolean forPicker = false;
     private int dialIndex = -1;
+    private Member actMember;
+    private boolean isMemberDeleteable;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        actMember = ActivityFragment.myActMember;
+        isMemberDeleteable = null != actMember && actMember.activityMemberDeletable();
+    }
 
     @Override
     protected void onSwipeRefreshing() {
@@ -126,15 +126,9 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void checkPermission() {
-        TeamDataCache.getInstance().fetchTeamMember(mQueryId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
-            @Override
-            public void onResult(boolean success, TeamMember result) {
-                if (success && null != result) {
-                    isMaster = result.getType() == TeamMemberType.Owner || result.getType() == TeamMemberType.Manager;
-                }
-                resetRightTitleIcon();
-            }
-        });
+        if (null != actMember && actMember.activityMemberAddable()) {
+            resetRightTitleIcon();
+        }
     }
 
     @Override
@@ -279,6 +273,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
                             }
                         }
                         mAdapter.update(list, false);
+                        mAdapter.sort();
                     } else {
                         isLoadingComplete(true);
                     }
@@ -367,7 +362,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         protected int comparator(Member item1, Member item2) {
-            return 0;
+            return item1.getSpell().compareTo(item2.getSpell());
         }
 
         private void delete(ContactViewHolder holder) {
@@ -400,15 +395,12 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onBindHolderOfView(ContactViewHolder holder, int position, @Nullable Member member) {
             boolean isMe = null != member && !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
-            Member actMember = ActivityFragment.myActMember;
-            boolean isManager = null != actMember && actMember.activityMemberDeletable();
             // 管理者不需要踢出
             if (forPicker) {
                 holder.showButton2(false);
             } else {
-                holder.showButton2(!isMe && isManager);
+                holder.showButton2(!isMe && isMemberDeleteable);
             }
-            //holder.showButton2(!isManager && !forPicker);
             holder.showContent(member, "");
             mItemManger.bindView(holder.itemView, position);
         }

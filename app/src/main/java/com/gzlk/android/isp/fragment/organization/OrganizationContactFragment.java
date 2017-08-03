@@ -95,6 +95,7 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        displayLoading(true);
         fetchingRemoteMembers(mOrganizationId, "");
     }
 
@@ -112,6 +113,10 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         if (null == mAdapter) {
             mAdapter = new ContactAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            setLoadingText(R.string.ui_organization_contact_loading_text);
+            setNothingText(R.string.ui_organization_contact_no_member);
+            displayLoading(true);
+            displayNothing(false);
             // 查找本地该组织名下所有成员
             fetchingRemoteMembers(mOrganizationId, "");
         }
@@ -127,6 +132,8 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
             mAdapter.add(list, false);
             mAdapter.sort();
         }
+        displayLoading(false);
+        displayNothing(mAdapter.getItemCount() < 1);
         stopRefreshing();
     }
 

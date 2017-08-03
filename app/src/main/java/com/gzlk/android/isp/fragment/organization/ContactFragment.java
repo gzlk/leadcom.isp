@@ -12,7 +12,6 @@ import android.view.View;
 
 import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.activity.TitleActivity;
 import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.MemberRequest;
@@ -21,7 +20,6 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
@@ -351,6 +349,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             } else {
                 searchingText = "";
                 mAdapter.add(members);
+                mAdapter.sort();
             }
             stopRefreshing();
         }
@@ -622,7 +621,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 
         @Override
         protected int comparator(Member item1, Member item2) {
-            return 0;
+            return item1.getSpell().compareTo(item2.getSpell());
         }
 
         private int getFirstCharCount(char chr) {

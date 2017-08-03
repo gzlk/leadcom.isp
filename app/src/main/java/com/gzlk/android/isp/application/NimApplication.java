@@ -20,7 +20,6 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
@@ -37,7 +36,6 @@ import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
