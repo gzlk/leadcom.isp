@@ -346,6 +346,13 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     /**
+     * 未读消息数量
+     */
+    public String formatUnread(int num) {
+        return format("%s", (num >= 9 ? "9+" : (num <= 0 ? "" : num)));
+    }
+
+    /**
      * 将yyyy-MM-dd HH:mm:ss的时间格式化成yyyy年mm月dd日
      */
     public String formatDate(String createDate) {

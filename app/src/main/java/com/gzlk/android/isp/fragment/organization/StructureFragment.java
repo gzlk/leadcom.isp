@@ -464,7 +464,9 @@ public class StructureFragment extends BaseOrganizationFragment {
         // 清空已经显示了的小组列表
         clearSquads();
         // 拉取远程的小组列表
-        fetchingRemoteSquads(groupId);
+        if (!isEmpty(groupId)) {
+            fetchingRemoteSquads(groupId);
+        }
     }
 
     @Override

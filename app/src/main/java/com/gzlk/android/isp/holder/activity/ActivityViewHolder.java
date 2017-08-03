@@ -9,6 +9,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 import com.hlk.hlklib.lib.inject.Click;
@@ -51,6 +52,8 @@ public class ActivityViewHolder extends BaseViewHolder {
     private TextView iconText;
     @ViewId(R.id.ui_holder_view_activity_item_flag)
     private CorneredView flagView;
+    @ViewId(R.id.ui_holder_view_activity_item_unread)
+    private TextView unreadNum;
     @ViewId(R.id.ui_holder_view_activity_item_title)
     private TextView titleView;
     @ViewId(R.id.ui_holder_view_activity_item_time)
@@ -64,7 +67,8 @@ public class ActivityViewHolder extends BaseViewHolder {
         flagView.setVisibility(View.GONE);
     }
 
-    public void showContent(String text) {
+    public void showContent(SimpleClickableItem item) {
+        String text = item.getSource();
         String[] strings = text.split("\\|", -1);
         iconText.setText(strings[1]);
         titleView.setText(strings[2]);
@@ -74,6 +78,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         headers.setVisibility(View.GONE);
         iconText.setVisibility(View.VISIBLE);
         flagView.setVisibility(strings[3].charAt(0) == '0' ? View.GONE : (text.charAt(0) == '3' ? View.GONE : View.VISIBLE));
+        unreadNum.setText(fragment().formatUnread(item.getAdditionalNum()));
         iconContainer.setBackground(getColor(text.charAt(0) == '2' ? R.color.color_faaa2d : R.color.color_fe4848));
     }
 
@@ -114,6 +119,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         headers.setAdapter(adapter);
         headers.setImagesData(img);
         flagView.setVisibility(activity.getUnreadNum() > 0 ? View.VISIBLE : View.GONE);
+        unreadNum.setText(fragment().formatUnread(activity.getUnreadNum()));
         timeView.setText(fragment().formatTimeAgo(activity.getBeginDate()));
         //headers.setVisibility(hasImage ? View.VISIBLE : View.GONE);
         headers.setVisibility(View.VISIBLE);

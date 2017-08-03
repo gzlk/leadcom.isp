@@ -30,7 +30,6 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
-import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
@@ -75,8 +74,15 @@ public class ActivityFragment extends BaseOrganizationFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         //  注册/注销观察者
         NIMClient.getService(MsgServiceObserve.class).observeRecentContact(messageObserver, true);
+        tryPaddingContent(true);
+        mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
     }
 
     @Override
@@ -92,6 +98,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
         public void onEvent(List<RecentContact> contacts) {
             // 当最近联系人列表数据有变化时，同步当前显示组织里的所有活动的未读标记和最近聊天内容
             resetUnreadFlags(contacts);
+            // 未读消息总数大于0时，显示有未读消息
+            mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
         }
     };
 
@@ -145,12 +153,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
         }
         return null;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        tryPaddingContent(true);
     }
 
     @Override
@@ -236,19 +238,16 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 displayLoading(false);
                 stopRefreshing();
                 // 拉取我未处理的群活动邀请
-                fetchingUnHandledActivityInvite(mQueryId);
+                resetUnhandledInvite(invtNum);
             }
         }).listFront(mQueryId, remotePageNumber);
     }
 
-    @Override
-    protected void onFetchingUnHandledActivityInviteComplete(List<Invitation> list) {
-        super.onFetchingUnHandledActivityInviteComplete(list);
-        int cnt = null == list ? 0 : list.size();
-        String string = format(items[1], cnt);
-        SimpleClickableItem item = new SimpleClickableItem(string);//(SimpleClickableItem) mAdapter.get(1);
-        //item.setSource(string);
-        if (cnt > 0) {
+    private void resetUnhandledInvite(int invtNum) {
+        String string = format(items[1], invtNum);
+        SimpleClickableItem item = new SimpleClickableItem(string);
+        item.setAdditionalNum(invtNum);
+        if (invtNum > 0) {
             // 有未处理的活动请求时才显示活动，否则隐藏
             if (mAdapter.exist(item)) {
                 mAdapter.update(item);
@@ -257,14 +256,30 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
             // 有待处理活动时，删除没有活动的提醒
             resetNothingItem(true);
-            //mAdapter.notifyItemChanged(1);
         } else {
             if (mAdapter.exist(item)) {
                 mAdapter.remove(item);
             }
             refreshNothingItem();
         }
-        displayLoading(false);
+    }
+
+    private void refreshNothingItem() {
+        resetNothingItem(hasActivity());
+    }
+
+    private void resetNothingItem(boolean remove) {
+        // 没有活动的提醒item
+        SimpleClickableItem sci = new SimpleClickableItem(items[3]);
+        if (remove) {
+            if (mAdapter.exist(sci)) {
+                mAdapter.remove(sci);
+            }
+        } else {
+            if (!mAdapter.exist(sci)) {
+                mAdapter.add(sci);
+            }
+        }
     }
 
     @Override
@@ -366,24 +381,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
             }
         }
         return false;
-    }
-
-    private void refreshNothingItem() {
-        resetNothingItem(hasActivity());
-    }
-
-    private void resetNothingItem(boolean remove) {
-        // 没有活动的提醒item
-        SimpleClickableItem sci = new SimpleClickableItem(items[3]);
-        if (remove) {
-            if (mAdapter.exist(sci)) {
-                mAdapter.remove(sci);
-            }
-        } else {
-            if (!mAdapter.exist(sci)) {
-                mAdapter.add(sci);
-            }
-        }
     }
 
     private void updateActivityList(List<Activity> list) {
@@ -572,7 +569,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof ActivityViewHolder) {
                 if (item instanceof SimpleClickableItem) {
-                    ((ActivityViewHolder) holder).showContent(((SimpleClickableItem) item).getSource());
+                    ((ActivityViewHolder) holder).showContent(((SimpleClickableItem) item));
                 } else {
                     ((ActivityViewHolder) holder).showContent((Activity) item);
                 }

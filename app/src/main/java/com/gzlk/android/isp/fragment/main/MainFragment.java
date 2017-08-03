@@ -69,6 +69,10 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private CustomTextView iconView1;
     @ViewId(R.id.ui_tool_main_bottom_icon_2)
     private CustomTextView iconView2;
+    @ViewId(R.id.ui_tool_main_bottom_icon_unread)
+    private LinearLayout icon2Unread;
+    @ViewId(R.id.ui_tool_main_bottom_icon_unread_num)
+    private TextView icon2UnreadNum;
     @ViewId(R.id.ui_tool_main_bottom_icon_3)
     private CustomTextView iconView3;
     @ViewId(R.id.ui_tool_main_bottom_icon_4)
@@ -157,6 +161,16 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             mFragments.add(new IndividualFragmentMultiType());
             ((ActivityFragment) mFragments.get(1)).mainFragment = this;
             ((OrganizationFragment) mFragments.get(2)).mainFragment = this;
+        }
+    }
+
+    /**
+     * 显示有未读消息的标记
+     */
+    public void showUnreadFlag(int num) {
+        if (null != icon2Unread) {
+            icon2Unread.setVisibility(num > 0 ? View.VISIBLE : View.GONE);
+            icon2UnreadNum.setText(formatUnread(num));
         }
     }
 

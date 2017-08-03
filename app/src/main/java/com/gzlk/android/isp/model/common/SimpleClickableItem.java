@@ -21,6 +21,7 @@ public class SimpleClickableItem extends Model {
     private String source;
     private boolean iconVisible = false;
     private boolean addVisible = false;
+    private int additionalNum;
 
     public SimpleClickableItem(String text) {
         source = text;
@@ -94,5 +95,13 @@ public class SimpleClickableItem extends Model {
 
     public void setAddVisible(boolean addVisible) {
         this.addVisible = addVisible;
+    }
+
+    public int getAdditionalNum() {
+        return additionalNum;
+    }
+
+    public void setAdditionalNum(int additionalNum) {
+        this.additionalNum = additionalNum;
     }
 }

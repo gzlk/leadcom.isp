@@ -21,6 +21,7 @@ public class SingleQuery<T> extends Api<T> {
     protected T data;
     private ArrayList<SimpleMoment> userMmt;
     private int actInvtStatus;
+    private int invtNum;
 
     public T getData() {
         return data;
@@ -44,5 +45,13 @@ public class SingleQuery<T> extends Api<T> {
 
     public void setActInvtStatus(int actInvtStatus) {
         this.actInvtStatus = actInvtStatus;
+    }
+
+    public int getInvtNum() {
+        return invtNum;
+    }
+
+    public void setInvtNum(int invtNum) {
+        this.invtNum = invtNum;
     }
 }
