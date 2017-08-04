@@ -57,9 +57,11 @@ import java.util.List;
 public class ActivityFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_SELECTED_ = "act_selected_index";
+    private static final String PARAM_INVITE = "act_invite_number";
 
     private String[] items;
     private int selectedIndex = -1;
+    private int inviteNumber = 0;
     private ActivityAdapter mAdapter;
     private OrgStructureViewHolder concernedViewHolder;
 
@@ -69,11 +71,16 @@ public class ActivityFragment extends BaseOrganizationFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         selectedIndex = bundle.getInt(PARAM_SELECTED_, -1);
+        inviteNumber = bundle.getInt(PARAM_INVITE, 0);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void saveParamsToBundle(Bundle bundle) {
+        if (null != concernedViewHolder) {
+            selectedIndex = concernedViewHolder.getSelected();
+        }
+        bundle.putInt(PARAM_SELECTED_, selectedIndex);
+        bundle.putInt(PARAM_INVITE, inviteNumber);
     }
 
     @Override
@@ -98,10 +105,14 @@ public class ActivityFragment extends BaseOrganizationFragment {
         public void onEvent(List<RecentContact> contacts) {
             // 当最近联系人列表数据有变化时，同步当前显示组织里的所有活动的未读标记和最近聊天内容
             resetUnreadFlags(contacts);
-            // 未读消息总数大于0时，显示有未读消息
-            mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
+            showUnreadNum(NIMClient.getService(MsgService.class).getTotalUnreadCount() + inviteNumber);
         }
     };
+
+    private void showUnreadNum(int num) {
+        // 未读消息总数大于0时，显示有未读消息
+        mainFragment.showUnreadFlag(num);
+    }
 
     // 查询最近联系人列表，并同步更新未读消息
     private void resetUnreadFlags() {
@@ -164,14 +175,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return false;
-    }
-
-    @Override
-    protected void saveParamsToBundle(Bundle bundle) {
-        if (null != concernedViewHolder) {
-            selectedIndex = concernedViewHolder.getSelected();
-        }
-        bundle.putInt(PARAM_SELECTED_, selectedIndex);
     }
 
     @Override
@@ -238,6 +241,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 displayLoading(false);
                 stopRefreshing();
                 // 拉取我未处理的群活动邀请
+                inviteNumber = invtNum;
+                showUnreadNum(NIMClient.getService(MsgService.class).getTotalUnreadCount() + inviteNumber);
                 resetUnhandledInvite(invtNum);
             }
         }).listFront(mQueryId, remotePageNumber);

@@ -30,12 +30,15 @@ import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
+import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -71,7 +74,18 @@ public class NimApplication extends BaseActivityManagedApplication {
             handleUserOnlineStatus();
 
             observeCustomNotification();
+
+            observerRecentContact(true);
         }
+    }
+
+    @Override
+    public void logout() {
+        //  注册/注销观察者
+        observerRecentContact(false);
+        // 退出后桌面提醒清零
+        ShortcutBadger.applyCount(this, 0);
+        super.logout();
     }
 
     private String getAppKey() {
@@ -184,6 +198,9 @@ public class NimApplication extends BaseActivityManagedApplication {
                         ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_net_broken);
                     }
                 }
+                if (StatusCode.typeOfValue(status.getValue()) == StatusCode.LOGINED) {
+                    observerRecentContact(true);
+                }
             }
         }, true);
     }
@@ -217,6 +234,23 @@ public class NimApplication extends BaseActivityManagedApplication {
         }, true);
     }
 
+    public void observerRecentContact(boolean setting) {
+        //  注册/注销观察者
+        NIMClient.getService(MsgServiceObserve.class).observeRecentContact(messageObserver, setting);
+        if (setting) {
+            resetBadgeNumber();
+        }
+    }
+
+    //  创建观察者对象
+    private Observer<List<RecentContact>> messageObserver = new Observer<List<RecentContact>>() {
+        @Override
+        public void onEvent(List<RecentContact> contacts) {
+            // 桌面未读消息数字提醒
+            resetBadgeNumber();
+        }
+    };
+
     public static OnNimMessageEvent messageEvent;
 
     private static ArrayList<NotificationChangeHandleCallback> callbacks = new ArrayList<>();
@@ -240,6 +274,7 @@ public class NimApplication extends BaseActivityManagedApplication {
 
     private static void resetBadgeNumber() {
         int size = NimMessage.getUnHandled();
+        size += NIMClient.getService(MsgService.class).getTotalUnreadCount();
         ShortcutBadger.applyCount(App.app(), size);
     }
 }
