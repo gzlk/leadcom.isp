@@ -20,6 +20,8 @@
     <color name="buttonDialogActiveColor">@color/textColorHintLight</color>
     <color name="activeBorderColor">@color/colorPrimary</color>
 
+    <color name="colorUnreadFlag">@color/color_fe4848</color>
+
     <color name="colorWord">@color/color_295391</color>
     <color name="colorExcel">@color/color_1f6b41</color>
     <color name="colorPpt">@color/color_c44423</color>

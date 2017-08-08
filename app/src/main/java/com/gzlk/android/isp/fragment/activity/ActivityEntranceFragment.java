@@ -98,6 +98,10 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
     private View labelView;
     @ViewId(R.id.ui_activity_entrance_creator)
     private View creatorView;
+    @ViewId(R.id.ui_activity_entrance_reject)
+    private View rejectButton;
+    @ViewId(R.id.ui_activity_entrance_agree)
+    private View agreeButton;
     // holder
     private SimpleClickableViewHolder titleHolder, timeHolder, addressHolder, labelHolder, creatorHolder;
 
@@ -377,6 +381,16 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
             creatorHolder = new SimpleClickableViewHolder(creatorView, this);
         }
         creatorHolder.showContent(format(items[4], null == activity ? "" : activity.getCreatorName()));
+
+        if (nimId > 0) {
+            NimMessage msg = NimMessage.query(nimId);
+            if (null != msg) {
+                // 消息已经处理过说明已暂缓或已同意，不再显示拒绝按钮
+                rejectButton.setVisibility(msg.isHandled() ? View.GONE : View.VISIBLE);
+                // 消息已经处理过且已经同意过，则不显示同意按钮
+                agreeButton.setVisibility(msg.isHandled() && msg.isHandleState() ? View.GONE : View.VISIBLE);
+            }
+        }
     }
 
     private String getLabels(List<Label> list) {

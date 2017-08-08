@@ -265,6 +265,9 @@ public class MainActivity extends TitleActivity {
                     if (msg.isHandleState()) {
                         // 直接打开活动群聊页面
                         NimUIKit.startTeamSession(activity, msg.getTid());
+                    } else {
+                        // 消息已处理过且属于暂不参加则打开加入活动页面
+                        openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%d", msg.getTid(), msg.getId()), true, false);
                     }
                 } else {
                     // 活动邀请，下一步打开未处理活动页面

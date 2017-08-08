@@ -93,9 +93,9 @@ public class ActivityDetailsSingleFragment extends BaseDownloadingUploadingSuppo
                 if (success) {
                     endButton.setEnabled(false);
                     endButton.setText(R.string.ui_activity_details_ended_activity);
-                    if (activity.getStatus() == Activity.Status.ENDED) {
-                        manager.wannaDelete();
-                    }
+                    //if (activity.getStatus() == Activity.Status.ENDED) {
+                    manager.wannaDelete();
+                    //}
                 }
             }
         }).end(mQueryId);

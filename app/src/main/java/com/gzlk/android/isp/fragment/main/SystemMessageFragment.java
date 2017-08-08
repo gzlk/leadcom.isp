@@ -134,6 +134,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 // 活动邀请且已处理过的话
                 if (msg.isHandleState()) {
                     checkTeamMember(msg.getTid());
+                } else {
+                    MainActivity.handleNimMessageDetails(Activity(), msg);
                 }
             } else {
                 MainActivity.handleNimMessageDetails(Activity(), msg);
