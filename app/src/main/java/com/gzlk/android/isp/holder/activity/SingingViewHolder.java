@@ -47,9 +47,9 @@ public class SingingViewHolder extends BaseViewHolder {
     }
 
     public void showContent(AppSigning signing) {
-        iconView.setTextColor(getColor(getIconColor(signing.getBeginTime(), signing.getEndTime())));
+        iconView.setTextColor(getColor(getIconColor(signing.getBeginDate(), signing.getEndDate())));
         titleView.setText(signing.getTitle());
-        descView.setText(signing.getDesc());
+        descView.setText(signing.getContent());
         timeView.setText(fragment().formatTimeAgo(signing.getCreateDate()));
     }
 
@@ -66,9 +66,9 @@ public class SingingViewHolder extends BaseViewHolder {
     }
 
     public void showContent(AppSignRecord record) {
-        titleView.setText(record.getCreatorName());
-        timeView.setText(fragment().formatTimeAgo(record.getCreateDate()) + "(" + record.getDistance() + ")");
-        descView.setText(record.getDesc());
+        titleView.setText(record.getUserName());
+        timeView.setText(fragment().formatTimeAgo(record.getCreateDate()));
+        descView.setText(record.getSite());
     }
 
     @Click({R.id.ui_holder_view_activity_signing_item_container})

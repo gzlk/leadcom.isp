@@ -9,8 +9,8 @@
 
     <LinearLayout
         android:id="@+id/message_item_notice_icon_image"
-        android:layout_width="@dimen/ui_static_dp_50"
-        android:layout_height="@dimen/ui_static_dp_50"
+        android:layout_width="@dimen/ui_nim_app_icon_size"
+        android:layout_height="@dimen/ui_nim_app_icon_size"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/ui_static_dp_5"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="@string/ui_icon_material_volume_up"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/ui_base_text_size_max"
+            android:textSize="@dimen/ui_nim_app_icon_text_size"
             app:ctv_source="material_icon" />
     </LinearLayout>
 

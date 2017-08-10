@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.nim.model.extension;
 
+import com.gzlk.android.isp.helper.StringHelper;
+
 import org.json.JSONObject;
 
 /**
@@ -34,8 +36,12 @@ public class SigningNotifyAttachment extends CustomAttachment {
     private String tid;
     // 签到应用的id
     private String setupId;
+    // 签到的title
+    private String title;
     // 提醒内容
     private String content;
+    // 签到的地址
+    private String address;
     // 开始时间
     private long beginTime;
     // 结束时间
@@ -65,12 +71,34 @@ public class SigningNotifyAttachment extends CustomAttachment {
         this.setupId = setupId;
     }
 
+    public String getTitle() {
+        if (isEmpty(title)) {
+            title = "未设置标题";
+        }
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getContent() {
         return content;
     }
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getAddress() {
+        if (isEmpty(address)) {
+            address = "未设置签到地址";
+        }
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public long getBeginTime() {
@@ -102,8 +130,14 @@ public class SigningNotifyAttachment extends CustomAttachment {
             if (data.has("setupId")) {
                 setupId = data.getString("setupId");
             }
+            if (data.has("title")) {
+                title = data.getString("title");
+            }
             if (data.has("content")) {
                 content = data.getString("content");
+            }
+            if (data.has("address")) {
+                address = data.getString("address");
             }
             if (data.has("beginTime")) {
                 beginTime = data.getLong("beginTime");
@@ -123,7 +157,9 @@ public class SigningNotifyAttachment extends CustomAttachment {
             data.put("notifyType", notifyType)
                     .put("tid", tid)
                     .put("setupId", setupId)
+                    .put("title", title)
                     .put("content", content)
+                    .put("address", address)
                     .put("beginTime", beginTime)
                     .put("endTime", endTime);
         } catch (Exception e) {

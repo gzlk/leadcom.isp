@@ -38,7 +38,6 @@ import java.util.List;
 
 public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
 
-    private static final String PARAM_CREATABLE = "nlf_creatable";
     private static boolean mCreatable = false;
 
     public static NoticeListFragment newInstance(String params) {
@@ -176,7 +175,7 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
             }
-        }).list(mActivityId);
+        }).list(mActivityId, remotePageNumber);
     }
 
     private void initializeAdapter() {

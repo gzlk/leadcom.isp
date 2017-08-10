@@ -82,7 +82,7 @@ public class SignFragment extends BaseLocationSupportFragment {
     private void createRecord() {
         if (null == record) {
             record = new AppSignRecord();
-            record.setCreatorName(Cache.cache().userName);
+            record.setUserName(Cache.cache().userName);
             record.setSetupId(mSignId);
         }
     }
@@ -92,7 +92,7 @@ public class SignFragment extends BaseLocationSupportFragment {
         createRecord();
         // 未签到时按钮可用
         mSignButton.setEnabled(isEmpty(record.getId()));
-        mSignedAddress.setText(record.getDesc());
+        mSignedAddress.setText(record.getSite());
     }
 
     @Override
@@ -148,7 +148,7 @@ public class SignFragment extends BaseLocationSupportFragment {
             });
         }
 
-        mEndTime.setText(getString(R.string.ui_activity_sign_end_time, (null == signing ? "" : signing.getEndTime())));
+        mEndTime.setText(getString(R.string.ui_activity_sign_end_time, (null == signing ? "" : signing.getEndDate())));
         if (null == mBaiduMap) {
             mBaiduMap = mMapView.getMap();
             //mBaiduMap.setOnMapStatusChangeListener(mapChangeListener);
@@ -182,7 +182,7 @@ public class SignFragment extends BaseLocationSupportFragment {
             stopFetchingLocation();
             if (!isLocated) {
                 ToastHelper.make().showMsg(R.string.ui_activity_sign_map_picker_location_invalid);
-            } else if (signing.couldSignable(record.getTime())) {
+            } else if (signing.couldSignable(record.getCreateDate())) {
                 // 将当前定位的位置当作签到位置
                 warningSignPosition();
             }
@@ -248,13 +248,13 @@ public class SignFragment extends BaseLocationSupportFragment {
     protected void onFetchingLocationComplete(boolean success, BaiduLocation location) {
         if (success) {
             createRecord();
-            record.setTime(location.getTime());
-            record.setLon(String.valueOf(location.getLongitude()));
-            record.setLat(String.valueOf(location.getLatitude()));
-            record.setAddress(location.getAddress() + location.getDescribe());
-            record.setAlt(String.valueOf(location.getAltitude()));
+            record.setCreateDate(location.getTime());
+            record.setLon(format("%.6f", location.getLongitude()));
+            record.setLat(format("%.6f", location.getLatitude()));
+            record.setSite(location.getAddress() + location.getDescribe());
+            record.setAlt(format("%.6f", location.getAltitude()));
             mTimerView.setText(formatDateTime(location.getTime()));
-            mAddress.setText(record.getAddress());
+            mAddress.setText(record.getSite());
             MyLocationData loc = new MyLocationData.Builder()
                     .accuracy(location.getRadius())// 此处设置开发者获取到的方向信息，顺时针0-360
                     .direction(location.getDirection())

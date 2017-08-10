@@ -5,6 +5,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.sign.SignFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -40,7 +41,7 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
 
     private CorneredView iconContainer;
     private CustomTextView notifyIcon;
-    private TextView contentTextView;
+    private TextView titleTextView, contentTextView, timeTextView, addressTextView;
 
     public MsgViewHolderSignNotify(BaseMultiItemFetchLoadAdapter adapter) {
         super(adapter);
@@ -55,7 +56,10 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
     protected void inflateContentView() {
         iconContainer = (CorneredView) view.findViewById(R.id.message_item_sign_notify_icon_container);
         notifyIcon = (CustomTextView) view.findViewById(R.id.message_item_sign_notify_icon);
-        contentTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_title_label);
+        titleTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_title_label);
+        contentTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_content_label);
+        timeTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_time_label);
+        addressTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_address_label);
     }
 
     private SigningNotifyAttachment notify;
@@ -93,7 +97,13 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
         notify = (SigningNotifyAttachment) message.getAttachment();
         notifyIcon.setText(getIcon());
         iconContainer.setBackground(context.getResources().getColor(getColor()));
+        titleTextView.setText(notify.getTitle());
         contentTextView.setText(notify.getContent());
+        long tm = notify.getNotifyType() == SigningNotifyType.NEW ? notify.getBeginTime() : notify.getEndTime();
+        int str = notify.getNotifyType() == SigningNotifyType.NEW ? R.string.ui_nim_app_sign_start_time : R.string.ui_nim_app_sign_end_time;
+        String time = StringHelper.getString(str, Utils.format("MM-dd HH:mm", tm));
+        timeTextView.setText(time);
+        addressTextView.setText(notify.getAddress());
     }
 
     @Override

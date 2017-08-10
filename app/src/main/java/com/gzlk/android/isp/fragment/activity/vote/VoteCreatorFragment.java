@@ -82,7 +82,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         mAppVote.setTitle(titleHolder.getValue());
-        mAppVote.setDesc(contentView.getValue());
+        mAppVote.setContent(contentView.getValue());
         bundle.putString(PARAM_POJO, AppVote.toJson(mAppVote));
     }
 
@@ -157,8 +157,8 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_title_invalid);
             return;
         }
-        mAppVote.setDesc(contentView.getValue());
-        if (isEmpty(mAppVote.getDesc())) {
+        mAppVote.setContent(contentView.getValue());
+        if (isEmpty(mAppVote.getContent())) {
             ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_desc_invalid);
             return;
         }
@@ -175,7 +175,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             if (item.getId().equals("+")) {
                 continue;
             }
-            if (isEmpty(item.getDesc())) {
+            if (isEmpty(item.getContent())) {
                 return false;
             }
         }
@@ -238,13 +238,13 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
                 super.onResponse(appVoteItem, success, message);
                 if (success) {
                     itemIndex++;
-                    mAppVote.getItemListData().add(appVoteItem);
+                    mAppVote.getActVoteItemList().add(appVoteItem);
                     addVoteItem();
                 } else {
                     hideImageHandlingDialog();
                 }
             }
-        }).add(mAppVote.getId(), item.getDesc());
+        }).add(mAppVote.getId(), item.getContent());
     }
 
     private void initializeHolders() {
@@ -282,7 +282,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             timeHolder = new SimpleClickableViewHolder(timeView, this);
             timeHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        timeHolder.showContent(format(items[3], formatDateTime(mAppVote.getEndTime())));
+        timeHolder.showContent(format(items[3], formatDateTime(mAppVote.getEndDate())));
         if (null == notifyHolder) {
             notifyHolder = new SimpleClickableViewHolder(notifyView, this);
             notifyHolder.addOnViewHolderClickListener(onViewHolderClickListener);
@@ -302,7 +302,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         @Override
         public void onClick(int index) {
             mAppVote.setTitle(titleHolder.getValue());
-            mAppVote.setDesc(contentView.getValue());
+            mAppVote.setContent(contentView.getValue());
             switch (index) {
                 case 0:
                     // 投票类型
@@ -412,7 +412,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
                 @Override
                 public void onTimeSelect(Date date, View v) {
                     String string = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
-                    mAppVote.setEndTime(string);
+                    mAppVote.setEndDate(string);
                     initializeHolders();
                 }
             }).setType(new boolean[]{true, true, true, true, true, false})
@@ -422,13 +422,13 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
                     .setContentSize(getFontDimension(R.dimen.ui_base_text_size))
                     .setOutSideCancelable(false)
                     .isCenterLabel(true).isDialog(false).build();
-            if (isEmpty(mAppVote.getEndTime())) {
+            if (isEmpty(mAppVote.getEndDate())) {
                 tpvEnd.setDate(Calendar.getInstance());
                 String string = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), Calendar.getInstance().getTime());
-                mAppVote.setEndTime(string);
+                mAppVote.setEndDate(string);
             } else {
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), mAppVote.getEndTime()));
+                calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), mAppVote.getEndDate()));
                 tpvEnd.setDate(calendar);
             }
         }
@@ -479,20 +479,20 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             AppVoteItem vi1 = new AppVoteItem();
             vi1.setId(String.valueOf(Utils.timestamp()));
             vi1.setLocalDeleted(true);
-            vi1.setDesc(format(dftOptions[0], size));
+            vi1.setContent(format(dftOptions[0], size));
             mAdapter.add(vi1);
 
             size = mAdapter.getItemCount() + 1;
             AppVoteItem vi2 = new AppVoteItem();
             vi2.setId(String.valueOf(Utils.timestamp() + 1));
             vi2.setLocalDeleted(true);
-            vi2.setDesc(format(dftOptions[0], size));
+            vi2.setContent(format(dftOptions[0], size));
             mAdapter.add(vi2);
 
             AppVoteItem viAdd = new AppVoteItem();
             viAdd.setId("+");
             viAdd.setSelectable(true);
-            viAdd.setDesc(dftOptions[1]);
+            viAdd.setContent(dftOptions[1]);
             mAdapter.add(viAdd);
         }
     }
@@ -501,7 +501,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         AppVoteItem viAdd = new AppVoteItem();
         viAdd.setId("+");
         viAdd.setSelectable(true);
-        viAdd.setDesc(dftOptions[1]);
+        viAdd.setContent(dftOptions[1]);
         if (!mAdapter.exist(viAdd)) {
             mAdapter.add(viAdd);
         }
@@ -516,7 +516,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
                 // 添加选项
                 AppVoteItem vi = new AppVoteItem();
                 vi.setId(String.valueOf(Utils.timestamp()));
-                vi.setDesc(format(dftOptions[0], size));
+                vi.setContent(format(dftOptions[0], size));
                 if (size > 9) {
                     // 最多10个选项
                     mAdapter.remove(item);

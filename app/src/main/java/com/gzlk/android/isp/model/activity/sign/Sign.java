@@ -1,8 +1,7 @@
 package com.gzlk.android.isp.model.activity.sign;
 
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.activity.vote.AppVote;
-import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 
@@ -28,15 +27,10 @@ public class Sign extends Model {
          * 签到人数
          */
         String SignInNum = "signInNum";
-        String Distance = "distance";
+        String End = "end";
+        String Archived = "archived";
     }
 
-    //标题
-    @Column(Archive.Field.Title)
-    private String title;
-    //描述
-    @Column(AppVote.Field.Description)
-    private String desc;
     //地理经度
     @Column(Field.Longitude)
     private String lon;
@@ -46,36 +40,12 @@ public class Sign extends Model {
     //海拔
     @Column(Field.Altitude)
     private String alt;
-    @Ignore
-    private String address;
-    //创建者的id
-    @Column(Model.Field.CreatorId)
-    private String creatorId;
-    //创建者名称
-    @Column(Model.Field.CreatorName)
-    private String creatorName;
+    //签到地点的名称
+    @Column(Activity.Field.Site)
+    private String site;
     //创建时间
     @Column(Model.Field.CreateDate)
     private String createDate;
-
-    public String getTitle() {
-        if (isEmpty(title)) {
-            title = "";
-        }
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
 
     public String getLon() {
         return lon;
@@ -101,34 +71,15 @@ public class Sign extends Model {
         this.alt = alt;
     }
 
-    public String getAddress() {
-        if (isEmpty(address)) {
-            address = "";
+    public String getSite() {
+        if (isEmpty(site)) {
+            site = "";
         }
-        return address;
+        return site;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    public String getCreatorName() {
-        if (isEmpty(creatorName)) {
-            creatorName = NO_NAME;
-        }
-        return creatorName;
-    }
-
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName;
+    public void setSite(String site) {
+        this.site = site;
     }
 
     public String getCreateDate() {

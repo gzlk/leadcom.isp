@@ -78,15 +78,18 @@ public class AppVoteRequest extends Request<AppVote> {
      * 添加一个投票应用
      */
     public void add(AppVote appVote) {
-        // {actId:"",title:"",desc:"",endTime:"",type:""}
+        // {actId,type,title,endDate,content,maxSelectable,anonymity,authPublic}
 
         JSONObject object = new JSONObject();
         try {
-            object.put("actId", appVote.getActId())
-                    .put("title", appVote.getTitle())
-                    .put("desc", appVote.getDesc())
-                    .put("type", appVote.getType())
-                    .put("endTime", appVote.getEndTime());
+            object.put("actId", appVote.getActId())         // 活动ID
+                    .put("title", appVote.getTitle())       // 投票标题
+                    .put("content", appVote.getContent())   // 投票描述
+                    .put("type", appVote.getType())         // 类型(1.单选,2.多选)
+                    .put("maxSelectable", appVote.getMaxSelectable())   // 投票选项的最大可选数(单选默认为1)
+                    .put("anonymity", appVote.getAnonymity())           // 投票是否记名(0.不记名,1.记名)
+                    .put("authPublic", appVote.getAuthPublic())         // 投票是否公开结果(0.不公开,1.公开)
+                    .put("endDate", appVote.getEndDate());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -102,6 +105,19 @@ public class AppVoteRequest extends Request<AppVote> {
     }
 
     /**
+     * 查询投票设置
+     */
+    public static final int FIND_VOTE = 1;
+    /**
+     * 查询投票设置和投票选项
+     */
+    public static final int FIND_ITEM = 2;
+    /**
+     * 查询投票设置、选项、投票记录
+     */
+    public static final int FIND_ALL = 3;
+
+    /**
      * 查询单个投票设置(包括其所有投票选项和选项得票数)
      *
      * @param voteId     投票应用id
@@ -110,14 +126,31 @@ public class AppVoteRequest extends Request<AppVote> {
      */
     public void find(String voteId, int ope, int pageNumber) {
         // id="",ope="",pageSize="",pageNum=""
-        httpRequest(getRequest(SingleVote.class, format("%s?id=%s&ope=%d&&pageNum=%d", url(FIND), voteId, ope, pageNumber), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleVote.class, format("%s?id=%s&ope=%d&&pageNumber=%d", url(FIND), voteId, ope, pageNumber), "", HttpMethods.Get));
     }
 
     /**
-     * 查询某个活动中的投票（标题、名称）列表
+     * 查询活动中的所有投票
      */
-    public void list(String activityId) {
-        // actId=""
-        httpRequest(getRequest(MultipleVote.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
+    public static final int LIST_ALL = 1;
+    /**
+     * 查询活动中正在进行中的投票
+     */
+    public static final int LIST_ACT = 2;
+    /**
+     * 查询活动中已结束的投票
+     */
+    public static final int LIST_END = 3;
+
+    /**
+     * 查询某个活动中的投票（标题、名称）列表
+     *
+     * @param activityId 活动ID
+     * @param ope        操作类型(1.所有活动投票设置,2.进行中的活动投票设置,3.已结束的活动投票设置)
+     * @param pageNumber 页码
+     */
+    public void list(String activityId, int ope, int pageNumber) {
+        // actId,ope,pageSize,pageNumber
+        httpRequest(getRequest(MultipleVote.class, format("%s?actId=%s&ope=%d&pageNumber=%d", url(LIST), activityId, ope, pageNumber), "", HttpMethods.Get));
     }
 }

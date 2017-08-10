@@ -85,7 +85,7 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
 
     private void saveSigning() {
         signing.setTitle(titleHolder.getValue());
-        signing.setDesc(contentView.getValue());
+        signing.setContent(contentView.getValue());
     }
 
     private AppSigning signing;
@@ -128,7 +128,7 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override
@@ -151,16 +151,16 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_creator_content_invalid);
             return;
         }
-        if (isEmpty(signing.getBeginTime())) {
+        if (isEmpty(signing.getBeginDate())) {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_creator_begin_time_invalid);
             return;
         }
-        if (isEmpty(signing.getEndTime())) {
+        if (isEmpty(signing.getEndDate())) {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_creator_end_time_invalid);
             return;
         }
-        long begin = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getBeginTime()).getTime();
-        long end = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getEndTime()).getTime();
+        long begin = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getBeginDate()).getTime();
+        long end = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getEndDate()).getTime();
         if (end < begin) {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_creator_end_time_invalid1);
             return;
@@ -216,17 +216,17 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
             addressHolder = new SimpleClickableViewHolder(addressView, this);
             addressHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        addressHolder.showContent(format(items[2], signing.getAddress()));
+        addressHolder.showContent(format(items[2], signing.getSite()));
         if (null == beginHolder) {
             beginHolder = new SimpleClickableViewHolder(beginView, this);
             beginHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        beginHolder.showContent(format(items[3], formatDateTime(signing.getBeginTime())));
+        beginHolder.showContent(format(items[3], formatDateTime(signing.getBeginDate())));
         if (null == endHolder) {
             endHolder = new SimpleClickableViewHolder(endView, this);
             endHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
-        endHolder.showContent(format(items[4], formatDateTime(signing.getEndTime())));
+        endHolder.showContent(format(items[4], formatDateTime(signing.getEndDate())));
         if (null == notifyHolder) {
             notifyHolder = new SimpleClickableViewHolder(notifyView, this);
             notifyHolder.addOnViewHolderClickListener(onViewHolderClickListener);
@@ -272,7 +272,7 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
     public void onActivityResult(int requestCode, Intent data) {
         if (requestCode == REQ_ADDRESS) {
             Address address = Address.fromJson(getResultedData(data));
-            signing.setAddress(address.getAddress());
+            signing.setSite(address.getAddress());
             signing.setLat(String.valueOf(address.getLatitude()));
             signing.setLon(String.valueOf(address.getLongitude()));
             initializeHolders();
@@ -283,9 +283,9 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
     private void showDateTime(Date date, boolean forStart) {
         String string = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
         if (forStart) {
-            signing.setBeginTime(string);
+            signing.setBeginDate(string);
         } else {
-            signing.setEndTime(string);
+            signing.setEndDate(string);
         }
         initializeHolders();
     }
@@ -307,13 +307,13 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
                     .setContentSize(getFontDimension(R.dimen.ui_base_text_size))
                     .setOutSideCancelable(false)
                     .isCenterLabel(true).isDialog(false).build();
-            if (isEmpty(signing.getBeginTime())) {
+            if (isEmpty(signing.getBeginDate())) {
                 tpvStart.setDate(Calendar.getInstance());
                 String string = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), Calendar.getInstance().getTime());
-                signing.setBeginTime(string);
+                signing.setBeginDate(string);
             } else {
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getBeginTime()));
+                calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getBeginDate()));
                 tpvStart.setDate(calendar);
             }
         }
@@ -337,13 +337,13 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
                     .setContentSize(getFontDimension(R.dimen.ui_base_text_size))
                     .setOutSideCancelable(false)
                     .isCenterLabel(true).isDialog(false).build();
-            if (isEmpty(signing.getEndTime())) {
+            if (isEmpty(signing.getEndDate())) {
                 tpvEnd.setDate(Calendar.getInstance());
                 String string = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), Calendar.getInstance().getTime());
-                signing.setEndTime(string);
+                signing.setEndDate(string);
             } else {
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getEndTime()));
+                calendar.setTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getEndDate()));
                 tpvEnd.setDate(calendar);
             }
         }

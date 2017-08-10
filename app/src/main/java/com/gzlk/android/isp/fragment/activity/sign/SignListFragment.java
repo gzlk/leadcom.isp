@@ -12,6 +12,7 @@ import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.activity.AppSigningRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -75,8 +76,16 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQ_CREATOR) {
-            loadingSignings();
+        switch (requestCode) {
+            case REQ_CREATOR:
+                loadingSignings();
+                break;
+            case REQUEST_DELETE:
+                String id = getResultedData(data);
+                AppSigning sign = new AppSigning();
+                sign.setId(id);
+                mAdapter.remove(sign);
+                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -135,13 +144,21 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
                     if (success) {
                         if (null != list) {
                             mAdapter.update(list, false);
+                            if (list.size() >= pageSize) {
+                                remotePageNumber++;
+                            }
+                            isLoadingComplete(list.size() < pageSize);
+                        } else {
+                            isLoadingComplete(true);
                         }
+                    } else {
+                        isLoadingComplete(true);
                     }
                     displayLoading(false);
                     displayNothing(mAdapter.getItemCount() < 1);
                     stopRefreshing();
                 }
-            }).list(activityId);
+            }).list(activityId, remotePageNumber);
         }
     }
 
@@ -160,7 +177,8 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
             String json = Json.gson().toJson(signing, new TypeToken<AppSigning>() {
             }.getType());
             // 打开查看签到应用详情
-            openActivity(SignDetailsFragment.class.getName(), format("%s,%s", mQueryId, StringHelper.replaceJson(json, false)), true, false);
+            SignDetailsFragment.open(SignListFragment.this, REQUEST_DELETE, mQueryId, json);
+            //openActivity(SignDetailsFragment.class.getName(), format("%s,%s", mQueryId, StringHelper.replaceJson(json, false)), REQUEST_DELETE, true, false);
         }
     };
 

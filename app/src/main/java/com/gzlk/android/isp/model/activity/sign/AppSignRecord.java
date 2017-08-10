@@ -6,9 +6,7 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
-import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
@@ -44,7 +42,7 @@ public class AppSignRecord extends Sign {
         QueryBuilder<AppSignRecord> builder = new QueryBuilder<>(AppSignRecord.class)
                 .whereEquals(Field.SigningId, setupId)
                 .whereAppendAnd()
-                .whereEquals(Model.Field.CreatorId, Cache.cache().userId);
+                .whereEquals(Model.Field.UserId, Cache.cache().userId);
         List<AppSignRecord> records = new Dao<>(AppSignRecord.class).query(builder);
         return (null == records || records.size() < 1) ? null : records.get(0);
     }
@@ -52,16 +50,12 @@ public class AppSignRecord extends Sign {
     //签到应用的id(活动-签到应用-签到  三者间是一对多，一对多的关系)
     @Column(Field.SigningId)
     private String setupId;
-
-    //手机设备号
-    @Column(AppVote.Field.IMSI)
-    private String imsi;
-
-    @Ignore
-    private String time;
-
-    @Column(Field.Distance)
-    private String distance;
+    //创建者的用户ID
+    @Column(Model.Field.UserId)
+    private String userId;
+    //创建者的用户名称
+    @Column(Model.Field.UserName)
+    private String userName;
 
     public String getSetupId() {
         return setupId;
@@ -71,27 +65,19 @@ public class AppSignRecord extends Sign {
         this.setupId = setupId;
     }
 
-    public String getImsi() {
-        return imsi;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setImsi(String imsi) {
-        this.imsi = imsi;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getTime() {
-        return time;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getDistance() {
-        return distance;
-    }
-
-    public void setDistance(String distance) {
-        this.distance = distance;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

@@ -4,12 +4,15 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.vote.AppVote;
-import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>活动应用：签到<br />
@@ -27,18 +30,35 @@ public class AppSigning extends Sign {
     //活动Id
     @Column(Activity.Field.ActivityId)
     private String actId;
-    //修改时间
-    @Column(Organization.Field.ModifyDate)
-    private String modifyDate;
+    //标题
+    @Column(Archive.Field.Title)
+    private String title;
+    //描述
+    @Column(Archive.Field.Content)
+    private String content;
+    //创建者的id
+    @Column(Model.Field.CreatorId)
+    private String creatorId;
+    //创建者名称
+    @Column(Model.Field.CreatorName)
+    private String creatorName;
     //签到开始时间
-    @Column(AppVote.Field.BeginTime)
-    private String beginTime;
+    @Column(AppVote.Field.BeginDate)
+    private String beginDate;
     //签到结束时间
-    @Column(AppVote.Field.EndTime)
-    private String endTime;
+    @Column(AppVote.Field.EndDate)
+    private String endDate;
     //签到人数(按user对象的id过滤，避免一个用户多次签到后被重复计数)
     @Column(Field.SignInNum)
     private int signInNum;
+    //是否已经结束(0.结束,1.进行中)
+    @Column(Field.End)
+    private int end;
+    //是否已存档(0.未存档,1.已存档)
+    @Column(Field.Archived)
+    private int archive;
+    @Ignore
+    private ArrayList<AppSignRecord> actSignInList;
     @Ignore
     private int notifyBeginTime;
 
@@ -48,8 +68,8 @@ public class AppSigning extends Sign {
     public boolean couldSignable(String date) {
         String fmt = StringHelper.getString(R.string.ui_base_text_date_time_format);
         long posTime = Utils.parseDate(fmt, date).getTime();
-        long beginTime = Utils.parseDate(fmt, getBeginTime()).getTime();
-        long endTime = Utils.parseDate(fmt, getEndTime()).getTime();
+        long beginTime = Utils.parseDate(fmt, getBeginDate()).getTime();
+        long endTime = Utils.parseDate(fmt, getEndDate()).getTime();
         if (posTime < beginTime) {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_not_start);
             return false;
@@ -68,28 +88,58 @@ public class AppSigning extends Sign {
         this.actId = actId;
     }
 
-    public String getBeginTime() {
-        return beginTime;
+    public String getTitle() {
+        if (isEmpty(title)) {
+            title = "";
+        }
+        return title;
     }
 
-    public void setBeginTime(String beginTime) {
-        this.beginTime = beginTime;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getEndTime() {
-        return endTime;
+    public String getContent() {
+        return content;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public String getModifyDate() {
-        return modifyDate;
+    public String getCreatorId() {
+        return creatorId;
     }
 
-    public void setModifyDate(String modifyDate) {
-        this.modifyDate = modifyDate;
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public String getCreatorName() {
+        if (isEmpty(creatorName)) {
+            creatorName = NO_NAME;
+        }
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
+
+    public String getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(String beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public int getSignInNum() {
@@ -98,6 +148,30 @@ public class AppSigning extends Sign {
 
     public void setSignInNum(int signInNum) {
         this.signInNum = signInNum;
+    }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public void setEnd(int end) {
+        this.end = end;
+    }
+
+    public int getArchive() {
+        return archive;
+    }
+
+    public void setArchive(int archive) {
+        this.archive = archive;
+    }
+
+    public ArrayList<AppSignRecord> getActSignInList() {
+        return actSignInList;
+    }
+
+    public void setActSignInList(ArrayList<AppSignRecord> actSignInList) {
+        this.actSignInList = actSignInList;
     }
 
     public int getNotifyBeginTime() {

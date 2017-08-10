@@ -55,7 +55,7 @@ public class VoteOptionEditViewHolder extends BaseViewHolder {
                 if (null != mOnHandlerBoundDataListener) {
                     AppVoteItem item = (AppVoteItem) mOnHandlerBoundDataListener.onHandlerBoundData(VoteOptionEditViewHolder.this);
                     if (null != item && !item.getId().equals("+")) {
-                        item.setDesc(contentView.getValue());
+                        item.setContent(contentView.getValue());
                     }
                 }
             }
@@ -66,10 +66,10 @@ public class VoteOptionEditViewHolder extends BaseViewHolder {
         // 是否可以显示+或-号
         iconView.setVisibility(item.isLocalDeleted() ? View.GONE : View.VISIBLE);
         resetMargin(item);
-        contentView.setValue(item.getDesc());
+        contentView.setValue(item.getContent());
         contentView.setVisibility(item.isSelectable() ? View.GONE : View.VISIBLE);
         textView.setVisibility(item.isSelectable() ? View.VISIBLE : View.GONE);
-        textView.setText(item.getDesc());
+        textView.setText(item.getContent());
         iconView.setText(item.isSelectable() ? R.string.ui_icon_add_solid : R.string.ui_icon_subtract_solid);
         iconView.setTextColor(getColor(item.isSelectable() ? R.color.colorPrimary : R.color.colorAccent));
     }

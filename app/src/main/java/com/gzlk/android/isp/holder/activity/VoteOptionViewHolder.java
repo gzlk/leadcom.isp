@@ -44,7 +44,7 @@ public class VoteOptionViewHolder extends BaseViewHolder {
         } else {
             showSingleChooseIcon(item);
         }
-        textView.setText(item.getDesc());
+        textView.setText(item.getContent());
         numberView.setText(StringHelper.getString(R.string.ui_activity_vote_details_number, item.getNum()));
     }
 

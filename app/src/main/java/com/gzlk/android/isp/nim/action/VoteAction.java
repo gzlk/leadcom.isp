@@ -58,8 +58,8 @@ public class VoteAction extends BaseAction {
                     vote.setTitle(appVote.getTitle());
                     vote.setVoteId(appVote.getId());
                     vote.setVoteType(appVote.getType());
-                    for (AppVoteItem item : appVote.getItemListData()) {
-                        vote.getVoteItems().add(item.getDesc());
+                    for (AppVoteItem item : appVote.getActVoteItemList()) {
+                        vote.getVoteItems().add(item.getContent());
                     }
 
                     IMMessage message;

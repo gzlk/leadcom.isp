@@ -216,7 +216,7 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
                     ToastHelper.make().showMsg(R.string.ui_activity_vote_details_voting_failed);
                 }
             }
-        }).add(activityId, mQueryId, itemId);
+        }).add(mQueryId, itemId);
     }
 
     private void initializeHolder() {
@@ -249,14 +249,14 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).find(mQueryId, 3, remotePageNumber);
+        }).find(mQueryId, AppVoteRequest.FIND_ALL, remotePageNumber);
     }
 
     private void showDetails() {
         voteViewHolder.showContent(mAppVote);
         voteViewHolder.showVoteType(mAppVote);
-        mAdapter.update(mAppVote.getItemListData(), false);
-        endTime.setText(getString(R.string.ui_activity_vote_details_end_time, formatDateTime(mAppVote.getEndTime())));
+        mAdapter.update(mAppVote.getActVoteItemList(), false);
+        endTime.setText(getString(R.string.ui_activity_vote_details_end_time, formatDateTime(mAppVote.getEndDate())));
         boolean ended = mAppVote.isEnded();
         bottomButton1.setVisibility(ended ? View.GONE : View.VISIBLE);
         bottomButton2.setVisibility(ended ? View.GONE : View.VISIBLE);
@@ -300,6 +300,14 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
         }).delete(mQueryId);
     }
 
+    private int getSelectedCount() {
+        int count = 0;
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            count += (mAdapter.get(i).isSelected()) ? 1 : 0;
+        }
+        return count;
+    }
+
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
@@ -314,10 +322,20 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
                     mAdapter.notifyItemChanged(i);
                 }
             } else {
-                // 多选
                 AppVoteItem item = mAdapter.get(index);
-                item.setSelected(!item.isSelected());
-                mAdapter.notifyItemChanged(index);
+                if (item.isSelected()) {
+                    // 取消已选择了的选项
+                    item.setSelected(!item.isSelected());
+                    mAdapter.notifyItemChanged(index);
+                } else {
+                    // 多选
+                    if (getSelectedCount() >= mAppVote.getMaxSelectable()) {
+                        ToastHelper.make().showMsg(getString(R.string.ui_activity_vote_details_max_selected, mAppVote.getMaxSelectable()));
+                    } else {
+                        item.setSelected(!item.isSelected());
+                        mAdapter.notifyItemChanged(index);
+                    }
+                }
             }
         }
     };

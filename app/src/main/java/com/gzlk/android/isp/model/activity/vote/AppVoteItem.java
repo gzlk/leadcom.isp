@@ -2,6 +2,7 @@ package com.gzlk.android.isp.model.activity.vote;
 
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -22,8 +23,8 @@ public class AppVoteItem extends Model {
     @Column(AppVote.Field.VoteId)
     private String setupId;
     //投票选项的描述
-    @Column(AppVote.Field.Description)
-    private String desc;
+    @Column(Archive.Field.Content)
+    private String content;
     //该投票选项的投票得票数
     @Column(AppVote.Field.Num)
     private int num = 0;
@@ -39,12 +40,12 @@ public class AppVoteItem extends Model {
         this.setupId = setupId;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getContent() {
+        return content;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public int getNum() {

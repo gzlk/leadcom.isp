@@ -79,27 +79,6 @@ public class AppNoticeRequest extends Request<AppNotice> {
     }
 
     /**
-     * 更改通知
-     *
-     * @param noticeId 通知id
-     * @param title    通知标题
-     * @param content  通知内容
-     */
-    public void update(String noticeId, String title, String content) {
-        // {id:"",title:"",content:""}
-        JSONObject object = new JSONObject();
-        try {
-            object.put("id", noticeId)
-                    .put("title", title)
-                    .put("content", content);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        httpRequest(getRequest(SingleNotice.class, url(UPDATE), object.toString(), HttpMethods.Post));
-    }
-
-    /**
      * 删除一个通知
      */
     public void delete(String noticeId) {
@@ -125,8 +104,8 @@ public class AppNoticeRequest extends Request<AppNotice> {
     /**
      * 查找活动里的通知列表
      */
-    public void list(String activityId) {
-        // actId=""
-        httpRequest(getRequest(MultipleNotice.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
+    public void list(String activityId, int pageNumber) {
+        // actId,pageSize,pageNumber
+        httpRequest(getRequest(MultipleNotice.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
     }
 }

@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.nim.model.extension;
 
+import com.gzlk.android.isp.helper.StringHelper;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 
 import org.json.JSONObject;
@@ -17,8 +18,13 @@ import org.json.JSONObject;
 
 public abstract class BaseAttachment implements MsgAttachment {
 
+    protected static boolean isEmpty(String string) {
+        return StringHelper.isEmpty(string);
+    }
+
     /**
      * 消息类型
+     *
      * @see AttachmentType
      */
     protected int type;

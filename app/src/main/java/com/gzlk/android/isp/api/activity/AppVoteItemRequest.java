@@ -1,10 +1,9 @@
 package com.gzlk.android.isp.api.activity;
 
-import com.gzlk.android.isp.api.query.SingleQuery;
-import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.model.activity.vote.AppVoteItem;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -29,9 +28,6 @@ public class AppVoteItemRequest extends Request<AppVoteItem> {
     }
 
     private static class SingleVoteItem extends SingleQuery<AppVoteItem> {
-    }
-
-    private static class MultipleVoteItem extends PaginationQuery<AppVoteItem> {
     }
 
     private static final String VOTE = "/activity/actVoteItem";
@@ -61,53 +57,16 @@ public class AppVoteItemRequest extends Request<AppVoteItem> {
     /**
      * 新增投票选项
      */
-    public void add(String voteId, String desc) {
+    public void add(String voteId, String content) {
         // {setupId:"",desc:""}
 
         JSONObject object = new JSONObject();
         try {
             object.put("setupId", voteId)
-                    .put("desc", desc);
+                    .put("content", content);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         httpRequest(getRequest(SingleVoteItem.class, url(ADD), object.toString(), HttpMethods.Post));
-    }
-
-    /**
-     * 更新指定投票选项
-     */
-    public void update(String itemId, String desc) {
-        // {id:"",desc:""}
-        JSONObject object = new JSONObject();
-        try {
-            object.put("id", itemId)
-                    .put("desc", desc);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        httpRequest(getRequest(SingleVoteItem.class, url(UPDATE), object.toString(), HttpMethods.Post));
-    }
-
-    /**
-     * 删除指定的投票选项
-     */
-    public void delete(String itemId) {
-        // id=""
-        httpRequest(getRequest(SingleVoteItem.class, format("%s?id=%s", url(DELETE), itemId), "", HttpMethods.Get));
-    }
-
-    /**
-     * 投票
-     */
-    public void vote(String itemId) {
-        // {itemId:""}
-        JSONObject object = new JSONObject();
-        try {
-            object.put("itemId", itemId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        httpRequest(getRequest(SingleVoteItem.class, "/activity/actVote/add", object.toString(), HttpMethods.Post));
     }
 }

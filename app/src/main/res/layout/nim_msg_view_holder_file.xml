@@ -25,7 +25,7 @@
         android:layout_toEndOf="@id/message_item_file_icon_image"
         android:autoLink="none"
         android:maxLines="2"
-        android:maxWidth="160dp"
+        android:maxWidth="@dimen/ui_nim_max_text_bubble_width"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
 

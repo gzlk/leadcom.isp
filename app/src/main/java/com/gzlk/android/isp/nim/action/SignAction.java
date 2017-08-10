@@ -65,9 +65,11 @@ public class SignAction extends BaseAction {
                     attachment.setNotifyType(SigningNotifyType.NEW);
                     attachment.setTid(getAccount());
                     attachment.setSetupId(signing.getId());
-                    attachment.setContent(signing.getTitle());
-                    attachment.setBeginTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getBeginTime()).getTime());
-                    attachment.setEndTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getEndTime()).getTime());
+                    attachment.setTitle(signing.getTitle());
+                    attachment.setContent(signing.getContent());
+                    attachment.setAddress(signing.getSite());
+                    attachment.setBeginTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getBeginDate()).getTime());
+                    attachment.setEndTime(Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), signing.getEndDate()).getTime());
                     message = MessageBuilder.createCustomMessage(getAccount(), SessionTypeEnum.Team, attachment.getContent(), attachment);
                     sendMessage(message);
                     break;

@@ -15,6 +15,7 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.map.AddressMapPickerFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -67,6 +68,12 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_POJO, strings[1]);
         sdf.setArguments(bundle);
         return sdf;
+    }
+
+    public static void open(BaseFragment fragment, int req, String tid, String voteJson) {
+        fragment.openActivity(SignDetailsFragment.class.getName(),
+                format("%s,%s", tid, StringHelper.replaceJson(voteJson, false)),
+                req, true, false);
     }
 
     private static final String PARAM_POJO = "sdf_param_pojo";
@@ -204,12 +211,14 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
     // 在群内发布签到开始或结束提醒
     private void publishNotify() {
         SigningNotifyAttachment notify = new SigningNotifyAttachment();
+        notify.setTitle(signing.getTitle());
         notify.setContent(notifyContent.getValue());
+        notify.setAddress(signing.getSite());
         notify.setNotifyType(notifyType);
         notify.setSetupId(signing.getId());
         notify.setTid(mQueryId);
-        notify.setBeginTime(Utils.parseDate(getString(R.string.ui_base_text_date_time_format), signing.getBeginTime()).getTime());
-        notify.setEndTime(Utils.parseDate(getString(R.string.ui_base_text_date_time_format), signing.getEndTime()).getTime());
+        notify.setBeginTime(Utils.parseDate(getString(R.string.ui_base_text_date_time_format), signing.getBeginDate()).getTime());
+        notify.setEndTime(Utils.parseDate(getString(R.string.ui_base_text_date_time_format), signing.getEndDate()).getTime());
         IMMessage message;
         message = MessageBuilder.createCustomMessage(mQueryId, SessionTypeEnum.Team, notify);
         NIMClient.getService(MsgService.class).sendMessage(message, false);
@@ -271,15 +280,16 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void delete() {
+        final String id = signing.getId();
         AppSigningRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppSigning>() {
             @Override
             public void onResponse(AppSigning signing, boolean success, String message) {
                 super.onResponse(signing, success, message);
-                if(success){
-                    finish();
+                if (success) {
+                    resultData(id);
                 }
             }
-        }).delete(signing.getId());
+        }).delete(id);
     }
 
     private void initializeHolder() {
@@ -300,7 +310,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         }
         titleHolder.showContent(format(getString(R.string.ui_activity_sign_details_title), signing.getTitle()));
 
-        contentView.setText(signing.getDesc());
+        contentView.setText(signing.getContent());
         contentView.makeExpandable();
     }
 
@@ -335,7 +345,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
             addr.setLongitude(stringToDouble(record.getLon(), 116.400244));
             addr.setLatitude(stringToDouble(record.getLat(), 39.963175));
             addr.setAltitude(stringToDouble(record.getAlt(), 0.0));
-            addr.setAddress(record.getDesc());
+            addr.setAddress(record.getSite());
             String params = StringHelper.format("true,%s", StringHelper.replaceJson(Address.toJson(addr), false));
             // 重现用户的签到地址
             openActivity(AddressMapPickerFragment.class.getName(), params, true, false);
@@ -358,9 +368,9 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public void onBindHolderOfView(SingingViewHolder holder, int position, AppSignRecord item) {
-            if (isEmpty(item.getDistance())) {
-                item.setDistance(calculateDistance(item.getLat(), item.getLon()));
-            }
+//            if (isEmpty(item.getDistance())) {
+//                item.setDistance(calculateDistance(item.getLat(), item.getLon()));
+//            }
             holder.showContent(item);
         }
 

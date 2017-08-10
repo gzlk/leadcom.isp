@@ -30,13 +30,14 @@ public class AppVote extends Model {
 
     public interface Field {
         String Description = "description";
-        String BeginTime = "beginTime";
-        String EndTime = "endTime";
-        String IsEnd = "isEnd";
+        String BeginDate = "beginDate";
+        String EndDate = "endDate";
+        String End = "end";
         String VoteId = "voteId";
         String MaxSelectable = "maxSelectable";
         String Num = "num";
         String VoteItemId = "voteItemId";
+        String Anonymity = "anonymity";
         String IMSI = "imsi";
     }
 
@@ -78,14 +79,14 @@ public class AppVote extends Model {
     @Column(Archive.Field.Title)
     private String title;
     //描述
-    @Column(Field.Description)
-    private String desc;
+    @Column(Archive.Field.Content)
+    private String content;
     //投票开始时间
-    @Column(Field.BeginTime)
+    @Column(Field.BeginDate)
     private String beginTime;
     //投票结束时间
-    @Column(Field.EndTime)
-    private String endTime;
+    @Column(Field.EndDate)
+    private String endDate;
     //创建时间
     @Column(Model.Field.CreateDate)
     private String createDate;
@@ -95,27 +96,35 @@ public class AppVote extends Model {
     //创建者名字
     @Column(Archive.Field.CreatorName)
     private String creatorName;
+    //是否不记名(0.不记名,1.记名)
+    @Column(Field.Anonymity)
+    private int anonymity;
+    //公开范围(0.不公开,1.公开)
+    @Column(Archive.Field.AuthPublic)
+    private int authPublic;
     //是否已经结束
-    @Column(Field.IsEnd)
-    private String isEnd;
+    @Column(Field.End)
+    private String end;
     @Ignore
     private int notifyBeginTime;
     @Ignore
-    private ArrayList<AppVoteItem> itemListData;
+    private ArrayList<AppVoteItem> actVoteItemList;
+    @Ignore
+    private ArrayList<AppVoteRecord> actVoteList;
 
     /**
      * 投票是否已经结束
      */
     public boolean isEnded() {
-        if (isEmpty(endTime)) return true;
-        long end = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), endTime).getTime();
+        if (isEmpty(endDate)) return true;
+        long end = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), endDate).getTime();
         long now = Utils.timestamp();
         return now > end;
     }
 
     public void saveVoteItems() {
-        if (null != itemListData) {
-            new Dao<>(AppVoteItem.class).save(itemListData);
+        if (null != actVoteItemList) {
+            new Dao<>(AppVoteItem.class).save(actVoteItemList);
         }
     }
 
@@ -160,12 +169,12 @@ public class AppVote extends Model {
         this.title = title;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getContent() {
+        return content;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getBeginTime() {
@@ -176,12 +185,12 @@ public class AppVote extends Model {
         this.beginTime = beginTime;
     }
 
-    public String getEndTime() {
-        return endTime;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public String getCreateDate() {
@@ -211,12 +220,28 @@ public class AppVote extends Model {
         this.creatorName = creatorName;
     }
 
-    public String getIsEnd() {
-        return isEnd;
+    public int getAnonymity() {
+        return anonymity;
     }
 
-    public void setIsEnd(String isEnd) {
-        this.isEnd = isEnd;
+    public void setAnonymity(int anonymity) {
+        this.anonymity = anonymity;
+    }
+
+    public int getAuthPublic() {
+        return authPublic;
+    }
+
+    public void setAuthPublic(int authPublic) {
+        this.authPublic = authPublic;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
     }
 
     public int getNotifyBeginTime() {
@@ -227,14 +252,22 @@ public class AppVote extends Model {
         this.notifyBeginTime = notifyBeginTime;
     }
 
-    public ArrayList<AppVoteItem> getItemListData() {
-        if (null == itemListData) {
-            itemListData = new ArrayList<>();
+    public ArrayList<AppVoteItem> getActVoteItemList() {
+        if (null == actVoteItemList) {
+            actVoteItemList = new ArrayList<>();
         }
-        return itemListData;
+        return actVoteItemList;
     }
 
-    public void setItemListData(ArrayList<AppVoteItem> itemListData) {
-        this.itemListData = itemListData;
+    public void setActVoteItemList(ArrayList<AppVoteItem> actVoteItemList) {
+        this.actVoteItemList = actVoteItemList;
+    }
+
+    public ArrayList<AppVoteRecord> getActVoteList() {
+        return actVoteList;
+    }
+
+    public void setActVoteList(ArrayList<AppVoteRecord> actVoteList) {
+        this.actVoteList = actVoteList;
     }
 }

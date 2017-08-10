@@ -136,7 +136,7 @@ public class VoteListFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
             }
-        }).list(activityId);
+        }).list(activityId, AppVoteRequest.LIST_ALL, remotePageNumber);
     }
 
     private void initializeAdapter() {

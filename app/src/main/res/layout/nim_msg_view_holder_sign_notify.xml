@@ -10,8 +10,8 @@
 
     <com.hlk.hlklib.lib.view.CorneredView
         android:id="@+id/message_item_sign_notify_icon_container"
-        android:layout_width="@dimen/ui_static_dp_35"
-        android:layout_height="@dimen/ui_static_dp_35"
+        android:layout_width="@dimen/ui_nim_app_icon_size"
+        android:layout_height="@dimen/ui_nim_app_icon_size"
         android:layout_marginEnd="@dimen/ui_static_dp_5"
         android:gravity="center"
         android:orientation="vertical"
@@ -28,14 +28,80 @@
             android:gravity="center"
             android:text="@string/ui_icon_material_location"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/ui_base_text_size_huge"
+            android:textSize="@dimen/ui_nim_app_icon_text_size"
             app:ctv_source="material_icon" />
     </com.hlk.hlklib.lib.view.CorneredView>
 
-    <TextView
-        android:id="@+id/message_item_sign_notify_title_label"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxWidth="@dimen/ui_nim_max_text_bubble_width"
-        android:textSize="@dimen/ui_base_text_size_small" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/message_item_sign_notify_title_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:maxWidth="@dimen/ui_nim_max_text_bubble_width"
+            android:text="@string/app_name_default"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+        <TextView
+            android:id="@+id/message_item_sign_notify_content_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:maxWidth="@dimen/ui_nim_max_text_bubble_width"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHintDark"
+            android:textSize="@dimen/ui_base_text_size_little" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_material_timer"
+                android:textColor="@color/textColorHintDark"
+                app:ctv_source="material_icon" />
+
+            <TextView
+                android:id="@+id/message_item_sign_notify_time_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_location"
+                android:textColor="@color/textColorHintDark" />
+
+            <TextView
+                android:id="@+id/message_item_sign_notify_address_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="start"
+                android:maxWidth="@dimen/ui_nim_max_text_bubble_width"
+                android:singleLine="true"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
+    </LinearLayout>
+
 </LinearLayout>

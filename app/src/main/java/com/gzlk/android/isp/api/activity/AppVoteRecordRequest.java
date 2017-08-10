@@ -1,10 +1,9 @@
 package com.gzlk.android.isp.api.activity;
 
-import com.gzlk.android.isp.api.query.SingleQuery;
-import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.model.activity.vote.AppVoteRecord;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -29,9 +28,6 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
     }
 
     private class SingleVoteRecord extends SingleQuery<AppVoteRecord> {
-    }
-
-    private class MultipleVoteRecord extends PaginationQuery<AppVoteRecord> {
     }
 
     private static final String RECORD = "/activity/actVote";
@@ -61,12 +57,11 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
     /**
      * 投票
      */
-    public void add(String activityId, String setupId, String itemId) {
-        // {itemId:""}
+    public void add(String setupId, String itemId) {
+        // {setupId,itemId}
         JSONObject object = new JSONObject();
         try {
             object.put("itemId", itemId)
-                    .put("actId", activityId)
                     .put("setupId", setupId);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -81,18 +76,10 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
         JSONObject object = new JSONObject();
         try {
             object.put("itemId", record.getItemId())
-                    .put("actId", record.getActId())
                     .put("setupId", record.getSetupId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
         httpRequest(getRequest(SingleVoteRecord.class, url(ADD), object.toString(), HttpMethods.Post));
-    }
-
-    /**
-     * 查询投票应用的投票记录
-     */
-    public void list(String setupId) {
-        httpRequest(getRequest(MultipleVoteRecord.class, format("%s?setupId=%s", url(LIST), setupId), "", HttpMethods.Get));
     }
 }

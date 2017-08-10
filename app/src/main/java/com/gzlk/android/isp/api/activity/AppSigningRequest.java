@@ -62,17 +62,18 @@ public class AppSigningRequest extends Request<AppSigning> {
      * 添加新的活动签到条目
      */
     public void add(AppSigning signing) {
-
+        // {actId,title,content,lon,lat,alt,site,beginDate,endDate}
         JSONObject object = new JSONObject();
         try {
             object.put("actId", signing.getActId())
                     .put("title", signing.getTitle())
-                    .put("desc", signing.getDesc())
+                    .put("content", signing.getContent())
                     .put("lon", signing.getLon())
                     .put("lat", signing.getLat())
                     .put("alt", signing.getAlt())
-                    .put("beginTime", signing.getBeginTime())
-                    .put("endTime", signing.getEndTime());
+                    .put("site", signing.getSite())
+                    .put("beginDate", signing.getBeginDate())
+                    .put("endDate", signing.getEndDate());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -91,6 +92,7 @@ public class AppSigningRequest extends Request<AppSigning> {
      * @param beginTime   签到开始时间
      * @param endTime     签到结束时间
      */
+    @Deprecated
     public void add(@NonNull String activityId, String title, String description,
                     double longitude, double latitude, double altitude, String beginTime, String endTime) {
         // {actId:"",title:"",desc:"",lon:"",lat:"",alt:"",beginTime:"",endTime:"",accessToken：""}
@@ -153,17 +155,26 @@ public class AppSigningRequest extends Request<AppSigning> {
     }
 
     /**
+     * 只查询签到内容
+     */
+    public static final int FIND_SIGN = 1;
+    /**
+     * 同时查询签到内容和签到记录
+     */
+    public static final int FIND_RECORD = 2;
+
+    /**
      * 查找单个签到应用的详情
      *
      * @param signId 签到应用的id
-     * @param option 0：只查询签到设置；1：查询签到设置和其下的所有签到记录
+     * @param option 操作类型(1.查询签到设置,2:查询签到设置和所有签到记录)
      */
     public void find(@NonNull String signId, int option) {
-        if (option <= 0) {
-            option = 0;
+        if (option <= FIND_SIGN) {
+            option = FIND_SIGN;
         }
-        if (option >= 1) {
-            option = 1;
+        if (option >= FIND_RECORD) {
+            option = FIND_RECORD;
         }
         httpRequest(getRequest(SingleSigning.class, format("%s?id=%s&ope=%d", url(FIND), signId, option), "", HttpMethods.Get));
     }
@@ -171,8 +182,8 @@ public class AppSigningRequest extends Request<AppSigning> {
     /**
      * 查询活动中的签到应用列表
      */
-    public void list(@NonNull String activityId) {
-        // actId=""
-        httpRequest(getRequest(MultipleSigning.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
+    public void list(@NonNull String activityId, int pageNumber) {
+        // actId,pageSize,pageNumber
+        httpRequest(getRequest(MultipleSigning.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
     }
 }

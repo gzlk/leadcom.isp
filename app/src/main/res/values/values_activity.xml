@@ -283,5 +283,6 @@
         <![CDATA[删除投票应用将会删除其下所有投票选项以及已有的投票记录。<br/>您确定要继续吗？]]>
     </string>
     <string name="ui_activity_vote_details_deleting">正在删除此投票应用&#8230;</string>
+    <string name="ui_activity_vote_details_max_selected" formatted="false">您至多只能选择%d个选项</string>
 
 </resources>

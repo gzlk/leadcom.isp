@@ -103,7 +103,7 @@
     <string name="ui_text_document_create_creating">正在创建新档案，请稍候&#8230;</string>
     <string name="ui_text_document_create_editing">正在更新新档案，请稍候&#8230;</string>
 
-    <!--index,title,desc,default selected,user visible,group visible-->
+    <!--index,title,content,default selected,user visible,group visible-->
     <string-array name="ui_security_setting_items">
         <item>1|公开|所有人可见|1|1|1</item>
         <item>0|私密|仅自己可见|0|1|0</item>

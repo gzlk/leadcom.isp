@@ -70,6 +70,7 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
      * @param content   留言内容
      * @param address   签到的详细地址
      */
+    @Deprecated
     public void add(@NonNull String signId, double longitude, double latitude, double altitude, String imsi,
                     String content, String address) {
         // {actId:"",setupId:"",lon:"",lat:"",alt:"",imsi:""accessToken：""}
@@ -91,8 +92,11 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
         httpRequest(getRequest(SingleRecord.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 成员签到
+     */
     public void add(AppSignRecord record) {
-        // {actId:"",setupId:"",lon:"",lat:"",alt:"",imsi:""accessToken：""}
+        // {setupId,lon,lat,alt,site}
 
         JSONObject object = new JSONObject();
         try {
@@ -100,10 +104,8 @@ public class AppSignRecordRequest extends Request<AppSignRecord> {
                     .put("lon", record.getLon())
                     .put("lat", record.getLat())
                     .put("alt", record.getAlt())
-                    .put("imsi", record.getImsi())
-                    .put("creatorName", record.getCreatorName())
-                    .put("title", record.getTitle())
-                    .put("desc", record.getAddress());
+                    // 签到地点名称
+                    .put("site", record.getSite());
         } catch (JSONException e) {
             e.printStackTrace();
         }
