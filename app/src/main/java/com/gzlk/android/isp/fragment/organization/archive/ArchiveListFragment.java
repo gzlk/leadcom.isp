@@ -164,7 +164,8 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 openActivity(ArchiveHandlerFragment.class.getName(), format("%d,%s,", ArchiveHandlerFragment.TYPE_APPROVE, acv.getId()), true, false);
             } else {
                 // 全部页面中，打开档案详情页
-                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
+                ArchiveDetailsFragment.open(ArchiveListFragment.this,Archive.Type.GROUP,acv.getId(), REQUEST_DELETE);
+                //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
             }
         }
     };

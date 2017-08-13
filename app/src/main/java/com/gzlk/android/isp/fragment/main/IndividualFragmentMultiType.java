@@ -375,7 +375,8 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
     private void archiveClick(Archive archive) {
         if (null != archive) {
             int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archive.getId()), BaseFragment.REQUEST_CHANGE, true, false);
+            ArchiveDetailsFragment.open(IndividualFragmentMultiType.this, type, archive.getId(), REQUEST_CHANGE);
+            //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archive.getId()), BaseFragment.REQUEST_CHANGE, true, false);
         }
     }
 

@@ -33,6 +33,8 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 
 public class SearchableViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private RelativeLayout root;
     @ViewId(R.id.ui_holder_view_searchable_input)
     private CorneredEditText searchInput;
     @ViewId(R.id.ui_holder_view_searchable_icon_container)
@@ -88,6 +90,10 @@ public class SearchableViewHolder extends BaseViewHolder {
         });
     }
 
+    public void setBackground(int color) {
+        root.setBackgroundColor(color);
+    }
+
     private void resetHintContainer(boolean hasFocus) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) hintContainer.getLayoutParams();
         params.addRule(RelativeLayout.CENTER_IN_PARENT, hasFocus ? 0 : RelativeLayout.TRUE);
@@ -96,6 +102,7 @@ public class SearchableViewHolder extends BaseViewHolder {
         if (hasFocus) {
             // 有焦点时，如果text为空则显示hint
             searchInput.setHint(R.string.ui_base_text_search);
+            Utils.showInputBoard(searchInput);
         } else {
             // 失去焦点时，不显示hint
             searchInput.setHint(null);

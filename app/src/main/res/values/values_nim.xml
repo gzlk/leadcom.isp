@@ -18,6 +18,11 @@
     <dimen name="ui_nim_app_icon_text_size">@dimen/ui_base_text_size_max</dimen>
     <dimen name="ui_nim_max_text_bubble_width">@dimen/ui_static_dp_170</dimen>
 
+    <string name="ui_nim_app_recent_contact_type_custom">[自定义消息]</string>
+    <string name="ui_nim_app_recent_contact_type_notice">[活动通知]</string>
+    <string name="ui_nim_app_recent_contact_type_signing">[活动签到]</string>
+    <string name="ui_nim_app_recent_contact_type_vote">[活动投票]</string>
+
     <string name="ui_nim_app_sign_start_time">开始时间：%s</string>
     <string name="ui_nim_app_sign_end_time">截止时间：%s</string>
 

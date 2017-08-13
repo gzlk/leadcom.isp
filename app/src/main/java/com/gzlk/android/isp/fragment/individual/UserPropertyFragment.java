@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.individual;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,11 +11,13 @@ import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.gzlk.android.isp.fragment.common.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.login.CodeVerifyFragment;
@@ -61,6 +64,15 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         bundle.putString(PARAM_QUERY_ID, params);
         mf.setArguments(bundle);
         return mf;
+    }
+
+    public static void open(BaseFragment fragment, String userId) {
+        fragment.openActivity(UserPropertyFragment.class.getName(), userId, false, false, true);
+    }
+
+    public static void open(Context context, String userId){
+        // 一般用于打开用户资料页面
+        BaseActivity.openActivity(context, UserPropertyFragment.class.getName(), userId, false, false, true);
     }
 
     // UI

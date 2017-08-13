@@ -205,7 +205,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
                 pickSelected(index);
             } else {
                 // 打开个人属性页
-                openActivity(UserPropertyFragment.class.getName(), mAdapter.get(index).getUserId(), false, false, true);
+                UserPropertyFragment.open(ActivityMemberFragment.this, mAdapter.get(index).getUserId());
             }
         }
     };

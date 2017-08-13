@@ -137,7 +137,8 @@ public class NimSessionHelper {
             @Override
             public void onAvatarClicked(Context context, IMMessage message) {
                 // 一般用于打开用户资料页面
-                BaseActivity.openActivity(context, UserPropertyFragment.class.getName(), message.getFromAccount(), false, false, true);
+                UserPropertyFragment.open(context, message.getFromAccount());
+                //BaseActivity.openActivity(context, UserPropertyFragment.class.getName(), message.getFromAccount(), false, false, true);
             }
 
             @Override

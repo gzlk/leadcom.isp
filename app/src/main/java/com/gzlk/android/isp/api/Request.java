@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.api;
 
-import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.query.BoolQuery;
@@ -14,11 +13,15 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnHttpListener;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.query.FullTextQuery;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.JsonBody;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -198,7 +201,11 @@ public abstract class Request<T> {
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.query = singleQuery;
                             onSingleRequestListener.actInviteStatus = singleQuery.getActInvtStatus();
-                            onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), data.getMsg());
+                            if (singleQuery.getData() instanceof FullTextQuery) {
+                                onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), response.getRawString());
+                            } else {
+                                onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), data.getMsg());
+                            }
                         }
                     } else if (data instanceof BoolQuery) {
                         BoolQuery<T> boolQuery = (BoolQuery<T>) data;

@@ -135,8 +135,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     public void doingInResume() {
         Activity().setRootViewPadding(toolBar, true);
         super.doingInResume();
-        leftIcon.setText(null);
-        //leftIcon.setText(R.string.ui_icon_query);
+        leftIcon.setText(R.string.ui_icon_query);
         leftText.setText(null);
         rightIconContainer.setVisibility(View.GONE);
         //((IndividualFragmentMultiType) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
@@ -289,6 +288,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 break;
             case R.id.ui_ui_custom_title_left_container:
                 // 搜索
+                FullTextQueryFragment.open(MainFragment.this);
                 break;
             case R.id.ui_ui_custom_title_right_container:
             case R.id.ui_ui_custom_title_right_icon:

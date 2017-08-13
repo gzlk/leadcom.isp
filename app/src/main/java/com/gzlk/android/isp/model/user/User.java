@@ -132,6 +132,9 @@ public class User extends Model {
     private ArrayList<String> createdActs;
 
     public String getName() {
+        if (isEmpty(name)) {
+            name = NO_NAME;
+        }
         return name;
     }
 

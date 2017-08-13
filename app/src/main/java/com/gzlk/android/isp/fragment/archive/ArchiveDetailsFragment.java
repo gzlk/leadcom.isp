@@ -14,6 +14,7 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseChatInputSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -60,6 +61,10 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         bundle.putString(PARAM_QUERY_ID, strings[1]);
         ddf.setArguments(bundle);
         return ddf;
+    }
+
+    public static void open(BaseFragment fragment, int type, String archiveId, int req) {
+        fragment.openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archiveId), req, true, false);
     }
 
     @Override

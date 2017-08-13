@@ -32,12 +32,16 @@ import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
+import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
+import com.gzlk.android.isp.nim.model.extension.VoteAttachment;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 
 import java.util.Iterator;
@@ -147,11 +151,26 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     if (isEmpty(nick)) {
                         nick = "null";
                     }
-                    act.setIntro(format("%s: %s", nick, contact.getContent()));
+                    act.setIntro(format("%s: %s", nick, getRecentMsgType(contact)));
                     mAdapter.notifyItemChanged(i);
                 }
             }
         }
+    }
+
+    private String getRecentMsgType(RecentContact contact) {
+        String ret = contact.getContent();
+        if (ret.contains(getString(R.string.ui_nim_app_recent_contact_type_custom))) {
+            MsgAttachment attachment = contact.getAttachment();
+            if (attachment instanceof NoticeAttachment) {
+                ret = getString(R.string.ui_nim_app_recent_contact_type_notice);
+            } else if (attachment instanceof SigningNotifyAttachment) {
+                ret = getString(R.string.ui_nim_app_recent_contact_type_signing);
+            } else if (attachment instanceof VoteAttachment) {
+                ret = getString(R.string.ui_nim_app_recent_contact_type_vote);
+            }
+        }
+        return ret;
     }
 
     private RecentContact get(String tid, List<RecentContact> contacts) {

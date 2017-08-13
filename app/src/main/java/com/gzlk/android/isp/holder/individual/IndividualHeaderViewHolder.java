@@ -8,8 +8,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
-import com.gzlk.android.isp.fragment.individual.QRCodeFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -49,9 +47,13 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
 
             @Override
             public void onImageClick(String url) {
-                openActivity(UserPropertyFragment.class.getName(), Cache.cache().userId, false, false, true);
+                openUserProperty(Cache.cache().userId);
             }
         });
+    }
+
+    private void openUserProperty(String userId) {
+        UserPropertyFragment.open(fragment(), userId);
     }
 
     private void resetTopPadding() {
@@ -70,7 +72,7 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
                 //openActivity(QRCodeFragment.class.getName(), "", false, false, true);
                 break;
             case R.id.ui_holder_view_user_name:
-                openActivity(UserPropertyFragment.class.getName(), Cache.cache().userId, false, false, true);
+                openUserProperty(Cache.cache().userId);
                 break;
         }
     }

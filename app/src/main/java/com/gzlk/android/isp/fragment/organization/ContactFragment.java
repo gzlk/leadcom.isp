@@ -509,7 +509,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         public void onClick(int index) {
             // 点击打开用户属性页
             Member member = mAdapter.get(index);
-            openActivity(UserPropertyFragment.class.getName(), member.getUserId(), false, false, true);
+            UserPropertyFragment.open(ContactFragment.this, member.getUserId());
         }
     };
 

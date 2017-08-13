@@ -150,7 +150,7 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 打开用户名片
-            openActivity(UserPropertyFragment.class.getName(), mAdapter.get(index).getUserId(), false, false, true);
+            UserPropertyFragment.open(OrganizationContactFragment.this, mAdapter.get(index).getUserId());
         }
     };
 
