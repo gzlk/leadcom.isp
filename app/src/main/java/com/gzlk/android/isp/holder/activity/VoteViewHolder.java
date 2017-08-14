@@ -31,8 +31,8 @@ public class VoteViewHolder extends BaseViewHolder {
     private ImageDisplayer headerImage;
     @ViewId(R.id.ui_individual_header_name)
     private TextView headerName;
-    @ViewId(R.id.ui_holder_view_activity_vote_item_title)
-    private TextView titleView;
+    //@ViewId(R.id.ui_holder_view_activity_vote_item_title)
+    //private TextView titleView;
     @ViewId(R.id.ui_holder_view_activity_vote_item_desc)
     private ExpandableTextView descView;
     @ViewId(R.id.ui_holder_view_activity_vote_item_status_text)
@@ -49,9 +49,9 @@ public class VoteViewHolder extends BaseViewHolder {
 
     public void showContent(AppVote appVote) {
         headerName.setText(appVote.getCreatorName());
-        titleView.setText(appVote.getTitle());
-        titleView.setVisibility(isEmpty(appVote.getTitle()) ? View.GONE : View.VISIBLE);
-        descView.setText(appVote.getContent());
+        //titleView.setText(appVote.getTitle());
+        //titleView.setVisibility(isEmpty(appVote.getTitle()) ? View.GONE : View.VISIBLE);
+        descView.setText(appVote.getTitle());
         descView.makeExpandable();
         timeView.setText(fragment().formatTimeAgo(appVote.getCreateDate()));
         boolean ended = appVote.isEnded();
@@ -62,7 +62,8 @@ public class VoteViewHolder extends BaseViewHolder {
 
     public void showVoteType(AppVote appVote) {
         statusTextView.setVisibility(View.GONE);
-        int i = appVote.getType();
+        // 最大选择项小于等于1时表示单选
+        int i = appVote.getMaxSelectable();
         i = i <= 1 ? 1 : 2;
         timeView.setText(StringHelper.getStringArray(R.array.ui_activity_vote_types)[i]);
     }

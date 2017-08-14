@@ -1,9 +1,15 @@
 package com.gzlk.android.isp.model.activity.vote;
 
+import com.gzlk.android.isp.api.activity.AppVoteRequest;
+import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.assit.QueryBuilder;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>投票记录<br />
@@ -18,6 +24,16 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Activity.Table.VOTE_RECORD)
 public class AppVoteRecord extends Model {
 
+    // 查找指定的投票里是否已经投过票
+    public static AppVoteRecord getRecord(String voteId) {
+        QueryBuilder<AppVoteRecord> builder = new QueryBuilder<>(AppVoteRecord.class)
+                .whereEquals(AppVote.Field.VoteId, voteId)
+                .whereAppendAnd()
+                .whereEquals(Field.UserId, Cache.cache().userId);
+        List<AppVoteRecord> list = new Dao<>(AppVoteRecord.class).query(builder);
+        return (null == list || list.size() < 1) ? null : list.get(0);
+    }
+
     //活动Id
     @Column(Activity.Field.ActivityId)
     private String actId;
@@ -27,9 +43,6 @@ public class AppVoteRecord extends Model {
     //投票选择项的id
     @Column(AppVote.Field.VoteItemId)
     private String itemId;
-    //手机设备号
-    @Column(AppVote.Field.IMSI)
-    private String imsi;
     //创建者名称
     @Column(Field.UserName)
     private String userName;
@@ -62,14 +75,6 @@ public class AppVoteRecord extends Model {
 
     public void setItemId(String itemId) {
         this.itemId = itemId;
-    }
-
-    public String getImsi() {
-        return imsi;
-    }
-
-    public void setImsi(String imsi) {
-        this.imsi = imsi;
     }
 
     public String getUserName() {

@@ -8,6 +8,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.litesuits.http.request.param.HttpMethods;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,6 +64,7 @@ public class AppVoteRequest extends Request<AppVote> {
     @Override
     protected void save(AppVote appVote) {
         appVote.saveVoteItems();
+        appVote.saveVoteRecords();
         super.save(appVote);
     }
 
@@ -70,6 +72,7 @@ public class AppVoteRequest extends Request<AppVote> {
     protected void save(List<AppVote> list) {
         for (AppVote vote : list) {
             vote.saveVoteItems();
+            vote.saveVoteRecords();
         }
         super.save(list);
     }
@@ -78,18 +81,19 @@ public class AppVoteRequest extends Request<AppVote> {
      * 添加一个投票应用
      */
     public void add(AppVote appVote) {
-        // {actId,type,title,endDate,content,maxSelectable,anonymity,authPublic}
+        // {actId,title,endDate,maxSelectable,anonymity,authPublic,[itemContentList]}
 
         JSONObject object = new JSONObject();
         try {
             object.put("actId", appVote.getActId())         // 活动ID
                     .put("title", appVote.getTitle())       // 投票标题
-                    .put("content", appVote.getContent())   // 投票描述
-                    .put("type", appVote.getType())         // 类型(1.单选,2.多选)
+                    //.put("content", appVote.getContent())   // 投票描述
+                    //.put("type", appVote.getType())         // 类型(1.单选,2.多选)
                     .put("maxSelectable", appVote.getMaxSelectable())   // 投票选项的最大可选数(单选默认为1)
                     .put("anonymity", appVote.getAnonymity())           // 投票是否记名(0.不记名,1.记名)
                     .put("authPublic", appVote.getAuthPublic())         // 投票是否公开结果(0.不公开,1.公开)
-                    .put("endDate", appVote.getEndDate());
+                    .put("endDate", appVote.getEndDate())
+                    .put("itemContentList", new JSONArray(appVote.getItemContentList()));
         } catch (JSONException e) {
             e.printStackTrace();
         }

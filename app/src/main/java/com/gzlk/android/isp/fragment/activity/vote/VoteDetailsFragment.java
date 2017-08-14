@@ -192,6 +192,7 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
         if (voteIndex >= mAdapter.getItemCount()) {
             // 投票完毕
             hideImageHandlingDialog();
+            loadingVoteDetails();
         } else {
             AppVoteItem item = mAdapter.get(voteIndex);
             if (item.isSelected()) {
@@ -252,14 +253,17 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
         }).find(mQueryId, AppVoteRequest.FIND_ALL, remotePageNumber);
     }
 
+    private boolean hasVoted = false;
+
     private void showDetails() {
         voteViewHolder.showContent(mAppVote);
         voteViewHolder.showVoteType(mAppVote);
+        hasVoted = null != AppVoteRecord.getRecord(mAppVote.getId());
         mAdapter.update(mAppVote.getActVoteItemList(), false);
         endTime.setText(getString(R.string.ui_activity_vote_details_end_time, formatDateTime(mAppVote.getEndDate())));
-        boolean ended = mAppVote.isEnded();
-        bottomButton1.setVisibility(ended ? View.GONE : View.VISIBLE);
-        bottomButton2.setVisibility(ended ? View.GONE : View.VISIBLE);
+        // 已投过票或者已结束时，不显示投票按钮
+        bottomButton1.setVisibility((mAppVote.isEnded() || hasVoted) ? View.GONE : View.VISIBLE);
+        bottomButton2.setVisibility((mAppVote.isEnded() || hasVoted) ? View.GONE : View.VISIBLE);
         boolean isMe = !isEmpty(mAppVote.getCreatorId()) && mAppVote.getCreatorId().equals(Cache.cache().userId);
         if (isMe) {
             resetRightIcon();
@@ -314,7 +318,7 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
             if (mAppVote.isEnded()) {
                 return;
             }
-            if (mAppVote.getType() <= 1) {
+            if (mAppVote.getMaxSelectable() <= 1) {
                 // 单选
                 for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
                     AppVoteItem item = mAdapter.get(i);
@@ -356,8 +360,9 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public void onBindHolderOfView(VoteOptionViewHolder holder, int position, @Nullable AppVoteItem item) {
-            holder.showContent(item, mAppVote.getType() > 1);
+            holder.showContent(item, mAppVote.getMaxSelectable() > 1);
             holder.showEnded(mAppVote.isEnded());
+            holder.showVoted(hasVoted);
         }
 
         @Override

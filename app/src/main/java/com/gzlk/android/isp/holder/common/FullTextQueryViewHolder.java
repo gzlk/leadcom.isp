@@ -12,6 +12,7 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.model.user.SimpleUser;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -50,8 +51,8 @@ public class FullTextQueryViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Model model) {
-        if (model instanceof User) {
-            showContent((User) model);
+        if (model instanceof SimpleUser) {
+            showContent((SimpleUser) model);
         } else if (model instanceof Organization) {
             showContent((Organization) model);
         } else if (model instanceof Activity) {
@@ -61,11 +62,11 @@ public class FullTextQueryViewHolder extends BaseViewHolder {
         }
     }
 
-    private void showContent(User user) {
+    private void showContent(SimpleUser user) {
         imageOval.setVisibility(View.VISIBLE);
         imageRound.setVisibility(View.GONE);
         imageOval.displayImage(user.getHeadPhoto(), imageSize, false, false);
-        String text = user.getName();
+        String text = user.getUserName();
         text = getSearchingText(text, searchingText);
         textView.setText(Html.fromHtml(text));
     }

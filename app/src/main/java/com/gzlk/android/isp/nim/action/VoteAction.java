@@ -57,9 +57,9 @@ public class VoteAction extends BaseAction {
                     assert appVote != null;
                     vote.setTitle(appVote.getTitle());
                     vote.setVoteId(appVote.getId());
-                    vote.setVoteType(appVote.getType());
-                    for (AppVoteItem item : appVote.getActVoteItemList()) {
-                        vote.getVoteItems().add(item.getContent());
+                    vote.setMaxVote(appVote.getMaxSelectable());
+                    for (String item : appVote.getItemContentList()) {
+                        vote.getVoteItems().add(item);
                     }
 
                     IMMessage message;

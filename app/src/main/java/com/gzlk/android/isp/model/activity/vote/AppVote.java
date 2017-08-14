@@ -42,17 +42,17 @@ public class AppVote extends Model {
     }
 
     /**
-     * 投票类型
+     * 投票结束状态
      */
-    public interface VoteType {
+    public interface VoteEnd {
         /**
-         * 单选投票
+         * 已结束
          */
-        int SINGLE = 1;
+        int ENDED = 1;
         /**
-         * 多选投票
+         * 未结束
          */
-        int MULTIPLE = 2;
+        int NOT_END = 0;
     }
 
     public static String toJson(AppVote appVote) {
@@ -69,12 +69,6 @@ public class AppVote extends Model {
     //活动Id
     @Column(Activity.Field.ActivityId)
     private String actId;
-    //调查类型：1.单选；2.多选
-    @Column(Archive.Field.Type)
-    private int type;
-    // 最大可选数量
-    @Column(Field.MaxSelectable)
-    private int maxSelectable;
     //标题
     @Column(Archive.Field.Title)
     private String title;
@@ -84,18 +78,21 @@ public class AppVote extends Model {
     //投票开始时间
     @Column(Field.BeginDate)
     private String beginTime;
-    //投票结束时间
-    @Column(Field.EndDate)
-    private String endDate;
     //创建时间
     @Column(Model.Field.CreateDate)
     private String createDate;
+    //投票结束时间
+    @Column(Field.EndDate)
+    private String endDate;
     //创建者id
     @Column(Archive.Field.CreatorId)
     private String creatorId;
     //创建者名字
     @Column(Archive.Field.CreatorName)
     private String creatorName;
+    // 最大可选数量
+    @Column(Field.MaxSelectable)
+    private int maxSelectable;
     //是否不记名(0.不记名,1.记名)
     @Column(Field.Anonymity)
     private int anonymity;
@@ -104,27 +101,25 @@ public class AppVote extends Model {
     private int authPublic;
     //是否已经结束
     @Column(Field.End)
-    private String end;
+    private int end;
     @Ignore
     private int notifyBeginTime;
+    @Ignore
+    private ArrayList<String> itemContentList;
     @Ignore
     private ArrayList<AppVoteItem> actVoteItemList;
     @Ignore
     private ArrayList<AppVoteRecord> actVoteList;
 
-    /**
-     * 投票是否已经结束
-     */
-    public boolean isEnded() {
-        if (isEmpty(endDate)) return true;
-        long end = Utils.parseDate(StringHelper.getString(R.string.ui_base_text_date_time_format), endDate).getTime();
-        long now = Utils.timestamp();
-        return now > end;
-    }
-
     public void saveVoteItems() {
         if (null != actVoteItemList) {
             new Dao<>(AppVoteItem.class).save(actVoteItemList);
+        }
+    }
+
+    public void saveVoteRecords() {
+        if (null != actVoteList) {
+            new Dao<>(AppVoteRecord.class).save(actVoteList);
         }
     }
 
@@ -136,21 +131,8 @@ public class AppVote extends Model {
         this.actId = actId;
     }
 
-    public int getType() {
-        if (0 == type) {
-            type = VoteType.SINGLE;
-        }
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-        // 设置默认的最大选择数量
-        maxSelectable = type == VoteType.SINGLE ? 1 : 2;
-    }
-
     public int getMaxSelectable() {
-        if (0 == maxSelectable) {
+        if (0 >= maxSelectable) {
             // 默认可选择1项
             maxSelectable = 1;
         }
@@ -236,12 +218,19 @@ public class AppVote extends Model {
         this.authPublic = authPublic;
     }
 
-    public String getEnd() {
+    public int getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(int end) {
         this.end = end;
+    }
+
+    /**
+     * 投票是否已结束
+     */
+    public boolean isEnded() {
+        return this.end == VoteEnd.ENDED;
     }
 
     public int getNotifyBeginTime() {
@@ -250,6 +239,14 @@ public class AppVote extends Model {
 
     public void setNotifyBeginTime(int notifyBeginTime) {
         this.notifyBeginTime = notifyBeginTime;
+    }
+
+    public ArrayList<String> getItemContentList() {
+        return itemContentList;
+    }
+
+    public void setItemContentList(ArrayList<String> itemContentList) {
+        this.itemContentList = itemContentList;
     }
 
     public ArrayList<AppVoteItem> getActVoteItemList() {

@@ -27,7 +27,7 @@ public class VoteAttachment extends CustomAttachment {
 
     private String voteId;
     private String title;
-    private int voteType;
+    private int maxVote;
     private ArrayList<String> voteItems;
 
     public String getVoteId() {
@@ -46,12 +46,12 @@ public class VoteAttachment extends CustomAttachment {
         this.title = title;
     }
 
-    public int getVoteType() {
-        return voteType;
+    public int getMaxVote() {
+        return maxVote;
     }
 
-    public void setVoteType(int voteType) {
-        this.voteType = voteType;
+    public void setMaxVote(int maxVote) {
+        this.maxVote = maxVote;
     }
 
     public ArrayList<String> getVoteItems() {
@@ -72,8 +72,8 @@ public class VoteAttachment extends CustomAttachment {
             if (data.has("title")) {
                 title = data.getString("title");
             }
-            if (data.has("voteType")) {
-                voteType = data.getInt("voteType");
+            if (data.has("maxVote")) {
+                maxVote = data.getInt("maxVote");
             }
             voteItems = new ArrayList<>();
             if (data.has("voteItems")) {
@@ -93,7 +93,7 @@ public class VoteAttachment extends CustomAttachment {
         try {
             object.put("voteId", voteId)
                     .put("title", title)
-                    .put("voteType", voteType);
+                    .put("maxVote", maxVote);
             String json = Json.gson().toJson(voteItems);
             object.put("voteItems", new JSONArray(json));
         } catch (Exception e) {

@@ -12,7 +12,6 @@ import com.bigkoo.pickerview.TimePickerView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.activity.AppVoteItemRequest;
 import com.gzlk.android.isp.api.activity.AppVoteRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
@@ -23,7 +22,6 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.activity.VoteOptionEditViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
-import com.gzlk.android.isp.holder.common.SimpleInputableViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
@@ -81,19 +79,19 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        mAppVote.setTitle(titleHolder.getValue());
-        mAppVote.setContent(contentView.getValue());
+        //mAppVote.setTitle(titleHolder.getValue());
+        mAppVote.setTitle(contentView.getValue());
         bundle.putString(PARAM_POJO, AppVote.toJson(mAppVote));
     }
 
-    @ViewId(R.id.ui_activity_vote_creator_title)
-    private View titleView;
+    //    @ViewId(R.id.ui_activity_vote_creator_title)
+//    private View titleView;
     @ViewId(R.id.ui_activity_vote_creator_content)
     private ClearEditText contentView;
     @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
     private RecyclerView optionsView;
-    @ViewId(R.id.ui_activity_vote_creator_type)
-    private View typeView;
+    //    @ViewId(R.id.ui_activity_vote_creator_type)
+//    private View typeView;
     @ViewId(R.id.ui_activity_vote_creator_max)
     private View maxView;
     @ViewId(R.id.ui_activity_vote_creator_end)
@@ -101,10 +99,10 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     @ViewId(R.id.ui_activity_vote_creator_notify)
     private View notifyView;
 
-    private SimpleInputableViewHolder titleHolder;
-    private SimpleClickableViewHolder typeHolder, maxHolder, timeHolder, notifyHolder;
+    //private SimpleInputableViewHolder titleHolder;
+    private SimpleClickableViewHolder maxHolder, timeHolder, notifyHolder;
 
-    private String[] items, types, dftOptions;
+    private String[] items, dftOptions;
     private AppVote mAppVote;
     private VoteItemAdapter mAdapter;
 
@@ -152,13 +150,13 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_invalid_activity);
             return;
         }
-        mAppVote.setTitle(titleHolder.getValue());
+//        mAppVote.setTitle(titleHolder.getValue());
+//        if (isEmpty(mAppVote.getTitle())) {
+//            ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_title_invalid);
+//            return;
+//        }
+        mAppVote.setTitle(contentView.getValue());
         if (isEmpty(mAppVote.getTitle())) {
-            ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_title_invalid);
-            return;
-        }
-        mAppVote.setContent(contentView.getValue());
-        if (isEmpty(mAppVote.getContent())) {
             ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_desc_invalid);
             return;
         }
@@ -170,6 +168,10 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     }
 
     private boolean checkOptions() {
+        if (null == mAppVote.getItemContentList()) {
+            mAppVote.setItemContentList(new ArrayList<String>());
+        }
+        mAppVote.getItemContentList().clear();
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
             AppVoteItem item = mAdapter.get(i);
             if (item.getId().equals("+")) {
@@ -177,6 +179,8 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             }
             if (isEmpty(item.getContent())) {
                 return false;
+            } else {
+                mAppVote.getItemContentList().add(item.getContent());
             }
         }
         return true;
@@ -188,63 +192,13 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             @Override
             public void onResponse(AppVote appVote, boolean success, String message) {
                 super.onResponse(appVote, success, message);
+                hideImageHandlingDialog();
                 if (success) {
-                    if (null != appVote) {
-                        mAppVote = appVote;
-                        addVoteItems();
-                    } else {
-                        hideImageHandlingDialog();
-                    }
-                } else {
-                    hideImageHandlingDialog();
+                    mAppVote = appVote;
+                    resultData(AppVote.toJson(mAppVote));
                 }
             }
         }).add(mAppVote);
-    }
-
-    private void result() {
-        hideImageHandlingDialog();
-        resultData(AppVote.toJson(mAppVote));
-    }
-
-    private int itemIndex = 0;
-
-    private void addVoteItems() {
-        itemIndex = 0;
-        showImageHandlingDialog(R.string.ui_activity_vote_creator_publish_vote_item);
-        addVoteItem();
-    }
-
-    private void addVoteItem() {
-        int size = mAdapter.getItemCount();
-        if (itemIndex >= size) {
-            // 添加完了
-            result();
-        } else {
-            AppVoteItem item = mAdapter.get(itemIndex);
-            if (item.getId().equals("+")) {
-                // 添加完了
-                result();
-            } else {
-                addVoteItem(item);
-            }
-        }
-    }
-
-    private void addVoteItem(AppVoteItem item) {
-        AppVoteItemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppVoteItem>() {
-            @Override
-            public void onResponse(AppVoteItem appVoteItem, boolean success, String message) {
-                super.onResponse(appVoteItem, success, message);
-                if (success) {
-                    itemIndex++;
-                    mAppVote.getActVoteItemList().add(appVoteItem);
-                    addVoteItem();
-                } else {
-                    hideImageHandlingDialog();
-                }
-            }
-        }).add(mAppVote.getId(), item.getContent());
     }
 
     private void initializeHolders() {
@@ -253,25 +207,16 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             optionsView.setLayoutManager(new CustomLinearLayoutManager(optionsView.getContext()));
             optionsView.setNestedScrollingEnabled(false);
         }
-        if (null == types) {
-            types = StringHelper.getStringArray(R.array.ui_activity_vote_types);
-        }
         if (null == mAppVote) {
             mAppVote = new AppVote();
-            // 默认单选投票
-            mAppVote.setType(AppVote.VoteType.SINGLE);
+            mAppVote.setItemContentList(new ArrayList<String>());
+            // 默认最大选择项目为1，也即单选投票
+            mAppVote.setMaxSelectable(1);
         }
-        if (null == titleHolder) {
-            titleHolder = new SimpleInputableViewHolder(titleView, this);
-        }
-        titleHolder.showContent(format(items[0], isEmpty(mAppVote.getTitle()) ? "" : mAppVote.getTitle()));
-        if (null == typeHolder) {
-            typeHolder = new SimpleClickableViewHolder(typeView, this);
-            typeHolder.addOnViewHolderClickListener(onViewHolderClickListener);
-        }
-        typeHolder.showContent(format(items[1], types[mAppVote.getType()]));
-        // 单选时，可选择数量隐藏，多选时显示
-        maxView.setVisibility(mAppVote.getType() == AppVote.VoteType.SINGLE ? View.GONE : View.VISIBLE);
+//        if (null == titleHolder) {
+//            titleHolder = new SimpleInputableViewHolder(titleView, this);
+//        }
+//        titleHolder.showContent(format(items[0], isEmpty(mAppVote.getTitle()) ? "" : mAppVote.getTitle()));
         if (null == maxHolder) {
             maxHolder = new SimpleClickableViewHolder(maxView, this);
             maxHolder.addOnViewHolderClickListener(onViewHolderClickListener);
@@ -288,6 +233,8 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             notifyHolder.addOnViewHolderClickListener(onViewHolderClickListener);
         }
         notifyHolder.showContent(format(items[4], getNotifyBeginTime()));
+
+        contentView.setValue(isEmpty(mAppVote.getTitle()) ? "" : mAppVote.getTitle());
     }
 
     private String getNotifyBeginTime() {
@@ -301,8 +248,8 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            mAppVote.setTitle(titleHolder.getValue());
-            mAppVote.setContent(contentView.getValue());
+            mAppVote.setTitle(contentView.getValue());
+            //mAppVote.setContent(contentView.getValue());
             switch (index) {
                 case 0:
                     // 投票类型
@@ -332,14 +279,14 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         Utils.hidingInputBoard(contentView);
         if (null == voteTypes) {
             voteTypes = new ArrayList<>();
-            voteTypes.add(types[1]);
-            voteTypes.add(types[2]);
+            //voteTypes.add(types[1]);
+            //voteTypes.add(types[2]);
         }
         if (null == voteTypePickerView) {
             voteTypePickerView = new OptionsPickerView.Builder(Activity(), new OptionsPickerView.OnOptionsSelectListener() {
                 @Override
                 public void onOptionsSelect(int i, int i1, int i2, View view) {
-                    mAppVote.setType(i + 1);
+                    //mAppVote.setType(i + 1);
                     initializeHolders();
                 }
             }).setTitleBgColor(getColor(R.color.colorPrimary))
@@ -355,22 +302,22 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
 
     // 多选时最多可选择的项目数量
     private OptionsPickerView voteMaxSelectablePickerView;
-    private ArrayList<Integer> maxSelectable;
+    private ArrayList<String> maxSelectable = new ArrayList<>();
 
     // 根据当前增加的选项数量
     @SuppressWarnings("unchecked")
     private void resetMaxSelectable() {
         // 按照增加的选项数量动态增加最大可选择数量
         maxSelectable.clear();
-        for (int i = 0, size = mAdapter.getItemCount(); i < size - 2; i++) {
-            maxSelectable.add(2 + i);
+        for (int i = 0, size = mAdapter.getItemCount(); i < size - 1; i++) {
+            maxSelectable.add(String.valueOf(1 + i));
         }
         if (null != voteMaxSelectablePickerView) {
             voteMaxSelectablePickerView.setPicker(maxSelectable);
-            int max = maxSelectable.indexOf(mAppVote.getMaxSelectable());
+            int max = maxSelectable.indexOf(String.valueOf(mAppVote.getMaxSelectable()));
             if (max < 0) {
                 max = 0;
-                mAppVote.setMaxSelectable(maxSelectable.get(max));
+                mAppVote.setMaxSelectable(Integer.valueOf(maxSelectable.get(max)));
                 maxHolder.showContent(format(items[2], getString(R.string.ui_activity_vote_creator_max_selectable, mAppVote.getMaxSelectable())));
             }
             // 更改选项之后默认设置最大选择记录
@@ -389,7 +336,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             voteMaxSelectablePickerView = new OptionsPickerView.Builder(Activity(), new OptionsPickerView.OnOptionsSelectListener() {
                 @Override
                 public void onOptionsSelect(int i, int i1, int i2, View view) {
-                    mAppVote.setMaxSelectable(maxSelectable.get(i));
+                    mAppVote.setMaxSelectable(i + 1);
                     initializeHolders();
                 }
             }).setTitleBgColor(getColor(R.color.colorPrimary))

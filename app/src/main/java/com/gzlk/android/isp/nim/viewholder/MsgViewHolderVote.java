@@ -68,7 +68,7 @@ public class MsgViewHolderVote extends MsgViewHolderBase {
     protected void bindContentView() {
         vote = (VoteAttachment) message.getAttachment();
         titleView.setText(vote.getTitle());
-        boolean multi = vote.getVoteType() > 1;
+        boolean multi = vote.getMaxVote() > 1;
         // 单选或多选
         item1Icon.setText(multi ? R.string.ui_icon_checkbox_checked : R.string.ui_icon_radio_unselected);
         item2Icon.setText(multi ? R.string.ui_icon_checkbox_checked : R.string.ui_icon_radio_unselected);

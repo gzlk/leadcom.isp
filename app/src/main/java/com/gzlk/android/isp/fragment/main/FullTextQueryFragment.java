@@ -10,6 +10,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.common.FullTextQueryRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -28,6 +29,7 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.query.FullTextQuery;
+import com.gzlk.android.isp.model.user.SimpleUser;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -193,12 +195,12 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void parseUsers(JSONArray usr) {
-        ArrayList<User> users = Json.gson().fromJson(usr.toString(), new TypeToken<ArrayList<User>>() {
+        ArrayList<SimpleUser> users = Json.gson().fromJson(usr.toString(), new TypeToken<ArrayList<SimpleUser>>() {
         }.getType());
         if (null != users && users.size() > 0) {
             SimpleClickableItem item = new SimpleClickableItem(items[0]);
             mAdapter.add(item);
-            for (User user : users) {
+            for (SimpleUser user : users) {
                 mAdapter.add(user);
             }
         }
@@ -248,14 +250,16 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             Model model = mAdapter.get(index);
-            if (model instanceof User) {
-                UserPropertyFragment.open(FullTextQueryFragment.this, model.getId());
+            if (model instanceof SimpleUser) {
+                UserPropertyFragment.open(FullTextQueryFragment.this, ((SimpleUser) model).getUserId());
             } else if (model instanceof Organization) {
                 openActivity(OrganizationPropertiesFragment.class.getName(), model.getId(), false, false, true);
             } else if (model instanceof Archive) {
                 Archive archive = (Archive) model;
                 int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
                 ArchiveDetailsFragment.open(FullTextQueryFragment.this, type, archive.getId(), REQUEST_CHANGE);
+            } else if (model instanceof Activity) {
+
             }
         }
     };

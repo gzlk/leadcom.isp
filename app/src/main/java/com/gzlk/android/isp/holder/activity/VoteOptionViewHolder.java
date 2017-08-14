@@ -48,6 +48,12 @@ public class VoteOptionViewHolder extends BaseViewHolder {
         numberView.setText(StringHelper.getString(R.string.ui_activity_vote_details_number, item.getNum()));
     }
 
+    public void showVoted(boolean voted) {
+        showEnded(voted);
+        // 已投过票时，显示投票结果，否则不显示
+        numberView.setVisibility(voted ? View.VISIBLE : View.GONE);
+    }
+
     public void showEnded(boolean ended) {
         iconView.setVisibility(ended ? View.GONE : View.VISIBLE);
     }
