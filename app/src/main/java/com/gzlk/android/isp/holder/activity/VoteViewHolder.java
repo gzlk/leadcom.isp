@@ -63,10 +63,7 @@ public class VoteViewHolder extends BaseViewHolder {
 
     public void showVoteType(AppVote appVote) {
         statusTextView.setVisibility(View.GONE);
-        // 最大选择项小于等于1时表示单选
-        int i = appVote.getMaxSelectable();
-        i = i <= 1 ? 1 : 2;
-        timeView.setText(StringHelper.getStringArray(R.array.ui_activity_vote_types)[i]);
+        timeView.setText(StringHelper.getStringArray(R.array.ui_activity_vote_types)[appVote.getType()]);
     }
 
     @Click({R.id.ui_holder_view_activity_vote_item})

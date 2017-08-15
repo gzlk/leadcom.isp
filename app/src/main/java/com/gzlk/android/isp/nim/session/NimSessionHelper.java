@@ -84,7 +84,7 @@ public class NimSessionHelper {
         setSessionListener();
 
         // 注册消息转发过滤器
-        registerMsgForwardFilter();
+        //registerMsgForwardFilter();
 
         // 注册消息撤回过滤器
         registerMsgRevokeFilter();

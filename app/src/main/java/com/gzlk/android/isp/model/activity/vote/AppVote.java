@@ -1,9 +1,6 @@
 package com.gzlk.android.isp.model.activity.vote;
 
 import com.google.gson.reflect.TypeToken;
-import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.etc.Utils;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -29,7 +26,6 @@ import java.util.ArrayList;
 public class AppVote extends Model {
 
     public interface Field {
-        String Description = "description";
         String BeginDate = "beginDate";
         String EndDate = "endDate";
         String CreatorHeadPhoto = "creatorHeadPhoto";
@@ -39,7 +35,24 @@ public class AppVote extends Model {
         String Num = "num";
         String VoteItemId = "voteItemId";
         String Anonymity = "anonymity";
-        String IMSI = "imsi";
+    }
+
+    /**
+     * 投票类型
+     */
+    public interface Type {
+        /**
+         * 单选投票
+         */
+        int SINGLE = 0;
+        /**
+         * 多选投票且至多只能选择两项
+         */
+        int TWICE = 1;
+        /**
+         * 多选投票无限制选择
+         */
+        int UNLIMITED = 2;
     }
 
     /**
@@ -107,6 +120,8 @@ public class AppVote extends Model {
     @Column(Field.End)
     private int end;
     @Ignore
+    private int type;
+    @Ignore
     private int notifyBeginTime;
     @Ignore
     private ArrayList<String> itemContentList;
@@ -124,6 +139,48 @@ public class AppVote extends Model {
     public void saveVoteRecords() {
         if (null != actVoteList) {
             new Dao<>(AppVoteRecord.class).save(actVoteList);
+        }
+    }
+
+    /**
+     * 投票类型
+     *
+     * @return <ul>
+     * <li>0=单选</li>
+     * <li>1=多选（2项）</li>
+     * <li>2=多选无限制选项</li>
+     * </ul>
+     */
+    public int getType() {
+        switch (maxSelectable) {
+            case 1:
+                // 单选
+                type = Type.SINGLE;
+                break;
+            case 2:
+                // 多选，最多两项
+                type = Type.TWICE;
+                break;
+            default:
+                // 多选，无限制
+                type = Type.UNLIMITED;
+                break;
+        }
+        return this.type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+        switch (type) {
+            case Type.SINGLE:
+                maxSelectable = 1;
+                break;
+            case Type.TWICE:
+                maxSelectable = 2;
+                break;
+            case Type.UNLIMITED:
+                maxSelectable = 0;
+                break;
         }
     }
 

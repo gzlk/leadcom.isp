@@ -259,6 +259,7 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
         voteViewHolder.showContent(mAppVote);
         voteViewHolder.showVoteType(mAppVote);
         hasVoted = null != AppVoteRecord.getRecord(mAppVote.getId());
+        setCustomTitle(hasVoted || mAppVote.isEnded() ? R.string.ui_activity_vote_details_fragment_title1 : R.string.ui_activity_vote_details_fragment_title);
         mAdapter.update(mAppVote.getActVoteItemList(), false);
         endTime.setText(getString(R.string.ui_activity_vote_details_end_time, formatDateTime(mAppVote.getEndDate())));
         // 已投过票或者已结束时，不显示投票按钮

@@ -32,6 +32,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -49,6 +50,7 @@ import java.util.Date;
 public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment {
 
     private static final String PARAM_POJO = "vcf_param_pojo";
+    private static final String PARAM_TYPE = "vcf_param_type";
 
     public static VoteCreatorFragment newInstance(String params) {
         VoteCreatorFragment vcf = new VoteCreatorFragment();
@@ -67,9 +69,15 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         BaseActivity.openActivity(context, VoteCreatorFragment.class.getName(), tid, requestCode, true, false);
     }
 
+    /**
+     * 最后选择的类型
+     */
+    private int lstType = AppVote.Type.SINGLE;
+
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
+        lstType = bundle.getInt(PARAM_TYPE, AppVote.Type.SINGLE);
         String json = bundle.getString(PARAM_POJO, "");
         if (!isEmpty(json)) {
             mAppVote = AppVote.fromJson(json);
@@ -79,6 +87,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
+        bundle.putInt(PARAM_TYPE, lstType);
         //mAppVote.setTitle(titleHolder.getValue());
         mAppVote.setTitle(contentView.getValue());
         bundle.putString(PARAM_POJO, AppVote.toJson(mAppVote));
@@ -90,8 +99,8 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     private ClearEditText contentView;
     @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
     private RecyclerView optionsView;
-    //    @ViewId(R.id.ui_activity_vote_creator_type)
-//    private View typeView;
+    @ViewId(R.id.ui_activity_vote_creator_type)
+    private View typeView;
     @ViewId(R.id.ui_activity_vote_creator_max)
     private View maxView;
     @ViewId(R.id.ui_activity_vote_creator_end)
@@ -100,9 +109,9 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     private View notifyView;
 
     //private SimpleInputableViewHolder titleHolder;
-    private SimpleClickableViewHolder maxHolder, timeHolder, notifyHolder;
+    private SimpleClickableViewHolder typeHolder, maxHolder, timeHolder, notifyHolder;
 
-    private String[] items, dftOptions;
+    private String[] items, types, dftOptions, ntfOptions;
     private AppVote mAppVote;
     private VoteItemAdapter mAdapter;
 
@@ -207,6 +216,9 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             optionsView.setLayoutManager(new CustomLinearLayoutManager(optionsView.getContext()));
             optionsView.setNestedScrollingEnabled(false);
         }
+        if (null == types) {
+            types = StringHelper.getStringArray(R.array.ui_activity_vote_types);
+        }
         if (null == mAppVote) {
             mAppVote = new AppVote();
             mAppVote.setItemContentList(new ArrayList<String>());
@@ -217,6 +229,11 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
 //            titleHolder = new SimpleInputableViewHolder(titleView, this);
 //        }
 //        titleHolder.showContent(format(items[0], isEmpty(mAppVote.getTitle()) ? "" : mAppVote.getTitle()));
+        if (null == typeHolder) {
+            typeHolder = new SimpleClickableViewHolder(typeView, this);
+            typeHolder.addOnViewHolderClickListener(onViewHolderClickListener);
+        }
+        typeHolder.showContent(format(items[1], types[lstType]));
         if (null == maxHolder) {
             maxHolder = new SimpleClickableViewHolder(maxView, this);
             maxHolder.addOnViewHolderClickListener(onViewHolderClickListener);
@@ -238,10 +255,22 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     }
 
     private String getNotifyBeginTime() {
-        if (0 >= mAppVote.getNotifyBeginTime()) {
-            return getString(R.string.ui_activity_sign_creator_notify_times_not_need);
-        } else {
-            return StringHelper.getString(R.string.ui_activity_sign_creator_notify_times, mAppVote.getNotifyBeginTime());
+        if (null == ntfOptions) {
+            ntfOptions = StringHelper.getStringArray(R.array.ui_activity_vote_notify_time);
+        }
+        switch (mAppVote.getNotifyBeginTime()) {
+            case 0:
+                return ntfOptions[4];
+            case 30:
+                return ntfOptions[0];
+            case 60:
+                return ntfOptions[1];
+            case 60 * 12:
+                return ntfOptions[2];
+            case 60 * 24:
+                return ntfOptions[3];
+            default:
+                return ntfOptions[4];
         }
     }
 
@@ -279,6 +308,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         Utils.hidingInputBoard(contentView);
         if (null == voteTypes) {
             voteTypes = new ArrayList<>();
+            voteTypes.addAll(Arrays.asList(types));
             //voteTypes.add(types[1]);
             //voteTypes.add(types[2]);
         }
@@ -286,7 +316,11 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
             voteTypePickerView = new OptionsPickerView.Builder(Activity(), new OptionsPickerView.OnOptionsSelectListener() {
                 @Override
                 public void onOptionsSelect(int i, int i1, int i2, View view) {
-                    //mAppVote.setType(i + 1);
+                    lstType = i;
+                    mAppVote.setType(lstType);
+                    if (lstType == AppVote.Type.UNLIMITED) {
+                        mAppVote.setMaxSelectable(mAdapter.getItemCount() - 1);
+                    }
                     initializeHolders();
                 }
             }).setTitleBgColor(getColor(R.color.colorPrimary))
@@ -383,32 +417,45 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     }
 
     private OptionsPickerView optionsPickerView;
-    private ArrayList<Integer> options;
+    private ArrayList<String> options;
+
+    private int getNotifyTime(int index) {
+        switch (index) {
+            case 0:
+                return 30;
+            case 1:
+                return 60;
+            case 2:
+                return 12 * 60;
+            case 3:
+                return 24 * 60;
+            default:
+                return 0;
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private void openOptionsPicker() {
+        if (null == ntfOptions) {
+            ntfOptions = StringHelper.getStringArray(R.array.ui_activity_vote_notify_time);
+        }
         if (null == options) {
             options = new ArrayList<>();
-            options.add(5);
-            options.add(10);
-            options.add(15);
-            options.add(20);
-            options.add(25);
-            options.add(30);
+            options.addAll(Arrays.asList(ntfOptions));
         }
         if (null == optionsPickerView) {
             optionsPickerView = new OptionsPickerView.Builder(Activity(), new OptionsPickerView.OnOptionsSelectListener() {
                 @Override
                 public void onOptionsSelect(int i, int i1, int i2, View view) {
-                    mAppVote.setNotifyBeginTime(options.get(i));
+                    mAppVote.setNotifyBeginTime(getNotifyTime(i));
                     initializeHolders();
                 }
             }).setTitleBgColor(getColor(R.color.colorPrimary))
                     .setSubmitColor(Color.WHITE)
                     .setCancelColor(Color.WHITE)
                     .setContentTextSize(getFontDimension(R.dimen.ui_base_text_size))
-                    .setOutSideCancelable(true).setSelectOptions(0)
-                    .isCenterLabel(true).isDialog(false).setLabels("分钟", "", "").build();
+                    .setOutSideCancelable(true).setSelectOptions(4)
+                    .isCenterLabel(true).isDialog(false).setLabels("", "", "").build();
             optionsPickerView.setPicker(options);
         }
         optionsPickerView.show();
@@ -468,16 +515,25 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
                     // 最多10个选项
                     mAdapter.remove(item);
                     mAdapter.add(vi);
+                    setMaxSelectable(10);
                 } else {
                     mAdapter.add(vi, size - 1);
+                    setMaxSelectable(mAdapter.getItemCount() - 1);
                 }
             } else {
                 mAdapter.remove(item);
                 resetAddItem();
+                setMaxSelectable(mAdapter.getItemCount() - 1);
             }
-            resetMaxSelectable();
+            //resetMaxSelectable();
         }
     };
+
+    private void setMaxSelectable(int max) {
+        if (lstType == AppVote.Type.UNLIMITED) {
+            mAppVote.setMaxSelectable(max);
+        }
+    }
 
     private BaseViewHolder.OnHandlerBoundDataListener<AppVoteItem> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<AppVoteItem>() {
         @Override

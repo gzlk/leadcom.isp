@@ -10,7 +10,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.common.FullTextQueryRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -31,8 +30,10 @@ import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.query.FullTextQuery;
 import com.gzlk.android.isp.model.user.SimpleUser;
 import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.netease.nim.uikit.NimUIKit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -256,10 +257,11 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
                 openActivity(OrganizationPropertiesFragment.class.getName(), model.getId(), false, false, true);
             } else if (model instanceof Archive) {
                 Archive archive = (Archive) model;
-                int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+                // 档案类型：1个人档案，2组织档案(这里的档案类型不一样)
+                int type = archive.getType() == 1 ? Archive.Type.USER : Archive.Type.GROUP;
                 ArchiveDetailsFragment.open(FullTextQueryFragment.this, type, archive.getId(), REQUEST_CHANGE);
             } else if (model instanceof Activity) {
-
+                NimSessionHelper.startTeamSession(Activity(), ((Activity) model).getTid());
             }
         }
     };
@@ -285,7 +287,7 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public int getItemViewType(int position) {
             Model model = get(position);
-            if (model instanceof User || model instanceof Organization ||
+            if (model instanceof SimpleUser || model instanceof Organization ||
                     model instanceof Activity || model instanceof Archive) {
                 return VT_CLICK;
             }
@@ -294,7 +296,7 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == VT_TITLE ? R.layout.holder_view_simple_clickable_gravity_left : R.layout.holder_view_full_text_query_item;
+            return viewType == VT_TITLE ? R.layout.holder_view_text_olny : R.layout.holder_view_full_text_query_item;
         }
 
         @Override

@@ -51,12 +51,12 @@
 
         <include
             android:id="@+id/ui_activity_vote_creator_type"
-            layout="@layout/holder_view_simple_clickable"
-            android:visibility="gone" />
+            layout="@layout/holder_view_simple_clickable" />
 
         <include
             android:id="@+id/ui_activity_vote_creator_max"
-            layout="@layout/holder_view_simple_clickable" />
+            layout="@layout/holder_view_simple_clickable"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/ui_activity_vote_creator_end"

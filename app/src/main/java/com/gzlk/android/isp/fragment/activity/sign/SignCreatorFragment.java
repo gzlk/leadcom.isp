@@ -29,6 +29,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -106,7 +107,7 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
     private SimpleInputableViewHolder titleHolder;
     private SimpleClickableViewHolder addressHolder, beginHolder, endHolder, notifyHolder;
 
-    private String[] items;
+    private String[] items, ntfOptions;
 
     @Override
     public int getLayout() {
@@ -235,10 +236,22 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
     }
 
     private String getNotifyBeginTime() {
-        if (0 >= signing.getNotifyBeginTime()) {
-            return getString(R.string.ui_activity_sign_creator_notify_times_not_need);
-        } else {
-            return StringHelper.getString(R.string.ui_activity_sign_creator_notify_times, signing.getNotifyBeginTime());
+        if (null == ntfOptions) {
+            ntfOptions = StringHelper.getStringArray(R.array.ui_activity_sign_notify_time);
+        }
+        switch (signing.getNotifyBeginTime()) {
+            case 0:
+                return ntfOptions[4];
+            case 10:
+                return ntfOptions[0];
+            case 20:
+                return ntfOptions[1];
+            case 30:
+                return ntfOptions[2];
+            case 60:
+                return ntfOptions[3];
+            default:
+                return ntfOptions[4];
         }
     }
 
@@ -351,32 +364,45 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
     }
 
     private OptionsPickerView optionsPickerView;
-    private ArrayList<Integer> options;
+    private ArrayList<String> options;
+
+    private int getNotifyTimes(int index) {
+        switch (index) {
+            case 0:
+                return 10;
+            case 1:
+                return 20;
+            case 2:
+                return 30;
+            case 3:
+                return 60;
+            default:
+                return 0;
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private void openOptionsPicker() {
+        if (null == ntfOptions) {
+            ntfOptions = StringHelper.getStringArray(R.array.ui_activity_sign_notify_time);
+        }
         if (null == options) {
             options = new ArrayList<>();
-            options.add(5);
-            options.add(10);
-            options.add(15);
-            options.add(20);
-            options.add(25);
-            options.add(30);
+            options.addAll(Arrays.asList(ntfOptions));
         }
         if (null == optionsPickerView) {
             optionsPickerView = new OptionsPickerView.Builder(Activity(), new OptionsPickerView.OnOptionsSelectListener() {
                 @Override
                 public void onOptionsSelect(int i, int i1, int i2, View view) {
-                    signing.setNotifyBeginTime(options.get(i));
+                    signing.setNotifyBeginTime(getNotifyTimes(i));
                     initializeHolders();
                 }
             }).setTitleBgColor(getColor(R.color.colorPrimary))
                     .setSubmitColor(Color.WHITE)
                     .setCancelColor(Color.WHITE)
                     .setContentTextSize(getFontDimension(R.dimen.ui_base_text_size))
-                    .setOutSideCancelable(true).setSelectOptions(1)
-                    .isCenterLabel(true).isDialog(false).setLabels("分钟", "", "").build();
+                    .setOutSideCancelable(true).setSelectOptions(4)
+                    .isCenterLabel(true).isDialog(false).setLabels("", "", "").build();
             optionsPickerView.setPicker(options);
         }
         optionsPickerView.show();

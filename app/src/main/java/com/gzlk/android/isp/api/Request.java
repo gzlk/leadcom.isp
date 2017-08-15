@@ -79,6 +79,7 @@ public abstract class Request<T> {
     protected static final String SAVE = "/save";
 
     private static final int ABSTR_SIZE = 100;
+    protected static final int MAX_PAGE_SIZE = 1000;
     private static final int ABSTR_ROW = 5;
     protected static final String SUMMARY = format("abstrSize=%d&abstrRow=%d", ABSTR_SIZE, ABSTR_ROW);
 

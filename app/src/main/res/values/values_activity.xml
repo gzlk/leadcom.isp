@@ -207,6 +207,13 @@
         <item>2|截止时间|%s|1</item>
         <item>3|提醒|%s|1</item>
     </string-array>
+    <string-array name="ui_activity_sign_notify_time">
+        <item>提前10分钟</item>
+        <item>提前20分钟</item>
+        <item>提前半小时</item>
+        <item>提前1小时</item>
+        <item>不提醒</item>
+    </string-array>
     <string name="ui_activity_sign_creator_publishing">正在发布签到请稍候&#8230;</string>
     <string name="ui_activity_sign_creator_published">已发布新的签到，您可以在签到开始之前提醒大家</string>
 
@@ -251,14 +258,21 @@
     </string-array>
     <string name="ui_activity_vote_creator_max_selectable" formatted="false">%d个选项</string>
     <string-array name="ui_activity_vote_types">
-        <item></item>
         <item>单选</item>
-        <item>多选</item>
+        <item>多选，最多两项</item>
+        <item>多选，无限制</item>
     </string-array>
     <string name="ui_activity_vote_item_hint">投票选项</string>
     <string-array name="ui_activity_vote_default_options">
         <item>选项%d</item>
         <item>添加选项</item>
+    </string-array>
+    <string-array name="ui_activity_vote_notify_time">
+        <item>提前30分钟</item>
+        <item>提前1小时</item>
+        <item>提前12小时</item>
+        <item>提前24小时</item>
+        <item>不提醒</item>
     </string-array>
     <string name="ui_activity_vote_creator_invalid_activity">无效的活动</string>
     <string name="ui_activity_vote_creator_title_invalid">投票标题不符合要求</string>
@@ -268,6 +282,7 @@
     <string name="ui_activity_vote_creator_publish_vote_item">正在添加投票选项&#8239;</string>
 
     <string name="ui_activity_vote_details_fragment_title">投票详情</string>
+    <string name="ui_activity_vote_details_fragment_title1">投票统计</string>
     <string name="ui_activity_vote_details_has_ended">投票终止，查看结果</string>
     <string name="ui_activity_vote_details_status_voting">进行中</string>
     <string name="ui_activity_vote_details_status_ended">已结束</string>

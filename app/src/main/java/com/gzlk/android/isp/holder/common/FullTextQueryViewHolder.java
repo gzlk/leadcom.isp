@@ -14,6 +14,7 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.SimpleUser;
 import com.gzlk.android.isp.model.user.User;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -44,6 +45,18 @@ public class FullTextQueryViewHolder extends BaseViewHolder {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageSize = getDimension(R.dimen.ui_base_user_header_image_size);
+        imageOval.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(String url) {
+                rootClick();
+            }
+        });
+        imageRound.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(String url) {
+                rootClick();
+            }
+        });
     }
 
     public void setSearchingText(String text) {
@@ -96,5 +109,16 @@ public class FullTextQueryViewHolder extends BaseViewHolder {
         String text = archive.getTitle();
         text = getSearchingText(text, searchingText);
         textView.setText(Html.fromHtml(text));
+    }
+
+    @Click({R.id.ui_holder_view_full_text_query_item_root})
+    private void elementClick(View view) {
+        rootClick();
+    }
+
+    private void rootClick() {
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        }
     }
 }
