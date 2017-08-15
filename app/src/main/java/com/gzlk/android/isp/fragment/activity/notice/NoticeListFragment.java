@@ -79,7 +79,7 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
         // 通知列表
         setCustomTitle(R.string.ui_activity_notice_list_fragment_title);
         if (mCreatable) {
-            tryResetRightEvent();
+            resetRightEvent();
         }
         initializeAdapter();
     }
@@ -174,6 +174,7 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
+                stopRefreshing();
             }
         }).list(mActivityId, remotePageNumber);
     }
@@ -190,6 +191,9 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             AppNotice notice = mAdapter.get(index);
+            notice.setRead(true);
+            AppNotice.save(notice);
+            mAdapter.notifyItemChanged(index);
             NoticeDetailsFragment.open(NoticeListFragment.this, notice.getId());
         }
     };

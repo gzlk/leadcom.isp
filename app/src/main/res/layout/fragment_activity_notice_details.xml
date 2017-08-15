@@ -21,11 +21,13 @@
 
             <include
                 android:id="@+id/ui_activity_notice_details_author"
-                layout="@layout/holder_view_simple_clickable_gravity_left" />
+                layout="@layout/holder_view_simple_clickable_gravity_left"
+                android:visibility="gone" />
 
             <include
                 android:id="@+id/ui_activity_notice_details_time"
-                layout="@layout/holder_view_simple_clickable_gravity_left" />
+                layout="@layout/holder_view_simple_clickable_gravity_left"
+                android:visibility="gone" />
 
             <com.gzlk.android.isp.lib.view.ExpandableTextView
                 android:id="@+id/ui_activity_notice_details_content"

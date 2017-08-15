@@ -51,6 +51,7 @@ public class VoteViewHolder extends BaseViewHolder {
         headerName.setText(appVote.getCreatorName());
         //titleView.setText(appVote.getTitle());
         //titleView.setVisibility(isEmpty(appVote.getTitle()) ? View.GONE : View.VISIBLE);
+        headerImage.displayImage(appVote.getCreatorHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size), false, false);
         descView.setText(appVote.getTitle());
         descView.makeExpandable();
         timeView.setText(fragment().formatTimeAgo(appVote.getCreateDate()));

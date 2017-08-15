@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.activity;
 
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Organization;
@@ -18,6 +19,14 @@ import com.litesuits.orm.db.annotation.Table;
  */
 @Table(Activity.Table.NOTICE)
 public class AppNotice extends Model {
+
+    public static AppNotice get(String noticeId) {
+        return new Dao<>(AppNotice.class).query(noticeId);
+    }
+
+    public static void save(AppNotice notice) {
+        new Dao<>(AppNotice.class).save(notice);
+    }
 
     //活动Id
     @Column(Activity.Field.ActivityId)

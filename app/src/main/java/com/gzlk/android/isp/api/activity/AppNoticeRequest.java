@@ -11,6 +11,8 @@ import com.litesuits.http.request.param.HttpMethods;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 /**
  * <b>功能描述：</b>活动应用：通知<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -54,6 +56,24 @@ public class AppNoticeRequest extends Request<AppNotice> {
     public AppNoticeRequest setOnMultipleRequestListener(OnMultipleRequestListener<AppNotice> listListener) {
         onMultipleRequestListener = listListener;
         return this;
+    }
+
+    @Override
+    protected void save(AppNotice notice) {
+        AppNotice old = AppNotice.get(notice.getId());
+        notice.setRead(null != old && old.isRead());
+        super.save(notice);
+    }
+
+    @Override
+    protected void save(List<AppNotice> list) {
+        if (null != list) {
+            for (AppNotice notice : list) {
+                AppNotice old = AppNotice.get(notice.getId());
+                notice.setRead(null != old && old.isRead());
+            }
+        }
+        super.save(list);
     }
 
     /**

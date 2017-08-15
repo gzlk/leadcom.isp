@@ -32,6 +32,7 @@ public class AppVote extends Model {
         String Description = "description";
         String BeginDate = "beginDate";
         String EndDate = "endDate";
+        String CreatorHeadPhoto = "creatorHeadPhoto";
         String End = "end";
         String VoteId = "voteId";
         String MaxSelectable = "maxSelectable";
@@ -90,6 +91,9 @@ public class AppVote extends Model {
     //创建者名字
     @Column(Archive.Field.CreatorName)
     private String creatorName;
+    //创建者用户头像
+    @Column(Field.CreatorHeadPhoto)
+    private String creatorHeadPhoto;
     // 最大可选数量
     @Column(Field.MaxSelectable)
     private int maxSelectable;
@@ -200,6 +204,14 @@ public class AppVote extends Model {
 
     public void setCreatorName(String creatorName) {
         this.creatorName = creatorName;
+    }
+
+    public String getCreatorHeadPhoto() {
+        return creatorHeadPhoto;
+    }
+
+    public void setCreatorHeadPhoto(String creatorHeadPhoto) {
+        this.creatorHeadPhoto = creatorHeadPhoto;
     }
 
     public int getAnonymity() {
