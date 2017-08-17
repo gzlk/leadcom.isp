@@ -9,6 +9,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -101,4 +102,6 @@ public class Cache {
      * 当前登录用户的id、姓名、网易云信登录的token、api服务器的accessToken
      */
     public String userId, nimToken, accessToken, userName;
+
+    public ArrayList<String> groupIds = new ArrayList<>();
 }

@@ -9,6 +9,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.activity.ActivityManagementViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -209,7 +210,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).list(mQueryId, ActRequest.LIST_CREATED, "", remotePageNumber);
+        }).list(mQueryId, ActRequest.LIST_CREATED, "", remotePageNumber, Cache.cache().groupIds);
     }
 
     private void loadingEndedActivity() {
@@ -225,7 +226,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).list(mQueryId, ActRequest.LIST_ENDED, "", remotePageNumber);
+        }).list(mQueryId, ActRequest.LIST_ENDED, "", remotePageNumber, Cache.cache().groupIds);
     }
 
     private void loadingJoinedActivity() {
@@ -241,7 +242,7 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 stopRefreshing();
             }
-        }).list(mQueryId, ActRequest.LIST_JOINED, "", remotePageNumber);
+        }).list(mQueryId, ActRequest.LIST_JOINED, "", remotePageNumber, Cache.cache().groupIds);
     }
 
     private void loadingNotJoinActivity() {

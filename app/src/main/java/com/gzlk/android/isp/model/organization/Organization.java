@@ -20,6 +20,11 @@ import java.util.ArrayList;
 @Table(Organization.Table.GROUP)
 public class Organization extends Model {
 
+    /**
+     * 其他组织的Id
+     */
+    public static final String OTHER_ID = "ad912b3b344f426a93860248ffd3c715";
+
     public static class Table {
         public static final String GROUP = "organization";
         public static final String SQUAD = "squad";

@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
@@ -105,7 +106,7 @@ public class UnApprovedInviteFragment extends BaseOrganizationFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
             }
-        }).activityInviteNotHandled(mQueryId, remotePageNumber);
+        }).activityInviteNotHandled(mQueryId, remotePageNumber, Cache.cache().groupIds);
     }
 
     private void initializeAdapter() {

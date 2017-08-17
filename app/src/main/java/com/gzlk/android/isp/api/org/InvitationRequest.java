@@ -2,11 +2,12 @@ package com.gzlk.android.isp.api.org;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.query.SingleQuery;
-import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.PaginationQuery;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -220,7 +221,8 @@ public class InvitationRequest extends Request<Invitation> {
      * <br/>(2017/07/14 17:00更改)
      * <br/>(2017/07/27 11:00更改)
      */
-    public void activityInviteNotHandled(String groupId, int pageNumber) {
+    public void activityInviteNotHandled(String groupId, int pageNumber, ArrayList<String> groupIds) {
+        String json = Utils.listToString(groupIds);
         String param = format("%s?groupId=%s&pageNumber=%d&pageSize=100", url(INVITE_INTO_ACTIVITY, "/list/notHandle"), groupId, pageNumber);
         httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }

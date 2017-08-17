@@ -2,11 +2,12 @@ package com.gzlk.android.isp.api.activity;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.query.SingleQuery;
-import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.PaginationQuery;
+import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
@@ -342,9 +343,10 @@ public class ActRequest extends Request<Activity> {
      * @param info       模糊搜索(活动标题)
      * @param pageNumber 页码
      */
-    public void list(@NonNull String groupId, int ope, String info, int pageNumber) {
-        // groupId,ope,info,pageSize,pageNumber
-        String param = format("%s?groupId=%s&ope=%d&info=%s&pageNumber=%d", url(LIST), groupId, ope, info, pageNumber);
+    public void list(@NonNull String groupId, int ope, String info, int pageNumber, ArrayList<String> groupIds) {
+        // groupId,ope,info,pageSize,pageNumber,[groupIds]
+        String json = Utils.listToString(groupIds);
+        String param = format("%s?groupId=%s&ope=%d&info=%s&pageNumber=%d&groupIds=%s", url(LIST), groupId, ope, info, pageNumber, json);
         httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 
@@ -354,9 +356,10 @@ public class ActRequest extends Request<Activity> {
      * @param groupId    组织id
      * @param pageNumber 页码
      */
-    public void listFront(@NonNull String groupId, int pageNumber) {
-        // groupId,pageSize,pageNumber
-        String param = format("%s/front?groupId=%s&pageNumber=%d", url(LIST), groupId, pageNumber);
+    public void listFront(@NonNull String groupId, int pageNumber, ArrayList<String> groupIds) {
+        // groupId,pageSize,pageNumber,[groupIds]
+        String json = Utils.listToString(groupIds);
+        String param = format("%s/front?groupId=%s&pageNumber=%d&groupIds=%s", url(LIST), groupId, pageNumber, json);
         httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 

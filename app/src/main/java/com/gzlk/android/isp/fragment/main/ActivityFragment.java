@@ -10,6 +10,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.org.OrgRequest;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
@@ -264,7 +265,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 showUnreadNum(NIMClient.getService(MsgService.class).getTotalUnreadCount() + inviteNumber);
                 resetUnhandledInvite(invtNum);
             }
-        }).listFront(mQueryId, remotePageNumber);
+        }).listFront(mQueryId, remotePageNumber, Cache.cache().groupIds);
     }
 
     private void resetUnhandledInvite(int invtNum) {
@@ -327,7 +328,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
     }
 
     public void rightIconClick(View view) {
-        if (mQueryId.equals(Activity.OTHER_ID)) {
+        if (mQueryId.equals(Organization.OTHER_ID)) {
             showTooltip(view, R.id.ui_tooltip_activity_management_normal, true, TooltipHelper.TYPE_LEFT, onClickListener);
         } else {
             showTooltip(view, R.id.ui_tooltip_activity_management, true, TooltipHelper.TYPE_LEFT, onClickListener);

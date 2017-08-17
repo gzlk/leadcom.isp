@@ -9,6 +9,7 @@ import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.api.org.SquadRequest;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
@@ -59,10 +60,21 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
             @Override
             public void onResponse(List<Organization> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                Cache.cache().groupIds.clear();
+                if (null != list) {
+                    for (Organization org : list) {
+                        if (!org.getId().equals(Organization.OTHER_ID)) {
+                            if (!Cache.cache().groupIds.contains(org.getId())) {
+                                Cache.cache().groupIds.add(org.getId());
+                            }
+                        }
+                    }
+                }
                 onFetchingJoinedRemoteOrganizationsComplete(list);
             }
         }).list(ope);
     }
+
 
     /**
      * 查询我加入的组织列表返回了
@@ -241,7 +253,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingJoinedActivityComplete(list);
             }
-        }).list(mOrganizationId, ActRequest.LIST_JOINED, "", remotePageNumber);
+        }).list(mOrganizationId, ActRequest.LIST_JOINED, "", remotePageNumber, Cache.cache().groupIds);
     }
 
     protected void onFetchingJoinedActivityComplete(List<Activity> list) {
@@ -257,7 +269,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 onFetchingUnHandledActivityInviteComplete(list);
             }
-        }).activityInviteNotHandled(groupId, 1);
+        }).activityInviteNotHandled(groupId, 1, Cache.cache().groupIds);
     }
 
     /**
