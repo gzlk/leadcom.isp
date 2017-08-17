@@ -17,8 +17,6 @@ public abstract class CustomAttachment extends BaseAttachment {
 
     // id
     private String id;
-    // accessToken
-    private String accessToken;
     //创建者Id
     private String creatorId;
     //创建者名称
@@ -27,25 +25,22 @@ public abstract class CustomAttachment extends BaseAttachment {
     private String createDate;
     //修改时间
     private String modifyDate;
+    // ios中用的id
+    private String customId;
 
-    public CustomAttachment(int type) {
+    CustomAttachment(int type) {
         super(type);
     }
 
     public String getId() {
+        if (isEmpty(id)) {
+            id = customId;
+        }
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
     }
 
     public String getCreatorId() {
@@ -80,14 +75,19 @@ public abstract class CustomAttachment extends BaseAttachment {
         this.modifyDate = modifyDate;
     }
 
+    public String getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(String customId) {
+        this.customId = customId;
+    }
+
     @Override
     protected void parseData(JSONObject data) {
         try {
             if (data.has("id")) {
                 id = data.getString("id");
-            }
-            if (data.has("accessToken")) {
-                accessToken = data.getString("accessToken");
             }
             if (data.has("creatorId")) {
                 creatorId = data.getString("creatorId");
@@ -101,6 +101,9 @@ public abstract class CustomAttachment extends BaseAttachment {
             if (data.has("modifyDate")) {
                 modifyDate = data.getString("modifyDate");
             }
+            if (data.has("customId")) {
+                customId = data.getString("customId");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,7 +114,7 @@ public abstract class CustomAttachment extends BaseAttachment {
         JSONObject object = new JSONObject();
         try {
             object.put("id", id)
-                    .put("accessToken", accessToken)
+                    .put("customId", customId)
                     .put("creatorId", creatorId)
                     .put("creatorName", creatorName)
                     .put("createDate", createDate)

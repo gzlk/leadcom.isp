@@ -59,7 +59,7 @@ public class VoteOptionViewHolder extends BaseViewHolder {
     }
 
     private void showMultiChooseIcon(AppVoteItem item) {
-        iconView.setText(item.isSelected() ? R.string.ui_icon_checkbox_checked : R.string.ui_icon_checkbox_unchecked);
+        iconView.setText(item.isSelected() ? R.string.ui_icon_select_solid : R.string.ui_icon_radio_unselected);
         iconView.setTextColor(getColor(!item.isSelected() ? R.color.textColorHint : R.color.colorPrimary));
     }
 

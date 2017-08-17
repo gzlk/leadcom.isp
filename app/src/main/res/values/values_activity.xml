@@ -290,10 +290,11 @@
     <string name="ui_activity_vote_details_status_ended">已结束</string>
     <string name="ui_activity_vote_details_button_reject">弃权</string>
     <string name="ui_activity_vote_details_button_vote">投票</string>
+    <string name="ui_activity_vote_details_rejected">已弃权</string>
     <string name="ui_activity_vote_details_number" formatted="false">%d票</string>
     <string name="ui_activity_vote_details_loading">正在加载投票详情&#8230;</string>
     <string name="ui_activity_vote_details_end_time" formatted="false">投票截止时间：%s</string>
-    <string name="ui_activity_vote_details_nothing_selected">请选择选项之后再进行投票</string>
+    <string name="ui_activity_vote_details_nothing_selected">没有选择任何投票项，您这是要投弃权吗？</string>
     <string name="ui_activity_vote_details_voting">正在处理您投票选项&#8230;</string>
     <string name="ui_activity_vote_details_voting_failed">投票失败</string>
     <string name="ui_activity_vote_details_delete">

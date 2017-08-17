@@ -16,7 +16,7 @@ import org.json.JSONObject;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseAttachment implements MsgAttachment {
+abstract class BaseAttachment implements MsgAttachment {
 
     protected static boolean isEmpty(String string) {
         return StringHelper.isEmpty(string);
@@ -29,7 +29,7 @@ public abstract class BaseAttachment implements MsgAttachment {
      */
     protected int type;
 
-    public BaseAttachment(int type) {
+    BaseAttachment(int type) {
         this.type = type;
     }
 

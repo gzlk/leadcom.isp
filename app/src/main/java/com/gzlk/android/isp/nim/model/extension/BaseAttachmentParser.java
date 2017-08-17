@@ -52,7 +52,7 @@ public class BaseAttachmentParser implements MsgAttachmentParser {
     /**
      * 打包数据
      */
-    public static String packData(int type, JSONObject data) {
+    static String packData(int type, JSONObject data) {
         JSONObject object = new JSONObject();
         try {
             object.put(KEY_TYPE, type);

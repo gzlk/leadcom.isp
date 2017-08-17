@@ -57,6 +57,7 @@ public class VoteAction extends BaseAction {
                     assert appVote != null;
                     vote.setTitle(appVote.getTitle());
                     vote.setVoteId(appVote.getId());
+                    vote.setCustomId(appVote.getId());
                     vote.setMaxVote(appVote.getMaxSelectable());
                     for (String item : appVote.getItemContentList()) {
                         vote.getVoteItems().add(item);

@@ -32,6 +32,8 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
 
+import java.util.ArrayList;
+
 /**
  * <b>功能描述：</b>投票详情页<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -83,6 +85,8 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
     private RecyclerView voteOptions;
     @ViewId(R.id.ui_activity_vote_details_end_time)
     private TextView endTime;
+    @ViewId(R.id.ui_activity_vote_details_refused)
+    private TextView refused;
     @ViewId(R.id.ui_tool_view_bottom_buttons_1)
     private CorneredButton bottomButton1;
     @ViewId(R.id.ui_tool_view_bottom_buttons_2)
@@ -146,7 +150,7 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_tool_view_bottom_buttons_1:
-                finish();
+                voting(new ArrayList<String>());
                 break;
             case R.id.ui_tool_view_bottom_buttons_2:
                 vote();
@@ -163,61 +167,57 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private int voteIndex = 0;
-
     private void vote() {
         fetchingActivity();
         if (isEmpty(activityId)) {
             ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_invalid_activity);
             return;
         }
-        if (selectedItems() > 0) {
+        ArrayList<String> ids = selectedItems();
+        if (ids.size() > 0) {
             showImageHandlingDialog(R.string.ui_activity_vote_details_voting);
-            voteIndex = 0;
-            voting();
+            voting(ids);
         } else {
-            ToastHelper.make().showMsg(R.string.ui_activity_vote_details_nothing_selected);
+            warningRefuseVote();
         }
     }
 
-    private int selectedItems() {
-        int cnt = 0;
+    // 提醒是否是要弃权
+    private void warningRefuseVote() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_vote_details_nothing_selected, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                bottomButton1.performClick();
+                return true;
+            }
+        }, null);
+    }
+
+    private ArrayList<String> selectedItems() {
+        ArrayList<String> ids = new ArrayList<>();
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
-            cnt += mAdapter.get(i).isSelected() ? 1 : 0;
-        }
-        return cnt;
-    }
-
-    private void voting() {
-        if (voteIndex >= mAdapter.getItemCount()) {
-            // 投票完毕
-            hideImageHandlingDialog();
-            loadingVoteDetails();
-        } else {
-            AppVoteItem item = mAdapter.get(voteIndex);
+            AppVoteItem item = mAdapter.get(i);
             if (item.isSelected()) {
-                voting(item.getId());
-            } else {
-                voteIndex++;
-                voting();
+                ids.add(item.getId());
             }
         }
+        return ids;
     }
 
-    private void voting(String itemId) {
+    private void voting(ArrayList<String> itemIds) {
         AppVoteRecordRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppVoteRecord>() {
             @Override
             public void onResponse(AppVoteRecord appVoteRecord, boolean success, String message) {
                 super.onResponse(appVoteRecord, success, message);
+                hideImageHandlingDialog();
                 if (success) {
-                    voteIndex++;
-                    voting();
+                    // 投票完毕
+                    loadingVoteDetails();
                 } else {
-                    hideImageHandlingDialog();
                     ToastHelper.make().showMsg(R.string.ui_activity_vote_details_voting_failed);
                 }
             }
-        }).add(mQueryId, itemId);
+        }).add(mQueryId, itemIds);
     }
 
     private void initializeHolder() {
@@ -250,7 +250,7 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).find(mQueryId, AppVoteRequest.FIND_ALL, remotePageNumber);
+        }).find(mQueryId, AppVoteRequest.FIND_MY, remotePageNumber);
     }
 
     private boolean hasVoted = false;
@@ -258,7 +258,8 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
     private void showDetails() {
         voteViewHolder.showContent(mAppVote);
         voteViewHolder.showVoteType(mAppVote);
-        hasVoted = null != AppVoteRecord.getRecord(mAppVote.getId());
+        hasVoted = null != mAppVote.getActVote() && !mAppVote.getActVote().haventVote();
+        refused.setVisibility(hasVoted && mAppVote.getActVote().hasRefused() ? View.VISIBLE : View.GONE);
         setCustomTitle(hasVoted || mAppVote.isEnded() ? R.string.ui_activity_vote_details_fragment_title1 : R.string.ui_activity_vote_details_fragment_title);
         mAdapter.update(mAppVote.getActVoteItemList(), false);
         endTime.setText(getString(R.string.ui_activity_vote_details_end_time, formatDateTime(mAppVote.getEndDate())));

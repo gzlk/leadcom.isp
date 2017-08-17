@@ -5,10 +5,8 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.sign.SignFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.nim.callback.SignCallback;
 import com.gzlk.android.isp.nim.constant.SigningNotifyType;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
@@ -99,9 +97,9 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
         iconContainer.setBackground(context.getResources().getColor(getColor()));
         titleTextView.setText(notify.getTitle());
         contentTextView.setText(notify.getContent());
-        long tm = notify.getNotifyType() == SigningNotifyType.NEW ? notify.getBeginTime() : notify.getEndTime();
+        String tm = notify.getNotifyType() == SigningNotifyType.NEW ? notify.getBeginTime() : notify.getEndTime();
         int str = notify.getNotifyType() == SigningNotifyType.NEW ? R.string.ui_nim_app_sign_start_time : R.string.ui_nim_app_sign_end_time;
-        String time = StringHelper.getString(str, Utils.format("MM-dd HH:mm", tm));
+        String time = StringHelper.getString(str, tm);
         timeTextView.setText(time);
         addressTextView.setText(notify.getAddress());
     }

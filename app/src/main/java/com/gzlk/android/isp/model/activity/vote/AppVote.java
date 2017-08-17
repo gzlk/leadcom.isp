@@ -33,7 +33,8 @@ public class AppVote extends Model {
         String VoteId = "voteId";
         String MaxSelectable = "maxSelectable";
         String Num = "num";
-        String VoteItemId = "voteItemId";
+        String Archived = "archived";
+        String VoteItemId = "voteItemIds";
         String Anonymity = "anonymity";
     }
 
@@ -53,6 +54,24 @@ public class AppVote extends Model {
          * 多选投票无限制选择
          */
         int UNLIMITED = 2;
+    }
+
+    /**
+     * 投票状态
+     */
+    public interface Status {
+        /**
+         * 未投票
+         */
+        int NOT_VOTE = 1;
+        /**
+         * 已投票
+         */
+        int HAS_VOTED = 2;
+        /**
+         * 已弃权
+         */
+        int REFUSED = 3;
     }
 
     /**
@@ -119,10 +138,16 @@ public class AppVote extends Model {
     //是否已经结束
     @Column(Field.End)
     private int end;
+    //是否已存档(0.未存档,1.已存档)
+    @Column(Field.Archived)
+    private int archive;
     @Ignore
     private int type;
     @Ignore
     private int notifyBeginTime;
+    //当前用户的投票记录
+    @Ignore
+    private AppVoteRecord actVote;
     @Ignore
     private ArrayList<String> itemContentList;
     @Ignore
@@ -136,9 +161,16 @@ public class AppVote extends Model {
         }
     }
 
+    /**
+     * 保存当前用户的投票记录和所有投票列表
+     */
     public void saveVoteRecords() {
+        Dao<AppVoteRecord> dao = new Dao<>(AppVoteRecord.class);
+        if (null != actVote) {
+            dao.save(actVote);
+        }
         if (null != actVoteList) {
-            new Dao<>(AppVoteRecord.class).save(actVoteList);
+            dao.save(actVoteList);
         }
     }
 
@@ -335,5 +367,21 @@ public class AppVote extends Model {
 
     public void setActVoteList(ArrayList<AppVoteRecord> actVoteList) {
         this.actVoteList = actVoteList;
+    }
+
+    public int getArchive() {
+        return archive;
+    }
+
+    public void setArchive(int archive) {
+        this.archive = archive;
+    }
+
+    public AppVoteRecord getActVote() {
+        return actVote;
+    }
+
+    public void setActVote(AppVoteRecord actVote) {
+        this.actVote = actVote;
     }
 }

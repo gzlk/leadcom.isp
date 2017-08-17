@@ -58,6 +58,7 @@ public class NoticeAction extends BaseAction {
                     IMMessage message;
                     NoticeAttachment notice = Json.gson().fromJson(result, new TypeToken<NoticeAttachment>() {
                     }.getType());
+                    notice.setCustomId(notice.getId());
                     message = MessageBuilder.createCustomMessage(getAccount(), SessionTypeEnum.Team, notice.getTitle(), notice);
                     sendMessage(message);
                     break;

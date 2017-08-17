@@ -11,7 +11,7 @@ package com.gzlk.android.isp.nim.model.extension;
  * <b>修改备注：</b><br />
  */
 
-public interface AttachmentType {
+interface AttachmentType {
     /**
      * 群通知
      */

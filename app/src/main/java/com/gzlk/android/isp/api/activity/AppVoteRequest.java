@@ -120,17 +120,26 @@ public class AppVoteRequest extends Request<AppVote> {
      * 查询投票设置、选项、投票记录
      */
     public static final int FIND_ALL = 3;
+    /**
+     * 4.投票设置信息,投票选项列表和当前用户投票记录
+     */
+    public static final int FIND_MY = 4;
 
     /**
      * 查询单个投票设置(包括其所有投票选项和选项得票数)
      *
      * @param voteId     投票应用id
-     * @param ope        ope：1.表示只查询投票设置对象，2.表示同时查询投票设置对象和投票选项；3.表示查询投票设置对象、投票选项和所有投票人的投票记录
+     * @param ope        <ul>
+     *                   <li>1.表示只查询投票设置对象</li>
+     *                   <li>2.表示同时查询投票设置对象和投票选项</li>
+     *                   <li>3.表示查询投票设置对象、投票选项和所有投票人的投票记录</li>
+     *                   <li>4.投票设置信息,投票选项列表和当前用户投票记录</li>
+     *                   </ul>
      * @param pageNumber pageNum:第几页;仅当ope为3时，分页入参有效
      */
     public void find(String voteId, int ope, int pageNumber) {
         // id="",ope="",pageSize="",pageNum=""
-        httpRequest(getRequest(SingleVote.class, format("%s?id=%s&ope=%d&&pageNumber=%d&pageSize=%d", url(FIND), voteId, ope, pageNumber, MAX_PAGE_SIZE), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleVote.class, format("%s?id=%s&ope=%d&&pageNumber=%d", url(FIND), voteId, ope, pageNumber), "", HttpMethods.Get));
     }
 
     /**

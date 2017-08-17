@@ -31,6 +31,9 @@ public class VoteAttachment extends CustomAttachment {
     private ArrayList<String> voteItems;
 
     public String getVoteId() {
+        if (isEmpty(voteId)) {
+            voteId = getCustomId();
+        }
         return voteId;
     }
 

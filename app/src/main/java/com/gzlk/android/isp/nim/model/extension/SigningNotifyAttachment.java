@@ -1,5 +1,7 @@
 package com.gzlk.android.isp.nim.model.extension;
 
+import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.StringHelper;
 
 import org.json.JSONObject;
@@ -43,9 +45,9 @@ public class SigningNotifyAttachment extends CustomAttachment {
     // 签到的地址
     private String address;
     // 开始时间
-    private long beginTime;
+    private String beginTime;
     // 结束时间
-    private long endTime;
+    private String endTime;
 
     public int getNotifyType() {
         return notifyType;
@@ -64,6 +66,9 @@ public class SigningNotifyAttachment extends CustomAttachment {
     }
 
     public String getSetupId() {
+        if (isEmpty(setupId)) {
+            setupId = getCustomId();
+        }
         return setupId;
     }
 
@@ -101,19 +106,19 @@ public class SigningNotifyAttachment extends CustomAttachment {
         this.address = address;
     }
 
-    public long getBeginTime() {
+    public String getBeginTime() {
         return beginTime;
     }
 
-    public void setBeginTime(long beginTime) {
+    public void setBeginTime(String beginTime) {
         this.beginTime = beginTime;
     }
 
-    public long getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(long endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
@@ -140,10 +145,10 @@ public class SigningNotifyAttachment extends CustomAttachment {
                 address = data.getString("address");
             }
             if (data.has("beginTime")) {
-                beginTime = data.getLong("beginTime");
+                beginTime = data.getString("beginTime");
             }
             if (data.has("endTime")) {
-                endTime = data.getLong("endTime");
+                endTime = data.getString("endTime");
             }
         } catch (Exception e) {
             e.printStackTrace();

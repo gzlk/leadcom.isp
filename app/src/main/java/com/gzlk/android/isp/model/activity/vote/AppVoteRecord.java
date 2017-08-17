@@ -1,14 +1,15 @@
 package com.gzlk.android.isp.model.activity.vote;
 
-import com.gzlk.android.isp.api.activity.AppVoteRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,31 +35,38 @@ public class AppVoteRecord extends Model {
         return (null == list || list.size() < 1) ? null : list.get(0);
     }
 
-    //活动Id
-    @Column(Activity.Field.ActivityId)
-    private String actId;
     //投票设置的id(用于把签到记录和签到设置关联起来)
     @Column(AppVote.Field.VoteId)
     private String setupId;
     //投票选择项的id
     @Column(AppVote.Field.VoteItemId)
-    private String itemId;
+    private ArrayList<String> itemIdList;
     //创建者名称
     @Column(Field.UserName)
     private String userName;
     //创建者的id
     @Column(Field.UserId)
     private String userId;
+    //用户头像
+    @Column(User.Field.HeadPhoto)
+    private String headPhoto;
+    //投票状态(1.未投票,2.已投票,3.弃权)
+    @Column(Activity.Field.Status)
+    private int status;
     //创建时间
     @Column(Field.CreateDate)
     protected String createDate;
 
-    public String getActId() {
-        return actId;
+    public boolean haventVote() {
+        return status == AppVote.Status.NOT_VOTE;
     }
 
-    public void setActId(String actId) {
-        this.actId = actId;
+    public boolean hasVoted() {
+        return status == AppVote.Status.HAS_VOTED;
+    }
+
+    public boolean hasRefused() {
+        return status == AppVote.Status.REFUSED;
     }
 
     public String getSetupId() {
@@ -69,12 +77,12 @@ public class AppVoteRecord extends Model {
         this.setupId = setupId;
     }
 
-    public String getItemId() {
-        return itemId;
+    public ArrayList<String> getItemIdList() {
+        return itemIdList;
     }
 
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
+    public void setItemIdList(ArrayList<String> itemIdList) {
+        this.itemIdList = itemIdList;
     }
 
     public String getUserName() {
@@ -91,6 +99,22 @@ public class AppVoteRecord extends Model {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getHeadPhoto() {
+        return headPhoto;
+    }
+
+    public void setHeadPhoto(String headPhoto) {
+        this.headPhoto = headPhoto;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getCreateDate() {

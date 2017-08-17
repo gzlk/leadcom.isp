@@ -7,8 +7,11 @@ import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.model.activity.vote.AppVoteRecord;
 import com.litesuits.http.request.param.HttpMethods;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>投票记录<br />
@@ -57,11 +60,11 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
     /**
      * 投票
      */
-    public void add(String setupId, String itemId) {
+    public void add(String setupId, ArrayList<String> itemIdList) {
         // {setupId,itemId}
         JSONObject object = new JSONObject();
         try {
-            object.put("itemId", itemId)
+            object.put("itemIdList", new JSONArray(itemIdList))
                     .put("setupId", setupId);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -75,7 +78,7 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
     public void add(AppVoteRecord record) {
         JSONObject object = new JSONObject();
         try {
-            object.put("itemId", record.getItemId())
+            object.put("itemIdList", new JSONArray(record.getItemIdList()))
                     .put("setupId", record.getSetupId());
         } catch (JSONException e) {
             e.printStackTrace();
