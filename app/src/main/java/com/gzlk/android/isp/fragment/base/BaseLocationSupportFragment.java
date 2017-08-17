@@ -45,7 +45,6 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
      * 初始化百度定位
      */
     private void fetchingLocateWithGaodeApi(int interval, boolean stoppable) {
-        displayLoading(true);
         // 先停止已经开始的定位过程
         GaodeHelper.instance().stop();
         GaodeHelper.instance().showDebug(true)
@@ -53,12 +52,6 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
                 .setScanSpan(interval)
                 .addOnLocatedListener(locatedListener)
                 .start();
-        Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                displayLoading(false);
-            }
-        }, 10000);
     }
 
     private OnLocatedListener locatedListener = new OnLocatedListener() {
@@ -67,7 +60,6 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
             if (!success) {
                 GaodeHelper.instance().stop();
             }
-            displayLoading(false);
             onFetchingLocationComplete(success, location);
         }
     };
@@ -94,7 +86,6 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
             // 设置查询结果监听者
             mGeoCoder.setOnGeocodeSearchListener(onGeocodeSearchListener);
         }
-        displayLoading(true);
         // 发起反地理编码请求(经纬度->地址信息)
         RegeocodeQuery query = new RegeocodeQuery(location, 200, GeocodeSearch.AMAP);
         mGeoCoder.getFromLocationAsyn(query);
@@ -105,7 +96,6 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
         @Override
         public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
             onReverseGeoCodeComplete(regeocodeResult);
-            displayLoading(false);
         }
 
         @Override

@@ -92,7 +92,7 @@ public class AddressMapPickerFragment extends MapHandleableFragment {
                 setMapScrollEnable(false);
             }
         } else {
-            if (!isLocated) {
+            if (!isLocated && hasPermission) {
                 startLocation();
             }
         }

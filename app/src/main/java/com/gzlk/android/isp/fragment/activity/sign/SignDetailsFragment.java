@@ -3,6 +3,7 @@ package com.gzlk.android.isp.fragment.activity.sign;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.amap.api.maps2d.model.LatLng;
 import com.google.gson.reflect.TypeToken;
@@ -42,7 +43,6 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -109,6 +109,8 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
     private CustomTextView endIcon4;
     @ViewId(R.id.ui_activity_sign_details_notify_content)
     private ClearEditText notifyContent;
+    @ViewId(R.id.ui_activity_sign_details_count)
+    private TextView countView;
 
     private SimpleClickableViewHolder titleHolder;
 
@@ -139,7 +141,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_activity_sign_creator_fragment_title);
+        setCustomTitle(R.string.ui_activity_sign_right_button_text);
         setNothingText(R.string.ui_activity_sign_details_no_sign_records);
         initializeHolder();
         initializeAdapter();
@@ -255,6 +257,8 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
                 stopRefreshing();
+                countView.setText(format("%s(%d)", getString(R.string.ui_activity_sign_signed), mAdapter.getItemCount()));
+                //setCustomTitle(format("%s(%d人次)", getString(R.string.ui_activity_sign_creator_fragment_title), mAdapter.getItemCount()));
             }
         }).list(signing.getId());
     }

@@ -64,40 +64,21 @@ public class App extends NimApplication {
         }
     }
 
-    private DisplayImageOptions smallOption, largeOption;
-
-    public DisplayImageOptions getLargeOption() {
-        return largeOption;
-    }
-
     private void initializeImageLoader() {
-        if (null == smallOption) {
-            smallOption = new DisplayImageOptions.Builder()
-                    .showImageOnLoading(R.mipmap.img_image_default)
-                    .showImageForEmptyUri(R.mipmap.img_image_loading_fail)
-                    .showImageOnFail(R.mipmap.img_image_loading_fail)
-                    //.delayBeforeLoading(100)
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .considerExifParams(true)
-                    .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    //.displayer(new FadeInBitmapDisplayer(100))
-                    .build();
-        }
-        if (null == largeOption) {
-            largeOption = new DisplayImageOptions.Builder()
-                    .showImageOnLoading(R.mipmap.img_image_default)
-                    .showImageForEmptyUri(R.mipmap.img_image_loading_fail)
-                    .showImageOnFail(R.mipmap.img_image_loading_fail)
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .considerExifParams(true)
-                    .imageScaleType(ImageScaleType.EXACTLY)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    .displayer(new FadeInBitmapDisplayer(100))
-                    .build();
-        }
+
+        DisplayImageOptions option = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.mipmap.img_image_default)
+                .showImageForEmptyUri(R.mipmap.img_image_loading_fail)
+                .showImageOnFail(R.mipmap.img_image_loading_fail)
+                //.delayBeforeLoading(100)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                //.displayer(new FadeInBitmapDisplayer(100))
+                .build();
+
         File cacheDir = new File(getCachePath(IMAGE_UIL));
         ImageLoaderConfiguration config = new ImageLoaderConfiguration
                 .Builder(this)
@@ -109,13 +90,11 @@ public class App extends NimApplication {
                 .diskCache(new UnlimitedDiskCache(cacheDir))
                 .diskCacheSize(50 * 1024 * 1024)
                 .diskCacheFileCount(100)
-                .defaultDisplayImageOptions(smallOption)
+                .defaultDisplayImageOptions(option)
                 //.writeDebugLogs()
                 .build();
 
         ImageLoader.getInstance().init(config);
-
-        //NimUIKit.getImageLoaderKit() = new ImageLoaderKit(this, config);
     }
 
     /**

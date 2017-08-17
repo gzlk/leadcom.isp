@@ -20,9 +20,9 @@
 
     <!--定位-->
     <string name="ui_text_permission_location_request">
-        <![CDATA[您需要允许app读取或使用您的<font color="#0094b0">联系人</font>功能才能继续。]]>
+        <![CDATA[您需要允许app使用您的<font color="#0094b0">定位</font>功能才能继续。]]>
     </string>
     <string name="ui_text_permission_location_denied">
-        <![CDATA[很抱歉，app无法读取您的<font color="#0094b0">联系人</font>。]]>
+        <![CDATA[很抱歉，app没有被允许进行<font color="#0094b0">定位</font>操作。]]>
     </string>
 </resources>

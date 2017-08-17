@@ -1,9 +1,10 @@
 package com.gzlk.android.isp.fragment.activity.sign;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
@@ -15,7 +16,6 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.map.MapHandleableFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
@@ -55,7 +55,6 @@ public class SignFragment extends MapHandleableFragment {
     }
 
     public static SignCallback callback;
-    private static boolean hasPermission = false;
 
     private static final String PARAM_TID = "sf_sign_tid";
     private static final String PARAM_SIGN_ID = "sf_sign_id";
@@ -65,42 +64,6 @@ public class SignFragment extends MapHandleableFragment {
     private String mTID, mSignId;
     private AppSignRecord record;
     private AppSigning signing;
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        hasPermission = false;
-        checkPermission();
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    // 尝试读取手机通讯录
-    private void checkPermission() {
-        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            String text = StringHelper.getString(R.string.ui_text_permission_location_request);
-            String denied = StringHelper.getString(R.string.ui_text_permission_location_denied);
-            tryGrantPermission(Manifest.permission.ACCESS_FINE_LOCATION, GRANT_LOCATION, text, denied);
-        } else {
-            hasPermission = true;
-        }
-    }
-
-    @Override
-    public void permissionGranted(String[] permissions, int requestCode) {
-        if (requestCode == GRANT_LOCATION) {
-            hasPermission = true;
-        }
-        super.permissionGranted(permissions, requestCode);
-    }
-
-    @Override
-    public void permissionGrantFailed(int requestCode) {
-        super.permissionGrantFailed(requestCode);
-        if (requestCode == GRANT_CONTACTS) {
-            setNothingText(R.string.ui_phone_contact_no_permission);
-            displayNothing(true);
-            finish();
-        }
-    }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -127,7 +90,10 @@ public class SignFragment extends MapHandleableFragment {
         record = AppSignRecord.getMyRecord(mSignId);
         createRecord();
         // 未签到时按钮可用
-        mSignButton.setEnabled(isEmpty(record.getId()));
+        boolean signed = !isEmpty(record.getId());
+        mSignButton.setEnabled(!signed);
+        mSignButton.setText(signed ? R.string.ui_activity_sign_signed : R.string.ui_nim_action_sign);
+        mSignInfo.setVisibility(signed ? View.GONE : View.VISIBLE);
         mSignedAddress.setText(record.getSite());
     }
 
@@ -140,6 +106,12 @@ public class SignFragment extends MapHandleableFragment {
         bundle.putString(PARAM_RECORD, AppSignRecord.toJson(record));
     }
 
+    @ViewId(R.id.ui_activity_sign_title)
+    private TextView mTitleView;
+    @ViewId(R.id.ui_activity_sign_time)
+    private TextView mTimeView;
+    @ViewId(R.id.ui_activity_sign_info)
+    private LinearLayout mSignInfo;
     @ViewId(R.id.ui_activity_sign_timer)
     private TextView mTimerView;
     @ViewId(R.id.ui_activity_sign_address)
@@ -161,8 +133,12 @@ public class SignFragment extends MapHandleableFragment {
         if (isEmpty(mSignId)) {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_invalid_sign_setup);
             mSignButton.setEnabled(false);
-        } else {
+        } else if (null == signing) {
             signing = new Dao<>(AppSigning.class).query(mSignId);
+            mTitleView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_text, signing.getTitle())));
+            String begin = Utils.format(signing.getBeginDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM);
+            String end = Utils.format(signing.getEndDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM1);
+            mTimeView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_time, begin, end)));
         }
         getLocalSignRecord();
         setCustomTitle(R.string.ui_nim_action_sign);
@@ -177,13 +153,19 @@ public class SignFragment extends MapHandleableFragment {
             }
         });
 
-        mEndTime.setText(getString(R.string.ui_activity_sign_end_time, (null == signing ? "" : signing.getEndDate())));
+        mEndTime.setText(getString(R.string.ui_activity_sign_end_time, (null == signing ? getString(R.string.ui_base_text_not_set) : signing.getEndDate())));
         super.doingInResume();
         // 不是复现签到位置时，开始定位
         if (isEmpty(record.getId()) && !isLocated && hasPermission) {
             startLocation();
         }
         reduceSignPoint();
+    }
+
+    @Override
+    public void onStop() {
+        enableMyLocation(false);
+        super.onStop();
     }
 
     private void reduceSignPoint() {
@@ -206,7 +188,6 @@ public class SignFragment extends MapHandleableFragment {
     @Click({R.id.ui_activity_sign_button})
     private void elementClick(View view) {
         if (view.getId() == R.id.ui_activity_sign_button) {
-            stopFetchingLocation();
             if (!isLocated) {
                 ToastHelper.make().showMsg(R.string.ui_activity_sign_map_picker_location_invalid);
             } else if (signing.couldSignable(record.getCreateDate())) {

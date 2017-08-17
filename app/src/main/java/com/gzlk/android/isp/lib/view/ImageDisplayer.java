@@ -275,7 +275,7 @@ public class ImageDisplayer extends RelativeLayout {
                 // 默认显示本地图片
                 url = "file://" + url;
             }
-            ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView), largeImageSupport ? App.app().getLargeOption() : null,
+            ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView), null,
                     new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
         }
     }

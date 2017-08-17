@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.map;
 
+import android.Manifest;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,8 @@ import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseLocationSupportFragment;
+import com.gzlk.android.isp.helper.GaodeHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.common.Address;
 import com.gzlk.android.isp.model.common.HLKLocation;
@@ -35,6 +38,7 @@ import com.hlk.hlklib.lib.view.CorneredView;
 
 public abstract class MapHandleableFragment extends BaseLocationSupportFragment {
 
+    protected static boolean hasPermission = false;
     private static final String PARAM_LOCATED = "ampf_located";
     protected static final String PARAM_ADDRESS = "ampf_address";
     private static final int dftZoomLevel = 16;
@@ -54,6 +58,41 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
     protected Address address = new Address();
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        hasPermission = false;
+        checkPermission();
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    // 尝试获取定位权限
+    private void checkPermission() {
+        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            String text = StringHelper.getString(R.string.ui_text_permission_location_request);
+            String denied = StringHelper.getString(R.string.ui_text_permission_location_denied);
+            tryGrantPermission(Manifest.permission.ACCESS_FINE_LOCATION, GRANT_LOCATION, text, denied);
+        } else {
+            hasPermission = true;
+        }
+    }
+
+    @Override
+    public void permissionGranted(String[] permissions, int requestCode) {
+        if (requestCode == GRANT_LOCATION) {
+            hasPermission = true;
+        }
+        super.permissionGranted(permissions, requestCode);
+    }
+
+    @Override
+    public void permissionGrantFailed(int requestCode) {
+        super.permissionGrantFailed(requestCode);
+        if (requestCode == GRANT_CONTACTS) {
+            setNothingText(getString(R.string.ui_text_permission_location_denied));
+            displayNothing(true);
+        }
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mMapView.onCreate(savedInstanceState);
@@ -70,13 +109,6 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
         super.onPause();
         //在activity执行onPause时执行mMapView.onPause()，实现地图生命周期管理
         mMapView.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mMapView.onDestroy();
     }
 
     @Override
@@ -105,7 +137,8 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
 
     @Override
     protected void destroyView() {
-
+        mAMap = null;
+        mMapView.onDestroy();
     }
 
     protected void reduceLocation() {
@@ -115,15 +148,23 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
     }
 
     /**
+     * 定位类型
+     */
+    protected int getLocationType() {
+        // 定位一次，且将地图移动到中心点
+        return MyLocationStyle.LOCATION_TYPE_LOCATE;
+    }
+
+    /**
      * 开始地图定位
      */
     protected void startLocation() {
         MyLocationStyle style = new MyLocationStyle();
-        // 定位一次，且将地图移动到中心点
-        style.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        style.myLocationType(getLocationType());
         style.strokeColor(getColor(R.color.colorPrimary));
         style.radiusFillColor(getColor(R.color.transparent_30_blue));
         style.strokeWidth(getDimension(R.dimen.ui_static_dp_1));
+        style.interval(GaodeHelper.SI_5);
         mAMap.setOnMyLocationChangeListener(onMyLocationChangeListener);
         mAMap.setOnCameraChangeListener(onCameraChangeListener);
         mAMap.setMyLocationStyle(style);
@@ -131,9 +172,18 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
         mAMap.getUiSettings().setMyLocationButtonEnabled(true);
         // 指南针
         mAMap.getUiSettings().setCompassEnabled(true);
-        // 16级放大
-        mAMap.getUiSettings().setZoomPosition(dftZoomLevel);
+        // 比例尺
+        mAMap.getUiSettings().setScaleControlsEnabled(true);
+        // 放大缩小控制
+        //mAMap.getUiSettings().setZoomControlsEnabled(true);
         mAMap.setMyLocationEnabled(true);
+    }
+
+    /**
+     * 停止定位
+     */
+    protected void enableMyLocation(boolean enable) {
+        mAMap.setMyLocationEnabled(enable);
     }
 
     /**
@@ -146,6 +196,17 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
     private AMap.OnMyLocationChangeListener onMyLocationChangeListener = new AMap.OnMyLocationChangeListener() {
         @Override
         public void onMyLocationChange(Location location) {
+            if (!isLocated) {
+                // 未定位成功之前，设置放大级数
+                LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
+                final CameraUpdate update = CameraUpdateFactory.newCameraPosition(new CameraPosition(pos, dftZoomLevel, 0, 0));
+                Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAMap.animateCamera(update);
+                    }
+                });
+            }
             isLocated = true;
             address.setLatitude(location.getLatitude());
             address.setLongitude(location.getLongitude());

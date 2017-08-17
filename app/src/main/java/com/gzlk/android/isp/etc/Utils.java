@@ -42,7 +42,7 @@ public class Utils {
     public static final float HEADER_ZOOM_MULTIPLES = 6.0f;
     public static final float CHATING_HEADER_ZOOM_SIZE = 7.5f;
 
-    public static final String FMT_HHMM = "yyyy/MM/dd HH:mm";
+    public static final String FMT_HHMM = "yyyy-MM-dd HH:mm";
     public static final String FMT_MDHM2 = "MM-dd HH:mm";
     public static final String FMT_MDHM = "MM月dd日 HH:mm";
     public static final String FMT_YMD = "yyyy/MM/dd";
@@ -51,7 +51,7 @@ public class Utils {
     public static final String FMT_YMDHM = "yyyy年MM月dd日HH:mm";
     public static final String FMT_HHMMSS = "yyyy/MM/dd HH:mm:ss";
     public static final String FMT_MMDD = "MM月dd日";
-    private static final String FMT_HHMM1 = "HH:mm";
+    public static final String FMT_HHMM1 = "HH:mm";
     private static final String FMT_MMDDHHMM = "MM月dd日HH:mm";
     public static final String FMT_YYYYMMDDHHMM = "yyyyMMddHHmm";
     public static final String FMT_YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";

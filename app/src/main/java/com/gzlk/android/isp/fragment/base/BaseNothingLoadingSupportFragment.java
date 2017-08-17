@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.base;
 
+import android.text.Html;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -81,7 +82,7 @@ public abstract class BaseNothingLoadingSupportFragment extends BaseLayoutSuppor
      */
     public void setNothingText(String text) {
         if (null != nothingTextView) {
-            nothingTextView.setText(text);
+            nothingTextView.setText(Html.fromHtml(text));
         }
     }
 
