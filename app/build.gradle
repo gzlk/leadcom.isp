@@ -26,7 +26,7 @@ android {
         resValue "string", "app_internal_version", getInternalVersion()
         resValue "string", "app_api_version", "v1"
         resValue "string", "app_name_default", "树脉"
-        resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
+        //resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
         // 正式(leadcom): e0535dd95633dfa23a6aba3a06628a55
         // 测试(leadcom): 3c9e1b9e424ccd215d6a828602d20407
         // 测试：3da0be9ec7ac70fea20f94a8fa8c84ce
@@ -133,6 +133,14 @@ dependencies {
     compile group: 'com.sun.mail', name: 'android-mail', version: '1.6.0-rc2'
     // https://mvnrepository.com/artifact/com.sun.mail/android-activation
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
+
+    // 高德地图
+    // 2D地图
+    compile 'com.amap.api:map2d:5.2.0'
+    // 搜索
+    compile 'com.amap.api:search:5.3.0'
+    // 定位
+    compile 'com.amap.api:location:3.5.0'
 
     // 桌面提醒
     compile 'me.leolin:ShortcutBadger:1.1.17'

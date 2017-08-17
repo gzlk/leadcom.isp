@@ -1,29 +1,27 @@
 package com.gzlk.android.isp.fragment.activity.sign;
 
+import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.MapStatusUpdate;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.model.LatLng;
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.AppSignRecordRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.fragment.base.BaseLocationSupportFragment;
-import com.gzlk.android.isp.helper.BaiduHelper;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.map.MapHandleableFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.activity.sign.AppSignRecord;
 import com.gzlk.android.isp.model.activity.sign.AppSigning;
-import com.gzlk.android.isp.model.common.BaiduLocation;
 import com.gzlk.android.isp.nim.callback.SignCallback;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -40,7 +38,7 @@ import com.hlk.hlklib.lib.view.CorneredButton;
  * <b>修改备注：</b><br />
  */
 
-public class SignFragment extends BaseLocationSupportFragment {
+public class SignFragment extends MapHandleableFragment {
 
     public static SignFragment newInstance(String params) {
         SignFragment sf = new SignFragment();
@@ -57,6 +55,7 @@ public class SignFragment extends BaseLocationSupportFragment {
     }
 
     public static SignCallback callback;
+    private static boolean hasPermission = false;
 
     private static final String PARAM_TID = "sf_sign_tid";
     private static final String PARAM_SIGN_ID = "sf_sign_id";
@@ -68,7 +67,44 @@ public class SignFragment extends BaseLocationSupportFragment {
     private AppSigning signing;
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        hasPermission = false;
+        checkPermission();
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    // 尝试读取手机通讯录
+    private void checkPermission() {
+        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            String text = StringHelper.getString(R.string.ui_text_permission_location_request);
+            String denied = StringHelper.getString(R.string.ui_text_permission_location_denied);
+            tryGrantPermission(Manifest.permission.ACCESS_FINE_LOCATION, GRANT_LOCATION, text, denied);
+        } else {
+            hasPermission = true;
+        }
+    }
+
+    @Override
+    public void permissionGranted(String[] permissions, int requestCode) {
+        if (requestCode == GRANT_LOCATION) {
+            hasPermission = true;
+        }
+        super.permissionGranted(permissions, requestCode);
+    }
+
+    @Override
+    public void permissionGrantFailed(int requestCode) {
+        super.permissionGrantFailed(requestCode);
+        if (requestCode == GRANT_CONTACTS) {
+            setNothingText(R.string.ui_phone_contact_no_permission);
+            displayNothing(true);
+            finish();
+        }
+    }
+
+    @Override
     protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
         isLocated = bundle.getBoolean(PARAM_LOCATED, false);
         mTID = bundle.getString(PARAM_TID, "");
         mSignId = bundle.getString(PARAM_SIGN_ID, "");
@@ -97,14 +133,13 @@ public class SignFragment extends BaseLocationSupportFragment {
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_LOCATED, isLocated);
         bundle.putString(PARAM_TID, mTID);
         bundle.putString(PARAM_SIGN_ID, mSignId);
         bundle.putString(PARAM_RECORD, AppSignRecord.toJson(record));
     }
 
-    @ViewId(R.id.ui_map_picker_map_view)
-    private MapView mMapView;
     @ViewId(R.id.ui_activity_sign_timer)
     private TextView mTimerView;
     @ViewId(R.id.ui_activity_sign_address)
@@ -115,9 +150,6 @@ public class SignFragment extends BaseLocationSupportFragment {
     private CorneredButton mSignButton;
     @ViewId(R.id.ui_activity_sign_end)
     private TextView mEndTime;
-
-    private BaiduMap mBaiduMap;
-    private boolean isLocated = false;
 
     @Override
     public int getLayout() {
@@ -135,45 +167,40 @@ public class SignFragment extends BaseLocationSupportFragment {
         getLocalSignRecord();
         setCustomTitle(R.string.ui_nim_action_sign);
 
-        if (isEmpty(record.getId())) {
-            // 未签到时显示刷新按钮
-            setRightIcon(R.string.ui_icon_refresh);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
-                @Override
-                public void onClick() {
-                    if (!isEmpty(record.getId())) {
-                        tryFetchingLocation(BaiduHelper.SI_3, false);
-                    }
-                }
-            });
-        }
+        setRightText(R.string.ui_activity_sign_right_button_text);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                String json = Json.gson().toJson(signing, new TypeToken<AppSigning>() {
+                }.getType());
+                SignDetailsFragment.open(SignFragment.this, REQUEST_DELETE, mTID, json);
+            }
+        });
 
         mEndTime.setText(getString(R.string.ui_activity_sign_end_time, (null == signing ? "" : signing.getEndDate())));
-        if (null == mBaiduMap) {
-            mBaiduMap = mMapView.getMap();
-            //mBaiduMap.setOnMapStatusChangeListener(mapChangeListener);
-        }
-        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        mMapView.onResume();
-        mBaiduMap.setMyLocationEnabled(true);
+        super.doingInResume();
         // 不是复现签到位置时，开始定位
-        if (isEmpty(record.getId()) && !isLocated) {
-            // 3s一次定位返回
-            tryFetchingLocation(BaiduHelper.SI_3, false);
+        if (isEmpty(record.getId()) && !isLocated && hasPermission) {
+            startLocation();
         }
         reduceSignPoint();
     }
 
     private void reduceSignPoint() {
         if (!isEmpty(record.getId())) {
-            MyLocationData loc = new MyLocationData.Builder()
-                    .accuracy(0.0F)// 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(0.0F)
-                    .latitude(Double.valueOf(record.getLat()))
-                    .longitude(Double.valueOf(record.getLon())).build();
-            mBaiduMap.setMyLocationData(loc);
-            resetMapCenterPoint(Double.valueOf(record.getLat()), Double.valueOf(record.getLon()));
+            address.setLatitude(Double.valueOf(record.getLat()));
+            address.setLongitude(Double.valueOf(record.getLon()));
+            reduceLocation();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_DELETE) {
+            // 删除之后的返回，直接返回上一页
+            finish();
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     @Click({R.id.ui_activity_sign_button})
@@ -217,20 +244,8 @@ public class SignFragment extends BaseLocationSupportFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        stopFetchingLocation();
-        //mBaiduMap.setOnMapClickListener(null);
-        mBaiduMap.setMyLocationEnabled(false);
-        //在activity执行onPause时执行mMapView.onPause()，实现地图生命周期管理
-        mMapView.onPause();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mMapView.onDestroy();
         callback = null;
     }
 
@@ -240,56 +255,17 @@ public class SignFragment extends BaseLocationSupportFragment {
     }
 
     @Override
-    protected void destroyView() {
-
-    }
-
-    @Override
-    protected void onFetchingLocationComplete(boolean success, BaiduLocation location) {
-        if (success) {
+    protected void onReverseGeoCodeComplete(String address) {
+        mAddress.setText(address);
+        if (!isEmpty(address)) {
             createRecord();
-            record.setCreateDate(location.getTime());
-            record.setLon(format("%.6f", location.getLongitude()));
-            record.setLat(format("%.6f", location.getLatitude()));
-            record.setSite(location.getAddress() + location.getDescribe());
-            record.setAlt(format("%.6f", location.getAltitude()));
-            mTimerView.setText(formatDateTime(location.getTime()));
+            record.setCreateDate(Utils.format(getString(R.string.ui_base_text_date_time_format), null));
+            record.setLon(format("%.6f", this.address.getLongitude()));
+            record.setLat(format("%.6f", this.address.getLatitude()));
+            record.setSite(address);
+            record.setAlt(format("%.6f", this.address.getAltitude()));
+            mTimerView.setText(formatDateTime(record.getCreateDate()));
             mAddress.setText(record.getSite());
-            MyLocationData loc = new MyLocationData.Builder()
-                    .accuracy(location.getRadius())// 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(location.getDirection())
-                    .latitude(location.getLatitude())
-                    .longitude(location.getLongitude()).build();
-            mBaiduMap.setMyLocationData(loc);
-            resetMapCenterPoint(location.getLatitude(), location.getLongitude());
-            isLocated = true;
         }
     }
-
-    /**
-     * 设置并显示地图中心点
-     */
-    private void resetMapCenterPoint(double latitude, double longitude) {
-        if (latitude == 0 || longitude == 0) {
-            return;
-        }
-        LatLng pos = new LatLng(latitude, longitude);
-        animateMapCenterPoint(pos);
-    }
-
-    /**
-     * 在地图上显示新的中心点
-     */
-    private void animateMapCenterPoint(LatLng position) {
-        //设置地图中心点以及缩放级别
-        MapStatusUpdate update;
-        if (!isLocated) {
-            // 第一次定到位置的时候地图动画移动到当前位置
-            update = MapStatusUpdateFactory.newLatLngZoom(position, 16);
-        } else {
-            update = MapStatusUpdateFactory.newLatLng(position);
-        }
-        mBaiduMap.animateMapStatus(update);
-    }
-
 }

@@ -2,7 +2,6 @@ package com.gzlk.android.isp.application;
 
 import android.graphics.Bitmap;
 
-import com.baidu.mapapi.SDKInitializer;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.crash.AppCrashHandler;
@@ -58,7 +57,6 @@ public class App extends NimApplication {
         //PgyCrashManager.register(this);
         initializeNim();
         if (shouldInit()) {
-            SDKInitializer.initialize(getApplicationContext());
             StorageUtil.init(this, null);
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();

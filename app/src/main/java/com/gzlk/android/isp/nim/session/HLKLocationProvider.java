@@ -29,7 +29,7 @@ import com.netease.nim.uikit.common.util.log.LogUtil;
  * <b>修改备注：</b><br />
  */
 
-public class BaiduLocationProvider implements LocationProvider {
+public class HLKLocationProvider implements LocationProvider {
 
     @Override
     public void requestLocation(final Context context, Callback callback) {

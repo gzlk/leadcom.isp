@@ -4,8 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.utils.DistanceUtil;
+import com.amap.api.maps2d.model.LatLng;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
@@ -19,6 +18,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.map.AddressMapPickerFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.GaodeHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.activity.SingingViewHolder;
@@ -217,8 +217,8 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         notify.setNotifyType(notifyType);
         notify.setSetupId(signing.getId());
         notify.setTid(mQueryId);
-        notify.setBeginTime(Utils.parseDate(getString(R.string.ui_base_text_date_time_format), signing.getBeginDate()).getTime());
-        notify.setEndTime(Utils.parseDate(getString(R.string.ui_base_text_date_time_format), signing.getEndDate()).getTime());
+        notify.setBeginTime(signing.getBeginDate());
+        notify.setEndTime(signing.getEndDate());
         IMMessage message;
         message = MessageBuilder.createCustomMessage(mQueryId, SessionTypeEnum.Team, notify);
         NIMClient.getService(MsgService.class).sendMessage(message, false);
@@ -300,7 +300,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
             resetNotifyContent();
         }
         boolean isMe = signing.getCreatorId().equals(Cache.cache().userId);
-        notifyContainer.setVisibility(isMe && signing.couldSignable(Utils.formatDateTime(new Date())) ? View.VISIBLE : View.GONE);
+        //notifyContainer.setVisibility(isMe && signing.couldSignable(Utils.formatDateTime(new Date())) ? View.VISIBLE : View.GONE);
 
         if (null == titleHolder) {
             titleHolder = new SimpleClickableViewHolder(titleView, SignDetailsFragment.this);
@@ -377,7 +377,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         private String calculateDistance(String latitude, String longitude) {
             double lat1 = Double.valueOf(latitude), lon1 = Double.valueOf(longitude);
             double lat0 = Double.valueOf(signing.getLat()), lon0 = Double.valueOf(signing.getLon());
-            double distance = DistanceUtil.getDistance(new LatLng(lat1, lon1), new LatLng(lat0, lon0));
+            double distance = GaodeHelper.getDistance(new LatLng(lat1, lon1), new LatLng(lat0, lon0));
             return Utils.formatDistance(distance);
         }
 

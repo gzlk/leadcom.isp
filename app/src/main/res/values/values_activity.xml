@@ -190,6 +190,7 @@
     <string name="ui_activity_sign_map_picker_locate_button_return">直接返回</string>
     <string name="ui_activity_sign_map_picker_locate_button_relocate">重新定位</string>
     <string name="ui_activity_sign_map_picker_location_invalid">无效的地址</string>
+    <string name="ui_activity_sign_map_picker_locate_failed">定位失败</string>
 
     <string name="ui_activity_sign_creator_fragment_title">@string/ui_nim_action_sign</string>
     <string name="ui_activity_sign_creator_title_invalid">标题不符合要求</string>
@@ -223,6 +224,7 @@
     <string name="ui_activity_sign_end_time" formatted="false">签到截止时间：%s</string>
     <string name="ui_activity_sign_invalid_sign_setup">无效的签到应用</string>
     <string name="ui_activity_sign_not_start">本次签到还未开始，请稍安勿躁</string>
+    <string name="ui_activity_sign_right_button_text">签到结果</string>
     <string name="ui_activity_sign_has_been_ended">签到已结束了</string>
     <string name="ui_activity_sign_warning">签到位置确定后将不可以修改，您确定要将当前位置当作签到地点吗？</string>
     <string name="ui_activity_sign_signing">正在签到，请稍候&#8230;</string>

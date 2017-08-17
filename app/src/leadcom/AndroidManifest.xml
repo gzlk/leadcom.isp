@@ -72,14 +72,11 @@
             android:name="com.netease.cosine.target.receiver"
             android:value="com.netease.nimlib.service.NimReceiver" />
 
-        <!--百度地图：含基础定位、基础地图、检索功能、计算工具-->
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" />
+        <!--高德地图-->
         <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="@string/baidu_map_lbsapi_key" />
+            android:name="com.amap.api.v2.apikey"
+            android:value="903911bf214b33dc91411fceece5f017" />
+        <service android:name="com.amap.api.location.APSService" />
     </application>
 
 </manifest>

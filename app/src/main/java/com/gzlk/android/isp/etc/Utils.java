@@ -85,7 +85,7 @@ public class Utils {
 
     public static String format(String fmt, Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat(fmt, Locale.getDefault());
-        return sdf.format(date);
+        return sdf.format(null == date ? new Date() : date);
     }
 
     public static Date parseDate(String fmt, String source) {

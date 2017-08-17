@@ -28,7 +28,7 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
 import com.gzlk.android.isp.model.common.Attachment;
-import com.gzlk.android.isp.model.common.BaiduLocation;
+import com.gzlk.android.isp.model.common.HLKLocation;
 import com.gzlk.android.isp.model.common.Seclusion;
 import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -197,7 +197,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    protected void onFetchingLocationComplete(boolean success, BaiduLocation location) {
+    protected void onFetchingLocationComplete(boolean success, HLKLocation location) {
         address = location.getAddress();
         log(address);
     }

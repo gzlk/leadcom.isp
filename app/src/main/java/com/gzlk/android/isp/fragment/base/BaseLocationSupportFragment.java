@@ -1,13 +1,13 @@
 package com.gzlk.android.isp.fragment.base;
 
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
-import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
-import com.gzlk.android.isp.helper.BaiduHelper;
-import com.gzlk.android.isp.model.common.BaiduLocation;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.RegeocodeResult;
+import com.gzlk.android.isp.helper.GaodeHelper;
+import com.gzlk.android.isp.helper.OnLocatedListener;
+import com.gzlk.android.isp.model.common.HLKLocation;
 
 /**
  * <b>功能描述：</b>提供定位相关api的fragment基类<br />
@@ -34,22 +34,25 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
      */
     protected void tryFetchingLocation(int interval, boolean stoppable) {
         displayNothing(false);
-        fetchingLocateWithBaiduApi(interval, stoppable);
+        fetchingLocateWithGaodeApi(interval, stoppable);
     }
 
     protected void stopFetchingLocation() {
-        BaiduHelper.Instance().stop();
+        GaodeHelper.instance().stop();
     }
 
     /**
      * 初始化百度定位
      */
-    private void fetchingLocateWithBaiduApi(int interval, boolean stoppable) {
+    private void fetchingLocateWithGaodeApi(int interval, boolean stoppable) {
         displayLoading(true);
         // 先停止已经开始的定位过程
-        BaiduHelper.Instance().stop();
-        BaiduHelper.Instance().stopWhenLocated(stoppable)
-                .setScanInterval(interval).addOnLocatedListener(locatedListener).start();
+        GaodeHelper.instance().stop();
+        GaodeHelper.instance().showDebug(true)
+                .stopWhenLocated(stoppable)
+                .setScanSpan(interval)
+                .addOnLocatedListener(locatedListener)
+                .start();
         Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -58,11 +61,11 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
         }, 10000);
     }
 
-    private BaiduHelper.OnLocatedListener locatedListener = new BaiduHelper.OnLocatedListener() {
+    private OnLocatedListener locatedListener = new OnLocatedListener() {
         @Override
-        public void onLocated(boolean success, BaiduLocation location) {
+        public void onLocated(boolean success, HLKLocation location) {
             if (!success) {
-                BaiduHelper.Instance().stop();
+                GaodeHelper.instance().stop();
             }
             displayLoading(false);
             onFetchingLocationComplete(success, location);
@@ -72,50 +75,49 @@ public abstract class BaseLocationSupportFragment extends BaseNothingLoadingSupp
     /**
      * 百度地图定位返回，子类需要重载该方法进行定位结果获取
      */
-    protected void onFetchingLocationComplete(boolean success, BaiduLocation location) {
+    protected void onFetchingLocationComplete(boolean success, HLKLocation location) {
 
     }
 
 
     //***********************************反转地址服务
     // 地址反转服务
-    protected GeoCoder mGeoCoder;
+    protected GeocodeSearch mGeoCoder;
 
     /**
      * 反转编码地理位置
      */
-    protected void tryReverseGeoCode(LatLng location) {
+    protected void tryReverseGeoCode(LatLonPoint location) {
         if (null == mGeoCoder) {
             // 创建GeoCoder实例对象
-            mGeoCoder = GeoCoder.newInstance();
+            mGeoCoder = new GeocodeSearch(Activity());
             // 设置查询结果监听者
-            mGeoCoder.setOnGetGeoCodeResultListener(geoCoderResultListener);
+            mGeoCoder.setOnGeocodeSearchListener(onGeocodeSearchListener);
         }
         displayLoading(true);
         // 发起反地理编码请求(经纬度->地址信息)
-        ReverseGeoCodeOption reverseGeoCodeOption = new ReverseGeoCodeOption();
-        // 设置反地理编码位置坐标
-        reverseGeoCodeOption.location(location);
-        mGeoCoder.reverseGeoCode(reverseGeoCodeOption);
+        RegeocodeQuery query = new RegeocodeQuery(location, 200, GeocodeSearch.AMAP);
+        mGeoCoder.getFromLocationAsyn(query);
     }
 
-    private OnGetGeoCoderResultListener geoCoderResultListener = new OnGetGeoCoderResultListener() {
-        @Override
-        public void onGetGeoCodeResult(GeoCodeResult geoCodeResult) {
+    private GeocodeSearch.OnGeocodeSearchListener onGeocodeSearchListener = new GeocodeSearch.OnGeocodeSearchListener() {
 
+        @Override
+        public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
+            onReverseGeoCodeComplete(regeocodeResult);
+            displayLoading(false);
         }
 
         @Override
-        public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
-            onReverseGeoCodeComplete(reverseGeoCodeResult);
-            displayLoading(false);
+        public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+
         }
     };
 
     /**
      * 反转地址编码的回调
      */
-    protected void onReverseGeoCodeComplete(ReverseGeoCodeResult reverseGeoCodeResult) {
+    protected void onReverseGeoCodeComplete(RegeocodeResult regeocodeResult) {
     }
 
 }

@@ -3,15 +3,16 @@ package com.gzlk.android.isp.model.common;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.baidu.location.BDLocation;
-import com.baidu.location.Poi;
+import com.amap.api.location.AMapLocation;
+import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.BaseModel;
 
-import java.util.List;
 import java.util.Locale;
 
 /**
- * <b>功能描述：</b>百度地图定位内容<br />
+ * <b>功能描述：</b>地图定位内容<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/04/23 18:21 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -21,7 +22,7 @@ import java.util.Locale;
  * <b>修改备注：</b><br />
  */
 
-public class BaiduLocation extends BaseModel implements Parcelable {
+public class HLKLocation extends BaseModel implements Parcelable {
 
     private String time;
     private String address;
@@ -39,9 +40,8 @@ public class BaiduLocation extends BaseModel implements Parcelable {
     private double altitude;
     private float radius;
     private float direction;
-    private List<Poi> poiList;
 
-    protected BaiduLocation(Parcel in) {
+    protected HLKLocation(Parcel in) {
         time = in.readString();
         address = in.readString();
         country = in.readString();
@@ -58,18 +58,17 @@ public class BaiduLocation extends BaseModel implements Parcelable {
         altitude = in.readDouble();
         radius = in.readFloat();
         direction = in.readFloat();
-        poiList = in.createTypedArrayList(Poi.CREATOR);
     }
 
-    public static final Creator<BaiduLocation> CREATOR = new Creator<BaiduLocation>() {
+    public static final Creator<HLKLocation> CREATOR = new Creator<HLKLocation>() {
         @Override
-        public BaiduLocation createFromParcel(Parcel in) {
-            return new BaiduLocation(in);
+        public HLKLocation createFromParcel(Parcel in) {
+            return new HLKLocation(in);
         }
 
         @Override
-        public BaiduLocation[] newArray(int size) {
-            return new BaiduLocation[size];
+        public HLKLocation[] newArray(int size) {
+            return new HLKLocation[size];
         }
     };
 
@@ -95,34 +94,17 @@ public class BaiduLocation extends BaseModel implements Parcelable {
         dest.writeDouble(altitude);
         dest.writeFloat(radius);
         dest.writeDouble(direction);
-        dest.writeList(poiList);
     }
 
-    public BaiduLocation() {
+    public HLKLocation() {
     }
 
-    public BaiduLocation(BDLocation location) {
-        setParameters(location);
-    }
-
-    @Override
-    public String toString() {
-        return String.format(Locale.getDefault(), "%s %s %s %s %s %s %s\n%s",
-                country, province, city, district, street,
-                streetNumber, describe, address);
-    }
-
-    private void setParameters(BDLocation location) {
+    public HLKLocation(AMapLocation location) {
         latitude = 0.0;
         longitude = 0.0;
         altitude = 0.0;
         if (null == location) return;
-        time = location.getTime();
-        city = location.getCity();
-        cityCode = location.getCityCode();
-        country = location.getCountry();
-        countryCode = location.getCountryCode();
-        district = location.getDistrict();
+        time = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), location.getTime());
         if (!Double.isNaN(location.getLatitude())) {
             latitude = location.getLatitude();
         }
@@ -132,13 +114,22 @@ public class BaiduLocation extends BaseModel implements Parcelable {
         if (!Double.isNaN(location.getAltitude())) {
             altitude = location.getAltitude();
         }
+        country = location.getCountry();
         province = location.getProvince();
+        city = location.getCity();
+        cityCode = location.getCityCode();
+        district = location.getDistrict();
         street = location.getStreet();
-        streetNumber = location.getStreetNumber();
-        address = location.getAddrStr();
-        setAddress(location.getAddrStr());
-        describe = location.getLocationDescribe().replace("在", "").replace("附近", "");
-        setPoiList(location.getPoiList());
+        streetNumber = location.getStreetNum();
+        address = location.getAddress();
+        describe = location.getDescription();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(), "%s %s %s %s %s %s %s\n%s",
+                country, province, city, district, street,
+                streetNumber, describe, address);
     }
 
     public String getTime() {
@@ -267,14 +258,6 @@ public class BaiduLocation extends BaseModel implements Parcelable {
 
     public void setDirection(float direction) {
         this.direction = direction;
-    }
-
-    public List<Poi> getPoiList() {
-        return this.poiList;
-    }
-
-    public void setPoiList(List<Poi> var1) {
-        this.poiList = var1;
     }
 
 }
