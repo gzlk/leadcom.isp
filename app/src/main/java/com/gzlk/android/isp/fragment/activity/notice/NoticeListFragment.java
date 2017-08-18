@@ -101,6 +101,7 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
         loadingNotices();
     }
 
@@ -158,6 +159,9 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(List<AppNotice> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
+                    if (remotePageNumber <= 1) {
+                        mAdapter.clear();
+                    }
                     if (null != list) {
                         if (list.size() >= pageSize) {
                             remotePageNumber++;

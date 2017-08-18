@@ -88,6 +88,7 @@ public class VoteListFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
         loadingVote();
     }
 
@@ -118,6 +119,9 @@ public class VoteListFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(List<AppVote> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
+                    if (remotePageNumber <= 1) {
+                        mAdapter.clear();
+                    }
                     if (null != list) {
                         if (list.size() >= pageSize) {
                             remotePageNumber++;

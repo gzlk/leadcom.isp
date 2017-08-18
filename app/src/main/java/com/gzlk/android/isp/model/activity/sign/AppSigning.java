@@ -67,13 +67,13 @@ public class AppSigning extends Sign {
      */
     public boolean couldSignable(String date) {
         String fmt = StringHelper.getString(R.string.ui_base_text_date_time_format);
-        long posTime = Utils.parseDate(fmt, date).getTime();
+        long postTime = Utils.parseDate(fmt, date).getTime();
         long beginTime = Utils.parseDate(fmt, getBeginDate()).getTime();
         long endTime = Utils.parseDate(fmt, getEndDate()).getTime();
-        if (posTime < beginTime) {
+        if (postTime < beginTime) {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_not_start);
             return false;
-        } else if (posTime > endTime) {
+        } else if (postTime > endTime) {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_has_been_ended);
             return false;
         }

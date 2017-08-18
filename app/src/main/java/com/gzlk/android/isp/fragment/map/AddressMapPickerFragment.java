@@ -86,8 +86,6 @@ public class AddressMapPickerFragment extends MapHandleableFragment {
         if (isReduce) {
             if (!isLocated) {
                 isLocated = true;
-                // 重现位置信息
-                reduceLocation();
                 // 重现位置时，不能拖动地图
                 setMapScrollEnable(false);
             }
@@ -95,6 +93,15 @@ public class AddressMapPickerFragment extends MapHandleableFragment {
             if (!isLocated && hasPermission) {
                 startLocation();
             }
+        }
+    }
+
+    @Override
+    protected void onMapLoadedComplete() {
+        super.onMapLoadedComplete();
+        if (isReduce) {
+            // 重现位置信息
+            reduceLocation();
         }
     }
 

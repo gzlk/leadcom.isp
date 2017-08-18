@@ -233,6 +233,7 @@
     <string name="ui_activity_sign_right_button_text">签到结果</string>
     <string name="ui_activity_sign_has_been_ended">签到已结束了</string>
     <string name="ui_activity_sign_signed">已签到</string>
+    <string name="ui_activity_sign_not_begin">未开始</string>
     <string name="ui_activity_sign_warning">签到位置确定后将不可以修改，您确定要将当前位置当作签到地点吗？</string>
     <string name="ui_activity_sign_signing">正在签到，请稍候&#8230;</string>
 

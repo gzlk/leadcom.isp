@@ -41,7 +41,7 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
     protected static boolean hasPermission = false;
     private static final String PARAM_LOCATED = "ampf_located";
     protected static final String PARAM_ADDRESS = "ampf_address";
-    private static final int dftZoomLevel = 16;
+    private static final float dftZoomLevel = 18f;
 
     @ViewId(R.id.ui_map_picker_center_pointer)
     public LinearLayout centerPointer;
@@ -124,9 +124,23 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
     public void doingInResume() {
         if (null == mAMap) {
             mAMap = mMapView.getMap();
+            mAMap.setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
+                @Override
+                public void onMapLoaded() {
+                    Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onMapLoadedComplete();
+                        }
+                    }, duration());
+                }
+            });
         }
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
         mMapView.onResume();
+    }
+
+    protected void onMapLoadedComplete() {
     }
 
     @Override
@@ -142,9 +156,24 @@ public abstract class MapHandleableFragment extends BaseLocationSupportFragment 
     }
 
     protected void reduceLocation() {
-        LatLng pos = new LatLng(address.getLatitude(), address.getLongitude());
-        CameraUpdate update = CameraUpdateFactory.newCameraPosition(new CameraPosition(pos, dftZoomLevel, 0, 0));
-        mAMap.animateCamera(update, duration(), null);
+        Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                LatLng pos = new LatLng(address.getLatitude(), address.getLongitude());
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(pos, dftZoomLevel);
+                mAMap.animateCamera(update, duration(), new AMap.CancelableCallback() {
+                    @Override
+                    public void onFinish() {
+                        //mAMap.animateCamera(CameraUpdateFactory.zoomTo(dftZoomLevel), duration(), null);
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+            }
+        });
     }
 
     /**

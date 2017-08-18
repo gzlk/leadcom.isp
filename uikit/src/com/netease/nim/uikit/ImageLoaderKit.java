@@ -59,7 +59,7 @@ public class ImageLoaderKit {
 
     private ImageLoaderConfiguration getDefaultConfig() throws IOException {
         int MAX_CACHE_MEMORY_SIZE = (int) (Runtime.getRuntime().maxMemory() / 8);
-        File cacheDir = StorageUtils.getOwnCacheDirectory(context, context.getPackageName() + "/cache/image/");
+        File cacheDir = StorageUtils.getOwnCacheDirectory(context, "leadcom/cache/image/");
 
         LogUtil.i(TAG, "ImageLoader memory cache size = " + MAX_CACHE_MEMORY_SIZE / M + "M");
         LogUtil.i(TAG, "ImageLoader disk cache directory = " + cacheDir.getAbsolutePath());

@@ -15,6 +15,7 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.map.MapHandleableFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.GaodeHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
@@ -60,14 +61,17 @@ public class SignFragment extends MapHandleableFragment {
     private static final String PARAM_SIGN_ID = "sf_sign_id";
     private static final String PARAM_RECORD = "sf_sign_record";
     private static final String PARAM_LOCATED = "sf_located";
+    private static final String PARAM_STARTED = "sf_started";
 
     private String mTID, mSignId;
+    private boolean mStarted = false;
     private AppSignRecord record;
     private AppSigning signing;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
+        mStarted = bundle.getBoolean(PARAM_STARTED, false);
         isLocated = bundle.getBoolean(PARAM_LOCATED, false);
         mTID = bundle.getString(PARAM_TID, "");
         mSignId = bundle.getString(PARAM_SIGN_ID, "");
@@ -100,6 +104,7 @@ public class SignFragment extends MapHandleableFragment {
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_STARTED, mStarted);
         bundle.putBoolean(PARAM_LOCATED, isLocated);
         bundle.putString(PARAM_TID, mTID);
         bundle.putString(PARAM_SIGN_ID, mSignId);
@@ -159,17 +164,62 @@ public class SignFragment extends MapHandleableFragment {
         if (isEmpty(record.getId()) && !isLocated && hasPermission) {
             startLocation();
         }
+        if (!mStarted) {
+            mStarted = true;
+            beginCheckSigningTime();
+        }
+    }
+
+    @Override
+    protected void onMapLoadedComplete() {
+        super.onMapLoadedComplete();
         reduceSignPoint();
+    }
+
+    private void beginCheckSigningTime() {
+        if (mStarted) {
+            Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkSigningTime();
+                }
+            }, GaodeHelper.SI_3);
+        }
+    }
+
+    private void checkSigningTime() {
+        if (null == signing) {
+            signing = new Dao<>(AppSigning.class).query(mSignId);
+        }
+        long begin = Utils.parseDate(getString(R.string.ui_base_text_date_time_format), signing.getBeginDate()).getTime();
+        long end = Utils.parseDate(getString(R.string.ui_base_text_date_time_format), signing.getEndDate()).getTime();
+        long now = Utils.timestamp();
+        boolean signable = now >= begin && now <= end;
+        boolean signed = !isEmpty(record.getId());
+        mSignButton.setEnabled(signable && !signed);
+        mSignButton.setText(signed ? R.string.ui_activity_sign_signed :
+                (signable ? R.string.ui_nim_action_sign :
+                        now < begin ? R.string.ui_activity_sign_not_begin :
+                                now > end ? R.string.ui_activity_vote_details_status_ended :
+                                        R.string.ui_nim_action_sign));
+        resetSignableInfo();
+        if (signed || now > end) {
+            // 已签到或已结束时，不再继续循环判断当前时间
+            mStarted = false;
+        }
+        beginCheckSigningTime();
     }
 
     @Override
     public void onStop() {
+        Handler().removeCallbacksAndMessages(null);
         enableMyLocation(false);
         super.onStop();
     }
 
     private void reduceSignPoint() {
         if (!isEmpty(record.getId())) {
+            isLocated = true;
             address.setLatitude(Double.valueOf(record.getLat()));
             address.setLongitude(Double.valueOf(record.getLon()));
             reduceLocation();
@@ -208,12 +258,14 @@ public class SignFragment extends MapHandleableFragment {
     }
 
     private void sign() {
+        mStarted = false;
         setLoadingText(R.string.ui_activity_sign_signing);
         displayLoading(true);
         AppSignRecordRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppSignRecord>() {
             @Override
             public void onResponse(AppSignRecord record, boolean success, String message) {
                 super.onResponse(record, success, message);
+                displayLoading(false);
                 if (success) {
                     if (null != callback) {
                         callback.onSuccess();
@@ -240,13 +292,19 @@ public class SignFragment extends MapHandleableFragment {
         mAddress.setText(address);
         if (!isEmpty(address)) {
             createRecord();
-            record.setCreateDate(Utils.format(getString(R.string.ui_base_text_date_time_format), null));
             record.setLon(format("%.6f", this.address.getLongitude()));
             record.setLat(format("%.6f", this.address.getLatitude()));
             record.setSite(address);
             record.setAlt(format("%.6f", this.address.getAltitude()));
-            mTimerView.setText(formatDateTime(record.getCreateDate()));
-            mAddress.setText(record.getSite());
+            resetSignableInfo();
         }
+    }
+
+    private void resetSignableInfo() {
+        if (isEmpty(record.getId())) {
+            record.setCreateDate(Utils.format(getString(R.string.ui_base_text_date_time_format), null));
+        }
+        mTimerView.setText(formatDateTime(record.getCreateDate()));
+        mAddress.setText(record.getSite());
     }
 }

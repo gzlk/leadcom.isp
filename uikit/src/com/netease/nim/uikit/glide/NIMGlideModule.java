@@ -34,7 +34,7 @@ public class NIMGlideModule implements GlideModule {
 
     private static synchronized DiskCache createDiskCache() {
         final Context context = NimUIKit.getContext();
-        File cacheDir = StorageUtils.getOwnCacheDirectory(context, context.getPackageName() + "/cache/image/");
+        File cacheDir = StorageUtils.getOwnCacheDirectory(context, "leadcom/cache/image/");
         if (!cacheDir.exists()) {
             cacheDir.mkdirs();
         }

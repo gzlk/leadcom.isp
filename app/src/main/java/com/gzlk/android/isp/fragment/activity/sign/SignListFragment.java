@@ -102,12 +102,13 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
         loadingSignings();
     }
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        loadingSignings();
     }
 
     @Override
@@ -142,6 +143,9 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
                 public void onResponse(List<AppSigning> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                     super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                     if (success) {
+                        if (remotePageNumber <= 1) {
+                            mAdapter.clear();
+                        }
                         if (null != list) {
                             mAdapter.update(list, false);
                             if (list.size() >= pageSize) {
