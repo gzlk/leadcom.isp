@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.activity.AppSignRecordRequest;
+import com.gzlk.android.isp.api.activity.AppSigningRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
@@ -135,17 +136,17 @@ public class SignFragment extends MapHandleableFragment {
 
     @Override
     public void doingInResume() {
+        super.doingInResume();
         if (isEmpty(mSignId)) {
             ToastHelper.make().showMsg(R.string.ui_activity_sign_invalid_sign_setup);
             mSignButton.setEnabled(false);
         } else if (null == signing) {
             signing = new Dao<>(AppSigning.class).query(mSignId);
-            mTitleView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_text, signing.getTitle())));
-            String begin = Utils.format(signing.getBeginDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM);
-            String end = Utils.format(signing.getEndDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM1);
-            mTimeView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_time, begin, end)));
+            if (null == signing) {
+                fetchingSigning();
+            }
         }
-        getLocalSignRecord();
+        initializeSigningInfo();
         setCustomTitle(R.string.ui_nim_action_sign);
 
         setRightText(R.string.ui_activity_sign_right_button_text);
@@ -158,15 +159,38 @@ public class SignFragment extends MapHandleableFragment {
             }
         });
 
-        mEndTime.setText(getString(R.string.ui_activity_sign_end_time, (null == signing ? getString(R.string.ui_base_text_not_set) : signing.getEndDate())));
-        super.doingInResume();
-        // 不是复现签到位置时，开始定位
-        if (isEmpty(record.getId()) && !isLocated && hasPermission) {
-            startLocation();
-        }
-        if (!mStarted) {
-            mStarted = true;
-            beginCheckSigningTime();
+    }
+
+    private void fetchingSigning() {
+        AppSigningRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppSigning>() {
+            @Override
+            public void onResponse(AppSigning appSigning, boolean success, String message) {
+                super.onResponse(appSigning, success, message);
+                if (success) {
+                    signing = appSigning;
+                    initializeSigningInfo();
+                }
+            }
+        }).find(mSignId, AppSigningRequest.FIND_RECORD);
+    }
+
+    private void initializeSigningInfo() {
+        if (null != signing) {
+            mTitleView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_text, signing.getTitle())));
+            String begin = Utils.format(signing.getBeginDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM);
+            String end = Utils.format(signing.getEndDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM1);
+            mTimeView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_time, begin, end)));
+            mEndTime.setText(getString(R.string.ui_activity_sign_end_time, (null == signing ? getString(R.string.ui_base_text_not_set) : signing.getEndDate())));
+            getLocalSignRecord();
+
+            // 不是复现签到位置时，开始定位
+            if (isEmpty(record.getId()) && !isLocated && hasPermission) {
+                startLocation();
+            }
+            if (!mStarted) {
+                mStarted = true;
+                beginCheckSigningTime();
+            }
         }
     }
 

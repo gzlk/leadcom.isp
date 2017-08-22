@@ -15,13 +15,11 @@ import com.gzlk.android.isp.listener.OnHttpListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.query.FullTextQuery;
 import com.litesuits.http.LiteHttp;
+import com.litesuits.http.log.HttpLog;
 import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.JsonBody;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -96,9 +94,10 @@ public abstract class Request<T> {
     protected String accessToken;
 
     public Request() {
+        HttpLog.isPrint = false;
         liteHttp = LiteHttp.build(App.app()).create();
         // 10秒网络超时
-        liteHttp.getConfig().setConnectTimeout(5000);
+        liteHttp.getConfig().setConnectTimeout(5000).setSocketTimeout(5000);
         accessToken = Cache.cache().accessToken;
         initializeDao();
     }

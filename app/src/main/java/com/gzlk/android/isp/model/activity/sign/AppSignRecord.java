@@ -10,6 +10,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,6 +46,14 @@ public class AppSignRecord extends Sign {
                 .whereEquals(Model.Field.UserId, Cache.cache().userId);
         List<AppSignRecord> records = new Dao<>(AppSignRecord.class).query(builder);
         return (null == records || records.size() < 1) ? null : records.get(0);
+    }
+
+    public static void save(ArrayList<AppSignRecord> records) {
+        new Dao<>(AppSignRecord.class).save(records);
+    }
+
+    public static void save(AppSignRecord record) {
+        new Dao<>(AppSignRecord.class).save(record);
     }
 
     //签到应用的id(活动-签到应用-签到  三者间是一对多，一对多的关系)

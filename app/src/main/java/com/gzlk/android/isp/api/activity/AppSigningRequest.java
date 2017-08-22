@@ -7,11 +7,14 @@ import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.model.activity.sign.AppSignRecord;
 import com.gzlk.android.isp.model.activity.sign.AppSigning;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>活动应用：签到<br />
@@ -56,6 +59,22 @@ public class AppSigningRequest extends Request<AppSigning> {
     public AppSigningRequest setOnMultipleRequestListener(OnMultipleRequestListener<AppSigning> listListener) {
         onMultipleRequestListener = listListener;
         return this;
+    }
+
+    @Override
+    protected void save(AppSigning appSigning) {
+        AppSignRecord.save(appSigning.getActSignInList());
+        super.save(appSigning);
+    }
+
+    @Override
+    protected void save(List<AppSigning> list) {
+        if (null != list) {
+            for (AppSigning signing : list) {
+                AppSignRecord.save(signing.getActSignInList());
+            }
+        }
+        super.save(list);
     }
 
     /**
