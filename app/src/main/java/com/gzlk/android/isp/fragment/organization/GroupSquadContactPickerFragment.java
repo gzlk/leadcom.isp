@@ -12,6 +12,7 @@ import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.organization.GroupSquadContactViewHolder;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
@@ -366,7 +367,7 @@ public class GroupSquadContactPickerFragment extends BaseOrganizationFragment {
     }
 
     // 全选
-    private BaseViewHolder.OnHandlerBoundDataListener<Model> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+    private OnHandleBoundDataListener<Model> onHandlerBoundDataListener = new OnHandleBoundDataListener<Model>() {
         @Override
         public Model onHandlerBoundData(BaseViewHolder holder) {
             int position = holder.getAdapterPosition();

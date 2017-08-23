@@ -29,6 +29,7 @@ import com.gzlk.android.isp.holder.organization.SquadAddViewHolder;
 import com.gzlk.android.isp.holder.organization.SquadDeleteableViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -516,7 +517,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         }).delete(squadId);
     }
 
-    private BaseViewHolder.OnHandlerBoundDataListener<Squad> handlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Squad>() {
+    private OnHandleBoundDataListener<Squad> handlerBoundDataListener = new OnHandleBoundDataListener<Squad>() {
         @Override
         public Squad onHandlerBoundData(BaseViewHolder holder) {
             warningDeleteSquad(holder.getAdapterPosition());

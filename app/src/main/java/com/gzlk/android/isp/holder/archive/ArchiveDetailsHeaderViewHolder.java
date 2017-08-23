@@ -129,7 +129,9 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
             super.onPageStarted(view, url, favicon);
             if (firstEnter) {
                 firstEnter = false;
-                ((ArchiveDetailsFragment) fragment()).showLoadingContent(true);
+                if (fragment() instanceof ArchiveDetailsFragment) {
+                    ((ArchiveDetailsFragment) fragment()).showLoadingContent(true);
+                }
             }
         }
 
@@ -138,7 +140,9 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
          */
         @Override
         public void onPageFinished(WebView view, String url) {
-            ((ArchiveDetailsFragment) fragment()).showLoadingContent(false);
+            if (fragment() instanceof ArchiveDetailsFragment) {
+                ((ArchiveDetailsFragment) fragment()).showLoadingContent(false);
+            }
             super.onPageFinished(view, url);
         }
     }

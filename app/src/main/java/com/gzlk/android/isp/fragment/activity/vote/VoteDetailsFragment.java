@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.api.activity.AppNoticeRequest;
 import com.gzlk.android.isp.api.activity.AppVoteRecordRequest;
 import com.gzlk.android.isp.api.activity.AppVoteRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -19,18 +20,27 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.activity.VoteOptionViewHolder;
 import com.gzlk.android.isp.holder.activity.VoteViewHolder;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.AppNotice;
 import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.gzlk.android.isp.model.activity.vote.AppVoteItem;
 import com.gzlk.android.isp.model.activity.vote.AppVoteRecord;
+import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.msg.MessageBuilder;
+import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.util.ArrayList;
 
@@ -255,10 +265,32 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
     private boolean hasVoted = false;
 
+    private int getRefusedCount() {
+        int ret = 0;
+        if (null != mAppVote.getActVoteList()) {
+            for (AppVoteRecord record : mAppVote.getActVoteList()) {
+                if (record.getStatus() == AppVote.Status.REFUSED) {
+                    ret++;
+                }
+            }
+        }
+        return ret;
+    }
+
     private void showDetails() {
         voteViewHolder.showContent(mAppVote);
         voteViewHolder.showVoteType(mAppVote);
         hasVoted = null != mAppVote.getActVote() && !mAppVote.getActVote().haventVote();
+        if (hasVoted || mAppVote.isEnded()) {
+            AppVoteItem refused = AppVoteItem.getRefuseItem();
+            refused.setNum(getRefusedCount());
+            if (!mAppVote.getActVoteItemList().contains(refused)) {
+                mAppVote.getActVoteItemList().add(refused);
+            } else {
+                int index = mAppVote.getActVoteItemList().indexOf(refused);
+                mAppVote.getActVoteItemList().set(index, refused);
+            }
+        }
         refused.setVisibility(hasVoted && mAppVote.getActVote().hasRefused() ? View.VISIBLE : View.GONE);
         setCustomTitle(hasVoted || mAppVote.isEnded() ? R.string.ui_activity_vote_details_fragment_title1 : R.string.ui_activity_vote_details_fragment_title);
         mAdapter.update(mAppVote.getActVoteItemList(), false);
@@ -273,13 +305,80 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resetRightIcon() {
-        setRightText(R.string.ui_base_text_delete);
+        setRightIcon(R.string.ui_icon_more);
+        //setRightText(R.string.ui_base_text_delete);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                warningDelete();
+                openDetailsDialog();
             }
         });
+    }
+
+    private void openDetailsDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                return View.inflate(voteOptions.getContext(), R.layout.popup_dialog_activity_vote_details, null);
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_button_activity_vote_publish, R.id.ui_dialog_button_activity_vote_delete};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_dialog_button_activity_vote_publish:
+                        publishVote();
+                        break;
+                    case R.id.ui_dialog_button_activity_vote_delete:
+                        warningDelete();
+                        break;
+                }
+                return true;
+            }
+        }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true).show();
+    }
+
+    private void publishVote() {
+        showImageHandlingDialog(R.string.ui_activity_vote_details_publish_details_warning);
+        String content = "";
+        if (null != mAppVote.getActVoteItemList()) {
+            int index = 1;
+            for (AppVoteItem item : mAppVote.getActVoteItemList()) {
+                content += (isEmpty(content) ? "" : "\n") + getString(R.string.ui_activity_vote_details_publish_content, index, item.getContent(), item.getNum());
+                index++;
+            }
+        }
+        if (isEmpty(content)) {
+            content = getString(R.string.ui_activity_vote_details_publish_content_no_option);
+        }
+        final String finalContent = content;
+        AppNoticeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppNotice>() {
+            @Override
+            public void onResponse(AppNotice notice, boolean success, String message) {
+                super.onResponse(notice, success, message);
+                hideImageHandlingDialog();
+                if (success) {
+                    if (null != notice) {
+                        NoticeAttachment attachment = new NoticeAttachment();
+                        attachment.setContent(finalContent);
+                        attachment.setCustomId(notice.getId());
+                        attachment.setActId(mAppVote.getActId());
+                        attachment.setTitle(getString(R.string.ui_activity_vote_details_publish_content_title, mAppVote.getTitle()));
+                        IMMessage msg = MessageBuilder.createCustomMessage(tid, SessionTypeEnum.Team, notice.getTitle(), attachment);
+                        NIMClient.getService(MsgService.class).sendMessage(msg, false);
+                    }
+                }
+            }
+        }).add(mAppVote.getActId(), mAppVote.getTitle(), content);
     }
 
     private void warningDelete() {
@@ -346,12 +445,22 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private OnHandleBoundDataListener<AppVoteItem> onHandlerBoundDataListener = new OnHandleBoundDataListener<AppVoteItem>() {
+        @Override
+        public AppVoteItem onHandlerBoundData(BaseViewHolder holder) {
+            AppVoteItem item = mAdapter.get(holder.getAdapterPosition());
+            VoteItemDetailsFragment.open(VoteDetailsFragment.this, mAppVote.getId(), item.getId());
+            return null;
+        }
+    };
+
     private class VoteItemAdapter extends RecyclerViewAdapter<VoteOptionViewHolder, AppVoteItem> {
 
         @Override
         public VoteOptionViewHolder onCreateViewHolder(View itemView, int viewType) {
             VoteOptionViewHolder holder = new VoteOptionViewHolder(itemView, VoteDetailsFragment.this);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
+            holder.addOnHandlerBoundDataListener(onHandlerBoundDataListener);
             return holder;
         }
 
@@ -362,9 +471,8 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public void onBindHolderOfView(VoteOptionViewHolder holder, int position, @Nullable AppVoteItem item) {
-            holder.showContent(item, mAppVote.getMaxSelectable() > 1);
-            holder.showEnded(mAppVote.isEnded());
-            holder.showVoted(hasVoted);
+            holder.showContent(item, mAppVote);
+            holder.showVoted(hasVoted || mAppVote.isEnded());
         }
 
         @Override

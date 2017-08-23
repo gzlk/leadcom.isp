@@ -26,6 +26,7 @@ import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentViewHolder;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -322,7 +323,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         }
     };
 
-    private BaseViewHolder.OnHandlerBoundDataListener<Model> boundMomentDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+    private OnHandleBoundDataListener<Model> boundMomentDataListener = new OnHandleBoundDataListener<Model>() {
         @Override
         public Moment onHandlerBoundData(BaseViewHolder holder) {
             Model model = adapter.get(holder.getAdapterPosition());
@@ -330,7 +331,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         }
     };
 
-    private BaseViewHolder.OnHandlerBoundDataListener<Model> boundDocumentListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+    private OnHandleBoundDataListener<Model> boundDocumentListener = new OnHandleBoundDataListener<Model>() {
         @Override
         public Archive onHandlerBoundData(BaseViewHolder holder) {
             Model model = adapter.get(holder.getAdapterPosition());
@@ -338,7 +339,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
         }
     };
 
-    private BaseViewHolder.OnHandlerBoundDataListener<Model> boundCollectionListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+    private OnHandleBoundDataListener<Model> boundCollectionListener = new OnHandleBoundDataListener<Model>() {
         @Override
         public Collection onHandlerBoundData(BaseViewHolder holder) {
             Model model = adapter.get(holder.getAdapterPosition());

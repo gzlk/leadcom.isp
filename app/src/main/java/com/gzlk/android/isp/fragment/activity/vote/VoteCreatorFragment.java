@@ -22,6 +22,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.activity.VoteOptionEditViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
@@ -535,7 +536,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         }
     }
 
-    private BaseViewHolder.OnHandlerBoundDataListener<AppVoteItem> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<AppVoteItem>() {
+    private OnHandleBoundDataListener<AppVoteItem> onHandlerBoundDataListener = new OnHandleBoundDataListener<AppVoteItem>() {
         @Override
         public AppVoteItem onHandlerBoundData(BaseViewHolder holder) {
             return mAdapter.get(holder.getAdapterPosition());

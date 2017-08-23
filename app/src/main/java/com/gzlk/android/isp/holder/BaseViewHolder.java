@@ -14,6 +14,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.hlk.hlklib.etc.Utility;
 
 import java.lang.ref.SoftReference;
@@ -177,22 +178,12 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     /**
      * 获取当前正在处理的数据对象的回调
      */
-    protected OnHandlerBoundDataListener mOnHandlerBoundDataListener;
+    protected OnHandleBoundDataListener mOnHandlerBoundDataListener;
 
     /**
      * 添加数据处理回调
      */
-    public void addOnHandlerBoundDataListener(OnHandlerBoundDataListener l) {
+    public void addOnHandlerBoundDataListener(OnHandleBoundDataListener l) {
         mOnHandlerBoundDataListener = l;
-    }
-
-    /**
-     * ViewHolder的数据处理接口
-     */
-    public interface OnHandlerBoundDataListener<T> {
-        /**
-         * 处理holder所在adapter中位置的绑定数据
-         */
-        T onHandlerBoundData(BaseViewHolder holder);
     }
 }

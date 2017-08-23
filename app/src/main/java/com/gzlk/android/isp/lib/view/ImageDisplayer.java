@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -355,6 +354,11 @@ public class ImageDisplayer extends RelativeLayout {
             default:
                 return R.layout.tool_view_image_normal;
         }
+    }
+
+    public void setDisplayType(@DisplayType int type) {
+        displayType = type;
+        initializeViews();
     }
 
     private OnClickListener onClickListener = new OnClickListener() {

@@ -266,11 +266,13 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void handleHandledActivity(boolean agree) {
-        NimMessage msg = NimMessage.query(nimId);
-        if (null != msg) {
-            msg.setHandled(true);
-            msg.setHandleState(agree);
-            NimMessage.save(msg);
+        List<NimMessage> msgs = NimMessage.queryNoHandledByTid(tid);
+        if (null != msgs) {
+            for (NimMessage msg : msgs) {
+                msg.setHandled(true);
+                msg.setHandleState(agree);
+            }
+            NimMessage.save(msgs);
             NimApplication.dispatchCallbacks();
         }
     }

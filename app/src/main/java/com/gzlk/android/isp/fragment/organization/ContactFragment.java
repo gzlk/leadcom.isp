@@ -23,6 +23,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.common.SearchableViewHolder;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Dao;
@@ -514,7 +515,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     };
 
     // 小组内设为管理员
-    private BaseViewHolder.OnHandlerBoundDataListener<Member> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Member>() {
+    private OnHandleBoundDataListener<Member> onHandlerBoundDataListener = new OnHandleBoundDataListener<Member>() {
         @Override
         public Member onHandlerBoundData(BaseViewHolder holder) {
             // 升级或撤销管理员

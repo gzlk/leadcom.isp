@@ -17,6 +17,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.SystemMessageViewHolder;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
@@ -173,7 +174,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         });
     }
 
-    private BaseViewHolder.OnHandlerBoundDataListener<NimMessage> handlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<NimMessage>() {
+    private OnHandleBoundDataListener<NimMessage> handlerBoundDataListener = new OnHandleBoundDataListener<NimMessage>() {
         @Override
         public NimMessage onHandlerBoundData(BaseViewHolder holder) {
             // 删除通知

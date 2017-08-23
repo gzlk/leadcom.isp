@@ -139,7 +139,7 @@ public class AppVoteRequest extends Request<AppVote> {
      */
     public void find(String voteId, int ope, int pageNumber) {
         // id="",ope="",pageSize="",pageNum=""
-        httpRequest(getRequest(SingleVote.class, format("%s?id=%s&ope=%d&&pageNumber=%d", url(FIND), voteId, ope, pageNumber), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleVote.class, format("%s?id=%s&ope=%d&pageNumber=%d", url(FIND), voteId, ope, pageNumber), "", HttpMethods.Get));
     }
 
     /**

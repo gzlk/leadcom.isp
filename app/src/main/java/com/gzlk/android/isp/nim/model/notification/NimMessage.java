@@ -47,6 +47,10 @@ public class NimMessage implements MsgAttachment {
         new Dao<>(NimMessage.class).save(msg);
     }
 
+    public static void save(List<NimMessage> msgs) {
+        new Dao<>(NimMessage.class).save(msgs);
+    }
+
     public static void delete(long msgId) {
         Dao<NimMessage> dao = new Dao<>(NimMessage.class);
         NimMessage msg = dao.querySingle(Model.Field.Id, msgId);
@@ -60,6 +64,19 @@ public class NimMessage implements MsgAttachment {
     public static List<NimMessage> query() {
         QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
                 .appendOrderDescBy(Model.Field.Id);
+        return new Dao<>(NimMessage.class).query(builder);
+    }
+
+    /**
+     * 查找同一个活动的未处理邀请
+     */
+    public static List<NimMessage> queryNoHandledByTid(String tid) {
+        QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
+                .whereEquals(Activity.Field.NimId, tid)
+                .whereAppendAnd()
+                .whereEquals(PARAM.HANDLED, false)
+                .whereAppendAnd()
+                .whereEquals(Archive.Field.Type, Type.ACTIVITY_INVITE);
         return new Dao<>(NimMessage.class).query(builder);
     }
 

@@ -294,12 +294,20 @@
     <string name="ui_activity_vote_details_fragment_title">投票详情</string>
     <string name="ui_activity_vote_details_fragment_title1">投票统计</string>
     <string name="ui_activity_vote_details_has_ended">投票终止，查看结果</string>
+    <string name="ui_activity_vote_details_see_item_details">查看结果</string>
+    <string name="ui_activity_vote_details_publish_details">发布结果</string>
+    <string name="ui_activity_vote_details_publish_details_warning">正在发布投票结果</string>
+    <string name="ui_activity_vote_details_publish_content_title">投票结果：%s</string>
+    <string name="ui_activity_vote_details_publish_content_no_option">没有投票选项</string>
+    <string name="ui_activity_vote_details_publish_content" formatted="false">%d、%s %d票</string>
     <string name="ui_activity_vote_details_status_voting">进行中</string>
     <string name="ui_activity_vote_details_status_ended">已结束</string>
     <string name="ui_activity_vote_details_button_reject">弃权</string>
     <string name="ui_activity_vote_details_button_vote">投票</string>
+    <string name="ui_activity_vote_details_rejected_id">voteItemRefused</string>
     <string name="ui_activity_vote_details_rejected">已弃权</string>
-    <string name="ui_activity_vote_details_number" formatted="false">%d票</string>
+    <string name="ui_activity_vote_details_count" formatted="false">%d票</string>
+    <string name="ui_activity_vote_details_number" formatted="false">%d票(%s)</string>
     <string name="ui_activity_vote_details_loading">正在加载投票详情&#8230;</string>
     <string name="ui_activity_vote_details_end_time" formatted="false">投票截止时间：%s</string>
     <string name="ui_activity_vote_details_nothing_selected">没有选择任何投票项，您这是要投弃权吗？</string>
@@ -311,4 +319,9 @@
     <string name="ui_activity_vote_details_deleting">正在删除此投票应用&#8230;</string>
     <string name="ui_activity_vote_details_max_selected" formatted="false">您至多只能选择%d个选项</string>
 
+    <string name="ui_activity_vote_item_details_fragment_title">查看选项</string>
+    <string name="ui_activity_vote_item_title_text" formatted="false">
+        <![CDATA[<font color="#65656a">选项：</font><font color="#b9b9c8">%s</font>]]>
+    </string>
+    <string name="ui_activity_vote_item_count" formatted="false">共有%d人选择此项</string>
 </resources>

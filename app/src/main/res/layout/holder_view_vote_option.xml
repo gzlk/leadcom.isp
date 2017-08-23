@@ -1,43 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ui_holder_view_vote_option"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/ui_base_dimen_button_height"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
-    android:background="@android:color/white"
-    android:orientation="horizontal"
-    app:cv_background="@android:color/white"
-    app:cv_background_active="@color/textColorHintLight"
-    app:cv_background_type="fill"
-    app:cv_border_size="@dimen/ui_static_dp_zero">
+    android:orientation="vertical">
 
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_holder_view_vote_option_icon"
-        android:layout_width="@dimen/ui_base_dimen_button_height"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/ui_icon_radio_selected"
-        android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/ui_base_text_size_big" />
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:id="@+id/ui_holder_view_vote_option"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_dimen_button_height"
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        app:cv_background="@android:color/white"
+        app:cv_background_active="@color/textColorHintLight"
+        app:cv_background_type="fill"
+        app:cv_border_size="@dimen/ui_static_dp_zero">
 
-    <TextView
-        android:id="@+id/ui_holder_view_vote_option_text"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:text="@string/app_name_default" />
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_vote_option_icon"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/ui_icon_radio_selected"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/ui_base_text_size_big" />
 
-    <TextView
-        android:id="@+id/ui_holder_view_vote_option_number"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-        android:gravity="center_vertical"
-        android:text="@string/app_name_default"
-        android:textColor="@color/textColorHint"
-        android:textSize="@dimen/ui_base_text_size_small" />
+        <TextView
+            android:id="@+id/ui_holder_view_vote_option_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/app_name_default" />
 
-</com.hlk.hlklib.lib.view.CorneredView>
+        <TextView
+            android:id="@+id/ui_holder_view_vote_option_number"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center_vertical"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+    <LinearLayout
+        android:id="@+id/ui_holder_view_vote_option_extra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/ui_holder_view_vote_option_chart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/ui_static_dp_15"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
+
+                <View
+                    android:id="@+id/ui_holder_view_vote_option_chart_color"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/ui_static_dp_5"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary" />
+
+                <View
+                    android:id="@+id/ui_holder_view_vote_option_chart_blank"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/ui_static_dp_5"
+                    android:layout_weight="0"
+                    android:background="@color/textColorHintLightLight" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|end"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ui_holder_view_vote_option_chart_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
+                    android:layout_marginStart="@dimen/ui_static_dp_5"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/ui_base_text_size_little" />
+
+                <TextView
+                    android:id="@+id/ui_holder_view_vote_option_chart_to_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_activity_vote_details_see_item_details"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/ui_base_text_size_little" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <com.hlk.hlklib.lib.view.ChatBalloon
+            android:id="@+id/ui_holder_view_vote_option_users_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-12dp"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/ui_base_dimen_button_height"
+            android:orientation="vertical"
+            android:padding="@dimen/ui_base_dimen_margin_padding"
+            android:visibility="gone"
+            app:cb_arrow_height="@dimen/ui_static_dp_10"
+            app:cb_arrow_margin="@dimen/ui_static_dp_20"
+            app:cb_arrow_side="topRight"
+            app:cb_arrow_width="@dimen/ui_static_dp_15"
+            app:cb_background_active="@color/textColorHintLight"
+            app:cb_background_normal="@android:color/white"
+            app:cb_border_active="@color/textColorHint"
+            app:cb_border_normal="@color/textColorHint"
+            app:cb_border_size="@dimen/ui_base_border_size_normal"
+            app:cb_corner_size="@dimen/ui_static_dp_zero">
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/ui_holder_view_vote_option_users"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:flexWrap="wrap">
+
+            </com.google.android.flexbox.FlexboxLayout>
+        </com.hlk.hlklib.lib.view.ChatBalloon>
+    </LinearLayout>
+</LinearLayout>

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
@@ -123,13 +124,9 @@ public class User extends Model {
     //签名（比如黄埔区民盟主委）
     @Column(Field.Signature)
     private String signature;
-
-    //加入的活动id列表，格式[id1,id2,id3]
-    @Column(Field.JoinedActs)
-    private ArrayList<String> joinedActs;
-    //发起的活动id列表，格式[id1,id2,id3]
-    @Column(Field.CreatedActs)
-    private ArrayList<String> createdActs;
+    //自定义介绍
+    @Ignore
+    private ArrayList<UserExtra> extra;
 
     public String getName() {
         if (isEmpty(name)) {
@@ -302,19 +299,11 @@ public class User extends Model {
         this.signature = signature;
     }
 
-    public ArrayList<String> getJoinedActs() {
-        return joinedActs;
+    public ArrayList<UserExtra> getExtra() {
+        return extra;
     }
 
-    public void setJoinedActs(ArrayList<String> joinedActs) {
-        this.joinedActs = joinedActs;
-    }
-
-    public ArrayList<String> getCreatedActs() {
-        return createdActs;
-    }
-
-    public void setCreatedActs(ArrayList<String> createdActs) {
-        this.createdActs = createdActs;
+    public void setExtra(ArrayList<UserExtra> extra) {
+        this.extra = extra;
     }
 }

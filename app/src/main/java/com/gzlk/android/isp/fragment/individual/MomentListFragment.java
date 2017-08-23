@@ -14,6 +14,7 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentViewHolder;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.model.user.User;
 
@@ -126,7 +127,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
         }).find(mQueryId, true);
     }
 
-    private BaseViewHolder.OnHandlerBoundDataListener<Moment> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Moment>() {
+    private OnHandleBoundDataListener<Moment> onHandlerBoundDataListener = new OnHandleBoundDataListener<Moment>() {
         @Override
         public Moment onHandlerBoundData(BaseViewHolder holder) {
             return mAdapter.get(holder.getAdapterPosition());

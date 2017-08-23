@@ -9,12 +9,15 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.model.user.UserExtra;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -136,6 +139,17 @@ public class UserRequest extends Request<User> {
                     break;
             }
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
+    }
+
+    public void update(ArrayList<UserExtra> extras) {
+        directlySave = false;
+        JSONObject object = new JSONObject();
+        try {
+            object.put("extra", new JSONArray(extras));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));

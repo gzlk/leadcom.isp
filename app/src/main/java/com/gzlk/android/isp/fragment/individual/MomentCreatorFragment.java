@@ -24,6 +24,7 @@ import com.gzlk.android.isp.holder.individual.ImageViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.RecycleAdapter;
@@ -311,7 +312,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    private BaseViewHolder.OnHandlerBoundDataListener<String> handlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<String>() {
+    private OnHandleBoundDataListener<String> handlerBoundDataListener = new OnHandleBoundDataListener<String>() {
         @Override
         public String onHandlerBoundData(BaseViewHolder holder) {
             return mAdapter.get(holder.getAdapterPosition());

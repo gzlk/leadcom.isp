@@ -24,6 +24,7 @@ import com.gzlk.android.isp.holder.archive.ArchiveAdditionalViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsHeaderViewHolder;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -427,7 +428,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
         }).add(commentType(), mQueryId, text);
     }
 
-    private BaseViewHolder.OnHandlerBoundDataListener<Model> onHandlerBoundDataListener = new BaseViewHolder.OnHandlerBoundDataListener<Model>() {
+    private OnHandleBoundDataListener<Model> onHandlerBoundDataListener = new OnHandleBoundDataListener<Model>() {
         @Override
         public Model onHandlerBoundData(BaseViewHolder holder) {
             // 收藏

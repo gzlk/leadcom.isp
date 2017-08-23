@@ -147,7 +147,7 @@ public class SignFragment extends MapHandleableFragment {
             }
         }
         initializeSigningInfo();
-        setCustomTitle(R.string.ui_nim_action_sign);
+        //setCustomTitle(R.string.ui_nim_action_sign);
 
         setRightText(R.string.ui_activity_sign_right_button_text);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
@@ -176,7 +176,8 @@ public class SignFragment extends MapHandleableFragment {
 
     private void initializeSigningInfo() {
         if (null != signing) {
-            mTitleView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_text, signing.getTitle())));
+            setCustomTitle(signing.getTitle());
+            mTitleView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_text, signing.getContent())));
             String begin = Utils.format(signing.getBeginDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM);
             String end = Utils.format(signing.getEndDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM1);
             mTimeView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_time, begin, end)));

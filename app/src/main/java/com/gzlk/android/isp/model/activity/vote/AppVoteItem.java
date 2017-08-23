@@ -1,10 +1,13 @@
 package com.gzlk.android.isp.model.activity.vote;
 
+import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.enums.Strategy;
 
 /**
  * <b>功能描述：</b>投票的选项<br />
@@ -18,6 +21,15 @@ import com.litesuits.orm.db.annotation.Table;
  */
 @Table(Activity.Table.VOTE_ITEM)
 public class AppVoteItem extends Model {
+
+    public static final String REFUSED_ID = StringHelper.getString(R.string.ui_activity_vote_details_rejected_id);
+
+    public static AppVoteItem getRefuseItem() {
+        AppVoteItem item = new AppVoteItem();
+        item.setId(REFUSED_ID);
+        item.setContent(StringHelper.getString(R.string.ui_activity_vote_details_rejected));
+        return item;
+    }
 
     //投票设置对象的id
     @Column(AppVote.Field.VoteId)
