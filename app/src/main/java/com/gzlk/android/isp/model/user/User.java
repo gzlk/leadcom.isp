@@ -300,6 +300,9 @@ public class User extends Model {
     }
 
     public ArrayList<UserExtra> getExtra() {
+        if (null == extra) {
+            extra = new ArrayList<>();
+        }
         return extra;
     }
 

@@ -154,6 +154,13 @@
     <string name="ui_text_user_information_loading_updating">正在更改您的信息，请稍候&#8230;</string>
     <string name="ui_text_user_information_to_archives">查看档案</string>
     <string name="ui_text_user_information_to_chat">发消息</string>
+    <string name="ui_text_user_property_self_defined_property">自定义介绍</string>
+    <string name="ui_text_user_property_self_defined_dialog_title">增加个人名片介绍栏目</string>
+    <string name="ui_text_user_property_self_defined_property_name_hint">标题(限8字)</string>
+    <string name="ui_text_user_property_self_defined_property_value_hint">内容(限20字)</string>
+    <string name="ui_text_user_property_self_defined_shown" formatted="false">1|是否公开|%d|</string>
+    <string name="ui_text_user_property_self_defined_invalid">标题或内容不能为空</string>
+    <string name="ui_text_user_property_self_defined_delete">您确定要删除这个自定义内容吗？</string>
 
     <string name="ui_text_modify_phone_number_fragment_title">更换手机号</string>
     <string name="ui_text_modify_phone_number_86" formatted="false">+86%s</string>

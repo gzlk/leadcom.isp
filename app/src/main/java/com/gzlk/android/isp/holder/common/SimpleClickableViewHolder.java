@@ -13,6 +13,7 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Concern;
 import com.gzlk.android.isp.model.organization.Squad;
+import com.gzlk.android.isp.model.user.UserExtra;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -43,6 +44,8 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     public CustomTextView appendIcon;
     @ViewId(R.id.ui_holder_view_simple_clickable_right_icon)
     public CustomTextView rightIcon;
+    @ViewId(R.id.ui_tool_view_contact_button2)
+    private TextView deleteView;
 
     public SimpleClickableViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -67,6 +70,8 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
             showContent((Squad) model);
         } else if (model instanceof SimpleClickableItem) {
             showContent((SimpleClickableItem) model);
+        } else if (model instanceof UserExtra) {
+            showContent(-1, ((UserExtra) model).getTitle(), ((UserExtra) model).getContent());
         } else {
             showContent(model.getId());
         }
@@ -99,6 +104,12 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
             imageView.displayImage(path, getDimension(R.dimen.ui_base_dimen_button_height), false, false);
             appendIcon.setVisibility(isEmpty(path) ? View.VISIBLE : View.GONE);
             valueTextView.setVisibility(isEmpty(path) ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+
+    public void showDelete(boolean shown) {
+        if (null != deleteView) {
+            deleteView.setVisibility(shown ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -145,11 +156,22 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
 
     private int index;
 
-    @Click({R.id.ui_holder_view_simple_clickable})
+    @Click({R.id.ui_holder_view_simple_clickable,
+            R.id.ui_tool_view_contact_button2})
     public void click(View view) {
-        if (null != mOnViewHolderClickListener) {
-            int pos = getAdapterPosition();
-            mOnViewHolderClickListener.onClick(pos < 0 ? index : pos);
+        switch (view.getId()) {
+            case R.id.ui_tool_view_contact_button2:
+                // 删除
+                if (null != mOnHandlerBoundDataListener) {
+                    mOnHandlerBoundDataListener.onHandlerBoundData(SimpleClickableViewHolder.this);
+                }
+                break;
+            case R.id.ui_holder_view_simple_clickable:
+                if (null != mOnViewHolderClickListener) {
+                    int pos = getAdapterPosition();
+                    mOnViewHolderClickListener.onClick(pos < 0 ? index : pos);
+                }
+                break;
         }
     }
 }

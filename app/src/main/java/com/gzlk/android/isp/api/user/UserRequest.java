@@ -148,7 +148,7 @@ public class UserRequest extends Request<User> {
         directlySave = false;
         JSONObject object = new JSONObject();
         try {
-            object.put("extra", new JSONArray(extras));
+            object.put("extra", new JSONArray(UserExtra.toJson(extras)));
         } catch (Exception e) {
             e.printStackTrace();
         }

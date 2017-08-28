@@ -10,9 +10,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
+import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
-import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.cache.Cache;
@@ -22,21 +23,26 @@ import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.gzlk.android.isp.fragment.common.BaseTransparentPropertyFragment;
 import com.gzlk.android.isp.fragment.login.CodeVerifyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.common.ToggleableViewHolder;
 import com.gzlk.android.isp.holder.individual.UserHeaderBigViewHolder;
 import com.gzlk.android.isp.holder.individual.UserSimpleMomentViewHolder;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.user.SimpleMoment;
 import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.model.user.UserExtra;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredView;
 
 import java.util.ArrayList;
@@ -57,6 +63,8 @@ import java.util.Locale;
 
 public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
+    private static final String PARAM_SELECTED = "upf_selected_index";
+
     public static UserPropertyFragment newInstance(String params) {
         UserPropertyFragment mf = new UserPropertyFragment();
         Bundle bundle = new Bundle();
@@ -70,7 +78,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         fragment.openActivity(UserPropertyFragment.class.getName(), userId, false, false, true);
     }
 
-    public static void open(Context context, String userId){
+    public static void open(Context context, String userId) {
         // 一般用于打开用户资料页面
         BaseActivity.openActivity(context, UserPropertyFragment.class.getName(), userId, false, false, true);
     }
@@ -78,13 +86,28 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     // UI
     @ViewId(R.id.ui_ui_custom_title_right_text)
     private TextView rightTextView;
+    @ViewId(R.id.ui_user_information_self_define)
+    private CorneredView selfDefine;
     @ViewId(R.id.ui_user_information_to_archive)
     private CorneredView toArchive;
     @ViewId(R.id.ui_user_information_to_chat)
     private CorneredView toChat;
 
     private String[] items;
+    private int selectedIndex;
     private MyPropertyAdapter mAdapter;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        selectedIndex = bundle.getInt(PARAM_SELECTED, 0);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putInt(PARAM_SELECTED, selectedIndex);
+    }
 
     @Override
     public void doingInResume() {
@@ -131,12 +154,16 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     }
 
     @Click({R.id.ui_ui_custom_title_right_container,
+            R.id.ui_user_information_self_define,
             R.id.ui_user_information_to_archive,
             R.id.ui_user_information_to_chat})
     private void click(View view) {
         switch (view.getId()) {
             case R.id.ui_ui_custom_title_right_container:
                 //toEdit();
+                break;
+            case R.id.ui_user_information_self_define:
+                openSelfDefineDialog();
                 break;
             case R.id.ui_user_information_to_archive:
                 onBottomButtonClicked();
@@ -154,6 +181,82 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     protected void onBottomButtonClicked() {
         // 查看档案
         ToastHelper.make().showMsg("目前没有查看个人档案的UI页面");
+    }
+
+    private View selfDefineDialog;
+    private ClearEditText selfName, selfValue;
+    private ToggleableViewHolder toggleHolder;
+
+    // 打开自定义属性对话框
+    private void openSelfDefineDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == selfDefineDialog) {
+                    selfDefineDialog = View.inflate(selfDefine.getContext(), R.layout.popup_dialog_individual_self_defined_property, null);
+                }
+                return selfDefineDialog;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+                if (null == toggleHolder) {
+                    toggleHolder = new ToggleableViewHolder(selfDefineDialog, UserPropertyFragment.this);
+                }
+                if (null == selfName) {
+                    selfName = (ClearEditText) selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_name);
+                }
+                if (null == selfValue) {
+                    selfValue = (ClearEditText) selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_value);
+                }
+                Model model = mAdapter.get(selectedIndex);
+                if (model instanceof UserExtra) {
+                    UserExtra ue = (UserExtra) model;
+                    selfName.setValue(ue.getTitle());
+                    selfValue.setValue(ue.getContent());
+                    toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, ue.getShow()));
+                } else {
+                    toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, UserExtra.ShownType.HIDE));
+                }
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                String title = selfName.getValue();
+                String value = selfValue.getValue();
+                if (isEmpty(title) || isEmpty(value)) {
+                    ToastHelper.make().showMsg(R.string.ui_text_user_property_self_defined_invalid);
+                    return false;
+                }
+                UserExtra extra = new UserExtra();
+                extra.setTitle(selfName.getValue());
+                extra.setContent(selfValue.getValue());
+                extra.setShow(toggleHolder.isToggled() ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE);
+                int index = Cache.cache().me.getExtra().indexOf(extra);
+                if (index >= 0) {
+                    Cache.cache().me.getExtra().set(index, extra);
+                } else {
+                    Cache.cache().me.getExtra().add(extra);
+                }
+                updateMyExtra();
+                return true;
+            }
+        }).setPopupType(DialogHelper.TYPE_SLID).show();
+    }
+
+    private void updateMyExtra() {
+        setLoadingText(R.string.ui_text_user_information_loading_updating);
+        displayLoading(true);
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                displayLoading(false);
+                if (success) {
+                    fetchingRemoteUserInfo();
+                }
+            }
+        }).update(Cache.cache().me.getExtra());
     }
 
 //    private void toEdit() {
@@ -183,6 +286,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }
         if (null == mAdapter) {
             mAdapter = new MyPropertyAdapter();
+            mAdapter.setMode(Attributes.Mode.Single);
             mRecyclerView.setAdapter(mAdapter);
             fetchingRemoteUserInfo();
         }
@@ -196,8 +300,15 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 openActivity(MomentListFragment.class.getName(), mQueryId, true, false);
             } else {
                 if (mQueryId.equals(Cache.cache().userId)) {
-                    // 只有我自己才能修改我自己的信息
-                    checkClickType(index);
+                    Model model = mAdapter.get(index);
+                    if (model instanceof UserExtra) {
+                        // 点击更改自定义设置
+                        selectedIndex = index;
+                        openSelfDefineDialog();
+                    } else {
+                        // 只有我自己才能修改我自己的信息
+                        checkClickType(index);
+                    }
                 }
             }
         }
@@ -238,6 +349,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         // 自己和自己不能聊天
         //toChat.setVisibility(isMe() ? View.GONE : View.VISIBLE);
         toChat.setVisibility(View.GONE);
+        // 自定义介绍
+        selfDefine.setVisibility(isMe() ? View.VISIBLE : View.GONE);
 
         final String invalid = StringHelper.getString(R.string.ui_base_text_not_set);
         // 头像部分
@@ -327,6 +440,13 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         } else {
             mAdapter.get(8).setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
             mAdapter.notifyItemChanged(8);
+        }
+
+        // 自定义属性
+        for (UserExtra extra : user.getExtra()) {
+            if (null != extra) {
+                mAdapter.update(extra);
+            }
         }
     }
 
@@ -560,9 +680,31 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }
     }
 
-    private class MyPropertyAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+    private OnHandleBoundDataListener<UserExtra> boundDataListener = new OnHandleBoundDataListener<UserExtra>() {
+        @Override
+        public UserExtra onHandlerBoundData(BaseViewHolder holder) {
+            int index = holder.getAdapterPosition();
+            Model model = mAdapter.get(index);
+            if (model instanceof UserExtra) {
+                warningDeleteSelfDefinedProperty(index);
+            }
+            return null;
+        }
+    };
 
-        private static final int VT_HEADER = 0, VT_MOMENT = 1, VT_CLICK = 2;
+    private void warningDeleteSelfDefinedProperty(final int index) {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_text_user_property_self_defined_delete, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                mAdapter.remove(index);
+                return true;
+            }
+        }, null);
+    }
+
+    private class MyPropertyAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
+
+        private static final int VT_HEADER = 0, VT_MOMENT = 1, VT_CLICK = 2, VT_DELETABLE = 3;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -578,6 +720,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 default:
                     SimpleClickableViewHolder scvh = new SimpleClickableViewHolder(itemView, UserPropertyFragment.this);
                     scvh.addOnViewHolderClickListener(onViewHolderClickListener);
+                    // 自定义属性的删除操作
+                    scvh.addOnHandlerBoundDataListener(boundDataListener);
                     return scvh;
             }
         }
@@ -590,7 +734,12 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 case 1:
                     return VT_MOMENT;
                 default:
-                    return VT_CLICK;
+                    Model model = get(position);
+                    if (model instanceof UserExtra) {
+                        return VT_DELETABLE;
+                    } else {
+                        return VT_CLICK;
+                    }
             }
         }
 
@@ -601,6 +750,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                     return R.layout.holder_view_individual_header_big;
                 case VT_MOMENT:
                     return R.layout.holder_view_user_simple_moment;
+                case VT_DELETABLE:
+                    return R.layout.holder_view_simple_clickable_deleteable;
                 default:
                     return R.layout.holder_view_simple_clickable;
             }
@@ -614,13 +765,20 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 ((UserSimpleMomentViewHolder) holder).showContent(item);
                 ((UserSimpleMomentViewHolder) holder).showContent(simpleMoments);
             } else if (holder instanceof SimpleClickableViewHolder) {
-                ((SimpleClickableViewHolder) holder).showContent(item);
+                SimpleClickableViewHolder sci = (SimpleClickableViewHolder) holder;
+                sci.showDelete(item instanceof UserExtra);
+                sci.showContent(item);
             }
         }
 
         @Override
         protected int comparator(Model item1, Model item2) {
             return 0;
+        }
+
+        @Override
+        public int getSwipeLayoutResourceId(int i) {
+            return R.id.ui_holder_view_contact_swipe_layout;
         }
     }
 }

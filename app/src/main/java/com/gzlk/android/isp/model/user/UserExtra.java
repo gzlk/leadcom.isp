@@ -1,5 +1,14 @@
 package com.gzlk.android.isp.model.user;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.model.Model;
+import com.hlk.hlklib.etc.Cryptography;
+
+import java.util.ArrayList;
+
 /**
  * <b>功能描述：</b>用户的附加属性<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -11,11 +20,53 @@ package com.gzlk.android.isp.model.user;
  * <b>修改备注：</b><br />
  */
 
-public class UserExtra {
+public class UserExtra extends Model {
+
+    public static String toJson(ArrayList<UserExtra> list) {
+        return Json.gson(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes f) {
+                return f.getName().equals("id") ||
+                        f.getName().startsWith("is") ||
+                        f.getName().startsWith("local");
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> aClass) {
+                return false;
+            }
+        }).toJson(list, new TypeToken<ArrayList<UserExtra>>() {
+        }.getType());
+    }
+
+    /**
+     * 显示类型
+     */
+    public interface ShownType {
+        /**
+         * 隐藏
+         */
+        int HIDE = 0;
+        /**
+         * 显示
+         */
+        int SHOWN = 1;
+    }
 
     private String title;   //标题
     private String content; //内容
     private int show;    //是否隐藏(0.隐藏,1.显示)
+
+    @Override
+    public String getId() {
+        if (isEmpty(super.getId())) {
+            if (isEmpty(title)) {
+                throw new IllegalArgumentException("User extra field \"title\" is empty.");
+            }
+            setId(Cryptography.md5(title));
+        }
+        return super.getId();
+    }
 
     public String getTitle() {
         return title;
@@ -23,6 +74,7 @@ public class UserExtra {
 
     public void setTitle(String title) {
         this.title = title;
+        getId();
     }
 
     public String getContent() {
@@ -34,6 +86,9 @@ public class UserExtra {
     }
 
     public int getShow() {
+        if (show != ShownType.HIDE && show != ShownType.SHOWN) {
+            show = ShownType.HIDE;
+        }
         return show;
     }
 

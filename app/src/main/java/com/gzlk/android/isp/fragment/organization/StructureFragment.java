@@ -26,7 +26,6 @@ import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.TextViewHolder;
 import com.gzlk.android.isp.holder.organization.OrgStructureViewHolder;
 import com.gzlk.android.isp.holder.organization.SquadAddViewHolder;
-import com.gzlk.android.isp.holder.organization.SquadDeleteableViewHolder;
 import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
@@ -517,6 +516,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         }).delete(squadId);
     }
 
+    // SimpleClickable的删除事件
     private OnHandleBoundDataListener<Squad> handlerBoundDataListener = new OnHandleBoundDataListener<Squad>() {
         @Override
         public Squad onHandlerBoundData(BaseViewHolder holder) {
@@ -544,13 +544,10 @@ public class StructureFragment extends BaseOrganizationFragment {
                 case VT_FOOTER:
                     return new SquadAddViewHolder(itemView, fragment);
                 case VT_SQUAD:
-                    SquadDeleteableViewHolder sdvh = new SquadDeleteableViewHolder(itemView, fragment);
-                    sdvh.addOnViewHolderClickListener(holderClickListener);
-                    sdvh.addOnHandlerBoundDataListener(handlerBoundDataListener);
-                    return sdvh;
                 default:
                     SimpleClickableViewHolder holder = new SimpleClickableViewHolder(itemView, fragment);
                     holder.addOnViewHolderClickListener(holderClickListener);
+                    holder.addOnHandlerBoundDataListener(handlerBoundDataListener);
                     return holder;
             }
         }
@@ -564,7 +561,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                 case VT_FOOTER:
                     return R.layout.holder_view_squad_add_layout;
                 case VT_SQUAD:
-                    return R.layout.holder_view_squad_deleteable_item;
+                    return R.layout.holder_view_simple_clickable_deleteable_gravity_left;
                 default:
                     return R.layout.holder_view_simple_clickable_gravity_left;
             }
@@ -572,16 +569,15 @@ public class StructureFragment extends BaseOrganizationFragment {
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-            if (holder instanceof SquadDeleteableViewHolder) {
-                SquadDeleteableViewHolder sdvh = (SquadDeleteableViewHolder) holder;
-                sdvh.showDelete(null != my && my.squadDeletable());
-                sdvh.showContent((Squad) item);
-            } else if (holder instanceof SimpleClickableViewHolder) {
+            if (holder instanceof SimpleClickableViewHolder) {
                 SimpleClickableViewHolder scvh = (SimpleClickableViewHolder) holder;
                 if (item instanceof SimpleClickableItem) {
                     scvh.showContent((SimpleClickableItem) item);
                 } else if (item instanceof Concern) {
                     scvh.showContent((Concern) item);
+                } else if (item instanceof Squad) {
+                    scvh.showContent((Squad) item);
+                    scvh.showDelete(null != my && my.squadDeletable());
                 }
             } else if (holder instanceof SquadAddViewHolder) {
                 ((SquadAddViewHolder) holder).showAddContainer(null != my && my.squadAddable());
