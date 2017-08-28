@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.Model;
@@ -71,7 +72,9 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
         } else if (model instanceof SimpleClickableItem) {
             showContent((SimpleClickableItem) model);
         } else if (model instanceof UserExtra) {
-            showContent(-1, ((UserExtra) model).getTitle(), ((UserExtra) model).getContent());
+            UserExtra ue = (UserExtra) model;
+            boolean deletable = null != deleteView && deleteView.getVisibility() == View.VISIBLE;
+            showContent(-1, ue.getTitle(), StringHelper.getString(R.string.ui_text_user_property_self_defined_value, ue.getContent(), deletable ? format("(%s)", StringHelper.getStringArray(R.array.ui_text_user_property_self_defined_shown_type)[ue.getShow()]) : ""));
         } else {
             showContent(model.getId());
         }

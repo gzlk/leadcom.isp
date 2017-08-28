@@ -48,6 +48,7 @@ import com.hlk.hlklib.lib.view.CorneredView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 
 /**
@@ -64,6 +65,7 @@ import java.util.Locale;
 public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
     private static final String PARAM_SELECTED = "upf_selected_index";
+    private static final String PARAM_DELETED = "upf_deleted_index";
 
     public static UserPropertyFragment newInstance(String params) {
         UserPropertyFragment mf = new UserPropertyFragment();
@@ -94,19 +96,21 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     private CorneredView toChat;
 
     private String[] items;
-    private int selectedIndex;
+    private int selectedIndex, deletedIndex;
     private MyPropertyAdapter mAdapter;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         selectedIndex = bundle.getInt(PARAM_SELECTED, 0);
+        deletedIndex = bundle.getInt(PARAM_DELETED, 0);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_SELECTED, selectedIndex);
+        bundle.putInt(PARAM_DELETED, deletedIndex);
     }
 
     @Override
@@ -163,6 +167,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 //toEdit();
                 break;
             case R.id.ui_user_information_self_define:
+                selectedIndex = 0;
                 openSelfDefineDialog();
                 break;
             case R.id.ui_user_information_to_archive:
@@ -228,7 +233,12 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                     ToastHelper.make().showMsg(R.string.ui_text_user_property_self_defined_invalid);
                     return false;
                 }
-                UserExtra extra = new UserExtra();
+                UserExtra extra;
+                if (selectedIndex > 0) {
+                    extra = (UserExtra) mAdapter.get(selectedIndex);
+                } else {
+                    extra = new UserExtra();
+                }
                 extra.setTitle(selfName.getValue());
                 extra.setContent(selfValue.getValue());
                 extra.setShow(toggleHolder.isToggled() ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE);
@@ -245,7 +255,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     }
 
     private void updateMyExtra() {
-        setLoadingText(R.string.ui_text_user_information_loading_updating);
+        setLoadingText(R.string.ui_text_user_information_loading_updating_extra);
         displayLoading(true);
         UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
@@ -253,6 +263,11 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 super.onResponse(user, success, message);
                 displayLoading(false);
                 if (success) {
+                    // 如果是删除某个自定义选项，此时删除adapter里的条目
+                    if (deletedIndex > 0) {
+                        mAdapter.remove(deletedIndex);
+                        deletedIndex = 0;
+                    }
                     fetchingRemoteUserInfo();
                 }
             }
@@ -443,10 +458,27 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }
 
         // 自定义属性
+        clearExtras();
         for (UserExtra extra : user.getExtra()) {
             if (null != extra) {
-                mAdapter.update(extra);
+                // 如果额外的属性是可显示状态或者不可显示但当前用户是登录用户时，也可以显示
+                if (extra.getShow() == UserExtra.ShownType.SHOWN || (extra.getShow() == UserExtra.ShownType.HIDE && isMe())) {
+                    mAdapter.update(extra);
+                }
             }
+        }
+    }
+
+    private void clearExtras() {
+        Iterator<Model> iterator = mAdapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof UserExtra) {
+                iterator.remove();
+                mAdapter.notifyItemRemoved(index);
+            }
+            index++;
         }
     }
 
@@ -686,6 +718,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             int index = holder.getAdapterPosition();
             Model model = mAdapter.get(index);
             if (model instanceof UserExtra) {
+                deletedIndex = index;
                 warningDeleteSelfDefinedProperty(index);
             }
             return null;
@@ -696,7 +729,10 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         SimpleDialogHelper.init(Activity()).show(R.string.ui_text_user_property_self_defined_delete, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                mAdapter.remove(index);
+                UserExtra ue = (UserExtra) mAdapter.get(index);
+                Cache.cache().me.getExtra().remove(ue);
+                updateMyExtra();
+                //mAdapter.remove(index);
                 return true;
             }
         }, null);
@@ -766,7 +802,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 ((UserSimpleMomentViewHolder) holder).showContent(simpleMoments);
             } else if (holder instanceof SimpleClickableViewHolder) {
                 SimpleClickableViewHolder sci = (SimpleClickableViewHolder) holder;
-                sci.showDelete(item instanceof UserExtra);
+                sci.showDelete((item instanceof UserExtra) && isMe());
                 sci.showContent(item);
             }
         }
