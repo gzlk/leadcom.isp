@@ -117,7 +117,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_individual_information;
+        return R.layout.fragment_individual_property;
     }
 
     @Override

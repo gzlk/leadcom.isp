@@ -37,7 +37,7 @@ public class MomentCommentFragment extends BaseLayoutSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_comment;
+        return R.layout.fragment_individual_moment_comment;
     }
 
     @Override

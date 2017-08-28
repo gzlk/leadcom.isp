@@ -31,7 +31,7 @@ public class FeedbackFragment extends BaseTransparentSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_feedback;
+        return R.layout.fragment_individual_feedback;
     }
 
     @Override

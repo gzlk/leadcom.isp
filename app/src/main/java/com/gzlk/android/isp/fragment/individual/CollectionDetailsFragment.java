@@ -6,7 +6,6 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -43,7 +42,7 @@ public class CollectionDetailsFragment extends BaseTransparentSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_collection_details;
+        return R.layout.fragment_individual_collection_details;
     }
 
     @Override

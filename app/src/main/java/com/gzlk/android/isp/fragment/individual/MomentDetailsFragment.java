@@ -83,7 +83,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_chatable;
+        return R.layout.fragment_normal_chatable;
     }
 
     @Override
