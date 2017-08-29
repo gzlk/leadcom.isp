@@ -188,7 +188,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         ToastHelper.make().showMsg("目前没有查看个人档案的UI页面");
     }
 
-    private View selfDefineDialog;
+    private View selfDefineDialog, selfShown;
     private ClearEditText selfName, selfValue;
     private ToggleableViewHolder toggleHolder;
 
@@ -214,14 +214,21 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 if (null == selfValue) {
                     selfValue = (ClearEditText) selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_value);
                 }
+                if (null == selfShown) {
+                    selfShown = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_shown);
+                }
                 Model model = mAdapter.get(selectedIndex);
+                selfShown.setVisibility((model instanceof UserExtra) ? View.VISIBLE : View.GONE);
                 if (model instanceof UserExtra) {
                     UserExtra ue = (UserExtra) model;
                     selfName.setValue(ue.getTitle());
+                    selfName.focusEnd();
                     selfValue.setValue(ue.getContent());
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, ue.getShow()));
                 } else {
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, UserExtra.ShownType.HIDE));
+                    selfName.setValue("");
+                    selfValue.setValue("");
                 }
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
@@ -241,7 +248,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 }
                 extra.setTitle(selfName.getValue());
                 extra.setContent(selfValue.getValue());
-                extra.setShow(toggleHolder.isToggled() ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE);
+                extra.setShow((selfShown.getVisibility() == View.VISIBLE || toggleHolder.isToggled()) ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE);
                 int index = Cache.cache().me.getExtra().indexOf(extra);
                 if (index >= 0) {
                     Cache.cache().me.getExtra().set(index, extra);

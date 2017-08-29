@@ -63,7 +63,9 @@
             app:cet_edit_value_extract_regex="@string/regex_normal_input_filter_chs_only"
             app:cet_edit_value_max_length="@integer/integer_user_property_self_defined_value_length" />
 
-        <include layout="@layout/holder_view_toggle" />
+        <include
+            android:id="@+id/ui_popup_individual_self_defined_property_shown"
+            layout="@layout/holder_view_toggle" />
     </com.hlk.hlklib.lib.view.CorneredView>
 
     <LinearLayout
