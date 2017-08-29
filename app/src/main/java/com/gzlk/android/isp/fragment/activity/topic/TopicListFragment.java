@@ -15,6 +15,7 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
@@ -53,6 +54,7 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
         BaseActivity.openActivity(context, TopicListFragment.class.getName(), tid, req, true, false);
     }
 
+    private String activityId = "";
     private TopicAdapter mAdapter;
 
     @Override
@@ -175,6 +177,15 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
+    private void fetchingActivity() {
+        if (isEmpty(activityId)) {
+            Activity act = Activity.getByTid(mQueryId);
+            if (null != act) {
+                activityId = act.getId();
+            }
+        }
+    }
+
     private void loadingTopics() {
         displayLoading(true);
         displayNothing(false);
@@ -205,10 +216,11 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
                 displayNothing(mAdapter.getItemCount() < 1);
                 stopRefreshing();
             }
-        }).list(mQueryId, remotePageNumber);
+        }).list(activityId, remotePageNumber);
     }
 
     private void initializeAdapter() {
+        fetchingActivity();
         if (null == mAdapter) {
             setLoadingText(R.string.ui_activity_topic_list_loading_text);
             setNothingText(R.string.ui_activity_topic_list_nothing_text);
