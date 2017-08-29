@@ -37,4 +37,12 @@ public class RequestCode {
      * 创建新的投票应用
      */
     public static final int REQ_VOTE_NEW = BASE_NIM_REQ + 5;
+    /**
+     * 议题列表
+     */
+    public static final int REQ_TOPIC_LIST = BASE_NIM_REQ + 6;
+    /**
+     * 创建新议题
+     */
+    public static final int REQ_TOPIC_NEW = BASE_NIM_REQ + 7;
 }

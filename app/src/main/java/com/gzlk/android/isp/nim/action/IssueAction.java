@@ -1,6 +1,11 @@
 package com.gzlk.android.isp.nim.action;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.activity.topic.TopicListFragment;
+import com.gzlk.android.isp.nim.constant.RequestCode;
 import com.netease.nim.uikit.session.actions.BaseAction;
 
 /**
@@ -22,6 +27,22 @@ public class IssueAction extends BaseAction {
 
     @Override
     public void onClick() {
+        // 打开通知列表页面
+        int requestCode = makeRequestCode(RequestCode.REQ_TOPIC_LIST);
+        TopicListFragment.open(getActivity(), getAccount(), requestCode);
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case RequestCode.REQ_TOPIC_LIST:
+                    // 到议题创建页面
+                    break;
+                case RequestCode.REQ_TOPIC_NEW:
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

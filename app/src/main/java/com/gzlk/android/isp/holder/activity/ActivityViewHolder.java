@@ -9,6 +9,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
@@ -127,6 +128,19 @@ public class ActivityViewHolder extends BaseViewHolder {
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
         titleView.setText(activity.getTitle());
         descView.setText(activity.getIntro());
+    }
+
+    public void showContent(AppTopic topic) {
+        headers.setAdapter(adapter);
+        headers.setImagesData(topic.getHeadPhotoList());
+        flagView.setVisibility(topic.getUnReadNum() > 0 ? View.VISIBLE : View.GONE);
+        unreadNum.setText(fragment().formatUnread(topic.getUnReadNum()));
+        timeView.setText(fragment().formatTimeAgo(topic.getCreateDate()));
+        headers.setVisibility(View.VISIBLE);
+        iconText.setVisibility(View.GONE);
+        iconContainer.setBackground(getColor(R.color.textColorHintLight));
+        titleView.setText(topic.getTitle());
+        descView.setText(topic.getAccessToken());
     }
 
     private void showHeaders(List<String> list) {

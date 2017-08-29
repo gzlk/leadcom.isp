@@ -40,6 +40,8 @@ public class Activity extends Model {
         String VOTE_RECORD = "activityVoteRecord";
         String SURVEY = "activitySurvey";
         String SURVEY_ITEM = "activitySurveyItem";
+        String TOPIC = "activityTopic";
+        String TOPIC_MEMBER = "activityTopicMember";
     }
 
     public interface Field {

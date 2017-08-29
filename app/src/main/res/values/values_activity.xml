@@ -324,4 +324,8 @@
         <![CDATA[<font color="#65656a">选项：</font><font color="#b9b9c8">%s</font>]]>
     </string>
     <string name="ui_activity_vote_item_count" formatted="false">共有%d人选择此项</string>
+
+    <string name="ui_activity_topic_list_right_title_text">发起议题</string>
+    <string name="ui_activity_topic_list_loading_text">正在加载议题列表&#8230;</string>
+    <string name="ui_activity_topic_list_nothing_text">目前本活动中没有更多议题</string>
 </resources>
