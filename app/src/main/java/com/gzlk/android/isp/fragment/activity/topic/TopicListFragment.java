@@ -203,6 +203,7 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
+                stopRefreshing();
             }
         }).list(mQueryId, remotePageNumber);
     }
@@ -213,6 +214,7 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
             setNothingText(R.string.ui_activity_topic_list_nothing_text);
             mAdapter = new TopicAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            loadingTopics();
         }
     }
 
