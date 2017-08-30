@@ -7,6 +7,7 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.organization.ContactViewHolder;
 import com.gzlk.android.isp.lib.Json;
@@ -53,6 +54,11 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         bundle.putString(PARAM_USER_IDS, replaceJson(strings[3], true));
         ocp.setArguments(bundle);
         return ocp;
+    }
+
+    public static void open(BaseFragment fragment, int req, String groupId, boolean lockExist, boolean singlePick, String existIds) {
+        String params = format("%s,%s,%s,%s", groupId, lockExist, singlePick, existIds);
+        fragment.openActivity(GroupContactPickFragment.class.getName(), params, req, true, false);
     }
 
     @Override
@@ -123,14 +129,10 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
             Member member = mAdapter.get(i);
             if (member.isSelected()) {
-                SubMember mbr = new SubMember();
-                mbr.setUserId(member.getUserId());
-                mbr.setUserName(member.getUserName());
-                members.add(mbr);
+                members.add(new SubMember(member));
             }
         }
-        resultData(Json.gson().toJson(members, new TypeToken<ArrayList<SubMember>>() {
-        }.getType()));
+        resultData(SubMember.toJson(members));
     }
 
     @Override

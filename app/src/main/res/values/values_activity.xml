@@ -327,12 +327,31 @@
     <string name="ui_activity_vote_item_count" formatted="false">共有%d人选择此项</string>
 
     <string name="ui_activity_topic_list_right_title_text">发起议题</string>
+    <string name="ui_activity_topic_nim_view_holder_title" formatted="false">【议题】%s</string>
+    <string name="ui_activity_topic_nim_view_holder_content">请大家踊跃发言</string>
     <string name="ui_activity_topic_list_loading_text">正在加载议题列表&#8230;</string>
     <string name="ui_activity_topic_list_nothing_text">目前本活动中没有更多议题</string>
+
     <string name="ui_activity_topic_creator_title_hint">议题名称</string>
     <string name="ui_activity_topic_creator_member_text">1|参与人|%s|2</string>
     <string-array name="ui_activity_topic_member_selector_items">
         <item>0|从当前活动选择||1</item>
         <item>1|从通讯录中选择||1</item>
     </string-array>
+    <string name="ui_activity_topic_creator_title_invalid">议题名称不符合要求</string>
+    <string name="ui_activity_topic_creator_no_member">您没有选择议题的参与人，确定要自己一个人进行这个议题吗？</string>
+    <string name="ui_activity_topic_creator_creating">正在创建议题&#8230;</string>
+
+    <string name="ui_activity_topic_property_fragment_title">议题设置</string>
+    <string name="ui_activity_topic_property_members_title" formatted="false">成员(%d人)</string>
+    <string-array name="ui_activity_topic_property_items">
+        <item>0|议题名称|%s|1</item>
+        <item>成员(%d人)</item>
+        <item>1|聊天记录||1</item>
+        <item>2|聊天文件||1</item>
+        <item>3|消息免打扰|%d|</item>
+    </string-array>
+    <string name="ui_activity_topic_property_exit">退出议题</string>
+
+    <string name="ui_activity_minutes_nim_view_holder_title" formatted="false">【会议纪要】%s</string>
 </resources>

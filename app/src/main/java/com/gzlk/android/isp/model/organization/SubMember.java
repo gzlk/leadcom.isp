@@ -1,8 +1,12 @@
 package com.gzlk.android.isp.model.organization;
 
+import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.lib.Json;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>只包含userId和userName两个属性的简单member对象<br />
@@ -16,6 +20,48 @@ import java.io.Serializable;
  */
 
 public class SubMember implements Serializable {
+
+    public static String toJson(ArrayList<SubMember> list) {
+        return Json.gson().toJson((null == list ? new ArrayList<>() : list), new TypeToken<ArrayList<SubMember>>() {
+        }.getType());
+    }
+
+    public static ArrayList<SubMember> fromJson(String json) {
+        return Json.gson().fromJson((StringHelper.isEmptyJsonArray(json) ? "[]" : json), new TypeToken<ArrayList<SubMember>>() {
+        }.getType());
+    }
+
+    public static String getMemberInfo(ArrayList<SubMember> list) {
+        String string = "";
+        if (list.size() < 1) {
+            string = StringHelper.getString(R.string.ui_activity_create_member_select_title);
+        } else {
+            int i = 0;
+            for (SubMember member : list) {
+                String name = member.getUserName();
+                string += (StringHelper.isEmpty(string) ? "" : "、") + (StringHelper.isEmpty(name) ? "" : name);
+                if (i >= 1) {
+                    break;
+                }
+                i++;
+            }
+            int size = list.size();
+            string += StringHelper.format("%s共%d人", (StringHelper.isEmpty(string) ? "" : (size > 2 ? "等，" : "，")), list.size());
+        }
+        return string;
+    }
+
+    public static ArrayList<String> getUserIds(ArrayList<SubMember> list) {
+        ArrayList<String> ids = new ArrayList<>();
+        if (null != list && list.size() > 0) {
+            for (SubMember member : list) {
+                if (!ids.contains(member.getUserId())) {
+                    ids.add(member.getUserId());
+                }
+            }
+        }
+        return ids;
+    }
 
     private String userId;
     private String userName;

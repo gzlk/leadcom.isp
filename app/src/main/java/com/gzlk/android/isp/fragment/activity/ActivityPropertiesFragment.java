@@ -1,11 +1,13 @@
 package com.gzlk.android.isp.fragment.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -70,6 +72,10 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         bundle.putString(PARAM_SESSION_ID, strings[1]);
         apf.setArguments(bundle);
         return apf;
+    }
+
+    public static void open(Context context, String actId, String tid) {
+        BaseActivity.openActivity(context, ActivityPropertiesFragment.class.getName(), format("%s,%s", actId, tid), false, false, true);
     }
 
     @Override
@@ -251,7 +257,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
             switch (index) {
                 case 1:
                     // 查看活动成员列表
-                    openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,false", mQueryId, activity.getGroupId()), true, false);
+                    ActivityMemberFragment.open(ActivityPropertiesFragment.this, ACTIVITY_BASE_REQUEST, mQueryId, activity.getGroupId(), false, false);
                     break;
                 case 2:
                     // 创建者是当前登录的用户时，可以 修改群名称
@@ -288,7 +294,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_property_transfer_warning, R.string.ui_base_text_i_known, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                openActivity(ActivityMemberFragment.class.getName(), format("%s,%s,true", mQueryId, groupId), REQUEST_PICK_ONE, true, false);
+                ActivityMemberFragment.open(ActivityPropertiesFragment.this, REQUEST_PICK_ONE, mQueryId, groupId, true, false);
                 return true;
             }
         }, null);

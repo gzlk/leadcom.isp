@@ -12,10 +12,12 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.activity.ActivityPropertiesFragment;
+import com.gzlk.android.isp.fragment.activity.topic.TopicPropertyFragment;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.main.SystemMessageFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.nim.action.CameraAction;
 import com.gzlk.android.isp.nim.action.FileAction;
 import com.gzlk.android.isp.nim.action.ImageAction;
@@ -24,7 +26,6 @@ import com.gzlk.android.isp.nim.action.LocationAction;
 import com.gzlk.android.isp.nim.action.MinutesAction;
 import com.gzlk.android.isp.nim.action.NoticeAction;
 import com.gzlk.android.isp.nim.action.SignAction;
-import com.gzlk.android.isp.nim.action.SurveyAction;
 import com.gzlk.android.isp.nim.action.VoteAction;
 import com.gzlk.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
@@ -55,8 +56,6 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
-import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
-import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
@@ -465,14 +464,18 @@ public class NimSessionHelper {
     }
 
     private static void openGroupPropertyInfo(Context context, String sessionId) {
-        com.gzlk.android.isp.model.activity.Activity act =
-                new Dao<>(com.gzlk.android.isp.model.activity.Activity.class)
-                        .querySingle(com.gzlk.android.isp.model.activity.Activity.Field.NimId, sessionId);
-        if (null != act) {
-            BaseActivity.openActivity(context, ActivityPropertiesFragment.class.getName(), StringHelper.format("%s,%s", act.getId(), sessionId), false, false, true);
+        AppTopic topic = AppTopic.queryByTid(sessionId);
+        if (null != topic) {
+            // 议题属性页
+            TopicPropertyFragment.open(context, sessionId, BaseFragment.REQUEST_CHANGE);
         } else {
-            // 本地找不到活动记录则按照网易自己的方式打开群属性页
-            NimUIKit.startTeamInfo(context, sessionId);
+            com.gzlk.android.isp.model.activity.Activity act = com.gzlk.android.isp.model.activity.Activity.getByTid(sessionId);
+            if (null != act) {
+                ActivityPropertiesFragment.open(context, act.getId(), sessionId);
+            } else {
+                // 本地找不到活动记录则按照网易自己的方式打开群属性页
+                NimUIKit.startTeamInfo(context, sessionId);
+            }
         }
     }
 }

@@ -140,7 +140,7 @@
     <string name="ui_organization_archive_nothing">没有更多组织档案了</string>
     <string name="ui_organization_management_transfer_warning">您是本组织的创建者，转让管理权之后您会降级为普通成员，您确定要这样做吗？</string>
 
-    <string name="ui_archive_management_title_button_1">@string/ui_base_text_all</string>
+    <string name="ui_archive_management_title_button_1">已审核</string>
     <string name="ui_archive_management_title_button_2">未存档活动档案</string>
     <string name="ui_archive_management_title_button_3">未审核组织档案</string>
     <string name="ui_archive_management_title_right_text">活动文件</string>

@@ -3,6 +3,7 @@ package com.gzlk.android.isp.nim.viewholder;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.nim.model.extension.TopicAttachment;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
@@ -22,6 +23,7 @@ import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
 public class MsgViewHolderTopic extends MsgViewHolderBase {
 
     private TextView titleView;
+    private TextView contentTextView;
     private TopicAttachment topic;
 
     public MsgViewHolderTopic(BaseMultiItemFetchLoadAdapter adapter) {
@@ -36,12 +38,14 @@ public class MsgViewHolderTopic extends MsgViewHolderBase {
     @Override
     protected void inflateContentView() {
         titleView = (TextView) view.findViewById(R.id.message_item_topic_title_label);
+        contentTextView = (TextView) view.findViewById(R.id.message_item_topic_content_label);
     }
 
     @Override
     protected void bindContentView() {
         topic = (TopicAttachment) message.getAttachment();
-        titleView.setText(topic.getTitle());
+        titleView.setText(StringHelper.getString(R.string.ui_activity_topic_nim_view_holder_title, topic.getTitle()));
+        contentTextView.setText(R.string.ui_activity_topic_nim_view_holder_content);
     }
 
     @Override

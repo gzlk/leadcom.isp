@@ -417,7 +417,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
 //                }
 //            }
         }
-        value = format(items[6], getMembersInfo());
+        value = format(items[6], SubMember.getMemberInfo(selectedMembers));
         memberHolder.showContent(value);
 
         if (isEmpty(intro)) {
@@ -452,26 +452,6 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.update(attachments, false);
             }
         }
-    }
-
-    private String getMembersInfo() {
-        String string = "";
-        if (selectedMembers.size() < 1) {
-            string = getString(R.string.ui_activity_create_member_select_title);
-        } else {
-            int i = 0;
-            for (SubMember member : selectedMembers) {
-                String name = member.getUserName();
-                string += (isEmpty(string) ? "" : "、") + (isEmpty(name) ? "" : name);
-                if (i >= 1) {
-                    break;
-                }
-                i++;
-            }
-            int size = selectedMembers.size();
-            string += format("%s共%d人", (isEmpty(string) ? "" : (size > 2 ? "等，" : "，")), selectedMembers.size());
-        }
-        return string;
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

@@ -1,5 +1,8 @@
 package com.gzlk.android.isp.model.activity.topic;
 
+import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -27,6 +30,15 @@ public class AppTopic extends Model {
 
     public interface Field {
         String TopicId = "topicId";
+    }
+
+    public static AppTopic queryByTid(String tid) {
+        return new Dao<>(AppTopic.class).querySingle(Activity.Field.NimId, tid);
+    }
+
+    public static String toJson(AppTopic topic) {
+        return Json.gson().toJson(topic, new TypeToken<AppTopic>() {
+        }.getType());
     }
 
     @Column(Activity.Field.ActivityId)

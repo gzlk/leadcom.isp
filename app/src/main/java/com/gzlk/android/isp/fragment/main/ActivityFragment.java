@@ -34,8 +34,10 @@ import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
+import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
+import com.gzlk.android.isp.nim.model.extension.TopicAttachment;
 import com.gzlk.android.isp.nim.model.extension.VoteAttachment;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nimlib.sdk.NIMClient;
@@ -172,6 +174,10 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 ret = getString(R.string.ui_nim_app_recent_contact_type_signing);
             } else if (attachment instanceof VoteAttachment) {
                 ret = getString(R.string.ui_nim_app_recent_contact_type_vote);
+            } else if (attachment instanceof TopicAttachment) {
+                ret = getString(R.string.ui_nim_app_recent_contact_type_topic);
+            } else if (attachment instanceof MinutesAttachment) {
+                ret = getString(R.string.ui_nim_app_recent_contact_type_minutes);
             }
         }
         return ret;

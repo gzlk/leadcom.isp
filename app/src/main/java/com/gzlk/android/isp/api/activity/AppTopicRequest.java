@@ -65,13 +65,13 @@ public class AppTopicRequest extends Request<AppTopic> {
     /**
      * 新增活动议题
      */
-    public void add(AppTopic topic) {
+    public void add(String activityId, String title, ArrayList<String> userIds) {
         // actId,title,[userIdList]
         JSONObject object = new JSONObject();
         try {
-            object.put("actId", topic.getActId())         // 活动ID
-                    .put("title", topic.getTitle())       // 标题
-                    .put("itemContentList", new JSONArray(topic.getUserIdList()));
+            object.put("actId", activityId)         // 活动ID
+                    .put("title", title)       // 标题;
+                    .put("userIdList", new JSONArray(userIds));
         } catch (JSONException e) {
             e.printStackTrace();
         }

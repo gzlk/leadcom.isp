@@ -3,6 +3,7 @@ package com.gzlk.android.isp.nim.viewholder;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
@@ -43,7 +44,7 @@ public class MsgViewHolderMinutes extends MsgViewHolderBase {
     @Override
     protected void bindContentView() {
         minutes = (MinutesAttachment) message.getAttachment();
-        titleTextView.setText(minutes.getTitle());
+        titleTextView.setText(StringHelper.getString(R.string.ui_activity_minutes_nim_view_holder_title, minutes.getTitle()));
         contentTextView.setText(message.getPushContent());
     }
 

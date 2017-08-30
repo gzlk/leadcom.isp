@@ -20,6 +20,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.api.org.MemberRequest;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.main.ActivityFragment;
@@ -54,6 +55,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_GROUP_ID = "amf_group_id";
     private static final String PARAM_FOR_PICKER = "amf_for_picker";
     private static final String PARAM_DIAL_INDEX = "amf_dial_index";
+    private static final String PARAM_MULTI_PICK = "amf_multi_pick";
 
     public static ActivityMemberFragment newInstance(String params) {
         ActivityMemberFragment amf = new ActivityMemberFragment();
@@ -65,8 +67,15 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_GROUP_ID, strings[1]);
         // 是否成员选取
         bundle.putBoolean(PARAM_FOR_PICKER, Boolean.valueOf(strings[2]));
+        // 是否多选
+        bundle.putBoolean(PARAM_MULTI_PICK, Boolean.valueOf(strings[3]));
         amf.setArguments(bundle);
         return amf;
+    }
+
+    public static void open(BaseFragment fragment, int req, String activityId, String groupId, boolean pickable, boolean multiPick) {
+        String params = format("%s,%s,%s,%s", activityId, groupId, pickable, multiPick);
+        fragment.openActivity(ActivityMemberFragment.class.getName(), params, req, true, false);
     }
 
     @Override
@@ -75,6 +84,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         groupId = bundle.getString(PARAM_GROUP_ID, "");
         forPicker = bundle.getBoolean(PARAM_FOR_PICKER, false);
         dialIndex = bundle.getInt(PARAM_DIAL_INDEX, -1);
+        multiPick = bundle.getBoolean(PARAM_MULTI_PICK, false);
     }
 
     @Override
@@ -83,22 +93,23 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putBoolean(PARAM_FOR_PICKER, forPicker);
         bundle.putString(PARAM_GROUP_ID, groupId);
         bundle.putInt(PARAM_DIAL_INDEX, dialIndex);
+        bundle.putBoolean(PARAM_MULTI_PICK, multiPick);
     }
 
     private MembersAdapter mAdapter;
     // 活动所属的组织
     private String groupId = "";
     // 是否是活动成员拾取
-    private boolean forPicker = false;
+    private boolean forPicker = false, multiPick = false;
     private int dialIndex = -1;
     private Member actMember;
-    private boolean isMemberDeleteable;
+    private boolean isMemberDeletable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         actMember = ActivityFragment.myActMember;
-        isMemberDeleteable = null != actMember && actMember.activityMemberDeletable();
+        isMemberDeletable = null != actMember && actMember.activityMemberDeletable();
     }
 
     @Override
@@ -126,7 +137,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void checkPermission() {
-        if (null != actMember && actMember.activityMemberAddable()) {
+        if (forPicker || (null != actMember && actMember.activityMemberAddable())) {
             resetRightTitleIcon();
         }
     }
@@ -201,8 +212,15 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             if (forPicker) {
-                // 单选
-                pickSelected(index);
+                if (multiPick) {
+                    // 多选
+                    Member m = mAdapter.get(index);
+                    m.setSelected(!m.isSelected());
+                    mAdapter.notifyItemChanged(index);
+                } else {
+                    // 单选
+                    pickSelected(index);
+                }
             } else {
                 // 打开个人属性页
                 UserPropertyFragment.open(ActivityMemberFragment.this, mAdapter.get(index).getUserId());
@@ -230,7 +248,11 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onClick() {
                 if (forPicker) {
-                    resultPickedMember();
+                    if (multiPick) {
+                        resultMultiMember();
+                    } else {
+                        resultPickedMember();
+                    }
                 } else {
                     pickNewMembers(groupId);
                 }
@@ -250,6 +272,17 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         resultData(account);
     }
 
+    private void resultMultiMember() {
+        ArrayList<SubMember> members = new ArrayList<>();
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            Member member = mAdapter.get(i);
+            if (member.isSelected()) {
+                members.add(new SubMember(member));
+            }
+        }
+        resultData(SubMember.toJson(members));
+    }
+
     private void fetchingMembers() {
         setLoadingText(R.string.ui_activity_member_loading);
         displayLoading(true);
@@ -266,7 +299,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
                             isLoadingComplete(true);
                         }
                         for (Member member : list) {
-                            if (forPicker) {
+                            if (forPicker && !multiPick) {
                                 if (!isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId)) {
                                     member.setLocalDeleted(true);
                                 }
@@ -329,8 +362,12 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     private ContactViewHolder.OnPhoneDialListener phoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
         @Override
         public void onDial(int index) {
-            dialIndex = index;
-            requestPhoneCallPermission();
+            if (forPicker) {
+                onViewHolderClickListener.onClick(index);
+            } else {
+                dialIndex = index;
+                requestPhoneCallPermission();
+            }
         }
     };
 
@@ -399,7 +436,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             if (forPicker) {
                 holder.showButton2(false);
             } else {
-                holder.showButton2(!isMe && isMemberDeleteable);
+                holder.showButton2(!isMe && isMemberDeletable);
             }
             holder.showContent(member, "");
             mItemManger.bindView(holder.itemView, position);
