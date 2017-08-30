@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.api.query;
 
 import com.gzlk.android.isp.api.Api;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.model.user.SimpleMoment;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class SingleQuery<T> extends Api<T> {
     private ArrayList<SimpleMoment> userMmt;
     private int actInvtStatus;
     private int invtNum;
+    private ArrayList<AppTopic>actTopicList;
 
     public T getData() {
         return data;
@@ -53,5 +55,13 @@ public class SingleQuery<T> extends Api<T> {
 
     public void setInvtNum(int invtNum) {
         this.invtNum = invtNum;
+    }
+
+    public ArrayList<AppTopic> getActTopicList() {
+        return actTopicList;
+    }
+
+    public void setActTopicList(ArrayList<AppTopic> actTopicList) {
+        this.actTopicList = actTopicList;
     }
 }

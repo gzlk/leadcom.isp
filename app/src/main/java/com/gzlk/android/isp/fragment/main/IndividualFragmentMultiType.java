@@ -207,7 +207,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                     }
                 }
             }
-        }).list(remotePageNumber);
+        }).list(Collection.Type.ALL_ARCHIVE, CollectionRequest.OPE_MONTH, remotePageNumber);
     }
 
     private void adjustRemotePages(int fetchedCount, int pageSize) {

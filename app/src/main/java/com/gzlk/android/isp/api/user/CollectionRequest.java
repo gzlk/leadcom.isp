@@ -142,9 +142,26 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     /**
-     * 查找指定用户的收藏内容
+     * 查询最近一周的收藏
      */
-    public void list(int pageNumber) {
+    public static final int OPE_WEEK = 1;
+    /**
+     * 查询最近一月的收藏
+     */
+    public static final int OPE_MONTH = 2;
+    /**
+     * 查询最近一年的收藏
+     */
+    public static final int OPE_YEAR = 3;
+
+    /**
+     * 查找指定用户的收藏内容
+     *
+     * @param type       收藏类型，参考 {@link Collection.Type}
+     * @param ope        ope:操作类型(1.查询最近一周的收藏,2.查询最近一月的收藏,3.查询最近一年的收藏)
+     * @param pageNumber 页码
+     */
+    public void list(int type, int ope, int pageNumber) {
         // accessToken
         httpRequest(getRequest(MultipleCollection.class,
                 format("%s?pageNumber=%d", url(LIST), pageNumber), "", HttpMethods.Get));

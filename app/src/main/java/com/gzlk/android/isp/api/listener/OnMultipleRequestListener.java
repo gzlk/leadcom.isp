@@ -1,5 +1,8 @@
 package com.gzlk.android.isp.api.listener;
 
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +19,7 @@ import java.util.List;
 public abstract class OnMultipleRequestListener<Data> {
 
     public int invtNum;
+    public ArrayList<AppTopic> actTopicList;
 
     /**
      * 网络调用成功

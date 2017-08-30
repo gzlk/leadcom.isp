@@ -24,4 +24,12 @@ interface AttachmentType {
      * 投票
      */
     int VOTE = 3;
+    /**
+     * 议题
+     */
+    int TOPIC = 4;
+    /**
+     * 会议纪要
+     */
+    int MINUTES = 5;
 }

@@ -87,5 +87,7 @@
     <string name="ui_icon_material_squad">&#xE7FC;</string>
     <string name="ui_icon_material_person">&#xE7FD;</string>
     <string name="ui_icon_material_list_numbered">&#xE242;</string>
+    <string name="ui_icon_material_comment">&#xE0B9;</string>
+    <string name="ui_icon_material_content_paste">&#xE14F;</string>
 
 </resources>

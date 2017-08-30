@@ -183,7 +183,8 @@ public abstract class Request<T> {
                             PaginationQuery<T> paginationQuery = (PaginationQuery<T>) data;
                             Pagination<T> pagination = paginationQuery.getData();
                             save(pagination.getList());
-                            onMultipleRequestListener.invtNum = ((PaginationQuery) data).getInvtNum();
+                            onMultipleRequestListener.invtNum = paginationQuery.getInvtNum();
+                            onMultipleRequestListener.actTopicList = paginationQuery.getActTopicList();
                             onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
                                     pagination.getTotalPages(), pagination.getPageSize(),
                                     pagination.getTotal(), pagination.getPageNumber());

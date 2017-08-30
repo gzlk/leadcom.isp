@@ -30,6 +30,7 @@ import com.gzlk.android.isp.lib.DepthViewPager;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
@@ -45,6 +46,7 @@ import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -67,6 +69,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private String[] items;
     private int selectedIndex = -1;
     private int inviteNumber = 0;
+    private ArrayList<AppTopic> appTopics = new ArrayList<>();
     private ActivityAdapter mAdapter;
     private OrgStructureViewHolder concernedViewHolder;
 
@@ -262,8 +265,10 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 stopRefreshing();
                 // 拉取我未处理的群活动邀请
                 inviteNumber = invtNum;
+                appTopics = actTopicList;
                 showUnreadNum(NIMClient.getService(MsgService.class).getTotalUnreadCount() + inviteNumber);
                 resetUnhandledInvite(invtNum);
+                resetTopics();
             }
         }).listFront(mQueryId, remotePageNumber, Cache.cache().groupIds);
     }
@@ -286,6 +291,34 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 mAdapter.remove(item);
             }
             refreshNothingItem();
+        }
+    }
+
+    // 重置该组织中的议题
+    private void resetTopics() {
+        int num = null == appTopics ? 0 : appTopics.size();
+        String string = format(items[2], num);
+        SimpleClickableItem item = new SimpleClickableItem(string);
+        item.setAdditionalNum(num);
+        if (num > 0) {
+            // 有议题
+            if (mAdapter.exist(item)) {
+                mAdapter.update(item);
+            } else {
+                SimpleClickableItem sci = new SimpleClickableItem(items[1]);
+                int index = mAdapter.indexOf(sci);
+                if (index > 0) {
+                    // 如果有未读消息提醒则加在其后面
+                    mAdapter.add(item, index + 1);
+                } else {
+                    mAdapter.add(item, 1);
+                }
+                //mAdapter.add(item, item.getIndex());
+            }
+        } else {
+            if (mAdapter.exist(item)) {
+                mAdapter.remove(item);
+            }
         }
     }
 

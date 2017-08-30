@@ -136,8 +136,10 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
 
     @Override
     public void remove(int position) {
-        innerList.remove(position);
-        notifyItemRemoved(position);
+        if (position >= 0) {
+            innerList.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     @Override

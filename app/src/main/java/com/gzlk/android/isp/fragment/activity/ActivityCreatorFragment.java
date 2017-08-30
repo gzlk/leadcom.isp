@@ -457,7 +457,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private String getMembersInfo() {
         String string = "";
         if (selectedMembers.size() < 1) {
-            string = "请选择参与人员";
+            string = getString(R.string.ui_activity_create_member_select_title);
         } else {
             int i = 0;
             for (SubMember member : selectedMembers) {

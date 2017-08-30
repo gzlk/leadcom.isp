@@ -53,7 +53,19 @@ public class Collection extends Model {
         /**
          * 连接
          */
-        int LINK = 5;
+        int LINK = 10;
+        /**
+         * 个人档案
+         */
+        int USER_ARCHIVE = 11;
+        /**
+         * 组织档案
+         */
+        int GROUP_ARCHIVE = 12;
+        /**
+         * 所有档案
+         */
+        int ALL_ARCHIVE = 1112;
     }
 
     /**

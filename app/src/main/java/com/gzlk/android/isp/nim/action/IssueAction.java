@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.activity.topic.TopicCreatorFragment;
 import com.gzlk.android.isp.fragment.activity.topic.TopicListFragment;
 import com.gzlk.android.isp.nim.constant.RequestCode;
 import com.netease.nim.uikit.session.actions.BaseAction;
@@ -38,6 +39,7 @@ public class IssueAction extends BaseAction {
             switch (requestCode) {
                 case RequestCode.REQ_TOPIC_LIST:
                     // 到议题创建页面
+                    TopicCreatorFragment.open(getActivity(), makeRequestCode(RequestCode.REQ_TOPIC_NEW), getAccount());
                     break;
                 case RequestCode.REQ_TOPIC_NEW:
                     break;

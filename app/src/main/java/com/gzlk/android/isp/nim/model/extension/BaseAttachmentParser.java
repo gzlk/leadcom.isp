@@ -39,6 +39,12 @@ public class BaseAttachmentParser implements MsgAttachmentParser {
                 case AttachmentType.VOTE:
                     attachment = new VoteAttachment();
                     break;
+                case AttachmentType.MINUTES:
+                    attachment = new MinutesAttachment();
+                    break;
+                case AttachmentType.TOPIC:
+                    attachment = new TopicAttachment();
+                    break;
             }
             if (null != attachment) {
                 attachment.fromJson(data);
