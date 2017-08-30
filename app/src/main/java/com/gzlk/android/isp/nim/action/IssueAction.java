@@ -6,8 +6,14 @@ import android.content.Intent;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.activity.topic.TopicCreatorFragment;
 import com.gzlk.android.isp.fragment.activity.topic.TopicListFragment;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.nim.constant.RequestCode;
+import com.gzlk.android.isp.nim.model.extension.TopicAttachment;
 import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nimlib.sdk.msg.MessageBuilder;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 /**
  * <b>功能描述：</b>网易云信议题Action<br />
@@ -42,6 +48,14 @@ public class IssueAction extends BaseAction {
                     TopicCreatorFragment.open(getActivity(), makeRequestCode(RequestCode.REQ_TOPIC_NEW), getAccount());
                     break;
                 case RequestCode.REQ_TOPIC_NEW:
+                    String json = BaseFragment.getResultedData(data);
+                    AppTopic topic = AppTopic.fromJson(json);
+                    TopicAttachment attachment = new TopicAttachment();
+                    attachment.setCustomId(topic.getTid());
+                    attachment.setActId(topic.getActId());
+                    attachment.setTitle(topic.getTitle());
+                    IMMessage message = MessageBuilder.createCustomMessage(getAccount(), SessionTypeEnum.Team, topic.getTitle(), attachment);
+                    sendMessage(message);
                     break;
             }
         }

@@ -41,6 +41,11 @@ public class AppTopic extends Model {
         }.getType());
     }
 
+    public static AppTopic fromJson(String json) {
+        return Json.gson().fromJson(json, new TypeToken<AppTopic>() {
+        }.getType());
+    }
+
     @Column(Activity.Field.ActivityId)
     private String actId;                               //活动ID
     @Column(Activity.Field.NimId)
