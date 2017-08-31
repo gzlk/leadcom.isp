@@ -291,7 +291,14 @@ public class MainActivity extends TitleActivity {
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
 //                }
                 break;
-
+            case NimMessage.Type.INVITE_TO_TOPIC:
+                if (msg.isHandled()) {
+                    NimUIKit.startTeamSession(activity, msg.getTid());
+                } else {
+                    yes = StringHelper.getString(R.string.ui_base_text_have_a_look);
+                    no = StringHelper.getString(R.string.ui_base_text_i_known);
+                }
+                break;
         }
         if (!StringHelper.isEmpty(yes)) {
             SimpleDialogHelper.init(activity).show(msg.getMsgContent(), yes, no, new DialogHelper.OnDialogConfirmListener() {
@@ -328,6 +335,10 @@ public class MainActivity extends TitleActivity {
                             //openActivity(activity, ContactFragment.class.getName(),
                             //        StringHelper.format("%d,,%s", ContactFragment.TYPE_SQUAD, msg.getGroupId()), true, false);
                             break;
+                        case NimMessage.Type.INVITE_TO_TOPIC:
+                            saveMessage(msg, true, true);
+                            NimUIKit.startTeamSession(activity, msg.getTid());
+                            break;
                     }
                     return true;
                 }
@@ -346,6 +357,9 @@ public class MainActivity extends TitleActivity {
                         case NimMessage.Type.INVITE_TO_SQUAD:
                             // 拒绝别人加入组织的邀请
                             inviteToSquadDenied(msg);
+                            break;
+                        case NimMessage.Type.INVITE_TO_TOPIC:
+                            saveMessage(msg, true, true);
                             break;
                     }
                 }

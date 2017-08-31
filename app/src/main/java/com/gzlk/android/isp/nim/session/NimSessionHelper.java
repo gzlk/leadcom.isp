@@ -17,6 +17,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.main.SystemMessageFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.nim.action.CameraAction;
 import com.gzlk.android.isp.nim.action.FileAction;
@@ -241,21 +242,30 @@ public class NimSessionHelper {
     public static void startTeamSession(Context context, String tid, IMMessage anchor) {
         // 通知中的 RecentContact 对象的未读数为0
         NIMClient.getService(MsgService.class).clearUnreadCount(tid, SessionTypeEnum.Team);
-        NimUIKit.startTeamSession(context, tid, anchor);
+        //NimUIKit.startTeamSession(context, tid, anchor);
+        startTeamSession(context, tid, null, anchor);
     }
 
     // 打开群聊界面(用于 UIKIT 中部分界面跳转回到指定的页面)
     public static void startTeamSession(Context context, String tid, Class<? extends Activity> backToClass, IMMessage anchor) {
-        NimUIKit.startChatting(context, tid, SessionTypeEnum.Team, getTeamCustomization(), backToClass, anchor);
+        Model model = getObject(tid);
+        if (null != model && model instanceof AppTopic) {
+            NimUIKit.startChatting(context, tid, SessionTypeEnum.Team, getTopicCustomization(), backToClass, anchor);
+        } else {
+            NimUIKit.startChatting(context, tid, SessionTypeEnum.Team, getTeamCustomization(), backToClass, anchor);
+        }
     }
 
     // 单聊界面定制
     private static SessionCustomization p2pCustomization;
     // 群聊界面定制
     private static SessionCustomization teamCustomization;
+    // 议题界面定制
+    private static SessionCustomization topicCustomization;
+    // 我的电脑聊天界面
     private static SessionCustomization myP2pCustomization;
 
-    private static ArrayList<BaseAction> getActions(SessionTypeEnum type) {
+    private static ArrayList<BaseAction> getActions(SessionTypeEnum type, boolean topic) {
         // 定制加号点开后可以包含的操作， 默认已经有图片，视频等消息了
 
         ArrayList<BaseAction> actions = new ArrayList<>();
@@ -280,12 +290,12 @@ public class NimSessionHelper {
         actions.add(new FileAction());
         if (type == SessionTypeEnum.Team) {
             actions.add(new NoticeAction());
-        }
-        if (type == SessionTypeEnum.Team && !BuildConfig.RELEASEABLE) {
             actions.add(new VoteAction());
             actions.add(new SignAction());
             //actions.add(new SurveyAction());
-            actions.add(new IssueAction());
+            if (!topic) {
+                actions.add(new IssueAction());
+            }
             actions.add(new MinutesAction());
         }
         return actions;
@@ -308,37 +318,9 @@ public class NimSessionHelper {
                 }
             };
 
-            // 背景
-//            p2pCustomization.backgroundColor = Color.BLUE;
-//            p2pCustomization.backgroundUri = "file:///android_asset/xx/bk.jpg";
-//            p2pCustomization.backgroundUri = "file:///sdcard/Pictures/bk.png";
-//            p2pCustomization.backgroundUri = "android.resource://com.netease.nim.demo/drawable/bk"
-
-            p2pCustomization.actions = getActions(SessionTypeEnum.P2P);
+            p2pCustomization.actions = getActions(SessionTypeEnum.P2P, false);
             p2pCustomization.withSticker = true;
 
-            // 定制ActionBar右边的按钮，可以加多个
-//            ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
-//            SessionCustomization.OptionsButton cloudMsgButton = new SessionCustomization.OptionsButton() {
-//                @Override
-//                public void onClick(Context context, View view, String sessionId) {
-//                    initPopuptWindow(context, view, sessionId, SessionTypeEnum.P2P);
-//                }
-//            };
-//            cloudMsgButton.iconId = R.drawable.nim_ic_messge_history;
-//
-//            SessionCustomization.OptionsButton infoButton = new SessionCustomization.OptionsButton() {
-//                @Override
-//                public void onClick(Context context, View view, String sessionId) {
-//                    MessageInfoActivity.startActivity(context, sessionId); //打开聊天信息
-//                }
-//            };
-//
-//            infoButton.iconId = R.drawable.nim_ic_message_actionbar_p2p_add;
-//
-//            buttons.add(cloudMsgButton);
-//            buttons.add(infoButton);
-//            p2pCustomization.buttons = buttons;
         }
 
         return p2pCustomization;
@@ -376,29 +358,74 @@ public class NimSessionHelper {
                 }
             };
 
-            // 背景
-//            p2pCustomization.backgroundColor = Color.BLUE;
-//            p2pCustomization.backgroundUri = "file:///android_asset/xx/bk.jpg";
-//            p2pCustomization.backgroundUri = "file:///sdcard/Pictures/bk.png";
-//            p2pCustomization.backgroundUri = "android.resource://com.netease.nim.demo/drawable/bk"
-
-            myP2pCustomization.actions = getActions(SessionTypeEnum.System);
+            myP2pCustomization.actions = getActions(SessionTypeEnum.System, false);
             myP2pCustomization.withSticker = false;
-            // 定制ActionBar右边的按钮，可以加多个
-//            ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
-//            SessionCustomization.OptionsButton cloudMsgButton = new SessionCustomization.OptionsButton() {
-//                @Override
-//                public void onClick(Context context, View view, String sessionId) {
-//                    initPopuptWindow(context, view, sessionId, SessionTypeEnum.P2P);
-//                }
-//            };
-//
-//            cloudMsgButton.iconId = R.drawable.ic_action_access_time;
-//
-//            buttons.add(cloudMsgButton);
-//            myP2pCustomization.buttons = buttons;
         }
         return myP2pCustomization;
+    }
+
+    private static SessionCustomization getTopicCustomization() {
+        if (topicCustomization == null) {
+            topicCustomization = new SessionCustomization() {
+                @Override
+                public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+                    if (requestCode == TeamRequestCode.REQUEST_CODE) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            String reason = data.getStringExtra(TeamExtras.RESULT_EXTRA_REASON);
+                            boolean finish = reason != null && (reason.equals(TeamExtras
+                                    .RESULT_EXTRA_REASON_DISMISS) || reason.equals(TeamExtras.RESULT_EXTRA_REASON_QUIT));
+                            if (finish) {
+                                activity.finish(); // 退出or解散群直接退出多人会话
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public MsgAttachment createStickerAttachment(String category, String item) {
+                    return null;//new StickerAttachment(category, item);
+                }
+            };
+
+            topicCustomization.actions = getActions(SessionTypeEnum.Team, true);
+
+            // 定制ActionBar右边的按钮，可以加多个
+            ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
+            SessionCustomization.OptionsButton chatButton = new SessionCustomization.OptionsButton() {
+                @Override
+                public void onClick(Context context, View view, String sessionId) {
+                    BaseActivity.openActivity(context, SystemMessageFragment.class.getName(), "", true, false);
+                }
+            };
+            chatButton.iconId = R.drawable.ic_action_chat;
+
+            SessionCustomization.OptionsButton infoButton = new SessionCustomization.OptionsButton() {
+                @Override
+                public void onClick(Context context, View view, String sessionId) {
+                    Team team = TeamDataCache.getInstance().getTeamById(sessionId);
+                    if (team != null && team.isMyTeam()) {
+                        // 议题属性页
+                        TopicPropertyFragment.open(context, sessionId, BaseFragment.REQUEST_CHANGE);
+                        // 打开群组属性页
+                        //openGroupPropertyInfo(context, sessionId);
+                        //NimUIKit.startTeamInfo(context, sessionId);
+                    } else {
+                        Toast.makeText(context, R.string.team_invalid_tip, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+            infoButton.iconId = R.drawable.ic_action_group;
+
+            buttons.add(infoButton);
+            //buttons.add(chatButton);
+            topicCustomization.buttons = buttons;
+
+            topicCustomization.withSticker = false;
+
+            topicCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector;
+        }
+
+        return topicCustomization;
     }
 
     private static SessionCustomization getTeamCustomization() {
@@ -424,7 +451,7 @@ public class NimSessionHelper {
                 }
             };
 
-            teamCustomization.actions = getActions(SessionTypeEnum.Team);
+            teamCustomization.actions = getActions(SessionTypeEnum.Team, false);
 
             // 定制ActionBar右边的按钮，可以加多个
             ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
@@ -463,19 +490,44 @@ public class NimSessionHelper {
         return teamCustomization;
     }
 
-    private static void openGroupPropertyInfo(Context context, String sessionId) {
+    private static Model getObject(String sessionId) {
         AppTopic topic = AppTopic.queryByTid(sessionId);
         if (null != topic) {
-            // 议题属性页
-            TopicPropertyFragment.open(context, sessionId, BaseFragment.REQUEST_CHANGE);
+            return topic;
         } else {
             com.gzlk.android.isp.model.activity.Activity act = com.gzlk.android.isp.model.activity.Activity.getByTid(sessionId);
             if (null != act) {
-                ActivityPropertiesFragment.open(context, act.getId(), sessionId);
-            } else {
-                // 本地找不到活动记录则按照网易自己的方式打开群属性页
-                NimUIKit.startTeamInfo(context, sessionId);
+                return act;
             }
         }
+        return null;
+    }
+
+    private static void openGroupPropertyInfo(Context context, String sessionId) {
+        Model model = getObject(sessionId);
+        if (null != model) {
+            if (model instanceof AppTopic) {
+                // 议题属性页
+                TopicPropertyFragment.open(context, sessionId, BaseFragment.REQUEST_CHANGE);
+            } else if (model instanceof com.gzlk.android.isp.model.activity.Activity) {
+                ActivityPropertiesFragment.open(context, model.getId(), sessionId);
+            }
+        } else {
+            // 本地找不到活动记录则按照网易自己的方式打开群属性页
+            NimUIKit.startTeamInfo(context, sessionId);
+        }
+//        AppTopic topic = AppTopic.queryByTid(sessionId);
+//        if (null != topic) {
+//            // 议题属性页
+//            TopicPropertyFragment.open(context, sessionId, BaseFragment.REQUEST_CHANGE);
+//        } else {
+//            com.gzlk.android.isp.model.activity.Activity act = com.gzlk.android.isp.model.activity.Activity.getByTid(sessionId);
+//            if (null != act) {
+//                ActivityPropertiesFragment.open(context, act.getId(), sessionId);
+//            } else {
+//                // 本地找不到活动记录则按照网易自己的方式打开群属性页
+//                NimUIKit.startTeamInfo(context, sessionId);
+//            }
+//        }
     }
 }

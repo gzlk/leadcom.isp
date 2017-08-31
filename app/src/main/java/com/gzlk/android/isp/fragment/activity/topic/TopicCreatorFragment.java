@@ -181,7 +181,7 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
             switch (index) {
                 case 1:
                     // 选择参与人
-                    TopicMemberSelectorFragment.open(TopicCreatorFragment.this, BaseFragment.REQUEST_SELECT, "");
+                    TopicMemberSelectorFragment.open(TopicCreatorFragment.this, REQUEST_SELECT, "");
                     break;
             }
         }

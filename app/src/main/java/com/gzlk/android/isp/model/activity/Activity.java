@@ -105,6 +105,10 @@ public class Activity extends Model {
         return new Dao<>(Activity.class).querySingle(Field.NimId, tid);
     }
 
+    public static Activity get(String id) {
+        return new Dao<>(Activity.class).query(id);
+    }
+
     //标题
     @Column(Archive.Field.Title)
     private String title;

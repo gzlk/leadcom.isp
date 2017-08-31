@@ -38,11 +38,11 @@ public class AppTopicRequest extends Request<AppTopic> {
     private static class MultipleTopic extends PaginationQuery<AppTopic> {
     }
 
-    private static final String URL = "/activity/actTopic";
+    private static final String TOPIC = "/activity/actTopic";
 
     @Override
     protected String url(String action) {
-        return format("%s%s", URL, action);
+        return format("%s%s", TOPIC, action);
     }
 
     @Override
@@ -133,6 +133,6 @@ public class AppTopicRequest extends Request<AppTopic> {
      * 查询活动议题列表
      */
     public void list(String activityId, int pageNumber) {
-        httpRequest(getRequest(MultipleTopic.class, format("%s?id=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleTopic.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
     }
 }

@@ -9,4 +9,5 @@
     <string name="ui_popup_input_duty">我的职务,请输入您的职务,%s,15,0,[\\w\u4e00#\u9fa5],[\\w\u4e00#\u9fa5]{2@15},长度2到15位，可包含中文、大小写字母、数字、下划线</string>
     <string name="ui_popup_input_signature">签名,个性签名,%s,30,0,[\\w\u4e00#\u9fa5],[\\w\u4e00#\u9fa5]{2@30},长度2到30位，可包含中文、大小写字母、数字、下划线</string>
     <string name="ui_popup_input_activity_title">活动名称,活动名称,%s,30,0,[a#zA#Z0#9\u4e00#\u9fa5],[a#zA#Z0#9\u4e00#\u9fa5]{2@30},长度2到30位，中英文、数字</string>
+    <string name="ui_popup_input_activity_topic_title">议题名称,议题名称,%s,20,0,[a#zA#Z0#9\u4e00#\u9fa5],[a#zA#Z0#9\u4e00#\u9fa5]{2@20},长度2到20位，中英文、数字</string>
 </resources>

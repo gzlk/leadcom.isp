@@ -37,11 +37,11 @@ public class AppTopicMemberRequest extends Request<AppTopicMember> {
     private static class MultipleMember extends PaginationQuery<AppTopicMember> {
     }
 
-    private static final String ULR = "/activity/actTopicMember";
+    private static final String MEMBER = "/activity/actTopicMember";
 
     @Override
     protected String url(String action) {
-        return format("%s%s", URL, action);
+        return format("%s%s", MEMBER, action);
     }
 
     @Override

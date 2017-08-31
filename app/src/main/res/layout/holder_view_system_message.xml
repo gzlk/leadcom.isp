@@ -13,6 +13,7 @@
     app:cv_background="@android:color/white"
     app:cv_background_active="@android:color/white"
     app:cv_background_type="fill"
+    app:cv_border_size="@dimen/ui_base_border_size_normal"
     app:cv_normal_border="@android:color/white">
 
     <com.hlk.hlklib.lib.view.CorneredView

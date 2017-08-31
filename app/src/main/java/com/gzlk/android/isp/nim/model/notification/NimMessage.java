@@ -32,6 +32,8 @@ public class NimMessage implements MsgAttachment {
         String TABLE = "notification";
         String HANDLED = "handled";
         String HANDLE_STATE = "handleState";
+        String APPID="appId";
+        String APPTID="appTid";
     }
 
     @Override
@@ -141,6 +143,22 @@ public class NimMessage implements MsgAttachment {
          * 邀请到小组（仅通知）
          */
         int INVITE_TO_SQUAD_ALERT = 24;
+        /**
+         * 邀请活动议题成员
+         */
+        int INVITE_TO_TOPIC = 27;
+        /**
+         * 退出活动议题
+         */
+        int EXIT_TOPIC = 28;
+        /**
+         * 踢出活动议题成员
+         */
+        int KICK_OUT_TOPIC = 29;
+        /**
+         * 结束活动议题
+         */
+        int END_TOPIC = 30;
     }
 
     /**
@@ -162,6 +180,8 @@ public class NimMessage implements MsgAttachment {
                 return "系统通知";
             case Type.INVITE_TO_SQUAD_ALERT:
                 return "加入小组";
+            case Type.INVITE_TO_TOPIC:
+                return "邀请您加入议题";
             default:
                 return StringHelper.format("不晓得什么通知(%d)", type);
         }
@@ -187,6 +207,10 @@ public class NimMessage implements MsgAttachment {
     // 活动所属的组织
     @Column(Organization.Field.GroupId)
     private String groupId;// 原有属性
+    @Column(PARAM.APPID)
+    private String appId;
+    @Column(PARAM.APPTID)
+    private String appTid;
     // 是否已处理
     @Column(PARAM.HANDLED)
     private boolean handled;
@@ -248,6 +272,22 @@ public class NimMessage implements MsgAttachment {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getAppTid() {
+        return appTid;
+    }
+
+    public void setAppTid(String appTid) {
+        this.appTid = appTid;
     }
 
     public boolean isHandled() {

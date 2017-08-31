@@ -74,7 +74,6 @@
         android:clickable="true"
         android:gravity="center"
         android:minHeight="@dimen/ui_base_dimen_button_height"
-        android:text="@string/ui_activity_topic_property_exit"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ui_base_text_size_big"
         app:active_color="@color/buttonActivityColor"

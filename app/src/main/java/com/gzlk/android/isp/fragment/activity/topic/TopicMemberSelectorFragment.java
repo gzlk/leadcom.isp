@@ -57,7 +57,7 @@ public class TopicMemberSelectorFragment extends BaseDownloadingUploadingSupport
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override

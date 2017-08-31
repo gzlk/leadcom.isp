@@ -16,6 +16,7 @@ import com.gzlk.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityDetailsMainFragment;
 import com.gzlk.android.isp.fragment.activity.ActivityManagementFragment;
 import com.gzlk.android.isp.fragment.activity.UnApprovedInviteFragment;
+import com.gzlk.android.isp.fragment.activity.topic.TopicListFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
@@ -582,6 +583,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                         break;
                     case 2:
                         // 议题列表
+                        TopicListFragment.open(ActivityFragment.this, mQueryId);
                         break;
                 }
             }

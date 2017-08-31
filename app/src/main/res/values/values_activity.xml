@@ -343,15 +343,26 @@
     <string name="ui_activity_topic_creator_creating">正在创建议题&#8230;</string>
 
     <string name="ui_activity_topic_property_fragment_title">议题设置</string>
+    <string name="ui_activity_topic_property_loading">正在加载议题详细信息&#8230;</string>
+    <string name="ui_activity_topic_property_invalid">无效的议题或议题已结束</string>
     <string name="ui_activity_topic_property_members_title" formatted="false">成员(%d人)</string>
     <string-array name="ui_activity_topic_property_items">
         <item>0|议题名称|%s|1</item>
-        <item>成员(%d人)</item>
         <item>1|聊天记录||1</item>
         <item>2|聊天文件||1</item>
         <item>3|消息免打扰|%d|</item>
     </string-array>
+    <string name="ui_activity_topic_property_update_title">正在更改议题名称&#8230;</string>
+    <string name="ui_activity_topic_property_member_selected_none">您没有选择新成员</string>
+    <string name="ui_activity_topic_property_member_inviting">正在邀请成员&#8230;</string>
+    <string name="ui_activity_topic_property_member_invited">已发送邀请</string>
     <string name="ui_activity_topic_property_exit">退出议题</string>
+    <string name="ui_activity_topic_property_end">解散议题</string>
+    <string name="ui_activity_topic_property_end_warning">解散议题会直接删除议题中的所有成员并且聊天记录将不会被保存，您确定要继续吗？</string>
+    <string name="ui_activity_topic_property_exiting">正在退出议题&#8230;</string>
+    <string name="ui_activity_topic_property_ending">正在解散议题&#8230;</string>
+    <string name="ui_activity_topic_property_exited">您已退出本议题</string>
+    <string name="ui_activity_topic_property_ended">您已解散本议题</string>
 
     <string name="ui_activity_minutes_nim_view_holder_title" formatted="false">【会议纪要】%s</string>
 </resources>

@@ -7,6 +7,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
 import com.gzlk.android.isp.model.activity.vote.AppVoteRecord;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -44,6 +45,11 @@ public class VoteItemUserViewHolder extends BaseViewHolder {
     public void showContent(AppVoteRecord record) {
         header.displayImage(record.getHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size), false, false);
         name.setText(record.getUserName());
+    }
+
+    public void showContent(AppTopicMember member){
+        header.displayImage(member.getHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size), false, false);
+        name.setText(member.getUserName());
     }
 
     @Click({R.id.ui_holder_view_activity_vote_item_user_info})

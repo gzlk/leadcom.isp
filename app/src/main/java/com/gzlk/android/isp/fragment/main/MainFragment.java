@@ -263,7 +263,6 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             R.id.ui_ui_custom_title_left_container, R.id.ui_ui_custom_title_right_container,
             R.id.ui_ui_custom_title_right_icon})
     private void elementClick(View view) {
-        log(view.toString());
         int id = view.getId();
         switch (id) {
             case R.id.ui_tool_main_bottom_clickable_1:
