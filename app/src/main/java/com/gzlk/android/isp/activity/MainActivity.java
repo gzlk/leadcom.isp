@@ -299,6 +299,9 @@ public class MainActivity extends TitleActivity {
                     no = StringHelper.getString(R.string.ui_base_text_i_known);
                 }
                 break;
+            default:
+                yes = StringHelper.getString(R.string.ui_base_text_i_known);
+                break;
         }
         if (!StringHelper.isEmpty(yes)) {
             SimpleDialogHelper.init(activity).show(msg.getMsgContent(), yes, no, new DialogHelper.OnDialogConfirmListener() {
@@ -338,6 +341,9 @@ public class MainActivity extends TitleActivity {
                         case NimMessage.Type.INVITE_TO_TOPIC:
                             saveMessage(msg, true, true);
                             NimUIKit.startTeamSession(activity, msg.getTid());
+                            break;
+                        default:
+                            saveMessage(msg, true, true);
                             break;
                     }
                     return true;

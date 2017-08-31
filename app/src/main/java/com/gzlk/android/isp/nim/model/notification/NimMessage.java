@@ -32,8 +32,8 @@ public class NimMessage implements MsgAttachment {
         String TABLE = "notification";
         String HANDLED = "handled";
         String HANDLE_STATE = "handleState";
-        String APPID="appId";
-        String APPTID="appTid";
+        String APPID = "appId";
+        String APPTID = "appTid";
     }
 
     @Override
@@ -182,8 +182,14 @@ public class NimMessage implements MsgAttachment {
                 return "加入小组";
             case Type.INVITE_TO_TOPIC:
                 return "邀请您加入议题";
+            case Type.EXIT_TOPIC:
+                return "退出议题";
+            case Type.KICK_OUT_TOPIC:
+                return "踢出议题";
+            case Type.END_TOPIC:
+                return "结束议题";
             default:
-                return StringHelper.format("不晓得什么通知(%d)", type);
+                return StringHelper.format("不晓得是什么通知(%d)", type);
         }
     }
 

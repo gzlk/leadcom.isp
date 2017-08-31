@@ -69,7 +69,7 @@ public class AppTopicMemberRequest extends Request<AppTopicMember> {
         JSONObject object = new JSONObject();
         try {
             object.put("actTopicId", topicId)         // 活动ID
-                    .put("itemContentList", new JSONArray(userIds));
+                    .put("userIdList", new JSONArray(userIds));
         } catch (JSONException e) {
             e.printStackTrace();
         }
