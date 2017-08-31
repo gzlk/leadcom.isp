@@ -38,7 +38,8 @@ public class NoticeViewHolder extends BaseViewHolder {
     }
 
     public void showContent(AppNotice notice) {
-        titleView.setText(notice.getTitle());
+        String time = Utils.format(notice.getCreateDate(), fragment().getString(R.string.ui_base_text_date_time_format), Utils.FMT_MMDD);
+        titleView.setText(fragment().getString(R.string.ui_activity_notice_list_item_title, time, notice.getTitle()));
         timeView.setText(fragment().formatTimeAgo(notice.getCreateDate()));
         readView.setText(notice.isRead() ? R.string.ui_base_text_has_read : R.string.ui_base_text_not_read);
         readView.setTextColor(getColor(notice.isRead() ? R.color.textColorHint : R.color.colorCaution));

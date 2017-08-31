@@ -183,6 +183,7 @@
     </string-array>
     <string name="ui_activity_notice_list_fragment_title">@string/ui_nim_action_notice</string>
     <string name="ui_activity_notice_list_loading_notices">正在加载通知列表&#8230;</string>
+    <string name="ui_activity_notice_list_item_title" formatted="false">【%s】%s</string>
 
     <string name="ui_activity_sign_map_picker_fragment_title">选择地址</string>
     <string name="ui_activity_sing_map_picker_locate_failure">
@@ -221,6 +222,7 @@
 
     <string name="ui_activity_sign_list_loading">正在加载签到列表</string>
     <string name="ui_activity_sign_list_nothing">暂时没有可以签到的记录</string>
+    <string name="ui_activity_sign_list_item_desc" formatted="false">请大家在%s之前签到</string>
 
     <string name="ui_activity_sign_end_time" formatted="false">签到截止时间：%s</string>
     <string name="ui_activity_sign_invalid_sign_setup">无效的签到应用</string>
