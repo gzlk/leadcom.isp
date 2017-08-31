@@ -348,6 +348,9 @@
     <string name="ui_activity_topic_property_loading">正在加载议题详细信息&#8230;</string>
     <string name="ui_activity_topic_property_invalid">无效的议题或议题已结束</string>
     <string name="ui_activity_topic_property_members_title" formatted="false">成员(%d人)</string>
+    <string name="ui_activity_topic_property_members_delete">删除成员</string>
+    <string name="ui_activity_topic_property_member_delete_warning" formatted="false">您确定要删除成员【%s】吗？</string>
+    <string name="ui_activity_topic_property_member_deleting">正在删除成员&#8230;</string>
     <string-array name="ui_activity_topic_property_items">
         <item>0|议题名称|%s|1</item>
         <item>1|聊天记录||1</item>

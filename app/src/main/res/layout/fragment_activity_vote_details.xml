@@ -18,10 +18,7 @@
 
             <include layout="@layout/holder_view_activity_vote_item" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/ui_tool_swipe_refreshable_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <include layout="@layout/tool_view_recycler_view_warp_content" />
 
             <LinearLayout
                 android:layout_width="match_parent"

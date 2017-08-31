@@ -320,7 +320,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 } else {
                     mAdapter.add(item, 1);
                 }
-                //mAdapter.add(item, item.getIndex());
+                //mAdapter.add(item, item.getModelTag());
             }
         } else {
             if (mAdapter.exist(item)) {

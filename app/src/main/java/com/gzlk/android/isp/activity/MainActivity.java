@@ -15,24 +15,18 @@ import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
-import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationPropertiesFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
-import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
-import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
-import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 /**
@@ -222,19 +216,19 @@ public class MainActivity extends TitleActivity {
     public static void handleNimMessageDetails(final AppCompatActivity activity, final NimMessage msg) {
         String yes = "", no = "";
         switch (msg.getType()) {
-            case NimMessage.Type.JOIN_TO_GROUP:
+            case NimMessage.Type.GROUP_JOIN:
                 yes = StringHelper.getString(R.string.ui_base_text_ok);
                 no = StringHelper.getString(R.string.ui_base_text_reject);
                 break;
-            case NimMessage.Type.APPROVE_JOIN_GROUP:
+            case NimMessage.Type.GROUP_JOIN_APPROVE:
                 // 组织管理者同意，申请方只有一个按钮“知道了”
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
-            case NimMessage.Type.DISAPPROVE_JOIN_GROUP:
+            case NimMessage.Type.GROUP_JOIN_DISAPPROVE:
                 // 组织管理者不同意，申请方都只有一个按钮“好吧”
                 yes = StringHelper.getString(R.string.ui_base_text_ok_ba);
                 break;
-            case NimMessage.Type.INVITE_TO_GROUP:
+            case NimMessage.Type.GROUP_INVITE:
                 // 受邀者出现的对话框是“好”,“不用了”
                 if (msg.isHandled()) {
                     if (msg.isHandleState()) {
@@ -245,18 +239,18 @@ public class MainActivity extends TitleActivity {
                     no = StringHelper.getString(R.string.ui_base_text_no_need);
                 }
                 break;
-            case NimMessage.Type.AGREE_TO_GROUP:
-            case NimMessage.Type.DISAGREE_TO_GROUP:
+            case NimMessage.Type.GROUP_INVITE_AGREE:
+            case NimMessage.Type.GROUP_INVITE_DISAGREE:
                 // 新成员同意或不同意邀请，邀请方都只有一个按钮“知道了”
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
-            case NimMessage.Type.INVITE_TO_SQUAD:
+            case NimMessage.Type.SQUAD_INVITE:
                 // 受邀者出现的对话框是“好”,“不用了”
                 yes = StringHelper.getString(R.string.ui_base_text_ok);
                 no = StringHelper.getString(R.string.ui_base_text_no_need);
                 break;
-            case NimMessage.Type.AGREE_TO_SQUAD:
-            case NimMessage.Type.DISAGREE_TO_SQUAD:
+            case NimMessage.Type.SQUAD_INVITE_AGREE:
+            case NimMessage.Type.SQUAD_INVITE_DISAGREE:
                 // 新成员同意或不同意邀请，邀请方都只有一个按钮“知道了”
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
@@ -275,11 +269,11 @@ public class MainActivity extends TitleActivity {
                     no = StringHelper.getString(R.string.ui_base_text_i_known);
                 }
                 break;
-            case NimMessage.Type.SYSTEM_NOTIFICATION:
+            case NimMessage.Type.SYSTEM_ALERT:
                 // 系统通知，只提醒就可以了
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
-            case NimMessage.Type.INVITE_TO_SQUAD_ALERT:
+            case NimMessage.Type.SQUAD_INVITE_ALERT:
 //                if (msg.isHandled()) {
 //                    if (msg.isHandleState()) {
 //                        // 直接打开小组成员
@@ -291,7 +285,7 @@ public class MainActivity extends TitleActivity {
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
 //                }
                 break;
-            case NimMessage.Type.INVITE_TO_TOPIC:
+            case NimMessage.Type.TOPIC_INVITE:
                 if (msg.isHandled()) {
                     NimUIKit.startTeamSession(activity, msg.getTid());
                 } else {
@@ -308,15 +302,15 @@ public class MainActivity extends TitleActivity {
                 @Override
                 public boolean onConfirm() {
                     switch (msg.getType()) {
-                        case NimMessage.Type.JOIN_TO_GROUP:
+                        case NimMessage.Type.GROUP_JOIN:
                             // 通过别人的入群申请
                             joinIntoGroupPassed(msg);
                             break;
-                        case NimMessage.Type.INVITE_TO_GROUP:
+                        case NimMessage.Type.GROUP_INVITE:
                             // 通过别人的入群邀请
                             inviteToGroupPassed(msg);
                             break;
-                        case NimMessage.Type.INVITE_TO_SQUAD:
+                        case NimMessage.Type.SQUAD_INVITE:
                             // 通过别人的邀请加入组织
                             inviteToSquadPassed(msg);
                             break;
@@ -329,16 +323,16 @@ public class MainActivity extends TitleActivity {
                                 openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%d", msg.getTid(), msg.getId()), true, false);
                             }
                             break;
-                        case NimMessage.Type.SYSTEM_NOTIFICATION:
+                        case NimMessage.Type.SYSTEM_ALERT:
                             // 系统通知的话，点击按钮设置已读标记
                             saveMessage(msg, true, true);
                             break;
-                        case NimMessage.Type.INVITE_TO_SQUAD_ALERT:
+                        case NimMessage.Type.SQUAD_INVITE_ALERT:
                             saveMessage(msg, true, true);
                             //openActivity(activity, ContactFragment.class.getName(),
                             //        StringHelper.format("%d,,%s", ContactFragment.TYPE_SQUAD, msg.getGroupId()), true, false);
                             break;
-                        case NimMessage.Type.INVITE_TO_TOPIC:
+                        case NimMessage.Type.TOPIC_INVITE:
                             saveMessage(msg, true, true);
                             NimUIKit.startTeamSession(activity, msg.getTid());
                             break;
@@ -352,19 +346,19 @@ public class MainActivity extends TitleActivity {
                 @Override
                 public void onCancel() {
                     switch (msg.getType()) {
-                        case NimMessage.Type.JOIN_TO_GROUP:
+                        case NimMessage.Type.GROUP_JOIN:
                             // 拒绝别人的入群申请
                             joinIntoGroupDenied(msg);
                             break;
-                        case NimMessage.Type.INVITE_TO_GROUP:
+                        case NimMessage.Type.GROUP_INVITE:
                             // 拒绝别人的入群邀请
                             inviteToGroupDenied(msg);
                             break;
-                        case NimMessage.Type.INVITE_TO_SQUAD:
+                        case NimMessage.Type.SQUAD_INVITE:
                             // 拒绝别人加入组织的邀请
                             inviteToSquadDenied(msg);
                             break;
-                        case NimMessage.Type.INVITE_TO_TOPIC:
+                        case NimMessage.Type.TOPIC_INVITE:
                             saveMessage(msg, true, true);
                             break;
                     }

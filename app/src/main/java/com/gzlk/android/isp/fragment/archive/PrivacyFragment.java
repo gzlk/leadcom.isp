@@ -282,7 +282,7 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
     // 单选
     private void resetSingleSelect(Security selected) {
         // 重置基础的3个选项
-        //if (selected.getIndex() == 1) {
+        //if (selected.getModelTag() == 1) {
         resetStaticItems();
         //}
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {

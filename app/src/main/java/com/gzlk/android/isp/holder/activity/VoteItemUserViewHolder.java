@@ -30,6 +30,8 @@ public class VoteItemUserViewHolder extends BaseViewHolder {
     private ImageDisplayer header;
     @ViewId(R.id.ui_holder_view_activity_vote_item_user_name)
     private TextView name;
+    @ViewId(R.id.ui_holder_view_activity_vote_item_deleter)
+    private View deleter;
 
     public VoteItemUserViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -47,13 +49,25 @@ public class VoteItemUserViewHolder extends BaseViewHolder {
         name.setText(record.getUserName());
     }
 
-    public void showContent(AppTopicMember member){
+    public void showContent(AppTopicMember member) {
         header.displayImage(member.getHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size), false, false);
         name.setText(member.getUserName());
+        deleter.setVisibility(member.isSelectable() ? View.VISIBLE : View.GONE);
     }
 
-    @Click({R.id.ui_holder_view_activity_vote_item_user_info})
+    @Click({R.id.ui_holder_view_activity_vote_item_user_info,
+            R.id.ui_holder_view_activity_vote_item_deleter})
     private void elementClick(View view) {
+        switch (view.getId()) {
+            case R.id.ui_holder_view_activity_vote_item_user_info:
+                performClick();
+                break;
+            case R.id.ui_holder_view_activity_vote_item_deleter:
+                if (null != mOnHandlerBoundDataListener) {
+                    mOnHandlerBoundDataListener.onHandlerBoundData(VoteItemUserViewHolder.this);
+                }
+                break;
+        }
         performClick();
     }
 

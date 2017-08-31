@@ -46,6 +46,10 @@ public class AppTopic extends Model {
         }.getType());
     }
 
+    public static void save(ArrayList<AppTopic> list) {
+        new Dao<>(AppTopic.class).save(list);
+    }
+
     @Column(Activity.Field.ActivityId)
     private String actId;                               //活动ID
     @Column(Activity.Field.NimId)

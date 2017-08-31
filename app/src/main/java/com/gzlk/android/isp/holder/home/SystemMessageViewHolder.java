@@ -61,13 +61,14 @@ public class SystemMessageViewHolder extends BaseViewHolder {
 
     private String getHandleTitle(NimMessage msg) {
         switch (msg.getType()) {
-            case NimMessage.Type.ACTIVITY_NOTIFICATION:
-            case NimMessage.Type.SYSTEM_NOTIFICATION:
-            case NimMessage.Type.INVITE_TO_SQUAD_ALERT:
-            case NimMessage.Type.END_TOPIC:
-            case NimMessage.Type.EXIT_TOPIC:
-            case NimMessage.Type.INVITE_TO_TOPIC:
-            case NimMessage.Type.KICK_OUT_TOPIC:
+            case NimMessage.Type.ACTIVITY_ALERT:
+            case NimMessage.Type.ACTIVITY_END:
+            case NimMessage.Type.SYSTEM_ALERT:
+            case NimMessage.Type.SQUAD_INVITE_ALERT:
+            case NimMessage.Type.TOPIC_END:
+            case NimMessage.Type.TOPIC_EXIT:
+            case NimMessage.Type.TOPIC_INVITE:
+            case NimMessage.Type.TOPIC_KICK_OUT:
                 return msg.isHandled() ? "" : "(未读)";
             default:
                 return msg.isHandled() ? (msg.isHandleState() ? "(已同意)" : "(暂缓)") : "(未处理)";

@@ -18,10 +18,7 @@
             android:padding="@dimen/ui_base_dimen_margin_padding"
             android:text="社会服务" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/ui_tool_swipe_refreshable_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <include layout="@layout/tool_view_recycler_view_warp_content" />
 
         <TextView
             android:layout_width="match_parent"

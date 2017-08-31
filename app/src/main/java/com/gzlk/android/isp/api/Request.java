@@ -13,6 +13,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnHttpListener;
 import com.gzlk.android.isp.model.Dao;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.model.query.FullTextQuery;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.log.HttpLog;
@@ -185,6 +186,9 @@ public abstract class Request<T> {
                             save(pagination.getList());
                             onMultipleRequestListener.invtNum = paginationQuery.getInvtNum();
                             onMultipleRequestListener.actTopicList = paginationQuery.getActTopicList();
+                            if (null != paginationQuery.getActTopicList()) {
+                                AppTopic.save(paginationQuery.getActTopicList());
+                            }
                             onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
                                     pagination.getTotalPages(), pagination.getPageSize(),
                                     pagination.getTotal(), pagination.getPageNumber());

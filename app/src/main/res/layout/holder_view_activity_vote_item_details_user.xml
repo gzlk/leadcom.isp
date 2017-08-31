@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ui_holder_view_activity_vote_item_user_info"
     android:layout_width="wrap_content"
@@ -12,6 +12,7 @@
         android:id="@+id/ui_holder_view_activity_vote_item_user_header"
         android:layout_width="@dimen/ui_base_user_header_image_size"
         android:layout_height="@dimen/ui_base_user_header_image_size"
+        android:layout_centerHorizontal="true"
         app:id_image_src="@mipmap/img_default_user_header"
         app:id_image_type="oval"
         app:id_show_header="true" />
@@ -20,7 +21,19 @@
         android:id="@+id/ui_holder_view_activity_vote_item_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/ui_holder_view_activity_vote_item_user_header"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/ui_static_dp_3"
+        android:maxLength="4"
         android:text="@string/app_name_default"
         android:textSize="@dimen/ui_base_text_size_small" />
-</LinearLayout>
+
+    <include
+        android:id="@+id/ui_holder_view_activity_vote_item_deleter"
+        layout="@layout/tool_view_image_button_deleter_small"
+        android:layout_width="@dimen/ui_static_dp_20"
+        android:layout_height="@dimen/ui_static_dp_20"
+        android:layout_alignEnd="@+id/ui_holder_view_activity_vote_item_user_header"
+        android:layout_marginEnd="@dimen/ui_static_dp_negative_5"
+        android:visibility="gone" />
+</RelativeLayout>

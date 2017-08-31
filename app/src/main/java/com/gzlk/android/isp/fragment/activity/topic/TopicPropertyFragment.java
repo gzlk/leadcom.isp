@@ -3,12 +3,18 @@ package com.gzlk.android.isp.fragment.activity.topic;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.AppTopicMemberRequest;
 import com.gzlk.android.isp.api.activity.AppTopicRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -17,15 +23,19 @@ import com.gzlk.android.isp.fragment.activity.ActivityMemberFragment;
 import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BasePopupInputSupportFragment;
-import com.gzlk.android.isp.fragment.organization.GroupContactPickFragment;
+import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.activity.TopicMemberAttacherViewHolder;
 import com.gzlk.android.isp.holder.activity.VoteItemUserViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.holder.common.ToggleableViewHolder;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
@@ -42,6 +52,7 @@ import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.model.Team;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <b>功能描述：</b>议题属性页面<br />
@@ -57,6 +68,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
 
     private static final String PARAM_TOPIC_ID = "tpf_topic_id";
     private static final String PARAM_ACT_ID = "tpf_act_id";
+    private static final String PARAM_DELETABLE = "tpf_deletable";
 
     public static TopicPropertyFragment newInstance(String params) {
         TopicPropertyFragment tpf = new TopicPropertyFragment();
@@ -79,8 +91,8 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
     private View titleView;
     @ViewId(R.id.ui_activity_topic_property_members_title)
     private TextView memberTitle;
-    @ViewId(R.id.ui_activity_topic_property_members)
-    private FlexboxLayout members;
+    @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
+    private RecyclerView mRecyclerView;
     @ViewId(R.id.ui_activity_topic_property_history)
     private View historyView;
     @ViewId(R.id.ui_activity_topic_property_files)
@@ -93,13 +105,16 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
     private SimpleClickableViewHolder titleHolder, historyHolder, fileHolder;
     private ToggleableViewHolder muteHolder;
     private String topicId = "", actId = "";
+    private boolean deletable = false;
     private AppTopic appTopic;
+    private MemberAdapter mAdapter;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         topicId = bundle.getString(PARAM_TOPIC_ID, "");
         actId = bundle.getString(PARAM_ACT_ID, "");
+        deletable = bundle.getBoolean(PARAM_DELETABLE, false);
     }
 
     @Override
@@ -107,6 +122,13 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_TOPIC_ID, topicId);
         bundle.putString(PARAM_ACT_ID, actId);
+        bundle.putBoolean(PARAM_DELETABLE, deletable);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mRecyclerView.setLayoutManager(new FlexboxLayoutManager(mRecyclerView.getContext(), FlexDirection.ROW, FlexWrap.WRAP));
     }
 
     @Override
@@ -116,6 +138,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
 
     @Override
     public void doingInResume() {
+        initializeAdapter();
         initializeHolder();
     }
 
@@ -143,6 +166,14 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
                 topicId = topic.getId();
                 actId = topic.getActId();
             }
+        }
+    }
+
+    private void initializeAdapter() {
+        if (null == mAdapter) {
+            mAdapter = new MemberAdapter();
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            mRecyclerView.setAdapter(mAdapter);
         }
     }
 
@@ -222,54 +253,172 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
     }
 
     private void showTopicMembers() {
-        members.removeAllViews();
+        // 删除成员
+        Iterator<Model> iterator = mAdapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof AppTopicMember) {
+                iterator.remove();
+                mAdapter.notifyItemRemoved(index);
+            }
+            index++;
+        }
+        // 显示成员
         if (null != appTopic.getActTopicMemberList()) {
+            index = 0;
             for (AppTopicMember member : appTopic.getActTopicMemberList()) {
-                addMember(member);
+                member.setSelectable(deletable);
+                mAdapter.add(member, index);
+                index++;
             }
         }
         if (isTopicCreatedByMe()) {
-            View view = View.inflate(members.getContext(), R.layout.holder_view_activity_topic_member_addor, null);
-            view.setOnClickListener(addClick);
-            members.addView(view);
+            // 添加成员
+            Model add = new Model();
+            add.setId("+");
+            mAdapter.add(add);
+
+            // 删除成员
+            Model delete = new Model();
+            delete.setId("-");
+            mAdapter.add(delete);
         }
     }
 
-    private View.OnClickListener addClick = new View.OnClickListener() {
+    private class MemberAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+        private static final int VT_MEMBER = 0, VT_OTHER = 1;
+
         @Override
-        public void onClick(View v) {
-            // 选择参与人
-            TopicMemberSelectorFragment.open(TopicPropertyFragment.this, REQUEST_SELECT, "");
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            if (viewType == VT_MEMBER) {
+                VoteItemUserViewHolder holder = new VoteItemUserViewHolder(itemView, TopicPropertyFragment.this);
+                holder.addOnViewHolderClickListener(memberClickListener);
+                holder.addOnHandlerBoundDataListener(onHandleBoundDataListener);
+                return holder;
+            } else {
+                TopicMemberAttacherViewHolder tmavh = new TopicMemberAttacherViewHolder(itemView, TopicPropertyFragment.this);
+                tmavh.addOnViewHolderClickListener(memberClickListener);
+                return tmavh;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return get(position) instanceof AppTopicMember ? VT_MEMBER : VT_OTHER;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return viewType == VT_MEMBER ? R.layout.holder_view_activity_vote_item_details_user : R.layout.holder_view_activity_topic_member_addor;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof VoteItemUserViewHolder) {
+                ((VoteItemUserViewHolder) holder).showContent((AppTopicMember) item);
+            } else if (holder instanceof TopicMemberAttacherViewHolder) {
+                ((TopicMemberAttacherViewHolder) holder).showContent(item);
+            }
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return 0;
+        }
+    }
+
+    // 点击用户查看用户信息
+    private OnViewHolderClickListener memberClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Model model = mAdapter.get(index);
+            if (model instanceof AppTopicMember) {
+                if (!model.isSelectable()) {
+                    // 不处于删除状态时，打开用户详情页
+                    AppTopicMember member = (AppTopicMember) model;
+                    UserPropertyFragment.open(TopicPropertyFragment.this, member.getUserId());
+                }
+            } else {
+                if (model.getId().equals("+")) {
+                    attachMembers();
+                } else if (model.getId().equals("-")) {
+                    resetDeleteStatus();
+                }
+            }
         }
     };
 
-    private void addMember(AppTopicMember member) {
-        View view = View.inflate(members.getContext(), R.layout.holder_view_activity_vote_item_details_user, null);
-        members.addView(view);
-        VoteItemUserViewHolder holder = new VoteItemUserViewHolder(view, this);
-        holder.showContent(member);
+    private void attachMembers() {
+        // 选择参与人
+        //TopicMemberSelectorFragment.open(TopicPropertyFragment.this, REQUEST_SELECT, "");
+
+        Activity act = Activity.get(actId);
+        if (null != act) {
+            // 从活动中选择
+            ActivityMemberFragment.open(TopicPropertyFragment.this, REQUEST_SELECT, act.getId(), act.getGroupId(), true, true);
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_activity_property_not_exist);
+            finish();
+        }
+    }
+
+    private void resetDeleteStatus() {
+        deletable = !deletable;
+        for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
+            Model m = mAdapter.get(i);
+            if (m instanceof AppTopicMember) {
+                AppTopicMember membr = (AppTopicMember) m;
+                if (!membr.getUserId().equals(Cache.cache().userId)) {
+                    // 不是我自己时才显示删除按钮
+                    membr.setSelectable(deletable);
+                    mAdapter.notifyItemChanged(i);
+                }
+            }
+        }
+    }
+
+    // 删除用户
+    private OnHandleBoundDataListener<Model> onHandleBoundDataListener = new OnHandleBoundDataListener<Model>() {
+        @Override
+        public Model onHandlerBoundData(BaseViewHolder holder) {
+            Model model = mAdapter.get(holder.getAdapterPosition());
+            if (model instanceof AppTopicMember) {
+                AppTopicMember member = (AppTopicMember) model;
+                warningDeleteMember(member.getUserId(), member.getUserName());
+            }
+            return null;
+        }
+    };
+
+    private void warningDeleteMember(final String userId, String userName) {
+        SimpleDialogHelper.init(Activity()).show(getString(R.string.ui_activity_topic_property_member_delete_warning, userName), R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                deleteMember(userId);
+                return true;
+            }
+        }, null);
+    }
+
+    private void deleteMember(String userId) {
+        showImageHandlingDialog(R.string.ui_activity_topic_property_member_deleting);
+        AppTopicMemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppTopicMember>() {
+            @Override
+            public void onResponse(AppTopicMember appTopicMember, boolean success, String message) {
+                super.onResponse(appTopicMember, success, message);
+                hideImageHandlingDialog();
+                if (success) {
+                    fetchingTopicDirectly();
+                }
+            }
+        }).delete(topicId, userId);
     }
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
             case REQUEST_SELECT:
-                Activity act = Activity.get(actId);
-                if (null != act) {
-                    int req = Integer.valueOf(getResultedData(data));
-                    if (req == REQUEST_CHANGE) {
-                        // 从活动中选择
-                        ActivityMemberFragment.open(TopicPropertyFragment.this, REQUEST_CHANGE, act.getId(), act.getGroupId(), true, true);
-                    } else if (req == REQUEST_DELETE) {
-                        // 从组织通讯录中选择
-                        GroupContactPickFragment.open(TopicPropertyFragment.this, REQUEST_CHANGE, act.getGroupId(), false, false, "");
-                    }
-                } else {
-                    ToastHelper.make().showMsg("活动不存在");
-                    finish();
-                }
-                break;
-            case REQUEST_CHANGE:
                 // 活动或组织成员选择之后的返回内容
                 String json = getResultedData(data);
                 inviteNewMembers(json);

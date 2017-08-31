@@ -12,12 +12,10 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.activity.ActivityMemberFragment;
 import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.organization.GroupContactPickFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
-import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
@@ -149,7 +147,7 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
     private void createTopic() {
         Activity act = Activity.getByTid(mQueryId);
         if (null == act) {
-            ToastHelper.make().showMsg("活动不存在");
+            ToastHelper.make().showMsg(R.string.ui_activity_property_not_exist);
             finish();
         } else {
             showImageHandlingDialog(R.string.ui_activity_topic_creator_creating);
@@ -180,8 +178,16 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
         public void onClick(int index) {
             switch (index) {
                 case 1:
-                    // 选择参与人
-                    TopicMemberSelectorFragment.open(TopicCreatorFragment.this, REQUEST_SELECT, "");
+                    Activity act = Activity.getByTid(mQueryId);
+                    if (null != act) {
+                        // 从活动中选择
+                        ActivityMemberFragment.open(TopicCreatorFragment.this, REQUEST_SELECT, act.getId(), act.getGroupId(), true, true);
+                        // 选择参与人
+                        //TopicMemberSelectorFragment.open(TopicCreatorFragment.this, REQUEST_SELECT, "");
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_activity_property_not_exist);
+                        finish();
+                    }
                     break;
             }
         }
@@ -191,22 +197,22 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
             case REQUEST_SELECT:
-                Activity act = Activity.getByTid(mQueryId);
-                if (null != act) {
-                    int req = Integer.valueOf(getResultedData(data));
-                    if (req == REQUEST_CHANGE) {
-                        // 从活动中选择
-                        ActivityMemberFragment.open(TopicCreatorFragment.this, REQUEST_CHANGE, act.getId(), act.getGroupId(), true, true);
-                    } else if (req == REQUEST_DELETE) {
-                        // 从组织通讯录中选择
-                        GroupContactPickFragment.open(TopicCreatorFragment.this, REQUEST_CHANGE, act.getGroupId(), false, false, "");
-                    }
-                } else {
-                    ToastHelper.make().showMsg("活动不存在");
-                    finish();
-                }
-                break;
-            case REQUEST_CHANGE:
+//                Activity act = Activity.getByTid(mQueryId);
+//                if (null != act) {
+//                    int req = Integer.valueOf(getResultedData(data));
+//                    if (req == REQUEST_CHANGE) {
+//                        // 从活动中选择
+//                        ActivityMemberFragment.open(TopicCreatorFragment.this, REQUEST_CHANGE, act.getId(), act.getGroupId(), true, true);
+//                    } else if (req == REQUEST_DELETE) {
+//                        // 从组织通讯录中选择
+//                        GroupContactPickFragment.open(TopicCreatorFragment.this, REQUEST_CHANGE, act.getGroupId(), false, false, "");
+//                    }
+//                } else {
+//                    ToastHelper.make().showMsg(R.string.ui_activity_property_not_exist);
+//                    finish();
+//                }
+//                break;
+//            case REQUEST_CHANGE:
                 // 活动或组织成员选择之后的返回内容
                 String json = getResultedData(data);
                 resetSelectedMembers(json);

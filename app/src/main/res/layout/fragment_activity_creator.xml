@@ -57,18 +57,14 @@
             app:cet_edit_max_lines="5"
             app:cet_edit_maximum_height="@dimen/ui_static_dp_120"
             app:cet_edit_minimum_height="@dimen/ui_static_dp_80"
-            app:cet_edit_value_verify_regex="@string/regex_normal_long_input_verify"
-            app:cet_edit_value_extract_regex="@string/regex_normal_long_input_filter"
             app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
-            app:cet_edit_value_max_length="@integer/integer_activity_introduction_max_length" />
+            app:cet_edit_value_extract_regex="@string/regex_normal_long_input_filter"
+            app:cet_edit_value_max_length="@integer/integer_activity_introduction_max_length"
+            app:cet_edit_value_verify_regex="@string/regex_normal_long_input_verify" />
 
         <include layout="@layout/holder_view_attachment_picker" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/ui_tool_swipe_refreshable_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipChildren="false" />
+        <include layout="@layout/tool_view_recycler_view_warp_content" />
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

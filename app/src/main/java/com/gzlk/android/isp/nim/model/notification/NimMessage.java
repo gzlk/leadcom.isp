@@ -94,27 +94,27 @@ public class NimMessage implements MsgAttachment {
         /**
          * 新成员申请加入组织
          */
-        int JOIN_TO_GROUP = 4;
+        int GROUP_JOIN = 4;
         /**
          * 批准新成员加入
          */
-        int APPROVE_JOIN_GROUP = 6;
+        int GROUP_JOIN_APPROVE = 6;
         /**
          * 不批准新成员加入
          */
-        int DISAPPROVE_JOIN_GROUP = 7;
+        int GROUP_JOIN_DISAPPROVE = 7;
         /**
          * 邀请新成员加入组织
          */
-        int INVITE_TO_GROUP = 8;
+        int GROUP_INVITE = 8;
         /**
          * 新成员同意加入组织
          */
-        int AGREE_TO_GROUP = 9;
+        int GROUP_INVITE_AGREE = 9;
         /**
          * 新成员不同意加入组织
          */
-        int DISAGREE_TO_GROUP = 10;
+        int GROUP_INVITE_DISAGREE = 10;
         /**
          * 活动成员邀请
          */
@@ -122,43 +122,47 @@ public class NimMessage implements MsgAttachment {
         /**
          * 小组成员邀请小组外人员加入小组
          */
-        int INVITE_TO_SQUAD = 19;
+        int SQUAD_INVITE = 19;
         /**
          * 被邀请者同意加入小组
          */
-        int AGREE_TO_SQUAD = 20;
+        int SQUAD_INVITE_AGREE = 20;
         /**
          * 被邀请者拒绝加入小组
          */
-        int DISAGREE_TO_SQUAD = 21;
+        int SQUAD_INVITE_DISAGREE = 21;
         /**
          * 活动通知
          */
-        int ACTIVITY_NOTIFICATION = 22;
+        int ACTIVITY_ALERT = 22;
         /**
          * 自定义系统通知
          */
-        int SYSTEM_NOTIFICATION = 23;
+        int SYSTEM_ALERT = 23;
         /**
          * 邀请到小组（仅通知）
          */
-        int INVITE_TO_SQUAD_ALERT = 24;
+        int SQUAD_INVITE_ALERT = 24;
+        /**
+         * 活动结束通知
+         */
+        int ACTIVITY_END = 26;
         /**
          * 邀请活动议题成员
          */
-        int INVITE_TO_TOPIC = 27;
+        int TOPIC_INVITE = 27;
         /**
          * 退出活动议题
          */
-        int EXIT_TOPIC = 28;
+        int TOPIC_EXIT = 28;
         /**
          * 踢出活动议题成员
          */
-        int KICK_OUT_TOPIC = 29;
+        int TOPIC_KICK_OUT = 29;
         /**
          * 结束活动议题
          */
-        int END_TOPIC = 30;
+        int TOPIC_END = 30;
     }
 
     /**
@@ -166,27 +170,29 @@ public class NimMessage implements MsgAttachment {
      */
     public static String getType(int type) {
         switch (type) {
-            case Type.JOIN_TO_GROUP:
+            case Type.GROUP_JOIN:
                 return "申请加入组织";
-            case Type.INVITE_TO_GROUP:
+            case Type.GROUP_INVITE:
                 return "邀请您加入组织";
             case Type.ACTIVITY_INVITE:
                 return "邀请您加入活动";
-            case Type.INVITE_TO_SQUAD:
+            case Type.ACTIVITY_END:
+                return "活动结束";
+            case Type.SQUAD_INVITE:
                 return "邀请您加入小组";
-            case Type.ACTIVITY_NOTIFICATION:
+            case Type.ACTIVITY_ALERT:
                 return "活动通知";
-            case Type.SYSTEM_NOTIFICATION:
+            case Type.SYSTEM_ALERT:
                 return "系统通知";
-            case Type.INVITE_TO_SQUAD_ALERT:
+            case Type.SQUAD_INVITE_ALERT:
                 return "加入小组";
-            case Type.INVITE_TO_TOPIC:
+            case Type.TOPIC_INVITE:
                 return "邀请您加入议题";
-            case Type.EXIT_TOPIC:
+            case Type.TOPIC_EXIT:
                 return "退出议题";
-            case Type.KICK_OUT_TOPIC:
+            case Type.TOPIC_KICK_OUT:
                 return "踢出议题";
-            case Type.END_TOPIC:
+            case Type.TOPIC_END:
                 return "结束议题";
             default:
                 return StringHelper.format("不晓得是什么通知(%d)", type);

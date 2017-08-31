@@ -49,7 +49,7 @@ public class SingingViewHolder extends BaseViewHolder {
     public void showContent(AppSigning signing) {
         iconView.setTextColor(getColor(getIconColor(signing.getBeginDate(), signing.getEndDate())));
         titleView.setText(signing.getTitle());
-        String time = Utils.format(fragment().getString(R.string.ui_base_text_date_time_format), signing.getEndDate(), Utils.FMT_HHMM1);
+        String time = Utils.format(signing.getEndDate(), fragment().getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM1);
         descView.setText(fragment().getString(R.string.ui_activity_sign_list_item_desc, time));
         timeView.setText(fragment().formatTimeAgo(signing.getCreateDate()));
     }
