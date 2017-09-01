@@ -345,6 +345,8 @@
     <string name="ui_activity_topic_creator_no_member">您没有选择议题的参与人，确定要自己一个人进行这个议题吗？</string>
     <string name="ui_activity_topic_creator_creating">正在创建议题&#8230;</string>
 
+    <string name="ui_activity_topic_not_member_of">您不是该议题的成员</string>
+
     <string name="ui_activity_topic_property_fragment_title">议题设置</string>
     <string name="ui_activity_topic_property_loading">正在加载议题详细信息&#8230;</string>
     <string name="ui_activity_topic_property_invalid">无效的议题或议题已结束</string>

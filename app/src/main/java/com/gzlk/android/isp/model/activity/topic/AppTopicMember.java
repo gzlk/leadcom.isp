@@ -1,13 +1,17 @@
 package com.gzlk.android.isp.model.activity.topic;
 
+import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>议题的成员<br />
@@ -21,6 +25,20 @@ import java.util.ArrayList;
  */
 @Table(Activity.Table.TOPIC_MEMBER)
 public class AppTopicMember extends Model {
+
+    public static boolean isMeMemberOf(String tid) {
+        AppTopic topic = AppTopic.queryByTid(tid);
+        return null != getMyMemberOf(topic.getId());
+    }
+
+    public static AppTopicMember getMyMemberOf(String topicId) {
+        QueryBuilder<AppTopicMember> builder = new QueryBuilder<>(AppTopicMember.class)
+                .whereEquals(AppTopic.Field.TopicId, topicId)
+                .whereAppendAnd()
+                .whereEquals(Field.UserId, Cache.cache().userId);
+        List<AppTopicMember> list = new Dao<>(AppTopicMember.class).query(builder);
+        return (null == list || list.size() < 1) ? null : list.get(0);
+    }
 
     @Column(AppTopic.Field.TopicId)
     private String actTopicId;          //活动议题ID

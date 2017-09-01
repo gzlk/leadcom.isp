@@ -385,23 +385,23 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
             Model model = mAdapter.get(holder.getAdapterPosition());
             if (model instanceof AppTopicMember) {
                 AppTopicMember member = (AppTopicMember) model;
-                warningDeleteMember(member.getUserId(), member.getUserName());
+                warningDeleteMember(member.getUserId(), member.getUserName(), holder.getAdapterPosition());
             }
             return null;
         }
     };
 
-    private void warningDeleteMember(final String userId, String userName) {
+    private void warningDeleteMember(final String userId, String userName, final int deleteIndex) {
         SimpleDialogHelper.init(Activity()).show(getString(R.string.ui_activity_topic_property_member_delete_warning, userName), R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                deleteMember(userId);
+                deleteMember(userId, deleteIndex);
                 return true;
             }
         }, null);
     }
 
-    private void deleteMember(String userId) {
+    private void deleteMember(String userId, final int deleteIndex) {
         showImageHandlingDialog(R.string.ui_activity_topic_property_member_deleting);
         AppTopicMemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppTopicMember>() {
             @Override
@@ -409,7 +409,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
                 super.onResponse(appTopicMember, success, message);
                 hideImageHandlingDialog();
                 if (success) {
-                    fetchingTopicDirectly();
+                    mAdapter.remove(deleteIndex);
                 }
             }
         }).delete(topicId, userId);

@@ -3,6 +3,7 @@ package com.gzlk.android.isp.api.activity;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.ListQuery;
 import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
@@ -34,7 +35,7 @@ public class AppTopicMemberRequest extends Request<AppTopicMember> {
     private static class SingleMember extends SingleQuery<AppTopicMember> {
     }
 
-    private static class MultipleMember extends PaginationQuery<AppTopicMember> {
+    private static class MultipleMember extends ListQuery<AppTopicMember> {
     }
 
     private static final String MEMBER = "/activity/actTopicMember";
@@ -104,6 +105,6 @@ public class AppTopicMemberRequest extends Request<AppTopicMember> {
      */
     public void list(String topicId, int pageNumber) {
         // actTopicId,pageSize,pageNumber
-        httpRequest(getRequest(SingleMember.class, format("%s?actTopicId=%s&pageNumber=%d", url(FIND), topicId, pageNumber), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleMember.class, format("%s?actTopicId=%s&pageNumber=%d&pageSize=%d", url(LIST), topicId, pageNumber, MAX_PAGE_SIZE), "", HttpMethods.Get));
     }
 }

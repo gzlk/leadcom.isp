@@ -36,6 +36,10 @@ public class AppTopic extends Model {
         return new Dao<>(AppTopic.class).querySingle(Activity.Field.NimId, tid);
     }
 
+    public static AppTopic queryById(String topicId) {
+        return new Dao<>(AppTopic.class).query(topicId);
+    }
+
     public static String toJson(AppTopic topic) {
         return Json.gson().toJson(topic, new TypeToken<AppTopic>() {
         }.getType());

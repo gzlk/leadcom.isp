@@ -23,6 +23,8 @@ public class TopicAttachment extends CustomAttachment {
     private String actId;
     // 通知标题
     private String title;
+    // 议题的id
+    private String topicId;
 
     public String getActId() {
         return actId;
@@ -40,6 +42,14 @@ public class TopicAttachment extends CustomAttachment {
         this.title = title;
     }
 
+    public String getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
+    }
+
     @Override
     protected void parseData(JSONObject data) {
         super.parseData(data);
@@ -49,6 +59,9 @@ public class TopicAttachment extends CustomAttachment {
             }
             if (data.has("title")) {
                 title = data.getString("title");
+            }
+            if (data.has("topicId")) {
+                topicId = data.getString("topicId");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,7 +73,8 @@ public class TopicAttachment extends CustomAttachment {
         JSONObject object = super.packData();
         try {
             object.put("actId", actId)
-                    .put("title", title);
+                    .put("title", title)
+                    .put("topicId", topicId);
         } catch (Exception e) {
             e.printStackTrace();
         }

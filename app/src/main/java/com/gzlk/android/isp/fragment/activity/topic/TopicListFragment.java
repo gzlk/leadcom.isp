@@ -9,17 +9,20 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
+import com.gzlk.android.isp.api.activity.AppTopicMemberRequest;
 import com.gzlk.android.isp.api.activity.AppTopicRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.activity.ActivityViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
+import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
 import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
@@ -301,11 +304,31 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    private void fetchingTopicMembers(String topicId, final String tid) {
+        AppTopicMemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<AppTopicMember>() {
+            @Override
+            public void onResponse(List<AppTopicMember> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (AppTopicMember.isMeMemberOf(tid)) {
+                        NimSessionHelper.startTeamSession(Activity(), tid);
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_activity_topic_not_member_of);
+                    }
+                }
+            }
+        }).list(topicId, 1);
+    }
+
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
             AppTopic topic = mAdapter.get(index);
-            NimSessionHelper.startTeamSession(Activity(), topic.getTid());
+            if (AppTopicMember.isMeMemberOf(topic.getTid())) {
+                NimSessionHelper.startTeamSession(Activity(), topic.getTid());
+            } else {
+                fetchingTopicMembers(topic.getId(), topic.getTid());
+            }
         }
     };
 

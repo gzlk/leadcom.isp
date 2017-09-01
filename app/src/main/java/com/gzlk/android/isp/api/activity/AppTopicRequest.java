@@ -133,6 +133,6 @@ public class AppTopicRequest extends Request<AppTopic> {
      * 查询活动议题列表
      */
     public void list(String activityId, int pageNumber) {
-        httpRequest(getRequest(MultipleTopic.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleTopic.class, format("%s?actId=%s&pageNumber=%d&pageSize=%d", url(LIST), activityId, pageNumber, MAX_PAGE_SIZE), "", HttpMethods.Get));
     }
 }

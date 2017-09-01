@@ -26,7 +26,7 @@ import java.util.List;
 public class AppVoteRecord extends Model {
 
     // 查找指定的投票里是否已经投过票
-    public static AppVoteRecord getRecord(String voteId) {
+    public static AppVoteRecord getMyRecord(String voteId) {
         QueryBuilder<AppVoteRecord> builder = new QueryBuilder<>(AppVoteRecord.class)
                 .whereEquals(AppVote.Field.VoteId, voteId)
                 .whereAppendAnd()
