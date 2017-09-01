@@ -248,7 +248,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 }
                 extra.setTitle(selfName.getValue());
                 extra.setContent(selfValue.getValue());
-                extra.setShow((selfShown.getVisibility() == View.VISIBLE || toggleHolder.isToggled()) ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE);
+                extra.setShow(selfShown.getVisibility() == View.GONE ? UserExtra.ShownType.HIDE : (toggleHolder.isToggled() ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE));
+                //extra.setShow((selfShown.getVisibility() == View.VISIBLE || toggleHolder.isToggled()) ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE);
                 int index = Cache.cache().me.getExtra().indexOf(extra);
                 if (index >= 0) {
                     Cache.cache().me.getExtra().set(index, extra);

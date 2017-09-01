@@ -167,18 +167,18 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     private String getRecentMsgType(RecentContact contact) {
         String ret = contact.getContent();
-        if (ret.contains(getString(R.string.ui_nim_app_recent_contact_type_custom))) {
+        if (ret.contains(StringHelper.getString(R.string.ui_nim_app_recent_contact_type_custom))) {
             MsgAttachment attachment = contact.getAttachment();
             if (attachment instanceof NoticeAttachment) {
-                ret = getString(R.string.ui_nim_app_recent_contact_type_notice);
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_notice);
             } else if (attachment instanceof SigningNotifyAttachment) {
-                ret = getString(R.string.ui_nim_app_recent_contact_type_signing);
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_signing);
             } else if (attachment instanceof VoteAttachment) {
-                ret = getString(R.string.ui_nim_app_recent_contact_type_vote);
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_vote);
             } else if (attachment instanceof TopicAttachment) {
-                ret = getString(R.string.ui_nim_app_recent_contact_type_topic);
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_topic);
             } else if (attachment instanceof MinutesAttachment) {
-                ret = getString(R.string.ui_nim_app_recent_contact_type_minutes);
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_minutes);
             }
         }
         return ret;
