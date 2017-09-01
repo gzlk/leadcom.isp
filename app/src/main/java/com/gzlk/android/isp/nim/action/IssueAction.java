@@ -53,6 +53,7 @@ public class IssueAction extends BaseAction {
                     TopicAttachment attachment = new TopicAttachment();
                     attachment.setCustomId(topic.getTid());
                     attachment.setActId(topic.getActId());
+                    attachment.setTopicId(topic.getId());
                     attachment.setTitle(topic.getTitle());
                     IMMessage message = MessageBuilder.createCustomMessage(getAccount(), SessionTypeEnum.Team, topic.getTitle(), attachment);
                     sendMessage(message);
