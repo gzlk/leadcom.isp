@@ -46,12 +46,14 @@ public class ContactViewHolder extends BaseViewHolder {
     private ImageDisplayer headerView;
     @ViewId(R.id.ui_holder_view_contact_name)
     private TextView nameView;
+    @ViewId(R.id.ui_holder_view_contact_duty)
+    private TextView dutyView;
     @ViewId(R.id.ui_holder_view_contact_phone)
     private TextView phoneView;
     @ViewId(R.id.ui_holder_view_contact_myself)
     private TextView myselfView;
     @ViewId(R.id.ui_holder_view_contact_manager)
-    private TextView managerView;
+    private CustomTextView managerView;
     @ViewId(R.id.ui_holder_view_contact_invite_button)
     private CorneredButton buttonInvite;
     @ViewId(R.id.ui_holder_view_contact_picker)
@@ -157,6 +159,7 @@ public class ContactViewHolder extends BaseViewHolder {
         }
         text = getSearchingText(text, searchingText);
         nameView.setText(Html.fromHtml(text));
+        dutyView.setText(member.getDuty());
         text = member.getPhone();
         if (StringHelper.isEmpty(text)) {
             text = StringHelper.getString(R.string.ui_organization_member_no_phone);
@@ -167,9 +170,10 @@ public class ContactViewHolder extends BaseViewHolder {
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
-        managerView.setText(member.isManager() ? Member.Code.GROUP_MANAGER_ROLE_NAME :
-                (member.isArchiveManager() ? Member.Code.GROUP_DOC_MANAGER_ROLE_NAME :
-                        (member.isSquadManager() ? Member.Code.GROUP_SQUAD_MANAGER_ROLE_NAME : "")));
+        managerView.setText(member.isManager() ? R.string.ui_icon_group_manager :
+                (member.isArchiveManager() ? R.string.ui_icon_archive_manager :
+                        (member.isSquadManager() ? R.string.ui_icon_group_manager : R.string.ui_icon_group_manager)));
+        managerView.setTextColor(getColor(member.isManager() ? R.color.colorPrimary : R.color.color_dfc371));
         managerView.setVisibility((member.isManager() || member.isArchiveManager() || member.isSquadManager()) ? View.VISIBLE : View.GONE);
 
         buttonInvite.setVisibility(buttonInviteVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);

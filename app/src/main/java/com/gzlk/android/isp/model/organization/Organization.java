@@ -25,37 +25,38 @@ public class Organization extends Model {
      */
     public static final String OTHER_ID = "ad912b3b344f426a93860248ffd3c715";
 
-    public static class Table {
-        public static final String GROUP = "organization";
-        public static final String SQUAD = "squad";
-        public static final String INVITATION = "invitation";
-        public static final String ROLE = "role";
-        public static final String RELATION = "relation";
-        public static final String PERMISSION = "permission";
-        public static final String MEMBER = "member";
-        public static final String CONCERN = "concern";
-        public static final String JOIN = "joinGroup";
+    public interface Table {
+        String GROUP = "organization";
+        String SQUAD = "squad";
+        String INVITATION = "invitation";
+        String ROLE = "role";
+        String RELATION = "relation";
+        String PERMISSION = "permission";
+        String MEMBER = "member";
+        String CONCERN = "concern";
+        String JOIN = "joinGroup";
     }
 
-    public static class Field {
-        public static final String GroupId = "groupId";
-        public static final String GroupName = "groupName";
-        public static final String UpperId = "upperId";
-        public static final String UpperName = "upperName";
-        public static final String Nature = "nature";
-        public static final String Logo = "logo";
-        public static final String Introduction = "introduction";
-        public static final String MemberNumber = "memberNum";
-        public static final String Verified = "verified";
-        public static final String RoleId = "roleId";
-        public static final String RoleName = "roleName";
-        public static final String RoleDescription = "roleDescription";
-        public static final String SquadId = "squadId";
-        public static final String SquadName = "squadName";
-        public static final String PermissionId = "permissionId";
-        public static final String GroupLogo = "groupLogo";
-        public static final String ModifyDate = "modifyDate";
-        public static final String Concerned = "concerned";
+    public interface Field {
+        String GroupId = "groupId";
+        String GroupName = "groupName";
+        String UpperId = "upperId";
+        String UpperName = "upperName";
+        String Nature = "nature";
+        String Logo = "logo";
+        String Introduction = "introduction";
+        String MemberNumber = "memberNum";
+        String Verified = "verified";
+        String RoleId = "roleId";
+        String RoleName = "roleName";
+        String RoleDescription = "roleDescription";
+        String SquadId = "squadId";
+        String Rank="rank";
+        String SquadName = "squadName";
+        String PermissionId = "permissionId";
+        String GroupLogo = "groupLogo";
+        String ModifyDate = "modifyDate";
+        String Concerned = "concerned";
     }
 
     @Column(Model.Field.Name)

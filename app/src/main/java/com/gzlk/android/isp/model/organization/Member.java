@@ -177,6 +177,12 @@ public class Member extends Leaguer {
     @Column(User.Field.Phone)
     private String phone;          //用户手机
 
+    @Column(User.Field.Duty)
+    private String duty;
+
+    @Column(Organization.Field.Rank)
+    private int rank;
+
     //活动Id
     @Column(Activity.Field.ActivityId)
     private String actId;
@@ -207,6 +213,22 @@ public class Member extends Leaguer {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getDuty() {
+        return duty;
+    }
+
+    public void setDuty(String duty) {
+        this.duty = duty;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 
     public String getActId() {

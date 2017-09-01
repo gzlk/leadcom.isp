@@ -3,7 +3,10 @@ package com.gzlk.android.isp.nim.viewholder;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.common.OfficeOnlinePreviewFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
@@ -50,6 +53,8 @@ public class MsgViewHolderMinutes extends MsgViewHolderBase {
 
     @Override
     protected void onItemClick() {
-
+        String url = minutes.getUrl();
+        String title = StringHelper.getString(R.string.ui_nim_action_minutes);
+        OfficeOnlinePreviewFragment.open(context, BaseFragment.ACTIVITY_BASE_REQUEST, url, title, Attachment.getExtension(url), false);
     }
 }

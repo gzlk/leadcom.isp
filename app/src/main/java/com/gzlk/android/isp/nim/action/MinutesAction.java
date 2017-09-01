@@ -1,7 +1,21 @@
 package com.gzlk.android.isp.nim.action;
 
+import android.content.Intent;
+
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.activity.AppMinutesRequest;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.common.OfficeOnlinePreviewFragment;
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.nim.constant.RequestCode;
+import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
 import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nimlib.sdk.msg.MessageBuilder;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 /**
  * <b>功能描述：</b>网易云信会议记录Action<br />
@@ -22,6 +36,44 @@ public class MinutesAction extends BaseAction {
 
     @Override
     public void onClick() {
+        gotMinutes();
+    }
 
+    // 获取会议纪要文档
+    private void gotMinutes() {
+        Activity act = Activity.getByTid(getAccount());
+        AppMinutesRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<String>() {
+            @Override
+            public void onResponse(String s, boolean success, String message) {
+                super.onResponse(s, success, message);
+                if (success) {
+                    open(s);
+                }
+            }
+        }).summary(act.getGroupId(), act.getId());
+    }
+
+    private void open(String url) {
+        // 打开会议纪要详情页面
+        int requestCode = makeRequestCode(RequestCode.REQ_MINUTES_DETAILS);
+        String ext = Attachment.getExtension(url);
+        OfficeOnlinePreviewFragment.open(getActivity(), requestCode, url, StringHelper.getString(R.string.ui_nim_action_minutes), ext, true);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == android.app.Activity.RESULT_OK) {
+            switch (requestCode) {
+                case RequestCode.REQ_MINUTES_DETAILS:
+                    MinutesAttachment attachment = new MinutesAttachment();
+                    attachment.setTitle(StringHelper.getString(R.string.ui_nim_action_minutes));
+                    attachment.setUrl(BaseFragment.getResultedData(data));
+                    IMMessage message = MessageBuilder.createCustomMessage(getAccount(), SessionTypeEnum.Team, StringHelper.getString(R.string.ui_nim_action_minutes), attachment);
+                    message.setPushContent(StringHelper.getString(R.string.ui_activity_minutes_nim_view_holder_content));
+                    sendMessage(message);
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

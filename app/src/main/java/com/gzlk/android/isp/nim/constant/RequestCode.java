@@ -45,4 +45,8 @@ public class RequestCode {
      * 创建新议题
      */
     public static final int REQ_TOPIC_NEW = BASE_NIM_REQ + 7;
+    /**
+     * 会议纪要详情页
+     */
+    public static final int REQ_MINUTES_DETAILS = BASE_NIM_REQ + 8;
 }

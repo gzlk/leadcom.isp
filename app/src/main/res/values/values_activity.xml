@@ -370,4 +370,5 @@
     <string name="ui_activity_topic_property_ended">您已解散本议题</string>
 
     <string name="ui_activity_minutes_nim_view_holder_title" formatted="false">【会议纪要】%s</string>
+    <string name="ui_activity_minutes_nim_view_holder_content">发来了活动内会议纪要</string>
 </resources>

@@ -1,12 +1,14 @@
 package com.gzlk.android.isp.fragment.common;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 
 import java.io.File;
@@ -26,6 +28,8 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
 
     private static final String PARAM_TITLE = "oopf_title";
     private static final String PARAM_EXT = "oopf_extension";
+    private static final String PARAM_MINUTES = "oopf_is_minutes";
+    private static final String PARAM_DOWNLOADED = "oopf_is_downloaded";
 
     public static OfficeOnlinePreviewFragment newInstance(String params) {
         OfficeOnlinePreviewFragment oopf = new OfficeOnlinePreviewFragment();
@@ -37,8 +41,15 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         bundle.putString(PARAM_TITLE, strings[1]);
         // 后缀
         bundle.putString(PARAM_EXT, strings[2]);
+        // 是否会议纪要文档
+        bundle.putBoolean(PARAM_MINUTES, Boolean.valueOf(strings[3]));
         oopf.setArguments(bundle);
         return oopf;
+    }
+
+    public static void open(Context context, int req, String url, String title, String extension, boolean isMinute) {
+        String params = format("%s,%s,%s,%s", url, title, extension, isMinute);
+        BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), params, req, true, false);
     }
 
     @Override
@@ -46,6 +57,8 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         super.getParamsFromBundle(bundle);
         mTitle = bundle.getString(PARAM_TITLE, "");
         mExtension = bundle.getString(PARAM_EXT, "");
+        mMinutes = bundle.getBoolean(PARAM_MINUTES, false);
+        mDownloaded = bundle.getBoolean(PARAM_DOWNLOADED, false);
     }
 
     @Override
@@ -53,9 +66,12 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_TITLE, mTitle);
         bundle.putString(PARAM_EXT, mExtension);
+        bundle.putBoolean(PARAM_MINUTES, mMinutes);
+        bundle.putBoolean(PARAM_DOWNLOADED, mDownloaded);
     }
 
     private String mTitle, mExtension;
+    private boolean mMinutes, mDownloaded = false;
 
     @Override
     public void doingInResume() {
@@ -63,23 +79,25 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         if (StringHelper.isEmpty(mQueryId)) {
             closeWithWarning(R.string.ui_text_home_inner_web_view_invalid_url);
         } else {
-            boolean needDown;
-            String local = "";
-            if (mQueryId.contains(FilePreviewHelper.NIM)) {
-                local = HttpHelper.helper().getLocalFilePath(mQueryId, App.ARCHIVE_DIR);
-                String localReal = local + "." + mExtension;
-                File file = new File(localReal);
-                needDown = !file.exists();
-            } else {
-                // 非网易云文件，直接尝试下载
-                needDown = true;
-            }
-            if (needDown) {
-                showImageHandlingDialog(R.string.ui_base_text_loading);
-                // 先下载然后再预览
-                downloadFile(mQueryId, App.ARCHIVE_DIR);
-            } else {
-                onFileDownloadingComplete(mQueryId, local, true);
+            if (!mDownloaded) {
+                boolean needDown;
+                String local = "";
+                if (mQueryId.contains(FilePreviewHelper.NIM)) {
+                    local = HttpHelper.helper().getLocalFilePath(mQueryId, App.ARCHIVE_DIR);
+                    String localReal = local + "." + mExtension;
+                    File file = new File(localReal);
+                    needDown = !file.exists();
+                } else {
+                    // 非网易云文件，直接尝试下载
+                    needDown = true;
+                }
+                if (needDown) {
+                    showImageHandlingDialog(R.string.ui_base_text_loading);
+                    // 先下载然后再预览
+                    downloadFile(mQueryId, App.ARCHIVE_DIR);
+                } else {
+                    onFileDownloadingComplete(mQueryId, local, true);
+                }
             }
         }
     }
@@ -95,12 +113,28 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         return mQueryId;
     }
 
+    private void resetRightEvent() {
+        setRightText(R.string.ui_base_text_publish);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                resultData(mQueryId);
+            }
+        });
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected void onFileDownloadingComplete(String url, String local, boolean success) {
+        mDownloaded = true;
         hideImageHandlingDialog();
         if (success) {
-            finish();
+            if (!mMinutes) {
+                // 不是会议纪要时，才需要关闭并且打开第三方应用打开office文档
+                finish();
+            } else {
+                resetRightEvent();
+            }
             String localReal = local + "." + mExtension;
             File target = new File(localReal);
             if (!target.exists()) {
