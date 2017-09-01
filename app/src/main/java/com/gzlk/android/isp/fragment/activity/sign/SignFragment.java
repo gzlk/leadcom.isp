@@ -14,6 +14,7 @@ import com.gzlk.android.isp.api.activity.AppSigningRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.map.MapHandleableFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.GaodeHelper;
@@ -54,6 +55,11 @@ public class SignFragment extends MapHandleableFragment {
         bundle.putString(PARAM_RECORD, strings[2]);
         sf.setArguments(bundle);
         return sf;
+    }
+
+    public static void open(BaseFragment fragment, String tid, String signId, String recordJson) {
+        String params = format("%s,%s,%s", tid, signId, recordJson);
+        fragment.openActivity(SignFragment.class.getName(), params, true, false);
     }
 
     public static SignCallback callback;

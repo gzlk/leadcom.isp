@@ -9,18 +9,18 @@ import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
+import com.gzlk.android.isp.api.activity.AppSignRecordRequest;
 import com.gzlk.android.isp.api.activity.AppSigningRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.activity.SingingViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.sign.AppSignRecord;
 import com.gzlk.android.isp.model.activity.sign.AppSigning;
 
 import java.util.List;
@@ -38,6 +38,8 @@ import java.util.List;
 
 public class SignListFragment extends BaseSwipeRefreshSupportFragment {
 
+    private static final String PARAM_SELECTED = "slf_selected";
+
     public static SignListFragment newInstance(String params) {
         SignListFragment slf = new SignListFragment();
         Bundle bundle = new Bundle();
@@ -48,7 +50,20 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private String activityId;
+    private int selectedIndex = -1;
     private SigningAdapter mAdapter;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        selectedIndex = bundle.getInt(PARAM_SELECTED, -1);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putInt(PARAM_SELECTED, selectedIndex);
+    }
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -69,7 +84,6 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
                 //openActivity(SignCreatorFragment.class.getName(), mQueryId, REQ_CREATOR, true, true);
             }
         });
-        setLoadingText(R.string.ui_activity_sign_list_loading);
         setNothingText(R.string.ui_activity_sign_list_nothing);
         initializeAdapter();
     }
@@ -117,53 +131,45 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingActivity() {
-        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
-            @Override
-            public void onResponse(Activity activity, boolean success, String message) {
-                super.onResponse(activity, success, message);
-                if (success && null != activity) {
-                    activityId = activity.getId();
-                    loadingSignings();
-                } else {
-                    ToastHelper.make().showMsg(message);
-                }
+        if (isEmpty(activityId)) {
+            Activity act = Activity.getByTid(mQueryId);
+            if (null != act) {
+                activityId = act.getId();
             }
-        }).findByTid(mQueryId);
+        }
     }
 
     // 远程拉取签到列表
     private void loadingSignings() {
+        fetchingActivity();
+        setLoadingText(R.string.ui_activity_sign_list_loading);
         displayLoading(true);
         displayNothing(false);
-        if (isEmpty(activityId)) {
-            fetchingActivity();
-        } else {
-            AppSigningRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<AppSigning>() {
-                @Override
-                public void onResponse(List<AppSigning> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                    super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                    if (success) {
-                        if (remotePageNumber <= 1) {
-                            mAdapter.clear();
+        AppSigningRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<AppSigning>() {
+            @Override
+            public void onResponse(List<AppSigning> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (remotePageNumber <= 1) {
+                        mAdapter.clear();
+                    }
+                    if (null != list) {
+                        mAdapter.update(list, false);
+                        if (list.size() >= pageSize) {
+                            remotePageNumber++;
                         }
-                        if (null != list) {
-                            mAdapter.update(list, false);
-                            if (list.size() >= pageSize) {
-                                remotePageNumber++;
-                            }
-                            isLoadingComplete(list.size() < pageSize);
-                        } else {
-                            isLoadingComplete(true);
-                        }
+                        isLoadingComplete(list.size() < pageSize);
                     } else {
                         isLoadingComplete(true);
                     }
-                    displayLoading(false);
-                    displayNothing(mAdapter.getItemCount() < 1);
-                    stopRefreshing();
+                } else {
+                    isLoadingComplete(true);
                 }
-            }).list(activityId, remotePageNumber);
-        }
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() < 1);
+                stopRefreshing();
+            }
+        }).list(activityId, remotePageNumber);
     }
 
     private void initializeAdapter() {
@@ -177,14 +183,49 @@ public class SignListFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
+            selectedIndex = index;
             AppSigning signing = mAdapter.get(index);
-            String json = Json.gson().toJson(signing, new TypeToken<AppSigning>() {
-            }.getType());
-            // 打开查看签到应用详情
-            SignDetailsFragment.open(SignListFragment.this, REQUEST_DELETE, mQueryId, json);
-            //openActivity(SignDetailsFragment.class.getName(), format("%s,%s", mQueryId, StringHelper.replaceJson(json, false)), REQUEST_DELETE, true, false);
+            checkMySigningRecords(signing);
         }
     };
+
+    private void checkMySigningRecords(AppSigning signing) {
+        String json = Json.gson().toJson(signing, new TypeToken<AppSigning>() {
+        }.getType());
+        //openActivity(SignDetailsFragment.class.getName(), format("%s,%s", mQueryId, StringHelper.replaceJson(json, false)), REQUEST_DELETE, true, false);
+        // 查询本地我是否已经签过到
+        AppSignRecord myRecord = AppSignRecord.getMyRecord(signing.getId());
+        if (null == myRecord) {
+            // 我没有签到或本地没有我的签到记录，拉取该签到应用的签到记录
+            loadingRemoteSignRecords(signing.getId(), json);
+        } else {
+            // 我已签过到，打开签到详情列表
+            // 打开查看签到应用详情
+            SignDetailsFragment.open(SignListFragment.this, REQUEST_DELETE, mQueryId, json);
+        }
+    }
+
+    private void loadingRemoteSignRecords(final String signId, final String json) {
+        setLoadingText(R.string.ui_activity_sign_details_loading_sign_records);
+        displayLoading(true);
+        AppSignRecordRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<AppSignRecord>() {
+            @Override
+            public void onResponse(List<AppSignRecord> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                displayLoading(false);
+                if (success) {
+                    AppSignRecord record = AppSignRecord.getMyRecord(signId);
+                    if (null == record) {
+                        // 没有签到，打开签到页面
+                        SignFragment.open(SignListFragment.this, mQueryId, signId, "");
+                    } else {
+                        // 已签到，打开签到记录列表页面
+                        SignDetailsFragment.open(SignListFragment.this, REQUEST_DELETE, mQueryId, json);
+                    }
+                }
+            }
+        }).list(signId);
+    }
 
     private class SigningAdapter extends RecyclerViewAdapter<SingingViewHolder, AppSigning> {
 

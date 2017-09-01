@@ -216,17 +216,17 @@ public class ActivityFragment extends BaseOrganizationFragment {
     }
 
     private void refreshingItems() {
+        setLoadingText(R.string.ui_activity_fetching_groups);
         displayLoading(true);
         fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_ACTIVITY);
         if (!isEmpty(mQueryId)) {
             fetchingActivities();
-        } else {
-            displayLoading(false);
         }
     }
 
     @Override
     protected void onFetchingJoinedRemoteOrganizationsComplete(List<Organization> list) {
+        displayLoading(false);
         if (null != list) {
             concernedViewHolder.add(list);
         } else {
