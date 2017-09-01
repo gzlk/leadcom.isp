@@ -216,6 +216,20 @@ public class NimApplication extends BaseActivityManagedApplication {
                 if (!StringHelper.isEmpty(json)) {
                     NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
                     if (null != msg) {
+                        switch (msg.getType()) {
+                            case NimMessage.Type.ACTIVITY_END:
+                            case NimMessage.Type.ACTIVITY_EXIT:
+                            case NimMessage.Type.ACTIVITY_KICK_OUT:
+                                // 活动结束、退出活动、被踢出活动时，清理活动中的未读消息条数
+                            case NimMessage.Type.TOPIC_END:
+                            case NimMessage.Type.TOPIC_EXIT:
+                            case NimMessage.Type.TOPIC_KICK_OUT:
+                                // 议题结束、退出议题、被踢出议题时，清理议题中的未读消息条数
+                                if (!isEmpty(msg.getTid())) {
+                                    NIMClient.getService(MsgService.class).clearUnreadCount(msg.getTid(), SessionTypeEnum.Team);
+                                }
+                                break;
+                        }
                         NimMessage.save(msg);
                         if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
                             // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户

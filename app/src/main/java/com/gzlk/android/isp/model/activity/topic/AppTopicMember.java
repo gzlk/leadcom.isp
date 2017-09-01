@@ -28,7 +28,7 @@ public class AppTopicMember extends Model {
 
     public static boolean isMeMemberOf(String tid) {
         AppTopic topic = AppTopic.queryByTid(tid);
-        return null != getMyMemberOf(topic.getId());
+        return null != topic && null != getMyMemberOf(topic.getId());
     }
 
     public static AppTopicMember getMyMemberOf(String topicId) {

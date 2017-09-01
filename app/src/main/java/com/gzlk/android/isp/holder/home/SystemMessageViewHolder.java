@@ -61,9 +61,9 @@ public class SystemMessageViewHolder extends BaseViewHolder {
 
     private String getHandleTitle(NimMessage msg) {
         switch (msg.getType()) {
-            case NimMessage.Type.ACTIVITY_ALERT:
+            case NimMessage.Type.ACTIVITY_ALERT_ALL:
             case NimMessage.Type.ACTIVITY_END:
-            case NimMessage.Type.SYSTEM_ALERT:
+            case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
             case NimMessage.Type.SQUAD_INVITE_ALERT:
             case NimMessage.Type.TOPIC_END:
             case NimMessage.Type.TOPIC_EXIT:

@@ -365,7 +365,7 @@
     <string name="ui_activity_topic_property_member_inviting">正在邀请成员&#8230;</string>
     <string name="ui_activity_topic_property_member_invited">已发送邀请</string>
     <string name="ui_activity_topic_property_exit">退出议题</string>
-    <string name="ui_activity_topic_property_end">解散议题</string>
+    <string name="ui_activity_topic_property_end">结束议题</string>
     <string name="ui_activity_topic_property_end_warning">解散议题会直接删除议题中的所有成员并且聊天记录将不会被保存，您确定要继续吗？</string>
     <string name="ui_activity_topic_property_exiting">正在退出议题&#8230;</string>
     <string name="ui_activity_topic_property_ending">正在解散议题&#8230;</string>

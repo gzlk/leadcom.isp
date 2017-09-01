@@ -323,13 +323,17 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 openActivity(MomentListFragment.class.getName(), mQueryId, true, false);
             } else {
                 if (mQueryId.equals(Cache.cache().userId)) {
-                    Model model = mAdapter.get(index);
-                    if (model instanceof UserExtra) {
-                        // 点击更改自定义设置
-                        selectedIndex = index;
-                        openSelfDefineDialog();
+                    if (index >= 0) {
+                        Model model = mAdapter.get(index);
+                        if (model instanceof UserExtra) {
+                            // 点击更改自定义设置
+                            selectedIndex = index;
+                            openSelfDefineDialog();
+                        } else {
+                            // 只有我自己才能修改我自己的信息
+                            checkClickType(index);
+                        }
                     } else {
-                        // 只有我自己才能修改我自己的信息
                         checkClickType(index);
                     }
                 }

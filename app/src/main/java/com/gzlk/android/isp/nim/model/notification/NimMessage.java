@@ -116,9 +116,29 @@ public class NimMessage implements MsgAttachment {
          */
         int GROUP_INVITE_DISAGREE = 10;
         /**
+         * 被踢出组织
+         */
+        int GROUP_KICK_OUT = 11;
+        /**
+         * 主动加入活动
+         */
+        int ACTIVITY_JOIN = 14;
+        /**
+         * 主动加入活动的回复
+         */
+        int ACTIVITY_JOIN_REPLY = 15;
+        /**
          * 活动成员邀请
          */
         int ACTIVITY_INVITE = 16;
+        /**
+         * 活动邀请的回复
+         */
+        int ACTIVITY_INVITE_REPLY = 17;
+        /**
+         * 被踢出活动
+         */
+        int ACTIVITY_KICK_OUT = 18;
         /**
          * 小组成员邀请小组外人员加入小组
          */
@@ -132,17 +152,21 @@ public class NimMessage implements MsgAttachment {
          */
         int SQUAD_INVITE_DISAGREE = 21;
         /**
-         * 活动通知
+         * 活动通知(对所有活动成员)
          */
-        int ACTIVITY_ALERT = 22;
+        int ACTIVITY_ALERT_ALL = 22;
         /**
-         * 自定义系统通知
+         * 活动通知(对选定成员)
          */
-        int SYSTEM_ALERT = 23;
+        int ACTIVITY_ALERT_SELECTED = 23;
         /**
          * 邀请到小组（仅通知）
          */
         int SQUAD_INVITE_ALERT = 24;
+        /**
+         * 成员退出活动
+         */
+        int ACTIVITY_EXIT = 25;
         /**
          * 活动结束通知
          */
@@ -180,9 +204,9 @@ public class NimMessage implements MsgAttachment {
                 return "活动结束";
             case Type.SQUAD_INVITE:
                 return "邀请您加入小组";
-            case Type.ACTIVITY_ALERT:
+            case Type.ACTIVITY_ALERT_ALL:
                 return "活动通知";
-            case Type.SYSTEM_ALERT:
+            case Type.ACTIVITY_ALERT_SELECTED:
                 return "系统通知";
             case Type.SQUAD_INVITE_ALERT:
                 return "加入小组";

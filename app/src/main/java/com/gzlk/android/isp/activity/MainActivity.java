@@ -269,7 +269,7 @@ public class MainActivity extends TitleActivity {
                     no = StringHelper.getString(R.string.ui_base_text_i_known);
                 }
                 break;
-            case NimMessage.Type.SYSTEM_ALERT:
+            case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
                 // 系统通知，只提醒就可以了
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
@@ -323,7 +323,7 @@ public class MainActivity extends TitleActivity {
                                 openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%d", msg.getTid(), msg.getId()), true, false);
                             }
                             break;
-                        case NimMessage.Type.SYSTEM_ALERT:
+                        case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
                             // 系统通知的话，点击按钮设置已读标记
                             saveMessage(msg, true, true);
                             break;

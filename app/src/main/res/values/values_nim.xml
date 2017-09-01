@@ -12,6 +12,7 @@
     <string name="ui_nim_action_video_choose">选择视频</string>
     <string name="ui_nim_action_video_capture">拍摄视频</string>
     <string name="ui_nim_action_location">位置</string>
+    <string name="ui_nim_action_blank"> </string>
 
     <!--群聊中应用的icon大小-->
     <dimen name="ui_nim_app_icon_size">@dimen/ui_static_dp_50</dimen>

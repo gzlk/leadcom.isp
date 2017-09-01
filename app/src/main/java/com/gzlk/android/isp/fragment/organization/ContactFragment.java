@@ -622,6 +622,14 @@ public class ContactFragment extends BaseOrganizationFragment {
 
         @Override
         protected int comparator(Member item1, Member item2) {
+//            int type1 = item1.getGroRole().getRoleType();
+//            int type2 = item2.getGroRole().getRoleType();
+//            if (type1 < type2) {
+//                return -1;
+//            }
+//            if (type1 > type2) {
+//                return 1;
+//            }
             return item1.getSpell().compareTo(item2.getSpell());
         }
 

@@ -34,6 +34,9 @@ public class Member extends Leaguer {
 
     public interface Code {
         //组织成员角色ID
+        /**
+         * 组织管理员Id
+         */
         String GROUP_MANAGER_ROLE_ID = "592fc0d0cb220a23640a0395";          //组织管理员
         String GROUP_COMMON_MEMBER_ROLE_ID = "592fc373cb220a23640a039a";    //普通成员
         String GROUP_DOC_MANAGER_ROLE_ID = "592fce2dcb220a32d8c88f52";      //档案管理员

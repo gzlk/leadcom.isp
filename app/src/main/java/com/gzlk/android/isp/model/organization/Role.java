@@ -41,13 +41,17 @@ public class Role extends Model {
          */
         int MANAGER = 2;
         /**
-         * 普通成员
+         * 小组管理员
          */
-        int NORMAL = 3;
+        int SQUAD_MANAGER = 3;
         /**
          * 档案管理员
          */
         int ARCHIVE_MANAGER = 4;
+        /**
+         * 普通成员
+         */
+        int NORMAL = 5;
     }
 
     /**
@@ -60,17 +64,25 @@ public class Role extends Model {
     /**
      * 通过roleName获取roleType
      */
-    private static int getRoleType(String roleName) {
-        if (isEmpty(roleName) || roleName.contains("普通成员") || roleName.contains("活动参与者")) {
+    private static int getRoleType(String roleId) {
+        if (isEmpty(roleId) ||
+                roleId.equals(Member.Code.GROUP_COMMON_MEMBER_ROLE_ID) ||
+                roleId.equals(Member.Code.ACT_MEMBER_ROLE_ID)) {
+            // 组织普通成员、活动普通成员
             return Type.NORMAL;
         }
-        if (roleName.contains("群创建者") || roleName.contains("活动发起者")) {
+        if (roleId.equals("群创建者") || roleId.equals("活动发起者")) {
             return Type.CREATOR;
         }
-        if (roleName.contains("群管理员")) {
+        if (roleId.equals(Member.Code.GROUP_SQUAD_MANAGER_ROLE_ID)) {
+            return Type.SQUAD_MANAGER;
+        }
+        if (roleId.equals(Member.Code.GROUP_MANAGER_ROLE_ID) ||
+                roleId.equals(Member.Code.ACT_MANAGER_ROLE_ID)) {
+            // 组织管理员、小组管理员、活动管理员
             return Type.MANAGER;
         }
-        if (roleName.contains("档案管理员")) {
+        if (roleId.equals(Member.Code.GROUP_DOC_MANAGER_ROLE_ID)) {
             return Type.ARCHIVE_MANAGER;
         }
         return Type.NORMAL;

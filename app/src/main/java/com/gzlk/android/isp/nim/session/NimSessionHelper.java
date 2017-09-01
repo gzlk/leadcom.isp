@@ -292,11 +292,12 @@ public class NimSessionHelper {
             actions.add(new NoticeAction());
             actions.add(new VoteAction());
             actions.add(new SignAction());
+            //actions.add(new BlankAction());
             //actions.add(new SurveyAction());
+            actions.add(new MinutesAction());
             if (!topic) {
                 actions.add(new IssueAction());
             }
-            actions.add(new MinutesAction());
         }
         return actions;
     }
