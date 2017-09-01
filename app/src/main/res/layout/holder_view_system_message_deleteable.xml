@@ -8,11 +8,11 @@
     <com.daimajia.swipe.SwipeLayout
         android:id="@+id/ui_holder_view_system_message_swipe_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/ui_static_dp_68">
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/ui_static_dp_50"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <TextView

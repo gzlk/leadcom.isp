@@ -40,6 +40,8 @@ public class SystemMessageViewHolder extends BaseViewHolder {
     private TextView titleView;
     @ViewId(R.id.ui_holder_view_system_message_time)
     private TextView timeView;
+    @ViewId(R.id.ui_holder_view_system_message_unread)
+    private TextView unreadView;
     @ViewId(R.id.ui_holder_view_system_message_description)
     private TextView descView;
 
@@ -56,7 +58,8 @@ public class SystemMessageViewHolder extends BaseViewHolder {
         titleView.setText(getTitle(msg));
         descView.setText(msg.getMsgContent());
         String time = Utils.formatTimeAgo(new Date(msg.getId()));
-        timeView.setText(format("%s%s", time, getHandleTitle(msg)));
+        timeView.setText(time);
+        unreadView.setVisibility(msg.isHandled() ? View.GONE : View.VISIBLE);
     }
 
     private String getHandleTitle(NimMessage msg) {

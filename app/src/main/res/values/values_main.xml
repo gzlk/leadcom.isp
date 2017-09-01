@@ -9,6 +9,7 @@
     <string name="ui_text_main_bottom_button_text_4">个人</string>
 
     <string name="ui_system_message_fragment_title">系统消息</string>
+    <string name="ui_system_message_unread">(未读)</string>
     <string name="ui_system_message_nothing">目前没有更多的系统消息</string>
     <string name="ui_system_message_delete_warning">系统消息删除之后不能恢复。\n您确定要继续吗？</string>
 

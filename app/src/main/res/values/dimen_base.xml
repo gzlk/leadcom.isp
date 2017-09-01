@@ -3,6 +3,7 @@
     <dimen name="ui_base_text_size">@dimen/ui_static_sp_16</dimen>
     <dimen name="ui_base_text_size_max">@dimen/ui_static_sp_28</dimen>
     <dimen name="ui_base_text_size_huge">@dimen/ui_static_sp_24</dimen>
+    <dimen name="ui_base_text_size_large">@dimen/ui_static_sp_22</dimen>
     <dimen name="ui_base_text_size_big">@dimen/ui_static_sp_18</dimen>
     <dimen name="ui_base_text_size_small">@dimen/ui_static_sp_14</dimen>
     <dimen name="ui_base_text_size_little">@dimen/ui_static_sp_10</dimen>

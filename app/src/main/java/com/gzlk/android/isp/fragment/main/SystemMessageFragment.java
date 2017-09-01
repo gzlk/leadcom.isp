@@ -126,11 +126,16 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             // 点击查看通知
             NimMessage msg = mAdapter.get(index);
-            if (!isEmpty(msg.getMsgTitle()) && !msg.isHandled()) {
+            if (!msg.isHandled()) {
                 msg.setHandled(true);
                 NimMessage.save(msg);
                 NimApplication.dispatchCallbacks();
             }
+//            if (!isEmpty(msg.getMsgTitle()) && !msg.isHandled()) {
+//                msg.setHandled(true);
+//                NimMessage.save(msg);
+//                NimApplication.dispatchCallbacks();
+//            }
             if (msg.getType() == NimMessage.Type.ACTIVITY_INVITE && msg.isHandled()) {
                 // 活动邀请且已处理过的话
                 if (msg.isHandleState()) {
