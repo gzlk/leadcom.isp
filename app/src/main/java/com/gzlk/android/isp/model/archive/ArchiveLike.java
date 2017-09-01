@@ -1,6 +1,6 @@
 package com.gzlk.android.isp.model.archive;
 
-import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -18,9 +18,13 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Archive.Table.LIKE)
 public class ArchiveLike extends ArchiveInfo {
 
-    @Column(Model.Field.UserId)
+    @Column(Field.UserId)
     private String userId;      //用户ID
-    @Column(Model.Field.CreateDate)
+    @Column(Field.UserName)
+    private String userName;    //用户名称
+    @Column(User.Field.HeadPhoto)
+    private String headPhoto;   //用户头像
+    @Column(Field.CreateDate)
     private String createDate;  //点赞日期
 
     public String getUserId() {
@@ -29,6 +33,22 @@ public class ArchiveLike extends ArchiveInfo {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getHeadPhoto() {
+        return headPhoto;
+    }
+
+    public void setHeadPhoto(String headPhoto) {
+        this.headPhoto = headPhoto;
     }
 
     public String getCreateDate() {

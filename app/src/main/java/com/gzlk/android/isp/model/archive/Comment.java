@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.model.archive;
 
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -42,6 +43,8 @@ public class Comment extends ArchiveInfo {
     private String userId;      //评论人ID
     @Column(Model.Field.UserName)
     private String userName;    //评论人名称
+    @Column(User.Field.HeadPhoto)
+    private String headPhoto;
     @Column(Model.Field.CreateDate)
     private String createDate;  //评论时间
 
@@ -67,6 +70,14 @@ public class Comment extends ArchiveInfo {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getHeadPhoto() {
+        return headPhoto;
+    }
+
+    public void setHeadPhoto(String headPhoto) {
+        this.headPhoto = headPhoto;
     }
 
     public String getCreateDate() {
