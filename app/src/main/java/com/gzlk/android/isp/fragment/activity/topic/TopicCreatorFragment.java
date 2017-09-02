@@ -40,6 +40,7 @@ import java.util.ArrayList;
 public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragment {
 
     private static final String PARAM_PICKED = "tcf_picked_member";
+    private static final String PARAM_CREATING = "tcf_is_creating";
 
     public static TopicCreatorFragment newInstance(String params) {
         TopicCreatorFragment tcf = new TopicCreatorFragment();
@@ -64,11 +65,13 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
     private View memberView;
 
     private SimpleClickableViewHolder memberHolder;
+    private boolean isCreating = false;
     private ArrayList<SubMember> selectedMembers = new ArrayList<>();
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
+        isCreating = bundle.getBoolean(PARAM_CREATING, false);
         String json = bundle.getString(PARAM_PICKED, EMPTY_ARRAY);
         resetSelectedMembers(json);
     }
@@ -76,6 +79,7 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_CREATING, isCreating);
         bundle.putString(PARAM_PICKED, SubMember.toJson(selectedMembers));
     }
 
@@ -145,12 +149,17 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
     }
 
     private void createTopic() {
+        if (isCreating) {
+            ToastHelper.make().showMsg("正在创建议题中，请不要重复创建");
+            return;
+        }
         Activity act = Activity.getByTid(mQueryId);
         if (null == act) {
             ToastHelper.make().showMsg(R.string.ui_activity_property_not_exist);
             finish();
         } else {
             showImageHandlingDialog(R.string.ui_activity_topic_creator_creating);
+            isCreating = true;
             AppTopicRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppTopic>() {
                 @Override
                 public void onResponse(AppTopic appTopic, boolean success, String message) {
@@ -158,6 +167,8 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
                     hideImageHandlingDialog();
                     if (success) {
                         resultData(AppTopic.toJson(appTopic));
+                    } else {
+                        isCreating = false;
                     }
                 }
             }).add(act.getId(), titleView.getValue(), SubMember.getUserIds(selectedMembers));

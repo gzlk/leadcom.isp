@@ -262,7 +262,9 @@ public class ContactFragment extends BaseOrganizationFragment {
         if (null == mAdapter) {
             mAdapter = new ContactAdapter();
             mAdapter.setMode(Attributes.Mode.Single);
-            mRecyclerView.addItemDecoration(new StickDecoration());
+            if (showType != TYPE_ORG) {
+                mRecyclerView.addItemDecoration(new StickDecoration());
+            }
             mRecyclerView.setAdapter(mAdapter);
             searchingListener.onSearching("");
             loadingQueryItem();
@@ -350,7 +352,9 @@ public class ContactFragment extends BaseOrganizationFragment {
             } else {
                 searchingText = "";
                 mAdapter.add(members);
-                mAdapter.sort();
+                if (showType != TYPE_ORG) {
+                    mAdapter.sort();
+                }
             }
             stopRefreshing();
         }
@@ -362,10 +366,14 @@ public class ContactFragment extends BaseOrganizationFragment {
         for (Member member : members) {
             // 根据姓名和手机号码模糊查询
             if (member.getUserName().contains(text) || member.getPhone().contains(text)) {
-                mAdapter.add(member);
+                if (showType != TYPE_ORG) {
+                    mAdapter.add(member);
+                }
             }
         }
-        mAdapter.sort();
+        if (showType != TYPE_ORG) {
+            mAdapter.sort();
+        }
     }
 
     private ContactViewHolder.OnUserDeleteListener onUserDeleteListener = new ContactViewHolder.OnUserDeleteListener() {
