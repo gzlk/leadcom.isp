@@ -142,7 +142,7 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
                     ignore.printStackTrace();
                 }
                 if (isEmpty(nick)) {
-                    nick = "null";
+                    nick = "";
                 }
                 topic.setAccessToken(format("%s: %s", nick, getRecentMsgType(contact)));
                 mAdapter.notifyItemChanged(i);

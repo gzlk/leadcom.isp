@@ -78,7 +78,8 @@ public class ActivityViewHolder extends BaseViewHolder {
         descView.setVisibility(isEmpty(strings[3]) ? View.GONE : View.VISIBLE);
         headers.setVisibility(View.GONE);
         iconText.setVisibility(View.VISIBLE);
-        flagView.setVisibility(strings[3].charAt(0) == '0' ? View.GONE : (text.charAt(0) == '3' ? View.GONE : View.VISIBLE));
+        //flagView.setVisibility(strings[3].charAt(0) == '0' ? View.GONE : (text.charAt(0) == '3' ? View.GONE : View.VISIBLE));
+        flagView.setVisibility(item.getAdditionalNum() > 0 ? View.VISIBLE : View.GONE);
         unreadNum.setText(fragment().formatUnread(item.getAdditionalNum()));
         iconContainer.setBackground(getColor(text.charAt(0) == '2' ? R.color.color_faaa2d : R.color.color_fe4848));
     }

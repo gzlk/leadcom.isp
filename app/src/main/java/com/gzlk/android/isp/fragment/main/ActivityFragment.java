@@ -97,6 +97,9 @@ public class ActivityFragment extends BaseOrganizationFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (null == items) {
+            items = StringHelper.getStringArray(R.array.ui_activity_home_page_items);
+        }
         //  注册/注销观察者
         NIMClient.getService(MsgServiceObserve.class).observeRecentContact(messageObserver, true);
         tryPaddingContent(true);
@@ -156,12 +159,37 @@ public class ActivityFragment extends BaseOrganizationFragment {
                         ignore.printStackTrace();
                     }
                     if (isEmpty(nick)) {
-                        nick = "null";
+                        nick = "";
                     }
                     act.setIntro(format("%s: %s", nick, getRecentMsgType(contact)));
                     mAdapter.notifyItemChanged(i);
                 }
+            } else if (model.getId().equals("2")) {
+                // 议题列表的未读消息统计
+                resetTopicsUnreadFlag(contacts);
             }
+        }
+    }
+
+    private void resetTopicsUnreadFlag(List<RecentContact> list) {
+        if (null == appTopics || appTopics.size() < 1) {
+            return;
+        }
+        int unread = 0;
+        for (AppTopic topic : appTopics) {
+            RecentContact contact = get(topic.getTid(), list);
+            if (null != contact) {
+                unread += contact.getUnreadCount();
+            }
+        }
+
+        String string = format(items[2], 0);
+        SimpleClickableItem item = new SimpleClickableItem(string);
+        int index = mAdapter.indexOf(item);
+        if (index > 0) {
+            item = (SimpleClickableItem) mAdapter.get(index);
+            item.setAdditionalNum(unread);
+            mAdapter.update(item);
         }
     }
 
@@ -276,6 +304,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 showUnreadNum(NIMClient.getService(MsgService.class).getTotalUnreadCount() + inviteNumber);
                 resetUnhandledInvite(invtNum);
                 resetTopics();
+                resetUnreadFlags();
             }
         }).listFront(mQueryId, remotePageNumber, Cache.cache().groupIds);
     }
@@ -456,8 +485,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
         for (Activity activity : list) {
             mAdapter.update(activity);
         }
-        // 查询网易云信联系人列表，并更新相应的未读提示和最后发送的消息
-        resetUnreadFlags();
     }
 
     private void clearActivities() {
