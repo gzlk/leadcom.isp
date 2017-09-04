@@ -20,6 +20,8 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
+import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
@@ -221,12 +223,21 @@ public class NimApplication extends BaseActivityManagedApplication {
                             case NimMessage.Type.ACTIVITY_EXIT:
                             case NimMessage.Type.ACTIVITY_KICK_OUT:
                                 // 活动结束、退出活动、被踢出活动时，清理活动中的未读消息条数
+                                if (!isEmpty(msg.getTid())) {
+                                    NIMClient.getService(MsgService.class).clearUnreadCount(msg.getTid(), SessionTypeEnum.Team);
+                                }
+                                break;
                             case NimMessage.Type.TOPIC_END:
                             case NimMessage.Type.TOPIC_EXIT:
                             case NimMessage.Type.TOPIC_KICK_OUT:
                                 // 议题结束、退出议题、被踢出议题时，清理议题中的未读消息条数
                                 if (!isEmpty(msg.getTid())) {
                                     NIMClient.getService(MsgService.class).clearUnreadCount(msg.getTid(), SessionTypeEnum.Team);
+                                    // 删除本地议题成员
+                                    AppTopic topic = AppTopic.queryByTid(msg.getTid());
+                                    if (null != topic) {
+                                        AppTopicMember.removeMemberOfTopicId(topic.getId());
+                                    }
                                 }
                                 break;
                         }

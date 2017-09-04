@@ -9,6 +9,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.assit.WhereBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,15 @@ public class AppTopicMember extends Model {
                 .whereEquals(Field.UserId, Cache.cache().userId);
         List<AppTopicMember> list = new Dao<>(AppTopicMember.class).query(builder);
         return (null == list || list.size() < 1) ? null : list.get(0);
+    }
+
+    /**
+     * 从本地议题成员里删除指定议题的所有成员(退出议题、解散议题时用到)
+     */
+    public static void removeMemberOfTopicId(String topicId) {
+        WhereBuilder builder = new WhereBuilder(AppTopicMember.class)
+                .where(AppTopic.Field.TopicId + " = ?", topicId);
+        new Dao<>(AppTopicMember.class).delete(builder);
     }
 
     @Column(AppTopic.Field.TopicId)

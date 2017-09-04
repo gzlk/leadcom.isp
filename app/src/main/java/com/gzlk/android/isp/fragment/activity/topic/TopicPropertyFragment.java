@@ -73,6 +73,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
     public static TopicPropertyFragment newInstance(String params) {
         TopicPropertyFragment tpf = new TopicPropertyFragment();
         Bundle bundle = new Bundle();
+        // 传过来的tid
         bundle.putString(PARAM_QUERY_ID, params);
         tpf.setArguments(bundle);
         return tpf;
@@ -524,6 +525,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
                 super.onResponse(appTopicMember, success, message);
                 hideImageHandlingDialog();
                 if (success) {
+                    AppTopicMember.removeMemberOfTopicId(topicId);
                     ToastHelper.make().showMsg(R.string.ui_activity_topic_property_exited);
                     finish();
                 }
