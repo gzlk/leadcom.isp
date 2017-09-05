@@ -24,6 +24,9 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 public class LocationAction extends BaseAction {
 
+    /**
+     * 位置
+     */
     public LocationAction() {
         super(R.drawable.nim_action_location, R.string.ui_nim_action_location);
     }

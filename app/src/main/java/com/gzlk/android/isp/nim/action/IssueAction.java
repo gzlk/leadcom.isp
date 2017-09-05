@@ -28,6 +28,9 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 public class IssueAction extends BaseAction {
 
+    /**
+     * 议题
+     */
     public IssueAction() {
         super(R.drawable.nim_action_issue, R.string.ui_nim_action_issue);
     }

@@ -31,6 +31,9 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 public class NoticeAction extends BaseAction {
 
+    /**
+     * 通知
+     */
     public NoticeAction() {
         super(R.drawable.nim_action_notice, R.string.ui_nim_action_notice);
     }

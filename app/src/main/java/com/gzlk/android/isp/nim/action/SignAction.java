@@ -35,6 +35,9 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 public class SignAction extends BaseAction {
 
+    /**
+     * 签到
+     */
     public SignAction() {
         super(R.drawable.nim_action_sign, R.string.ui_nim_action_sign);
     }

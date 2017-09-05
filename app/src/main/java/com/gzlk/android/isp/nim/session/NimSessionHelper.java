@@ -19,6 +19,7 @@ import com.gzlk.android.isp.fragment.main.SystemMessageFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
+import com.gzlk.android.isp.nim.action.BlankAction;
 import com.gzlk.android.isp.nim.action.CameraAction;
 import com.gzlk.android.isp.nim.action.FileAction;
 import com.gzlk.android.isp.nim.action.ImageAction;
@@ -294,7 +295,7 @@ public class NimSessionHelper {
             actions.add(new SignAction());
             //actions.add(new BlankAction());
             //actions.add(new SurveyAction());
-            actions.add(new MinutesAction());
+            //actions.add(new MinutesAction());
             if (!topic) {
                 actions.add(new IssueAction());
             }

@@ -26,6 +26,9 @@ import java.io.File;
 
 public class CameraAction extends PickImageAction {
 
+    /**
+     * 拍照
+     */
     public CameraAction() {
         super(R.drawable.nim_action_camera, R.string.ui_nim_action_camera, false);
     }

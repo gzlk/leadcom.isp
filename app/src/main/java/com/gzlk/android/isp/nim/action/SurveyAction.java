@@ -16,6 +16,9 @@ import com.netease.nim.uikit.session.actions.BaseAction;
 
 public class SurveyAction extends BaseAction {
 
+    /**
+     * 问卷调查
+     */
     public SurveyAction() {
         super(R.drawable.nim_action_survey, R.string.ui_nim_action_survey);
     }

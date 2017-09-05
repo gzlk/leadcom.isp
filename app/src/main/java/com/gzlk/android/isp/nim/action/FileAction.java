@@ -25,6 +25,9 @@ import java.io.File;
 
 public class FileAction extends BaseAction {
 
+    /**
+     * 文件
+     */
     public FileAction() {
         super(R.drawable.nim_action_file, R.string.ui_nim_action_file);
     }

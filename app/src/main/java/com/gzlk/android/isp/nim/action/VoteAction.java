@@ -29,6 +29,9 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 public class VoteAction extends BaseAction {
 
+    /**
+     * 投票
+     */
     public VoteAction() {
         super(R.drawable.nim_action_vote, R.string.ui_nim_action_vote);
     }

@@ -30,7 +30,9 @@ public abstract class ChooseVideoAction extends BaseAction {
     // 视频
     private transient VideoMessageHelper videoMessageHelper;
 
-
+    /**
+     * 视频选择Action基类
+     */
     protected ChooseVideoAction(int iconResId, int titleId, boolean choose) {
         super(iconResId, titleId);
         isChoose = choose;

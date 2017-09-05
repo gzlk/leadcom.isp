@@ -15,6 +15,9 @@ import com.gzlk.android.isp.R;
 
 public class VideoCaptureAction extends ChooseVideoAction {
 
+    /**
+     * 拍摄视频
+     */
     public VideoCaptureAction() {
         super(R.drawable.nim_action_video_capture, R.string.ui_nim_action_video_capture, false);
     }

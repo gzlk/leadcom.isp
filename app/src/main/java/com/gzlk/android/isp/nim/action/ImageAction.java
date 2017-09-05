@@ -22,6 +22,9 @@ import java.io.File;
 
 public class ImageAction extends PickImageAction {
 
+    /**
+     * 相册
+     */
     public ImageAction() {
         super(R.drawable.nim_action_image, R.string.ui_nim_action_image, true);
     }

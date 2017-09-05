@@ -30,6 +30,9 @@ import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 public class MinutesAction extends BaseAction {
 
+    /**
+     * 会议纪要
+     */
     public MinutesAction() {
         super(R.drawable.nim_action_minutes, R.string.ui_nim_action_minutes);
     }

@@ -15,6 +15,9 @@ import com.gzlk.android.isp.R;
 
 public class VideoChooseAction extends ChooseVideoAction {
 
+    /**
+     * 选择视频
+     */
     public VideoChooseAction() {
         super(R.drawable.nim_action_video_choose, R.string.ui_nim_action_video_choose, true);
     }

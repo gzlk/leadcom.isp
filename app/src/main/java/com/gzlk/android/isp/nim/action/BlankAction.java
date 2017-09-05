@@ -16,6 +16,9 @@ import com.netease.nim.uikit.session.actions.BaseAction;
 
 public class BlankAction extends BaseAction {
 
+    /**
+     * 空白Action
+     */
     public BlankAction() {
         super(R.drawable.nim_action_blank, R.string.ui_nim_action_blank);
     }
