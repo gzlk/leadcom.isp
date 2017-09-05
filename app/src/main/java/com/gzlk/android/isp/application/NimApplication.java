@@ -223,8 +223,11 @@ public class NimApplication extends BaseActivityManagedApplication {
                             case NimMessage.Type.ACTIVITY_EXIT:
                             case NimMessage.Type.ACTIVITY_KICK_OUT:
                                 // 活动结束、退出活动、被踢出活动时，清理活动中的未读消息条数
-                                if (!isEmpty(msg.getTid())) {
-                                    NIMClient.getService(MsgService.class).clearUnreadCount(msg.getTid(), SessionTypeEnum.Team);
+                                clearUnreadCount(msg.getTid());
+                                if (msg.getType() == NimMessage.Type.ACTIVITY_END && null != msg.getSubTidList()) {
+                                    for (String tid : msg.getSubTidList()) {
+                                        clearUnreadCount(tid);
+                                    }
                                 }
                                 break;
                             case NimMessage.Type.TOPIC_END:
@@ -232,7 +235,7 @@ public class NimApplication extends BaseActivityManagedApplication {
                             case NimMessage.Type.TOPIC_KICK_OUT:
                                 // 议题结束、退出议题、被踢出议题时，清理议题中的未读消息条数
                                 if (!isEmpty(msg.getTid())) {
-                                    NIMClient.getService(MsgService.class).clearUnreadCount(msg.getTid(), SessionTypeEnum.Team);
+                                    clearUnreadCount(msg.getTid());
                                     // 删除本地议题成员
                                     AppTopic topic = AppTopic.queryByTid(msg.getTid());
                                     if (null != topic) {
@@ -257,6 +260,12 @@ public class NimApplication extends BaseActivityManagedApplication {
                 }
             }
         }, true);
+    }
+
+    private void clearUnreadCount(String tid) {
+        if (!isEmpty(tid)) {
+            NIMClient.getService(MsgService.class).clearUnreadCount(tid, SessionTypeEnum.Team);
+        }
     }
 
     public void observerRecentContact(boolean setting) {

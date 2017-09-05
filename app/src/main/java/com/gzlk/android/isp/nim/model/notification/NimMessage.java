@@ -12,6 +12,7 @@ import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +35,7 @@ public class NimMessage implements MsgAttachment {
         String HANDLE_STATE = "handleState";
         String APPID = "appId";
         String APPTID = "appTid";
+        String TOPICS = "appTopics";
     }
 
     @Override
@@ -253,6 +255,9 @@ public class NimMessage implements MsgAttachment {
     // 处理状态，true=已处理，false=已拒绝
     @Column(PARAM.HANDLE_STATE)
     private boolean handleState;
+    // 结束的活动的所有议题的tid(用于取消这些议题里的未读消息)
+    @Column(PARAM.TOPICS)
+    private ArrayList<String> subTidList;
 
     public long getId() {
         return id;
@@ -340,6 +345,17 @@ public class NimMessage implements MsgAttachment {
 
     public void setHandleState(boolean handleState) {
         this.handleState = handleState;
+    }
+
+    public ArrayList<String> getSubTidList() {
+        if (null == subTidList) {
+            subTidList = new ArrayList<>();
+        }
+        return subTidList;
+    }
+
+    public void setSubTidList(ArrayList<String> subTidList) {
+        this.subTidList = subTidList;
     }
 
     @Override

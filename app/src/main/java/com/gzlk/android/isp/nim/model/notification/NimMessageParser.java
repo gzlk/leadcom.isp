@@ -1,10 +1,14 @@
 package com.gzlk.android.isp.nim.model.notification;
 
+import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.lib.Json;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachmentParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>自定义消息解析器<br />
@@ -24,6 +28,7 @@ public class NimMessageParser implements MsgAttachmentParser {
     private static final String KEY_CONTENT = "msgContent";
     private static final String KEY_UUID = "uuid";
     private static final String KEY_HANDLED = "handled";
+    private static final String KEY_TOPICS = "subTidList";
 
     @Override
     public MsgAttachment parse(String s) {
@@ -44,6 +49,12 @@ public class NimMessageParser implements MsgAttachmentParser {
             }
             if (object.has(KEY_HANDLED)) {
                 msg.setHandled(object.getBoolean(KEY_HANDLED));
+            }
+            if (object.has(KEY_TOPICS)) {
+                String json = object.getJSONArray(KEY_TOPICS).toString();
+                ArrayList<String> subTidList = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {
+                }.getType());
+                msg.setSubTidList(subTidList);
             }
             return msg;
         } catch (JSONException e) {
