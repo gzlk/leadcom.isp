@@ -549,6 +549,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
             @Override
             public void onResponse(AppTopic topic, boolean success, String message) {
                 super.onResponse(topic, success, message);
+                hideImageHandlingDialog();
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_activity_topic_property_ended);
                     finish();
