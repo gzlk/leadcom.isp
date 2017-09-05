@@ -226,6 +226,12 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        hideImageHandlingDialog();
+        super.onDestroyView();
+    }
+
     /**
      * 上传文件
      */
