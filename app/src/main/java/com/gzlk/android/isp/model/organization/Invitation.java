@@ -1,9 +1,15 @@
 package com.gzlk.android.isp.model.organization;
 
+import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.assit.WhereBuilder;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>邀请用户加入组织<br />
@@ -18,16 +24,43 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Organization.Table.INVITATION)
 public class Invitation extends Model {
 
-    public static class Field {
-        public static final String InviterId = "inviterId";
-        public static final String InviterName = "inviterName";
-        public static final String InviteeId = "inviteeId";
-        public static final String InviteeName = "inviteeName";
-        public static final String AllowSee = "allowSeeInviterBaseInfo";
-        public static final String HandleDate = "handleDime";
-        public static final String Message = "message";
-        public static final String State = "state";
-        public static final String CreateTime = "createTime";
+    public interface Field {
+        String InviterId = "inviterId";
+        String InviterName = "inviterName";
+        String InviteeId = "inviteeId";
+        String InviteeName = "inviteeName";
+        String AllowSee = "allowSeeInviterBaseInfo";
+        String HandleDate = "handleDime";
+        String Message = "message";
+        String State = "state";
+        String CreateTime = "createTime";
+    }
+
+    public static boolean isInvited(String userId, String groupId, String squadId) {
+        QueryBuilder<Invitation> builder = new QueryBuilder<>(Invitation.class);
+        if (!StringHelper.isEmpty(squadId)) {
+            // 邀请进小组的
+            builder = builder.whereEquals(Organization.Field.SquadId, squadId);
+            //.whereAppendAnd().whereAppend(Organization.Field.GroupId + " IS NULL");
+        } else {
+            // 邀请进组织的
+            builder = builder.whereEquals(Organization.Field.GroupId, groupId);
+            //.whereAppendAnd().whereAppend(Organization.Field.SquadId + " IS NULL");
+        }
+        builder = builder.whereAppendAnd().whereEquals(Invitation.Field.InviteeId, userId);
+        List<Invitation> list = new Dao<>(Invitation.class).query(builder);
+        return null != list && list.size() > 0;
+    }
+
+    public static void removeInvite(String userId, String groupId, String squadId) {
+        WhereBuilder builder = new WhereBuilder(Invitation.class);
+        if (!isEmpty(squadId)) {
+            builder = builder.where(Organization.Field.SquadId + " = ? ", squadId);
+        } else {
+            builder = builder.where(Organization.Field.GroupId + " = ? ", groupId);
+        }
+        builder = builder.and().where(Invitation.Field.InviteeId + " = ? ", userId);
+        new Dao<>(Invitation.class).delete(builder);
     }
 
     // 组织id和名称

@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.api.common.SystemRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.application.App;
@@ -36,13 +35,11 @@ import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.common.Contact;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;
-import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.tasks.AsyncedTask;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -241,7 +238,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         if (null != list) {
             for (Contact contact : list) {
                 // 检索此用户是否已被邀请
-                contact.setInvited(invited(contact.getPhone()));
+                //contact.setInvited(invited(contact.getPhone()));
                 contact.setMember(isMemberExists(contact.getPhone()));
             }
             contacts.clear();
@@ -263,31 +260,31 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         mAdapter.sort();
     }
 
-    Dao<User> userDao = new Dao<>(User.class);
-
-    private User getUser(String phone) {
-        return userDao.querySingle(User.Field.Phone, phone);
-    }
-
-    private boolean invited(String phone) {
-        User user = getUser(phone);
-        if (null != user) {
-            QueryBuilder<Invitation> builder = new QueryBuilder<>(Invitation.class);
-            if (!StringHelper.isEmpty(mSquadId)) {
-                // 邀请进小组的
-                builder = builder.whereEquals(Organization.Field.SquadId, mSquadId);
-                //.whereAppendAnd().whereAppend(Organization.Field.GroupId + " IS NULL");
-            } else {
-                // 邀请进组织的
-                builder = builder.whereEquals(Organization.Field.GroupId, mOrganizationId);
-                //.whereAppendAnd().whereAppend(Organization.Field.SquadId + " IS NULL");
-            }
-            builder = builder.whereAppendAnd().whereEquals(Invitation.Field.InviteeId, user.getId());
-            List<Invitation> list = new Dao<>(Invitation.class).query(builder);
-            return null != list && list.size() > 0;
-        }
-        return false;
-    }
+//    Dao<User> userDao = new Dao<>(User.class);
+//
+//    private User getUser(String phone) {
+//        return userDao.querySingle(User.Field.Phone, phone);
+//    }
+//
+//    private boolean invited(String phone) {
+//        User user = getUser(phone);
+//        if (null != user) {
+//            QueryBuilder<Invitation> builder = new QueryBuilder<>(Invitation.class);
+//            if (!StringHelper.isEmpty(mSquadId)) {
+//                // 邀请进小组的
+//                builder = builder.whereEquals(Organization.Field.SquadId, mSquadId);
+//                //.whereAppendAnd().whereAppend(Organization.Field.GroupId + " IS NULL");
+//            } else {
+//                // 邀请进组织的
+//                builder = builder.whereEquals(Organization.Field.GroupId, mOrganizationId);
+//                //.whereAppendAnd().whereAppend(Organization.Field.SquadId + " IS NULL");
+//            }
+//            builder = builder.whereAppendAnd().whereEquals(Invitation.Field.InviteeId, user.getId());
+//            List<Invitation> list = new Dao<>(Invitation.class).query(builder);
+//            return null != list && list.size() > 0;
+//        }
+//        return false;
+//    }
 
     private SlidView.OnSlidChangedListener onSlidChangedListener = new SlidView.OnSlidChangedListener() {
         @Override

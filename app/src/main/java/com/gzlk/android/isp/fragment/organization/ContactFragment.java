@@ -417,7 +417,8 @@ public class ContactFragment extends BaseOrganizationFragment {
                     mbr.setId(memberId);
                     members.remove(mbr);
                     new Dao<>(Member.class).delete(memberId);
-                    searching(searchingText);
+                    //searching(searchingText);
+                    mAdapter.remove(mbr);
                 }
                 ToastHelper.make().showMsg(message);
                 displayLoading(false);
@@ -437,7 +438,8 @@ public class ContactFragment extends BaseOrganizationFragment {
                     mbr.setId(memberId);
                     members.remove(mbr);
                     new Dao<>(Member.class).delete(memberId);
-                    searching(searchingText);
+                    //searching(searchingText);
+                    mAdapter.remove(mbr);
                 }
                 ToastHelper.make().showMsg(message);
                 displayLoading(false);
