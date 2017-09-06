@@ -1,12 +1,12 @@
 package com.gzlk.android.isp.model.user;
 
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.gzlk.android.isp.model.archive.Archive;
-import com.gzlk.android.isp.model.archive.ArchiveSource;
-import com.hlk.hlklib.lib.inject.Click;
 import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>个人收藏<br />
@@ -22,8 +22,9 @@ import com.litesuits.orm.db.annotation.Table;
 public class Collection extends Model {
 
     public interface Field {
-        String Module = "module";
-        String ModuleId = "moduleId";
+        String SourceType = "sourceType";
+        String SourceId = "sourceId";
+        String SourceTitle = "sourceTitle";
     }
 
     /**
@@ -63,6 +64,10 @@ public class Collection extends Model {
          */
         int GROUP_ARCHIVE = 12;
         /**
+         * 个人动态
+         */
+        int USER_MOMENT = 13;
+        /**
          * 所有档案
          */
         int ALL_ARCHIVE = 1112;
@@ -71,7 +76,7 @@ public class Collection extends Model {
     /**
      * 收藏来源
      */
-    public interface Module {
+    public interface SourceType {
         /**
          * 个人档案
          */
@@ -87,21 +92,11 @@ public class Collection extends Model {
         /**
          * 议题聊天
          */
-        int DISCUSSION = 4;
+        int TOPIC = 4;
         /**
          * 个人动态
          */
         int MOMENT = 5;
-    }
-
-    /**
-     * 把source里的值取出来
-     */
-    public void compound() {
-        if (null != source) {
-            module = source.getModule();
-            moduleId = source.getId();
-        }
     }
 
     //收藏的类型(1->文本, 2->文档, 3-图片, 4->视频, 5->附件, 6->链接)
@@ -109,16 +104,16 @@ public class Collection extends Model {
     private int type;
     //标签
     @Column(Archive.Field.Label)
-    private String label;
-    //来源(module:模块类型,id:模块ID)
-    @Ignore
-    private ArchiveSource source;
-    //模块类型(1.个人档案,2.组织档案,3.活动聊天,4.议题聊天,5.个人动态)
-    @Column(Field.Module)
-    private int module;
-    //模块ID(表的ID主键)
-    @Column(Field.ModuleId)
-    private String moduleId;
+    private ArrayList<String> label;
+    //来源的模块类型(1.个人档案,2.组织档案,3.个人动态,4.活动聊天,5.议题聊天)
+    @Column(Field.SourceType)
+    private int sourceType;
+    //来源的模块ID(对应来源模块的id:1->个人档案ID,2->组织档案ID,3->个人动态ID,4->活动ID,5->议题ID)
+    @Column(Field.SourceId)
+    private String sourceId;
+    //来源的模块标题(对应来源模块的title,个人动态没有标题,该属性为Null)
+    @Column(Field.SourceTitle)
+    private String sourceTitle;
     //收藏的内容(文本,图片,语音,附件,链接)
     @Column(Archive.Field.Content)
     private String content;
@@ -131,12 +126,14 @@ public class Collection extends Model {
     //原作者名称
     @Column(Archive.Field.CreatorName)
     private String creatorName;
+    @Column(AppVote.Field.CreatorHeadPhoto)
+    private String creatorHeadPhoto;   //原作者用户头像
     //创建日期
     @Column(Model.Field.CreateDate)
     private String createDate;
     //修改日期
     @Column(Archive.Field.LastModifiedDate)
-    private String lastModifiedDate;
+    private String modifiedDate;
 
     public int getType() {
         return type;
@@ -146,36 +143,36 @@ public class Collection extends Model {
         this.type = type;
     }
 
-    public String getLabel() {
+    public ArrayList<String> getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(ArrayList<String> label) {
         this.label = label;
     }
 
-    public ArchiveSource getSource() {
-        return source;
+    public int getSourceType() {
+        return sourceType;
     }
 
-    public void setSource(ArchiveSource source) {
-        this.source = source;
+    public void setSourceType(int sourceType) {
+        this.sourceType = sourceType;
     }
 
-    public int getModule() {
-        return module;
+    public String getSourceId() {
+        return sourceId;
     }
 
-    public void setModule(int module) {
-        this.module = module;
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
-    public String getModuleId() {
-        return moduleId;
+    public String getSourceTitle() {
+        return sourceTitle;
     }
 
-    public void setModuleId(String moduleId) {
-        this.moduleId = moduleId;
+    public void setSourceTitle(String sourceTitle) {
+        this.sourceTitle = sourceTitle;
     }
 
     public String getContent() {
@@ -210,6 +207,14 @@ public class Collection extends Model {
         this.creatorName = creatorName;
     }
 
+    public String getCreatorHeadPhoto() {
+        return creatorHeadPhoto;
+    }
+
+    public void setCreatorHeadPhoto(String creatorHeadPhoto) {
+        this.creatorHeadPhoto = creatorHeadPhoto;
+    }
+
     public String getCreateDate() {
         return createDate;
     }
@@ -218,11 +223,11 @@ public class Collection extends Model {
         this.createDate = createDate;
     }
 
-    public String getLastModifiedDate() {
-        return lastModifiedDate;
+    public String getModifiedDate() {
+        return modifiedDate;
     }
 
-    public void setLastModifiedDate(String lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
+    public void setModifiedDate(String modifiedDate) {
+        this.modifiedDate = modifiedDate;
     }
 }

@@ -234,7 +234,7 @@ public class ImageDisplayer extends RelativeLayout {
         showDelete = deletable;
         showSelect = selectable;
         displayUrl = url;
-        if (StringHelper.isEmpty(displayUrl)) {
+        if (StringHelper.isEmpty(displayUrl) || displayUrl.contains("(null)")) {
             displayUrl = "drawable://" + (isShowHeader ? R.mipmap.img_default_user_header : R.mipmap.img_image_loading_fail);
         }
         displayImage2();

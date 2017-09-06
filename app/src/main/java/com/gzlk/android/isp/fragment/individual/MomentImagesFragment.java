@@ -329,9 +329,6 @@ public class MomentImagesFragment extends BaseMomentFragment {
     private void tryCollection() {
         // 收藏当前显示的图片
         String url = images.get(selected);
-        ArchiveSource as = new ArchiveSource();
-        as.setModule(Collection.Module.MOMENT);
-        as.setId(mQueryId);
         CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
             @Override
             public void onResponse(Collection collection, boolean success, String message) {
@@ -343,7 +340,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).add(Collection.Type.IMAGE, as, url, momentUser, momentName);
+        }).add(Collection.Type.IMAGE, url, momentUser, momentName, mMoment.getHeadPhoto(), Collection.SourceType.MOMENT, mMoment.getId(), "", null);
     }
 
     private void save() {

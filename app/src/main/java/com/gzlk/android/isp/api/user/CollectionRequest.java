@@ -2,19 +2,20 @@ package com.gzlk.android.isp.api.user;
 
 import android.support.annotation.NonNull;
 
-import com.gzlk.android.isp.api.query.SingleQuery;
-import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.PaginationQuery;
+import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.model.archive.ArchiveSource;
 import com.gzlk.android.isp.model.user.Collection;
 import com.litesuits.http.request.param.HttpMethods;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>个人收藏相关api<br />
@@ -63,45 +64,36 @@ public class CollectionRequest extends Request<Collection> {
         return this;
     }
 
-    @Override
-    protected void save(Collection collection) {
-        if (null != collection) {
-            collection.compound();
-        }
-        super.save(collection);
-    }
-
-    @Override
-    protected void save(List<Collection> list) {
-        if (null != list && list.size() > 0) {
-            for (Collection col : list) {
-                col.compound();
-            }
-        }
-        super.save(list);
-    }
-
     /**
      * 添加个人收藏
      *
-     * @param type        收藏类型，参考 {@link Collection.Type}
-     * @param source      来源(module:模块类型,id:模块ID) {@link ArchiveSource}
-     * @param content     内容
-     * @param creatorId   作者id
-     * @param creatorName 作者名字
+     * @param type             收藏类型，参考 {@link Collection.Type}
+     * @param content          收藏内容(文本或文件的URL,type=11/12/13时不传该参数)
+     * @param creatorId        原作者用户ID
+     * @param creatorName      原作者用户名称
+     * @param creatorHeadPhoto 原作者用户头像
+     * @param sourceType       收藏来源的类型(1.个人档案,2.组织档案,3.个人动态,4.活动聊天,5.议题聊天)
+     * @param sourceId         收藏来源的ID(个人档案:个人档案ID,组织档案:组织档案ID,个人动态:个人动态ID,活动聊天:活动ID,议题聊天:议题ID)
+     * @param sourceTitle      收藏来源的标题(title字段，个人动态不传)
+     * @param label            标签
      * @see Collection.Type
      * @see ArchiveSource
      */
-    public void add(int type, ArchiveSource source, String content, @NonNull String creatorId, String creatorName) {
-        // {type,content,creatorId,creatorName,accessToken}
+    public void add(int type, String content, @NonNull String creatorId, String creatorName, String creatorHeadPhoto,
+                    int sourceType, String sourceId, String sourceTitle, ArrayList<String> label) {
+        // {type,content,creatorId,creatorName,creatorHeadPhoto,sourceType,sourceId,sourceTitle,[label]}
 
         JSONObject object = new JSONObject();
         try {
             object.put("type", type)
-                    .put("source", new JSONObject(source.toString()))
                     .put("content", checkNull(content))
                     .put("creatorId", checkNull(creatorId))
-                    .put("creatorName", checkNull(creatorName));
+                    .put("creatorName", checkNull(creatorName))
+                    .put("creatorHeadPhoto", checkNull(creatorHeadPhoto))
+                    .put("sourceType", sourceType)
+                    .put("sourceId", sourceId)
+                    .put("sourceTitle", checkNull(sourceTitle))
+                    .put("label", new JSONArray(null == label ? new ArrayList() : label));
         } catch (JSONException e) {
             e.printStackTrace();
         }

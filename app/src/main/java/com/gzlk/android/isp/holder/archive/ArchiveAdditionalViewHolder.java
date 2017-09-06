@@ -196,9 +196,9 @@ public class ArchiveAdditionalViewHolder extends BaseViewHolder {
         }
     }
 
-    private Collection getCollection(int type, String moduleId) {
+    private Collection getCollection(int type, String sourceId) {
         QueryBuilder<Collection> builder = new QueryBuilder<>(Collection.class)
-                .whereEquals(Collection.Field.ModuleId, moduleId)
+                .whereEquals(Collection.Field.SourceId, sourceId)
                 .whereAppendAnd()
                 .whereEquals(Archive.Field.Type, type);
         List<Collection> list = new Dao<>(Collection.class).query(builder);
