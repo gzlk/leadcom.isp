@@ -18,6 +18,7 @@ import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.home.SystemMessageViewHolder;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
+import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
@@ -109,8 +110,29 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new MessageAdapter();
             mAdapter.setMode(Attributes.Mode.Single);
             mRecyclerView.setAdapter(mAdapter);
+            setRightIcon(R.string.ui_icon_delete);
+            setRightText(R.string.ui_base_text_clear);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    warningClear();
+                }
+            });
         }
         loadingLocalMessages();
+    }
+
+    private void warningClear() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_system_message_clear_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                NimMessage.clear();
+                NimApplication.dispatchCallbacks();
+                mAdapter.clear();
+                displayNothing(mAdapter.getItemCount() < 1);
+                return true;
+            }
+        }, null);
     }
 
     private void loadingLocalMessages() {

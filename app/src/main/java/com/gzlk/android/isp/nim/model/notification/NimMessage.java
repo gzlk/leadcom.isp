@@ -89,6 +89,9 @@ public class NimMessage implements MsgAttachment {
         return null == msgs ? 0 : msgs.size();
     }
 
+    public static void clear(){
+        new Dao<>(NimMessage.class).clear();
+    }
     /**
      * 自定义消息类型
      */

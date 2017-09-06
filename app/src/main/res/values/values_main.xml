@@ -9,9 +9,13 @@
     <string name="ui_text_main_bottom_button_text_4">个人</string>
 
     <string name="ui_system_message_fragment_title">系统消息</string>
+    <string name="ui_system_message_fragment_title_right_text">清空消息</string>
     <string name="ui_system_message_unread">(未读)</string>
     <string name="ui_system_message_nothing">目前没有更多的系统消息</string>
     <string name="ui_system_message_delete_warning">系统消息删除之后不能恢复。\n您确定要继续吗？</string>
+    <string name="ui_system_message_clear_warning">
+        <![CDATA[<b>清空系统消息</b><br/>系统消息<font color="#fe4848">清空之后不能恢复</font>！<br/>如您的系统消息中包含重要的内容，请<font color="#65656a">逐条删除</font>您不再需要保留的消息。<br/>您确定要继续吗？]]>
+    </string>
 
     <string name="ui_system_updatable">
         <![CDATA[<b>有新的版本了</b><br/>我们推出了新版本的app。当然您也可以继续使用现有的，但我们强烈推荐您更新到最新版本以体验最新的内容。]]>
