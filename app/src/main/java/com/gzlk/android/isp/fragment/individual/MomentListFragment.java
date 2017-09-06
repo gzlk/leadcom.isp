@@ -12,9 +12,8 @@ import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.api.user.UserRequest;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentViewHolder;
-import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.model.user.User;
 
@@ -127,10 +126,12 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
         }).find(mQueryId, true);
     }
 
-    private OnHandleBoundDataListener<Moment> onHandlerBoundDataListener = new OnHandleBoundDataListener<Moment>() {
+    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
-        public Moment onHandlerBoundData(BaseViewHolder holder) {
-            return mAdapter.get(holder.getAdapterPosition());
+        public void onClick(int index) {
+            // 默认显示第一张图片
+            MomentImagesFragment.open(MomentListFragment.this, mAdapter.get(index).getId(), 0);
+            //openActivity(MomentImagesFragment.class.getName(), format("%s,0", mAdapter.get(index).getId()), true, false);
         }
     };
 
@@ -155,7 +156,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public MomentViewHolder onCreateViewHolder(View itemView, int viewType) {
             MomentViewHolder holder = new MomentViewHolder(itemView, MomentListFragment.this);
-            holder.addOnHandlerBoundDataListener(onHandlerBoundDataListener);
+            holder.addOnViewHolderClickListener(onViewHolderClickListener);
             holder.addOnGotPositionListener(gotPositionListener);
             return holder;
         }

@@ -48,7 +48,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment {
+public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_SHOWN = "title_bar_shown";
     private static final String PARAM_SELECTED = "function_selected";
@@ -368,7 +368,8 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
                 openImageSelector(true);
             } else {
                 // 默认显示第一张图片
-                openActivity(MomentImagesFragment.class.getName(), format("%s,0", moment.getId()), true, false);
+                MomentImagesFragment.open(IndividualFragment.this, moment.getId(), 0);
+                //openActivity(MomentImagesFragment.class.getName(), format("%s,0", moment.getId()), true, false);
             }
         }
     }
@@ -376,7 +377,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
     private void archiveClick(Archive archive) {
         if (null != archive) {
             int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-            ArchiveDetailsFragment.open(IndividualFragmentMultiType.this, type, archive.getId(), REQUEST_CHANGE);
+            ArchiveDetailsFragment.open(IndividualFragment.this, type, archive.getId(), REQUEST_CHANGE);
             //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archive.getId()), BaseFragment.REQUEST_CHANGE, true, false);
         }
     }
@@ -387,7 +388,7 @@ public class IndividualFragmentMultiType extends BaseSwipeRefreshSupportFragment
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
-            BaseFragment fragment = IndividualFragmentMultiType.this;
+            BaseFragment fragment = IndividualFragment.this;
             switch (viewType) {
                 case VT_HEADER:
                     return new IndividualHeaderViewHolder(itemView, fragment);

@@ -16,6 +16,7 @@ import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -70,6 +71,10 @@ public class MomentImagesFragment extends BaseMomentFragment {
         bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[1]));
         mdf.setArguments(bundle);
         return mdf;
+    }
+
+    public static void open(BaseFragment fragment, String momentId, int displayIndex) {
+        fragment.openActivity(MomentImagesFragment.class.getName(), format("%s,%d", momentId, displayIndex), true, false);
     }
 
     private int selected;

@@ -138,7 +138,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         leftIcon.setText(R.string.ui_icon_query);
         leftText.setText(null);
         rightIconContainer.setVisibility(View.GONE);
-        //((IndividualFragmentMultiType) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
+        //((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             mFragments.add(new HomeFragment());
             mFragments.add(new ActivityFragment());
             mFragments.add(new OrganizationFragment());
-            mFragments.add(new IndividualFragmentMultiType());
+            mFragments.add(new IndividualFragment());
             ((ActivityFragment) mFragments.get(1)).mainFragment = this;
             ((OrganizationFragment) mFragments.get(2)).mainFragment = this;
         }
@@ -239,9 +239,9 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         boolean needHandleTitleBar = true;
         for (int i = 0, len = mFragments.size(); i < len; i++) {
             BaseTransparentSupportFragment fragment = mFragments.get(i);
-            if (i == 2 || fragment instanceof IndividualFragmentMultiType) {
+            if (i == 2 || fragment instanceof IndividualFragment) {
                 // 个人界面已经显示了，此时不再需要改变标题栏背景
-                needHandleTitleBar = !((IndividualFragmentMultiType) mFragments.get(3)).isTitleBarShown();
+                needHandleTitleBar = !((IndividualFragment) mFragments.get(3)).isTitleBarShown();
             }
             fragment.setViewPagerDisplayedCurrent(position == i);
         }
