@@ -37,34 +37,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/ui_holder_view_contact_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLength="@integer/integer_name_max_length"
-                android:singleLine="true"
-                android:text="@string/app_name" />
-
-            <TextView
-                android:id="@+id/ui_holder_view_contact_duty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-                android:maxLength="4"
-                android:text="@string/app_name_default"
-                android:textColor="@color/textColorHintDark"
-                android:textSize="@dimen/ui_base_text_size_small" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2.5"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ui_holder_view_contact_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLength="3"
+                    android:minWidth="@dimen/ui_static_dp_50"
+                    android:singleLine="true"
+                    android:text="@string/app_name_default" />
+
+                <TextView
+                    android:id="@+id/ui_holder_view_contact_duty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                    android:maxLength="4"
+                    android:text="@string/app_name_default"
+                    android:textColor="@color/textColorHintDark"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:orientation="horizontal">
 
                 <TextView

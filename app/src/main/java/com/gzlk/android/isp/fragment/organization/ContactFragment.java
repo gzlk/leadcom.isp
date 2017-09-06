@@ -351,7 +351,13 @@ public class ContactFragment extends BaseOrganizationFragment {
                 searching(text);
             } else {
                 searchingText = "";
-                mAdapter.add(members);
+                for (Member member : members) {
+                    if (mAdapter.exist(member)) {
+                        mAdapter.update(member);
+                    } else {
+                        mAdapter.add(member);
+                    }
+                }
                 if (showType != TYPE_ORG) {
                     mAdapter.sort();
                 }
