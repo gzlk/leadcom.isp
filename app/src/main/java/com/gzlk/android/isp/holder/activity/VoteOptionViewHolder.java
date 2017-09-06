@@ -53,7 +53,7 @@ public class VoteOptionViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_vote_option_users)
     private FlexboxLayout headersLayout;
 
-    private int imageSize, marginEnd;
+    private int imageSize, marginEnd, totalVote = 0;
 
     public VoteOptionViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -75,11 +75,24 @@ public class VoteOptionViewHolder extends BaseViewHolder {
         //showEnded(vote.isEnded());
     }
 
+    private void resetTotalVoteCount(AppVote vote) {
+        totalVote = 0;
+        if (null != vote.getActVoteList()) {
+            for (AppVoteRecord record : vote.getActVoteList()) {
+                if (record.getStatus() == AppVote.Status.REFUSED) {
+                    totalVote += 1;
+                } else {
+                    totalVote += null == record.getItemIdList() ? 0 : record.getItemIdList().size();
+                }
+            }
+        }
+    }
+
     private void showVoteCount(AppVoteItem item, AppVote vote) {
-        int totalVoted = null == vote.getActVoteList() ? 0 : vote.getActVoteList().size();
+        resetTotalVoteCount(vote);
         numberView.setText(fragment().getString(R.string.ui_activity_vote_details_count, item.getNum()));
         if (null != vote.getActVoteList()) {
-            float percentage = (float) ((item.getNum() * 1.0) / totalVoted);
+            float percentage = (float) ((item.getNum() * 1.0) / totalVote);
             chartCount.setText(StringHelper.getString(R.string.ui_activity_vote_details_number, item.getNum(), format("%d", (int) (percentage * 100)) + "%"));
             chartCount.setTag(R.id.hlklib_ids_custom_view_click_tag, item.getNum());
             chartToDetails.setVisibility(item.getNum() > 0 ? View.VISIBLE : View.INVISIBLE);

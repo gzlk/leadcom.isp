@@ -37,6 +37,9 @@ public class AppVoteItem extends Model {
     //投票选项的描述
     @Column(Archive.Field.Content)
     private String content;
+    //序号
+    @Column(Activity.Field.Sequence)
+    private int seq;
     //该投票选项的投票得票数
     @Column(AppVote.Field.Num)
     private int num = 0;
@@ -58,6 +61,14 @@ public class AppVoteItem extends Model {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getSeq() {
+        return seq;
+    }
+
+    public void setSeq(int seq) {
+        this.seq = seq;
     }
 
     public int getNum() {

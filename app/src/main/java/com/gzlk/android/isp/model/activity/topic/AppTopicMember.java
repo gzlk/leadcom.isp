@@ -49,7 +49,8 @@ public class AppTopicMember extends Model {
                 .where(AppTopic.Field.TopicId + " = ?", topicId);
         new Dao<>(AppTopicMember.class).delete(builder);
     }
-
+    @Column(Activity.Field.ActivityId)
+    private String actId;               //活动ID
     @Column(AppTopic.Field.TopicId)
     private String actTopicId;          //活动议题ID
     @Column(Field.UserId)
@@ -58,10 +59,20 @@ public class AppTopicMember extends Model {
     private String userName;            //用户名称
     @Column(User.Field.HeadPhoto)
     private String headPhoto;           //用户头像
+    @Column(User.Field.Phone)
+    private String phone;               //用户手机号码
     @Column(Field.CreateDate)
     private String createDate;          //创建时间
     @Ignore
     private ArrayList<String> userIdList;    //邀请的用户ID
+
+    public String getActId() {
+        return actId;
+    }
+
+    public void setActId(String actId) {
+        this.actId = actId;
+    }
 
     public String getActTopicId() {
         return actTopicId;
@@ -93,6 +104,14 @@ public class AppTopicMember extends Model {
 
     public void setHeadPhoto(String headPhoto) {
         this.headPhoto = headPhoto;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getCreateDate() {
