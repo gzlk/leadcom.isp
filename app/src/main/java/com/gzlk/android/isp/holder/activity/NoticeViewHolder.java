@@ -4,7 +4,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.activity.AppNotice;
@@ -38,7 +37,7 @@ public class NoticeViewHolder extends BaseViewHolder {
     }
 
     public void showContent(AppNotice notice) {
-        String time = Utils.format(notice.getCreateDate(), fragment().getString(R.string.ui_base_text_date_time_format), Utils.FMT_MMDD);
+        String time = fragment().formatDate(notice.getCreateDate(), R.string.ui_base_text_date_format_chs_mmdd);
         titleView.setText(fragment().getString(R.string.ui_activity_notice_list_item_title, time, notice.getTitle()));
         timeView.setText(fragment().formatTimeAgo(notice.getCreateDate()));
         readView.setText(notice.isRead() ? R.string.ui_base_text_has_read : R.string.ui_base_text_not_read);

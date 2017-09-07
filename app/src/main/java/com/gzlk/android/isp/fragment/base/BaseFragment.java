@@ -363,21 +363,32 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 将yyyy-MM-dd HH:mm:ss的时间格式化成yyyy年mm月dd日
      */
-    public String formatDate(String createDate) {
-        if (isEmpty(createDate)) return "";
+    public String formatDate(String date) {
+        return format(date, R.string.ui_base_text_date_format_chs);
+    }
+
+    /**
+     * 将yyyy-MM-dd HH:mm:ss的时间格式化成指定的格式内容
+     */
+    public String formatDate(String date, int toFormat) {
+        return formatDate(date, StringHelper.getString(toFormat));
+    }
+
+    /**
+     * 将yyyy-MM-dd HH:mm:ss的时间格式化成指定的格式内容
+     */
+    public String formatDate(String date, String toFormat) {
+        if (isEmpty(date)) return "";
         // 增加秒的格式化内容，避免ios不同的格式化公式
-        String ss = (createDate.length() < 19) ? ":00" : "";
-        return Utils.format(createDate + ss, StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs));
+        String ss = (date.length() < 19) ? ":00" : "";
+        return Utils.format(date + ss, StringHelper.getString(R.string.ui_base_text_date_time_format), toFormat);
     }
 
     /**
      * 将yyyy-MM-dd HH:mm:ss的时间格式化成yyyy年mm月dd日 hh时mm分
      */
-    public String formatDateTime(String createDate) {
-        if (isEmpty(createDate)) return "";
-        // 增加秒的格式化内容，避免ios不同的格式化公式
-        String ss = (createDate.length() < 19) ? ":00" : "";
-        return Utils.format(createDate + ss, StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs_min));
+    public String formatDateTime(String date) {
+        return formatDate(date, R.string.ui_base_text_date_time_format_chs_min);
     }
 
     /**

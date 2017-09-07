@@ -599,7 +599,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void showCreateDate(Date date) {
         happenDate = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
-        timeHolder.showContent(format(items[2], "(" + Utils.format(StringHelper.getString(R.string.ui_base_text_date_format_chs_min), date) + ")"));
+        timeHolder.showContent(format(items[2], "(" + Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format_chs_min), date) + ")"));
     }
 
     private void openDatePicker() {

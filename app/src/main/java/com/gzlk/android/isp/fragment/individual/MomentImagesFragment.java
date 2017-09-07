@@ -15,7 +15,6 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.HttpHelper;
@@ -26,7 +25,6 @@ import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
-import com.gzlk.android.isp.model.archive.ArchiveSource;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
@@ -149,7 +147,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 mAdapter.notifyDataSetChanged();
                 changedPosition(selected);
             }
-            setCustomTitle(Utils.format(mMoment.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), "yyyy年MM月dd日HH:mm"));
+            setCustomTitle(formatDate(mMoment.getCreateDate(), R.string.ui_base_text_date_time_format_chs_hhmm));
             detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), mMoment.getContent(), true));
             detailContentTextView.makeExpandable();
             checkIsMyPraised();

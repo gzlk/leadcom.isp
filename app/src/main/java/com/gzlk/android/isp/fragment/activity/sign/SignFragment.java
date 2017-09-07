@@ -184,8 +184,8 @@ public class SignFragment extends MapHandleableFragment {
         if (null != signing) {
             setCustomTitle(signing.getTitle());
             mTitleView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_text, signing.getContent())));
-            String begin = Utils.format(signing.getBeginDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM);
-            String end = Utils.format(signing.getEndDate(), getString(R.string.ui_base_text_date_time_format), Utils.FMT_HHMM1);
+            String begin = formatDate(signing.getBeginDate(), R.string.ui_base_text_date_time_format_hhmm);
+            String end = formatDate(signing.getEndDate(), R.string.ui_base_text_time_format_hhmm);
             mTimeView.setText(Html.fromHtml(getString(R.string.ui_activity_sign_title_time, begin, end)));
             mEndTime.setText(getString(R.string.ui_activity_sign_end_time, (null == signing ? getString(R.string.ui_base_text_not_set) : signing.getEndDate())));
             getLocalSignRecord();

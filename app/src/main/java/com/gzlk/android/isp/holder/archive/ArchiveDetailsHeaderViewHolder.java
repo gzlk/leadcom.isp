@@ -9,7 +9,6 @@ import android.webkit.WebViewClient;
 
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
-import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -92,7 +91,7 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
     public void showContent(final Archive archive) {
         titleHolder.showContent(format(items[0], archive.getTitle()));
         sourceHolder.showContent(format(items[1], archive.getUserName()));
-        timeHolder.showContent(format(items[2], Utils.format(archive.getHappenDate(), StringHelper.getString(R.string.ui_base_text_date_time_format), StringHelper.getString(R.string.ui_base_text_date_format_chs))));
+        timeHolder.showContent(format(items[2], fragment().formatDate(archive.getHappenDate())));
         privacyHolder.showContent(format(items[3], ""));
         descView.setText(StringHelper.getString(R.string.ui_text_document_details_intro, archive.getIntro()));
         descView.makeExpandable();
