@@ -22,7 +22,7 @@ import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
-import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
 import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
@@ -305,12 +305,12 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingTopicMembers(String topicId, final String tid) {
-        AppTopicMemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<AppTopicMember>() {
+        AppTopicMemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
             @Override
-            public void onResponse(List<AppTopicMember> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
-                    if (AppTopicMember.isMeMemberOf(tid)) {
+                    if (Member.isMeMemberOfTopic(tid)) {
                         NimSessionHelper.startTeamSession(Activity(), tid);
                     } else {
                         ToastHelper.make().showMsg(R.string.ui_activity_topic_not_member_of);
@@ -324,7 +324,7 @@ public class TopicListFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             AppTopic topic = mAdapter.get(index);
-            if (AppTopicMember.isMeMemberOf(topic.getTid())) {
+            if (Member.isMeMemberOfTopic(topic.getTid())) {
                 NimSessionHelper.startTeamSession(Activity(), topic.getTid());
             } else {
                 fetchingTopicMembers(topic.getId(), topic.getTid());

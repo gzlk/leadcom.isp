@@ -9,13 +9,11 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.List;
 
@@ -51,19 +49,11 @@ public class SimpleMemberViewHolder extends SimpleClickableViewHolder {
      * 显示组织成员头像列表
      */
     public void showContent(Organization org) {
-        List<Member> members = getMembers(org.getId());
+        List<Member> members = Member.getMembersOfGroupOrSquad(org.getId(), "");
         String items = StringHelper.getStringArray(R.array.ui_organization_details_items)[1];
         int size = null == members ? 0 : members.size();
         showContent(new SimpleClickableItem(format(items, size)));
         showHeaders(members);
-    }
-
-    private List<Member> getMembers(String orgId) {
-        QueryBuilder<Member> builder = new QueryBuilder<>(Member.class)
-                .whereEquals(Organization.Field.GroupId, orgId)
-                .whereAppendAnd()
-                .whereAppend(Organization.Field.SquadId + " IS NULL");
-        return new Dao<>(Member.class).query(builder);
     }
 
     /**

@@ -4,10 +4,12 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.model.common.Leaguer;
 import com.gzlk.android.isp.model.operation.ACTOperation;
 import com.gzlk.android.isp.model.operation.GRPOperation;
@@ -16,6 +18,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.assit.WhereBuilder;
 
 import java.util.List;
 
@@ -98,6 +101,10 @@ public class Member extends Leaguer {
          * 活动成员
          */
         int ACTIVITY = 3;
+        /**
+         * 议题成员
+         */
+        int TOPIC = 4;
     }
 
     private static ExclusionStrategy strategy = new ExclusionStrategy() {
@@ -122,25 +129,9 @@ public class Member extends Leaguer {
     }
 
     /**
-     * 查找我在指定组织里的角色
-     */
-    public static Member getGroupMemberOfMe(String groupId) {
-        QueryBuilder<Member> builder = new QueryBuilder<>(Member.class)
-                .whereEquals(Organization.Field.GroupId, groupId)
-                .whereAppendAnd()
-                .whereEquals(Field.UserId, Cache.cache().userId)
-                .whereAppendAnd()
-                .whereAppend(Organization.Field.SquadId + " IS NULL")
-                .whereAppendAnd()
-                .whereAppend(Activity.Field.ActivityId + " IS NULL");
-        List<Member> members = new Dao<>(Member.class).query(builder);
-        return (null == members || members.size() < 1) ? null : members.get(0);
-    }
-
-    /**
      * 查询指定用户是否在本地缓存中的某个组织或小组里
      */
-    public static boolean isMemberInLocal(String phone, String groupId, String squadId) {
+    public static boolean isPhoneMemberOfGroupOrSquad(String phone, String groupId, String squadId) {
         if (isEmpty(phone) || isEmpty(groupId)) return false;
         QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
                 .whereEquals(Organization.Field.GroupId, groupId);
@@ -154,21 +145,76 @@ public class Member extends Leaguer {
         return (null != list && list.size() > 0);
     }
 
-    /**
-     * 查询指定用户是否在本地缓存中的某个活动里
-     */
-    public static boolean isMemberInLocal(String phone, String activityId) {
-        if (isEmpty(phone) || isEmpty(activityId)) return false;
-
-        QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
-                .whereEquals(Activity.Field.ActivityId, activityId)
-                .whereAppendAnd().whereEquals(User.Field.Phone, phone);
-        List<Member> list = new Dao<>(Member.class).query(query);
-        return !(null == list || list.size() < 1);
+    public static void save(Member member) {
+        new Dao<>(Member.class).save(member);
     }
 
     public static void remove(String memberId) {
         new Dao<>(Member.class).delete(memberId);
+    }
+
+    /**
+     * 查询我加入的所有组织的以我为成员的列表
+     */
+    public static List<Member> getMyMembersOfJoinedGroups() {
+        QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
+                .whereEquals(Model.Field.UserId, Cache.cache().userId)
+                .whereAnd(Organization.Field.GroupId + " IS NOT NULL ")
+                .whereAnd(Organization.Field.SquadId + " IS NULL")
+                .orderBy(Model.Field.CreateDate);
+        return new Dao<>(Member.class).query(query);
+    }
+
+    /**
+     * 查询组织或小组的本地成员列表
+     */
+    public static List<Member> getMembersOfGroupOrSquad(String groupId, String squadId) {
+        QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
+                .whereEquals(Organization.Field.GroupId, groupId);
+        if (StringHelper.isEmpty(squadId)) {
+            query = query.whereAppendAnd().whereAppend(Organization.Field.SquadId + " IS NULL");
+        } else {
+            query = query.whereAppendAnd().whereEquals(Organization.Field.SquadId, squadId);
+        }
+        query = query.whereAnd(Activity.Field.ActivityId + " IS NULL ")
+                .whereAnd(AppTopic.Field.TopicId + " IS NULL ");
+        return new Dao<>(Member.class).query(query);
+    }
+
+    /**
+     * 获取指定活动的成员列表
+     */
+    public static List<Member> getMemberOfActivity(String activityId) {
+        return new Dao<>(Member.class).query(Activity.Field.ActivityId, activityId);
+    }
+
+    /**
+     * 我是否是指定tid的议题中的成员
+     */
+    public static boolean isMeMemberOfTopic(String tid) {
+        AppTopic topic = AppTopic.queryByTid(tid);
+        return null != topic && null != getMyMemberOfTopic(topic.getId());
+    }
+
+    /**
+     * 查询我在指定议题id中的成员信息
+     */
+    private static Member getMyMemberOfTopic(String topicId) {
+        QueryBuilder<Member> builder = new QueryBuilder<>(Member.class)
+                .whereEquals(AppTopic.Field.TopicId, topicId)
+                .whereAppendAnd()
+                .whereEquals(Field.UserId, Cache.cache().userId);
+        List<Member> list = new Dao<>(Member.class).query(builder);
+        return (null == list || list.size() < 1) ? null : list.get(0);
+    }
+
+    /**
+     * 从本地议题成员里删除指定议题的所有成员(退出议题、解散议题时用到)
+     */
+    public static void removeMemberOfTopicId(String topicId) {
+        WhereBuilder builder = new WhereBuilder(Member.class)
+                .where(AppTopic.Field.TopicId + " = ?", topicId);
+        new Dao<>(Member.class).delete(builder);
     }
 
     @Column(Organization.Field.GroupId)
@@ -176,9 +222,6 @@ public class Member extends Leaguer {
 
     @Column(Organization.Field.SquadId)
     private String squadId;        //小组ID
-
-    @Column(User.Field.Phone)
-    private String phone;          //用户手机
 
     @Column(User.Field.Duty)
     private String duty;
@@ -189,6 +232,10 @@ public class Member extends Leaguer {
     //活动Id
     @Column(Activity.Field.ActivityId)
     private String actId;
+
+    @Column(AppTopic.Field.TopicId)
+    private String actTopicId;          //活动议题ID
+
     @Ignore
     private Role groRole;
     @Ignore
@@ -208,14 +255,6 @@ public class Member extends Leaguer {
 
     public void setSquadId(String squadId) {
         this.squadId = squadId;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getDuty() {
@@ -240,6 +279,14 @@ public class Member extends Leaguer {
 
     public void setActId(String actId) {
         this.actId = actId;
+    }
+
+    public String getActTopicId() {
+        return actTopicId;
+    }
+
+    public void setActTopicId(String actTopicId) {
+        this.actTopicId = actTopicId;
     }
 
     public Role getGroRole() {

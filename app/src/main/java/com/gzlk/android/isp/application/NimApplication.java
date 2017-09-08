@@ -21,7 +21,7 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
-import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
@@ -239,7 +239,7 @@ public class NimApplication extends BaseActivityManagedApplication {
                                     // 删除本地议题成员
                                     AppTopic topic = AppTopic.queryByTid(msg.getTid());
                                     if (null != topic) {
-                                        AppTopicMember.removeMemberOfTopicId(topic.getId());
+                                        Member.removeMemberOfTopicId(topic.getId());
                                     }
                                 }
                                 break;

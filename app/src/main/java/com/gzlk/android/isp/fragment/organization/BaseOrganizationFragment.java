@@ -233,8 +233,7 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 查询本地成员列表，按照成员名字排序
      */
     protected void loadingLocalMembers(String organizationId, String squadId) {
-        QueryBuilder<Member> query = memberBuilder(organizationId, squadId).orderBy(Model.Field.UserName);
-        onLoadingLocalMembersComplete(organizationId, squadId, new Dao<>(Member.class).query(query));
+        onLoadingLocalMembersComplete(organizationId, squadId, Member.getMembersOfGroupOrSquad(organizationId, squadId));
     }
 
     /**

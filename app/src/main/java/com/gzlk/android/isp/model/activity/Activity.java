@@ -95,7 +95,7 @@ public class Activity extends Model {
      * 从本地缓存中查找指定活动成员列表
      */
     public static List<Member> getMembers(String activityId) {
-        return new Dao<>(Member.class).query(Field.ActivityId, activityId);
+        return Member.getMemberOfActivity(activityId);
     }
 
     /**

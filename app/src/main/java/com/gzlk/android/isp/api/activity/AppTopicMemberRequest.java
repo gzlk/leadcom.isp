@@ -4,9 +4,8 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.query.ListQuery;
-import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.query.SingleQuery;
-import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
+import com.gzlk.android.isp.model.organization.Member;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -26,16 +25,16 @@ import java.util.ArrayList;
  * <b>修改备注：</b><br />
  */
 
-public class AppTopicMemberRequest extends Request<AppTopicMember> {
+public class AppTopicMemberRequest extends Request<Member> {
 
     public static AppTopicMemberRequest request() {
         return new AppTopicMemberRequest();
     }
 
-    private static class SingleMember extends SingleQuery<AppTopicMember> {
+    private static class SingleMember extends SingleQuery<Member> {
     }
 
-    private static class MultipleMember extends ListQuery<AppTopicMember> {
+    private static class MultipleMember extends ListQuery<Member> {
     }
 
     private static final String MEMBER = "/activity/actTopicMember";
@@ -46,18 +45,18 @@ public class AppTopicMemberRequest extends Request<AppTopicMember> {
     }
 
     @Override
-    protected Class<AppTopicMember> getType() {
-        return AppTopicMember.class;
+    protected Class<Member> getType() {
+        return Member.class;
     }
 
     @Override
-    public AppTopicMemberRequest setOnSingleRequestListener(OnSingleRequestListener<AppTopicMember> listener) {
+    public AppTopicMemberRequest setOnSingleRequestListener(OnSingleRequestListener<Member> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public AppTopicMemberRequest setOnMultipleRequestListener(OnMultipleRequestListener<AppTopicMember> listListener) {
+    public AppTopicMemberRequest setOnMultipleRequestListener(OnMultipleRequestListener<Member> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }

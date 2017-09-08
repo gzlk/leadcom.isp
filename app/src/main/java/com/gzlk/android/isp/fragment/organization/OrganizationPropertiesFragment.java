@@ -25,7 +25,6 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.common.SimpleClickableItem;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.List;
 
@@ -87,15 +86,6 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
         }
     }
 
-    private int getMembers() {
-        QueryBuilder<Member> builder = new QueryBuilder<>(Member.class)
-                .whereEquals(Organization.Field.GroupId, mQueryId)
-                .whereAppendAnd()
-                .whereAppend(Organization.Field.SquadId + " IS NULL");
-        List<Member> members = new Dao<>(Member.class).query(builder);
-        return null == members ? 0 : members.size();
-    }
-
     private void initializeOrg(Organization org) {
         int index = 0;
         for (String string : items) {
@@ -108,7 +98,8 @@ public class OrganizationPropertiesFragment extends BaseTransparentPropertyFragm
             switch (index) {
                 case 1:
                     // 活动成员
-                    int size = getMembers();
+                    List<Member> members = Member.getMembersOfGroupOrSquad(mQueryId, "");
+                    int size = null == members ? 0 : members.size();
                     text = format(string, size);
                     break;
                 case 2:

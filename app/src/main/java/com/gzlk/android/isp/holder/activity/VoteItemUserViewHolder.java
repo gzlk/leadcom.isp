@@ -7,8 +7,8 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
-import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
 import com.gzlk.android.isp.model.activity.vote.AppVoteRecord;
+import com.gzlk.android.isp.model.organization.Member;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -49,7 +49,7 @@ public class VoteItemUserViewHolder extends BaseViewHolder {
         name.setText(record.getUserName());
     }
 
-    public void showContent(AppTopicMember member) {
+    public void showContent(Member member) {
         header.displayImage(member.getHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size), false, false);
         name.setText(member.getUserName());
         deleter.setVisibility(member.isSelectable() ? View.VISIBLE : View.GONE);

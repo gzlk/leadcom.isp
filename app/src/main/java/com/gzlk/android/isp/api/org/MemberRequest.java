@@ -46,6 +46,7 @@ public class MemberRequest extends Request<Member> {
     private static final String GROUP_MEMBER = "/group/groMember";
     private static final String SQUAD_MEMBER = "/group/groSquMember";
     private static final String ACTIVITY_MEMBER = "/activity/actMember";
+    private static final String TOPIC_MEMBER = "/activity/actTopicMember";
 
     @Override
     protected String url(String action) {
@@ -53,13 +54,20 @@ public class MemberRequest extends Request<Member> {
     }
 
     private String url(int type, String action) {
-        String api = GROUP_MEMBER;
+        String api;
         switch (type) {
             case Member.Type.SQUAD:
                 api = SQUAD_MEMBER;
                 break;
             case Member.Type.ACTIVITY:
                 api = ACTIVITY_MEMBER;
+                break;
+            case Member.Type.TOPIC:
+                api = TOPIC_MEMBER;
+                break;
+            case Member.Type.GROUP:
+            default:
+                api = GROUP_MEMBER;
                 break;
         }
         return format("%s%s", api, action);
@@ -120,6 +128,8 @@ public class MemberRequest extends Request<Member> {
                 return "squadId";
             case Member.Type.ACTIVITY:
                 return "actId";
+            case Member.Type.TOPIC:
+                return "actTopicId";
             default:
                 return "groupId";
         }
@@ -128,6 +138,7 @@ public class MemberRequest extends Request<Member> {
     private String getMemberId(int type) {
         switch (type) {
             case Member.Type.ACTIVITY:
+            case Member.Type.TOPIC:
                 return "id";
             default:
                 return "memberId";

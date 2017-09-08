@@ -8,9 +8,8 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.model.archive.Security;
-import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.archive.Security;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
@@ -18,7 +17,6 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.List;
 
@@ -122,13 +120,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
     }
 
     private String getOrganizationMembers(String orgId) {
-        QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
-                .whereEquals(Organization.Field.GroupId, orgId)
-                .whereAppendAnd()
-                .whereAppend(Organization.Field.SquadId + " IS NULL")
-                .groupBy(User.Field.Phone)
-                .orderBy(Model.Field.CreateDate);
-        List<Member> members = new Dao<>(Member.class).query(query);
+        List<Member> members = Member.getMembersOfGroupOrSquad(orgId, "");
         String string = "";
         int i = 0;
         for (Member member : members) {

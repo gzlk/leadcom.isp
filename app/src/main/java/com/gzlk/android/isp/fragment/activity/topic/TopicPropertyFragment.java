@@ -38,7 +38,7 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
-import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.SubMember;
 import com.gzlk.android.isp.nim.activity.SessionHistoryActivity;
 import com.hlk.hlklib.lib.inject.Click;
@@ -259,7 +259,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         int index = 0;
         while (iterator.hasNext()) {
             Model model = iterator.next();
-            if (model instanceof AppTopicMember) {
+            if (model instanceof Member) {
                 iterator.remove();
                 mAdapter.notifyItemRemoved(index);
             }
@@ -268,7 +268,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         // 显示成员
         if (null != appTopic.getActTopicMemberList()) {
             index = 0;
-            for (AppTopicMember member : appTopic.getActTopicMemberList()) {
+            for (Member member : appTopic.getActTopicMemberList()) {
                 member.setSelectable(deletable);
                 mAdapter.add(member, index);
                 index++;
@@ -306,7 +306,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
 
         @Override
         public int getItemViewType(int position) {
-            return get(position) instanceof AppTopicMember ? VT_MEMBER : VT_OTHER;
+            return get(position) instanceof Member ? VT_MEMBER : VT_OTHER;
         }
 
         @Override
@@ -317,7 +317,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof VoteItemUserViewHolder) {
-                ((VoteItemUserViewHolder) holder).showContent((AppTopicMember) item);
+                ((VoteItemUserViewHolder) holder).showContent((Member) item);
             } else if (holder instanceof TopicMemberAttacherViewHolder) {
                 ((TopicMemberAttacherViewHolder) holder).showContent(item);
             }
@@ -334,10 +334,10 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         @Override
         public void onClick(int index) {
             Model model = mAdapter.get(index);
-            if (model instanceof AppTopicMember) {
+            if (model instanceof Member) {
                 if (!model.isSelectable()) {
                     // 不处于删除状态时，打开用户详情页
-                    AppTopicMember member = (AppTopicMember) model;
+                    Member member = (Member) model;
                     UserPropertyFragment.open(TopicPropertyFragment.this, member.getUserId());
                 }
             } else {
@@ -368,8 +368,8 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         deletable = !deletable;
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
             Model m = mAdapter.get(i);
-            if (m instanceof AppTopicMember) {
-                AppTopicMember membr = (AppTopicMember) m;
+            if (m instanceof Member) {
+                Member membr = (Member) m;
                 if (!membr.getUserId().equals(Cache.cache().userId)) {
                     // 不是我自己时才显示删除按钮
                     membr.setSelectable(deletable);
@@ -384,8 +384,8 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         @Override
         public Model onHandlerBoundData(BaseViewHolder holder) {
             Model model = mAdapter.get(holder.getAdapterPosition());
-            if (model instanceof AppTopicMember) {
-                AppTopicMember member = (AppTopicMember) model;
+            if (model instanceof Member) {
+                Member member = (Member) model;
                 warningDeleteMember(member.getUserId(), member.getUserName(), holder.getAdapterPosition());
             }
             return null;
@@ -404,9 +404,9 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
 
     private void deleteMember(String userId, final int deleteIndex) {
         showImageHandlingDialog(R.string.ui_activity_topic_property_member_deleting);
-        AppTopicMemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppTopicMember>() {
+        AppTopicMemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onResponse(AppTopicMember appTopicMember, boolean success, String message) {
+            public void onResponse(Member appTopicMember, boolean success, String message) {
                 super.onResponse(appTopicMember, success, message);
                 hideImageHandlingDialog();
                 if (success) {
@@ -441,9 +441,9 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
             ToastHelper.make().showMsg(R.string.ui_activity_topic_property_member_selected_none);
         } else {
             showImageHandlingDialog(R.string.ui_activity_topic_property_member_inviting);
-            AppTopicMemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppTopicMember>() {
+            AppTopicMemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
                 @Override
-                public void onResponse(AppTopicMember member, boolean success, String message) {
+                public void onResponse(Member member, boolean success, String message) {
                     super.onResponse(member, success, message);
                     hideImageHandlingDialog();
                     if (success) {
@@ -519,13 +519,13 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
 
     private void exitTopic() {
         showImageHandlingDialog(R.string.ui_activity_topic_property_exiting);
-        AppTopicMemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppTopicMember>() {
+        AppTopicMemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onResponse(AppTopicMember appTopicMember, boolean success, String message) {
+            public void onResponse(Member appTopicMember, boolean success, String message) {
                 super.onResponse(appTopicMember, success, message);
                 hideImageHandlingDialog();
                 if (success) {
-                    AppTopicMember.removeMemberOfTopicId(topicId);
+                    Member.removeMemberOfTopicId(topicId);
                     ToastHelper.make().showMsg(R.string.ui_activity_topic_property_exited);
                     finish();
                 }

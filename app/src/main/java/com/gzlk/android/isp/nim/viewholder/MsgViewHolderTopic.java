@@ -9,7 +9,7 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
-import com.gzlk.android.isp.model.activity.topic.AppTopicMember;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.nim.model.extension.TopicAttachment;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
@@ -59,7 +59,7 @@ public class MsgViewHolderTopic extends MsgViewHolderBase {
     @Override
     protected void onItemClick() {
         // 如果我已经是议题里的成员则直接打开议题
-        if (AppTopicMember.isMeMemberOf(topic.getCustomId())) {
+        if (Member.isMeMemberOfTopic(topic.getCustomId())) {
             NimSessionHelper.startTeamSession(context, topic.getCustomId());
         } else {
             if (StringHelper.isEmpty(topic.getTopicId())) {
@@ -91,12 +91,12 @@ public class MsgViewHolderTopic extends MsgViewHolderBase {
     }
 
     private void fetchingTopicMembers(String topicId) {
-        AppTopicMemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<AppTopicMember>() {
+        AppTopicMemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
             @Override
-            public void onResponse(List<AppTopicMember> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
-                    if (AppTopicMember.isMeMemberOf(topic.getCustomId())) {
+                    if (Member.isMeMemberOfTopic(topic.getCustomId())) {
                         NimSessionHelper.startTeamSession(context, topic.getCustomId());
                     } else {
                         ToastHelper.make().showMsg(R.string.ui_activity_topic_not_member_of);

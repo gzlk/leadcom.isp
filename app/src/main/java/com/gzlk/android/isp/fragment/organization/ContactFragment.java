@@ -422,7 +422,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                     Member mbr = new Member();
                     mbr.setId(memberId);
                     members.remove(mbr);
-                    new Dao<>(Member.class).delete(memberId);
+                    Member.remove(memberId);
                     //searching(searchingText);
                     mAdapter.remove(mbr);
                 }
@@ -443,7 +443,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                     Member mbr = new Member();
                     mbr.setId(memberId);
                     members.remove(mbr);
-                    new Dao<>(Member.class).delete(memberId);
+                    Member.remove(memberId);
                     //searching(searchingText);
                     mAdapter.remove(mbr);
                 }

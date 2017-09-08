@@ -7,7 +7,6 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -21,7 +20,6 @@ import com.gzlk.android.isp.model.common.Seclusion;
 import com.gzlk.android.isp.model.archive.Security;
 import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
-import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
@@ -326,14 +324,7 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private List<String> getMyOrganizations() {
-        QueryBuilder<Member> query = new QueryBuilder<>(Member.class)
-                .whereEquals(Model.Field.UserId, Cache.cache().userId)
-                .whereAppendAnd()
-                .whereAppend(Organization.Field.GroupId + " IS NOT NULL ")
-                .whereAppendAnd()
-                .whereAppend(Organization.Field.SquadId + " IS NULL")
-                .orderBy(Model.Field.CreateDate);
-        List<Member> members = new Dao<>(Member.class).query(query);
+        List<Member> members = Member.getMyMembersOfJoinedGroups();
         List<String> result = new ArrayList<>();
         for (Member member : members) {
             result.add(member.getGroupId());
@@ -378,12 +369,7 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         if (null != org) {
-            QueryBuilder<Member> builder = new QueryBuilder<>(Member.class)
-                    .whereEquals(Organization.Field.GroupId, org.getId())
-                    .whereAppendAnd()
-                    .whereAppend(Organization.Field.SquadId + " IS NULL")
-                    .groupBy(User.Field.Phone);
-            List<Member> members = new Dao<>(Member.class).query(builder);
+            List<Member> members = Member.getMembersOfGroupOrSquad(org.getId(), "");
             if (null != members && members.size() > 0) {
                 // 在当前点击组织后面添加成员列表
                 int index = mAdapter.indexOf(org);

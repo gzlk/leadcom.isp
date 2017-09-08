@@ -32,6 +32,9 @@ public class Leaguer extends Model {
     // 用户头像
     @Column(User.Field.HeadPhoto)
     private String headPhoto;
+    @Column(User.Field.Phone)
+    private String phone;          //用户手机
+
     //角色Id
     @Column(Organization.Field.RoleId)
     private String roleId;
@@ -91,6 +94,14 @@ public class Leaguer extends Model {
 
     public void setHeadPhoto(String headPhoto) {
         this.headPhoto = headPhoto;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getRoleId() {

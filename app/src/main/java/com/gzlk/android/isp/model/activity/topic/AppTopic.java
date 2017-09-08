@@ -7,6 +7,7 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
@@ -77,7 +78,7 @@ public class AppTopic extends Model {
     @Ignore
     private ArrayList<String> headPhotoList;                 //成员头像列表(最多九张)
     @Ignore
-    private ArrayList<AppTopicMember> actTopicMemberList;    //活动议题成员列表
+    private ArrayList<Member> actTopicMemberList;    //活动议题成员列表
 
     // 自定义属性
     private int unReadNum;
@@ -176,14 +177,14 @@ public class AppTopic extends Model {
         this.headPhotoList = headPhotoList;
     }
 
-    public ArrayList<AppTopicMember> getActTopicMemberList() {
+    public ArrayList<Member> getActTopicMemberList() {
         if (null == actTopicMemberList) {
             actTopicMemberList = new ArrayList<>();
         }
         return actTopicMemberList;
     }
 
-    public void setActTopicMemberList(ArrayList<AppTopicMember> actTopicMemberList) {
+    public void setActTopicMemberList(ArrayList<Member> actTopicMemberList) {
         this.actTopicMemberList = actTopicMemberList;
     }
 

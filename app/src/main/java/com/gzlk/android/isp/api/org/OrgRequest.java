@@ -66,7 +66,6 @@ public class OrgRequest extends Request<Organization> {
     }
 
     private Dao<Role> roleDao = new Dao<>(Role.class);
-    private Dao<Member> memberDao = new Dao<>(Member.class);
     private Dao<Organization> orgDao = new Dao<>(Organization.class);
 
     private boolean isFetchingJoinedGroups = false;
@@ -81,7 +80,7 @@ public class OrgRequest extends Request<Organization> {
                 role.savePermissionIds();
                 roleDao.save(role);
             }
-            memberDao.save(member);
+            Member.save(member);
         }
     }
 
