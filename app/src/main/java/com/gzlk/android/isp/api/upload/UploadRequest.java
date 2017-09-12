@@ -73,7 +73,7 @@ public class UploadRequest extends Request<Upload> {
         String path = format("%s%s", URL, UPLOAD);
         log(format("upload file %s\nto %s", file, path));
         final String fileName = file.substring(file.lastIndexOf('/') + 1);
-        return new JsonRequest<Upload>(path, Upload.class).setHttpListener(new OnHttpListener<Upload>(true, true) {
+        OnHttpListener<Upload> listener = new OnHttpListener<Upload>(true, true) {
             @Override
             public void onSucceed(Upload data, Response<Upload> response) {
                 super.onSucceed(data, response);
@@ -109,7 +109,12 @@ public class UploadRequest extends Request<Upload> {
                     onUploadingListener.onUploading(file, total, len);
                 }
             }
-        }).addHeader("accessToken", accessToken).setHttpBody(body, HttpMethods.Post);
+        };
+        return new JsonRequest<Upload>(path, Upload.class)
+                .setHttpListener(listener)
+                .addHeader("accessToken", accessToken)
+                .addHeader("terminalType", "android")
+                .setHttpBody(body, HttpMethods.Post);
     }
 
     /**

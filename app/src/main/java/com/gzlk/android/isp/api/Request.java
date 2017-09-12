@@ -41,7 +41,7 @@ public abstract class Request<T> {
     /**
      * 默认多页查询时页大小
      */
-    public static final int PAGE_SIZE = 10;
+    protected static final int PAGE_SIZE = 10;
 
     protected static final String URL = format("%s/%s", BaseApi.URL, BaseApi.API_VER);
     /**
@@ -72,15 +72,9 @@ public abstract class Request<T> {
      * 搜索
      */
     protected static final String SEARCH = "/search";
-    /**
-     * 保存
-     */
-    protected static final String SAVE = "/save";
 
-    private static final int ABSTR_SIZE = 100;
     protected static final int MAX_PAGE_SIZE = 1000;
-    private static final int ABSTR_ROW = 5;
-    protected static final String SUMMARY = format("abstrSize=%d&abstrRow=%d", ABSTR_SIZE, ABSTR_ROW);
+    protected static final String SUMMARY = format("abstrSize=%d&abstrRow=%d", 100, 5);
 
     /**
      * 组合url
@@ -170,8 +164,7 @@ public abstract class Request<T> {
      */
     protected JsonRequest<Api<T>> getRequest(Type resultType, String action, final String body, final HttpMethods methods) {
         final String url = format("%s%s", URL, action);
-        final String accessToken = Cache.cache().accessToken;
-        return new JsonRequest<Api<T>>(url, resultType).setHttpListener(new OnHttpListener<Api<T>>() {
+        OnHttpListener<Api<T>> listener = new OnHttpListener<Api<T>>() {
 
             @Override
             public void onSucceed(Api<T> data, Response<Api<T>> response) {
@@ -231,7 +224,12 @@ public abstract class Request<T> {
                         (isEmpty(body) ? "" : format("\nbody: %s\n", body))));
                 fireFailedListenerEvents("");
             }
-        }).addHeader("accessToken", accessToken).setHttpBody(new JsonBody(body), methods);
+        };
+        return new JsonRequest<Api<T>>(url, resultType)
+                .setHttpListener(listener)
+                .addHeader("accessToken", accessToken)
+                //.addHeader("terminalType", "android")
+                .setHttpBody(new JsonBody(body), methods);
     }
 
     /**

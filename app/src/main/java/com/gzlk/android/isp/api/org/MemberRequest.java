@@ -11,9 +11,11 @@ import com.gzlk.android.isp.model.organization.Member;
 import com.gzlk.android.isp.model.organization.Role;
 import com.litesuits.http.request.param.HttpMethods;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -255,8 +257,26 @@ public class MemberRequest extends Request<Member> {
      * 从组织里添加小组成员且不需要对方同意或拒绝(2017-06-26 21:34新增)
      */
     public void addToSquadFromGroup(String userId, String squadId) {
-        String url = url(Member.Type.SQUAD, ADD);
-        String param = format("%s?userId=%s&squadId=%s", url, userId, squadId);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add(userId);
+        addToSquadFromGroup(squadId, ids);
+    }
+
+    /**
+     * 从组织里添加小组成员且不需要对方同意或拒绝(可同时添加多个)<br/>
+     * 更改方法为POST，参数改为json(2017-09-12 08:00)
+     */
+    public void addToSquadFromGroup(String squadId, ArrayList<String> userIdList) {
+        // {squadId,[userIdList]}
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("squadId", squadId);
+            object.put("userIdList", new JSONArray(userIdList));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleMember.class, url(Member.Type.SQUAD, ADD), object.toString(), HttpMethods.Post));
     }
 }
