@@ -71,8 +71,8 @@
     <string name="ui_text_setting_messaging_fragment_title">消息通知</string>
 
     <string name="ui_text_about_fragment_title">关于</string>
-    <string name="ui_text_about_version" formatted="false">Android %s v: %s</string>
-    <string name="ui_text_about_revision" formatted="false">api: %s(rev: %s)</string>
+    <string name="ui_text_about_version" formatted="false">Android %s version: %s</string>
+    <string name="ui_text_about_revision" formatted="false">api: %s(revision: %s)</string>
     <string-array name="ui_about">
         <item>0|去评分||0</item>
         <item>1|意见反馈||0</item>

@@ -228,7 +228,7 @@ public abstract class Request<T> {
         return new JsonRequest<Api<T>>(url, resultType)
                 .setHttpListener(listener)
                 .addHeader("accessToken", accessToken)
-                //.addHeader("terminalType", "android")
+                .addHeader("terminalType", "android")
                 .setHttpBody(new JsonBody(body), methods);
     }
 
