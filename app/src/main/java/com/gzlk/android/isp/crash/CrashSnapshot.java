@@ -11,10 +11,13 @@ import android.os.StatFs;
 import android.provider.Settings.Secure;
 import android.text.TextUtils;
 
+import com.gzlk.android.isp.BuildConfig;
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.crash.system.InstallUtil;
 import com.gzlk.android.isp.crash.system.NetworkUtil;
 import com.gzlk.android.isp.crash.system.SysInfoUtil;
+import com.gzlk.android.isp.helper.StringHelper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -200,7 +203,6 @@ public class CrashSnapshot {
         }
     }
 
-
     public static String snapshot(Context context, boolean uncaught, String timestamp, String trace, int count) {
         Map<String, String> info = new LinkedHashMap<String, String>();
         info.put("count: ", String.valueOf(count));
@@ -215,6 +217,9 @@ public class CrashSnapshot {
         info.put("ver: ", String.format(Locale.getDefault(), "%d", InstallUtil.getVersionCode(context)));
         info.put("caught: ", uncaught ? "no" : "yes");
         info.put("network: ", NetworkUtil.getNetworkInfo(context));
+        info.put("app version: ", BuildConfig.VERSION_NAME);
+        info.put("app api: ", StringHelper.getString(R.string.app_api_version));
+        info.put("app revision: ", StringHelper.getString(R.string.app_internal_version));
         Iterator<Map.Entry<String, String>> iterator = info.entrySet().iterator();
         StringBuilder sb = new StringBuilder();
         while (iterator.hasNext()) {

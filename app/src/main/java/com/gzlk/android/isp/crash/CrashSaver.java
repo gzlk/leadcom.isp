@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 class CrashSaver {
 
@@ -58,13 +59,13 @@ class CrashSaver {
         if (TextUtils.isEmpty(filename)) {
             return;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date();
         String timestamp = sdf.format(date);
         BufferedWriter mBufferedWriter = null;
         try {
             File mFile = new File(StorageUtil.getWritePath(
-                    filename + ".crashlog", StorageType.TYPE_LOG));
+                    filename + ".crashlog.txt", StorageType.TYPE_LOG));
             File pFile = mFile.getParentFile();
             if (!pFile.exists()) {// 如果文件夹不存在，则先创建文件夹
                 pFile.mkdirs();
