@@ -53,21 +53,25 @@ public abstract class BaseWebViewFragment extends BaseDownloadingUploadingSuppor
         return R.layout.fragment_web_view;
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void doingInResume() {
         if (null == webView) {
-            if (!isLoaded) {
-                isLoaded = true;
-                webView = (WebView) mRootView;
-                webView.getSettings().setUseWideViewPort(true);
-                webView.getSettings().setLoadWithOverviewMode(true);
-                webView.getSettings().setDomStorageEnabled(true);
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.setWebViewClient(new MyWebViewClient());
-                webView.setWebChromeClient(new MyWebChromeClient());
-                webView.loadUrl(loadingUrl());
-            }
+            loadingUrl(loadingUrl());
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    protected void loadingUrl(String url) {
+        if (!isLoaded) {
+            isLoaded = true;
+            webView = (WebView) mRootView;
+            webView.getSettings().setUseWideViewPort(true);
+            webView.getSettings().setLoadWithOverviewMode(true);
+            webView.getSettings().setDomStorageEnabled(true);
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.setWebViewClient(new MyWebViewClient());
+            webView.setWebChromeClient(new MyWebChromeClient());
+            webView.loadUrl(url);
         }
     }
 

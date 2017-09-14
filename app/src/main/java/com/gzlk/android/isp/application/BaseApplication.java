@@ -154,6 +154,10 @@ public class BaseApplication extends Application {
      * 字体文件目录
      */
     public static final String FONT_DIR = "fonts";
+    /**
+     * word 转换成 html 的目录
+     */
+    public static final String HTML_DIR = "html";
 
     /**
      * 获取外挂 SD 卡目录下的 data 目录，末尾不包含/<br>

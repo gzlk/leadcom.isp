@@ -130,6 +130,9 @@ public class Attachment extends Model {
         return R.color.colorPrimary;
     }
 
+    /**
+     * 根据后缀名判断是否是 Office 文档
+     */
     public static boolean isOffice(String ext) {
         if (StringHelper.isEmpty(ext)) return false;
         switch (ext) {
@@ -139,6 +142,19 @@ public class Attachment extends Model {
             case "xlsx":
             case "ppt":
             case "pptx":
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 根据后缀名判断是否是 Word 文档
+     */
+    public static boolean isWord(String ext) {
+        if (StringHelper.isEmpty(ext)) return false;
+        switch (ext) {
+            case "doc":
+            case "docx":
                 return true;
         }
         return false;

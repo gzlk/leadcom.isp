@@ -5,10 +5,12 @@ import android.os.Bundle;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
+import com.gzlk.android.isp.apache.poi.WordUtil;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 
 import java.io.File;
@@ -129,10 +131,8 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         mDownloaded = true;
         hideImageHandlingDialog();
         if (success) {
-            if (!mMinutes) {
-                // 不是会议纪要时，才需要关闭并且打开第三方应用打开office文档
-                finish();
-            } else {
+            if (mMinutes) {
+                // 会议纪要时，需要共享出去
                 resetRightEvent();
             }
             String localReal = local + "." + mExtension;
@@ -142,8 +142,17 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
                 File source = new File(local);
                 source.renameTo(target);
             }
-            // 下载完毕，使用本地第三方app打开office文档
-            FilePreviewHelper.previewMimeFile(Activity(), localReal, mExtension);
+
+            if (Attachment.isWord(mExtension)) {
+                // 下载完毕，打开word预览
+                WordUtil word = new WordUtil(localReal);
+                log(word.htmlPath);
+                loadingUrl("file:///" + word.htmlPath);
+            } else {
+                // 下载完毕，使用本地第三方app打开office文档
+                finish();
+                FilePreviewHelper.previewMimeFile(Activity(), localReal, mExtension);
+            }
         }
     }
 }
