@@ -3,6 +3,7 @@ package com.gzlk.android.isp.apache.poi;
 import android.util.Xml;
 
 import com.gzlk.android.isp.helper.LogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.etc.Utility;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -41,9 +42,7 @@ public class WordUtil {
     private final static String TAG = "POIWordUtil";
     public String htmlPath;
     private String docPath;
-    private String picturePath;
     private List<Picture> pictures;
-    private TableIterator tableIterator;
     private int presentPicture = 0;
     private FileOutputStream output;
 
@@ -65,8 +64,8 @@ public class WordUtil {
     private String divRight = "<div align=\"right\">", divEnd = "</div>";
     private String imgBegin = "<img src=\"%s\" >";
 
-    public WordUtil(String doc_name) {
-        docPath = doc_name;
+    public WordUtil(String docName) {
+        docPath = docName;
         String fileName = FileUtil.getFileName(docPath);
         htmlPath = FileUtil.createFile(fileName + ".html");
         // 判断已转换的文件是否存在，不用每次打开时都转换，节省时间
@@ -99,7 +98,7 @@ public class WordUtil {
             HWPFDocument hwpf = new HWPFDocument(pfs);
             Range range = hwpf.getRange();
             pictures = hwpf.getPicturesTable().getAllPictures();
-            tableIterator = new TableIterator(range);
+            TableIterator tableIterator = new TableIterator(range);
             int numParagraphs = range.numParagraphs();// 得到页面所有的段落数
             for (int i = 0; i < numParagraphs; i++) { // 遍历段落数
                 Paragraph p = range.getParagraph(i); // 得到文档中的每一个段落
@@ -165,10 +164,10 @@ public class WordUtil {
             boolean isUnderline = false; // 下划线
             boolean isBold = false; // 加粗
             boolean isRegion = false; // 在那个区域中
-            int pic_ndex = 1; // docx中的图片名从image1开始，所以索引从1开始
-            int event_type = xmlParser.getEventType();
-            while (event_type != XmlPullParser.END_DOCUMENT) {
-                switch (event_type) {
+            int picIndex = 1; // docx中的图片名从image1开始，所以索引从1开始
+            int eventType = xmlParser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                switch (eventType) {
                     case XmlPullParser.START_TAG: // 开始标签
                         String tagBegin = xmlParser.getName();
                         if (tagBegin.equalsIgnoreCase("r")) {
@@ -193,7 +192,7 @@ public class WordUtil {
                         if (tagBegin.equalsIgnoreCase("sz")) { // 判断文字大小
                             if (isRegion) {
                                 int size = getSize(Integer.valueOf(xmlParser.getAttributeValue(0)));
-                                output.write(String.format(fontSizeTag, size).getBytes());
+                                output.write(StringHelper.format(fontSizeTag, size).getBytes());
                                 isSize = true;
                             }
                         }
@@ -206,12 +205,12 @@ public class WordUtil {
                             output.write(columnBegin.getBytes());
                         }
                         if (tagBegin.equalsIgnoreCase("pic")) { // 检测到图片
-                            ZipEntry pic_entry = FileUtil.getPicEntry(docxFile, pic_ndex);
+                            ZipEntry pic_entry = FileUtil.getPicEntry(docxFile, picIndex);
                             if (pic_entry != null) {
                                 byte[] pictureBytes = FileUtil.getPictureBytes(docxFile, pic_entry);
                                 writeDocumentPicture(pictureBytes);
                             }
-                            pic_ndex++; // 转换一张后，索引+1
+                            picIndex++; // 转换一张后，索引+1
                         }
                         if (tagBegin.equalsIgnoreCase("p") && !isTable) {// 检测到段落，如果在表格中就无视
                             output.write(lineBegin.getBytes());
@@ -297,7 +296,7 @@ public class WordUtil {
                     default:
                         break;
                 }
-                event_type = xmlParser.next();
+                eventType = xmlParser.next();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -350,8 +349,8 @@ public class WordUtil {
         }
     }
 
-    public void writeDocumentPicture(byte[] pictureBytes) {
-        picturePath = FileUtil.createFile(FileUtil.getFileName(docPath) + presentPicture + ".jpg");
+    private void writeDocumentPicture(byte[] pictureBytes) {
+        String picturePath = FileUtil.createFile(FileUtil.getFileName(docPath) + presentPicture + ".jpg");
         FileUtil.writePicture(picturePath, pictureBytes);
         presentPicture++;
         String imageString = String.format(imgBegin, picturePath);
@@ -362,7 +361,7 @@ public class WordUtil {
         }
     }
 
-    public void writeParagraphContent(Paragraph paragraph) {
+    private void writeParagraphContent(Paragraph paragraph) {
         int pnumCharacterRuns = paragraph.numCharacterRuns();
         for (int j = 0; j < pnumCharacterRuns; j++) {
             CharacterRun run = paragraph.getCharacterRun(j);
@@ -376,7 +375,7 @@ public class WordUtil {
                     if (text.length() >= 2 && pnumCharacterRuns < 2) {
                         output.write(text.getBytes());
                     } else {
-                        String fontSizeBegin = String.format(fontSizeTag, getSize(run.getFontSize()));
+                        String fontSizeBegin = StringHelper.format(fontSizeTag, getSize(run.getFontSize()));
                         String fontColorBegin = String.format(fontColorTag, getColor(run.getColor()));
                         output.write(fontSizeBegin.getBytes());
                         output.write(fontColorBegin.getBytes());
