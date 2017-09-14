@@ -99,13 +99,13 @@ android {
             }
         }
     }
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-    }
+//    packagingOptions {
+//        exclude 'META-INF/DEPENDENCIES'
+//        exclude 'META-INF/NOTICE'
+//        exclude 'META-INF/LICENSE'
+//        exclude 'META-INF/LICENSE.txt'
+//        exclude 'META-INF/NOTICE.txt'
+//    }
 }
 repositories {
     mavenCentral()
@@ -152,6 +152,33 @@ dependencies {
     compile group: 'com.sun.mail', name: 'android-mail', version: '1.6.0-rc2'
     // https://mvnrepository.com/artifact/com.sun.mail/android-activation
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
+
+    // apache poi office 套件
+    /**
+     * Component	Application type	    Maven artifactId	Notes
+     POIFS	        OLE2 Filesystem	        poi	                Required to work with OLE2 / POIFS based files
+     HPSF	        OLE2 Property Sets	    poi
+     HSSF	        Excel XLS       	    poi	                For HSSF only, if common SS is needed see below
+     HSLF	        PowerPoint PPT  	    poi-scratchpad
+     HWPF	        Word DOC        	    poi-scratchpad
+     HDGF	        Visio VSD       	    poi-scratchpad
+     HPBF	        Publisher PUB   	    poi-scratchpad
+     HSMF	        Outlook MSG     	    poi-scratchpad
+     HWMF	        WMF drawings    	    poi-scratchpad
+     OpenXML4J	    OOXML           	    poi-ooxml           plus either poi-ooxml-schemas or ooxml-schemas and ooxml-security
+     XSSF	        Excel XLSX      	    poi-ooxml
+     XSLF	        PowerPoint PPTX 	    poi-ooxml
+     XWPF	        Word DOCX       	    poi-ooxml
+     XDGF	        Visio VSDX      	    poi-ooxml
+     Common SL  	PowerPoint PPT and PPTX	poi-scratchpad and poi-ooxml
+     Common SS  	Excel XLS and XLSX  	poi-ooxml	        WorkbookFactory and friends all require poi-ooxml, not just core poi
+     * */
+    // https://mvnrepository.com/artifact/org.apache.poi/poi
+    compile group: 'org.apache.poi', name: 'poi', version: '3.17-beta1'
+    // https://mvnrepository.com/artifact/org.apache.poi/poi-scratchpad
+    compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17-beta1'
+    // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17-beta1'
 
     // 高德地图
     // 2D地图
