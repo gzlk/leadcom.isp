@@ -94,4 +94,11 @@ public class ActLabelRequest extends Request<Label> {
     public void getTopLabels(int topSet) {
         httpRequest(getRequest(ListQueryLabel.class, format("%s?top=%d", "/ontolog/getLabelTop", topSet), "", HttpMethods.Get));
     }
+
+    /**
+     * 查询个人常用标签
+     */
+    public void getUserLabels(int topSet) {
+        httpRequest(getRequest(ListQueryLabel.class, format("%s?top=%d", "/user/userLabel/top", topSet), "", HttpMethods.Get));
+    }
 }
