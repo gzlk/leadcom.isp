@@ -52,7 +52,7 @@ public class MomentCommentViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Comment comment) {
-        header.displayImage("", imageSize, false, false);
+        header.displayImage(comment.getHeadPhoto(), imageSize, false, false);
         nameView.setText(comment.getUserName());
         timeView.setText(fragment().formatTimeAgo(comment.getCreateDate()));
         contentView.setText(EmojiUtility.getEmojiString(contentView.getContext(), comment.getContent(), true));

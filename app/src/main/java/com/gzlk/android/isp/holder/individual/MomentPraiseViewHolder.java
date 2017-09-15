@@ -11,7 +11,6 @@ import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,15 +29,14 @@ public class MomentPraiseViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_individual_moment_praises)
     private FlexboxLayout headers;
 
-    private int imageSize, marginEnd, marginBottom;
+    private int imageSize, margin;
     private boolean hasShown = false;
 
     public MomentPraiseViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageSize = getDimension(R.dimen.ui_base_user_header_image_size_small);
-        marginEnd = getDimension(R.dimen.ui_static_dp_5);
-        marginBottom = getDimension(R.dimen.ui_static_dp_5);
+        margin = getDimension(R.dimen.ui_static_dp_5);
     }
 
     public void setHasShown(boolean hasShown) {
@@ -59,13 +57,15 @@ public class MomentPraiseViewHolder extends BaseViewHolder {
         for (ArchiveLike like : likes) {
             ImageDisplayer displayer = new ImageDisplayer(headers.getContext());
             displayer.setShowHeader(true);
-            displayer.displayImage("", imageSize, false, false);
+            displayer.displayImage(like.getHeadPhoto(), imageSize, false, false);
             headers.addView(displayer);
             FlexboxLayout.LayoutParams params = (FlexboxLayout.LayoutParams) displayer.getLayoutParams();
             params.width = imageSize;
             params.height = imageSize;
-            params.rightMargin = marginEnd;
-            params.bottomMargin = marginBottom;
+            params.rightMargin = margin;
+            params.leftMargin = margin;
+            params.bottomMargin = margin;
+            params.topMargin = margin;
             displayer.setLayoutParams(params);
         }
     }
