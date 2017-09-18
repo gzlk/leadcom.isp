@@ -14,7 +14,7 @@ import com.litesuits.orm.db.annotation.Column;
  * <b>修改备注：</b><br />
  */
 
-public class Additional extends Doc {
+public class Additional extends Model {
 
     @Column(Archive.Field.ReadNumber)
     private int readNum;     //阅读次数

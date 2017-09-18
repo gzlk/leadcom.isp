@@ -48,6 +48,10 @@ public class Comment extends ArchiveInfo {
     @Column(Model.Field.CreateDate)
     private String createDate;  //评论时间
 
+    //当前用户是否收藏(0.未收藏,1.已收藏)
+    @Column(Archive.Field.Collected)
+    private int collection;
+
     public String getContent() {
         return content;
     }
@@ -91,4 +95,17 @@ public class Comment extends ArchiveInfo {
         this.createDate = createDate;
     }
 
+    /**
+     * 当前用户是否收藏(0.未收藏,1.已收藏)
+     */
+    public int getCollection() {
+        return collection;
+    }
+
+    /**
+     * 当前用户是否收藏(0.未收藏,1.已收藏)
+     */
+    public void setCollection(int collection) {
+        this.collection = collection;
+    }
 }

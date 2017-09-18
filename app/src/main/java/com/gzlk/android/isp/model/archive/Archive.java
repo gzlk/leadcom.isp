@@ -76,6 +76,7 @@ public class Archive extends Additional {
         String CreatorId = "creatorId";
         String CreatorName = "creatorName";
         String Label = "label";
+        String Collected = "collected";
         String Office = "office";
         String Pdf = "pdf";
         String Video = "video";
@@ -305,6 +306,9 @@ public class Archive extends Additional {
     //档案附加信息
     @Ignore
     private Additional addition;
+    //当前用户是否收藏(0.未收藏,1.已收藏)
+    @Column(Archive.Field.Collected)
+    private int collection;
 
     // 存档相关
     @Column(Activity.Field.ActivityId)
@@ -610,5 +614,19 @@ public class Archive extends Additional {
 
     public void setArchiverId(String archiverId) {
         this.archiverId = archiverId;
+    }
+
+    /**
+     * 当前用户是否收藏(0.未收藏,1.已收藏)
+     */
+    public int getCollection() {
+        return collection;
+    }
+
+    /**
+     * 当前用户是否收藏(0.未收藏,1.已收藏)
+     */
+    public void setCollection(int collection) {
+        this.collection = collection;
     }
 }
