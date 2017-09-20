@@ -68,6 +68,11 @@ public class Moment extends Additional {
     // 我是否已赞
     @Ignore
     private boolean myPraised;
+    //当前用户是否收藏(0.未收藏,1.已收藏)
+    @Column(Archive.Field.Collected)
+    private int collection;
+    @Column(Archive.Field.CollectionId)
+    private String colId;          //当前用户收藏该动态后的收藏ID
 
     public String getUserId() {
         return userId;
@@ -143,5 +148,27 @@ public class Moment extends Additional {
 
     public void setMyPraised(boolean myPraised) {
         this.myPraised = myPraised;
+    }
+
+    /**
+     * 当前用户是否收藏(0.未收藏,1.已收藏)
+     */
+    public int getCollection() {
+        return collection;
+    }
+
+    /**
+     * 当前用户是否收藏(0.未收藏,1.已收藏)
+     */
+    public void setCollection(int collection) {
+        this.collection = collection;
+    }
+
+    public String getColId() {
+        return colId;
+    }
+
+    public void setColId(String colId) {
+        this.colId = colId;
     }
 }
