@@ -86,9 +86,15 @@ public class MomentRequest extends Request<Moment> {
 
     /**
      * 添加Moment
+     *
+     * @param location   地址
+     * @param content    文本内容
+     * @param image      图片地址(将数据放入json数组)
+     * @param videoUrl   视频地址(一个动态对应一个视频)
+     * @param authPublic 公开范围(1.公开,2.不公开)
      */
-    public void add(String location, String content, ArrayList<String> image, String videoUrl) {
-        // {location,content,[image],video,type}
+    public void add(String location, String content, ArrayList<String> image, String videoUrl, int authPublic) {
+        // {location,content,[image],video,type,authPublic}
         JSONObject object = new JSONObject();
         try {
             int type = Moment.Type.TEXT;
@@ -104,7 +110,8 @@ public class MomentRequest extends Request<Moment> {
                 type = Moment.Type.VIDEO;
                 object.put("video", checkNull(videoUrl));
             }
-            object.put("type", type);
+            object.put("type", type)
+                    .put("authPublic", authPublic);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -53,6 +53,10 @@ public class Moment extends Additional {
     //创建时间
     @Column(Model.Field.CreateDate)
     private String createDate;
+    @Column(Archive.Field.Type)
+    private int type;           //类型(1.纯文本,2.图片,3.视频)
+    @Column(Archive.Field.AuthPublic)
+    private int authPublic;     //授权公开范围(1.公开,2.私密)
     //创建地点
     @Column(Archive.Field.Location)
     private String location;
@@ -62,6 +66,8 @@ public class Moment extends Additional {
     //档案附加信息
     @Ignore
     private Additional addition;
+    @Column(Archive.Field.Video)
+    private String video;          //视频地址
     //图片
     @Column(Archive.Field.Image)
     private ArrayList<String> image;
@@ -109,6 +115,22 @@ public class Moment extends Additional {
         this.createDate = createDate;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getAuthPublic() {
+        return authPublic;
+    }
+
+    public void setAuthPublic(int authPublic) {
+        this.authPublic = authPublic;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -132,6 +154,14 @@ public class Moment extends Additional {
     public void setAddition(Additional addition) {
         this.addition = addition;
         resetAdditional(this.addition);
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
     }
 
     public ArrayList<String> getImage() {
