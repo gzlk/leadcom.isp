@@ -65,8 +65,8 @@
 
     <string-array name="ui_individual_setting_messaging">
         <item>0|新消息通知|%s|0</item>
-        <item>1|声音提示|0</item>
-        <item>2|震动提示|0</item>
+        <item>1|声音提示|%d</item>
+        <item>2|震动提示|%d</item>
     </string-array>
     <string name="ui_text_setting_messaging_fragment_title">消息通知</string>
 

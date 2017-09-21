@@ -103,11 +103,7 @@ public class NimApplication extends BaseActivityManagedApplication {
         return getString(R.string.netease_nim_app_key_beta);
     }
 
-    // 如果返回值为 null，则全部使用默认参数。
-    private SDKOptions options() {
-        SDKOptions options = new SDKOptions();
-        options.appKey = getAppKey();
-        log(format("app key: %s, isForTest: %s, is release: %s", options.appKey, isForTest, BuildConfig.RELEASEABLE));
+    private static StatusBarNotificationConfig getNotificationConfig() {
         // 如果将新消息通知提醒托管给 SDK 完成，需要添加以下配置。否则无需设置。
         StatusBarNotificationConfig config = new StatusBarNotificationConfig();
         config.notificationEntrance = WelcomeActivity.class; // 点击通知栏跳转到该Activity
@@ -116,9 +112,22 @@ public class NimApplication extends BaseActivityManagedApplication {
         config.ledARGB = Color.GREEN;
         config.ledOnMs = 1000;
         config.ledOffMs = 1500;
+        // 是否需要震动
+        config.vibrate = nimVibrate;
+        // 是否需要响铃
+        config.ring = nimSound;
         // 通知铃声的uri字符串
         config.notificationSound = "android.resource://com.leadcom.android.isp/raw/msg";
-        options.statusBarNotificationConfig = config;
+        return config;
+    }
+
+    // 如果返回值为 null，则全部使用默认参数。
+    private SDKOptions options() {
+        SDKOptions options = new SDKOptions();
+        options.appKey = getAppKey();
+        log(format("app key: %s, isForTest: %s, is release: %s", options.appKey, isForTest, BuildConfig.RELEASEABLE));
+
+        options.statusBarNotificationConfig = getNotificationConfig();
 
         // 配置保存图片，文件，log 等数据的目录
         // 如果 options 中没有设置这个值，SDK 会使用下面代码示例中的位置作为 SDK 的数据目录。
@@ -176,10 +185,42 @@ public class NimApplication extends BaseActivityManagedApplication {
                 // 设置当前登录者信息
                 NimSessionHelper.setAccount(account);
             }
+            readNimMessageNotify(account);
             return new LoginInfo(account, token);
         } else {
             return null;
         }
+    }
+
+    /**
+     * Nim 声音、震动开关
+     */
+    public static boolean nimSound = false, nimVibrate = false;
+
+    /**
+     * 读取本地设置的消息通知方式
+     */
+    public static void readNimMessageNotify(String account) {
+        if (isEmpty(account)) {
+            nimSound = true;
+            nimVibrate = true;
+            return;
+        }
+        String sound = PreferenceHelper.get(StringHelper.getString(R.string.pf_last_login_user_sound, account), "");
+        String vibrate = PreferenceHelper.get(StringHelper.getString(R.string.pf_last_login_user_vibrate, account), "");
+        nimSound = isEmpty(sound) || sound.equals("1");
+        nimVibrate = isEmpty(vibrate) || vibrate.equals("1");
+    }
+
+    /**
+     * 重置 Nim 消息通知方式
+     */
+    public static void resetNimMessageNotify(boolean sound, boolean vibrate) {
+        nimSound = sound;
+        nimVibrate = vibrate;
+        PreferenceHelper.save(StringHelper.getString(R.string.pf_last_login_user_sound, Cache.cache().userId), (sound ? "1" : "0"));
+        PreferenceHelper.save(StringHelper.getString(R.string.pf_last_login_user_vibrate, Cache.cache().userId), (vibrate ? "1" : "0"));
+        NIMClient.updateStatusBarNotificationConfig(getNotificationConfig());
     }
 
     private void handleUserOnlineStatus() {
