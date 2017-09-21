@@ -29,6 +29,7 @@
     <string name="ui_base_text_downloading">正在下载请稍候&#8230;</string>
     <string name="ui_base_text_downloading_fail" formatted="false">保存失败：%s</string>
     <string name="ui_base_text_downloading_image_completed">已下载到本地相册</string>
+    <string name="ui_base_text_downloading_file_completed">已下载到本地</string>
 
     <string name="ui_base_text_date_default">1970-01-01 00:00:01</string>
     <string name="ui_base_text_date_time_format">yyyy-MM-dd HH:mm:ss</string>

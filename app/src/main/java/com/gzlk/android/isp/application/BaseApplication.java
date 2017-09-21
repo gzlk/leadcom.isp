@@ -16,6 +16,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.etc.Cryptography;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -110,6 +111,8 @@ public class BaseApplication extends Application {
     }
 
     public static final String ROOT_DIR = "leadcom";
+
+    public static final String NOMEDIA = ".nomedia";
     /**
      * 本地缓存路径
      */
@@ -215,8 +218,21 @@ public class BaseApplication extends Application {
     private synchronized void createDirs(String dirs) {
         File file = new File(dirs);
         // 查看文件目录是否存在，不存在则创建
-        if (!file.exists())
+        if (!file.exists()) {
             file.mkdirs();
+        }
+        if (dirs.endsWith(IMAGE_DIR + "/") || dirs.endsWith(HTML_DIR + "/") || dirs.endsWith(CROPPED_DIR + "/") || dirs.endsWith(CAMERA_DIR + "/")) {
+            // 本地图片文件夹增加 .nomedia
+            String path = dirs + NOMEDIA;
+            File f = new File(path);
+            if (!f.exists()) {
+                try {
+                    f.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**

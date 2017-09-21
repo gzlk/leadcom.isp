@@ -2,7 +2,6 @@ package com.gzlk.android.isp.fragment.individual;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.method.ScrollingMovementMethod;
@@ -28,18 +27,14 @@ import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
+import com.gzlk.android.isp.task.CopyLocalFileTask;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CustomTextView;
-import com.hlk.hlklib.tasks.AsyncedTask;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -351,7 +346,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
         String local = HttpHelper.helper().getLocalFilePath(url, App.IMAGE_DIR);
         File file = new File(local);
         if (file.exists()) {
-            new CopyTo().exec(url, local);
+            new CopyLocalFileTask().exec(url, local);
         } else {
             // 文件不存在则重新下载
             downloadFile(url);
@@ -364,67 +359,6 @@ public class MomentImagesFragment extends BaseMomentFragment {
         if (success) {
             // 下载成功之后重新另存到外置SD卡公共Picture目录
             save();
-        }
-    }
-
-    private class CopyTo extends AsyncedTask<String, Integer, Boolean> {
-
-        private String error = "";
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            String url = params[0];
-            String local = params[1];
-            String name = url.substring(url.lastIndexOf('/'));
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/" + App.ROOT_DIR;
-            try {
-                File f = new File(path);
-                if (!f.exists()) {
-                    if (!f.mkdirs()) {
-                        error = StringHelper.getString(R.string.ui_base_text_dictionary_create_fail);
-                        return false;
-                    }
-                }
-
-                File file = new File(local);
-                if (file.exists()) {
-                    long totalLength = file.length();
-                    InputStream inputStream = new FileInputStream(local);
-                    String out = path + name;
-                    FileOutputStream fos = new FileOutputStream(out);
-                    byte[] buffer = new byte[4096];
-                    int handled = 0;
-                    int read;
-                    while ((read = inputStream.read(buffer)) != -1) {
-                        handled += read;
-                        fos.write(buffer, 0, read);
-                        publishProgress((int) (handled * 1.0 / totalLength * 100));
-                    }
-                    fos.close();
-                    inputStream.close();
-                    return true;
-                } else {
-                    error = StringHelper.getString(R.string.ui_base_text_file_not_exists);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                error = e.getMessage();
-            }
-            return false;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            if (result) {
-                ToastHelper.make().showMsg(R.string.ui_base_text_downloading_image_completed);
-            } else {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_downloading_fail, error));
-            }
         }
     }
 
