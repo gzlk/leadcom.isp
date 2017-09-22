@@ -4,6 +4,7 @@ import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
@@ -51,6 +52,18 @@ public class Collection extends Model {
          * 附件
          */
         int ATTACHMENT = 5;
+        /**
+         * 音频
+         */
+        int AUDIO = 6;
+        /**
+         * 位置
+         */
+        int POSITION = 7;
+        /**
+         * 分享
+         */
+        int MOMENT = 8;
         /**
          * 连接
          */
@@ -114,9 +127,20 @@ public class Collection extends Model {
     //来源的模块标题(对应来源模块的title,个人动态没有标题,该属性为Null)
     @Column(Field.SourceTitle)
     private String sourceTitle;
-    //收藏的内容(文本,图片,语音,附件,链接)
+    //收藏的内容(文本,文档,图片,视频,附件,音频)
     @Column(Archive.Field.Content)
     private String content;
+    //个人档案
+    @Ignore
+    private Archive userDoc;
+    //组织档案
+    @Ignore
+    private Archive groDoc;
+    //个人动态
+    @Ignore
+    private Moment userMmt;
+    @Ignore
+    private Position position;         //地理位置(经度,纬度,海拔,位置名称)
     //收藏人ID
     @Column(Model.Field.UserId)
     private String userId;
@@ -181,6 +205,38 @@ public class Collection extends Model {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Archive getUserDoc() {
+        return userDoc;
+    }
+
+    public void setUserDoc(Archive userDoc) {
+        this.userDoc = userDoc;
+    }
+
+    public Archive getGroDoc() {
+        return groDoc;
+    }
+
+    public void setGroDoc(Archive groDoc) {
+        this.groDoc = groDoc;
+    }
+
+    public Moment getUserMmt() {
+        return userMmt;
+    }
+
+    public void setUserMmt(Moment userMmt) {
+        this.userMmt = userMmt;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
     public String getUserId() {
