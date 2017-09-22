@@ -12,7 +12,6 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.litesuits.http.data.TypeToken;
 import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
@@ -129,6 +128,8 @@ public class Attachment extends Model {
 
         return R.color.colorPrimary;
     }
+
+    private static final String OFFICE_EXTENSIONS = "pdf,doc,docx,dot,dotx,ppt,pptx,pot,potx,pps,ppsx,xls,xlsx,xla,xlam,xlc,xlm,xlt,xltx,xlw,";
 
     /**
      * 根据后缀名判断是否是 Office 文档

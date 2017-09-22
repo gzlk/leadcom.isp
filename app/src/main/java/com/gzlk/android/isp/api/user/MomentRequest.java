@@ -156,6 +156,6 @@ public class MomentRequest extends Request<Moment> {
      */
     public void groupList(int pageNumber) {
         String params = format("%s?pageNumber=%d", url(GROUPS), pageNumber);
-        httpRequest(getRequest(SingleMoment.class, params, "", HttpMethods.Get));
+        httpRequest(getRequest(MultiMoment.class, params, "", HttpMethods.Get));
     }
 }

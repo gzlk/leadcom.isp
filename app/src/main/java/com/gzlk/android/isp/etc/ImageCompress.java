@@ -151,6 +151,15 @@ public final class ImageCompress {
         return options;
     }
 
+    private static final String IMAGE_EXTENSIONS = "jpg,jpe,jpeg,pjpeg,gif,bmp,tif,cod,ief,jfif,svg,ras," +
+            "cmx,ico,png,pnm,pbm,pgm,ppm,rgb,xbm,xpm,xwd,pic,pcx,fh,webp,xif,wbmp,npx,mdi,rlc,mmr,fst,fpx," +
+            "fbs,dxf,dwg,sub,djvu,uvi,psd,btif,ktx,g3,cgm,";
+    private static final String VIDEO_EXTENSIONS = "mp4,mp2,mpa,mpe,mpeg,mpg,mpv2,mov,movie,qt,lsf,lsx,asf," +
+            "asr,asx,movie,wvx,wm,wmx,wmv,avi,3g2,3gp,ts,m4v,fli,webm,viv,uvu,pyv,mxu,fvt,uvv,uvs,uvp,uvm," +
+            "uvh,ogv,mj2,jpm,jpgv,h264,h263,h261,rm,flv,f4v";
+    private static final String AUDIO_EXTENSIONS = "amr,aac,wav,au,snd,mid,rmi,rmp,mp3,aif,aifc,aiff,m3u,ra," +
+            "ram,wma,wax,weba,rip,ecelp9600,ecelp7470,ecelp4800,pya,lvp,dts,dtshd,dra,eol,uva,oga,mpga,mp4a,adp,";
+
     /**
      * 指定路径的文件是否为图片格式
      */
@@ -165,7 +174,7 @@ public final class ImageCompress {
             case "tiff":
                 return true;
             default:
-                return false;
+                return IMAGE_EXTENSIONS.contains(extension + ",");
         }
     }
 
@@ -191,7 +200,7 @@ public final class ImageCompress {
             case "mov":
                 return true;
         }
-        return false;
+        return VIDEO_EXTENSIONS.contains(extension + ",");
     }
 
     /**

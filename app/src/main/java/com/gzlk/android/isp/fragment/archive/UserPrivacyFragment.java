@@ -139,16 +139,22 @@ public class UserPrivacyFragment extends BaseSwipeRefreshSupportFragment {
 
     private void resetSingleSelected(int index) {
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
-            Security security = mAdapter.get(i);
-            security.setSelected(security.getIndex() == index);
-            security.setLocalDeleted(security.isSelected());
-            mAdapter.notifyItemChanged(i);
+            if (i != index) {
+                Security security = mAdapter.get(i);
+                security.setSelected(false);
+                security.setLocalDeleted(security.isSelected());
+                mAdapter.notifyItemChanged(i);
+            }
         }
     }
 
     private OnViewHolderClickListener viewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
+            Security security = mAdapter.get(index);
+            security.setSelectable(!security.isSelected());
+            security.setLocalDeleted(security.isSelected());
+            mAdapter.notifyItemChanged(index);
             resetSingleSelected(index);
         }
     };
