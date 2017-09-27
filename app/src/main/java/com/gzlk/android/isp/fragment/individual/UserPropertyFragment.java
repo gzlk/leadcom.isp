@@ -185,7 +185,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     @Override
     protected void onBottomButtonClicked() {
         // 查看档案
-        ToastHelper.make().showMsg("目前没有查看个人档案的UI页面");
+        IndividualArchivesFragment.open(this, mQueryId, ACTIVITY_BASE_REQUEST);
+        //ToastHelper.make().showMsg("目前没有查看个人档案的UI页面");
     }
 
     private View selfDefineDialog, selfShown;
@@ -373,6 +374,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     }
 
     private void checkUser(final User user) {
+        // 自己需要在这里查看自己的个人档案吗？
+        toArchive.setVisibility(View.VISIBLE);
         // 自己和自己不能聊天
         //toChat.setVisibility(isMe() ? View.GONE : View.VISIBLE);
         toChat.setVisibility(View.GONE);

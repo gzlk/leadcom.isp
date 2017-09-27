@@ -45,6 +45,10 @@
     <string name="ui_individual_moment_list_loading">正在加载动态列表，请稍候&#8230;</string>
     <string name="ui_individual_moment_comment_hint">输入评论内容</string>
 
+    <string name="ui_individual_archive_list_fragment_title" formatted="false">%s的公开档案</string>
+    <string name="ui_individual_archive_list_loading">正在加载个人档案列表，请稍候&#78230;</string>
+    <string name="ui_individual_archive_list_nothing">暂时没有更多公开的个人档案</string>
+
     <!--个人设置功能列表-->
     <string-array name="ui_individual_settings">
         <item>0|修改密码|</item>

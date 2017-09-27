@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model.user;
 import android.text.TextUtils;
 
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
@@ -34,6 +35,10 @@ public class User extends Model {
          * 用户隐私设置
          */
         public static final String PRIVACY = "privacy";
+    }
+
+    public static User get(String userId) {
+        return new Dao<>(User.class).query(userId);
     }
 
     /**
