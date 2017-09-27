@@ -70,6 +70,7 @@ public class IndividualArchivesFragment extends BaseSwipeRefreshSupportFragment 
     @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
+        fetchingArchives();
     }
 
     @Override
