@@ -46,7 +46,7 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
         userHeader.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
 
             @Override
-            public void onImageClick(String url) {
+            public void onImageClick(ImageDisplayer displayer, String url) {
                 openUserProperty(Cache.cache().userId);
             }
         });

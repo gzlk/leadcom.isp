@@ -13,7 +13,6 @@ import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.SimpleUser;
-import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
@@ -47,13 +46,13 @@ public class FullTextQueryViewHolder extends BaseViewHolder {
         imageSize = getDimension(R.dimen.ui_base_user_header_image_size);
         imageOval.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
-            public void onImageClick(String url) {
+            public void onImageClick(ImageDisplayer displayer, String url) {
                 rootClick();
             }
         });
         imageRound.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
-            public void onImageClick(String url) {
+            public void onImageClick(ImageDisplayer displayer, String url) {
                 rootClick();
             }
         });

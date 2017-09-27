@@ -18,6 +18,7 @@ import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentPraiseViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
@@ -284,11 +285,21 @@ public class MomentDetailsFragment extends BaseMomentFragment {
 
     private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
-        public void onImageClick(String url) {
+        public void onImageClick(ImageDisplayer displayer, String url) {
             int index = mMoment.getImage().indexOf(url);
             String json = StringHelper.replaceJson(Json.gson().toJson(mMoment.getImage(), new TypeToken<ArrayList<String>>() {
             }.getType()), false);
             openActivity(ImageViewerFragment.class.getName(), format("%d,%s", index, json), false, false, true);
+        }
+    };
+
+    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Model model = mAdapter.get(index);
+            if (model instanceof Comment) {
+                UserPropertyFragment.open(MomentDetailsFragment.this, ((Comment) model).getUserId());
+            }
         }
     };
 
@@ -312,8 +323,11 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                         praiseViewHolder.showContent(likes);
                     }
                     return praiseViewHolder;
+                default:
+                    MomentCommentViewHolder mcv = new MomentCommentViewHolder(itemView, MomentDetailsFragment.this);
+                    mcv.addOnViewHolderClickListener(onViewHolderClickListener);
+                    return mcv;
             }
-            return new MomentCommentViewHolder(itemView, MomentDetailsFragment.this);
         }
 
         @Override

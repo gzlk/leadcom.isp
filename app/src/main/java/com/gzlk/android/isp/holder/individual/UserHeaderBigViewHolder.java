@@ -48,7 +48,7 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         ((BaseTransparentSupportFragment) fragment).tryPaddingContent(itemView, false);
         headerImage.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
-            public void onImageClick(String url) {
+            public void onImageClick(ImageDisplayer displayer, String url) {
                 openImageSelector();
             }
         });

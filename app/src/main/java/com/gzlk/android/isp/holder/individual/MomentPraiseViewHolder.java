@@ -5,6 +5,8 @@ import android.view.View;
 import com.google.android.flexbox.FlexboxLayout;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
@@ -67,6 +69,21 @@ public class MomentPraiseViewHolder extends BaseViewHolder {
             params.bottomMargin = margin;
             params.topMargin = margin;
             displayer.setLayoutParams(params);
+            displayer.addOnImageClickListener(onImageClickListener);
+            displayer.setTag(R.id.hlklib_ids_custom_view_click_tag, like.getUserId());
         }
     }
+
+    private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
+
+        @Override
+        public void onImageClick(ImageDisplayer displayer, String url) {
+            String clicked = (String) displayer.getTag(R.id.hlklib_ids_custom_view_click_tag);
+            if (!isEmpty(url)) {
+                UserPropertyFragment.open(fragment(), clicked);
+            } else {
+                ToastHelper.make().showMsg(R.string.ui_text_user_information_blank_or_error_id);
+            }
+        }
+    };
 }

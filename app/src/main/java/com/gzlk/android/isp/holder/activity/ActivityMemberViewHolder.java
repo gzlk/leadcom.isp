@@ -42,7 +42,7 @@ public class ActivityMemberViewHolder extends BaseViewHolder {
         size = getDimension(R.dimen.ui_static_dp_70);
         ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
             @Override
-            public void onImageClick(String url) {
+            public void onImageClick(ImageDisplayer displayer, String url) {
                 if (null != mOnViewHolderClickListener) {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }

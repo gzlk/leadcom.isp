@@ -158,6 +158,7 @@
     <string name="ui_text_user_information_loading_updating">正在更改您的信息，请稍候&#8230;</string>
     <string name="ui_text_user_information_to_archives">查看档案</string>
     <string name="ui_text_user_information_to_chat">发消息</string>
+    <string name="ui_text_user_information_blank_or_error_id">无效的用户id</string>
     <string name="ui_text_user_property_self_defined_property">自定义介绍</string>
     <string name="ui_text_user_property_self_defined_dialog_title">增加个人名片介绍栏目</string>
     <string name="ui_text_user_property_self_defined_property_name_hint">标题(限8字)</string>

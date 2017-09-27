@@ -1,8 +1,6 @@
 package com.gzlk.android.isp.holder.individual;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.gzlk.android.isp.R;

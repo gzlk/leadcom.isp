@@ -322,7 +322,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     // 照片预览点击
     private ImageDisplayer.OnImageClickListener imagePreviewClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
-        public void onImageClick(String url) {
+        public void onImageClick(ImageDisplayer displayer, String url) {
             // 相册预览
             //startGalleryPreview(getWaitingForUploadFiles().indexOf(url));
             startGalleryPreview(waitingFroCompressImages.indexOf(url));

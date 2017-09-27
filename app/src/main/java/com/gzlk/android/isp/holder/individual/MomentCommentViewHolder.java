@@ -45,6 +45,14 @@ public class MomentCommentViewHolder extends BaseViewHolder {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageSize = getDimension(R.dimen.ui_base_user_header_image_size_small);
+        header.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(ImageDisplayer displayer, String url) {
+                if (null != mOnViewHolderClickListener) {
+                    mOnViewHolderClickListener.onClick(getAdapterPosition());
+                }
+            }
+        });
     }
 
     public void showIcon(boolean shown) {
@@ -60,7 +68,7 @@ public class MomentCommentViewHolder extends BaseViewHolder {
     }
 
     @Click({R.id.ui_holder_view_moment_comment_container})
-    private void elementClick(View view){
+    private void elementClick(View view) {
 
     }
 }

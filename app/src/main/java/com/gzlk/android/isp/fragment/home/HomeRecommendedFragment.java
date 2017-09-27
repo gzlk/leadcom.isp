@@ -210,7 +210,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
 
     private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
-        public void onImageClick(String url) {
+        public void onImageClick(ImageDisplayer displayer, String url) {
             FocusImage image = getImage(url);
             if (null != image) {
                 String type = image.getType();

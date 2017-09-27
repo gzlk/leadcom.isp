@@ -367,7 +367,7 @@ public class ImageDisplayer extends RelativeLayout {
             if (v == deleteContainer && null != deleteClickListener) {
                 deleteClickListener.onDeleteClick(displayUrl);
             } else if (v == imageView && null != imageClickListener) {
-                imageClickListener.onImageClick(displayUrl);
+                imageClickListener.onImageClick(ImageDisplayer.this, displayUrl);
             } else if (v == selectContainer && null != selectorClickListener) {
                 setSelected(!selected);
                 selectorClickListener.onSelectorClick(displayUrl, selected);
@@ -391,7 +391,7 @@ public class ImageDisplayer extends RelativeLayout {
         /**
          * 图片点击了
          */
-        void onImageClick(String url);
+        void onImageClick(ImageDisplayer displayer, String url);
     }
 
     private OnSelectorClickListener selectorClickListener;

@@ -69,7 +69,7 @@ public class ArchiveViewHolder extends BaseViewHolder {
         imageHeight = getDimension(R.dimen.ui_static_dp_70);
         documentContentImage.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
-            public void onImageClick(String url) {
+            public void onImageClick(ImageDisplayer displayer, String url) {
                 if (null != mOnViewHolderClickListener) {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }

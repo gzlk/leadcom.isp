@@ -184,7 +184,7 @@ public class VoteOptionViewHolder extends BaseViewHolder {
 
     private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
-        public void onImageClick(String url) {
+        public void onImageClick(ImageDisplayer displayer, String url) {
             handleToVoteItemDetails();
         }
     };

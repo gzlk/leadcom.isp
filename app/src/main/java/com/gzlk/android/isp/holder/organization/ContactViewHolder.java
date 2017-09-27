@@ -71,7 +71,7 @@ public class ContactViewHolder extends BaseViewHolder {
         imageSize = getDimension(R.dimen.ui_static_dp_30);
         headerView.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
-            public void onImageClick(String url) {
+            public void onImageClick(ImageDisplayer displayer, String url) {
                 if (null != mOnViewHolderClickListener) {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }
