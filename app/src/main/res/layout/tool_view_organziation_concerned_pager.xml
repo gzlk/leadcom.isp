@@ -7,7 +7,7 @@
     android:minWidth="@dimen/ui_static_dp_120"
     android:animateLayoutChanges="true"
     app:cardCornerRadius="@dimen/ui_static_dp_10"
-    app:cardElevation="@dimen/ui_static_dp_1">
+    app:cardElevation="@dimen/ui_base_translationZ_small">
 
     <LinearLayout
         android:id="@+id/ui_tool_organization_concerned_pager_container"
