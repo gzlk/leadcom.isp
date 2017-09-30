@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ui_base_share_dialog_title">分享到：</string>
+
+    <string name="ui_base_share_dialog_to_qq">QQ</string>
+    <string name="ui_base_share_dialog_to_qzone">QQ空间</string>
+    <string name="ui_base_share_dialog_to_wx_chat">微信</string>
+    <string name="ui_base_share_dialog_to_wx_moment">朋友圈</string>
+    <string name="ui_base_share_dialog_to_weibo">微博</string>
+
+    <dimen name="ui_base_share_dialog_button_corner_size">@dimen/ui_static_dp_8</dimen>
+    <dimen name="ui_base_share_dialog_button_icon_margin">@dimen/ui_static_dp_10</dimen>
+    <dimen name="ui_base_share_dialog_icon_text_size">@dimen/ui_static_sp_30</dimen>
+    <dimen name="ui_base_share_dialog_icon_container">@dimen/ui_static_sp_40</dimen>
+
+    <string name="ui_base_share_text_share_to_qq_complete">已分享到QQ</string>
+    <string name="ui_base_share_text_share_to_qq_cancel">已取消分享到QQ</string>
+    <string name="ui_base_share_text_share_to_qq_failed" formatted="false">分享到QQ失败：%s(%d)，%s</string>
+
+    <string name="ui_base_share_text_share_to_qzone_complete">已分享到QQ空间</string>
+    <string name="ui_base_share_text_share_to_qzone_cancel">取消分享到QQ空间</string>
+    <string name="ui_base_share_text_share_to_qzone_failed" formatted="false">分享到QQ空间失败：%s(%d)，%s</string>
+</resources>

@@ -33,6 +33,7 @@ android {
         resValue "string", "netease_nim_app_key", "e0535dd95633dfa23a6aba3a06628a55"
         resValue "string", "netease_nim_app_key_beta", "3c9e1b9e424ccd215d6a828602d20407"
         resValue "string", "netease_nim_app_key_test", "3da0be9ec7ac70fea20f94a8fa8c84ce"
+        resValue "string", "tencent_app_id_qq", "tencent1105414666"
     }
     productFlavors {
         leadcom {}
@@ -115,6 +116,8 @@ repositories {
     }
     // 视频播放器
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
+    // 微博SDK
+    maven { url "https://dl.bintray.com/thelasterstar/maven/" }
     flatDir {
         dirs 'libs'
     }
@@ -152,6 +155,12 @@ dependencies {
     compile group: 'com.sun.mail', name: 'android-mail', version: '1.6.0-rc2'
     // https://mvnrepository.com/artifact/com.sun.mail/android-activation
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
+
+    // 微博SDK
+    compile 'com.sina.weibo.sdk:core:4.1.3:openDefaultRelease@aar'
+
+    // 微信SDK
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
 
     // apache poi office 套件
     /**

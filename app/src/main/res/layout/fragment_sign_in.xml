@@ -212,7 +212,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ui_base_dimen_margin_padding"
-                android:text="@string/ui_icon_weixin"
+                android:text="@string/ui_icon_wx_chat"
                 android:textColor="@color/color_3eb135"
                 android:textSize="@dimen/ui_static_sp_50" />
         </LinearLayout>

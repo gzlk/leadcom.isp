@@ -21,6 +21,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.share.ShareToQQ;
 import com.hlk.hlklib.etc.Utility;
 
 import java.util.Locale;
@@ -341,6 +342,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
     @Override
     public final void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (SHAREABLE) {
+            ShareToQQ.onActivityResult(requestCode, resultCode, data);
+        }
         if (resultCode == Activity.RESULT_OK) {
             onActivityResult(requestCode, data);
         }
@@ -351,6 +355,69 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * Activity result事件，子类重载此方法以获取自己的处理方式
      */
     public void onActivityResult(int requestCode, Intent data) {
+    }
+
+    /**
+     * 是否可以分享到第三方媒体
+     */
+    protected boolean SHAREABLE = false;
+    // 分享
+    private View shareDialog;
+
+    /**
+     * 打开分享选择对话框
+     */
+    protected void openShareDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == shareDialog) {
+                    shareDialog = View.inflate(Activity(), R.layout.popup_dialog_share, null);
+                }
+                return shareDialog;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{
+                        R.id.ui_dialog_share_to_qq,
+                        R.id.ui_dialog_share_to_qzone,
+                        R.id.ui_dialog_share_to_wx_chat,
+                        R.id.ui_dialog_share_to_wx_moment,
+                        R.id.ui_dialog_share_to_weibo
+                };
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_dialog_share_to_qq:
+                        shareToQQ();
+                        break;
+                    case R.id.ui_dialog_share_to_qzone:
+                        shareToQZone();
+                        break;
+                    case R.id.ui_dialog_share_to_wx_chat:
+                        break;
+                    case R.id.ui_dialog_share_to_wx_moment:
+                        break;
+                    case R.id.ui_dialog_share_to_weibo:
+                        break;
+                }
+                return true;
+            }
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.TYPE_SLID).show();
+    }
+
+    protected void shareToQQ() {
+    }
+
+    protected void shareToQZone() {
     }
 
     /**

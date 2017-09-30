@@ -27,6 +27,7 @@ import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
+import com.gzlk.android.isp.share.ShareToQQ;
 import com.gzlk.android.isp.task.CopyLocalFileTask;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
@@ -293,6 +294,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
             public int[] clickEventHandleIds() {
                 return new int[]{R.id.ui_dialog_moment_details_button_privacy,
                         R.id.ui_dialog_moment_details_button_favorite,
+                        R.id.ui_dialog_moment_details_button_share,
                         R.id.ui_dialog_moment_details_button_save,
                         R.id.ui_dialog_moment_details_button_delete};
             }
@@ -313,6 +315,9 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 // 收藏单张图片
                 tryCollection();
                 break;
+            case R.id.ui_dialog_moment_details_button_share:
+                openShareDialog();
+                break;
             case R.id.ui_dialog_moment_details_button_save:
                 // 保存单张图片到本地
                 save();
@@ -321,6 +326,16 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 deleteMoment();
                 break;
         }
+    }
+
+    @Override
+    protected void shareToQQ() {
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "", "", "", images.get(selected), null);
+    }
+
+    @Override
+    protected void shareToQZone() {
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), mMoment.getContent(), "", "http://www.baidu.com", "", mMoment.getImage());
     }
 
     @SuppressWarnings("ConstantConditions")
