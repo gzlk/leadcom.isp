@@ -129,7 +129,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
     }
 
     private View imageDialogView;
-    private ClearEditText imageAlt, imageUrl;
+    private ClearEditText imageAlt, imageUrl, imageWidth, imageHeight;
 
     private void openImageDialog() {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {

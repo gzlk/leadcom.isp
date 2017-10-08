@@ -12,6 +12,8 @@
     <string name="ui_text_archive_creator_editor_image_select_dialog_title">插入图片</string>
     <string name="ui_text_archive_creator_editor_image_select_image_alt">图片名称</string>
     <string name="ui_text_archive_creator_editor_image_select_image_url">地址(选择图片或粘贴网络地址)</string>
+    <string name="ui_text_archive_creator_editor_image_select_width">显示宽度(px)</string>
+    <string name="ui_text_archive_creator_editor_image_select_height">显示高度(px)</string>
     <string name="ui_text_archive_creator_editor_image_select_image_choose_local">浏览&#8230;</string>
     <string name="ui_text_archive_creator_editor_image_select_url_error">请选择本地图片或粘贴网络图片地址</string>
     <string name="ui_text_archive_creator_editor_image_selected_nothing">请选择本地图片</string>

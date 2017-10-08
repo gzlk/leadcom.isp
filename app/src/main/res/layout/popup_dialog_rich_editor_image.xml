@@ -79,6 +79,41 @@
                 app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
                 app:cet_edit_text_size="@dimen/ui_base_text_size_small" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+                android:orientation="horizontal">
+
+                <com.hlk.hlklib.lib.view.ClearEditText
+                    android:id="@+id/ui_popup_rich_editor_image_width"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                    android:layout_weight="1"
+                    app:cet_edit_active_border="@color/color_faaa2d"
+                    app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
+                    app:cet_edit_hint="@string/ui_text_archive_creator_editor_image_select_width"
+                    app:cet_edit_input_type="number"
+                    app:cet_edit_normal_border="@color/textColorHintLight"
+                    app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
+                    app:cet_edit_text_size="@dimen/ui_base_text_size_small"
+                    app:cet_edit_value_extract_regex="@string/regex_normal_input_filter_num_only" />
+
+                <com.hlk.hlklib.lib.view.ClearEditText
+                    android:id="@+id/ui_popup_rich_editor_image_height"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cet_edit_active_border="@color/color_faaa2d"
+                    app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
+                    app:cet_edit_hint="@string/ui_text_archive_creator_editor_image_select_height"
+                    app:cet_edit_input_type="number"
+                    app:cet_edit_normal_border="@color/textColorHintLight"
+                    app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
+                    app:cet_edit_text_size="@dimen/ui_base_text_size_small"
+                    app:cet_edit_value_extract_regex="@string/regex_normal_input_filter_num_only" />
+            </LinearLayout>
         </LinearLayout>
 
     </com.hlk.hlklib.lib.view.CorneredView>
