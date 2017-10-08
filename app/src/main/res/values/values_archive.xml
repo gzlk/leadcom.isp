@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="ui_archive_creator_selector_icon_size">@dimen/ui_static_dp_50</dimen>
+    <string name="ui_archive_creator_selector_text_title">任选一种新建档案，您说了算</string>
+    <string name="ui_archive_creator_selector_text_normal">标准</string>
+    <string name="ui_archive_creator_selector_text_image">图文</string>
+    <string name="ui_archive_creator_selector_text_attachment">附件</string>
+
+    <string name="ui_text_archive_creator_title_hint">请输入题名</string>
+    <string name="ui_text_archive_creator_content_hint">请输入正文</string>
+    <string name="ui_text_archive_creator_editor_image_select_dialog_title">插入图片</string>
+    <string name="ui_text_archive_creator_editor_image_select_image_alt">图片名称</string>
+    <string name="ui_text_archive_creator_editor_image_select_image_url">地址(选择图片或粘贴网络地址)</string>
+    <string name="ui_text_archive_creator_editor_image_select_image_choose_local">浏览&#8230;</string>
+    <string name="ui_text_archive_creator_editor_image_select_url_error">请选择本地图片或粘贴网络图片地址</string>
+    <string name="ui_text_archive_creator_editor_image_selected_nothing">请选择本地图片</string>
 </resources>

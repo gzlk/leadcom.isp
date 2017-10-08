@@ -120,6 +120,31 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
+     * 新增图文档案
+     */
+    public void add(String groupId, String title, int type, String content, String markdown, int authPublic) {
+        // groupId,type,title,authPublic
+        // {groupId,type,title,happenDate,label,[authUser],content,markdown,[office],[image],[video],[attach]},authPublic,intro,cover
+        // {title,type,happenDate,authPublic,[label],content,markdown,[office],[image],[video],[attach],intro,cover,[authUser],[authGro]}
+        boolean isIndividual = isEmpty(groupId);
+        JSONObject object = new JSONObject();
+        try {
+            object.put("title", title)
+                    .put("type", type)
+                    .put("authPublic", authPublic)
+                    .put("content", content)
+                    .put("markdown", markdown);
+            if (!isIndividual) {
+                object.put("groupId", groupId);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleArchive.class, isIndividual ? url(ADD) : group(ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
      * 新增个人档案
      *
      * @param cover        封面

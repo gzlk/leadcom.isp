@@ -101,4 +101,31 @@
     <string name="ui_icon_material_comment">&#xE0B9;</string>
     <string name="ui_icon_material_content_paste">&#xE14F;</string>
 
+    <!--富文本编辑器控制按钮-->
+    <string name="ui_icon_rich_editor_undo">&#xe682;</string>
+    <string name="ui_icon_rich_editor_redo">&#xe69c;</string>
+    <string name="ui_icon_rich_editor_font">&#xe692;</string>
+    <string name="ui_icon_rich_editor_image">&#xe62b;</string>
+    <string name="ui_icon_rich_editor_link">&#xe62a;</string>
+    <string name="ui_icon_rich_editor_movie">&#xe686;</string>
+    <string name="ui_icon_rich_editor_music">&#xe641;</string>
+    <string name="ui_icon_rich_editor_quote">&#xe62f;</string>
+    <string name="ui_icon_rich_editor_ordered">&#xe862;</string>
+    <string name="ui_icon_rich_editor_unordered">&#xe64a;</string>
+    <string name="ui_icon_rich_editor_heading_1">&#xe62d;</string>
+    <string name="ui_icon_rich_editor_heading_2">&#xe632;</string>
+    <string name="ui_icon_rich_editor_heading_3">&#xe633;</string>
+    <string name="ui_icon_rich_editor_heading_4">&#xe635;</string>
+    <string name="ui_icon_rich_editor_heading_5">&#xe637;</string>
+    <string name="ui_icon_rich_editor_heading_6">&#xe63a;</string>
+    <string name="ui_icon_rich_editor_bold">&#xe61d;</string>
+    <string name="ui_icon_rich_editor_italic">&#xe631;</string>
+    <string name="ui_icon_rich_editor_underline">&#xe639;</string>
+    <string name="ui_icon_rich_editor_strike_through">&#xe672;</string>
+    <string name="ui_icon_rich_editor_superscript">&#xe671;</string>
+    <string name="ui_icon_rich_editor_subscript">&#xe665;</string>
+    <string name="ui_icon_rich_editor_align_left">&#xe780;</string>
+    <string name="ui_icon_rich_editor_align_center">&#xe627;</string>
+    <string name="ui_icon_rich_editor_align_right">&#xe77e;</string>
+
 </resources>

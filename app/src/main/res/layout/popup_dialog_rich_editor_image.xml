@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_dialog_button_cancel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        app:cv_border_size="@dimen/ui_static_dp_zero"
+        app:cv_left_top_corner="@dimen/ui_base_dimen_margin_padding"
+        app:cv_right_top_corner="@dimen/ui_base_dimen_margin_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ui_text_archive_creator_editor_image_select_dialog_title" />
+
+            <LinearLayout
+                android:id="@+id/ui_dialog_button_closer"
+                android:layout_width="@dimen/ui_static_dp_30"
+                android:layout_height="@dimen/ui_static_dp_30"
+                android:background="@drawable/ui_background_oval_caution"
+                android:gravity="center">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/ui_static_dp_5"
+                    android:rotation="45"
+                    android:text="@string/ui_icon_add"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <com.hlk.hlklib.lib.view.ClearEditText
+                android:id="@+id/ui_popup_rich_editor_image_alt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cet_edit_active_border="@color/color_faaa2d"
+                app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
+                app:cet_edit_hint="@string/ui_text_archive_creator_editor_image_select_image_alt"
+                app:cet_edit_normal_border="@color/textColorHintLight"
+                app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
+                app:cet_edit_text_size="@dimen/ui_base_text_size_small" />
+
+            <com.hlk.hlklib.lib.view.ClearEditText
+                android:id="@+id/ui_popup_rich_editor_image_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+                app:cet_edit_active_border="@color/color_faaa2d"
+                app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
+                app:cet_edit_hint="@string/ui_text_archive_creator_editor_image_select_image_url"
+                app:cet_edit_normal_border="@color/textColorHintLight"
+                app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
+                app:cet_edit_text_size="@dimen/ui_base_text_size_small" />
+
+        </LinearLayout>
+
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal">
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_popup_rich_editor_image_navigate"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/ui_text_archive_creator_editor_image_select_image_choose_local"
+            app:active_color="@color/buttonDialogActiveColor"
+            app:left_bottom_corner_size="@dimen/ui_base_dimen_margin_padding"
+            app:normal_color="@color/buttonDialogNormalColor" />
+
+        <include layout="@layout/tool_view_half_line_vertical" />
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_dialog_button_confirm"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/ui_base_text_confirm"
+            android:textColor="@color/ui_text_normal_primary"
+            app:active_color="@color/buttonDialogActiveColor"
+            app:normal_color="@color/buttonDialogNormalColor"
+            app:right_bottom_corner_size="@dimen/ui_base_dimen_margin_padding" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2" />
+</LinearLayout>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_archive_creator_font_style_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <include
+        android:id="@+id/ui_archive_creator_font_style_top_line"
+        layout="@layout/tool_view_half_line_horizontal" />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:flexWrap="wrap">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_bold"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_bold"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_italic"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_italic"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_underline"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_underline"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_strike_through"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_strike_through"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_superscript"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_superscript"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_subscript"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_subscript"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_align_left"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_align_left"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_align_center"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_align_center"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_align_right"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_align_right"
+            android:textColor="@color/textColorHint" />
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_heading1"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_heading_1"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_heading2"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_heading_2"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_heading3"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_heading_3"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_heading4"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_heading_4"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_heading5"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_heading_5"
+            android:textColor="@color/textColorHint" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_archive_creator_action_heading6"
+            android:layout_width="@dimen/ui_base_dimen_button_height"
+            android:layout_height="@dimen/ui_base_dimen_button_height"
+            android:gravity="center"
+            android:text="@string/ui_icon_rich_editor_heading_6"
+            android:textColor="@color/textColorHint" />
+
+    </LinearLayout>
+
+</LinearLayout>

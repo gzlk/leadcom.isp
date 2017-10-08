@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/ui_static_dp_2">
+
+    <com.hlk.hlklib.lib.view.ClearEditText
+        android:id="@+id/ui_archive_creator_rich_editor_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_dimen_button_height"
+        app:cet_edit_gravity="center_vertical"
+        app:cet_edit_hint="@string/ui_text_archive_creator_title_hint"
+        app:cet_edit_minimum_height="@dimen/ui_base_dimen_button_height"
+        app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
+        app:cet_edit_text_size="@dimen/ui_base_text_size_big" />
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <jp.wasabeef.richeditor.RichEditor
+            android:id="@+id/ui_archive_creator_rich_editor_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/ui_archive_creator_controls_layout" />
+
+        <LinearLayout
+            android:id="@+id/ui_archive_creator_controls_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+            <include layout="@layout/tool_view_rich_editor_font_style" />
+
+            <include
+                android:id="@+id/ui_archive_creator_toolbar_top_line"
+                layout="@layout/tool_view_half_line_horizontal"
+                android:visibility="gone" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ui_base_dimen_button_height"
+                android:layout_marginTop="@dimen/hlklib_chat_balloon_border_size"
+                android:background="@android:color/white"
+                android:elevation="@dimen/ui_base_translationZ"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_undo"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_undo"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_redo"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_redo"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_image"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_image"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_font"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_font"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_attachment"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_attachment"
+                        android:textColor="@color/textColorHint"
+                        android:textStyle="bold" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_video"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_movie"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_audio"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_music"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_quote"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_quote"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_link"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_link"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_ordered_list"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_ordered"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_unordered_list"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_unordered"
+                        android:textColor="@color/textColorHint" />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

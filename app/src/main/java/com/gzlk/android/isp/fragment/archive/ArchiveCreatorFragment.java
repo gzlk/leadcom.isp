@@ -362,7 +362,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_archive_creator;
+        return R.layout.fragment_archive_creator_old;
     }
 
     @Override

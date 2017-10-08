@@ -24,7 +24,7 @@ android {
         }
         manifestPlaceholders = [APP_PKG_NAME: applicationId]
         resValue "string", "app_internal_version", getInternalVersion()
-        resValue "string", "app_api_version", "v2"
+        resValue "string", "app_api_version", "v1"
         resValue "string", "app_name_default", "树脉"
         //resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
         // 正式(leadcom): e0535dd95633dfa23a6aba3a06628a55
@@ -134,6 +134,9 @@ dependencies {
     compile project(path: ':uikit')
 
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    // richeditor
+    compile(name: 'richeditor-release', ext: 'aar')
 //    compile(name: 'hlklib-1.0.6.3-SNAPSHOT-release', ext: 'aar')
 //    compile 'com.facebook.rebound:rebound:0.3.8'
 
