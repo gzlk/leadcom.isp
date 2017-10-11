@@ -176,10 +176,14 @@ public class NimApplication extends BaseActivityManagedApplication {
         return getResources().getDisplayMetrics().widthPixels / 2;
     }
 
+    private static int get(int res, int resBeta) {
+        return BuildConfig.RELEASEABLE ? resBeta : res;
+    }
+
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
     public LoginInfo loginInfo() {
-        String account = isForTest ? "xfeiffer" : PreferenceHelper.get(R.string.pf_last_login_user_id, "");
-        String token = isForTest ? "111111" : PreferenceHelper.get(R.string.pf_last_login_user_nim_token, "");
+        String account = isForTest ? "xfeiffer" : PreferenceHelper.get(get(R.string.pf_last_login_user_id, R.string.pf_last_login_user_id_beta), "");
+        String token = isForTest ? "111111" : PreferenceHelper.get(get(R.string.pf_last_login_user_nim_token, R.string.pf_last_login_user_nim_token_beta), "");
         if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
             if (account.equals(Cache.cache().userId)) {
                 // 设置当前登录者信息
@@ -206,8 +210,8 @@ public class NimApplication extends BaseActivityManagedApplication {
             nimVibrate = true;
             return;
         }
-        String sound = PreferenceHelper.get(StringHelper.getString(R.string.pf_last_login_user_sound, account), "");
-        String vibrate = PreferenceHelper.get(StringHelper.getString(R.string.pf_last_login_user_vibrate, account), "");
+        String sound = PreferenceHelper.get(StringHelper.getString(get(R.string.pf_last_login_user_sound, R.string.pf_last_login_user_sound_beta), account), "");
+        String vibrate = PreferenceHelper.get(StringHelper.getString(get(R.string.pf_last_login_user_vibrate, R.string.pf_last_login_user_vibrate_beta), account), "");
         nimSound = isEmpty(sound) || sound.equals("1");
         nimVibrate = isEmpty(vibrate) || vibrate.equals("1");
     }
@@ -218,8 +222,8 @@ public class NimApplication extends BaseActivityManagedApplication {
     public static void resetNimMessageNotify(boolean sound, boolean vibrate) {
         nimSound = sound;
         nimVibrate = vibrate;
-        PreferenceHelper.save(StringHelper.getString(R.string.pf_last_login_user_sound, Cache.cache().userId), (sound ? "1" : "0"));
-        PreferenceHelper.save(StringHelper.getString(R.string.pf_last_login_user_vibrate, Cache.cache().userId), (vibrate ? "1" : "0"));
+        PreferenceHelper.save(StringHelper.getString(get(R.string.pf_last_login_user_sound, R.string.pf_last_login_user_sound_beta), Cache.cache().userId), (sound ? "1" : "0"));
+        PreferenceHelper.save(StringHelper.getString(get(R.string.pf_last_login_user_vibrate, R.string.pf_last_login_user_vibrate_beta), Cache.cache().userId), (vibrate ? "1" : "0"));
         NIMClient.updateStatusBarNotificationConfig(getNotificationConfig());
     }
 

@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.cache;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
@@ -62,6 +63,10 @@ public class Cache {
         }
     }
 
+    private static int get(int res, int resBeta) {
+        return BuildConfig.RELEASEABLE ? resBeta : res;
+    }
+
     public void setCurrentUser(User user) {
         logUser(me, "Old");
         logUser(user, "New");
@@ -73,16 +78,16 @@ public class Cache {
             accessToken = me.getAccessToken();
             NimSessionHelper.setAccount(userId);
             // 保存网易云登录的账户和令牌
-            PreferenceHelper.save(R.string.pf_last_login_user_id, userId);
-            PreferenceHelper.save(R.string.pf_last_login_user_token, accessToken);
-            PreferenceHelper.save(R.string.pf_last_login_user_nim_token, nimToken);
+            PreferenceHelper.save(get(R.string.pf_last_login_user_id, R.string.pf_last_login_user_id_beta), userId);
+            PreferenceHelper.save(get(R.string.pf_last_login_user_token, R.string.pf_last_login_user_token_beta), accessToken);
+            PreferenceHelper.save(get(R.string.pf_last_login_user_nim_token, R.string.pf_last_login_user_nim_token_beta), nimToken);
         }
     }
 
     public void restoreCached() {
-        userId = PreferenceHelper.get(R.string.pf_last_login_user_id);
-        accessToken = PreferenceHelper.get(R.string.pf_last_login_user_token);
-        nimToken = PreferenceHelper.get(R.string.pf_last_login_user_nim_token);
+        userId = PreferenceHelper.get(get(R.string.pf_last_login_user_id, R.string.pf_last_login_user_id_beta));
+        accessToken = PreferenceHelper.get(get(R.string.pf_last_login_user_token, R.string.pf_last_login_user_token_beta));
+        nimToken = PreferenceHelper.get(get(R.string.pf_last_login_user_nim_token, R.string.pf_last_login_user_nim_token_beta));
     }
 
     /**
