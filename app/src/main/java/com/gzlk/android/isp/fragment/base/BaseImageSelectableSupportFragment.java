@@ -478,7 +478,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     /**
      * 获取从相册返回的数据中的图片地址
      */
-    private String getGalleryResultedPath(@NonNull Intent data) {
+    protected String getGalleryResultedPath(@NonNull Intent data) {
 
         Uri uri = data.getData();
         // DocumentProvider

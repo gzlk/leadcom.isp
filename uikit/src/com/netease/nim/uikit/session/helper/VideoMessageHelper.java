@@ -189,23 +189,26 @@ public class VideoMessageHelper {
      * 获取文件路径
      *
      * @param data intent数据
-     * @return
+     * @return 文件路径
      */
     private String filePathFromIntent(Intent data) {
         Uri uri = data.getData();
 
+        String path = null;
         try {
             Cursor cursor = activity.getContentResolver().query(uri, null, null, null, null);
             if (cursor == null) {
                 //miui 2.3 有可能为null
-                return uri.getPath();
+                path = uri.getPath();
             } else {
                 cursor.moveToFirst();
-                return cursor.getString(cursor.getColumnIndex("_data")); // 文件路径
+                path = cursor.getString(cursor.getColumnIndex("_data")); // 文件路径
+                cursor.close();
             }
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
         }
+        return path;
     }
 
     /**

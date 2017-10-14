@@ -263,6 +263,14 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_CROP = ACTIVITY_BASE_REQUEST + 4;
     /**
+     * 选择视频
+     */
+    public static final int REQUEST_VIDEO = ACTIVITY_BASE_REQUEST + 5;
+    /**
+     * 选择音频
+     */
+    public static final int REQUEST_MUSIC = ACTIVITY_BASE_REQUEST + 6;
+    /**
      * 新增
      */
     public static final int REQUEST_CREATE = ACTIVITY_BASE_REQUEST + 100;

@@ -9,8 +9,8 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveEditorCreatorFragment;
 import com.gzlk.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -159,7 +159,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                     } else {
                         // 新建组织档案
                         //openActivity(ArchiveCreatorFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), REQUEST_CHANGE, true, true);
-                        ArchiveCreateSelectorFragment.open(ArchivesFragment.this, mQueryId);
+                        ArchiveEditorCreatorFragment.open(ArchivesFragment.this, mQueryId);
                     }
                     break;
                 case R.id.ui_tooltip_menu_organization_document_manage:

@@ -120,22 +120,28 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 新增图文档案
+     * 新增档案
      */
-    public void add(String groupId, String title, int type, String content, String markdown, int authPublic) {
+    public void add(Archive archive) {
         // groupId,type,title,authPublic
         // {groupId,type,title,happenDate,label,[authUser],content,markdown,[office],[image],[video],[attach]},authPublic,intro,cover
         // {title,type,happenDate,authPublic,[label],content,markdown,[office],[image],[video],[attach],intro,cover,[authUser],[authGro]}
-        boolean isIndividual = isEmpty(groupId);
+        boolean isIndividual = isEmpty(archive.getGroupId());
         JSONObject object = new JSONObject();
         try {
-            object.put("title", title)
-                    .put("type", type)
-                    .put("authPublic", authPublic)
-                    .put("content", content)
-                    .put("markdown", markdown);
+            object.put("title", archive.getTitle())
+                    .put("cover", checkNull(archive.getCover()))
+                    .put("type", archive.getType())
+                    .put("authPublic", archive.getAuthPublic())
+                    .put("content", archive.getContent())
+                    .put("markdown", archive.getMarkdown())
+                    .put("label", new JSONArray(archive.getLabel()))
+                    .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
+                    .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
+                    .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
+                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())));
             if (!isIndividual) {
-                object.put("groupId", groupId);
+                object.put("groupId", archive.getGroupId());
             }
         } catch (JSONException e) {
             e.printStackTrace();

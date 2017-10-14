@@ -7,14 +7,42 @@
     <string name="ui_archive_creator_selector_text_image">图文</string>
     <string name="ui_archive_creator_selector_text_attachment">附件</string>
 
+    <string name="ui_text_archive_creator_editor_video_cover_default">http://120.25.124.199:8008/group1/M00/00/13/eBk66lng0_yAOTQYAABKQjAngPs457.png</string>
     <string name="ui_text_archive_creator_title_hint">请输入题名</string>
     <string name="ui_text_archive_creator_content_hint">请输入正文</string>
+    <string name="ui_text_archive_creator_editor_attachment_uploading">上传中&#8230;</string>
+    <string name="ui_text_archive_creator_editor_attachment_uploading_failed">上传失败，条件允许的话请更换其他上传方式</string>
     <string name="ui_text_archive_creator_editor_image_select_dialog_title">插入图片</string>
-    <string name="ui_text_archive_creator_editor_image_select_image_alt">图片名称</string>
-    <string name="ui_text_archive_creator_editor_image_select_image_url">地址(选择图片或粘贴网络地址)</string>
-    <string name="ui_text_archive_creator_editor_image_select_width">显示宽度(px)</string>
-    <string name="ui_text_archive_creator_editor_image_select_height">显示高度(px)</string>
+    <string name="ui_text_archive_creator_editor_image_select_image_alt">图片名称(选填)</string>
+    <string name="ui_text_archive_creator_editor_image_select_image_url">地址(选择图片或粘贴网络地址，必填)</string>
+    <string name="ui_text_archive_creator_editor_image_select_width">显示宽度(px，选填)</string>
+    <string name="ui_text_archive_creator_editor_image_select_width_value">480</string>
+    <string name="ui_text_archive_creator_editor_image_select_height">显示高度(px，选填)</string>
+    <string name="ui_text_archive_creator_editor_image_select_height_value">320</string>
     <string name="ui_text_archive_creator_editor_image_select_image_choose_local">浏览&#8230;</string>
     <string name="ui_text_archive_creator_editor_image_select_url_error">请选择本地图片或粘贴网络图片地址</string>
     <string name="ui_text_archive_creator_editor_image_selected_nothing">请选择本地图片</string>
+
+    <string name="ui_text_archive_creator_editor_music_select_dialog_title">插入音频</string>
+    <string name="ui_text_archive_creator_editor_music_select_dialog_url">音频文件地址(必填)</string>
+    <string name="ui_text_archive_creator_editor_music_select_dialog_url_empty">音频地址不能为空</string>
+    <string name="ui_text_archive_creator_editor_music_select_dialog_file_size">当前选择音频文件：%s</string>
+
+    <string name="ui_text_archive_creator_editor_video_select_dialog_title">插入视频</string>
+    <string name="ui_text_archive_creator_editor_video_select_dialog_cover">视频封面图片(选填)</string>
+    <string name="ui_text_archive_creator_editor_video_select_dialog_url">视频地址(必填)</string>
+    <string name="ui_text_archive_creator_editor_video_select_dialog_url_warning">
+        音频、视频类文件由于体积过于巨大，请尽量事先上传(wifi环境上传可节省您的流量)原始文件或直接使用在线地址方式
+    </string>
+    <string name="ui_text_archive_creator_editor_video_select_dialog_url_empty">视频地址不能为空</string>
+    <string name="ui_text_archive_creator_editor_video_select_dialog_file_size">当前选择视频文件：%s</string>
+
+    <string name="ui_text_archive_creator_editor_link_dialog_title">插入链接</string>
+    <string name="ui_text_archive_creator_editor_link_dialog_link_label">显示文字</string>
+    <string name="ui_text_archive_creator_editor_link_dialog_link_url">http(s)://</string>
+    <string name="ui_text_archive_creator_editor_link_dialog_invalid_input">链接的文字或地址不正确</string>
+    <string name="ui_text_archive_creator_editor_link_dialog_invalid_url">链接地址不正确</string>
+
+    <string name="ui_text_archive_creator_editor_title_invalid">档案标题不能为空</string>
+    <string name="ui_text_archive_creator_editor_content_invalid">档案内容不能为空</string>
 </resources>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -48,6 +49,10 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
         bundle.putInt(PARAM_ASPECT_Y, Integer.valueOf(strings[3]));
         cpf.setArguments(bundle);
         return cpf;
+    }
+
+    public static void open(BaseFragment fragment, int req, boolean cropable, String cover, int aspectX, int aspectY) {
+        fragment.openActivity(CoverPickFragment.class.getName(), format("%s,%s,%d,%d", cover, cropable, aspectX, aspectY), req, true, false);
     }
 
     private String selectedImage = "";

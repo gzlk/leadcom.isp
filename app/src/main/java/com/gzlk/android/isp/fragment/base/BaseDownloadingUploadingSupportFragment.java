@@ -41,6 +41,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     private static final String KEY_UPLOADED_FILES = "uploaded_files_";
     private static final String KEY_MAX_SELECTABLE = "max_selectable_size";
     private static final String KEY_DIRECTLY_UPLOAD = "directly_upload";
+    private static final String KEY_SHOW_UPLOADING = "show_uploading";
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -53,6 +54,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         string = bundle.getString(KEY_UPLOADED_FILES, "[]");
         uploadedFiles = Json.gson().fromJson(string, new TypeToken<List<String>>() {
         }.getType());
+        needShowUploading = bundle.getBoolean(KEY_SHOW_UPLOADING, true);
     }
 
     @Override
@@ -62,12 +64,17 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         bundle.putBoolean(KEY_DIRECTLY_UPLOAD, isSupportDirectlyUpload);
         bundle.putString(KEY_HANDLED_FILES, Json.gson().toJson(waitingForUploadFiles));
         bundle.putString(KEY_UPLOADED_FILES, Json.gson().toJson(uploadedFiles));
+        bundle.putBoolean(KEY_SHOW_UPLOADING, needShowUploading);
     }
 
     /**
      * 标记是否直接上传图片，默认直接上传
      */
     protected boolean isSupportDirectlyUpload = true;
+    /**
+     * 上传的时候是否需要显示上传进度
+     */
+    protected boolean needShowUploading = true;
 
     protected int maxSelectable = 0;
 
@@ -124,7 +131,11 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             uploading();
         } else {
             log("no file(s) waiting for upload.");
+            onUploadingFailed();
         }
+    }
+
+    protected void onUploadingFailed() {
     }
 
     private void uploading() {
@@ -163,9 +174,11 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
                 } else {
                     // 上传失败时停止上传
                     hideImageHandlingDialog();
+                    onUploadingFailed();
                 }
             } else {
                 hideImageHandlingDialog();
+                onUploadingFailed();
             }
         }
     };
@@ -197,7 +210,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             progressDialogView = View.inflate(Activity(), R.layout.popup_dialog_image_handling, null);
             handlingTextView = (TextView) progressDialogView.findViewById(R.id.ui_dialog_image_handling_text);
         }
-        if (!progressDialog.isShowing()) {
+        if (needShowUploading && !progressDialog.isShowing()) {
             progressDialog.show();
         }
         //clearDirectParent(progressDialogView);

@@ -25,7 +25,7 @@ abstract class BaseApi implements Serializable {
     static final String URL = BuildConfig.RELEASEABLE ? "http://120.24.87.21:8888" : "http://113.108.144.2:8889";
     //"http://113.108.144.2:"+(BuildConfig.RELEASEABLE ?"8044":"8889");
 
-    static final String API_VER = StringHelper.getString(R.string.app_api_version);
+    static final String API_VER = StringHelper.getString(BuildConfig.RELEASEABLE ? R.string.app_api_version_release : R.string.app_api_version);
     /**
      * 网络调用成功时的状态码
      */

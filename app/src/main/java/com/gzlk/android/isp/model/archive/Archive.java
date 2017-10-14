@@ -465,6 +465,9 @@ public class Archive extends Additional {
     }
 
     public ArrayList<String> getLabel() {
+        if (null == this.label) {
+            this.label = new ArrayList<>();
+        }
         return label;
     }
 

@@ -565,7 +565,8 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 case 0:
                     // 选择封面
                     // 到封面拾取器
-                    openActivity(CoverPickFragment.class.getName(), format("%s,false,1,1", cover), REQ_COVER, true, false);
+                    CoverPickFragment.open(ArchiveCreatorFragment.this, REQ_COVER, false, cover, 1, 1);
+                    //openActivity(CoverPickFragment.class.getName(), format("%s,false,1,1", cover), REQ_COVER, true, false);
                     break;
                 case 1:
                     // 选择日期

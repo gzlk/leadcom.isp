@@ -28,7 +28,35 @@
             android:id="@+id/ui_archive_creator_rich_editor_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/ui_archive_creator_controls_layout" />
+            android:layout_above="@+id/ui_archive_creator_controls_layout"
+            android:background="@android:color/white" />
+
+        <LinearLayout
+            android:id="@+id/ui_archive_creator_rich_editor_uploader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+                android:layout_width="@dimen/ui_static_dp_40"
+                android:layout_height="@dimen/ui_static_dp_40"
+                android:layout_gravity="center"
+                app:mlpb_enable_circle_background="false"
+                app:mlpb_progress_color="@color/colorProgressing"
+                app:mlpb_progress_stoke_width="@dimen/ui_static_dp_2"
+                app:mlpb_progress_text_visibility="invisible" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_text_archive_creator_editor_attachment_uploading"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/ui_base_text_size_little" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ui_archive_creator_controls_layout"
