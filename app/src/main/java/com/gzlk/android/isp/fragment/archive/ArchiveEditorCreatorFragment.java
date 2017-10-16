@@ -459,6 +459,10 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                     videoSize.setVisibility(View.GONE);
                     mArchive.getVideo().add(uploaded.get(0));
                     break;
+                case UP_ATTACH:
+                    // 上传了多个附件（一次最多9个）
+                    //mEditor.insertHtml("");
+                    break;
             }
             // 插入完毕之后清空已上传的文件列表
             getUploadedFiles().clear();
@@ -853,7 +857,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
             @Override
             public void onDismiss() {
-                //log("attachment dialog dismissed");
+                log("attachment dialog dismissed");
                 mAttachmentIcon.setTextColor(getColor(R.color.textColorHint));
             }
         }).setPopupType(DialogHelper.FADE).show();
@@ -870,7 +874,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             // 可以多选
             properties.selection_mode = DialogConfigs.MULTI_MODE;
             // 最多可选文件数量
-            properties.maximum_count = 0;
+            properties.maximum_count = 9;
             // 文件扩展名过滤
             //properties.extensions = StringHelper.getStringArray(R.array.ui_base_file_pick_types);
             filePickerDialog = new FilePickerDialog(Activity(), properties);
@@ -889,10 +893,12 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             attachmentDesc.setVisibility((null == strings || strings.length < 1) ? View.VISIBLE : View.GONE);
             // 更新待上传文件列表
             getWaitingForUploadFiles().clear();
-            getWaitingForUploadFiles().addAll(Arrays.asList(strings));
-            for (String string : getWaitingForUploadFiles()) {
-                Attachment attachment = new Attachment(string);
-                mAdapter.update(attachment);
+            if (null != strings) {
+                getWaitingForUploadFiles().addAll(Arrays.asList(strings));
+                for (String string : getWaitingForUploadFiles()) {
+                    Attachment attachment = new Attachment(string);
+                    mAdapter.update(attachment);
+                }
             }
         }
     };
