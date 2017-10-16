@@ -73,9 +73,9 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         return lpf;
     }
 
-    public static void open(BaseFragment fragment, int req, String groupId, String activityId, int type, String selected) {
+    public static void open(BaseFragment fragment, String groupId, String activityId, int type, String selected) {
         String params = format("%s,%s,%d,%s", groupId, activityId, type, selected);
-        fragment.openActivity(LabelPickFragment.class.getName(), params, req, true, false);
+        fragment.openActivity(LabelPickFragment.class.getName(), params, REQUEST_LABEL, true, false);
     }
 
     @Override
@@ -296,7 +296,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 createLabel();
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     private void createLabel() {

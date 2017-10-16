@@ -260,7 +260,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 updateMyExtra();
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     private void updateMyExtra() {
@@ -663,7 +663,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
                 tryEditUserInfo(UserRequest.UPDATE_SEX, StringHelper.getString(view.getId() == R.id.ui_dialog_button_sex_male ? R.string.ui_base_text_sex_male : R.string.ui_base_text_sex_female));
                 return true;
             }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     private void tryEditUserInfo(final int type, final String value) {

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/ui_static_dp_80"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/ui_static_dp_zero"
+        android:paddingStart="@dimen/ui_static_dp_15">
+
+        <TextView
+            android:id="@+id/ui_popup_rich_editor_setting_title"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="@string/app_name_default"
+            android:textStyle="bold" />
+
+        <include layout="@layout/tool_view_half_line_horizontal" />
+
+        <LinearLayout
+            android:id="@+id/ui_popup_rich_editor_setting_public"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_static_dp_15"
+            android:layout_marginTop="@dimen/ui_static_dp_15"
+            android:background="@drawable/ui_background_clickable"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_static_dp_zero">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_base_text_public"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/ui_static_dp_5"
+                android:paddingTop="@dimen/ui_static_dp_5">
+
+                <TextView
+                    android:id="@+id/ui_popup_rich_editor_setting_public_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/ui_base_text_public"
+                    android:textStyle="bold" />
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_icon_right" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <include layout="@layout/tool_view_half_line_horizontal" />
+
+        <LinearLayout
+            android:id="@+id/ui_popup_rich_editor_setting_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_static_dp_15"
+            android:layout_marginTop="@dimen/ui_static_dp_15"
+            android:background="@drawable/ui_background_clickable"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_static_dp_zero">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_base_text_label"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/ui_static_dp_5"
+                android:paddingTop="@dimen/ui_static_dp_5">
+
+                <TextView
+                    android:id="@+id/ui_popup_rich_editor_setting_label_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/ui_base_text_other"
+                    android:textStyle="bold" />
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_icon_right" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <include layout="@layout/tool_view_half_line_horizontal" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_static_dp_15"
+            android:layout_marginTop="@dimen/ui_static_dp_15"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_static_dp_zero">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_activity_archiving_source1"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/ui_static_dp_5"
+                android:paddingTop="@dimen/ui_static_dp_5">
+
+                <TextView
+                    android:id="@+id/ui_popup_rich_editor_setting_creator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name_default"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_static_dp_15"
+            android:layout_marginTop="@dimen/ui_static_dp_15"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_static_dp_zero">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_text_archive_creator_editor_create_time"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/ui_static_dp_5"
+                android:paddingTop="@dimen/ui_static_dp_5">
+
+                <TextView
+                    android:id="@+id/ui_popup_rich_editor_setting_create_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ui_text_archive_creator_editor_create_time"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

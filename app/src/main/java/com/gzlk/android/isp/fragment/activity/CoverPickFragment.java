@@ -10,7 +10,6 @@ import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
-import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -51,8 +50,8 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
         return cpf;
     }
 
-    public static void open(BaseFragment fragment, int req, boolean cropable, String cover, int aspectX, int aspectY) {
-        fragment.openActivity(CoverPickFragment.class.getName(), format("%s,%s,%d,%d", cover, cropable, aspectX, aspectY), req, true, false);
+    public static void open(BaseFragment fragment, boolean cropable, String cover, int aspectX, int aspectY) {
+        fragment.openActivity(CoverPickFragment.class.getName(), format("%s,%s,%d,%d", cover, cropable, aspectX, aspectY), REQUEST_COVER, true, false);
     }
 
     private String selectedImage = "";

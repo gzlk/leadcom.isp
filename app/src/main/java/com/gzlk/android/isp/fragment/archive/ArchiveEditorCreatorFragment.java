@@ -1,7 +1,6 @@
 package com.gzlk.android.isp.fragment.archive;
 
 import android.content.ActivityNotFoundException;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -9,25 +8,38 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bumptech.glide.util.Util;
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.activity.CoverPickFragment;
+import com.gzlk.android.isp.fragment.activity.LabelPickFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.common.Seclusion;
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -35,6 +47,8 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import jp.wasabeef.richeditor.RichEditor;
 
@@ -82,6 +96,12 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             }.getType());
         } else {
             mArchive = new Archive();
+            // 标记是否为组织档案
+            mArchive.setGroupId(mQueryId);
+            // 默认为个人普通档案或组织普通档案
+            mArchive.setType(Archive.ArchiveType.NORMAL);
+            // 档案默认向所有人公开的
+            mArchive.setAuthPublic(Seclusion.Type.Public);
         }
     }
 
@@ -99,8 +119,18 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
     private RichEditor mEditor;
     @ViewId(R.id.ui_archive_creator_toolbar_top_line)
     private View toolbarTopLine;
+    @ViewId(R.id.ui_archive_creator_action_image)
+    private CustomTextView mImageIcon;
     @ViewId(R.id.ui_archive_creator_action_font)
     private CustomTextView mFontIcon;
+    @ViewId(R.id.ui_archive_creator_action_attachment)
+    private CustomTextView mAttachmentIcon;
+    @ViewId(R.id.ui_archive_creator_action_video)
+    private CustomTextView mVideoIcon;
+    @ViewId(R.id.ui_archive_creator_action_audio)
+    private CustomTextView mAudioIcon;
+    @ViewId(R.id.ui_archive_creator_action_link)
+    private CustomTextView mLinkIcon;
     @ViewId(R.id.ui_archive_creator_font_style_layout)
     private View fontStyleLayout;
     @ViewId(R.id.ui_archive_creator_rich_editor_uploader)
@@ -135,6 +165,10 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         if (Build.VERSION.SDK_INT < 19) {
             toolbarTopLine.setVisibility(View.VISIBLE);
         }
+        mEditor.focusEditor();
+
+        // 选择封面，到封面拾取器
+        CoverPickFragment.open(ArchiveEditorCreatorFragment.this, false, "", 1, 1);
     }
 
     @Override
@@ -159,6 +193,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                     tryCreateArchive();
                 } else {
                     // 显示附加菜单信息
+                    openSettingDialog();
                 }
             }
         });
@@ -176,7 +211,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
             return;
         }
-        createArchive();
+        mEditor.getMarkdown();
     }
 
     private RichEditor.OnTextChangeListener textChangeListener = new RichEditor.OnTextChangeListener() {
@@ -188,10 +223,10 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 String html = text.replace("html:", "");
                 mArchive.setContent(html);
                 log("HTML: " + text);
-                mEditor.getMarkdown();
             } else if (text.contains("mark:")) {
                 mArchive.setMarkdown(text.replace("mark:", ""));
                 log("MARK: " + text);
+                createArchive();
             }
         }
     };
@@ -204,6 +239,8 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 if (success) {
                     mArchive = archive;
                     resetRightIcons();
+                    mEditor.setInputEnabled(false);
+                    openSettingDialog();
                 }
             }
         }).add(mArchive);
@@ -224,9 +261,79 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
 
     }
 
+    private View settingDialogView;
+    private TextView titleText, publicText, labelText, creatorText, createTime;
+
+    private void openSettingDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == settingDialogView) {
+                    settingDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_archive_setting, null);
+                    titleText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_title);
+                    publicText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_text);
+                    labelText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label_text);
+                    creatorText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_creator);
+                    createTime = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_create_time);
+                }
+                return settingDialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+                titleText.setText(mArchive.getTitle());
+                creatorText.setText(mArchive.getUserName());
+                createTime.setText(formatDate(mArchive.getCreateDate(), "yyyy.MM.dd"));
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_popup_rich_editor_setting_public, R.id.ui_popup_rich_editor_setting_label};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_popup_rich_editor_setting_public:
+                        openSecuritySetting();
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_label:
+                        openLabelPicker();
+                        break;
+                }
+                return false;
+            }
+
+            private void openSecuritySetting() {
+                Seclusion seclusion = PrivacyFragment.getSeclusion("");
+                seclusion.setStatus(mArchive.getAuthPublic());
+                if (mArchive.getAuthPublic() == Seclusion.Type.Specify) {
+                    seclusion.setUserIds(mArchive.getAuthUser());
+                } else if (mArchive.getAuthPublic() == Seclusion.Type.Group) {
+                    seclusion.setGroupIds(mArchive.getAuthGro());
+                }
+                String json = PrivacyFragment.getSeclusion(seclusion);
+                // 隐私设置
+                if (isEmpty(mQueryId)) {
+                    // 个人隐私设置
+                    PrivacyFragment.open(ArchiveEditorCreatorFragment.this, StringHelper.replaceJson(json, false), true);
+                } else {
+                    // 组织档案隐私设置
+                    PrivacyFragment.open(ArchiveEditorCreatorFragment.this, StringHelper.replaceJson(json, false), false);
+                }
+            }
+
+            private void openLabelPicker() {
+                String json = Json.gson().toJson(mArchive.getLabel());
+                String string = replaceJson(json, false);
+                LabelPickFragment.open(ArchiveEditorCreatorFragment.this, mQueryId, "", LabelPickFragment.TYPE_ARCHIVE, string);
+            }
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
+    }
+
     // 插入图片的对话框
     private View imageDialogView;
-    private ClearEditText imageAlt, imageUrl, imageWidth, imageHeight;
+    private ClearEditText imageAlt, imageUrl;
 
     private void openImageDialog() {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
@@ -236,8 +343,6 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                     imageDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_image, null);
                     imageAlt = (ClearEditText) imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_alt);
                     imageUrl = (ClearEditText) imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_url);
-                    imageWidth = (ClearEditText) imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_width);
-                    imageHeight = (ClearEditText) imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_height);
                 }
                 return imageDialogView;
             }
@@ -262,6 +367,12 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 }
                 return true;
             }
+        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
+            @Override
+            public void onDismiss() {
+                log("image dialog dismissed");
+                mImageIcon.setTextColor(getColor(R.color.textColorHint));
+            }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
@@ -281,24 +392,14 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 }
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_FADE).show();
+        }).setPopupType(DialogHelper.FADE).show();
     }
 
     private void insertImage(String url, String alt) {
-        String width = imageWidth.getValue();
-        String height = imageHeight.getValue();
-        int w = Integer.valueOf(isEmpty(width) ? "0" : width);
-        int h = Integer.valueOf(isEmpty(height) ? "0" : height);
-        if (w <= 0 || h <= 0) {
-            mEditor.insertImage(url, alt);
-        } else {
-            mEditor.insertImage(url, alt, w, h);
-        }
+        mEditor.insertImage(url, alt);
         if (null != imageUrl) {
             imageUrl.setValue("");
             imageAlt.setValue("");
-            imageWidth.setValue("");
-            imageHeight.setValue("");
         }
     }
 
@@ -401,6 +502,12 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 }
                 return true;
             }
+        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
+            @Override
+            public void onDismiss() {
+                log("audio dialog dismissed");
+                mAudioIcon.setTextColor(getColor(R.color.textColorHint));
+            }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
@@ -421,7 +528,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 }
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_FADE).show();
+        }).setPopupType(DialogHelper.FADE).show();
     }
 
     // 视频选择对话框
@@ -457,10 +564,17 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 switch (view.getId()) {
                     case R.id.ui_popup_rich_editor_video_navigate:
                         // 打开文件选择器选择视频文件
-                        chooseLocalVideo();
+                        //chooseLocalVideo();
+                        chooseVideoFromLocalBeforeKitKat(REQUEST_VIDEO);
                         return false;
                 }
                 return true;
+            }
+        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
+            @Override
+            public void onDismiss() {
+                log("video dialog dismissed");
+                mVideoIcon.setTextColor(getColor(R.color.textColorHint));
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
@@ -482,23 +596,65 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 }
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_FADE).show();
+        }).setPopupType(DialogHelper.FADE).show();
     }
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQUEST_VIDEO) {
-            // 视频选择返回了
-            String path = getGalleryResultedPath(data);
-            videoUrl.setValue(path);
-            showFileSize(true, path, videoSize);
-        } else if (requestCode == REQUEST_MUSIC) {
-            // 音乐文件选择返回了
-            String path = getGalleryResultedPath(data);
-            musicUrl.setValue(path);
-            showFileSize(false, path, musicSize);
+        switch (requestCode) {
+            case REQUEST_COVER:
+                mArchive.setCover(getResultedData(data));
+                break;
+            case REQUEST_VIDEO:
+                // 视频选择返回了
+                String videoPath = getGalleryResultedPath(data);
+                videoUrl.setValue(videoPath);
+                showFileSize(true, videoPath, videoSize);
+                break;
+            case REQUEST_MUSIC:
+                // 音乐文件选择返回了
+                String musicPath = getGalleryResultedPath(data);
+                musicUrl.setValue(musicPath);
+                showFileSize(false, musicPath, musicSize);
+                break;
+            case REQUEST_SECURITY:
+                String json = getResultedData(data);
+                Seclusion seclusion = PrivacyFragment.getSeclusion(json);
+                mArchive.setAuthPublic(seclusion.getStatus());
+                mArchive.setAuthGro(seclusion.getGroupIds());
+                mArchive.setAuthUser(seclusion.getUserIds());
+                if (null != publicText) {
+                    publicText.setText(PrivacyFragment.getPrivacy(seclusion));
+                }
+                updateArchive(ArchiveRequest.TYPE_AUTH);
+                break;
+            case REQUEST_LABEL:
+                String labelJson = getResultedData(data);
+                ArrayList<String> list = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
+                }.getType());
+                if (null != list) {
+                    mArchive.getLabel().clear();
+                    mArchive.getLabel().addAll(list);
+                }
+                if (null != labelText) {
+                    labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
+                }
+                updateArchive(ArchiveRequest.TYPE_LABEL);
+                break;
+            case REQUEST_ATTACHMENT:
+                break;
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    private void updateArchive(int type) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                ToastHelper.make().showMsg(message);
+            }
+        }).update(mArchive, type);
     }
 
     private void showFileSize(boolean video, String path, TextView view) {
@@ -561,13 +717,29 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         }
     }
 
+    private String getPickType(int request) {
+        switch (request) {
+            case REQUEST_VIDEO:
+                return "video/*";
+            case REQUEST_MUSIC:
+                return "audio/*";
+            case REQUEST_ATTACHMENT:
+            default:
+                return "*/*";
+        }
+    }
+
     /**
      * API19 之前选择视频
      */
     protected void chooseVideoFromLocalBeforeKitKat(int request) {
         Intent mIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        mIntent.setType(request == REQUEST_VIDEO ? "video/*" : "audio/*");
+        mIntent.setType(getPickType(request));
         mIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        if (request == REQUEST_ATTACHMENT && Build.VERSION.SDK_INT >= 18) {
+            // 设置可以多选
+            mIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
         try {
             startActivityForResult(mIntent, request);
         } catch (ActivityNotFoundException e) {
@@ -605,6 +777,12 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             public boolean onClick(View view) {
                 return true;
             }
+        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
+            @Override
+            public void onDismiss() {
+                log("link dialog dismissed");
+                mLinkIcon.setTextColor(getColor(R.color.textColorHint));
+            }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
@@ -621,7 +799,149 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 mEditor.insertLink(url, label);
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_FADE).show();
+        }).setPopupType(DialogHelper.FADE).show();
+    }
+
+    private View attachmentDialogView;
+    private RecyclerView recyclerView;
+    private TextView attachmentDesc;
+    private FileAdapter mAdapter;
+
+    private void openAttachmentDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == attachmentDialogView) {
+                    attachmentDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_attachment, null);
+                    attachmentDesc = (TextView) attachmentDialogView.findViewById(R.id.ui_popup_rich_editor_attachment_description);
+                    recyclerView = (RecyclerView) attachmentDialogView.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
+                    recyclerView.setLayoutManager(new CustomLinearLayoutManager(recyclerView.getContext()));
+                    mAdapter = new FileAdapter();
+                    recyclerView.setAdapter(mAdapter);
+                }
+                return attachmentDialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_button_closer, R.id.ui_popup_rich_editor_attachment_navigate};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_popup_rich_editor_attachment_navigate:
+                        // 浏览本地文件
+                        openFilePickDialog();
+                        //chooseVideoFromLocalBeforeKitKat(REQUEST_ATTACHMENT);
+                        return false;
+                }
+                return true;
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                uploadType = UP_ATTACH;
+                uploadFiles();
+                return true;
+            }
+        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
+            @Override
+            public void onDismiss() {
+                log("attachment dialog dismissed");
+                mAttachmentIcon.setTextColor(getColor(R.color.textColorHint));
+            }
+        }).setPopupType(DialogHelper.FADE).show();
+    }
+
+    // 文件选择
+    private FilePickerDialog filePickerDialog;
+
+    private void openFilePickDialog() {
+        if (null == filePickerDialog) {
+            DialogProperties properties = new DialogProperties();
+            // 选择文件
+            properties.selection_type = DialogConfigs.FILE_SELECT;
+            // 可以多选
+            properties.selection_mode = DialogConfigs.MULTI_MODE;
+            // 最多可选文件数量
+            properties.maximum_count = 0;
+            // 文件扩展名过滤
+            //properties.extensions = StringHelper.getStringArray(R.array.ui_base_file_pick_types);
+            filePickerDialog = new FilePickerDialog(Activity(), properties);
+            filePickerDialog.setTitle(StringHelper.getString(R.string.ui_text_document_picker_title));
+            filePickerDialog.setPositiveBtnName(StringHelper.getString(R.string.ui_base_text_confirm));
+            filePickerDialog.setNegativeBtnName(StringHelper.getString(R.string.ui_base_text_cancel));
+            filePickerDialog.setDialogSelectionListener(dialogSelectionListener);
+        }
+        resetSelectedFiles();
+        filePickerDialog.show();
+    }
+
+    private DialogSelectionListener dialogSelectionListener = new DialogSelectionListener() {
+        @Override
+        public void onSelectedFilePaths(String[] strings) {
+            attachmentDesc.setVisibility((null == strings || strings.length < 1) ? View.VISIBLE : View.GONE);
+            // 更新待上传文件列表
+            getWaitingForUploadFiles().clear();
+            getWaitingForUploadFiles().addAll(Arrays.asList(strings));
+            for (String string : getWaitingForUploadFiles()) {
+                Attachment attachment = new Attachment(string);
+                mAdapter.update(attachment);
+            }
+        }
+    };
+
+    private void resetSelectedFiles() {
+        int size = mAdapter.getItemCount();
+        if (size > 0) {
+            List<String> tmp = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Attachment att = mAdapter.get(i);
+                if (att.isLocalFile()) {
+                    tmp.add(att.getFullPath());
+                }
+            }
+            filePickerDialog.markFiles(tmp);
+        }
+    }
+
+    private OnViewHolderClickListener attachmentViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Attachment attachment = mAdapter.get(index);
+            mArchive.getAttach().remove(attachment);
+            mAdapter.remove(attachment);
+        }
+    };
+
+    private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
+        @Override
+        public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
+            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveEditorCreatorFragment.this);
+            holder.addOnViewHolderClickListener(attachmentViewHolderClickListener);
+            return holder;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_attachment;
+        }
+
+        @Override
+        public void onBindHolderOfView(final AttachmentViewHolder holder, int position, @Nullable Attachment item) {
+            holder.showContent(item);
+        }
+
+        @Override
+        protected int comparator(Attachment item1, Attachment item2) {
+            return 0;
+        }
     }
 
     @Click({R.id.ui_archive_creator_action_undo, R.id.ui_archive_creator_action_redo,
@@ -648,6 +968,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 mEditor.redo();
                 break;
             case R.id.ui_archive_creator_action_image:
+                mImageIcon.setTextColor(getColor(R.color.colorAccent));
                 openImageDialog();
                 break;
             case R.id.ui_archive_creator_action_font:
@@ -655,15 +976,19 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 mFontIcon.setTextColor(getColor(fontStyleLayout.getVisibility() == View.GONE ? R.color.textColorHint : R.color.colorAccent));
                 break;
             case R.id.ui_archive_creator_action_attachment:
+                mAttachmentIcon.setTextColor(getColor(R.color.colorAccent));
                 // 插入一个附件
                 // 附件的图标地址(24x24)http://120.25.124.199:8008/group1/M00/00/13/eBk66lngZ0-AW_1aAAAJiqCeKro517.png
+                openAttachmentDialog();
                 break;
             case R.id.ui_archive_creator_action_video:
+                mVideoIcon.setTextColor(getColor(R.color.colorAccent));
                 // 插入或上传一段视频
                 // 视频封面地址：http://120.25.124.199:8008/group1/M00/00/13/eBk66lngcsOAUoWUAAAcAlhYhMk172.png
                 openVideoDialog();
                 break;
             case R.id.ui_archive_creator_action_audio:
+                mAudioIcon.setTextColor(getColor(R.color.colorAccent));
                 // 插入或上传一段音乐
                 openMusicDialog();
                 break;
@@ -671,6 +996,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 mEditor.setBlockquote();
                 break;
             case R.id.ui_archive_creator_action_link:
+                mLinkIcon.setTextColor(getColor(R.color.colorAccent));
                 // 插入一个超链接
                 openLinkDialog();
                 break;

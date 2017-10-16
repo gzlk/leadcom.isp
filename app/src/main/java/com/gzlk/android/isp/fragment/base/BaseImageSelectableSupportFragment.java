@@ -481,6 +481,13 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     protected String getGalleryResultedPath(@NonNull Intent data) {
 
         Uri uri = data.getData();
+        return getFilePathFromUri(uri);
+    }
+
+    /**
+     * 通过Uri获取文件的路径
+     */
+    protected String getFilePathFromUri(Uri uri) {
         // DocumentProvider
         if (Build.VERSION.SDK_INT >= 19 && DocumentsContract.isDocumentUri(Activity(), uri)) {
             // ExternalStorageProvider
@@ -715,7 +722,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                 handleUserRequest(view.getId());
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true);
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true);
         dialogHelper.show();
     }
 

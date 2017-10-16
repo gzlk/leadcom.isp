@@ -33,16 +33,20 @@ public class DialogHelper {
     /**
      * 弹出效果
      */
-    public static final int TYPE_FADE = 0;
+    public static final int FADE = 0;
     /**
-     * 滑入效果
+     * 底部滑入效果
      */
-    public static final int TYPE_SLID = 1;
+    public static final int SLID_IN_BOTTOM = 1;
+    /**
+     * 从右侧滑入
+     */
+    public static final int SLID_IN_RIGHT = 2;
 
     /**
      * 弹出对话框的动画方式
      */
-    @IntDef({TYPE_FADE, TYPE_SLID})
+    @IntDef({FADE, SLID_IN_BOTTOM, SLID_IN_RIGHT})
     public @interface PopupType {
     }
 
@@ -78,11 +82,22 @@ public class DialogHelper {
         return this;
     }
 
+    private int getWindowAnimations() {
+        switch (popupType) {
+            case SLID_IN_BOTTOM:
+                return R.style.DialogAnimationSlidInFromBottom;
+            case SLID_IN_RIGHT:
+                return R.style.DialogAnimationSlidInFromRight;
+            default:
+                return R.style.DialogAnimationFade;
+        }
+    }
+
     @SuppressWarnings("ConstantConditions")
     private void initializeDialog() {
         dialog = new AlertDialog.Builder(activity.get()).create();
         // 弹出效果和滑入效果
-        dialog.getWindow().setWindowAnimations(popupType == TYPE_FADE ? R.style.DialogAnimationFade : R.style.DialogAnimationSlid);
+        dialog.getWindow().setWindowAnimations(getWindowAnimations());
         dialog.setCancelable(cancelable);
         dialog.setCanceledOnTouchOutside(canceledWithOutsideTouch);
         dialog.setOnDismissListener(dismissListener);
@@ -116,7 +131,7 @@ public class DialogHelper {
         return setCancelText(StringHelper.getString(res));
     }
 
-    private int popupType = TYPE_FADE;
+    private int popupType = FADE;
 
     /**
      * 设置弹出动画效果

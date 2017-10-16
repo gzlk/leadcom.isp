@@ -271,6 +271,26 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_MUSIC = ACTIVITY_BASE_REQUEST + 6;
     /**
+     * 选择附件(任意文件)
+     */
+    public static final int REQUEST_ATTACHMENT = ACTIVITY_BASE_REQUEST + 7;
+    /**
+     * 隐私设置
+     */
+    public static final int REQUEST_SECURITY = ACTIVITY_BASE_REQUEST + 10;
+    /**
+     * 标签选择
+     */
+    public static final int REQUEST_LABEL = ACTIVITY_BASE_REQUEST + 11;
+    /**
+     * 封面选择
+     */
+    public static final int REQUEST_COVER = ACTIVITY_BASE_REQUEST + 12;
+    /**
+     * 成员选择
+     */
+    public static final int REQUEST_MEMBER = ACTIVITY_BASE_REQUEST + 13;
+    /**
      * 新增
      */
     public static final int REQUEST_CREATE = ACTIVITY_BASE_REQUEST + 100;
@@ -419,7 +439,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                 }
                 return true;
             }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     protected void shareToQQ() {

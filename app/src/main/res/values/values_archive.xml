@@ -7,7 +7,9 @@
     <string name="ui_archive_creator_selector_text_image">图文</string>
     <string name="ui_archive_creator_selector_text_attachment">附件</string>
 
+    <string name="ui_text_archive_creator_editor_create_time">创建时间</string>
     <string name="ui_text_archive_creator_editor_video_cover_default">http://120.25.124.199:8008/group1/M00/00/13/eBk66lng0_yAOTQYAABKQjAngPs457.png</string>
+    <string name="ui_text_archive_creator_editor_attachment_icon">http://120.25.124.199:8008/group1/M00/00/17/cErYIVnkBRiAOy1aAAAJiqCeKro218.png</string>
     <string name="ui_text_archive_creator_title_hint">请输入题名</string>
     <string name="ui_text_archive_creator_content_hint">请输入正文</string>
     <string name="ui_text_archive_creator_editor_attachment_uploading">上传中&#8230;</string>
@@ -42,6 +44,9 @@
     <string name="ui_text_archive_creator_editor_link_dialog_link_url">http(s)://</string>
     <string name="ui_text_archive_creator_editor_link_dialog_invalid_input">链接的文字或地址不正确</string>
     <string name="ui_text_archive_creator_editor_link_dialog_invalid_url">链接地址不正确</string>
+
+    <string name="ui_text_archive_creator_editor_attachment_dialog_title">插入附件</string>
+    <string name="ui_text_archive_creator_editor_attachment_dialog_desc">选择您要添加的附件</string>
 
     <string name="ui_text_archive_creator_editor_title_invalid">档案标题不能为空</string>
     <string name="ui_text_archive_creator_editor_content_invalid">档案内容不能为空</string>

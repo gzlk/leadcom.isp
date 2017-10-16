@@ -85,9 +85,6 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private String cover = "", title = "", address = "", intro = "";
     // 默认只向组织内部开放
     private int authPublic = Activity.OpenStatus.NONE;
-    private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
-    private static final int REQ_COVER = REQ_MEMBER + 1;
-    private static final int REQ_LABEL = REQ_COVER + 1;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -130,16 +127,16 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
-            case REQ_MEMBER:
+            case REQUEST_MEMBER:
                 // 活动成员选择返回了
                 memberJson = getResultedData(data);
                 resetMembers();
                 break;
-            case REQ_COVER:
+            case REQUEST_COVER:
                 // 封面选择了
                 cover = getResultedData(data);
                 break;
-            case REQ_LABEL:
+            case REQUEST_LABEL:
                 labelJson = getResultedData(data);
                 resetLabels();
                 break;
@@ -460,7 +457,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
             switch (index) {
                 case 0:
                     // 到活动封面拾取器
-                    CoverPickFragment.open(ActivityCreatorFragment.this, REQ_COVER, true, cover, 2, 1);
+                    CoverPickFragment.open(ActivityCreatorFragment.this, true, cover, 2, 1);
                     //openActivity(CoverPickFragment.class.getName(), format("%s,true,2,1", cover), REQ_COVER, true, false);
                     break;
                 case 1:
@@ -471,7 +468,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     // 选择活动标签
                     labelJson = Json.gson().toJson(labelsNames);
                     String json = replaceJson(labelJson, false);
-                    LabelPickFragment.open(ActivityCreatorFragment.this, REQ_LABEL, mGroupId, mQueryId, LabelPickFragment.TYPE_ACTIVITY, json);
+                    LabelPickFragment.open(ActivityCreatorFragment.this, mGroupId, mQueryId, LabelPickFragment.TYPE_ACTIVITY, json);
                     //openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
                     break;
                 case 3:
@@ -489,7 +486,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                         //String params = format("%s,false,%s", mGroupId, replaceJson(memberJson, false));
                         //openActivity(GroupSquadContactPickerFragment.class.getName(), params, REQ_MEMBER, true, false);
 
-                        GroupsContactPickerFragment.open(ActivityCreatorFragment.this, mGroupId, REQ_MEMBER);
+                        GroupsContactPickerFragment.open(ActivityCreatorFragment.this, mGroupId);
                     }
                     break;
             }
@@ -593,7 +590,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 return true;
             }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     private String happenDate;

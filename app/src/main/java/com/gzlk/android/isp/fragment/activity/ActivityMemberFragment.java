@@ -144,7 +144,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQ_MEMBER) {
+        if (requestCode == REQUEST_MEMBER) {
             handleMemberSelected(getResultedData(data));
         }
         super.onActivityResult(requestCode, data);
@@ -182,8 +182,6 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }).activityInvite(mQueryId, ids);
     }
 
-    private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
-
     // 尝试从组织通讯录里选取其他成员进本活动
     private void pickNewMembers(String groupId) {
         //ArrayList<SubMember> members = new ArrayList<>();
@@ -195,7 +193,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         ////openActivity(GroupContactPickFragment.class.getName(), format("%s,true,false,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
         //openActivity(GroupSquadContactPickerFragment.class.getName(), format("%s,true,%s", groupId, replaceJson(json, false)), REQ_MEMBER, true, false);
 
-        GroupsContactPickerFragment.open(this, groupId, REQ_MEMBER);
+        GroupsContactPickerFragment.open(this, groupId);
     }
 
     @Override

@@ -274,7 +274,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == PrivacyFragment.REQUEST_SECURITY) {
+        if (requestCode == REQUEST_SECURITY) {
             // 隐私设置返回了
             privacy = getResultedData(data);
         }
@@ -287,7 +287,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
             String json = PrivacyFragment.getSeclusion(seclusion);
-            openActivity(UserPrivacyFragment.class.getName(), json, PrivacyFragment.REQUEST_SECURITY, true, false);
+            openActivity(UserPrivacyFragment.class.getName(), json, REQUEST_SECURITY, true, false);
             //ToastHelper.make(Activity()).showMsg("隐私设置");
         }
     };

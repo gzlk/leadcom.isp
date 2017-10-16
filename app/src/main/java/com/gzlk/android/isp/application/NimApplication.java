@@ -95,12 +95,12 @@ public class NimApplication extends BaseActivityManagedApplication {
             // 我的测试key
             return getString(R.string.netease_nim_app_key_test);
         }
-        if (BuildConfig.RELEASEABLE) {
+        //if (BuildConfig.RELEASEABLE) {
             // release 版的 app key
             return getString(R.string.netease_nim_app_key);
-        }
+        //}
         // beta 版的 app key
-        return getString(R.string.netease_nim_app_key_beta);
+        //return getString(R.string.netease_nim_app_key_beta);
     }
 
     private static StatusBarNotificationConfig getNotificationConfig() {

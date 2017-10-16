@@ -10,6 +10,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.common.Seclusion;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -129,10 +130,10 @@ public class ArchiveRequest extends Request<Archive> {
         boolean isIndividual = isEmpty(archive.getGroupId());
         JSONObject object = new JSONObject();
         try {
-            object.put("title", archive.getTitle())
+            object.put("title", archive.getTitle())// 必要字段
                     .put("cover", checkNull(archive.getCover()))
-                    .put("type", archive.getType())
-                    .put("authPublic", archive.getAuthPublic())
+                    .put("type", archive.getType())// 必要字段
+                    .put("authPublic", archive.getAuthPublic())// 必要字段
                     .put("content", archive.getContent())
                     .put("markdown", archive.getMarkdown())
                     .put("label", new JSONArray(archive.getLabel()))
@@ -141,13 +142,59 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())));
             if (!isIndividual) {
-                object.put("groupId", archive.getGroupId());
+                object.put("groupId", archive.getGroupId());// 必要字段
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         httpRequest(getRequest(SingleArchive.class, isIndividual ? url(ADD) : group(ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 更改公开范围
+     */
+    public static final int TYPE_AUTH = 1;
+    /**
+     * 更改标签
+     */
+    public static final int TYPE_LABEL = 2;
+    /**
+     * 更改封面图
+     */
+    public static final int TYPE_COVER = 3;
+
+    /**
+     * 更新档案内容
+     */
+    public void update(Archive archive, int type) {
+        boolean isIndividual = isEmpty(archive.getGroupId());
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", archive.getId());
+            switch (type) {
+                case TYPE_AUTH:
+                    object.put("authPublic", archive.getAuthPublic());
+                    if (archive.getAuthPublic() == Seclusion.Type.Group) {
+                        // 对组织公开时，更新组织的id列表
+                        // 目前只有对当前组织内的所有人公开
+                    } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
+                        // 对指定部分人公开时，更新指定公开的人的id列表
+                        object.put("authUser", new JSONArray(archive.getAuthUser()));
+                    }
+                    break;
+                case TYPE_LABEL:
+                    object.put("label", new JSONArray(archive.getLabel()));
+                    break;
+                case TYPE_COVER:
+                    object.put("cover", archive.getCover());
+                    break;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleArchive.class, url(isIndividual ? Archive.Type.USER : Archive.Type.GROUP, UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**

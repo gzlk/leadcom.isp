@@ -154,7 +154,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                 cancelConcern(index);
                 return true;
             }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     private void cancelConcern(final int index) {
@@ -244,7 +244,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                 concernGroup(selectedIndex);
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).show();
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     private void concernGroup(final int index) {

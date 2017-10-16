@@ -304,7 +304,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 handlePopupClick(view.getId());
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true).show();
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
     }
 
     private void handlePopupClick(int id) {

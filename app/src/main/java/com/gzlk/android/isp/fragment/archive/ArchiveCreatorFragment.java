@@ -163,20 +163,17 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     }
 
-    private static final int REQ_COVER = ACTIVITY_BASE_REQUEST + 11;
-    private static final int REQ_LABEL = REQ_COVER + 1;
-
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
-            case PrivacyFragment.REQUEST_SECURITY:
+            case REQUEST_SECURITY:
                 // 隐私设置返回了
                 privacy = getResultedData(data);
                 break;
-            case REQ_COVER:
+            case REQUEST_COVER:
                 cover = getResultedData(data);
                 break;
-            case REQ_LABEL:
+            case REQUEST_LABEL:
                 labelJson = getResultedData(data);
                 resetLabels();
                 break;
@@ -563,9 +560,8 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             switch (index) {
                 case 0:
-                    // 选择封面
-                    // 到封面拾取器
-                    CoverPickFragment.open(ArchiveCreatorFragment.this, REQ_COVER, false, cover, 1, 1);
+                    // 选择封面，到封面拾取器
+                    CoverPickFragment.open(ArchiveCreatorFragment.this, false, cover, 1, 1);
                     //openActivity(CoverPickFragment.class.getName(), format("%s,false,1,1", cover), REQ_COVER, true, false);
                     break;
                 case 1:
@@ -590,7 +586,7 @@ public class ArchiveCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     // 标签
                     labelJson = Json.gson().toJson(labels);
                     String string = replaceJson(labelJson, false);
-                    LabelPickFragment.open(ArchiveCreatorFragment.this, REQ_LABEL, archiveGroup, "", LabelPickFragment.TYPE_ARCHIVE, string);
+                    LabelPickFragment.open(ArchiveCreatorFragment.this, archiveGroup, "", LabelPickFragment.TYPE_ARCHIVE, string);
                     //openActivity(LabelPickFragment.class.getName(), string, REQ_LABEL, true, false);
                     break;
             }

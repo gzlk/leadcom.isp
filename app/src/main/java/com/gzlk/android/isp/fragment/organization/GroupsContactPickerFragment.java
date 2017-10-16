@@ -50,8 +50,8 @@ public class GroupsContactPickerFragment extends BaseSwipeRefreshSupportFragment
         return gcpf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, int req) {
-        fragment.openActivity(GroupsContactPickerFragment.class.getName(), groupId, req, true, false);
+    public static void open(BaseFragment fragment, String groupId) {
+        fragment.openActivity(GroupsContactPickerFragment.class.getName(), groupId, REQUEST_MEMBER, true, false);
     }
 
     private ContactPickerAdapter mAdapter;

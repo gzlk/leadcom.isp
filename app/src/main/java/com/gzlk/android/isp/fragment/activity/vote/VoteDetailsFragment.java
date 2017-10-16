@@ -344,7 +344,7 @@ public class VoteDetailsFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 return true;
             }
-        }).setPopupType(DialogHelper.TYPE_SLID).setAdjustScreenWidth(true).show();
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
     }
 
     private void publishVote() {

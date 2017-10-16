@@ -39,11 +39,6 @@ import java.util.List;
 
 public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
 
-    /**
-     * 隐私设置
-     */
-    public static final int REQUEST_SECURITY = ACTIVITY_BASE_REQUEST + 10;
-
     public static PrivacyFragment newInstance(String params) {
         PrivacyFragment ssf = new PrivacyFragment();
         String[] strings = splitParameters(params);

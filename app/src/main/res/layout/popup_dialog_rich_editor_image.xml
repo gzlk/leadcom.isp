@@ -83,7 +83,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <com.hlk.hlklib.lib.view.ClearEditText
                     android:id="@+id/ui_popup_rich_editor_image_width"
