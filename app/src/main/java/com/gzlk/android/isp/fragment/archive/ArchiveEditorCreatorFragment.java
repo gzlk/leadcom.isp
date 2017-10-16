@@ -853,7 +853,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
             @Override
             public void onDismiss() {
-                log("attachment dialog dismissed");
+                //log("attachment dialog dismissed");
                 mAttachmentIcon.setTextColor(getColor(R.color.textColorHint));
             }
         }).setPopupType(DialogHelper.FADE).show();
