@@ -7,16 +7,13 @@ import android.widget.TextView;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.CreateOrganizationFragment;
-import com.gzlk.android.isp.fragment.organization.LivenessFragment;
 import com.gzlk.android.isp.fragment.organization.OnOrganizationChangedListener;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
-import com.gzlk.android.isp.fragment.organization.archive.RecommendedArchiveFragment;
+import com.gzlk.android.isp.fragment.organization.ArchiveRecommendedFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -104,7 +101,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         boolean exists = false;
         int recommend = 0;
         for (int i = 0, len = mFragments.size(); i < len; i++) {
-            if (mFragments.get(i) instanceof RecommendedArchiveFragment) {
+            if (mFragments.get(i) instanceof ArchiveRecommendedFragment) {
                 exists = true;
                 recommend = i;
             }
@@ -116,7 +113,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         }
         if (addable && !exists) {
             channel4.setVisibility(View.VISIBLE);
-            addFragment(RecommendedArchiveFragment.newInstance(groupId));
+            addFragment(ArchiveRecommendedFragment.newInstance(groupId));
         }
     }
 

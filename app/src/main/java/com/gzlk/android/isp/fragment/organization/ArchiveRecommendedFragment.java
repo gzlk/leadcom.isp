@@ -1,10 +1,9 @@
-package com.gzlk.android.isp.fragment.organization.archive;
+package com.gzlk.android.isp.fragment.organization;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.bumptech.glide.util.Util;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.RecommendArchiveRequest;
@@ -33,10 +32,10 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class RecommendedArchiveFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchiveRecommendedFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static RecommendedArchiveFragment newInstance(String params) {
-        RecommendedArchiveFragment raf = new RecommendedArchiveFragment();
+    public static ArchiveRecommendedFragment newInstance(String params) {
+        ArchiveRecommendedFragment raf = new ArchiveRecommendedFragment();
         Bundle bundle = new Bundle();
         // 传入的组织 id
         bundle.putString(PARAM_QUERY_ID, params);
@@ -130,7 +129,7 @@ public class RecommendedArchiveFragment extends BaseSwipeRefreshSupportFragment 
         @Override
         public void onClick(int index) {
             RecommendArchive archive = mAdapter.get(index);
-            ArchiveDetailsFragment.open(RecommendedArchiveFragment.this, (null == archive.getUserDoc() ? Archive.Type.GROUP : Archive.Type.USER), archive.getDocId(), REQUEST_CHANGE);
+            ArchiveDetailsFragment.open(ArchiveRecommendedFragment.this, (null == archive.getUserDoc() ? Archive.Type.GROUP : Archive.Type.USER), archive.getDocId(), REQUEST_CHANGE);
         }
     };
 
@@ -167,7 +166,7 @@ public class RecommendedArchiveFragment extends BaseSwipeRefreshSupportFragment 
     private class RecommendAdapter extends RecyclerViewAdapter<ArchiveRecommendViewHolder, RecommendArchive> {
         @Override
         public ArchiveRecommendViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ArchiveRecommendViewHolder holder = new ArchiveRecommendViewHolder(itemView, RecommendedArchiveFragment.this);
+            ArchiveRecommendViewHolder holder = new ArchiveRecommendViewHolder(itemView, ArchiveRecommendedFragment.this);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             holder.addOnHandlerBoundDataListener(onHandleBoundDataListener);
             return holder;
