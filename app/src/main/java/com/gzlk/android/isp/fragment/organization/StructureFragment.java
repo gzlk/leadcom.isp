@@ -17,6 +17,7 @@ import com.gzlk.android.isp.api.org.SquadRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
+import com.gzlk.android.isp.fragment.main.OrganizationFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -82,6 +83,7 @@ public class StructureFragment extends BaseOrganizationFragment {
     private boolean initialized = false;
 
     public MainFragment mainFragment;
+    public OrganizationFragment organizationFragment;
 
     private OnOrganizationChangedListener organizationChangedListener;
 
@@ -426,6 +428,12 @@ public class StructureFragment extends BaseOrganizationFragment {
             mAdapter.update(sci);
             // 本组织下的小组列表
             fetchingGroupSquads(organization.getId());
+            // 如果当前用户是管理员的话，增加推荐档案列表的显示
+            if (my.isManager()) {
+                organizationFragment.addRecommendedArchives(true, selectedGroupId);
+            } else {
+                organizationFragment.addRecommendedArchives(false, selectedGroupId);
+            }
         }
         // 更改标题栏上的文字和icon
         if (null != organizationChangedListener) {

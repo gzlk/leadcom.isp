@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.view.ViewGroup;
 
 import com.gzlk.android.isp.R;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -26,6 +28,7 @@ import java.util.List;
 public abstract class BaseViewPagerSupportFragment extends BaseTransparentSupportFragment {
 
     protected static final String PARAM_SELECTED_INDEX = "bvpf_param_selected_index";
+    private static final String PARAM_REMOVABLE = "bvpf_param_removable";
 
     // UI
     @ViewId(R.id.ui_tool_view_pager)
@@ -40,6 +43,10 @@ public abstract class BaseViewPagerSupportFragment extends BaseTransparentSuppor
     private int viewPagerSelectedPage = 0;
     protected List<BaseTransparentSupportFragment> mFragments = new ArrayList<>();
     private FragmentAdapter mAdapter;
+    /**
+     * 是否可以动态添加、删除fragment
+     */
+    protected boolean isRemovable = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,11 +59,13 @@ public abstract class BaseViewPagerSupportFragment extends BaseTransparentSuppor
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         viewPagerSelectedPage = bundle.getInt(PARAM_SELECTED_INDEX, 0);
+        isRemovable = bundle.getBoolean(PARAM_REMOVABLE, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         bundle.putInt(PARAM_SELECTED_INDEX, viewPagerSelectedPage);
+        bundle.putBoolean(PARAM_REMOVABLE, isRemovable);
         super.saveParamsToBundle(bundle);
     }
 
@@ -153,6 +162,23 @@ public abstract class BaseViewPagerSupportFragment extends BaseTransparentSuppor
         }
     };
 
+    /**
+     * 增加一个 fragment
+     */
+    protected void addFragment(BaseTransparentSupportFragment fragment) {
+        mFragments.add(fragment);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 删除指定 index 的 fragment
+     */
+    protected void removeFragment(int index) {
+        mFragments.remove(index);
+        //mAdapter.remove(index);
+        mAdapter.notifyDataSetChanged();
+    }
+
     private class FragmentAdapter extends FragmentPagerAdapter {
 
         FragmentAdapter(FragmentManager fm) {
@@ -168,6 +194,13 @@ public abstract class BaseViewPagerSupportFragment extends BaseTransparentSuppor
         public int getCount() {
             return mFragments.size();
         }
+
+        @Override
+        public long getItemId(int position) {
+            // 获取当前数据的hashCode，重写此方法以此为id动态添加、删除fragment
+            return mFragments.get(position).hashCode();
+        }
+
     }
 
 }

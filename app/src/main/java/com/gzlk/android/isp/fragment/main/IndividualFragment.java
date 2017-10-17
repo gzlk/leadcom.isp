@@ -3,6 +3,7 @@ package com.gzlk.android.isp.fragment.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
@@ -34,6 +35,7 @@ import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.model.user.User;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -255,6 +257,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             isSupportDirectlyUpload = false;
             // 添加图片选择
             addOnImageSelectedListener(imageSelectedListener);
+            mRecyclerView.addOnScrollListener(scrollListener);
             adapter = new IndividualAdapter();
             mRecyclerView.setAdapter(adapter);
             appendListHeader(selectedFunction == 0);
@@ -271,6 +274,51 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         public void onImageSelected(ArrayList<String> selected) {
             // 打开新建动态页面
             openActivity(MomentCreatorFragment.class.getName(), Json.gson().toJson(selected), true, true);
+        }
+    };
+
+    private SoftReference<View> toolBarView;
+
+    public IndividualFragment setToolBar(View view) {
+        if (null == toolBarView || null == toolBarView.get()) {
+            toolBarView = new SoftReference<>(view);
+        }
+        return this;
+    }
+
+    private SoftReference<View> textView;
+
+    public void setToolBarTextView(View view) {
+        if (null == textView || null == textView.get()) {
+            textView = new SoftReference<>(view);
+        }
+    }
+
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        private int scrolledY = 0;
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (!isViewPagerDisplayedCurrent()) {
+                return;
+            }
+            scrolledY += dy;
+            if (scrolledY >= 0 && scrolledY <= 500) {
+                float alpha = scrolledY * 0.005f;
+                if (null != toolBarView && null != toolBarView.get()) {
+                    toolBarView.get().setAlpha(alpha);
+                    isTitleBarShown = toolBarView.get().getAlpha() >= 1;
+                }
+                if (null != textView && null != textView.get()) {
+                    textView.get().setAlpha(alpha);
+                }
+            }
         }
     };
 

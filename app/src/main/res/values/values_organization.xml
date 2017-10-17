@@ -3,7 +3,7 @@
     <string name="ui_organization_top_channel_1">小组</string>
     <string name="ui_organization_top_channel_2">成员</string>
     <string name="ui_organization_top_channel_3">档案</string>
-    <string name="ui_organization_top_channel_4">活跃度</string>
+    <string name="ui_organization_top_channel_4">推荐</string>
 
     <string-array name="ui_organization_structure_items">
         <item>0|||</item>
@@ -162,5 +162,12 @@
     <string name="ui_archive_approve_passed">审核通过</string>
     <string name="ui_archive_approve_not_passed">审核不通过</string>
     <string name="ui_archive_approve_no_title">[没有标题]</string>
+
+    <!--档案推荐-->
+    <string name="ui_archive_recommend_loading">正在加载推荐档案列表&#8230;</string>
+    <string name="ui_archive_recommend_nothing">暂时没有被推荐的档案</string>
+    <string name="ui_archive_recommend_archive_null">档案为空，无法推荐</string>
+    <string name="ui_archive_recommend_archive_content_too_short">该档案字数少于70个字符，不适合推荐，请重新选择符合推荐的档案</string>
+    <string name="ui_archive_recommend_belong_group" formatted="false">所属：%s</string>
 
 </resources>

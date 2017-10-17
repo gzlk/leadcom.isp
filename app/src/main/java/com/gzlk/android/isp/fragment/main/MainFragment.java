@@ -138,6 +138,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         leftIcon.setText(R.string.ui_icon_query);
         leftText.setText(null);
         rightIconContainer.setVisibility(View.GONE);
+        ((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground);
         //((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
     }
 

@@ -7,6 +7,8 @@ import android.widget.TextView;
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
@@ -14,6 +16,7 @@ import com.gzlk.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.gzlk.android.isp.fragment.organization.LivenessFragment;
 import com.gzlk.android.isp.fragment.organization.OnOrganizationChangedListener;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
+import com.gzlk.android.isp.fragment.organization.archive.RecommendedArchiveFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -64,6 +67,12 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     public MainFragment mainFragment;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        isRemovable = true;
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public int getLayout() {
         return R.layout.fragment_main_organization;
     }
@@ -83,6 +92,31 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             //mFragments.add(new LivenessFragment());
             ((StructureFragment) mFragments.get(0)).mainFragment = mainFragment;
             ((StructureFragment) mFragments.get(0)).setOnOrganizationChangedListener(organizationChangedListener);
+            // 拉取到组织的
+            ((StructureFragment) mFragments.get(0)).organizationFragment = this;
+        }
+    }
+
+    /**
+     * 管理员时，增加档案推荐列表
+     */
+    public void addRecommendedArchives(boolean addable, String groupId) {
+        boolean exists = false;
+        int recommend = 0;
+        for (int i = 0, len = mFragments.size(); i < len; i++) {
+            if (mFragments.get(i) instanceof RecommendedArchiveFragment) {
+                exists = true;
+                recommend = i;
+            }
+        }
+        if (!addable && exists) {
+            // 删除这个fragment
+            removeFragment(recommend);
+            channel4.setVisibility(View.GONE);
+        }
+        if (addable && !exists) {
+            channel4.setVisibility(View.VISIBLE);
+            addFragment(RecommendedArchiveFragment.newInstance(groupId));
         }
     }
 

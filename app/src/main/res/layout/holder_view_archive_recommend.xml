@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_archive_recommend_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+    android:background="@android:color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/ui_base_dimen_margin_padding"
+    app:cv_active_border="@color/colorPrimary"
+    app:cv_background="@android:color/white"
+    app:cv_background_active="@android:color/white"
+    app:cv_border_size="@dimen/ui_base_border_size_normal"
+    app:cv_normal_border="@android:color/white">
+
+    <com.gzlk.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_holder_view_archive_recommend_image"
+        android:layout_width="@dimen/ui_static_dp_100"
+        android:layout_height="@dimen/ui_static_dp_80"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        app:id_image_scale_type="centerCrop"
+        app:id_image_src="@mipmap/img_image_default" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ui_holder_view_archive_recommend_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/app_name_default" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_archive_recommend_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_archive_recommend_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_small" />
+    </LinearLayout>
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_archive_recommend_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/ui_static_dp_80"
+        android:text="@string/ui_icon_archive_recommend"
+        android:textColor="@color/textColorHint"
+        android:textSize="@dimen/ui_base_text_size_max" />
+</com.hlk.hlklib.lib.view.CorneredView>

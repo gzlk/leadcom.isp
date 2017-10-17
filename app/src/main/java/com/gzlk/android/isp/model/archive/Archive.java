@@ -58,6 +58,14 @@ public class Archive extends Additional {
          * 赞
          */
         public static final String LIKE = "archiveLike";
+        /**
+         * 组织的公开档案
+         */
+        public static final String PUBLIC_ARCHIVE = "publicArchive";
+        /**
+         * 推荐档案
+         */
+        public static final String RECOMMEND_ARCHIVE = "recommendArchive";
     }
 
     public interface Field {
@@ -96,6 +104,10 @@ public class Archive extends Additional {
         String PassedNum = "passedNum";
         String ArchiveDate = "archiveDate";
         String ArchiveId = "archiveId";
+        String ReferrerId="referrerId";
+        String ReferrerName="referrerName";
+        String ReferrerHeadPhoto="referrerHeadPhoto";
+        String Recommend="recommend";
     }
 
     /**
@@ -224,6 +236,10 @@ public class Archive extends Additional {
                 }
             }
         }
+    }
+
+    public static Archive get(String archiveId) {
+        return new Dao<>(Archive.class).query(archiveId);
     }
 
     /**
