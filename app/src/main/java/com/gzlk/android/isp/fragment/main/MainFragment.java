@@ -14,6 +14,7 @@ import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
+import com.gzlk.android.isp.fragment.home.HomeArchiveRecommendedFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
@@ -155,7 +156,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
-            mFragments.add(new HomeFragment());
+            // 档案推荐
+            mFragments.add(new HomeArchiveRecommendedFragment());
             mFragments.add(new ActivityFragment());
             mFragments.add(new OrganizationFragment());
             mFragments.add(new IndividualFragment());
@@ -243,6 +245,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             if (i == 2 || fragment instanceof IndividualFragment) {
                 // 个人界面已经显示了，此时不再需要改变标题栏背景
                 needHandleTitleBar = !((IndividualFragment) mFragments.get(3)).isTitleBarShown();
+            } else if (i == 1 || fragment instanceof HomeFragment) {
+                //needHandleTitleBar = !((HomeFragment) mFragments.get(3)).isTitleBarShown();
             }
             fragment.setViewPagerDisplayedCurrent(position == i);
         }

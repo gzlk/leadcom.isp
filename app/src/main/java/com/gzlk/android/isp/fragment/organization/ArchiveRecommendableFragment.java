@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.RecommendArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -32,10 +33,10 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveRecommendedFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static ArchiveRecommendedFragment newInstance(String params) {
-        ArchiveRecommendedFragment raf = new ArchiveRecommendedFragment();
+    public static ArchiveRecommendableFragment newInstance(String params) {
+        ArchiveRecommendableFragment raf = new ArchiveRecommendableFragment();
         Bundle bundle = new Bundle();
         // 传入的组织 id
         bundle.putString(PARAM_QUERY_ID, params);
@@ -83,6 +84,7 @@ public class ArchiveRecommendedFragment extends BaseSwipeRefreshSupportFragment 
     }
 
     private void loadingRecommended() {
+        setLoadingText(R.string.ui_archive_recommend_loading);
         displayLoading(true);
         displayNothing(false);
         RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
@@ -117,7 +119,6 @@ public class ArchiveRecommendedFragment extends BaseSwipeRefreshSupportFragment 
     private void initializeAdapter() {
         if (null == mAdapter) {
             setNothingText(R.string.ui_archive_recommend_nothing);
-            setLoadingText(R.string.ui_archive_recommend_loading);
             mAdapter = new RecommendAdapter();
             mRecyclerView.setAdapter(mAdapter);
             loadingRecommended();
@@ -129,7 +130,7 @@ public class ArchiveRecommendedFragment extends BaseSwipeRefreshSupportFragment 
         @Override
         public void onClick(int index) {
             RecommendArchive archive = mAdapter.get(index);
-            ArchiveDetailsFragment.open(ArchiveRecommendedFragment.this, (null == archive.getUserDoc() ? Archive.Type.GROUP : Archive.Type.USER), archive.getDocId(), REQUEST_CHANGE);
+            ArchiveDetailsFragment.open(ArchiveRecommendableFragment.this, (null == archive.getUserDoc() ? Archive.Type.GROUP : Archive.Type.USER), archive.getDocId(), REQUEST_CHANGE);
         }
     };
 
@@ -138,35 +139,89 @@ public class ArchiveRecommendedFragment extends BaseSwipeRefreshSupportFragment 
         @Override
         public RecommendArchive onHandlerBoundData(BaseViewHolder holder) {
             RecommendArchive archive = mAdapter.get(holder.getAdapterPosition());
-            recommendArchive(archive);
+            tryRecommendArchive(archive, holder.getAdapterPosition());
             return null;
         }
     };
 
-    private long getArchiveContentLength(String content) {
+    private long getArchiveContentRealLength(String content) {
         String html = Utils.clearHtml(content);
         if (isEmpty(html)) return 0;
         return html.length();
     }
 
-    private void recommendArchive(RecommendArchive archive) {
+    private void tryRecommendArchive(RecommendArchive archive, int index) {
         Archive doc = null == archive.getUserDoc() ? archive.getGroDoc() : archive.getUserDoc();
         if (null != doc) {
-            long len = getArchiveContentLength(doc.getContent());
-            if (len < 70) {
-                ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_too_short);
-            }else{
-
+            if (archive.getRecommend() == 0) {
+                if (doc.getImage().size() < 1 && doc.getVideo().size() < 1) {
+                    // 无图无视频
+                    ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_no_image_video);
+                } else {
+                    if (doc.getImage().size() > 0 || doc.getVideo().size() > 0) {
+                        recommendArchive(archive, index);
+                    } else {
+                        long len = getArchiveContentRealLength(doc.getContent());
+                        if (len < 70) {
+                            ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_too_short);
+                        } else {
+                            // 推荐
+                            recommendArchive(archive, index);
+                        }
+                    }
+                }
+            } else {
+                if (isEmpty(archive.getId()) || archive.getId().equals("null")) {
+                    ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_id_null);
+                } else {
+                    unRecommendArchive(archive.getId(), index);
+                }
             }
         } else {
             ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_null);
         }
     }
 
+    // 推荐档案
+    private void recommendArchive(RecommendArchive archive, final int index) {
+        setLoadingText(R.string.ui_archive_recommend_recommending);
+        displayLoading(true);
+        RecommendArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<RecommendArchive>() {
+            @Override
+            public void onResponse(RecommendArchive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    RecommendArchive doc = mAdapter.get(index);
+                    doc.setRecommend(RecommendArchive.RecommendStatus.RECOMMENDED);
+                    mAdapter.notifyItemChanged(index);
+                }
+                displayLoading(false);
+            }
+        }).recommend(archive.getType(), archive.getGroupId(), archive.getDocId(), archive.getUserId());
+    }
+
+    // 取消推荐档案
+    private void unRecommendArchive(String recommendId, final int index) {
+        setLoadingText(R.string.ui_archive_recommend_unrecommending);
+        displayLoading(true);
+        RecommendArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<RecommendArchive>() {
+            @Override
+            public void onResponse(RecommendArchive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    RecommendArchive doc = mAdapter.get(index);
+                    doc.setRecommend(RecommendArchive.RecommendStatus.UN_RECOMMEND);
+                    mAdapter.notifyItemChanged(index);
+                }
+                displayLoading(false);
+            }
+        }).unRecommend(recommendId);
+    }
+
     private class RecommendAdapter extends RecyclerViewAdapter<ArchiveRecommendViewHolder, RecommendArchive> {
         @Override
         public ArchiveRecommendViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ArchiveRecommendViewHolder holder = new ArchiveRecommendViewHolder(itemView, ArchiveRecommendedFragment.this);
+            ArchiveRecommendViewHolder holder = new ArchiveRecommendViewHolder(itemView, ArchiveRecommendableFragment.this);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             holder.addOnHandlerBoundDataListener(onHandleBoundDataListener);
             return holder;

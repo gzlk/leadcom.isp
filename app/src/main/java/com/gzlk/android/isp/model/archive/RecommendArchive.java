@@ -20,6 +20,34 @@ import com.litesuits.orm.db.annotation.Table;
 @Table(Archive.Table.RECOMMEND_ARCHIVE)
 public class RecommendArchive extends Model {
 
+    /**
+     * 推荐的档案类型
+     */
+    public interface RecommendType {
+        /**
+         * 组织档案
+         */
+        int GROUP = 1;
+        /**
+         * 个人档案
+         */
+        int USER = 2;
+    }
+
+    /**
+     * 档案推荐状态
+     */
+    public interface RecommendStatus {
+        /**
+         * 未推荐
+         */
+        int UN_RECOMMEND = 0;
+        /**
+         * 已推荐
+         */
+        int RECOMMENDED = 1;
+    }
+
     @Column(Archive.Field.Type)
     private int type;                   //档案类型(1.组织档案,2.个人档案)
     @Column(Organization.Field.GroupId)
@@ -139,7 +167,9 @@ public class RecommendArchive extends Model {
 
     public Archive getUserDoc() {
         if (null == userDoc) {
-            userDoc = Archive.get(docId);
+            if (type == RecommendType.USER) {
+                userDoc = Archive.get(docId);
+            }
         }
         return userDoc;
     }
@@ -149,8 +179,10 @@ public class RecommendArchive extends Model {
     }
 
     public Archive getGroDoc() {
-        if (null == userDoc) {
-            userDoc = Archive.get(docId);
+        if (null == groDoc) {
+            if (type == RecommendType.GROUP) {
+                groDoc = Archive.get(docId);
+            }
         }
         return groDoc;
     }

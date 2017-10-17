@@ -51,7 +51,7 @@ public class ArchiveRecommendViewHolder extends BaseViewHolder {
         titleView.setText(null == doc ? "" : doc.getTitle());
         groupView.setText(StringHelper.getString(R.string.ui_archive_recommend_belong_group, archive.getGroupName()));
         timeView.setText(fragment().formatDate(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_format)));
-        iconView.setTextColor(getColor(archive.getRecommend() == 1 ? R.color.colorCaution : R.color.textColorHint));
+        iconView.setTextColor(getColor(archive.getRecommend() == RecommendArchive.RecommendStatus.RECOMMENDED ? R.color.colorCaution : R.color.textColorHint));
     }
 
     @Click({R.id.ui_holder_view_archive_recommend_layout, R.id.ui_holder_view_archive_recommend_icon})

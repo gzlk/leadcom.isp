@@ -13,7 +13,7 @@ import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.gzlk.android.isp.fragment.organization.OnOrganizationChangedListener;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
-import com.gzlk.android.isp.fragment.organization.ArchiveRecommendedFragment;
+import com.gzlk.android.isp.fragment.organization.ArchiveRecommendableFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -101,7 +101,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         boolean exists = false;
         int recommend = 0;
         for (int i = 0, len = mFragments.size(); i < len; i++) {
-            if (mFragments.get(i) instanceof ArchiveRecommendedFragment) {
+            if (mFragments.get(i) instanceof ArchiveRecommendableFragment) {
                 exists = true;
                 recommend = i;
             }
@@ -113,7 +113,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         }
         if (addable && !exists) {
             channel4.setVisibility(View.VISIBLE);
-            addFragment(ArchiveRecommendedFragment.newInstance(groupId));
+            addFragment(ArchiveRecommendableFragment.newInstance(groupId));
         }
     }
 

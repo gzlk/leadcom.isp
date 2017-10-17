@@ -63,7 +63,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:minHeight="@dimen/ui_static_dp_80"
         android:text="@string/ui_icon_archive_recommend"
         android:textColor="@color/textColorHint"
         android:textSize="@dimen/ui_base_text_size_max" />

@@ -4,10 +4,14 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.query.PaginationQuery;
+import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.RecommendArchive;
 import com.litesuits.http.request.param.HttpMethods;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -26,6 +30,9 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
 
     public static RecommendArchiveRequest request() {
         return new RecommendArchiveRequest();
+    }
+
+    private static class SingleRecommend extends SingleQuery<RecommendArchive> {
     }
 
     private static class MultipleRecommend extends PaginationQuery<RecommendArchive> {
@@ -91,6 +98,39 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
     protected void save(RecommendArchive recommendArchive) {
         saveArchive(recommendArchive);
         super.save(recommendArchive);
+    }
+
+    /**
+     * 推荐档案
+     *
+     * @param type             组织档案推荐类型(1.组织档案,2.个人档案)
+     * @param groupId          推荐档案的组织ID
+     * @param archiveId        档案ID(组织档案ID或个人档案ID)
+     * @param archiveCreatorId 档案创建者的用户ID
+     */
+    public void recommend(int type, String groupId, String archiveId, String archiveCreatorId) {
+        // {type,groupId,userId,docId}
+        JSONObject object = new JSONObject();
+        try {
+            object.put("type", type)
+                    .put("groupId", groupId)
+                    .put("userId", archiveCreatorId)
+                    .put("docId", archiveId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleRecommend.class, url(ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 取消推荐档案
+     *
+     * @param recommendedId 档案推荐的id
+     */
+    public void unRecommend(String recommendedId) {
+        // groDocRcmdId
+        String param = format("%s?groDocRcmdId=%s", url(DELETE), recommendedId);
+        httpRequest(getRequest(SingleRecommend.class, param, "", HttpMethods.Get));
     }
 
     /**
