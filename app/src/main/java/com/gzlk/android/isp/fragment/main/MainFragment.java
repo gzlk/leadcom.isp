@@ -323,13 +323,11 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private void handleTitleBar(int position) {
         switch (position) {
             case 0:
+            case 3:
                 if (!isTitleBarShown()) {
                     transparentTitleBar(true);
                 }
-                displaySettingIcon(false);
-            case 3:
-                transparentTitleBar(true);
-                displaySettingIcon(true);
+                displaySettingIcon(position == 3);
                 break;
             default:
                 transparentTitleBar(false);
