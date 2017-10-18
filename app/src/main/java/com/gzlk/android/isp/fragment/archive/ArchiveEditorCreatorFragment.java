@@ -248,7 +248,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
 
     @Override
     protected boolean checkStillEditing() {
-        return !isEmpty(titleView.getValue());
+        return isEmpty(mArchive.getId()) && !isEmpty(titleView.getValue());
     }
 
     @Override

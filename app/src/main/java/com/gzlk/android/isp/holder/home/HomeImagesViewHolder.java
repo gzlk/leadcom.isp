@@ -118,10 +118,12 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
                 CustomTextView dot = new CustomTextView(viewPager.getContext());
                 dots.add(dot);
                 // 第一个和最后一个看不见，其余的可以看见
-                //dot.setVisibility(i == 0 || i >= size - 1 ? View.INVISIBLE : View.VISIBLE);
+                //if (i == 0 || i == size - 1) {
+                dot.setVisibility(View.INVISIBLE);
+                //}
                 dot.setText(StringHelper.getString(R.string.ui_icon_radio_disabled));
                 dot.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_tiny));
-                dot.setTextColor(getColor(R.color.textColorHint));
+                dot.setTextColor(getColor(R.color.textColorHintDark));
                 indicator.addView(dot);
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) dot.getLayoutParams();
                 params.rightMargin = dotPadding;
@@ -154,9 +156,14 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         currentPosition = position;
         titleView.setText(urls.get(currentPosition).getTitle());
         //colorChange(position);
+        changeDotsColor(position, getColor(R.color.textColorHintDark));
+    }
+
+    private void changeDotsColor(int position, int color) {
         for (int i = 0, len = dots.size(); i < len; i++) {
+            dots.get(i).setVisibility((i > 0 && i < len - 1) ? View.VISIBLE : View.INVISIBLE);
             if (dots.get(i).getVisibility() == View.VISIBLE) {
-                dots.get(i).setTextColor(i == position ? Color.WHITE : getColor(R.color.textColorHint));
+                dots.get(i).setTextColor(i == position ? Color.WHITE : color);
             }
         }
     }
@@ -174,7 +181,8 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
             public void onGenerated(Palette palette) {
                 Palette.Swatch vibrant = palette.getVibrantSwatch();
                 if (null != vibrant) {
-                    titleView.setTextColor(colorBurn(vibrant.getRgb()));
+                    //titleView.setTextColor(colorBurn(vibrant.getRgb()));
+                    changeDotsColor(position, colorBurn(vibrant.getRgb()));
                 }
             }
 

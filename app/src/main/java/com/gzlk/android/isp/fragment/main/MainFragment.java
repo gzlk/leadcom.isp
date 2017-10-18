@@ -256,6 +256,9 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         if (position >= 1 && position < 3) {
             transparentTitleText(false);
         }
+        if (position == 0) {
+            displaySettingIcon(false);
+        }
     }
 
     @Override
@@ -308,14 +311,29 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         }
     }
 
+    private boolean isTitleBarShown() {
+        if (getDisplayedPage() == 0) {
+            return ((HomeRecommendedFragment) mFragments.get(0)).isTitleBarShown();
+        } else if (getDisplayedPage() == 3) {
+            return ((IndividualFragment) mFragments.get(3)).isTitleBarShown();
+        }
+        return true;
+    }
+
     private void handleTitleBar(int position) {
         switch (position) {
             case 0:
+                if (!isTitleBarShown()) {
+                    transparentTitleBar(true);
+                }
+                displaySettingIcon(false);
             case 3:
                 transparentTitleBar(true);
+                displaySettingIcon(true);
                 break;
             default:
                 transparentTitleBar(false);
+                displaySettingIcon(false);
                 break;
         }
     }
@@ -373,7 +391,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();
         //transparentTitleText(transparent);
-        displayRightIcon(transparent);
+        //displaySettingIcon(transparent);
     }
 
     private void transparentTitleText(boolean transparent) {
@@ -383,7 +401,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();
     }
 
-    private void displayRightIcon(final boolean show) {
+    private void displaySettingIcon(final boolean show) {
         rightSettingIcon.animate().alpha(show ? 1 : 0)
                 .setDuration(duration())
                 .setInterpolator(new AccelerateDecelerateInterpolator())
