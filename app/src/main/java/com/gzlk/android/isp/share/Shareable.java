@@ -38,7 +38,7 @@ public class Shareable {
         return StringHelper.isEmpty(string);
     }
 
-    protected static String getLocalPath(String imageUrl) {
+    public static String getLocalPath(String imageUrl) {
         File file = ImageLoader.getInstance().getDiskCache().get(imageUrl);
         if (null != file) {
             return file.getPath();

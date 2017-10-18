@@ -89,9 +89,10 @@ public class NimMessage implements MsgAttachment {
         return null == msgs ? 0 : msgs.size();
     }
 
-    public static void clear(){
+    public static void clear() {
         new Dao<>(NimMessage.class).clear();
     }
+
     /**
      * 自定义消息类型
      */
@@ -192,6 +193,30 @@ public class NimMessage implements MsgAttachment {
          * 结束活动议题
          */
         int TOPIC_END = 30;
+        /**
+         * 个人档案点赞
+         */
+        int USER_ARCHIVE_LIKE = 31;
+        /**
+         * 个人档案评论
+         */
+        int USER_ARCHIVE_COMMENT = 32;
+        /**
+         * 组织档案点赞
+         */
+        int GROUP_ARCHIVE_LIKE = 33;
+        /**
+         * 组织档案评论
+         */
+        int GROUP_ARCHIVE_COMMENT = 34;
+        /**
+         * 个人动态点赞
+         */
+        int MOMENT_LIKE = 35;
+        /**
+         * 个人动态评论
+         */
+        int MOMENT_COMMENT = 36;
     }
 
     /**

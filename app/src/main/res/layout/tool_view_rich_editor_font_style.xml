@@ -39,7 +39,8 @@
             android:layout_height="@dimen/ui_base_dimen_button_height"
             android:gravity="center"
             android:text="@string/ui_icon_rich_editor_underline"
-            android:textColor="@color/textColorHint" />
+            android:textColor="@color/textColorHint"
+            android:visibility="gone" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_archive_creator_action_strike_through"
@@ -47,7 +48,8 @@
             android:layout_height="@dimen/ui_base_dimen_button_height"
             android:gravity="center"
             android:text="@string/ui_icon_rich_editor_strike_through"
-            android:textColor="@color/textColorHint" />
+            android:textColor="@color/textColorHint"
+            android:visibility="gone" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_archive_creator_action_superscript"
@@ -55,7 +57,8 @@
             android:layout_height="@dimen/ui_base_dimen_button_height"
             android:gravity="center"
             android:text="@string/ui_icon_rich_editor_superscript"
-            android:textColor="@color/textColorHint" />
+            android:textColor="@color/textColorHint"
+            android:visibility="gone" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_archive_creator_action_subscript"
@@ -63,7 +66,8 @@
             android:layout_height="@dimen/ui_base_dimen_button_height"
             android:gravity="center"
             android:text="@string/ui_icon_rich_editor_subscript"
-            android:textColor="@color/textColorHint" />
+            android:textColor="@color/textColorHint"
+            android:visibility="gone" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_archive_creator_action_align_left"
@@ -89,15 +93,6 @@
             android:text="@string/ui_icon_rich_editor_align_right"
             android:textColor="@color/textColorHint" />
 
-    </com.google.android.flexbox.FlexboxLayout>
-
-    <include layout="@layout/tool_view_half_line_horizontal" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_archive_creator_action_heading1"
             android:layout_width="@dimen/ui_base_dimen_button_height"
@@ -121,6 +116,16 @@
             android:gravity="center"
             android:text="@string/ui_icon_rich_editor_heading_3"
             android:textColor="@color/textColorHint" />
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_archive_creator_action_heading4"

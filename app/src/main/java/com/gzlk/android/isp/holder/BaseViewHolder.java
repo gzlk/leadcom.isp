@@ -15,6 +15,7 @@ import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
+import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.hlk.hlklib.etc.Utility;
 
 import java.lang.ref.SoftReference;
@@ -185,5 +186,14 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
      */
     public void addOnHandlerBoundDataListener(OnHandleBoundDataListener l) {
         mOnHandlerBoundDataListener = l;
+    }
+
+    protected OnViewHolderElementClickListener mOnViewHolderElementClickListener;
+
+    /**
+     * 添加元素点击事件处理回调
+     */
+    public void setOnViewHolderElementClickListener(OnViewHolderElementClickListener l) {
+        mOnViewHolderElementClickListener = l;
     }
 }

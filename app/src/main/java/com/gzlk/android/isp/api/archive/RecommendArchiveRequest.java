@@ -141,4 +141,12 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
         String params = format("%s?%s&pageNumber=%d&groupId=%s", url(LIST), SUMMARY, pageNumber, groupId);
         httpRequest(getRequest(MultipleRecommend.class, params, "", HttpMethods.Get));
     }
+
+    /**
+     * 首页推荐档案列表
+     */
+    public void front(int pageNumber) {
+        String params = format("%s?%s&pageNumber=%d", url(LIST + "/front"), SUMMARY, pageNumber);
+        httpRequest(getRequest(MultipleRecommend.class, params, "", HttpMethods.Get));
+    }
 }

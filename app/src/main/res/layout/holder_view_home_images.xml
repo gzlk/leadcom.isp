@@ -12,12 +12,11 @@
         android:id="@+id/ui_holder_view_home_image_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/transparent_40"
         android:ellipsize="end"
+        android:maxLines="2"
         android:padding="@dimen/ui_static_dp_5"
-        android:singleLine="true"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ui_base_text_size_large" />
 
     <LinearLayout
         android:id="@+id/ui_holder_view_home_image_indicator"
@@ -28,5 +27,40 @@
         android:orientation="horizontal"
         android:padding="@dimen/ui_base_dimen_margin_padding">
 
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_5"
+            android:text="@string/ui_icon_radio_disabled"
+            android:textSize="@dimen/ui_base_text_size_tiny" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_5"
+            android:text="@string/ui_icon_radio_disabled"
+            android:textSize="@dimen/ui_base_text_size_tiny" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_5"
+            android:text="@string/ui_icon_radio_disabled"
+            android:textSize="@dimen/ui_base_text_size_tiny" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_5"
+            android:text="@string/ui_icon_radio_disabled"
+            android:textSize="@dimen/ui_base_text_size_tiny" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_static_dp_5"
+            android:text="@string/ui_icon_radio_disabled"
+            android:textSize="@dimen/ui_base_text_size_tiny" />
     </LinearLayout>
 </RelativeLayout>

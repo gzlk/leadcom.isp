@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
+import com.gzlk.android.isp.api.archive.RecommendArchiveRequest;
 import com.gzlk.android.isp.api.common.FocusImageRequest;
 import com.gzlk.android.isp.api.common.RecommendRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
@@ -20,6 +22,7 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.common.InnerWebViewFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveHomeRecommendedViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.gzlk.android.isp.holder.home.ActivityHomeViewHolder;
 import com.gzlk.android.isp.holder.home.HomeImagesViewHolder;
@@ -28,11 +31,13 @@ import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.archive.RecommendArchive;
 import com.gzlk.android.isp.model.common.FocusImage;
 import com.gzlk.android.isp.model.common.PriorityPlace;
 import com.gzlk.android.isp.model.common.RecommendContent;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +74,8 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_TYPE = "hrf_param_type";
 
+    private static final String PARAM_SHOWN = "title_bar_shown";
+
     public static HomeRecommendedFragment newInstance(String params) {
         HomeRecommendedFragment hrf = new HomeRecommendedFragment();
         Bundle bundle = new Bundle();
@@ -77,19 +84,75 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
         return hrf;
     }
 
+    private boolean isTitleBarShown = false;
+
     private int mType = TYPE_NOTHING;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mType = bundle.getInt(PARAM_TYPE, TYPE_ALL);
+        isTitleBarShown = bundle.getBoolean(PARAM_SHOWN, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_TYPE, mType);
+        bundle.putBoolean(PARAM_SHOWN, isTitleBarShown);
     }
+
+    /**
+     * 标题栏是否已经显示了
+     */
+    public boolean isTitleBarShown() {
+        return isTitleBarShown;
+    }
+
+    private SoftReference<View> toolBarView;
+
+    public HomeRecommendedFragment setToolBar(View view) {
+        if (null == toolBarView || null == toolBarView.get()) {
+            toolBarView = new SoftReference<>(view);
+        }
+        return this;
+    }
+
+    private SoftReference<View> textView;
+
+    public void setToolBarTextView(View view) {
+        if (null == textView || null == textView.get()) {
+            textView = new SoftReference<>(view);
+        }
+    }
+
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        private int scrolledY = 0;
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (!isViewPagerDisplayedCurrent()) {
+                return;
+            }
+            scrolledY += dy;
+            if (scrolledY >= 0 && scrolledY <= 500) {
+                float alpha = scrolledY * 0.005f;
+                if (null != toolBarView && null != toolBarView.get()) {
+                    toolBarView.get().setAlpha(alpha);
+                    isTitleBarShown = toolBarView.get().getAlpha() >= 1;
+                }
+                if (null != textView && null != textView.get()) {
+                    textView.get().setAlpha(alpha);
+                }
+            }
+        }
+    };
 
     @Override
     protected void onViewPagerDisplayedChanged(boolean visible) {
@@ -140,7 +203,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        if (mType == TYPE_ALL) {
+        if (mType == TYPE_ALL || mType == TYPE_ARCHIVE) {
             fetchingFocusImages();
         } else {
             fetchingRecommended();
@@ -162,6 +225,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingFocusImages() {
+        setLoadingText(R.string.ui_text_home_focus_image_loading);
         displayLoading(true);
         displayNothing(false);
         FocusImageRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<FocusImage>() {
@@ -185,9 +249,10 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new RecommendedAdapter();
+            mRecyclerView.addOnScrollListener(scrollListener);
             mRecyclerView.setAdapter(mAdapter);
             if (getUserVisibleHint()) {
-                if (mType == TYPE_ALL) {
+                if (mType == TYPE_ALL || mType == TYPE_ARCHIVE) {
                     setTestData();
                     fetchingFocusImages();
                 } else {
@@ -242,6 +307,10 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingRecommended() {
+        if (mType == TYPE_ARCHIVE) {
+            fetchingRecommendedArchives();
+            return;
+        }
         displayLoading(true);
         displayNothing(false);
         RecommendRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendContent>() {
@@ -290,6 +359,49 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
         }).list(mType);
     }
 
+    private void fetchingRecommendedArchives() {
+        setLoadingText(R.string.ui_text_home_archive_loading);
+        displayLoading(true);
+        displayNothing(false);
+        RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
+            @Override
+            public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (remotePageNumber <= 1) {
+                        removeArchives();
+                    }
+                    if (null != list) {
+                        if (list.size() >= pageSize) {
+                            remotePageNumber++;
+                            isLoadingComplete(false);
+                        } else {
+                            isLoadingComplete(true);
+                        }
+                        for (RecommendArchive archive : list) {
+                            mAdapter.update(archive);
+                        }
+                    } else {
+                        isLoadingComplete(true);
+                    }
+                } else {
+                    isLoadingComplete(true);
+                }
+                stopRefreshing();
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() < 2);
+            }
+        }).front(remotePageNumber);
+    }
+
+    private void removeArchives() {
+        int size = mAdapter.getItemCount();
+        while (size > 1) {
+            mAdapter.remove(size - 1);
+            size = mAdapter.getItemCount();
+        }
+    }
+
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
@@ -298,6 +410,10 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                 // 到活动详情报名页
                 Activity act = (Activity) model;
                 isJoinedPublicAct(act.getId(), act.getTid());
+            } else if (model instanceof RecommendArchive) {
+                RecommendArchive recommend = (RecommendArchive) model;
+                int type = recommend.getType() == RecommendArchive.RecommendType.USER ? Archive.Type.USER : Archive.Type.GROUP;
+                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, recommend.getDocId()), true, false);
             } else if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
@@ -343,6 +459,10 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                     ActivityHomeViewHolder holder = new ActivityHomeViewHolder(itemView, HomeRecommendedFragment.this);
                     holder.addOnViewHolderClickListener(onViewHolderClickListener);
                     return holder;
+                case VT_ARCHIVE:
+                    ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, HomeRecommendedFragment.this);
+                    ahrvh.addOnViewHolderClickListener(onViewHolderClickListener);
+                    return ahrvh;
                 default:
                     ArchiveManagementViewHolder ahvh = new ArchiveManagementViewHolder(itemView, HomeRecommendedFragment.this);
                     ahvh.addOnViewHolderClickListener(onViewHolderClickListener);
@@ -352,7 +472,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int getItemViewType(int position) {
-            if (mType == TYPE_ALL && position == 0) {
+            if ((mType == TYPE_ALL || mType == TYPE_ARCHIVE) && position == 0) {
                 return VT_HEADER;
             }
             Model model = get(position);
@@ -374,7 +494,8 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                     return R.layout.holder_view_home_seminar;
                 default:
                     // 档案
-                    return R.layout.holder_view_archive_management;
+                    //return R.layout.holder_view_archive_management;
+                    return R.layout.holder_view_archive_home_recommended;
             }
         }
 
@@ -388,6 +509,8 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                 }
             } else if (holder instanceof ActivityHomeViewHolder) {
                 ((ActivityHomeViewHolder) holder).showContent((Activity) item);
+            } else if (holder instanceof ArchiveHomeRecommendedViewHolder) {
+                ((ArchiveHomeRecommendedViewHolder) holder).showContent((RecommendArchive) item);
             }
         }
 

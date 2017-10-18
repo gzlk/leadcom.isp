@@ -104,10 +104,10 @@ public class Archive extends Additional {
         String PassedNum = "passedNum";
         String ArchiveDate = "archiveDate";
         String ArchiveId = "archiveId";
-        String ReferrerId="referrerId";
-        String ReferrerName="referrerName";
-        String ReferrerHeadPhoto="referrerHeadPhoto";
-        String Recommend="recommend";
+        String ReferrerId = "referrerId";
+        String ReferrerName = "referrerName";
+        String ReferrerHeadPhoto = "referrerHeadPhoto";
+        String Recommend = "recommend";
     }
 
     /**
@@ -144,6 +144,20 @@ public class Archive extends Additional {
          * 活动档案（组织档案有效）
          */
         int ACTIVITY = 3;
+    }
+
+    /**
+     * 档案的收藏状态
+     */
+    public interface CollectionType {
+        /**
+         * 未收藏
+         */
+        int UN_COLLECT = 0;
+        /**
+         * 已收藏
+         */
+        int COLLECTED = 1;
     }
 
     /**

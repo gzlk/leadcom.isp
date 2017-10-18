@@ -102,19 +102,19 @@
                         android:textColor="@color/textColorHint" />
 
                     <com.hlk.hlklib.lib.view.CustomTextView
-                        android:id="@+id/ui_archive_creator_action_image"
-                        android:layout_width="@dimen/ui_base_dimen_button_height"
-                        android:layout_height="@dimen/ui_base_dimen_button_height"
-                        android:gravity="center"
-                        android:text="@string/ui_icon_rich_editor_image"
-                        android:textColor="@color/textColorHint" />
-
-                    <com.hlk.hlklib.lib.view.CustomTextView
                         android:id="@+id/ui_archive_creator_action_font"
                         android:layout_width="@dimen/ui_base_dimen_button_height"
                         android:layout_height="@dimen/ui_base_dimen_button_height"
                         android:gravity="center"
                         android:text="@string/ui_icon_rich_editor_font"
+                        android:textColor="@color/textColorHint" />
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_action_image"
+                        android:layout_width="@dimen/ui_base_dimen_button_height"
+                        android:layout_height="@dimen/ui_base_dimen_button_height"
+                        android:gravity="center"
+                        android:text="@string/ui_icon_rich_editor_image"
                         android:textColor="@color/textColorHint" />
 
                     <com.hlk.hlklib.lib.view.CustomTextView
@@ -124,7 +124,8 @@
                         android:gravity="center"
                         android:text="@string/ui_icon_attachment"
                         android:textColor="@color/textColorHint"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
                     <com.hlk.hlklib.lib.view.CustomTextView
                         android:id="@+id/ui_archive_creator_action_video"
@@ -148,7 +149,8 @@
                         android:layout_height="@dimen/ui_base_dimen_button_height"
                         android:gravity="center"
                         android:text="@string/ui_icon_rich_editor_link"
-                        android:textColor="@color/textColorHint" />
+                        android:textColor="@color/textColorHint"
+                        android:visibility="gone" />
 
                     <com.hlk.hlklib.lib.view.CustomTextView
                         android:id="@+id/ui_archive_creator_action_quote"
@@ -156,7 +158,8 @@
                         android:layout_height="@dimen/ui_base_dimen_button_height"
                         android:gravity="center"
                         android:text="@string/ui_icon_rich_editor_quote"
-                        android:textColor="@color/textColorHint" />
+                        android:textColor="@color/textColorHint"
+                        android:visibility="gone" />
 
                     <com.hlk.hlklib.lib.view.CustomTextView
                         android:id="@+id/ui_archive_creator_action_ordered_list"
@@ -164,7 +167,8 @@
                         android:layout_height="@dimen/ui_base_dimen_button_height"
                         android:gravity="center"
                         android:text="@string/ui_icon_rich_editor_ordered"
-                        android:textColor="@color/textColorHint" />
+                        android:textColor="@color/textColorHint"
+                        android:visibility="gone" />
 
                     <com.hlk.hlklib.lib.view.CustomTextView
                         android:id="@+id/ui_archive_creator_action_unordered_list"
@@ -172,7 +176,8 @@
                         android:layout_height="@dimen/ui_base_dimen_button_height"
                         android:gravity="center"
                         android:text="@string/ui_icon_rich_editor_unordered"
-                        android:textColor="@color/textColorHint" />
+                        android:textColor="@color/textColorHint"
+                        android:visibility="gone" />
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>

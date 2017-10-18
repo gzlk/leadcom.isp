@@ -7,9 +7,15 @@
     <string name="ui_text_home_top_channel_3">点评</string>
     <string name="ui_text_home_top_channel_4">编辑位</string>
 
+    <string name="ui_text_home_focus_image_loading">正在加载头条内容&#8230;</string>
+    <string name="ui_text_home_focus_image_nothing">暂时没有更多头条推荐内容了</string>
+    <string name="ui_text_home_activity_loading">正在加载推荐的活动&#8230;</string>
     <string name="ui_text_home_activity_nothing">暂时没有更多活动了</string>
+    <string name="ui_text_home_archive_loading">正在加载推荐的档案&#8230;</string>
     <string name="ui_text_home_archive_nothing">暂时没有更多档案了</string>
 
     <string name="ui_text_home_inner_web_view_invalid_url">无效的url路径</string>
     <string name="ui_text_home_archive_content_empty">该档案的内容是空的</string>
+
+    <string name="ui_text_home_archive_recommend_group_name" formatted="false">【%s推荐】</string>
 </resources>
