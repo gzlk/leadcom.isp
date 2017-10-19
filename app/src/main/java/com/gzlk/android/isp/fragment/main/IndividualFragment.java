@@ -194,8 +194,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     if (null != list) {
                         if (selectedFunction == 0) {
                             Moment today = (Moment) adapter.get(2);
-                            today.setAuthPublic(userInfoNum);
-                            today.setContent(lastHeadPhoto);
+                            today.setAuthPublic(2);
+                            today.setContent("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
                             adapter.notifyItemChanged(2);
                             for (Moment moment : list) {
                                 adapter.update(moment);
@@ -480,6 +480,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case R.id.ui_holder_view_moment_camera_message_layer:
                     // 打开消息列表
+                    UserMessageFragment.open(IndividualFragment.this);
                     break;
             }
         }
