@@ -24,6 +24,9 @@ public class SingleQuery<T> extends Api<T> {
     private int actInvtStatus;
     private int invtNum;
     private ArrayList<AppTopic>actTopicList;
+    // 个人消息
+    private int userInfoNum;
+    private String lastHeadPhoto;
 
     public T getData() {
         return data;
@@ -63,5 +66,21 @@ public class SingleQuery<T> extends Api<T> {
 
     public void setActTopicList(ArrayList<AppTopic> actTopicList) {
         this.actTopicList = actTopicList;
+    }
+
+    public int getUserInfoNum() {
+        return userInfoNum;
+    }
+
+    public void setUserInfoNum(int userInfoNum) {
+        this.userInfoNum = userInfoNum;
+    }
+
+    public String getLastHeadPhoto() {
+        return lastHeadPhoto;
+    }
+
+    public void setLastHeadPhoto(String lastHeadPhoto) {
+        this.lastHeadPhoto = lastHeadPhoto;
     }
 }

@@ -96,8 +96,8 @@ public class NimApplication extends BaseActivityManagedApplication {
             return getString(R.string.netease_nim_app_key_test);
         }
         //if (BuildConfig.RELEASEABLE) {
-            // release 版的 app key
-            return getString(R.string.netease_nim_app_key);
+        // release 版的 app key
+        return getString(R.string.netease_nim_app_key);
         //}
         // beta 版的 app key
         //return getString(R.string.netease_nim_app_key_beta);
@@ -290,17 +290,26 @@ public class NimApplication extends BaseActivityManagedApplication {
                                 break;
                         }
                         NimMessage.save(msg);
-                        if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
-                            // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
-                            Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
-                            NotificationHelper.helper(NimApplication.this).show(getString(R.string.ui_nim_action_notice), msg.getMsgContent(), extra);
-                        } else {
-                            // 转到MainActivity处理消息
-                            if (null != messageEvent) {
-                                messageEvent.onMessageEvent(msg);
+                        if(msg.isSavable()){
+                            if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
+                                // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
+                                Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
+                                NotificationHelper.helper(NimApplication.this).show(getString(R.string.ui_nim_action_notice), msg.getMsgContent(), extra);
                             }
+                            dispatchCallbacks();
                         }
-                        dispatchCallbacks();
+                        dispatchEvents(msg);
+//                        if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
+//                            // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
+//                            Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
+//                            NotificationHelper.helper(NimApplication.this).show(getString(R.string.ui_nim_action_notice), msg.getMsgContent(), extra);
+//                        } else {
+//                            // 转到MainActivity处理消息
+//                            if (null != messageEvent) {
+//                                messageEvent.onMessageEvent(msg);
+//                            }
+//                        }
+//                        dispatchCallbacks();
                     }
                 }
             }
@@ -330,7 +339,32 @@ public class NimApplication extends BaseActivityManagedApplication {
         }
     };
 
-    public static OnNimMessageEvent messageEvent;
+    private static ArrayList<OnNimMessageEvent> messageEvents = new ArrayList<>();
+
+    /**
+     * 增加推送消息处理回调
+     */
+    public static void addNimMessageEvent(OnNimMessageEvent event) {
+        if (!messageEvents.contains(event)) {
+            messageEvents.add(event);
+        }
+    }
+
+    /**
+     * 删除推送消息处理回调
+     */
+    public static void removeNimMessageEvent(OnNimMessageEvent event) {
+        messageEvents.remove(event);
+    }
+
+    /**
+     * 按照列表挨个通知回调处理消息到达事件
+     */
+    private static void dispatchEvents(NimMessage message) {
+        for (OnNimMessageEvent event : messageEvents) {
+            event.onMessageEvent(message);
+        }
+    }
 
     private static ArrayList<NotificationChangeHandleCallback> callbacks = new ArrayList<>();
 

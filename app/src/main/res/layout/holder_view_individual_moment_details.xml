@@ -4,6 +4,8 @@
     android:id="@+id/ui_holder_view_moment_details_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+    android:background="@android:color/white"
     android:orientation="horizontal"
     android:padding="@dimen/ui_base_dimen_margin_padding">
 

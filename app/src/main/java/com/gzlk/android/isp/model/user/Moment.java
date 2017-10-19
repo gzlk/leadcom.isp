@@ -165,6 +165,9 @@ public class Moment extends Additional {
     }
 
     public ArrayList<String> getImage() {
+        if (null == image) {
+            image = new ArrayList<>();
+        }
         return image;
     }
 

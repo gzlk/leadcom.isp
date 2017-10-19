@@ -21,6 +21,10 @@ public abstract class OnMultipleRequestListener<Data> {
     public int invtNum;
     public ArrayList<AppTopic> actTopicList;
 
+    // 个人消息
+    public int userInfoNum;
+    public String lastHeadPhoto;
+
     /**
      * 网络调用成功
      */

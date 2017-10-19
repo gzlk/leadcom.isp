@@ -80,7 +80,7 @@ public class MainActivity extends TitleActivity {
         // 接收消息
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, true);
         // 接收自定义通知
-        NimApplication.messageEvent = nimMessageEvent;
+        NimApplication.addNimMessageEvent(nimMessageEvent);
         //NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, true);
 
         if (null == mainFragment) {
@@ -124,7 +124,7 @@ public class MainActivity extends TitleActivity {
 
     @Override
     protected void onDestroy() {
-        NimApplication.messageEvent = null;
+        NimApplication.removeNimMessageEvent(nimMessageEvent);
         //NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
         //PgyUpdateManager.unregister();
@@ -160,7 +160,9 @@ public class MainActivity extends TitleActivity {
     private OnNimMessageEvent nimMessageEvent = new OnNimMessageEvent() {
         @Override
         public void onMessageEvent(NimMessage message) {
-            handleNimMessageDetails(MainActivity.this, message);
+            if (message.isSavable()) {
+                handleNimMessageDetails(MainActivity.this, message);
+            }
         }
     };
 

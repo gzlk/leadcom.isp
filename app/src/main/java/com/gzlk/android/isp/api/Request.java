@@ -179,6 +179,8 @@ public abstract class Request<T> {
                             save(pagination.getList());
                             onMultipleRequestListener.invtNum = paginationQuery.getInvtNum();
                             onMultipleRequestListener.actTopicList = paginationQuery.getActTopicList();
+                            onMultipleRequestListener.userInfoNum = paginationQuery.getUserInfoNum();
+                            onMultipleRequestListener.lastHeadPhoto = paginationQuery.getLastHeadPhoto();
                             if (null != paginationQuery.getActTopicList()) {
                                 AppTopic.save(paginationQuery.getActTopicList());
                             }

@@ -42,12 +42,22 @@
 
     <string name="ui_individual_moment_list_user_not_exists">该用户不存在</string>
     <string name="ui_individual_moment_list_nothing">他目前还没有发布过任何内容</string>
-    <string name="ui_individual_moment_list_loading">正在加载动态列表，请稍候&#8230;</string>
+    <string name="ui_individual_moment_list_loading">正在加载列表，请稍候&#8230;</string>
     <string name="ui_individual_moment_comment_hint">输入评论内容</string>
+    <string name="ui_individual_moment_list_message_numbers" formatted="false">%d条消息</string>
 
     <string name="ui_individual_archive_list_fragment_title" formatted="false">%s的公开档案</string>
     <string name="ui_individual_archive_list_loading">正在加载个人档案列表，请稍候&#78230;</string>
     <string name="ui_individual_archive_list_nothing">暂时没有更多公开的个人档案</string>
+
+    <string name="ui_individual_collection_list_loading">正在加载收藏列表，请稍候&#8230;</string>
+
+    <string name="ui_individual_message_fragment_title">消息</string>
+    <string name="ui_individual_message_fetching">正在加载消息列表，请稍候&#8230;</string>
+    <string name="ui_individual_message_deleting">正在删除消息，请稍候&#8230;</string>
+    <string name="ui_individual_message_clear_warning">
+        <![CDATA[<b>清空消息</b><br/>消息<font color="#fe4848">清空之后不能恢复</font>！<br/>如您的消息中包含重要的内容，请<font color="#65656a">逐条删除</font>您不再需要保留的消息。<br/>您确定要继续吗？]]>
+    </string>
 
     <!--个人设置功能列表-->
     <string-array name="ui_individual_settings">

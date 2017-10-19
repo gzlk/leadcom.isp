@@ -48,7 +48,9 @@ public class NimMessage implements MsgAttachment {
     }
 
     public static void save(NimMessage msg) {
-        new Dao<>(NimMessage.class).save(msg);
+        if (msg.isSavable()) {
+            new Dao<>(NimMessage.class).save(msg);
+        }
     }
 
     public static void save(List<NimMessage> msgs) {
@@ -91,6 +93,13 @@ public class NimMessage implements MsgAttachment {
 
     public static void clear() {
         new Dao<>(NimMessage.class).clear();
+    }
+
+    /**
+     * 查看本条消息是否可以保存
+     */
+    public boolean isSavable() {
+        return type >= Type.USER_ARCHIVE_LIKE && type <= Type.MOMENT_COMMENT;
     }
 
     /**

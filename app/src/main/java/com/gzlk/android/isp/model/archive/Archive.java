@@ -1,7 +1,6 @@
 package com.gzlk.android.isp.model.archive;
 
 import com.gzlk.android.isp.cache.Cache;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
@@ -11,9 +10,7 @@ import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
-import com.litesuits.orm.db.assit.QueryBuilder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,6 +105,8 @@ public class Archive extends Additional {
         String ReferrerName = "referrerName";
         String ReferrerHeadPhoto = "referrerHeadPhoto";
         String Recommend = "recommend";
+        String LikeId = "likeId";
+        String Liked = "liked";
     }
 
     /**
@@ -158,6 +157,20 @@ public class Archive extends Additional {
          * 已收藏
          */
         int COLLECTED = 1;
+    }
+
+    /**
+     * 点赞状态
+     */
+    public interface LikeType {
+        /**
+         * 未赞
+         */
+        int UN_LIKE = 0;
+        /**
+         * 已赞
+         */
+        int LIKED = 1;
     }
 
     /**
@@ -366,6 +379,10 @@ public class Archive extends Additional {
     //审核时间
     @Column(Field.ApproveDate)
     private String approveDate;
+    @Column(Field.LikeId)
+    private String likeId;
+    @Column(Field.Liked)
+    private int like;
 
     public String getGroupId() {
         return groupId;
@@ -672,5 +689,21 @@ public class Archive extends Additional {
 
     public void setColId(String colId) {
         this.colId = colId;
+    }
+
+    public String getLikeId() {
+        return likeId;
+    }
+
+    public void setLikeId(String likeId) {
+        this.likeId = likeId;
+    }
+
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
     }
 }

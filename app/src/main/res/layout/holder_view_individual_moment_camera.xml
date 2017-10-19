@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="@dimen/ui_base_dimen_margin_padding">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_moment_camera_icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/ui_icon_camera"
+        android:textColor="@color/textColorHintLight"
+        android:textSize="@dimen/ui_static_sp_45" />
+
+    <LinearLayout
+        android:id="@+id/ui_holder_view_moment_camera_message_layer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/ui_static_dp_5"
+            android:layout_weight="1" />
+
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/ui_static_dp_5"
+            app:cv_background="@color/colorPrimary"
+            app:cv_background_active="@color/colorPrimary"
+            app:cv_background_type="fill"
+            app:cv_corner_size="@dimen/ui_static_dp_5">
+
+            <com.gzlk.android.isp.lib.view.ImageDisplayer
+                android:id="@+id/ui_holder_view_moment_camera_message_header"
+                android:layout_width="@dimen/ui_base_user_header_image_size_small"
+                android:layout_height="@dimen/ui_base_user_header_image_size_small"
+                app:id_image_scale_type="centerCrop"
+                app:id_image_src="@mipmap/img_default_user_header"
+                app:id_image_type="rounded" />
+
+            <TextView
+                android:id="@+id/ui_holder_view_moment_camera_message_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_static_dp_5"
+                android:layout_weight="1"
+                android:text="@string/app_name_default"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_right"
+                android:textColor="@android:color/white" />
+        </com.hlk.hlklib.lib.view.CorneredView>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/ui_static_dp_5"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+</LinearLayout>

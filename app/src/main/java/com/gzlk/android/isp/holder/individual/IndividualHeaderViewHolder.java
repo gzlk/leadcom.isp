@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.individual.UserMessageFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -70,6 +71,7 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
         switch (id) {
             case R.id.ui_tool_individual_header_to_2d_code:
                 //openActivity(QRCodeFragment.class.getName(), "", false, false, true);
+                UserMessageFragment.open(fragment());
                 break;
             case R.id.ui_holder_view_user_name:
                 openUserProperty(Cache.cache().userId);

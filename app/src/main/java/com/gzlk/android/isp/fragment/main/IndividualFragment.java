@@ -12,6 +12,7 @@ import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
+import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
@@ -22,18 +23,22 @@ import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
 import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
+import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
 import com.gzlk.android.isp.holder.individual.CollectionItemViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualHeaderViewHolder;
-import com.gzlk.android.isp.holder.individual.MomentViewHolder;
+import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
+import com.gzlk.android.isp.holder.individual.MomentHomeCameraViewHolder;
 import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
+import com.gzlk.android.isp.listener.OnNimMessageEvent;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.nim.model.notification.NimMessage;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -57,6 +62,28 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PAGE_TAG = "ifmt_page_%d_";
     private boolean isTitleBarShown = false;
     private int selectedFunction = 0;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        NimApplication.addNimMessageEvent(messageEvent);
+    }
+
+    @Override
+    public void onDestroy() {
+        NimApplication.removeNimMessageEvent(messageEvent);
+        super.onDestroy();
+    }
+
+    private OnNimMessageEvent messageEvent = new OnNimMessageEvent() {
+        @Override
+        public void onMessageEvent(NimMessage message) {
+            if (!message.isSavable()) {
+                // 拉取消息列表
+                performRefresh();
+            }
+        }
+    };
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -129,6 +156,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 //        performRefresh();
 //    }
     private void performRefresh() {
+        adapter.remove(noMore());
+        displayLoading(true);
         switch (selectedFunction) {
             case 0:
                 // 刷新动态列表
@@ -149,21 +178,31 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
      * 拉取我的最新说说列表
      */
     private void refreshingRemoteMoments() {
+        //setLoadingText(R.string.ui_individual_moment_list_loading);
+        //displayLoading(true);
         MomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Moment>() {
 
             @SuppressWarnings("unchecked")
             @Override
             public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                adjustRemotePages(null == list ? 0 : list.size(), pageSize);
+                int count = null == list ? 0 : list.size();
+                adjustRemotePages(count, pageSize);
                 if (success) {
                     if (null != list) {
                         if (selectedFunction == 0) {
+                            Moment today = (Moment) adapter.get(2);
+                            today.setAuthPublic(userInfoNum);
+                            today.setContent(lastHeadPhoto);
+                            adapter.notifyItemChanged(2);
                             for (Moment moment : list) {
                                 adapter.update(moment);
                             }
                         }
                     }
+                }
+                if (count < pageSize) {
+                    adapter.add(noMore());
                 }
             }
         }).list(Cache.cache().userId, remotePageNumber);
@@ -173,12 +212,16 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
      * 拉取我的档案列表
      */
     private void refreshingRemoteDocuments() {
+        //adapter.remove(noMore());
+        //setLoadingText(R.string.ui_individual_archive_list_loading);
+        //displayLoading(true);
         ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @SuppressWarnings("unchecked")
             @Override
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                adjustRemotePages(null == list ? 0 : list.size(), pageSize);
+                int count = null == list ? 0 : list.size();
+                adjustRemotePages(count, pageSize);
                 if (success) {
                     if (null != list) {
                         if (selectedFunction == 1) {
@@ -188,17 +231,24 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     }
                 }
+                if (count < pageSize) {
+                    adapter.add(noMore());
+                }
             }
         }).list(remotePageNumber, Cache.cache().userId);
     }
 
     private void refreshingFavorites() {
+        //adapter.remove(noMore());
+        //setLoadingText(R.string.ui_individual_collection_list_loading);
+        //displayLoading(true);
         CollectionRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Collection>() {
             @SuppressWarnings("unchecked")
             @Override
             public void onResponse(List<Collection> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                adjustRemotePages(null == list ? 0 : list.size(), pageSize);
+                int count = null == list ? 0 : list.size();
+                adjustRemotePages(count, pageSize);
                 if (success) {
                     if (null != list) {
                         if (selectedFunction == 2) {
@@ -208,6 +258,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     }
                 }
+                if (count < pageSize) {
+                    adapter.add(noMore());
+                }
             }
         }).list(Collection.Type.ALL_ARCHIVE, CollectionRequest.OPE_MONTH, remotePageNumber);
     }
@@ -216,11 +269,12 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
         remotePageNumber += (fetchedCount >= pageSize ? 1 : 0);
         isLoadingComplete(fetchedCount < pageSize);
+        displayLoading(false);
         stopRefreshing();
     }
 
     private IndividualAdapter adapter;
-    private Model functions;
+    private Model functions, camera, nomore;
     private Moment today;
 
     // 功能列表
@@ -241,6 +295,23 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         // 设置时间为今天最后一秒，在排序时会一直排在最前面
         today.setCreateDate(Utils.formatDateOfNow("yyyy-MM-dd 23:59:59"));
         return today;
+    }
+
+    private Model noMore() {
+        if (null == nomore) {
+            nomore = new Model();
+            nomore.setId(getString(R.string.ui_base_text_nothing_more_id));
+            nomore.setAccessToken(getString(R.string.ui_base_text_nothing_more));
+        }
+        return nomore;
+    }
+
+    private Model momentCamera() {
+        if (null == camera) {
+            camera = new Model();
+            camera.setId(getString(R.string.ui_text_moment_item_default_today));
+        }
+        return camera;
     }
 
     private void appendListHeader(boolean needToday) {
@@ -358,43 +429,6 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    private MomentViewHolder.OnGotPositionListener gotPositionListener = new MomentViewHolder.OnGotPositionListener() {
-        @Override
-        public Moment previous(int myPosition) {
-            if (myPosition > 1) {
-                Model model = adapter.get(myPosition - 1);
-                if (model instanceof Moment) {
-                    return (Moment) model;
-                }
-            }
-            return null;
-        }
-    };
-
-    private OnHandleBoundDataListener<Model> boundMomentDataListener = new OnHandleBoundDataListener<Model>() {
-        @Override
-        public Moment onHandlerBoundData(BaseViewHolder holder) {
-            Model model = adapter.get(holder.getAdapterPosition());
-            return (model instanceof Moment) ? ((Moment) model) : null;
-        }
-    };
-
-    private OnHandleBoundDataListener<Model> boundDocumentListener = new OnHandleBoundDataListener<Model>() {
-        @Override
-        public Archive onHandlerBoundData(BaseViewHolder holder) {
-            Model model = adapter.get(holder.getAdapterPosition());
-            return (model instanceof Archive) ? ((Archive) model) : null;
-        }
-    };
-
-    private OnHandleBoundDataListener<Model> boundCollectionListener = new OnHandleBoundDataListener<Model>() {
-        @Override
-        public Collection onHandlerBoundData(BaseViewHolder holder) {
-            Model model = adapter.get(holder.getAdapterPosition());
-            return (model instanceof Collection) ? ((Collection) model) : null;
-        }
-    };
-
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
@@ -409,6 +443,21 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private OnViewHolderElementClickListener onViewHolderElementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_holder_view_moment_camera_icon:
+                    // 选择照片
+                    openImageSelector(true);
+                    break;
+                case R.id.ui_holder_view_moment_camera_message_layer:
+                    // 打开消息列表
+                    break;
+            }
+        }
+    };
+
     private void momentClick(Moment moment) {
         if (null != moment) {
             // 点击打开新窗口查看详情
@@ -417,7 +466,6 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             } else {
                 // 默认显示第一张图片
                 MomentImagesFragment.open(IndividualFragment.this, moment.getId(), 0);
-                //openActivity(MomentImagesFragment.class.getName(), format("%s,0", moment.getId()), true, false);
             }
         }
     }
@@ -426,13 +474,12 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         if (null != archive) {
             int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
             ArchiveDetailsFragment.open(IndividualFragment.this, type, archive.getId(), REQUEST_CHANGE);
-            //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, archive.getId()), BaseFragment.REQUEST_CHANGE, true, false);
         }
     }
 
     private class IndividualAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_HEADER = 0, VT_FUNCTION = 1, VT_MOMENT = 2, VT_ARCHIVE = 3, VT_COLLECTION = 4;
+        private static final int VT_HEADER = 0, VT_FUNCTION = 1, VT_MOMENT = 2, VT_ARCHIVE = 3, VT_COLLECTION = 4, VT_CAMERA = 5, VT_NO_MORE = 6;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -447,10 +494,21 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     ifvh.addOnFunctionChangeListener(functionChangeListener);
                     return ifvh;
                 case VT_MOMENT:
-                    MomentViewHolder mvh = new MomentViewHolder(itemView, fragment);
-                    mvh.addOnViewHolderClickListener(onViewHolderClickListener);
-                    mvh.addOnGotPositionListener(gotPositionListener);
-                    return mvh;
+//                    MomentViewHolder mvh = new MomentViewHolder(itemView, fragment);
+//                    mvh.addOnViewHolderClickListener(onViewHolderClickListener);
+//                    mvh.addOnGotPositionListener(gotPositionListener);
+//                    return mvh;
+                    MomentDetailsViewHolder mdvh = new MomentDetailsViewHolder(itemView, fragment);
+                    mdvh.addOnViewHolderClickListener(onViewHolderClickListener);
+                    // 赞、评论快捷菜单
+                    //mdvh.setOnMoreClickListener(onMoreClickListener);
+                    // 图片点击
+                    //mdvh.setOnImageClickListener(onImageClickListener);
+                    return mdvh;
+                case VT_CAMERA:
+                    MomentHomeCameraViewHolder mhcvh = new MomentHomeCameraViewHolder(itemView, fragment);
+                    mhcvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
+                    return mhcvh;
                 case VT_ARCHIVE:
                     ArchiveViewHolder holder = new ArchiveViewHolder(itemView, fragment);
                     holder.addOnViewHolderClickListener(onViewHolderClickListener);
@@ -459,6 +517,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     CollectionItemViewHolder civh = new CollectionItemViewHolder(itemView, fragment);
                     civh.addOnViewHolderClickListener(onViewHolderClickListener);
                     return civh;
+                case VT_NO_MORE:
+                    return new NothingMoreViewHolder(itemView, fragment);
             }
             return null;
         }
@@ -471,9 +531,13 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case VT_FUNCTION:
                     return R.layout.holder_view_individual_main_functions;
                 case VT_MOMENT:
-                    return R.layout.holder_view_moment;
+                    return R.layout.holder_view_individual_moment_details;
                 case VT_ARCHIVE:
                     return R.layout.holder_view_document;
+                case VT_CAMERA:
+                    return R.layout.holder_view_individual_moment_camera;
+                case VT_NO_MORE:
+                    return R.layout.holder_view_nothing_more;
                 default:
                     return R.layout.holder_view_collection;
             }
@@ -484,6 +548,10 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             Model model = get(position);
             if (model instanceof User) {
                 return VT_HEADER;
+            } else if (model.getId().contains("moment")) {
+                return VT_CAMERA;
+            } else if (model.getId().contains("no_more_any_things")) {
+                return VT_NO_MORE;
             } else if (model instanceof Moment) {
                 return VT_MOMENT;
             } else if (model instanceof Archive) {
@@ -497,12 +565,16 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof IndividualHeaderViewHolder) {
                 ((IndividualHeaderViewHolder) holder).showContent((User) item);
-            } else if (holder instanceof MomentViewHolder) {
-                ((MomentViewHolder) holder).showContent((Moment) item);
+            } else if (holder instanceof MomentDetailsViewHolder) {
+                ((MomentDetailsViewHolder) holder).showContent((Moment) item);
             } else if (holder instanceof ArchiveViewHolder) {
                 ((ArchiveViewHolder) holder).showContent((Archive) item);
             } else if (holder instanceof CollectionItemViewHolder) {
                 ((CollectionItemViewHolder) holder).showContent((Collection) item);
+            } else if (holder instanceof MomentHomeCameraViewHolder) {
+                ((MomentHomeCameraViewHolder) holder).showContent((Moment) item);
+            } else if (holder instanceof NothingMoreViewHolder) {
+                ((NothingMoreViewHolder) holder).showContent(item);
             }
         }
 
