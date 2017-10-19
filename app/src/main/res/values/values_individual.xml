@@ -53,6 +53,7 @@
     <string name="ui_individual_collection_list_loading">正在加载收藏列表，请稍候&#8230;</string>
 
     <string name="ui_individual_message_fragment_title">消息</string>
+    <string name="ui_individual_message_list">消息列表</string>
     <string name="ui_individual_message_fetching">正在加载消息列表，请稍候&#8230;</string>
     <string name="ui_individual_message_deleting">正在删除消息，请稍候&#8230;</string>
     <string name="ui_individual_message_clear_warning">

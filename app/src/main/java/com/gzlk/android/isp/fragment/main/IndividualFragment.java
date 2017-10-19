@@ -21,6 +21,8 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.CollectionDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
 import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
+import com.gzlk.android.isp.fragment.individual.UserMessageFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
@@ -428,6 +430,31 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
     };
+
+    private View openUserMsgDialogView;
+
+    public void openUserMessageList() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == openUserMsgDialogView) {
+                    openUserMsgDialogView = View.inflate(Activity(), R.layout.popup_dialog_individual_user_message, null);
+                }
+                return openUserMsgDialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                UserMessageFragment.open(IndividualFragment.this);
+                return true;
+            }
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
