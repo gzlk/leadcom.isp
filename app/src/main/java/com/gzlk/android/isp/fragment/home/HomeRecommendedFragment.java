@@ -22,7 +22,7 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.common.InnerWebViewFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.archive.ArchiveHomeRecommendedViewHolder;
+import com.gzlk.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.gzlk.android.isp.holder.home.ActivityHomeViewHolder;
 import com.gzlk.android.isp.holder.home.HomeImagesViewHolder;
@@ -203,6 +203,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
         if (mType == TYPE_ALL || mType == TYPE_ARCHIVE) {
             fetchingFocusImages();
         } else {

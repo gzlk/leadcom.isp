@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.holder.archive;
+package com.gzlk.android.isp.holder.home;
 
 import android.text.Html;
 import android.view.View;
@@ -45,6 +45,8 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
     private TextView commentsView;
     @ViewId(R.id.ui_tool_view_archive_additional_like_number)
     private TextView likesView;
+    @ViewId(R.id.ui_tool_view_archive_additional_collection_number)
+    private TextView collectsView;
     @ViewId(R.id.ui_tool_view_archive_additional_like_icon)
     private CustomTextView likeIcon;
     @ViewId(R.id.ui_tool_view_archive_additional_collection_icon)
@@ -85,6 +87,8 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         contentView.setText(isEmpty(doc.getContent()) ? "" : Utils.clearHtml(doc.getContent()));
         commentsView.setText(String.valueOf(doc.getAddition().getCmtNum()));
         likesView.setText(String.valueOf(doc.getAddition().getLikeNum()));
+        collectsView.setText(String.valueOf(doc.getAddition().getColNum()));
+        collectIcon.setText(doc.getCollection() == Archive.CollectionType.COLLECTED ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
         collectIcon.setTextColor(getColor(doc.getCollection() == Archive.CollectionType.COLLECTED ? R.color.colorCaution : R.color.textColorHint));
     }
 
