@@ -353,7 +353,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).add(Collection.Type.IMAGE, url, momentUser, momentName, mMoment.getHeadPhoto(), Collection.SourceType.MOMENT, mMoment.getId(), "", null);
+        }).add(Collection.Type.IMAGE, url, momentUser, momentName, mMoment.getHeadPhoto(), Collection.SourceType.MOMENT, mMoment.getId(), "", null, null);
     }
 
     private void save() {

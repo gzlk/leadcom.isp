@@ -93,26 +93,26 @@ public class Collection extends Model {
         /**
          * 个人档案
          */
-        int INDIVIDUAL = 1;
+        int USER_ARCHIVE = 1;
         /**
          * 组织档案
          */
-        int GROUP = 2;
-        /**
-         * 活动聊天
-         */
-        int ACTIVITY = 3;
-        /**
-         * 议题聊天
-         */
-        int TOPIC = 4;
+        int GROUP_ARCHIVE = 2;
         /**
          * 个人动态
          */
-        int MOMENT = 5;
+        int MOMENT = 3;
+        /**
+         * 活动聊天
+         */
+        int ACTIVITY = 4;
+        /**
+         * 议题聊天
+         */
+        int TOPIC = 5;
     }
 
-    //收藏的类型(1->文本, 2->文档, 3-图片, 4->视频, 5->附件, 6->链接)
+    //收藏的类型(1.文本,2.文档,3.图片,4.视频,5.附件,6.音频,7.位置,11.个人档案,12.组织档案,13.个人动态)
     @Column(Archive.Field.Type)
     private int type;
     //标签

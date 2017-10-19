@@ -1,5 +1,8 @@
 package com.gzlk.android.isp.model.user;
 
+import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.lib.Json;
+
 /**
  * <b>功能描述：</b>用户收藏的位置信息<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -16,6 +19,12 @@ public class Position {
     private String lat;                    //地理纬度
     private String alt;                    //海拔
     private String site;                   //位置的名称
+
+    public static String toJson(Position position) {
+        if (null == position) return "{}";
+        return Json.gson().toJson(position, new TypeToken<Position>() {
+        }.getType());
+    }
 
     public String getLon() {
         return lon;

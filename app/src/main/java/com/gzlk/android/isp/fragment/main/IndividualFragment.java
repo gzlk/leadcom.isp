@@ -194,8 +194,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     if (null != list) {
                         if (selectedFunction == 0) {
                             Moment today = (Moment) adapter.get(2);
-                            today.setAuthPublic(2);
-                            today.setContent("http://120.25.124.199:8008/group1/M00/00/01/eBk66lkruluAfabnAAIkQkp4t78087.jpg");
+                            today.setAuthPublic(userInfoNum);
+                            today.setContent(lastHeadPhoto);
                             adapter.notifyItemChanged(2);
                             for (Moment moment : list) {
                                 adapter.update(moment);

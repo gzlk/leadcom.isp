@@ -86,29 +86,35 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         contentView.setVisibility(isEmpty(doc.getContent()) ? View.GONE : View.VISIBLE);
         contentView.setText(isEmpty(doc.getContent()) ? "" : Utils.clearHtml(doc.getContent()));
         commentsView.setText(String.valueOf(doc.getAddition().getCmtNum()));
+
         likesView.setText(String.valueOf(doc.getAddition().getLikeNum()));
+        boolean liked = doc.getLike() == Archive.LikeType.LIKED;
+        likeIcon.setText(liked ? R.string.ui_icon_heart_solid : R.string.ui_icon_heart_hollow);
+        likeIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
+
+        liked = doc.getCollection() == Archive.CollectionType.COLLECTED;
         collectsView.setText(String.valueOf(doc.getAddition().getColNum()));
-        collectIcon.setText(doc.getCollection() == Archive.CollectionType.COLLECTED ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
-        collectIcon.setTextColor(getColor(doc.getCollection() == Archive.CollectionType.COLLECTED ? R.color.colorCaution : R.color.textColorHint));
+        collectIcon.setText(liked ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
+        collectIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
     }
 
-    @Click({R.id.ui_holder_view_archive_home_recommend_layout
-            //R.id.ui_tool_view_archive_additional_comment_layout,
-            //R.id.ui_tool_view_archive_additional_like_layout,
-            //R.id.ui_tool_view_archive_additional_collection_layout
+    @Click({R.id.ui_holder_view_archive_home_recommend_layout,
+            R.id.ui_tool_view_archive_additional_comment_layout,
+            R.id.ui_tool_view_archive_additional_like_layout,
+            R.id.ui_tool_view_archive_additional_collection_layout
     })
     private void elementClick(View view) {
-        if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        switch (view.getId()) {
+            case R.id.ui_holder_view_archive_home_recommend_layout:
+                if (null != mOnViewHolderClickListener) {
+                    mOnViewHolderClickListener.onClick(getAdapterPosition());
+                }
+                break;
+            default:
+                if (null != mOnViewHolderElementClickListener) {
+                    mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+                }
+                break;
         }
-//        switch (view.getId()) {
-//            case R.id.ui_holder_view_archive_home_recommend_layout:
-//                break;
-//            default:
-//                if (null != mOnViewHolderElementClickListener) {
-//                    mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
-//                }
-//                break;
-//        }
     }
 }

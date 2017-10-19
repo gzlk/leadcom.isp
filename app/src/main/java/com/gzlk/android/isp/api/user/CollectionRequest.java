@@ -5,10 +5,12 @@ import android.support.annotation.NonNull;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.BoolQuery;
 import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.model.archive.ArchiveSource;
 import com.gzlk.android.isp.model.user.Collection;
+import com.gzlk.android.isp.model.user.Position;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -35,6 +37,9 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     private static class SingleCollection extends SingleQuery<Collection> {
+    }
+
+    private static class BoolCollection extends BoolQuery<Collection> {
     }
 
     private static class MultipleCollection extends PaginationQuery<Collection> {
@@ -67,7 +72,7 @@ public class CollectionRequest extends Request<Collection> {
     /**
      * 添加个人收藏
      *
-     * @param type             收藏类型，参考 {@link Collection.Type}
+     * @param type             收藏类型，参考 {@link Collection.Type}(1.文本,2.文档,3.图片,4.视频,5.附件,6.音频,7.位置,11.个人档案,12.组织档案,13.个人动态)
      * @param content          收藏内容(文本或文件的URL,type=11/12/13时不传该参数)
      * @param creatorId        原作者用户ID
      * @param creatorName      原作者用户名称
@@ -80,8 +85,8 @@ public class CollectionRequest extends Request<Collection> {
      * @see ArchiveSource
      */
     public void add(int type, String content, @NonNull String creatorId, String creatorName, String creatorHeadPhoto,
-                    int sourceType, String sourceId, String sourceTitle, ArrayList<String> label) {
-        // {type,content,creatorId,creatorName,creatorHeadPhoto,sourceType,sourceId,sourceTitle,[label]}
+                    int sourceType, String sourceId, String sourceTitle, ArrayList<String> label, Position position) {
+        // {type,content,creatorId,creatorName,creatorHeadPhoto,sourceType,sourceId,sourceTitle,[label],{position}}
 
         JSONObject object = new JSONObject();
         try {
@@ -93,7 +98,8 @@ public class CollectionRequest extends Request<Collection> {
                     .put("sourceType", sourceType)
                     .put("sourceId", sourceId)
                     .put("sourceTitle", checkNull(sourceTitle))
-                    .put("label", new JSONArray(null == label ? new ArrayList() : label));
+                    .put("label", new JSONArray(null == label ? new ArrayList() : label))
+                    .put("position", new JSONObject(Position.toJson(position)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -106,7 +112,7 @@ public class CollectionRequest extends Request<Collection> {
      */
     public void delete(String collectionId) {
         // colId
-        httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Get));
+        httpRequest(getRequest(BoolCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Get));
     }
 
     /**

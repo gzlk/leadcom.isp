@@ -232,10 +232,8 @@ public class MainActivity extends TitleActivity {
                 break;
             case NimMessage.Type.GROUP_INVITE:
                 // 受邀者出现的对话框是“好”,“不用了”
-                if (msg.isHandled()) {
-                    if (msg.isHandleState()) {
-                        openActivity(activity, OrganizationPropertiesFragment.class.getName(), msg.getGroupId(), false, false, true);
-                    }
+                if (msg.isHandled() && msg.isHandleState()) {
+                    openActivity(activity, OrganizationPropertiesFragment.class.getName(), msg.getGroupId(), false, false, true);
                 } else {
                     yes = StringHelper.getString(R.string.ui_base_text_ok);
                     no = StringHelper.getString(R.string.ui_base_text_no_need);
