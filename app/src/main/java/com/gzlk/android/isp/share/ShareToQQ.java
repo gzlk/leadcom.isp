@@ -39,6 +39,7 @@ public class ShareToQQ extends Shareable {
         }
     }
 
+    @SuppressWarnings("AccessStaticViaInstance")
     public static void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (null != mTencent) {
             mTencent.onActivityResultData(requestCode, resultCode, data, new UiListener(TO_QQ));

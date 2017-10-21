@@ -22,14 +22,15 @@ public class Shareable {
 
     public static final int TO_QQ = 1;
     public static final int TO_QZONE = 2;
-    public static final int TO_WX_CHAT = 3;
-    public static final int TO_WX_MOMENT = 4;
-    public static final int TO_WEIBO = 5;
+    public static final int TO_WX_SESSION = 3;
+    public static final int TO_WX_TIMELINE = 4;
+    public static final int TO_WX_FAVORITE = 5;
+    public static final int TO_WEIBO = 6;
 
     /**
      * 分享类型
      */
-    @IntDef({TO_QQ, TO_QZONE, TO_WX_CHAT, TO_WX_MOMENT, TO_WEIBO})
+    @IntDef({TO_QQ, TO_QZONE, TO_WX_SESSION, TO_WX_TIMELINE, TO_WX_FAVORITE, TO_WEIBO})
     public @interface ShareType {
 
     }

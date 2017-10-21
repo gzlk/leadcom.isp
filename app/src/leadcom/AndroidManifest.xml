@@ -97,6 +97,12 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!--微信-->
+        <activity
+            android:name="${APP_PKG_NAME}.wxapi.WXEntryActivity"
+            android:exported="true"
+            android:label="@string/app_name_default" />
     </application>
 
 </manifest>

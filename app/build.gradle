@@ -35,6 +35,7 @@ android {
         resValue "string", "netease_nim_app_key_beta", "3c9e1b9e424ccd215d6a828602d20407"
         resValue "string", "netease_nim_app_key_test", "3da0be9ec7ac70fea20f94a8fa8c84ce"
         resValue "string", "tencent_app_id_qq", "tencent1105414666"
+        resValue "string", "tencent_app_id_wx", "wxdf350061d9a7666b"
     }
     productFlavors {
         leadcom {}

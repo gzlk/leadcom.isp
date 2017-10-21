@@ -2,6 +2,7 @@
 <resources>
 
     <string name="ui_base_share_dialog_title">分享到：</string>
+    <string name="ui_base_share_title">来自树脉的分享</string>
 
     <string name="ui_base_share_dialog_to_qq">QQ</string>
     <string name="ui_base_share_dialog_to_qzone">QQ空间</string>
@@ -15,10 +16,10 @@
     <dimen name="ui_base_share_dialog_icon_container">@dimen/ui_static_sp_40</dimen>
 
     <string name="ui_base_share_text_share_to_qq_complete">已分享到QQ</string>
-    <string name="ui_base_share_text_share_to_qq_cancel">已取消分享到QQ</string>
+    <string name="ui_base_share_text_share_to_qq_cancel">分享到QQ已取消</string>
     <string name="ui_base_share_text_share_to_qq_failed" formatted="false">分享到QQ失败：%s(%d)，%s</string>
 
     <string name="ui_base_share_text_share_to_qzone_complete">已分享到QQ空间</string>
-    <string name="ui_base_share_text_share_to_qzone_cancel">取消分享到QQ空间</string>
+    <string name="ui_base_share_text_share_to_qzone_cancel">分享到QQ空间已取消</string>
     <string name="ui_base_share_text_share_to_qzone_failed" formatted="false">分享到QQ空间失败：%s(%d)，%s</string>
 </resources>
