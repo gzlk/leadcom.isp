@@ -107,6 +107,9 @@ public class Archive extends Additional {
         String Recommend = "recommend";
         String LikeId = "likeId";
         String Liked = "liked";
+        String ToUserId = "toUserId";
+        String ToUserName = "toUserName";
+        String ToHeadPhoto = "toHeadPhoto";
     }
 
     /**
@@ -383,6 +386,8 @@ public class Archive extends Additional {
     private String likeId;
     @Column(Field.Liked)
     private int like;
+    @Ignore
+    private Organization groEntity;
 
     public String getGroupId() {
         return groupId;
@@ -705,5 +710,13 @@ public class Archive extends Additional {
 
     public void setLike(int like) {
         this.like = like;
+    }
+
+    public Organization getGroEntity() {
+        return groEntity;
+    }
+
+    public void setGroEntity(Organization groEntity) {
+        this.groEntity = groEntity;
     }
 }

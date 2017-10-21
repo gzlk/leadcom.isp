@@ -11,7 +11,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
-import com.gzlk.android.isp.api.user.MomentRequest;
+import com.gzlk.android.isp.api.user.PublicMomentRequest;
 import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
@@ -20,9 +20,12 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.CollectionDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
+import com.gzlk.android.isp.fragment.individual.MomentDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
 import com.gzlk.android.isp.fragment.individual.UserMessageFragment;
+import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
@@ -31,19 +34,23 @@ import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentHomeCameraViewHolder;
+import com.gzlk.android.isp.holder.individual.MomentsItemCommentViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
+import com.gzlk.android.isp.model.user.MomentPublic;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -62,8 +69,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_SHOWN = "title_bar_shown";
     private static final String PARAM_SELECTED = "function_selected";
     private static final String PAGE_TAG = "ifmt_page_%d_";
+    private static final String PARAM_SELECTED_MMT = "mmt_selected";
     private boolean isTitleBarShown = false;
-    private int selectedFunction = 0;
+    private int selectedFunction = 0, selectedMoment = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,12 +100,14 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         super.getParamsFromBundle(bundle);
         isTitleBarShown = bundle.getBoolean(PARAM_SHOWN, false);
         selectedFunction = bundle.getInt(PARAM_SELECTED, 0);
+        selectedMoment = bundle.getInt(PARAM_SELECTED_MMT, 0);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         bundle.putBoolean(PARAM_SHOWN, isTitleBarShown);
         bundle.putInt(PARAM_SELECTED, selectedFunction);
+        bundle.putInt(PARAM_SELECTED_MMT, selectedMoment);
         super.saveParamsToBundle(bundle);
     }
 
@@ -182,11 +192,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     private void refreshingRemoteMoments() {
         //setLoadingText(R.string.ui_individual_moment_list_loading);
         //displayLoading(true);
-        MomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Moment>() {
-
-            @SuppressWarnings("unchecked")
+        PublicMomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<MomentPublic>() {
             @Override
-            public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<MomentPublic> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 int count = null == list ? 0 : list.size();
                 adjustRemotePages(count, pageSize);
@@ -197,8 +205,22 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                             today.setAuthPublic(userInfoNum);
                             today.setContent(lastHeadPhoto);
                             adapter.notifyItemChanged(2);
-                            for (Moment moment : list) {
-                                adapter.update(moment);
+                            for (MomentPublic moment : list) {
+                                moment.getUserMmt().resetAdditional(moment.getUserMmt().getAddition());
+                                adapter.update(moment.getUserMmt());
+                                clearMomentComments(moment.getUserMmt());
+                                int index = adapter.indexOf(moment.getUserMmt());
+                                int size = moment.getUserMmt().getUserMmtCmtList().size();
+                                for (Comment comment : moment.getUserMmt().getUserMmtCmtList()) {
+                                    index++;
+                                    adapter.add(comment, index);
+                                }
+                                if (size > 0) {
+                                    // 设置最后一个评论
+                                    Comment cmt = (Comment) adapter.get(index);
+                                    cmt.setLast(true);
+                                    adapter.update(cmt);
+                                }
                             }
                         }
                     }
@@ -207,7 +229,23 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     adapter.add(noMore());
                 }
             }
-        }).list(Cache.cache().userId, remotePageNumber);
+        }).list(StructureFragment.selectedGroupId, remotePageNumber);
+    }
+
+    private void clearMomentComments(Moment moment) {
+        Iterator<Model> iterator = adapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof Comment) {
+                Comment comment = (Comment) model;
+                if (comment.getMomentId().equals(moment.getId())) {
+                    iterator.remove();
+                    adapter.notifyItemRemoved(index);
+                }
+            }
+            index++;
+        }
     }
 
     /**
@@ -470,6 +508,25 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.ui_tooltip_menu_moment_comment:
+                case R.id.ui_tooltip_menu_moment_comment1:
+                    // 发表评论，打开详情页评论
+                    MomentDetailsFragment.open(IndividualFragment.this, adapter.get(selectedMoment).getId());
+                    break;
+                case R.id.ui_tooltip_menu_moment_praise:
+                    // 点赞说说
+                    break;
+                case R.id.ui_tooltip_menu_moment_praised:
+                    // 取消赞说说
+                    break;
+            }
+        }
+    };
+
     private OnViewHolderElementClickListener onViewHolderElementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
@@ -481,6 +538,28 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case R.id.ui_holder_view_moment_camera_message_layer:
                     // 打开消息列表
                     UserMessageFragment.open(IndividualFragment.this);
+                    break;
+                case R.id.ui_holder_view_moment_details_container:
+                    // 这里已经是详情页，不再需要打开详情页了
+                    Moment moment = (Moment) adapter.get(index);
+                    if (moment.getImage().size() < 1) {
+                        // 没有图片，直接打开说说详情页
+                        MomentDetailsFragment.open(IndividualFragment.this, moment.getId());
+                    } else {
+                        // 默认打开第一个图片
+                        MomentImagesFragment.open(IndividualFragment.this, moment.getId(), 0);
+                    }
+                    break;
+                case R.id.ui_holder_view_moment_details_more:
+                    // 打开快捷赞、评论菜单
+                    selectedMoment = index;
+                    Model model = adapter.get(index);
+                    if (model instanceof Moment) {
+                        Moment mmt = (Moment) model;
+                        // 已赞和未赞
+                        int layout = mmt.isMyPraised() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
+                        showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+                    }
                     break;
             }
         }
@@ -507,7 +586,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     private class IndividualAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_HEADER = 0, VT_FUNCTION = 1, VT_MOMENT = 2, VT_ARCHIVE = 3, VT_COLLECTION = 4, VT_CAMERA = 5, VT_NO_MORE = 6;
+        private static final int VT_HEADER = 0, VT_FUNCTION = 1, VT_MOMENT = 2,
+                VT_ARCHIVE = 3, VT_COLLECTION = 4, VT_CAMERA = 5, VT_NO_MORE = 6,
+                VT_COMMENT = 7;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -527,11 +608,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 //                    mvh.addOnGotPositionListener(gotPositionListener);
 //                    return mvh;
                     MomentDetailsViewHolder mdvh = new MomentDetailsViewHolder(itemView, fragment);
-                    mdvh.addOnViewHolderClickListener(onViewHolderClickListener);
-                    // 赞、评论快捷菜单
-                    //mdvh.setOnMoreClickListener(onMoreClickListener);
-                    // 图片点击
-                    //mdvh.setOnImageClickListener(onImageClickListener);
+                    mdvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
+                    mdvh.isShowLike(true);
                     return mdvh;
                 case VT_CAMERA:
                     MomentHomeCameraViewHolder mhcvh = new MomentHomeCameraViewHolder(itemView, fragment);
@@ -547,6 +625,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     return civh;
                 case VT_NO_MORE:
                     return new NothingMoreViewHolder(itemView, fragment);
+                case VT_COMMENT:
+                    return new MomentsItemCommentViewHolder(itemView, fragment);
             }
             return null;
         }
@@ -566,6 +646,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     return R.layout.holder_view_individual_moment_camera;
                 case VT_NO_MORE:
                     return R.layout.holder_view_nothing_more;
+                case VT_COMMENT:
+                    return R.layout.holder_view_individual_moment_comment_name;
                 default:
                     return R.layout.holder_view_collection;
             }
@@ -586,6 +668,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 return VT_ARCHIVE;
             } else if (model instanceof Collection) {
                 return VT_COLLECTION;
+            } else if (model instanceof Comment) {
+                return VT_COMMENT;
             } else return VT_FUNCTION;
         }
 
@@ -603,6 +687,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 ((MomentHomeCameraViewHolder) holder).showContent((Moment) item);
             } else if (holder instanceof NothingMoreViewHolder) {
                 ((NothingMoreViewHolder) holder).showContent(item);
+            } else if (holder instanceof MomentsItemCommentViewHolder) {
+                ((MomentsItemCommentViewHolder) holder).showContent((Comment) item);
             }
         }
 

@@ -28,6 +28,7 @@ import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.share.ShareToQQ;
+import com.gzlk.android.isp.share.ShareToWeiXin;
 import com.gzlk.android.isp.task.CopyLocalFileTask;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
@@ -335,7 +336,17 @@ public class MomentImagesFragment extends BaseMomentFragment {
 
     @Override
     protected void shareToQZone() {
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), mMoment.getContent(), "", "http://www.baidu.com", "", mMoment.getImage());
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title), mMoment.getContent(), "http://www.baidu.com", "", mMoment.getImage());
+    }
+
+    @Override
+    protected void shareToWeiXinSession() {
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, mMoment.getContent(), mMoment.getImage());
+    }
+
+    @Override
+    protected void shareToWeiXinTimeline() {
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, mMoment.getContent(), mMoment.getImage());
     }
 
     @SuppressWarnings("ConstantConditions")

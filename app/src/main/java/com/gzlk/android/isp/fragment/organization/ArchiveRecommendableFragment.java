@@ -197,7 +197,8 @@ public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragmen
                 }
                 displayLoading(false);
             }
-        }).recommend(archive.getType(), archive.getGroupId(), archive.getDocId(), archive.getUserId());
+        }).recommend(archive.getType(), StructureFragment.selectedGroupId, archive.getDocId(),
+                (null == archive.getUserDoc() ? archive.getGroDoc().getUserId() : archive.getUserDoc().getUserId()));
     }
 
     // 取消推荐档案

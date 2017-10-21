@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model.archive;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
@@ -47,6 +48,14 @@ public class Comment extends ArchiveInfo {
     private String headPhoto;
     @Column(Model.Field.CreateDate)
     private String createDate;  //评论时间
+    @Column(Archive.Field.ToUserId)
+    private String toUserId;
+    @Column(Archive.Field.ToUserName)
+    private String toUserName;
+    @Column(Archive.Field.ToHeadPhoto)
+    private String toHeadPhoto;
+    @Ignore
+    private boolean isLast;
 
     public String getContent() {
         return content;
@@ -91,4 +100,35 @@ public class Comment extends ArchiveInfo {
         this.createDate = createDate;
     }
 
+    public String getToUserId() {
+        return toUserId;
+    }
+
+    public void setToUserId(String toUserId) {
+        this.toUserId = toUserId;
+    }
+
+    public String getToUserName() {
+        return toUserName;
+    }
+
+    public void setToUserName(String toUserName) {
+        this.toUserName = toUserName;
+    }
+
+    public String getToHeadPhoto() {
+        return toHeadPhoto;
+    }
+
+    public void setToHeadPhoto(String toHeadPhoto) {
+        this.toHeadPhoto = toHeadPhoto;
+    }
+
+    public boolean isLast() {
+        return isLast;
+    }
+
+    public void setLast(boolean last) {
+        isLast = last;
+    }
 }

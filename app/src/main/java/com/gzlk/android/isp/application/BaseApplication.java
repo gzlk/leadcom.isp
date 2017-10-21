@@ -242,6 +242,10 @@ public class BaseApplication extends Application {
         return UUID.randomUUID().toString();
     }
 
+    public String getTempLocalPath(String path) {
+        return getCachePath(path) + "/" + getRandomUUID();
+    }
+
     /**
      * 获取本地Image缓存文件夹路径，末尾包含/
      */

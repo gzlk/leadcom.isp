@@ -44,6 +44,12 @@
     <string name="ui_individual_moment_list_nothing">他目前还没有发布过任何内容</string>
     <string name="ui_individual_moment_list_loading">正在加载列表，请稍候&#8230;</string>
     <string name="ui_individual_moment_comment_hint">输入评论内容</string>
+    <string name="ui_individual_moment_comment_content_only_name" formatted="false">
+        <![CDATA[<font color="#3cbaff">%s：</font>%s]]>
+    </string>
+    <string name="ui_individual_moment_comment_content_only_name_to" formatted="false">
+        <![CDATA[<font color="#3cbaff">%s</font>回复<font color="#3cbaff">%s</font>：%s]]>
+    </string>
     <string name="ui_individual_moment_list_message_numbers" formatted="false">%d条消息</string>
 
     <string name="ui_individual_archive_list_fragment_title" formatted="false">%s的公开档案</string>

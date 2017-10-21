@@ -5,20 +5,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
-import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentCommentViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentPraiseViewHolder;
-import com.gzlk.android.isp.lib.Json;
-import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
@@ -255,16 +252,6 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         }
     }
 
-    private MomentDetailsViewHolder.OnMoreClickListener onMoreClickListener = new MomentDetailsViewHolder.OnMoreClickListener() {
-        @Override
-        public void onClick(View view, int index) {
-            mSelectedIndex = index;
-            // 已赞和未赞
-            int layout = mMoment.isMyPraised() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
-            showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
-        }
-    };
-
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -283,13 +270,28 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         }
     };
 
-    private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
-        public void onImageClick(ImageDisplayer displayer, String url) {
-            int index = mMoment.getImage().indexOf(url);
-            String json = StringHelper.replaceJson(Json.gson().toJson(mMoment.getImage(), new TypeToken<ArrayList<String>>() {
-            }.getType()), false);
-            openActivity(ImageViewerFragment.class.getName(), format("%d,%s", index, json), false, false, true);
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_holder_view_moment_details_container:
+                    // 这里已经是详情页，不再需要打开详情页了
+                    break;
+                case R.id.ui_holder_view_moment_details_more:
+                    // 打开快捷赞、评论菜单
+                    mSelectedIndex = index;
+                    // 已赞和未赞
+                    int layout = mMoment.isMyPraised() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
+                    showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+                    break;
+            }
+        }
+    };
+
+    private OnHandleBoundDataListener<Model> boundDataListener = new OnHandleBoundDataListener<Model>() {
+        @Override
+        public Model onHandlerBoundData(BaseViewHolder holder) {
+            return mAdapter.get(holder.getAdapterPosition());
         }
     };
 
@@ -312,10 +314,9 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             switch (viewType) {
                 case VT_MOMENT:
                     MomentDetailsViewHolder holder = new MomentDetailsViewHolder(itemView, MomentDetailsFragment.this);
-                    // 赞、评论快捷菜单
-                    holder.setOnMoreClickListener(onMoreClickListener);
-                    // 图片点击
-                    holder.setOnImageClickListener(onImageClickListener);
+                    holder.setOnViewHolderElementClickListener(elementClickListener);
+                    holder.addOnHandlerBoundDataListener(boundDataListener);
+                    holder.isShowLike(false);
                     return holder;
                 case VT_PRAISE:
                     if (null == praiseViewHolder) {
@@ -347,9 +348,9 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 case VT_MOMENT:
                     return R.layout.holder_view_individual_moment_details;
                 case VT_PRAISE:
-                    return R.layout.holder_view_individual_moment_praise;
+                    return R.layout.holder_view_individual_moment_like_header;
                 default:
-                    return R.layout.holder_view_individual_moment_comment;
+                    return R.layout.holder_view_individual_moment_comment_header;
             }
         }
 

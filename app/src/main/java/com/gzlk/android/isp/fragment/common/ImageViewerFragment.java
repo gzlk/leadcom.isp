@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -47,6 +48,12 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
         bundle.putString(PARAM_QUERY_ID, StringHelper.replaceJson(strings[1], true));
         ivf.setArguments(bundle);
         return ivf;
+    }
+
+    public static void open(BaseFragment fragment, int selectedIndex, ArrayList<String> urls) {
+        String json = StringHelper.replaceJson(Json.gson().toJson(urls, new TypeToken<ArrayList<String>>() {
+        }.getType()), false);
+        fragment.openActivity(ImageViewerFragment.class.getName(), format("%d,%s", selectedIndex, json), false, false, true);
     }
 
     private int selectedIndex = 0;

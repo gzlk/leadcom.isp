@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="@dimen/ui_base_user_header_image_size_small"
+            android:layout_height="@dimen/ui_static_dp_5"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_individual_moment_comment_name_comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:layout_weight="1"
+            android:background="@color/textColorHintLightLight"
+            android:paddingEnd="@dimen/ui_static_dp_3"
+            android:paddingStart="@dimen/ui_static_dp_3"
+            android:text="@string/app_name_default"
+            android:textSize="@dimen/ui_base_text_size_small" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ui_holder_view_individual_moment_comment_name_last"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_base_dimen_margin_padding" />
+
+        <include layout="@layout/tool_view_half_line_horizontal" />
+    </LinearLayout>
+</LinearLayout>

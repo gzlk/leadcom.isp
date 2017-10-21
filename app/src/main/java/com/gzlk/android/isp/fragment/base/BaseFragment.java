@@ -431,8 +431,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                         shareToQZone();
                         break;
                     case R.id.ui_dialog_share_to_wx_chat:
+                        shareToWeiXinSession();
                         break;
                     case R.id.ui_dialog_share_to_wx_moment:
+                        shareToWeiXinTimeline();
                         break;
                     case R.id.ui_dialog_share_to_weibo:
                         break;
@@ -446,6 +448,12 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     protected void shareToQZone() {
+    }
+
+    protected void shareToWeiXinSession() {
+    }
+
+    protected void shareToWeiXinTimeline() {
     }
 
     /**

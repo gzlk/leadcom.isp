@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
@@ -13,7 +14,6 @@ import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CustomTextView;
 
 /**
  * <b>功能描述：</b>说说的详情<br />
@@ -42,11 +42,18 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     private LinearLayout images2;
     @ViewId(R.id.ui_holder_view_moment_details_images3)
     private LinearLayout images3;
-    @ViewId(R.id.ui_holder_view_moment_details_more)
-    private CustomTextView more;
+    @ViewId(R.id.ui_holder_view_individual_moment_like_name_layout)
+    private View likeLayout;
+    @ViewId(R.id.ui_holder_view_individual_moment_like_names)
+    private TextView likeNames;
+    @ViewId(R.id.ui_holder_view_individual_moment_like_name_line)
+    private View likeLine;
+    @ViewId(R.id.ui_holder_view_moment_details_bottom_padding)
+    private View bottomPaddingView;
 
     private ImageLineViewHolder imageLine1, imageLine2, imageLine3;
     private int imageSize;
+    private boolean showLike = false;
 
     public MomentDetailsViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -55,10 +62,30 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         imageLine1 = new ImageLineViewHolder(images1, fragment);
         imageLine2 = new ImageLineViewHolder(images2, fragment);
         imageLine3 = new ImageLineViewHolder(images3, fragment);
+
+        ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(ImageDisplayer displayer, String url) {
+                if (null != mOnHandlerBoundDataListener) {
+                    Object object = mOnHandlerBoundDataListener.onHandlerBoundData(MomentDetailsViewHolder.this);
+                    if (null != object && object instanceof Moment) {
+                        Moment moment = (Moment) object;
+                        int index = moment.getImage().indexOf(url);
+                        ImageViewerFragment.open(fragment(), index, moment.getImage());
+                    }
+                }
+            }
+        };
+        imageLine1.setOnImageClickListener(onImageClickListener);
+        imageLine2.setOnImageClickListener(onImageClickListener);
+        imageLine3.setOnImageClickListener(onImageClickListener);
     }
 
-    public View getAnchor() {
-        return more;
+    /**
+     * 设置是否在这里直接显示点赞列表
+     */
+    public void isShowLike(boolean shown) {
+        showLike = shown;
     }
 
     public void showContent(Moment moment) {
@@ -87,7 +114,7 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
                 imageLine1.showBottomMargin(true);
                 imageLine2.clearImages();
                 imageLine2.showContent(moment.getImage(), 3);
-                imageLine1.showBottomMargin(false);
+                imageLine2.showBottomMargin(false);
                 imageLine3.clearImages();
             } else {
                 imageLine1.clearImages();
@@ -101,43 +128,22 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
             imageLine2.clearImages();
             imageLine3.clearImages();
         }
+        showLikes(moment);
+        bottomPaddingView.setVisibility(moment.getUserMmtCmtList().size() > 0 ? View.GONE : View.VISIBLE);
     }
 
-    /**
-     * 图片点击事件
-     */
-    public void setOnImageClickListener(ImageDisplayer.OnImageClickListener listener) {
-        imageLine1.setOnImageClickListener(listener);
-        imageLine2.setOnImageClickListener(listener);
-        imageLine3.setOnImageClickListener(listener);
+    private void showLikes(Moment moment) {
+        if (!showLike) return;
+        likeLayout.setVisibility(moment.getUserMmtLikeList().size() > 0 ? View.VISIBLE : View.GONE);
+        likeNames.setText(moment.getLikeNames());
+        likeLine.setVisibility(moment.getUserMmtCmtList().size() > 0 ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_holder_view_moment_details_container,
             R.id.ui_holder_view_moment_details_more})
     private void elementClick(View view) {
-        switch (view.getId()) {
-            case R.id.ui_holder_view_moment_details_container:
-                // 打开详情页
-                if (null != mOnViewHolderClickListener) {
-                    mOnViewHolderClickListener.onClick(getAdapterPosition());
-                }
-                break;
-            case R.id.ui_holder_view_moment_details_more:
-                // 打开快捷赞、评论菜单
-                if (null != moreClickListener) {
-                    moreClickListener.onClick(view, getAdapterPosition());
-                }
-                break;
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
-    }
-
-    public interface OnMoreClickListener {
-        void onClick(View view, int index);
-    }
-
-    private OnMoreClickListener moreClickListener;
-
-    public void setOnMoreClickListener(OnMoreClickListener l) {
-        moreClickListener = l;
     }
 }

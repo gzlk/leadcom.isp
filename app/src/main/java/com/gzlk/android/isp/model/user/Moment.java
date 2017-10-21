@@ -3,6 +3,8 @@ package com.gzlk.android.isp.model.user;
 import com.gzlk.android.isp.model.archive.Additional;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.archive.ArchiveLike;
+import com.gzlk.android.isp.model.archive.Comment;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -79,6 +81,12 @@ public class Moment extends Additional {
     private int collection;
     @Column(Archive.Field.CollectionId)
     private String colId;          //当前用户收藏该动态后的收藏ID
+
+    // 点赞相关
+    @Ignore
+    private ArrayList<ArchiveLike> userMmtLikeList;
+    @Ignore
+    private ArrayList<Comment> userMmtCmtList;
 
     public String getUserId() {
         return userId;
@@ -203,5 +211,38 @@ public class Moment extends Additional {
 
     public void setColId(String colId) {
         this.colId = colId;
+    }
+
+    public ArrayList<ArchiveLike> getUserMmtLikeList() {
+        if (null == userMmtLikeList) {
+            userMmtLikeList = new ArrayList<>();
+        }
+        return userMmtLikeList;
+    }
+
+    public void setUserMmtLikeList(ArrayList<ArchiveLike> userMmtLikeList) {
+        this.userMmtLikeList = userMmtLikeList;
+    }
+
+    public String getLikeNames() {
+        if (null != userMmtLikeList) {
+            String tmp = "";
+            for (ArchiveLike like : userMmtLikeList) {
+                tmp += (isEmpty(tmp) ? "" : "、") + like.getUserName();
+            }
+            return tmp;
+        }
+        return "";
+    }
+
+    public ArrayList<Comment> getUserMmtCmtList() {
+        if (null == userMmtCmtList) {
+            userMmtCmtList = new ArrayList<>();
+        }
+        return userMmtCmtList;
+    }
+
+    public void setUserMmtCmtList(ArrayList<Comment> userMmtCmtList) {
+        this.userMmtCmtList = userMmtCmtList;
     }
 }
