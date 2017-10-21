@@ -1,6 +1,6 @@
 package com.gzlk.android.isp.wxapi;
 
-import com.gzlk.android.isp.activity.BaseActivity;
+import android.app.Activity;
 
 /**
  * <b>功能描述：</b>接收发送到微信请求的响应结果<br />
@@ -13,5 +13,6 @@ import com.gzlk.android.isp.activity.BaseActivity;
  * <b>修改备注：</b><br />
  */
 
-public class WXEntryActivity extends BaseActivity {
+public class WXEntryActivity extends Activity {
+
 }

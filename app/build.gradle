@@ -116,10 +116,9 @@ repositories {
         //url 'https://repo1.maven.org/maven2/com/github/hsiangleekwok/hlklib/'
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
+    maven { url "https://dl.bintray.com/thelasterstar/maven/" }
     // 视频播放器
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
-    // 微博SDK
-    maven { url "https://dl.bintray.com/thelasterstar/maven/" }
     flatDir {
         dirs 'libs'
     }
@@ -162,7 +161,7 @@ dependencies {
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
 
     // 微博SDK
-    compile 'com.sina.weibo.sdk:core:4.1.3:openDefaultRelease@aar'
+    compile 'com.sina.weibo.sdk:core:4.1.6:openDefaultRelease@aar'
 
     // 微信SDK
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
