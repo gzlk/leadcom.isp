@@ -22,6 +22,7 @@ import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.share.ShareToQQ;
+import com.gzlk.android.isp.share.ShareToWeiBo;
 import com.hlk.hlklib.etc.Utility;
 
 import java.util.Locale;
@@ -383,6 +384,16 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * Activity result事件，子类重载此方法以获取自己的处理方式
      */
     public void onActivityResult(int requestCode, Intent data) {
+    }
+
+    /**
+     * 微博分享时需要用到的 onNewIntent
+     */
+    public void onNewIntent(Intent intent) {
+        ShareToWeiBo stwb = ShareToWeiBo.instance();
+        if (null != stwb) {
+            stwb.onNewInstance(intent);
+        }
     }
 
     /**

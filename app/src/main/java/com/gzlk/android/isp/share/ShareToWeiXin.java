@@ -67,6 +67,7 @@ public class ShareToWeiXin extends Shareable {
         if (isEmpty(text) && (null == images || images.size() < 1)) {
             throw new IllegalArgumentException("Cannot share empty text or empty image to weixin.");
         }
+        regToWX(activityContext);
         switch (type) {
             case TO_WX_SESSION:
                 shareToWeiXinSession(text, images);

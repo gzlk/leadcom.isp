@@ -22,4 +22,15 @@
     <string name="ui_base_share_text_share_to_qzone_complete">已分享到QQ空间</string>
     <string name="ui_base_share_text_share_to_qzone_cancel">分享到QQ空间已取消</string>
     <string name="ui_base_share_text_share_to_qzone_failed" formatted="false">分享到QQ空间失败：%s(%d)，%s</string>
+
+    <string name="ui_base_share_text_share_to_wx_auth_denied">微信授权失败</string>
+    <string name="ui_base_share_text_share_to_wx_complete">已分享到微信</string>
+    <string name="ui_base_share_text_share_to_wx_cancel">微信分享已取消</string>
+    <string name="ui_base_share_text_share_to_wx_sent_failed">微信分享发送失败</string>
+    <string name="ui_base_share_text_share_to_wx_unsupported">微信不支持分享此类内容</string>
+    <string name="ui_base_share_text_share_to_wx_unknown" formatted="false">未知的微信分享失败代码(%d)</string>
+
+    <string name="ui_base_share_text_share_to_weibo_complete">已分享到微博</string>
+    <string name="ui_base_share_text_share_to_weibo_cancel">微博分享已取消</string>
+    <string name="ui_base_share_text_share_to_weibo_failed">微博分享失败</string>
 </resources>

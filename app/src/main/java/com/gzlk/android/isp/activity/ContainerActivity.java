@@ -66,6 +66,15 @@ public class ContainerActivity extends TitleActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // 微博分享时，需要这个方法进行回调
+        if (null != mFragment) {
+            mFragment.onNewIntent(intent);
+        }
+    }
+
+    @Override
     protected boolean onBackKeyEvent(int keyCode, KeyEvent event) {
         if (null != mFragment) {
             if (mFragment.onBackKeyEvent()) {
