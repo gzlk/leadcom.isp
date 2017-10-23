@@ -184,11 +184,12 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
 
     private void warningDraftExist(final ArchiveDraft draft, final int size) {
         int text = size > 1 ? R.string.ui_text_archive_creator_editor_create_draft_more : R.string.ui_text_archive_creator_editor_create_draft_1;
-        SimpleDialogHelper.init(Activity()).show(text, R.string.ui_base_text_yes, R.string.ui_text_archive_creator_editor_create_new, new DialogHelper.OnDialogConfirmListener() {
+        SimpleDialogHelper.init(Activity()).show(text, size > 1 ? R.string.ui_base_text_have_a_look : R.string.ui_base_text_edit, R.string.ui_text_archive_creator_editor_create_new, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 if (size > 1) {
                     // 打开草稿选择页面
+                    ArchiveDraftFragment.open(ArchiveEditorCreatorFragment.this, mQueryId);
                 } else {
                     String json = draft.getArchiveJson();
                     mArchive = Archive.fromJson(json);
@@ -201,6 +202,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             @Override
             public void onCancel() {
                 // 创建新档案
+                createNewDraftArchive();
             }
         });
     }
@@ -266,9 +268,13 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
+                    // 提交成功，删除草稿
+                    ArchiveDraft.delete(mArchive.getId());
                     mArchive = archive;
+                    resultSucceededActivity();
+                    //mArchive = archive;
                     //resetRightIcons();
-                    mEditor.setInputEnabled(false);
+                    //mEditor.setInputEnabled(false);
                     //openSettingDialog();
                 }
             }
@@ -283,9 +289,24 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
     }
 
     @Override
-    protected boolean checkStillEditing() {
-        // 草稿且标题不为空
-        return isDraft() && !isEmpty(titleView.getValue());
+    public void onStop() {
+        saveDraft();
+        super.onStop();
+    }
+
+    private void saveDraft() {
+        mArchive.setTitle(titleView.getValue());
+        // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
+        if (isDraft() && (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent()))) {
+            ArchiveDraft draft = new ArchiveDraft();
+            draft.setId(mArchive.getId());
+            draft.setTitle(mArchive.getTitle());
+            draft.setGroupId(mArchive.getGroupId());
+            draft.setArchiveJson(Archive.toJson(mArchive));
+            draft.setCreateDate(Utils.formatDateOfNow(StringHelper.getString(R.string.ui_base_text_date_time_format)));
+            ArchiveDraft.save(draft);
+            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
+        }
     }
 
     @Override
@@ -323,7 +344,20 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             public void onBindData(View dialogView, DialogHelper helper) {
                 titleText.setText(mArchive.getTitle());
                 creatorText.setText(mArchive.getUserName());
-                createTime.setText(formatDate(mArchive.getCreateDate(), "yyyy.MM.dd"));
+                String text = mArchive.getCreateDate();
+                if (!isEmpty(text)) {
+                    text = formatDate(mArchive.getCreateDate(), "yyyy.MM.dd");
+                }
+                createTime.setText(text);
+                coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
+                labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
+                Seclusion seclusion = new Seclusion();
+                seclusion.setGroupIds(mArchive.getAuthGro());
+                seclusion.setUserIds(mArchive.getAuthUser());
+                seclusion.setUserNames(mArchive.getAuthUserName());
+                // 这一步一定要在最后设置，否则状态会被重置
+                seclusion.setStatus(mArchive.getAuthPublic());
+                publicText.setText(PrivacyFragment.getPrivacy(seclusion));
             }
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
@@ -691,6 +725,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 mArchive.setAuthPublic(seclusion.getStatus());
                 mArchive.setAuthGro(seclusion.getGroupIds());
                 mArchive.setAuthUser(seclusion.getUserIds());
+                mArchive.setAuthUserName(seclusion.getUserNames());
                 if (null != publicText) {
                     publicText.setText(PrivacyFragment.getPrivacy(seclusion));
                 }
@@ -714,6 +749,13 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 }
                 break;
             case REQUEST_ATTACHMENT:
+                break;
+            case REQUEST_DRAFT:
+                // 草稿选择完毕
+                String draftJson = getResultedData(data);
+                mArchive = Archive.fromJson(StringHelper.replaceJson(draftJson, true));
+                titleView.setValue(mArchive.getTitle());
+                mEditor.setHtml(mArchive.getContent());
                 break;
         }
         super.onActivityResult(requestCode, data);

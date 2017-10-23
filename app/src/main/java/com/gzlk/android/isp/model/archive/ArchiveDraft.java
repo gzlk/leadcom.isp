@@ -33,6 +33,14 @@ public class ArchiveDraft extends Model {
         return new Dao<>(ArchiveDraft.class).query(builder);
     }
 
+    public static void save(ArchiveDraft draft) {
+        new Dao<>(ArchiveDraft.class).save(draft);
+    }
+
+    public static void delete(String draftId) {
+        new Dao<>(ArchiveDraft.class).delete(draftId);
+    }
+
     @Column(Archive.Field.Title)
     private String title;
     @Column(Organization.Field.GroupId)

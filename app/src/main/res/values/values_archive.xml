@@ -7,8 +7,15 @@
     <string name="ui_archive_creator_selector_text_image">图文</string>
     <string name="ui_archive_creator_selector_text_attachment">附件</string>
 
-    <string name="ui_text_archive_creator_editor_create_draft_1">您还有一个未提交的档案，现在要继续编辑吗？</string>
-    <string name="ui_text_archive_creator_editor_create_draft_more" formatted="false">您有%d个未提交的档案，要继续编辑吗？</string>
+    <string name="ui_text_archive_creator_editor_create_draft_1">
+        <![CDATA[您还有个未提交的档案草稿。<br/>要继续编辑吗？]]>
+    </string>
+    <string name="ui_text_archive_creator_editor_create_draft_more" formatted="false">
+        <![CDATA[您还有几个未提交的档案草稿。<br/>要去看看吗？]]>
+    </string>
+    <string name="ui_text_archive_creator_editor_create_draft_time" formatted="false">最后修改：%s</string>
+    <string name="ui_text_archive_creator_editor_create_draft_delete">未提交的草稿删除之后不能恢复，您确定吗？</string>
+    <string name="ui_text_archive_creator_editor_create_draft_saved">档案草稿已保存，下次可以继续编辑。</string>
     <string name="ui_text_archive_creator_editor_create_new">新建档案</string>
     <string name="ui_text_archive_creator_editor_create_cover">档案封面</string>
     <string name="ui_text_archive_creator_editor_create_cover_null">请为档案提供一个封面</string>

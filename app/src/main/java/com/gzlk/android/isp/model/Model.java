@@ -48,6 +48,21 @@ public class Model extends BaseModel {
         return StringHelper.format(fmt, args);
     }
 
+    public static Model getNoMore() {
+        return getNoMore("");
+    }
+
+    public static Model getNoMore(int noMoreText) {
+        return getNoMore(StringHelper.getString(noMoreText));
+    }
+
+    public static Model getNoMore(String noMoreText) {
+        Model model = new Model();
+        model.setId(StringHelper.getString(R.string.ui_base_text_nothing_more_id));
+        model.setAccessToken(isEmpty(noMoreText) ? StringHelper.getString(R.string.ui_base_text_nothing_more) : noMoreText);
+        return model;
+    }
+
     @PrimaryKey(AssignType.BY_MYSELF)
     @NotNull
     @Column(Field.Id)

@@ -536,11 +536,13 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         return false;
     }
 
+    protected int stillEditingWarning = R.string.ui_base_text_still_editing;
+
     /**
      * 询问用户是否放弃编辑
      */
     protected void warningStillInEditing() {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_base_text_still_editing, R.string.ui_base_text_yes, R.string.ui_base_text_think_again, new DialogHelper.OnDialogConfirmListener() {
+        SimpleDialogHelper.init(Activity()).show(stillEditingWarning, R.string.ui_base_text_yes, R.string.ui_base_text_think_again, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 finish();

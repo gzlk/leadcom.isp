@@ -4,13 +4,26 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.daimajia.swipe.util.Attributes;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.organization.archive.ArchiveAdapter;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveDraftViewHolder;
+import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
+import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.archive.ArchiveDraft;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>草稿档案列表<br />
@@ -38,6 +51,17 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         fragment.openActivity(ArchiveDraftFragment.class.getName(), groupId, REQUEST_DRAFT, true, false);
     }
 
+    private DraftAdapter mAdapter;
+    private Model noMore;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        enableSwipe(false);
+        isLoadingComplete(true);
+        noMore = Model.getNoMore("");
+    }
+
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
@@ -50,9 +74,27 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-
+                resultSelected();
             }
         });
+        initializeAdapter();
+    }
+
+    private void resultSelected() {
+        String json = "";
+        boolean selected = false;
+        for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
+            Model model = mAdapter.get(i);
+            if (model.isSelected() && model instanceof ArchiveDraft) {
+                ArchiveDraft draft = (ArchiveDraft) model;
+                json = draft.getArchiveJson();
+                selected = true;
+                break;
+            }
+        }
+        if (selected) {
+            resultData(StringHelper.replaceJson(json, false));
+        }
     }
 
     @Override
@@ -80,20 +122,92 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
-    private class DraftAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder,Model>{
+    private void initializeAdapter() {
+        if (null == mAdapter) {
+            mAdapter = new DraftAdapter();
+            mAdapter.setMode(Attributes.Mode.Single);
+            mRecyclerView.setAdapter(mAdapter);
+            List<ArchiveDraft> drafts = ArchiveDraft.getDraft(mQueryId);
+            if (null != drafts) {
+                for (ArchiveDraft draft : drafts) {
+                    mAdapter.add(draft);
+                }
+            }
+            mAdapter.add(noMore);
+        }
+    }
+
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_tool_view_archive_draft_layout:
+                    for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
+                        Model model = mAdapter.get(i);
+                        if (i == index) {
+                            model.setSelected(!model.isSelected());
+                        } else {
+                            model.setSelected(false);
+                        }
+                        mAdapter.notifyItemChanged(i);
+                    }
+                    break;
+                case R.id.ui_tool_view_archive_draft_delete:
+                    warningDraftDelete(index);
+                    break;
+            }
+        }
+    };
+
+    private void warningDraftDelete(final int index) {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_text_archive_creator_editor_create_draft_delete, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                ArchiveDraft.delete(mAdapter.get(index).getId());
+                mAdapter.notifyItemRemoved(index);
+                return true;
+            }
+        });
+    }
+
+    private class DraftAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
+
+        private static final int VT_DRAFT = 0, VT_LAST = 1;
+
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
-            return null;
+            if (viewType == VT_DRAFT) {
+                ArchiveDraftViewHolder holder = new ArchiveDraftViewHolder(itemView, ArchiveDraftFragment.this);
+                holder.setOnViewHolderElementClickListener(elementClickListener);
+                return holder;
+            } else {
+                return new NothingMoreViewHolder(itemView, ArchiveDraftFragment.this);
+            }
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return 0;
+            if (viewType == VT_DRAFT) {
+                return R.layout.holder_view_archive_draft;
+            }
+            return R.layout.holder_view_nothing_more;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (get(position) instanceof ArchiveDraft) {
+                return VT_DRAFT;
+            }
+            return VT_LAST;
         }
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-
+            if (holder instanceof ArchiveDraftViewHolder) {
+                ((ArchiveDraftViewHolder) holder).showContent((ArchiveDraft) item);
+            } else if (holder instanceof NothingMoreViewHolder) {
+                ((NothingMoreViewHolder) holder).showContent(item);
+            }
         }
 
         @Override
@@ -103,7 +217,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int getSwipeLayoutResourceId(int i) {
-            return 0;
+            return R.id.ui_holder_view_contact_swipe_layout;
         }
     }
 }

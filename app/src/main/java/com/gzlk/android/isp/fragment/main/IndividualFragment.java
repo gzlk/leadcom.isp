@@ -77,6 +77,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NimApplication.addNimMessageEvent(messageEvent);
+        nomore = Model.getNoMore();
     }
 
     @Override
@@ -168,7 +169,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 //        performRefresh();
 //    }
     private void performRefresh() {
-        adapter.remove(noMore());
+        adapter.remove(nomore);
         displayLoading(true);
         switch (selectedFunction) {
             case 0:
@@ -226,7 +227,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 }
                 if (count < pageSize) {
-                    adapter.add(noMore());
+                    adapter.add(nomore);
                 }
             }
         }).list(StructureFragment.selectedGroupId, remotePageNumber);
@@ -272,7 +273,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 }
                 if (count < pageSize) {
-                    adapter.add(noMore());
+                    adapter.add(nomore);
                 }
             }
         }).list(remotePageNumber, Cache.cache().userId);
@@ -299,7 +300,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 }
                 if (count < pageSize) {
-                    adapter.add(noMore());
+                    adapter.add(nomore);
                 }
             }
         }).list(Collection.Type.ALL_ARCHIVE, CollectionRequest.OPE_MONTH, remotePageNumber);
@@ -335,15 +336,6 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         // 设置时间为今天最后一秒，在排序时会一直排在最前面
         today.setCreateDate(Utils.formatDateOfNow("yyyy-MM-dd 23:59:59"));
         return today;
-    }
-
-    private Model noMore() {
-        if (null == nomore) {
-            nomore = new Model();
-            nomore.setId(getString(R.string.ui_base_text_nothing_more_id));
-            nomore.setAccessToken(getString(R.string.ui_base_text_nothing_more));
-        }
-        return nomore;
     }
 
     private Model momentCamera() {

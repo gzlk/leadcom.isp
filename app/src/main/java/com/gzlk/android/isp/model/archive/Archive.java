@@ -98,6 +98,7 @@ public class Archive extends Additional {
         String AuthPublic = "authPublic";
         String AuthGroup = "authGroup";
         String AuthUser = "authUser";
+        String AuthUserName = "authUserName";
         String ApproverId = "approverId";
         String ApproveDate = "approveDate";
         String ReadNumber = "readNumber";
@@ -253,6 +254,12 @@ public class Archive extends Additional {
         }.getType());
     }
 
+    public static String toJson(Archive archive) {
+        if (null == archive) return "{}";
+        return Json.gson().toJson(archive, new TypeToken<Archive>() {
+        }.getType());
+    }
+
     public String getArchiveStatus() {
         switch (status) {
             case ArchiveStatus.APPROVING:
@@ -378,6 +385,8 @@ public class Archive extends Additional {
     //授权个人(用户ID Json数组)，授权的用户才能查看
     @Column(Field.AuthUser)
     private ArrayList<String> authUser;
+    @Column(Field.AuthUserName)
+    private ArrayList<String> authUserName;
     //档案发生时间
     @Column(Model.Field.CreateDate)
     private String createDate;
@@ -645,6 +654,14 @@ public class Archive extends Additional {
 
     public void setAuthUser(ArrayList<String> authUser) {
         this.authUser = authUser;
+    }
+
+    public ArrayList<String> getAuthUserName() {
+        return authUserName;
+    }
+
+    public void setAuthUserName(ArrayList<String> authUserName) {
+        this.authUserName = authUserName;
     }
 
     public int getStatus() {
