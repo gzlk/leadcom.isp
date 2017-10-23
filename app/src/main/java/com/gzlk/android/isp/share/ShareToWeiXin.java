@@ -13,6 +13,7 @@ import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
@@ -53,9 +54,19 @@ public class ShareToWeiXin extends Shareable {
         LogHelper.log("WXShare", string);
     }
 
-    private static void regToWX(Context context) {
+    private static boolean regToWX(Context context) {
         wxapi = WXAPIFactory.createWXAPI(context, APP_ID);
-        wxapi.registerApp(APP_ID);
+        if (wxapi.isWXAppInstalled()) {
+            if (wxapi.isWXAppSupportAPI()) {
+                return wxapi.registerApp(APP_ID);
+            } else {
+                ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_not_support_api);
+                return false;
+            }
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_not_installed);
+            return false;
+        }
     }
 
     /**
@@ -65,20 +76,24 @@ public class ShareToWeiXin extends Shareable {
      */
     public static void shareToWeiXin(Context activityContext, @ShareType int type, String text, ArrayList<String> images) {
         if (isEmpty(text) && (null == images || images.size() < 1)) {
-            throw new IllegalArgumentException("Cannot share empty text or empty image to weixin.");
+            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_blank);
+            return;
         }
-        regToWX(activityContext);
-        switch (type) {
-            case TO_WX_SESSION:
-                shareToWeiXinSession(text, images);
-                break;
-            case TO_WX_TIMELINE:
-                shareToWeiXinTimeline(activityContext, text, images);
-                break;
-            case TO_WX_FAVORITE:
-                break;
-            default:
-                break;
+        if (regToWX(activityContext)) {
+            switch (type) {
+                case TO_WX_SESSION:
+                    shareToWeiXinSession(text, images);
+                    break;
+                case TO_WX_TIMELINE:
+                    shareToWeiXinTimeline(activityContext, text, images);
+                    break;
+                case TO_WX_FAVORITE:
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_register_failed);
         }
     }
 

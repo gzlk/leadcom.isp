@@ -39,6 +39,10 @@ public class Shareable {
         return StringHelper.isEmpty(string);
     }
 
+    protected static String getString(int res) {
+        return StringHelper.getString(res);
+    }
+
     public static String getLocalPath(String imageUrl) {
         File file = ImageLoader.getInstance().getDiskCache().get(imageUrl);
         if (null != file) {

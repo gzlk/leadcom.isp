@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.tencent.connect.common.Constants;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
 import com.tencent.tauth.IUiListener;
@@ -41,8 +42,10 @@ public class ShareToQQ extends Shareable {
 
     @SuppressWarnings("AccessStaticViaInstance")
     public static void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (null != mTencent) {
-            mTencent.onActivityResultData(requestCode, resultCode, data, new UiListener(TO_QQ));
+        if (requestCode == Constants.REQUEST_QQ_SHARE || requestCode == Constants.REQUEST_QZONE_SHARE) {
+            if (resultCode == Constants.ACTIVITY_OK) {
+                Tencent.handleResultData(data, new UiListener(TO_QQ));
+            }
         }
     }
 

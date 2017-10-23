@@ -9,12 +9,15 @@ import android.net.Uri;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
+import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.MultiImageObject;
 import com.sina.weibo.sdk.api.TextObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
+import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.share.WbShareCallback;
 import com.sina.weibo.sdk.share.WbShareHandler;
 
@@ -34,6 +37,8 @@ import java.util.ArrayList;
 
 public class ShareToWeiBo extends Shareable implements WbShareCallback {
 
+    private static final String APP_KEY = StringHelper.getString(R.string.weibo_app_key);
+    private static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
     private WbShareHandler shareHandler;
 
     @Override
@@ -56,9 +61,14 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
     }
 
     private static SoftReference<ShareToWeiBo> instance;
+    private Context ctx;
 
     private ShareToWeiBo(Context context) {
-        shareHandler = new WbShareHandler((Activity) context);
+        ctx = context;
+        if (!WbSdk.isWbInstall(ctx)) {
+            WbSdk.install(ctx, new AuthInfo(ctx, APP_KEY, REDIRECT_URL, ""));
+        }
+        shareHandler = new WbShareHandler((Activity) ctx);
         shareHandler.registerApp();
         shareHandler.setProgressColor(0xff33b5e5);
         instance = new SoftReference<>(this);
@@ -77,6 +87,13 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
         }
     }
 
+    public static void clear() {
+        if (null != instance) {
+            instance.clear();
+            instance = null;
+        }
+    }
+
     /**
      * 分享纯文字或图文
      */
@@ -92,7 +109,12 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
             if (images.size() <= 1) {
                 weiboMessage.imageObject = getImageObject(images.get(0));
             } else {
-                weiboMessage.multiImageObject = getImageObject(images);
+                if (WbSdk.supportMultiImage(ctx)) {
+                    weiboMessage.multiImageObject = getImageObject(images);
+                } else {
+                    ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_weibo_not_support_multi_image);
+                    return;
+                }
             }
         }
         shareHandler.shareMessage(weiboMessage, false);
@@ -101,7 +123,7 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
     private TextObject getTextObject(String text) {
         TextObject textObject = new TextObject();
         textObject.text = text;
-        textObject.title = "xxxx";
+        textObject.title = getString(R.string.ui_base_share_title);
         textObject.actionUrl = "http://www.baidu.com";
         return textObject;
     }

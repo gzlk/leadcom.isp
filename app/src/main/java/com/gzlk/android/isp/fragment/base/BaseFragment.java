@@ -396,6 +396,12 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        ShareToWeiBo.clear();
+        super.onDestroy();
+    }
+
     /**
      * 是否可以分享到第三方媒体
      */
@@ -448,6 +454,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                         shareToWeiXinTimeline();
                         break;
                     case R.id.ui_dialog_share_to_weibo:
+                        shareToWeiBo();
                         break;
                 }
                 return true;
@@ -465,6 +472,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     protected void shareToWeiXinTimeline() {
+    }
+
+    protected void shareToWeiBo() {
     }
 
     /**

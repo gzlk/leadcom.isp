@@ -28,6 +28,7 @@ import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.share.ShareToQQ;
+import com.gzlk.android.isp.share.ShareToWeiBo;
 import com.gzlk.android.isp.share.ShareToWeiXin;
 import com.gzlk.android.isp.task.CopyLocalFileTask;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
@@ -347,6 +348,11 @@ public class MomentImagesFragment extends BaseMomentFragment {
     @Override
     protected void shareToWeiXinTimeline() {
         ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, mMoment.getContent(), mMoment.getImage());
+    }
+
+    @Override
+    protected void shareToWeiBo() {
+        ShareToWeiBo.init(Activity()).share(mMoment.getContent(), mMoment.getImage());
     }
 
     @SuppressWarnings("ConstantConditions")

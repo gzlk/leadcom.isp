@@ -15,6 +15,8 @@
     <dimen name="ui_base_share_dialog_icon_text_size">@dimen/ui_static_sp_30</dimen>
     <dimen name="ui_base_share_dialog_icon_container">@dimen/ui_static_sp_40</dimen>
 
+    <string name="ui_base_share_text_share_blank">请提供要分享的文本内容或图片</string>
+
     <string name="ui_base_share_text_share_to_qq_complete">已分享到QQ</string>
     <string name="ui_base_share_text_share_to_qq_cancel">分享到QQ已取消</string>
     <string name="ui_base_share_text_share_to_qq_failed" formatted="false">分享到QQ失败：%s(%d)，%s</string>
@@ -23,6 +25,9 @@
     <string name="ui_base_share_text_share_to_qzone_cancel">分享到QQ空间已取消</string>
     <string name="ui_base_share_text_share_to_qzone_failed" formatted="false">分享到QQ空间失败：%s(%d)，%s</string>
 
+    <string name="ui_base_share_text_share_to_wx_not_installed">您没有安装微信客户端</string>
+    <string name="ui_base_share_text_share_to_wx_not_support_api">您的微信客户端不支持分享功能</string>
+    <string name="ui_base_share_text_share_to_wx_register_failed">无法注册应用到微信</string>
     <string name="ui_base_share_text_share_to_wx_auth_denied">微信授权失败</string>
     <string name="ui_base_share_text_share_to_wx_complete">已分享到微信</string>
     <string name="ui_base_share_text_share_to_wx_cancel">微信分享已取消</string>
@@ -33,4 +38,5 @@
     <string name="ui_base_share_text_share_to_weibo_complete">已分享到微博</string>
     <string name="ui_base_share_text_share_to_weibo_cancel">微博分享已取消</string>
     <string name="ui_base_share_text_share_to_weibo_failed">微博分享失败</string>
+    <string name="ui_base_share_text_share_to_weibo_not_support_multi_image">您的微博客户端不支持同时分享多个图片</string>
 </resources>
