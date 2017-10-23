@@ -7,6 +7,11 @@
     <string name="ui_archive_creator_selector_text_image">图文</string>
     <string name="ui_archive_creator_selector_text_attachment">附件</string>
 
+    <string name="ui_text_archive_creator_editor_create_draft_1">您还有一个未提交的档案，现在要继续编辑吗？</string>
+    <string name="ui_text_archive_creator_editor_create_draft_more" formatted="false">您有%d个未提交的档案，要继续编辑吗？</string>
+    <string name="ui_text_archive_creator_editor_create_new">新建档案</string>
+    <string name="ui_text_archive_creator_editor_create_cover">档案封面</string>
+    <string name="ui_text_archive_creator_editor_create_cover_null">请为档案提供一个封面</string>
     <string name="ui_text_archive_creator_editor_create_time">创建时间</string>
     <string name="ui_text_archive_creator_editor_video_cover_default">http://120.25.124.199:8008/group1/M00/00/13/eBk66lng0_yAOTQYAABKQjAngPs457.png</string>
     <string name="ui_text_archive_creator_editor_attachment_icon">http://120.25.124.199:8008/group1/M00/00/17/cErYIVnkBRiAOy1aAAAJiqCeKro218.png</string>

@@ -29,14 +29,17 @@ import com.gzlk.android.isp.fragment.activity.LabelPickFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.archive.ArchiveDraft;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.common.Seclusion;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
@@ -92,17 +95,23 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         uploadType = bundle.getInt(PARAM_UPLOAD_TYPE, UP_NOTHING);
         String json = bundle.getString(PARAM_ARCHIVE, "");
         if (!isEmpty(json)) {
-            mArchive = Json.gson().fromJson(json, new TypeToken<Archive>() {
-            }.getType());
+            mArchive = Archive.fromJson(json);
         } else {
-            mArchive = new Archive();
-            // 标记是否为组织档案
-            mArchive.setGroupId(mQueryId);
-            // 默认为个人普通档案或组织普通档案
-            mArchive.setType(Archive.ArchiveType.NORMAL);
-            // 档案默认向所有人公开的
-            mArchive.setAuthPublic(Seclusion.Type.Public);
+            createNewDraftArchive();
         }
+    }
+
+    // 新建一个草稿档案
+    private void createNewDraftArchive() {
+        mArchive = new Archive();
+        // 新建的档案都为临时档案
+        mArchive.setId(Archive.getDraftId());
+        // 标记是否为组织档案
+        mArchive.setGroupId(mQueryId);
+        // 默认为个人普通档案或组织普通档案
+        mArchive.setType(Archive.ArchiveType.NORMAL);
+        // 档案默认向所有人公开的
+        mArchive.setAuthPublic(Seclusion.Type.Public);
     }
 
     @Override
@@ -166,9 +175,34 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             toolbarTopLine.setVisibility(View.VISIBLE);
         }
         mEditor.focusEditor();
+        // 检索是否有未提交的草稿
+        List<ArchiveDraft> drafts = ArchiveDraft.getDraft(mQueryId);
+        if (null != drafts && drafts.size() > 0) {
+            warningDraftExist(drafts.get(0), drafts.size());
+        }
+    }
 
-        // 选择封面，到封面拾取器
-        CoverPickFragment.open(ArchiveEditorCreatorFragment.this, false, "", 1, 1);
+    private void warningDraftExist(final ArchiveDraft draft, final int size) {
+        int text = size > 1 ? R.string.ui_text_archive_creator_editor_create_draft_more : R.string.ui_text_archive_creator_editor_create_draft_1;
+        SimpleDialogHelper.init(Activity()).show(text, R.string.ui_base_text_yes, R.string.ui_text_archive_creator_editor_create_new, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                if (size > 1) {
+                    // 打开草稿选择页面
+                } else {
+                    String json = draft.getArchiveJson();
+                    mArchive = Archive.fromJson(json);
+                    titleView.setValue(mArchive.getTitle());
+                    mEditor.setHtml(mArchive.getContent());
+                }
+                return true;
+            }
+        }, new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                // 创建新档案
+            }
+        });
     }
 
     @Override
@@ -179,24 +213,15 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
     @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_text_document_create_fragment_title);
-        resetRightIcons();
-    }
-
-    private void resetRightIcons() {
-        setRightText(null == mArchive || isEmpty(mArchive.getId()) ? R.string.ui_base_text_save : 0);
-        setRightIcon(null != mArchive && !isEmpty(mArchive.getId()) ? R.string.ui_icon_more : 0);
+        setRightIcon(R.string.ui_icon_more);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                if (null == mArchive || isEmpty(mArchive.getId())) {
-                    // 创建档案
-                    tryCreateArchive();
-                } else {
-                    // 显示附加菜单信息
-                    openSettingDialog();
-                }
+                // 显示附加菜单信息
+                openSettingDialog();
             }
         });
+        //resetRightIcons();
     }
 
     private void tryCreateArchive() {
@@ -209,6 +234,10 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         String html = mEditor.getHtml();
         if (isEmpty(html)) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
+            return;
+        }
+        if (isEmpty(mArchive.getCover())) {
+            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_null);
             return;
         }
         mEditor.getMarkdown();
@@ -238,17 +267,25 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 super.onResponse(archive, success, message);
                 if (success) {
                     mArchive = archive;
-                    resetRightIcons();
+                    //resetRightIcons();
                     mEditor.setInputEnabled(false);
-                    openSettingDialog();
+                    //openSettingDialog();
                 }
             }
         }).add(mArchive);
     }
 
+    /**
+     * 当前档案是否为草稿档案
+     */
+    private boolean isDraft() {
+        return isEmpty(mArchive.getId()) || mArchive.getId().contains("draft_");
+    }
+
     @Override
     protected boolean checkStillEditing() {
-        return isEmpty(mArchive.getId()) && !isEmpty(titleView.getValue());
+        // 草稿且标题不为空
+        return isDraft() && !isEmpty(titleView.getValue());
     }
 
     @Override
@@ -262,9 +299,11 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
     }
 
     private View settingDialogView;
+    private ImageDisplayer coverView;
     private TextView titleText, publicText, labelText, creatorText, createTime;
 
     private void openSettingDialog() {
+        mArchive.setTitle(titleView.getValue());
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override
             public View onInitializeView() {
@@ -275,6 +314,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                     labelText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label_text);
                     creatorText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_creator);
                     createTime = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_create_time);
+                    coverView = (ImageDisplayer) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover_image);
                 }
                 return settingDialogView;
             }
@@ -288,7 +328,11 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
             public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_popup_rich_editor_setting_public, R.id.ui_popup_rich_editor_setting_label};
+                return new int[]{
+                        R.id.ui_popup_rich_editor_setting_public,
+                        R.id.ui_popup_rich_editor_setting_label,
+                        R.id.ui_popup_rich_editor_setting_cover,
+                        R.id.ui_popup_rich_editor_setting_commit};
             }
 
             @Override
@@ -299,6 +343,13 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                         break;
                     case R.id.ui_popup_rich_editor_setting_label:
                         openLabelPicker();
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_cover:
+                        // 选择封面，到封面拾取器
+                        CoverPickFragment.open(ArchiveEditorCreatorFragment.this, false, mArchive.getCover(), 1, 1);
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_commit:
+                        tryCreateArchive();
                         break;
                 }
                 return false;
@@ -462,6 +513,13 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 case UP_ATTACH:
                     // 上传了多个附件（一次最多9个）
                     //mEditor.insertHtml("");
+                    if (null != uploaded) {
+                        for (Attachment attachment : uploaded) {
+                            if (!mArchive.getAttach().contains(attachment)) {
+                                mArchive.getAttach().add(attachment);
+                            }
+                        }
+                    }
                     break;
             }
             // 插入完毕之后清空已上传的文件列表
@@ -608,6 +666,12 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         switch (requestCode) {
             case REQUEST_COVER:
                 mArchive.setCover(getResultedData(data));
+                if (null != coverView) {
+                    coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
+                }
+                if (!isDraft()) {
+                    updateArchive(ArchiveRequest.TYPE_COVER);
+                }
                 break;
             case REQUEST_VIDEO:
                 // 视频选择返回了
@@ -630,7 +694,9 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 if (null != publicText) {
                     publicText.setText(PrivacyFragment.getPrivacy(seclusion));
                 }
-                updateArchive(ArchiveRequest.TYPE_AUTH);
+                if (!isDraft()) {
+                    updateArchive(ArchiveRequest.TYPE_AUTH);
+                }
                 break;
             case REQUEST_LABEL:
                 String labelJson = getResultedData(data);
@@ -643,7 +709,9 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 if (null != labelText) {
                     labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
                 }
-                updateArchive(ArchiveRequest.TYPE_LABEL);
+                if (!isDraft()) {
+                    updateArchive(ArchiveRequest.TYPE_LABEL);
+                }
                 break;
             case REQUEST_ATTACHMENT:
                 break;

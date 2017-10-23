@@ -1,6 +1,9 @@
 package com.gzlk.android.isp.model.archive;
 
+import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.cache.Cache;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
@@ -30,39 +33,43 @@ public class Archive extends Additional {
     /**
      * 档案相关的表
      */
-    public static class Table {
+    public interface Table {
         /**
          * 档案
          */
-        public static final String ARCHIVE = "archive";
+        String ARCHIVE = "archive";
         /**
          * 用户档案
          */
-        public static final String USER_ARCHIVE = "userArchive";
+        String USER_ARCHIVE = "userArchive";
         /**
          * 组织档案
          */
-        public static final String GROUP_ARCHIVE = "groupArchive";
+        String GROUP_ARCHIVE = "groupArchive";
         /**
          * 用户说说
          */
-        public static final String USER_MOMENT = "userMoment";
+        String USER_MOMENT = "userMoment";
         /**
          * 评论
          */
-        public static final String COMMENT = "archiveComment";
+        String COMMENT = "archiveComment";
         /**
          * 赞
          */
-        public static final String LIKE = "archiveLike";
+        String LIKE = "archiveLike";
         /**
          * 组织的公开档案
          */
-        public static final String PUBLIC_ARCHIVE = "publicArchive";
+        String PUBLIC_ARCHIVE = "publicArchive";
         /**
          * 推荐档案
          */
-        public static final String RECOMMEND_ARCHIVE = "recommendArchive";
+        String RECOMMEND_ARCHIVE = "recommendArchive";
+        /**
+         * 草稿
+         */
+        String ARCHIVE_DRAFT = "archiveDraft";
     }
 
     public interface Field {
@@ -110,6 +117,7 @@ public class Archive extends Additional {
         String ToUserId = "toUserId";
         String ToUserName = "toUserName";
         String ToHeadPhoto = "toHeadPhoto";
+        String DraftJson = "draftJson";
     }
 
     /**
@@ -214,6 +222,35 @@ public class Archive extends Additional {
          * 审核失败（未审核通过）
          */
         int FAILURE = 3;
+    }
+
+    /**
+     * 草稿类型
+     */
+    public interface DraftType {
+        /**
+         * 正常档案
+         */
+        int NORMAL = 0;
+        /**
+         * 草稿档案
+         */
+        int DRAFT = 1;
+    }
+
+    /**
+     * 获取临时草稿id
+     */
+    public static String getDraftId() {
+        return format("draft_%d", Utils.timestamp());
+    }
+
+    public static Archive fromJson(String json) {
+        if (isEmpty(json)) {
+            return new Archive();
+        }
+        return Json.gson().fromJson(json, new TypeToken<Archive>() {
+        }.getType());
     }
 
     public String getArchiveStatus() {

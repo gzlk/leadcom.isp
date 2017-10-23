@@ -292,6 +292,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_MEMBER = ACTIVITY_BASE_REQUEST + 13;
     /**
+     * 草稿选择
+     */
+    public static final int REQUEST_DRAFT = ACTIVITY_BASE_REQUEST + 14;
+    /**
      * 新增
      */
     public static final int REQUEST_CREATE = ACTIVITY_BASE_REQUEST + 100;
