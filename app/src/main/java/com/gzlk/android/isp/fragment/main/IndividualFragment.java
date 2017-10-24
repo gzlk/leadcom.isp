@@ -37,6 +37,7 @@ import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentHomeCameraViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentsItemCommentViewHolder;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
@@ -78,7 +79,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NimApplication.addNimMessageEvent(messageEvent);
-        nomore = Model.getNoMore();
+        nothingMore = Model.getNoMore();
     }
 
     @Override
@@ -170,7 +171,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 //        performRefresh();
 //    }
     private void performRefresh() {
-        adapter.remove(nomore);
+        mAdapter.remove(nothingMore);
         displayLoading(true);
         switch (selectedFunction) {
             case 0:
@@ -203,39 +204,39 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     if (null != list) {
                         if (selectedFunction == 0) {
-                            Moment today = (Moment) adapter.get(2);
+                            Moment today = (Moment) mAdapter.get(2);
                             today.setAuthPublic(userInfoNum);
                             today.setContent(lastHeadPhoto);
-                            adapter.notifyItemChanged(2);
+                            mAdapter.notifyItemChanged(2);
                             for (MomentPublic moment : list) {
                                 moment.getUserMmt().resetAdditional(moment.getUserMmt().getAddition());
-                                adapter.update(moment.getUserMmt());
+                                mAdapter.update(moment.getUserMmt());
                                 clearMomentComments(moment.getUserMmt());
-                                int index = adapter.indexOf(moment.getUserMmt());
+                                int index = mAdapter.indexOf(moment.getUserMmt());
                                 int size = moment.getUserMmt().getUserMmtCmtList().size();
                                 for (Comment comment : moment.getUserMmt().getUserMmtCmtList()) {
                                     index++;
-                                    adapter.add(comment, index);
+                                    mAdapter.add(comment, index);
                                 }
                                 if (size > 0) {
                                     // 设置最后一个评论
-                                    Comment cmt = (Comment) adapter.get(index);
+                                    Comment cmt = (Comment) mAdapter.get(index);
                                     cmt.setLast(true);
-                                    adapter.update(cmt);
+                                    mAdapter.update(cmt);
                                 }
                             }
                         }
                     }
                 }
                 if (count < pageSize) {
-                    adapter.add(nomore);
+                    mAdapter.add(nothingMore);
                 }
             }
         }).list(StructureFragment.selectedGroupId, remotePageNumber);
     }
 
     private void clearMomentComments(Moment moment) {
-        Iterator<Model> iterator = adapter.iterator();
+        Iterator<Model> iterator = mAdapter.iterator();
         int index = 0;
         while (iterator.hasNext()) {
             Model model = iterator.next();
@@ -243,7 +244,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 Comment comment = (Comment) model;
                 if (comment.getMomentId().equals(moment.getId())) {
                     iterator.remove();
-                    adapter.notifyItemRemoved(index);
+                    mAdapter.notifyItemRemoved(index);
                 }
             }
             index++;
@@ -254,7 +255,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
      * 拉取我的档案列表
      */
     private void refreshingRemoteDocuments() {
-        //adapter.remove(noMore());
+        //mAdapter.remove(noMore());
         //setLoadingText(R.string.ui_individual_archive_list_loading);
         //displayLoading(true);
         ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
@@ -268,20 +269,20 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     if (null != list) {
                         if (selectedFunction == 1) {
                             for (Archive archive : list) {
-                                adapter.update(archive);
+                                mAdapter.update(archive);
                             }
                         }
                     }
                 }
                 if (count < pageSize) {
-                    adapter.add(nomore);
+                    mAdapter.add(nothingMore);
                 }
             }
         }).list(remotePageNumber, Cache.cache().userId);
     }
 
     private void refreshingFavorites() {
-        //adapter.remove(noMore());
+        //mAdapter.remove(noMore());
         //setLoadingText(R.string.ui_individual_collection_list_loading);
         //displayLoading(true);
         CollectionRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Collection>() {
@@ -295,13 +296,13 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     if (null != list) {
                         if (selectedFunction == 2) {
                             for (Collection collection : list) {
-                                adapter.update(collection);
+                                mAdapter.update(collection);
                             }
                         }
                     }
                 }
                 if (count < pageSize) {
-                    adapter.add(nomore);
+                    mAdapter.add(nothingMore);
                 }
             }
         }).list(Collection.Type.ALL_ARCHIVE, CollectionRequest.OPE_MONTH, remotePageNumber);
@@ -315,9 +316,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         stopRefreshing();
     }
 
-    private IndividualAdapter adapter;
-    private Model functions, camera, nomore;
-    private Moment today;
+    private IndividualAdapter mAdapter;
+    private Model functions, nothingMore;
+    private Moment cameraMoment;
 
     // 功能列表
     private Model functions() {
@@ -330,46 +331,38 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 
     // 今天
     private Moment today() {
-        if (null == today) {
-            today = new Moment();
-            today.setId(getString(R.string.ui_text_moment_item_default_today));
+        if (null == cameraMoment) {
+            cameraMoment = new Moment();
+            cameraMoment.setId(getString(R.string.ui_text_moment_item_default_today));
         }
         // 设置时间为今天最后一秒，在排序时会一直排在最前面
-        today.setCreateDate(Utils.formatDateOfNow("yyyy-MM-dd 23:59:59"));
-        return today;
-    }
-
-    private Model momentCamera() {
-        if (null == camera) {
-            camera = new Model();
-            camera.setId(getString(R.string.ui_text_moment_item_default_today));
-        }
-        return camera;
+        cameraMoment.setCreateDate(Utils.formatDateOfNow("yyyy-MM-dd 23:59:59"));
+        return cameraMoment;
     }
 
     private void appendListHeader(boolean needToday) {
-        adapter.add(Cache.cache().me, 0);
-        adapter.add(functions(), 1);
+        mAdapter.add(Cache.cache().me, 0);
+        mAdapter.add(functions(), 1);
         if (needToday) {
-            adapter.add(today(), 2);
+            mAdapter.add(today(), 2);
         }
     }
 
     private void initializeAdapter() {
-        if (null == adapter) {
+        if (null == mAdapter) {
             // 这里不需要直接上传，只需要把选择的图片传递给新建动态页面即可，上传在那里实现
             isSupportDirectlyUpload = false;
             // 添加图片选择
             addOnImageSelectedListener(imageSelectedListener);
             mRecyclerView.addOnScrollListener(scrollListener);
-            adapter = new IndividualAdapter();
-            mRecyclerView.setAdapter(adapter);
+            mAdapter = new IndividualAdapter();
+            mRecyclerView.setAdapter(mAdapter);
             appendListHeader(selectedFunction == 0);
             // 自动加载本地缓存中的记录
             performRefresh();
         } else {
             // 更新我的信息
-            adapter.update(Cache.cache().me);
+            mAdapter.update(Cache.cache().me);
         }
     }
 
@@ -427,13 +420,13 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     };
 
     private void resetList() {
-        int size = adapter.getItemCount();
+        int size = mAdapter.getItemCount();
         while (size > 2) {
-            adapter.remove(size - 1);
-            size = adapter.getItemCount();
+            mAdapter.remove(size - 1);
+            size = mAdapter.getItemCount();
         }
         if (selectedFunction == 0) {
-            adapter.add(today());
+            mAdapter.add(today());
         }
         setSupportLoadingMore(true);
     }
@@ -451,7 +444,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 // 上层返回的有更改的或删除的
                 Model model = new Model();
                 model.setId(getResultedData(data));
-                adapter.remove(model);
+                mAdapter.remove(model);
                 break;
         }
         super.onActivityResult(requestCode, data);
@@ -500,7 +493,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            Model model = adapter.get(index);
+            Model model = mAdapter.get(index);
             if (model instanceof Moment) {
                 momentClick((Moment) model);
             } else if (model instanceof Archive) {
@@ -518,7 +511,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case R.id.ui_tooltip_menu_moment_comment:
                 case R.id.ui_tooltip_menu_moment_comment1:
                     // 发表评论，打开详情页评论
-                    MomentDetailsFragment.open(IndividualFragment.this, adapter.get(selectedMoment).getId());
+                    MomentDetailsFragment.open(IndividualFragment.this, mAdapter.get(selectedMoment).getId());
                     break;
                 case R.id.ui_tooltip_menu_moment_praise:
                     // 点赞说说
@@ -544,7 +537,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case R.id.ui_holder_view_moment_details_container:
                     // 这里已经是详情页，不再需要打开详情页了
-                    Moment moment = (Moment) adapter.get(index);
+                    Moment moment = (Moment) mAdapter.get(index);
                     if (moment.getImage().size() < 1) {
                         // 没有图片，直接打开说说详情页
                         MomentDetailsFragment.open(IndividualFragment.this, moment.getId());
@@ -556,7 +549,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case R.id.ui_holder_view_moment_details_more:
                     // 打开快捷赞、评论菜单
                     selectedMoment = index;
-                    Model model = adapter.get(index);
+                    Model model = mAdapter.get(index);
                     if (model instanceof Moment) {
                         Moment mmt = (Moment) model;
                         // 已赞和未赞
@@ -568,10 +561,17 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private OnHandleBoundDataListener<Model> momentBoundDataListener = new OnHandleBoundDataListener<Model>() {
+        @Override
+        public Model onHandlerBoundData(BaseViewHolder holder) {
+            return mAdapter.get(holder.getAdapterPosition());
+        }
+    };
+
     private void momentClick(Moment moment) {
         if (null != moment) {
             // 点击打开新窗口查看详情
-            if (moment.getId().contains("today's")) {
+            if (moment.getId().contains("cameraMoment's")) {
                 openImageSelector(true);
             } else {
                 // 默认显示第一张图片
@@ -612,6 +612,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
 //                    return mvh;
                     MomentDetailsViewHolder mdvh = new MomentDetailsViewHolder(itemView, fragment);
                     mdvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
+                    mdvh.addOnHandlerBoundDataListener(momentBoundDataListener);
+                    mdvh.setToDetails(true);
                     mdvh.isShowLike(true);
                     return mdvh;
                 case VT_CAMERA:

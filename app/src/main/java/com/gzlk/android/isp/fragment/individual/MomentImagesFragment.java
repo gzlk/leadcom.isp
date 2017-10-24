@@ -94,7 +94,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
 
     // UI
     @ViewId(R.id.ui_tool_view_pager)
-    private ViewPager detailImageContent;
+    private ViewPager imageViewPager;
     @ViewId(R.id.ui_moment_detail_content_text)
     private ExpandableTextView detailContentTextView;
     // 附加UI
@@ -143,6 +143,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
             }
             if (null != mAdapter) {
                 mAdapter.notifyDataSetChanged();
+                imageViewPager.setCurrentItem(selected, true);
                 changedPosition(selected);
             }
             setCustomTitle(formatDate(mMoment.getCreateDate(), R.string.ui_base_text_date_time_format_chs_hhmm));
@@ -396,12 +397,12 @@ public class MomentImagesFragment extends BaseMomentFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
-            detailImageContent.addOnPageChangeListener(mOnPageChangeListener);
+            imageViewPager.addOnPageChangeListener(mOnPageChangeListener);
             mAdapter = new MomentDetailsAdapter();
-            detailImageContent.setAdapter(mAdapter);
+            imageViewPager.setAdapter(mAdapter);
             changedPosition(selected);
         }
-        detailImageContent.setCurrentItem(selected, true);
+        imageViewPager.setCurrentItem(selected, true);
     }
 
     private ViewPager.SimpleOnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {

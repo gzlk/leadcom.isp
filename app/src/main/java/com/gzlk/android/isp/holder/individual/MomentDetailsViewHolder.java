@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
+import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
@@ -14,6 +15,7 @@ import com.gzlk.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 
 /**
  * <b>功能描述：</b>说说的详情<br />
@@ -44,6 +46,8 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     private LinearLayout images3;
     @ViewId(R.id.ui_holder_view_individual_moment_like_name_layout)
     private View likeLayout;
+    @ViewId(R.id.ui_holder_view_individual_moment_like_icon)
+    private CustomTextView likeIcon;
     @ViewId(R.id.ui_holder_view_individual_moment_like_names)
     private TextView likeNames;
     @ViewId(R.id.ui_holder_view_individual_moment_like_name_line)
@@ -54,8 +58,9 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     private ImageLineViewHolder imageLine1, imageLine2, imageLine3;
     private int imageSize;
     private boolean showLike = false;
+    private boolean isToDetails = false;
 
-    public MomentDetailsViewHolder(View itemView, BaseFragment fragment) {
+    public MomentDetailsViewHolder(View itemView, final BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageSize = getDimension(R.dimen.ui_base_user_header_image_size_small);
@@ -71,7 +76,12 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
                     if (null != object && object instanceof Moment) {
                         Moment moment = (Moment) object;
                         int index = moment.getImage().indexOf(url);
-                        ImageViewerFragment.open(fragment(), index, moment.getImage());
+                        if (isToDetails) {
+                            // 到图片详情页
+                            MomentImagesFragment.open(fragment(), moment.getId(), index);
+                        } else {
+                            ImageViewerFragment.open(fragment(), index, moment.getImage());
+                        }
                     }
                 }
             }
@@ -79,6 +89,10 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         imageLine1.setOnImageClickListener(onImageClickListener);
         imageLine2.setOnImageClickListener(onImageClickListener);
         imageLine3.setOnImageClickListener(onImageClickListener);
+    }
+
+    public void setToDetails(boolean to) {
+        isToDetails = to;
     }
 
     /**
@@ -129,14 +143,18 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
             imageLine3.clearImages();
         }
         showLikes(moment);
+        likeIcon.setVisibility(moment.getUserMmtLikeList().size() > 0 ? View.VISIBLE : View.GONE);
+        likeNames.setVisibility(moment.getUserMmtLikeList().size() > 0 ? View.VISIBLE : View.GONE);
         bottomPaddingView.setVisibility(moment.getUserMmtCmtList().size() > 0 ? View.GONE : View.VISIBLE);
     }
 
     private void showLikes(Moment moment) {
         if (!showLike) return;
-        likeLayout.setVisibility(moment.getUserMmtLikeList().size() > 0 ? View.VISIBLE : View.GONE);
+        int comments = moment.getUserMmtCmtList().size();
+        int likes = moment.getUserMmtLikeList().size();
+        //likeLayout.setVisibility(moment.getUserMmtLikeList().size() > 0 ? View.VISIBLE : View.GONE);
         likeNames.setText(moment.getLikeNames());
-        likeLine.setVisibility(moment.getUserMmtCmtList().size() > 0 ? View.VISIBLE : View.GONE);
+        likeLine.setVisibility(comments > 0 ? (likes > 0 ? View.VISIBLE : View.GONE) : View.GONE);
     }
 
     @Click({R.id.ui_holder_view_moment_details_container,
