@@ -296,6 +296,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_DRAFT = ACTIVITY_BASE_REQUEST + 14;
     /**
+     * 选择
+     */
+    public static final int REQUEST_SELECT = ACTIVITY_BASE_REQUEST + 15;
+    /**
      * 新增
      */
     public static final int REQUEST_CREATE = ACTIVITY_BASE_REQUEST + 100;
@@ -307,10 +311,6 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 删除
      */
     public static final int REQUEST_DELETE = ACTIVITY_BASE_REQUEST + 102;
-    /**
-     * 选择
-     */
-    public static final int REQUEST_SELECT = ACTIVITY_BASE_REQUEST + 103;
 
     /**
      * 启动容器Activity(此时打开的新Activity不需要返回确认)

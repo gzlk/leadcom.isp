@@ -27,7 +27,7 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.CoverPickFragment;
 import com.gzlk.android.isp.fragment.activity.LabelPickFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseImageSelectableSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -42,6 +42,7 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveDraft;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.common.Seclusion;
+import com.gzlk.android.isp.model.organization.Organization;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -65,34 +66,48 @@ import jp.wasabeef.richeditor.RichEditor;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFragment {
+public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_UPLOAD_TYPE = "aecf_upload_type";
     private static final String PARAM_ARCHIVE = "aecf_archive_content";
+    private static final String PARAM_EDITOR_TYPE = "aecf_archive_editor_type";
 
     private static final int UP_NOTHING = 0;
     private static final int UP_IMAGE = 1;
     private static final int UP_MUSIC = 2;
     private static final int UP_VIDEO = 3;
     private static final int UP_ATTACH = 4;
+    /**
+     * 图文方式
+     */
+    private static final int TYPE_MULTIMEDIA = 1;
+    /**
+     * 附件方式
+     */
+    private static final int TYPE_ATTACHMENT = 2;
 
-    public static ArchiveEditorCreatorFragment newInstance(String params) {
-        ArchiveEditorCreatorFragment aecf = new ArchiveEditorCreatorFragment();
+    public static ArchiveEditorFragment newInstance(String params) {
+        ArchiveEditorFragment aecf = new ArchiveEditorFragment();
         Bundle bundle = new Bundle();
+        String[] strings = splitParameters(params);
         // 传过来的组织id，也即要创建的档案所属的组织，为empty时创建的是个人档案
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        // 编辑器方式（附件方式、图文方式）
+        bundle.putInt(PARAM_EDITOR_TYPE, Integer.valueOf(strings[1]));
         aecf.setArguments(bundle);
         return aecf;
     }
 
-    public static void open(BaseFragment fragment, String groupId) {
-        fragment.openActivity(ArchiveEditorCreatorFragment.class.getName(), groupId, true, true);
+    public static void open(BaseFragment fragment, String groupId, boolean attachable) {
+        String params = format("%s,%d", groupId, attachable ? TYPE_ATTACHMENT : TYPE_MULTIMEDIA);
+        fragment.openActivity(ArchiveEditorFragment.class.getName(), params, true, true);
     }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         uploadType = bundle.getInt(PARAM_UPLOAD_TYPE, UP_NOTHING);
+        editorType = bundle.getInt(PARAM_EDITOR_TYPE, TYPE_MULTIMEDIA);
         String json = bundle.getString(PARAM_ARCHIVE, "");
         if (!isEmpty(json)) {
             mArchive = Archive.fromJson(json);
@@ -118,8 +133,24 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_UPLOAD_TYPE, uploadType);
+        bundle.putInt(PARAM_EDITOR_TYPE, editorType);
         bundle.putString(PARAM_ARCHIVE, Json.gson().toJson(mArchive, new TypeToken<Archive>() {
         }.getType()));
+    }
+
+    @Override
+    protected void onSwipeRefreshing() {
+
+    }
+
+    @Override
+    protected void onLoadingMore() {
+
+    }
+
+    @Override
+    protected String getLocalPageTag() {
+        return null;
     }
 
     @ViewId(R.id.ui_archive_creator_rich_editor_title)
@@ -144,12 +175,20 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
     private View fontStyleLayout;
     @ViewId(R.id.ui_archive_creator_rich_editor_uploader)
     private View updatingIndicator;
+    @ViewId(R.id.ui_archive_creator_controls_layout)
+    private View multimediaView;
+    @ViewId(R.id.ui_archive_creator_rich_editor_attachment)
+    private View attachmentView;
     // 创建成功的档案信息
     private Archive mArchive;
     /**
      * 当前上传的文件类型：1=图片，2=音乐，3=视频
      */
     private int uploadType = UP_NOTHING;
+    /**
+     * 默认图文编辑方式
+     */
+    private int editorType = TYPE_MULTIMEDIA;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -180,6 +219,8 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         if (null != drafts && drafts.size() > 0) {
             warningDraftExist(drafts.get(0), drafts.size());
         }
+        attachmentView.setVisibility(editorType == TYPE_ATTACHMENT ? View.VISIBLE : View.GONE);
+        multimediaView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
     }
 
     private void warningDraftExist(final ArchiveDraft draft, final int size) {
@@ -189,7 +230,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             public boolean onConfirm() {
                 if (size > 1) {
                     // 打开草稿选择页面
-                    ArchiveDraftFragment.open(ArchiveEditorCreatorFragment.this, mQueryId);
+                    ArchiveDraftFragment.open(ArchiveEditorFragment.this, mQueryId);
                 } else {
                     String json = draft.getArchiveJson();
                     mArchive = Archive.fromJson(json);
@@ -240,6 +281,10 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         }
         if (isEmpty(mArchive.getCover())) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_null);
+            return;
+        }
+        if (mArchive.getLabel().size() < 1) {
+            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
             return;
         }
         mEditor.getMarkdown();
@@ -302,6 +347,12 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             draft.setId(mArchive.getId());
             draft.setTitle(mArchive.getTitle());
             draft.setGroupId(mArchive.getGroupId());
+            if (!isEmpty(mArchive.getGroupId()) && isEmpty(draft.getGroupName())) {
+                Organization group = Organization.get(mArchive.getId());
+                if (null != group) {
+                    draft.setGroupName(group.getName());
+                }
+            }
             draft.setArchiveJson(Archive.toJson(mArchive));
             draft.setCreateDate(Utils.formatDateOfNow(StringHelper.getString(R.string.ui_base_text_date_time_format)));
             ArchiveDraft.save(draft);
@@ -347,6 +398,8 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 String text = mArchive.getCreateDate();
                 if (!isEmpty(text)) {
                     text = formatDate(mArchive.getCreateDate(), "yyyy.MM.dd");
+                } else {
+                    text = "";
                 }
                 createTime.setText(text);
                 coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
@@ -380,7 +433,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                         break;
                     case R.id.ui_popup_rich_editor_setting_cover:
                         // 选择封面，到封面拾取器
-                        CoverPickFragment.open(ArchiveEditorCreatorFragment.this, false, mArchive.getCover(), 1, 1);
+                        CoverPickFragment.open(ArchiveEditorFragment.this, false, mArchive.getCover(), 1, 1);
                         break;
                     case R.id.ui_popup_rich_editor_setting_commit:
                         tryCreateArchive();
@@ -401,17 +454,17 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 // 隐私设置
                 if (isEmpty(mQueryId)) {
                     // 个人隐私设置
-                    PrivacyFragment.open(ArchiveEditorCreatorFragment.this, StringHelper.replaceJson(json, false), true);
+                    PrivacyFragment.open(ArchiveEditorFragment.this, StringHelper.replaceJson(json, false), true);
                 } else {
                     // 组织档案隐私设置
-                    PrivacyFragment.open(ArchiveEditorCreatorFragment.this, StringHelper.replaceJson(json, false), false);
+                    PrivacyFragment.open(ArchiveEditorFragment.this, StringHelper.replaceJson(json, false), false);
                 }
             }
 
             private void openLabelPicker() {
                 String json = Json.gson().toJson(mArchive.getLabel());
                 String string = replaceJson(json, false);
-                LabelPickFragment.open(ArchiveEditorCreatorFragment.this, mQueryId, "", LabelPickFragment.TYPE_ARCHIVE, string);
+                LabelPickFragment.open(ArchiveEditorFragment.this, mQueryId, "", LabelPickFragment.TYPE_ARCHIVE, string);
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
@@ -1036,10 +1089,15 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
         }
     };
 
+    @Override
+    protected void onDelayRefreshComplete(@DelayType int type) {
+
+    }
+
     private class FileAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
         @Override
         public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
-            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveEditorCreatorFragment.this);
+            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveEditorFragment.this);
             holder.addOnViewHolderClickListener(attachmentViewHolderClickListener);
             return holder;
         }
@@ -1065,7 +1123,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
             R.id.ui_archive_creator_action_attachment, R.id.ui_archive_creator_action_video,
             R.id.ui_archive_creator_action_audio, R.id.ui_archive_creator_action_quote,
             R.id.ui_archive_creator_action_link, R.id.ui_archive_creator_action_ordered_list,
-            R.id.ui_archive_creator_action_unordered_list,
+            R.id.ui_archive_creator_action_unordered_list, R.id.ui_tool_attachment_button,
             // 一下为字体格式设置
             R.id.ui_archive_creator_action_bold, R.id.ui_archive_creator_action_italic,
             R.id.ui_archive_creator_action_underline, R.id.ui_archive_creator_action_strike_through,
@@ -1092,6 +1150,7 @@ public class ArchiveEditorCreatorFragment extends BaseImageSelectableSupportFrag
                 mFontIcon.setTextColor(getColor(fontStyleLayout.getVisibility() == View.GONE ? R.color.textColorHint : R.color.colorAccent));
                 break;
             case R.id.ui_archive_creator_action_attachment:
+            case R.id.ui_tool_attachment_button:
                 mAttachmentIcon.setTextColor(getColor(R.color.colorAccent));
                 // 插入一个附件
                 // 附件的图标地址(24x24)http://120.25.124.199:8008/group1/M00/00/13/eBk66lngZ0-AW_1aAAAJiqCeKro517.png

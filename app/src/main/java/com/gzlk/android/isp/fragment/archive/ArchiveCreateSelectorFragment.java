@@ -30,7 +30,7 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
     }
 
     public static void open(BaseFragment fragment, String groupId) {
-        fragment.openActivity(ArchiveCreateSelectorFragment.class.getName(), groupId, false, false, true);
+        fragment.openActivity(ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, false, false, true);
     }
 
     @Override
@@ -64,10 +64,10 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
             case R.id.ui_archive_creator_selector_normal:
                 break;
             case R.id.ui_archive_creator_selector_rich_text:
-                ArchiveEditorCreatorFragment.open(ArchiveCreateSelectorFragment.this, mQueryId);
-                finish();
+                resultData("multimedia");
                 break;
             case R.id.ui_archive_creator_selector_attachment:
+                resultData("attachment");
                 break;
         }
     }

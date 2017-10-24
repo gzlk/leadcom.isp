@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.organization;
 
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
@@ -51,12 +52,16 @@ public class Organization extends Model {
         String RoleName = "roleName";
         String RoleDescription = "roleDescription";
         String SquadId = "squadId";
-        String Rank="rank";
+        String Rank = "rank";
         String SquadName = "squadName";
         String PermissionId = "permissionId";
         String GroupLogo = "groupLogo";
         String ModifyDate = "modifyDate";
         String Concerned = "concerned";
+    }
+
+    public static Organization get(String id) {
+        return new Dao<>(Organization.class).query(id);
     }
 
     @Column(Model.Field.Name)

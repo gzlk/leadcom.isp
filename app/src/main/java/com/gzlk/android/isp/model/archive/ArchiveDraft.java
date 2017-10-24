@@ -45,6 +45,8 @@ public class ArchiveDraft extends Model {
     private String title;
     @Column(Organization.Field.GroupId)
     private String groupId;
+    @Column(Organization.Field.GroupName)
+    private String groupName;
     @Column(Archive.Field.DraftJson)
     private String archiveJson;
     @Column(Field.CreateDate)
@@ -64,6 +66,14 @@ public class ArchiveDraft extends Model {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public String getArchiveJson() {

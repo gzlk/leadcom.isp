@@ -33,6 +33,8 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
     private TextView titleView;
     @ViewId(R.id.ui_tool_view_archive_draft_time)
     private TextView timeView;
+    @ViewId(R.id.ui_tool_view_archive_draft_group)
+    private TextView groupView;
     @ViewId(R.id.ui_tool_view_archive_draft_selector)
     private CustomTextView selectorView;
 
@@ -47,6 +49,11 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
         titleView.setText(archive.getTitle());
         timeView.setText(StringHelper.getString(R.string.ui_text_archive_creator_editor_create_draft_time, fragment().formatTimeAgo(draft.getCreateDate())));
         selectorView.setTextColor(getColor(draft.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        if (!isEmpty(draft.getGroupId())) {
+            groupView.setText(draft.getGroupName());
+        } else {
+            groupView.setText("个人档案");
+        }
     }
 
     @Click({R.id.ui_tool_view_archive_draft_layout, R.id.ui_tool_view_archive_draft_delete})

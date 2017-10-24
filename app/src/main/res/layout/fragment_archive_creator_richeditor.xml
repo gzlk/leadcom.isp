@@ -20,7 +20,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@android:color/white"
         android:orientation="vertical">
 
@@ -182,4 +183,17 @@
             </HorizontalScrollView>
         </LinearLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ui_archive_creator_rich_editor_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <include layout="@layout/holder_view_attachment_picker" />
+
+        <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
+    </LinearLayout>
 </LinearLayout>

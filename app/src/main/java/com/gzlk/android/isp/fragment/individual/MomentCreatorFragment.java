@@ -14,14 +14,13 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.PrivacyFragment;
-import com.gzlk.android.isp.fragment.archive.UserPrivacyFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.individual.ImageViewHolder;
+import com.gzlk.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.gzlk.android.isp.holder.common.SimpleClickableViewHolder;
+import com.gzlk.android.isp.holder.individual.ImageViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
@@ -153,9 +152,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             // 如果选择了的图片大于1张，则需要压缩图片并且上传
             compressImage();
             //uploadFiles();
-        } else
-
-        {
+        } else {
             addMoment(null);
         }
     }
@@ -191,7 +188,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(Moment moment, boolean success, String message) {
                 super.onResponse(moment, success, message);
                 if (success) {
-                    finish();
+                    resultSucceededActivity();
                 }
             }
         }).add(address, content, images, "", seclusion.getStatus() + 1);
@@ -277,6 +274,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         if (requestCode == REQUEST_SECURITY) {
             // 隐私设置返回了
             privacy = getResultedData(data);
+            privacyHolder.showContent(format(textItems[1], PrivacyFragment.getPrivacy(PrivacyFragment.getSeclusion(privacy))));
         }
         super.onActivityResult(requestCode, data);
     }
@@ -287,7 +285,8 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
             String json = PrivacyFragment.getSeclusion(seclusion);
-            openActivity(UserPrivacyFragment.class.getName(), json, REQUEST_SECURITY, true, false);
+            PrivacyFragment.open(MomentCreatorFragment.this, StringHelper.replaceJson(json, false), true);
+            //openActivity(UserPrivacyFragment.class.getName(), json, REQUEST_SECURITY, true, false);
             //ToastHelper.make(Activity()).showMsg("隐私设置");
         }
     };

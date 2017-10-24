@@ -164,6 +164,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onConfirm() {
                 ArchiveDraft.delete(mAdapter.get(index).getId());
+                mAdapter.remove(index);
                 mAdapter.notifyItemRemoved(index);
                 return true;
             }

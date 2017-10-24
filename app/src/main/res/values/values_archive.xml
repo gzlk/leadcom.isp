@@ -8,7 +8,7 @@
     <string name="ui_archive_creator_selector_text_attachment">附件</string>
 
     <string name="ui_text_archive_creator_editor_create_draft_1">
-        <![CDATA[您还有个未提交的档案草稿。<br/>要继续编辑吗？]]>
+        <![CDATA[您还有未提交的档案草稿。<br/>要继续编辑吗？]]>
     </string>
     <string name="ui_text_archive_creator_editor_create_draft_more" formatted="false">
         <![CDATA[您还有几个未提交的档案草稿。<br/>要去看看吗？]]>
@@ -16,9 +16,11 @@
     <string name="ui_text_archive_creator_editor_create_draft_time" formatted="false">最后修改：%s</string>
     <string name="ui_text_archive_creator_editor_create_draft_delete">未提交的草稿删除之后不能恢复，您确定吗？</string>
     <string name="ui_text_archive_creator_editor_create_draft_saved">档案草稿已保存，下次可以继续编辑。</string>
+    <string name="ui_text_archive_creator_editor_create_draft_individual">个人档案</string>
     <string name="ui_text_archive_creator_editor_create_new">新建档案</string>
     <string name="ui_text_archive_creator_editor_create_cover">档案封面</string>
-    <string name="ui_text_archive_creator_editor_create_cover_null">请为档案提供一个封面</string>
+    <string name="ui_text_archive_creator_editor_create_cover_null">请给新建的档案挑选一个封面</string>
+    <string name="ui_text_archive_creator_editor_create_label_null">请给新建的档案打上标签</string>
     <string name="ui_text_archive_creator_editor_create_time">创建时间</string>
     <string name="ui_text_archive_creator_editor_video_cover_default">http://120.25.124.199:8008/group1/M00/00/13/eBk66lng0_yAOTQYAABKQjAngPs457.png</string>
     <string name="ui_text_archive_creator_editor_attachment_icon">http://120.25.124.199:8008/group1/M00/00/17/cErYIVnkBRiAOy1aAAAJiqCeKro218.png</string>
@@ -60,6 +62,6 @@
     <string name="ui_text_archive_creator_editor_attachment_dialog_title">插入附件</string>
     <string name="ui_text_archive_creator_editor_attachment_dialog_desc">选择您要添加的附件</string>
 
-    <string name="ui_text_archive_creator_editor_title_invalid">档案标题不能为空</string>
+    <string name="ui_text_archive_creator_editor_title_invalid">档案题名不能为空</string>
     <string name="ui_text_archive_creator_editor_content_invalid">档案内容不能为空</string>
 </resources>

@@ -16,6 +16,7 @@ import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.CollectionDetailsFragment;
@@ -376,7 +377,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
             // 打开新建动态页面
-            openActivity(MomentCreatorFragment.class.getName(), Json.gson().toJson(selected), true, true);
+            openActivity(MomentCreatorFragment.class.getName(), Json.gson().toJson(selected), REQUEST_CREATE, true, true);
         }
     };
 
@@ -438,10 +439,20 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQUEST_CHANGE) {
-            // 上层返回的有更改的
-            resetList();
-            performRefresh();
+        switch (requestCode) {
+            case REQUEST_SELECT:
+                String type = getResultedData(data);
+                ArchiveEditorFragment.open(IndividualFragment.this, mQueryId, type.equals("attachment"));
+                break;
+            case REQUEST_CREATE:
+                onSwipeRefreshing();
+                break;
+            case REQUEST_DELETE:
+                // 上层返回的有更改的或删除的
+                Model model = new Model();
+                model.setId(getResultedData(data));
+                adapter.remove(model);
+                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -572,7 +583,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     private void archiveClick(Archive archive) {
         if (null != archive) {
             int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-            ArchiveDetailsFragment.open(IndividualFragment.this, type, archive.getId(), REQUEST_CHANGE);
+            ArchiveDetailsFragment.open(IndividualFragment.this, type, archive.getId(), REQUEST_DELETE);
         }
     }
 

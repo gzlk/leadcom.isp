@@ -140,7 +140,9 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
-                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())));
+                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
+                    .put("authUser", new JSONArray(archive.getAuthUser()))
+                    .put("authGro", new JSONArray(archive.getAuthGro()));
             if (!isIndividual) {
                 object.put("groupId", archive.getGroupId());// 必要字段
             }
