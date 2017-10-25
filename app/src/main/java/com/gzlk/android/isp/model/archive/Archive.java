@@ -113,6 +113,7 @@ public class Archive extends Additional {
         String ReferrerName = "referrerName";
         String ReferrerHeadPhoto = "referrerHeadPhoto";
         String Recommend = "recommend";
+        String Check = "check";
         String LikeId = "likeId";
         String Liked = "liked";
         String ToUserId = "toUserId";

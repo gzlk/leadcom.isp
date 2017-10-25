@@ -1,8 +1,8 @@
 package com.gzlk.android.isp.model.common;
 
 import com.gzlk.android.isp.model.Model;
-import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.archive.RecommendArchive;
 
 /**
  * <b>功能描述：</b>首页推荐的内容<br />
@@ -24,7 +24,7 @@ public class RecommendContent extends Model {
         /**
          * 活动
          */
-        int ACTIVITY = 1;
+        //int ACTIVITY = 1;
         /**
          * 档案
          */
@@ -32,15 +32,15 @@ public class RecommendContent extends Model {
         /**
          * 编辑展示位
          */
-        int PRIORITY_PLACE = 3;
+        int PRIORITY_PLACE = 1;
     }
 
     //被推荐的内容类型：1来自活动，2来自组织档案
     private int sourceType;
     //活动，当推荐的内容来自档案时此字段为空
-    private Activity activity;
+    //private Activity activity;
     //组织档案，当推荐的内容来自活动时此字段为空
-    private Archive groDoc;
+    private RecommendArchive groDocRcmd;
     //编辑展示位
     private PriorityPlace priorityPlace;
     //推荐时间
@@ -54,20 +54,20 @@ public class RecommendContent extends Model {
         this.sourceType = sourceType;
     }
 
-    public Activity getActivity() {
-        return activity;
+//    public Activity getActivity() {
+//        return activity;
+//    }
+//
+//    public void setActivity(Activity activity) {
+//        this.activity = activity;
+//    }
+
+    public RecommendArchive getGroDocRcmd() {
+        return groDocRcmd;
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
-    }
-
-    public Archive getGroDoc() {
-        return groDoc;
-    }
-
-    public void setGroDoc(Archive groDoc) {
-        this.groDoc = groDoc;
+    public void setGroDocRcmd(RecommendArchive groDocRcmd) {
+        this.groDocRcmd = groDocRcmd;
     }
 
     public PriorityPlace getPriorityPlace() {

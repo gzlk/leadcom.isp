@@ -59,12 +59,12 @@ public class RecommendRequest extends Request<RecommendContent> {
 
     private void saveContent(RecommendContent content) {
         switch (content.getSourceType()) {
-            case RecommendContent.SourceType.ACTIVITY:
-                // 保存活动
-                activityDao.save(content.getActivity());
-                break;
+//            case RecommendContent.SourceType.ACTIVITY:
+//                // 保存活动
+//                activityDao.save(content.getActivity());
+//                break;
             case RecommendContent.SourceType.ARCHIVE:
-                archiveDao.save(content.getGroDoc());
+                archiveDao.save(content.getGroDocRcmd().getGroDoc());
                 break;
         }
     }
@@ -91,13 +91,11 @@ public class RecommendRequest extends Request<RecommendContent> {
 
     /**
      * 获取后台推送的档案或活动列表
-     *
-     * @param type 类型，参见 {@link com.gzlk.android.isp.model.common.RecommendContent.SourceType}
      */
-    public void list(int type) {
+    public void list(int pageNumber) {
         // 不保存
         directlySave = false;
-        String params = format("%d", type);
-        httpRequest(getRequest(MultiRecommend.class, format("/operate/recommend/list?sourceType=%s", params), "", HttpMethods.Get));
+        String params = format("%s&pageNumber=%d", SUMMARY, pageNumber);
+        httpRequest(getRequest(MultiRecommend.class, format("/operate/recommend/list?%s", params), "", HttpMethods.Get));
     }
 }

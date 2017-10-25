@@ -76,6 +76,8 @@ public class RecommendArchive extends Model {
     private Archive groDoc;             //组织档案
     @Column(Archive.Field.Recommend)
     private int recommend;              //当前组织是否推荐(0.未推荐,1.已推荐)
+    @Column(Archive.Field.Check)
+    private int check;                  // 档案是否已审核(0.未审核,1.已审核)
 
     public int getType() {
         return type;
@@ -197,5 +199,13 @@ public class RecommendArchive extends Model {
 
     public void setRecommend(int recommend) {
         this.recommend = recommend;
+    }
+
+    public int getCheck() {
+        return check;
+    }
+
+    public void setCheck(int check) {
+        this.check = check;
     }
 }

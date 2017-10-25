@@ -88,7 +88,7 @@ public class UserMessageViewHolder extends BaseViewHolder {
             imageView.setVisibility(moment.getImage().size() > 0 ? View.VISIBLE : View.GONE);
             imageView.displayImage(moment.getImage().size() > 0 ? moment.getImage().get(0) : "", imageSize, false, false);
         } else {
-            //Archive archive = null == msg.getGroDoc() ? msg.getUserDoc() : msg.getGroDoc();
+            //Archive archive = null == msg.getGroDocRcmd() ? msg.getUserDoc() : msg.getGroDocRcmd();
             textView.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
             imageView.displayImage("drawable://" + R.drawable.img_default_archive, imageSize, false, false);

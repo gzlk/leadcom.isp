@@ -4,7 +4,7 @@
     android:id="@+id/ui_holder_view_archive_management_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/ui_base_border_size_normal"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="@dimen/ui_base_dimen_margin_padding"

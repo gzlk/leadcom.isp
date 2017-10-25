@@ -315,10 +315,10 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingRecommended() {
-        if (mType == TYPE_ARCHIVE) {
-            fetchingRecommendedArchives();
-            return;
-        }
+//        if (mType == TYPE_ARCHIVE) {
+//            fetchingRecommendedArchives();
+//            return;
+//        }
         displayLoading(true);
         displayNothing(false);
         RecommendRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendContent>() {
@@ -336,14 +336,14 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                         }
                         for (RecommendContent content : list) {
                             switch (content.getSourceType()) {
-                                case RecommendContent.SourceType.ACTIVITY:
-                                    if (null != content.getActivity()) {
-                                        mAdapter.update(content.getActivity());
-                                    }
-                                    break;
+//                                case RecommendContent.SourceType.ACTIVITY:
+//                                    if (null != content.getActivity()) {
+//                                        mAdapter.update(content.getActivity());
+//                                    }
+//                                    break;
                                 case RecommendContent.SourceType.ARCHIVE:
-                                    if (null != content.getGroDoc()) {
-                                        mAdapter.update(content.getGroDoc());
+                                    if (null != content.getGroDocRcmd()) {
+                                        mAdapter.update(content.getGroDocRcmd());
                                     }
                                     break;
                                 case RecommendContent.SourceType.PRIORITY_PLACE:
@@ -364,7 +364,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < (mType == TYPE_ALL ? 2 : 1));
             }
-        }).list(mType);
+        }).list(remotePageNumber);
     }
 
     private void fetchingRecommendedArchives() {
@@ -609,8 +609,10 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
             Model model = get(position);
             if (model instanceof Activity) {
                 return VT_ACTIVITY;
-            } else {
+            } else if (model instanceof RecommendArchive) {
                 return VT_ARCHIVE;
+            } else {
+                return VT_EDITOR;
             }
         }
 
@@ -623,10 +625,11 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                 case VT_ACTIVITY:
                     // 活动
                     return R.layout.holder_view_home_seminar;
+                case VT_ARCHIVE:
+                    return R.layout.holder_view_archive_home_recommended;
                 default:
                     // 档案
-                    //return R.layout.holder_view_archive_management;
-                    return R.layout.holder_view_archive_home_recommended;
+                    return R.layout.holder_view_archive_management;
             }
         }
 
