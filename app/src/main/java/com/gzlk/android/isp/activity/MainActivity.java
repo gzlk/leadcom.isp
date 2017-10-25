@@ -20,6 +20,7 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
+import com.gzlk.android.isp.model.common.SystemUpdate;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
@@ -135,12 +136,13 @@ public class MainActivity extends TitleActivity {
      * 检测服务器上的最新客户端版本并提示用户更新
      */
     private void checkClientVersion() {
-        UpdateRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<String>() {
+        UpdateRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<SystemUpdate>() {
             @Override
-            public void onResponse(String s, boolean success, String message) {
-                super.onResponse(s, success, message);
+            public void onResponse(SystemUpdate systemUpdate, boolean success, String message) {
+                super.onResponse(systemUpdate, success, message);
                 if (success) {
-                    if (!StringHelper.isEmpty(s) && s.compareTo(BuildConfig.VERSION_NAME) > 0) {
+                    String ver = systemUpdate.getVersion();
+                    if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
                         warningUpdatable();
                     }
                 }
@@ -149,7 +151,8 @@ public class MainActivity extends TitleActivity {
     }
 
     private void warningUpdatable() {
-        SimpleDialogHelper.init(this).show(R.string.ui_system_updatable, R.string.ui_base_text_ok, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+        String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default));
+        SimpleDialogHelper.init(this).show(text, R.string.ui_base_text_ok, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 return true;

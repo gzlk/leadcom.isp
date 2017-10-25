@@ -4,6 +4,7 @@ import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.model.common.SystemUpdate;
 import com.litesuits.http.request.param.HttpMethods;
 
 /**
@@ -17,13 +18,13 @@ import com.litesuits.http.request.param.HttpMethods;
  * <b>修改备注：</b><br />
  */
 
-public class UpdateRequest extends Request<String> {
+public class UpdateRequest extends Request<SystemUpdate> {
 
     public static UpdateRequest request() {
         return new UpdateRequest();
     }
 
-    private static class SingleUpdate extends SingleQuery<String> {
+    private static class SingleUpdate extends SingleQuery<SystemUpdate> {
     }
 
     private static final String VERSION = SystemRequest.SYSTEM + "/getClieVersion";
@@ -34,18 +35,18 @@ public class UpdateRequest extends Request<String> {
     }
 
     @Override
-    protected Class<String> getType() {
-        return null;
+    protected Class<SystemUpdate> getType() {
+        return SystemUpdate.class;
     }
 
     @Override
-    public UpdateRequest setOnSingleRequestListener(OnSingleRequestListener<String> listener) {
+    public UpdateRequest setOnSingleRequestListener(OnSingleRequestListener<SystemUpdate> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public UpdateRequest setOnMultipleRequestListener(OnMultipleRequestListener<String> listListener) {
+    public UpdateRequest setOnMultipleRequestListener(OnMultipleRequestListener<SystemUpdate> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }

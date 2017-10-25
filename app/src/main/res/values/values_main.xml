@@ -17,8 +17,8 @@
         <![CDATA[<b>清空系统消息</b><br/>系统消息<font color="#fe4848">清空之后不能恢复</font>！<br/>如您的系统消息中包含重要的内容，请<font color="#65656a">逐条删除</font>您不再需要保留的消息。<br/>您确定要继续吗？]]>
     </string>
 
-    <string name="ui_system_updatable">
-        <![CDATA[<b>有新的版本了</b><br/>我们推出了新版本的app。当然您也可以继续使用现有的，但我们强烈推荐您更新到最新版本以体验最新的内容。]]>
+    <string name="ui_system_updatable" formatted="false">
+        <![CDATA[<b>更新应用</b><br/>%s有新版本可用，更新并试一试最新功能吧。]]>
     </string>
 
     <string-array name="ui_full_text_query_base_items">
