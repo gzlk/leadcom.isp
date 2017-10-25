@@ -35,7 +35,7 @@ import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualHeaderViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentHomeCameraViewHolder;
-import com.gzlk.android.isp.holder.individual.MomentsItemCommentViewHolder;
+import com.gzlk.android.isp.holder.individual.MomentCommentTextViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
@@ -631,7 +631,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case VT_NO_MORE:
                     return new NothingMoreViewHolder(itemView, fragment);
                 case VT_COMMENT:
-                    return new MomentsItemCommentViewHolder(itemView, fragment);
+                    return new MomentCommentTextViewHolder(itemView, fragment);
             }
             return null;
         }
@@ -692,8 +692,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 ((MomentHomeCameraViewHolder) holder).showContent((Moment) item);
             } else if (holder instanceof NothingMoreViewHolder) {
                 ((NothingMoreViewHolder) holder).showContent(item);
-            } else if (holder instanceof MomentsItemCommentViewHolder) {
-                ((MomentsItemCommentViewHolder) holder).showContent((Comment) item);
+            } else if (holder instanceof MomentCommentTextViewHolder) {
+                ((MomentCommentTextViewHolder) holder).showContent((Comment) item);
             }
         }
 

@@ -11,6 +11,7 @@
     app:cv_active_border="@color/colorPrimary"
     app:cv_background="@color/color_f3f3f5"
     app:cv_background_active="@color/color_e9e9e9"
+    app:cv_background_type="fill"
     app:cv_border_size="@dimen/ui_base_border_size_normal"
     app:cv_normal_border="@android:color/transparent">
 
@@ -58,15 +59,13 @@
                 android:textSize="@dimen/ui_base_text_size_little" />
         </LinearLayout>
 
-        <com.gzlk.android.isp.lib.view.ExpandableTextView
+        <TextView
             android:id="@+id/ui_holder_view_moment_comment_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/app_name_default"
             android:textColor="@color/textColorHintDark"
-            android:textSize="@dimen/ui_base_text_size_small"
-            app:lessText="@string/ui_base_text_collapse"
-            app:moreText="@string/ui_base_text_expand" />
+            android:textSize="@dimen/ui_base_text_size_small" />
 
     </LinearLayout>
 </com.hlk.hlklib.lib.view.CorneredView>

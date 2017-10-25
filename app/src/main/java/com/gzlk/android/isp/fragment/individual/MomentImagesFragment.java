@@ -70,7 +70,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
     }
 
     public static void open(BaseFragment fragment, String momentId, int displayIndex) {
-        fragment.openActivity(MomentImagesFragment.class.getName(), format("%s,%d", momentId, displayIndex), true, false);
+        fragment.openActivity(MomentImagesFragment.class.getName(), format("%s,%d", momentId, displayIndex), REQUEST_DELETE, true, false);
     }
 
     private int selected;
@@ -171,7 +171,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
             if (deleted != null) {
                 dao.delete(deleted);
             }
-            finish();
+            resultData(mQueryId);
         }
     }
 

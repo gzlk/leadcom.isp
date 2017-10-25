@@ -1,10 +1,12 @@
 package com.gzlk.android.isp.holder.individual;
 
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
@@ -26,7 +28,7 @@ import com.hlk.hlklib.lib.view.CustomTextView;
  * <b>修改备注：</b><br />
  */
 
-public class MomentCommentViewHolder extends BaseViewHolder {
+public class MomentCommentHeaderViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_moment_comment_icon)
     private CustomTextView icon;
@@ -37,11 +39,11 @@ public class MomentCommentViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_moment_comment_time)
     private TextView timeView;
     @ViewId(R.id.ui_holder_view_moment_comment_content)
-    private ExpandableTextView contentView;
+    private TextView contentView;
 
     private int imageSize;
 
-    public MomentCommentViewHolder(View itemView, BaseFragment fragment) {
+    public MomentCommentHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageSize = getDimension(R.dimen.ui_base_user_header_image_size_small);
@@ -61,10 +63,15 @@ public class MomentCommentViewHolder extends BaseViewHolder {
 
     public void showContent(Comment comment) {
         header.displayImage(comment.getHeadPhoto(), imageSize, false, false);
-        nameView.setText(comment.getUserName());
+        String text;
+        if (!isEmpty(comment.getToUserId())) {
+            text = StringHelper.getString(R.string.ui_individual_moment_comment_content_header_name_to, comment.getUserName(), comment.getToUserName());
+        } else {
+            text = StringHelper.getString(R.string.ui_individual_moment_comment_content_header_name, comment.getUserName());
+        }
+        nameView.setText(Html.fromHtml(text));
         timeView.setText(fragment().formatTimeAgo(comment.getCreateDate()));
         contentView.setText(EmojiUtility.getEmojiString(contentView.getContext(), comment.getContent(), true));
-        contentView.makeExpandable();
     }
 
     @Click({R.id.ui_holder_view_moment_comment_container})

@@ -61,13 +61,14 @@ public class MomentPraiseViewHolder extends BaseViewHolder {
             displayer.setShowHeader(true);
             displayer.displayImage(like.getHeadPhoto(), imageSize, false, false);
             headers.addView(displayer);
+            int lines = headers.getFlexLines().size();
             FlexboxLayout.LayoutParams params = (FlexboxLayout.LayoutParams) displayer.getLayoutParams();
             params.width = imageSize;
             params.height = imageSize;
             params.rightMargin = margin;
-            params.leftMargin = margin;
-            params.bottomMargin = margin;
-            params.topMargin = margin;
+            params.leftMargin = 0;
+            params.bottomMargin = 0;
+            params.topMargin = lines > 1 ? margin : 0;
             displayer.setLayoutParams(params);
             displayer.addOnImageClickListener(onImageClickListener);
             displayer.setTag(R.id.hlklib_ids_custom_view_click_tag, like.getUserId());

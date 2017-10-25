@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.individual;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -77,6 +78,19 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected String getLocalPageTag() {
         return null;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_DELETE:
+                // 删除
+                Moment moment = new Moment();
+                moment.setId(getResultedData(data));
+                mAdapter.remove(moment);
+                break;
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     private void fetchingMoments() {

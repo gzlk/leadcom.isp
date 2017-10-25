@@ -13,7 +13,6 @@ import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.archive.LikeRequest;
 import com.gzlk.android.isp.api.archive.RecommendArchiveRequest;
 import com.gzlk.android.isp.api.common.FocusImageRequest;
-import com.gzlk.android.isp.api.common.RecommendRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
@@ -40,7 +39,6 @@ import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.archive.RecommendArchive;
 import com.gzlk.android.isp.model.common.FocusImage;
 import com.gzlk.android.isp.model.common.PriorityPlace;
-import com.gzlk.android.isp.model.common.RecommendContent;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
@@ -315,56 +313,57 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingRecommended() {
+        fetchingRecommendedArchives();
 //        if (mType == TYPE_ARCHIVE) {
 //            fetchingRecommendedArchives();
 //            return;
 //        }
-        displayLoading(true);
-        displayNothing(false);
-        RecommendRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendContent>() {
-            @Override
-            public void onResponse(List<RecommendContent> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                initializeAdapter();
-                if (success) {
-                    if (null != list) {
-                        if (list.size() >= pageSize) {
-                            remotePageNumber++;
-                            isLoadingComplete(false);
-                        } else {
-                            isLoadingComplete(true);
-                        }
-                        for (RecommendContent content : list) {
-                            switch (content.getSourceType()) {
-//                                case RecommendContent.SourceType.ACTIVITY:
-//                                    if (null != content.getActivity()) {
-//                                        mAdapter.update(content.getActivity());
+//        displayLoading(true);
+//        displayNothing(false);
+//        RecommendRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendContent>() {
+//            @Override
+//            public void onResponse(List<RecommendContent> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+//                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+//                initializeAdapter();
+//                if (success) {
+//                    if (null != list) {
+//                        if (list.size() >= pageSize) {
+//                            remotePageNumber++;
+//                            isLoadingComplete(false);
+//                        } else {
+//                            isLoadingComplete(true);
+//                        }
+//                        for (RecommendContent content : list) {
+//                            switch (content.getSourceType()) {
+////                                case RecommendContent.SourceType.ACTIVITY:
+////                                    if (null != content.getActivity()) {
+////                                        mAdapter.update(content.getActivity());
+////                                    }
+////                                    break;
+//                                case RecommendContent.SourceType.ARCHIVE:
+//                                    if (null != content.getGroDocRcmd()) {
+//                                        mAdapter.update(content.getGroDocRcmd());
 //                                    }
 //                                    break;
-                                case RecommendContent.SourceType.ARCHIVE:
-                                    if (null != content.getGroDocRcmd()) {
-                                        mAdapter.update(content.getGroDocRcmd());
-                                    }
-                                    break;
-                                case RecommendContent.SourceType.PRIORITY_PLACE:
-                                    if (null != content.getPriorityPlace()) {
-                                        mAdapter.update(content.getPriorityPlace());
-                                    }
-                                    break;
-                            }
-                        }
-                        //mAdapter.sort();
-                    } else {
-                        isLoadingComplete(true);
-                    }
-                } else {
-                    isLoadingComplete(true);
-                }
-                stopRefreshing();
-                displayLoading(false);
-                displayNothing(mAdapter.getItemCount() < (mType == TYPE_ALL ? 2 : 1));
-            }
-        }).list(remotePageNumber);
+//                                case RecommendContent.SourceType.PRIORITY_PLACE:
+//                                    if (null != content.getPriorityPlace()) {
+//                                        mAdapter.update(content.getPriorityPlace());
+//                                    }
+//                                    break;
+//                            }
+//                        }
+//                        //mAdapter.sort();
+//                    } else {
+//                        isLoadingComplete(true);
+//                    }
+//                } else {
+//                    isLoadingComplete(true);
+//                }
+//                stopRefreshing();
+//                displayLoading(false);
+//                displayNothing(mAdapter.getItemCount() < (mType == TYPE_ALL ? 2 : 1));
+//            }
+//        }).list(remotePageNumber);
     }
 
     private void fetchingRecommendedArchives() {
@@ -399,7 +398,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 2);
             }
-        }).front(remotePageNumber);
+        }).list(remotePageNumber);
     }
 
     private void removeArchives() {

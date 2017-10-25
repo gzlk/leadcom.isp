@@ -143,16 +143,17 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
             imageLine3.clearImages();
         }
         showLikes(moment);
-        likeIcon.setVisibility(moment.getUserMmtLikeList().size() > 0 ? View.VISIBLE : View.GONE);
-        likeNames.setVisibility(moment.getUserMmtLikeList().size() > 0 ? View.VISIBLE : View.GONE);
-        bottomPaddingView.setVisibility(moment.getUserMmtCmtList().size() > 0 ? View.GONE : View.VISIBLE);
     }
 
     private void showLikes(Moment moment) {
+        likeLayout.setVisibility(showLike ? View.VISIBLE : View.GONE);
         if (!showLike) return;
         int comments = moment.getUserMmtCmtList().size();
         int likes = moment.getUserMmtLikeList().size();
-        //likeLayout.setVisibility(moment.getUserMmtLikeList().size() > 0 ? View.VISIBLE : View.GONE);
+        likeLayout.setVisibility(comments <= 0 && likes <= 0 ? View.GONE : View.VISIBLE);
+        likeIcon.setVisibility(likes > 0 ? View.VISIBLE : View.GONE);
+        likeNames.setVisibility(likes > 0 ? View.VISIBLE : View.GONE);
+        bottomPaddingView.setVisibility(comments > 0 ? View.GONE : View.VISIBLE);
         likeNames.setText(moment.getLikeNames());
         likeLine.setVisibility(comments > 0 ? (likes > 0 ? View.VISIBLE : View.GONE) : View.GONE);
     }

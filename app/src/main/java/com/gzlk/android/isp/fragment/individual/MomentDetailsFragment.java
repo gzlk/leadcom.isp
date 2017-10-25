@@ -10,7 +10,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.individual.MomentCommentViewHolder;
+import com.gzlk.android.isp.holder.individual.MomentCommentHeaderViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentPraiseViewHolder;
 import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
@@ -325,7 +325,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     }
                     return praiseViewHolder;
                 default:
-                    MomentCommentViewHolder mcv = new MomentCommentViewHolder(itemView, MomentDetailsFragment.this);
+                    MomentCommentHeaderViewHolder mcv = new MomentCommentHeaderViewHolder(itemView, MomentDetailsFragment.this);
                     mcv.addOnViewHolderClickListener(onViewHolderClickListener);
                     return mcv;
             }
@@ -358,8 +358,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof MomentDetailsViewHolder) {
                 ((MomentDetailsViewHolder) holder).showContent((Moment) item);
-            } else if (holder instanceof MomentCommentViewHolder) {
-                MomentCommentViewHolder hld = (MomentCommentViewHolder) holder;
+            } else if (holder instanceof MomentCommentHeaderViewHolder) {
+                MomentCommentHeaderViewHolder hld = (MomentCommentHeaderViewHolder) holder;
                 hld.showIcon(position == (likes.size() > 0 ? 2 : 1));
                 hld.showContent((Comment) item);
             } else if (holder instanceof MomentPraiseViewHolder) {

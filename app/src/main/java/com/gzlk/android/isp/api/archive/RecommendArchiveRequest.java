@@ -143,6 +143,14 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
     }
 
     /**
+     * 查询首页推荐的档案列表
+     */
+    public void list(int pageNumber) {
+        String params = format("%s&pageNumber=%d", SUMMARY, pageNumber);
+        httpRequest(getRequest(MultipleRecommend.class, format("/operate/recommend/list?%s", params), "", HttpMethods.Get));
+    }
+
+    /**
      * 首页推荐档案列表
      */
     public void front(int pageNumber) {

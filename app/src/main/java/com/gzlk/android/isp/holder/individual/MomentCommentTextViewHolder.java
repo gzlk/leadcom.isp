@@ -1,6 +1,5 @@
 package com.gzlk.android.isp.holder.individual;
 
-import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -9,11 +8,12 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.archive.Comment;
+import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
 /**
- * <b>功能描述：</b>朋友圈（首页 - 个人 - 动态）中说说的评论<br />
+ * <b>功能描述：</b>朋友圈（首页 - 个人 - 动态）中说说的评论，只有名字没有头像<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/10/20 14:51 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -23,14 +23,14 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
  * <b>修改备注：</b><br />
  */
 
-public class MomentsItemCommentViewHolder extends BaseViewHolder {
+public class MomentCommentTextViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_individual_moment_comment_name_comment)
     private TextView commentView;
     @ViewId(R.id.ui_holder_view_individual_moment_comment_name_last)
     private View lastPadding;
 
-    public MomentsItemCommentViewHolder(View itemView, BaseFragment fragment) {
+    public MomentCommentTextViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
@@ -42,7 +42,7 @@ public class MomentsItemCommentViewHolder extends BaseViewHolder {
         } else {
             text = StringHelper.getString(R.string.ui_individual_moment_comment_content_only_name, comment.getUserName(), comment.getContent());
         }
-        commentView.setText(Html.fromHtml(text));
+        commentView.setText(EmojiUtility.getEmojiString(commentView.getContext(), text, true));
         lastPadding.setVisibility(comment.isLast() ? View.VISIBLE : View.GONE);
     }
 }

@@ -129,6 +129,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 int count = null == list ? 0 : list.size();
                 isLoadingComplete(count < pageSize);
+                remotePageNumber += count < pageSize ? 0 : 1;
                 if (success) {
                     if (remotePageNumber <= 1) {
                         mAdapter.clear();
