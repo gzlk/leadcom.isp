@@ -127,7 +127,7 @@ public class ArchiveRequest extends Request<Archive> {
         // groupId,type,title,authPublic
         // {groupId,type,title,happenDate,label,[authUser],content,markdown,[office],[image],[video],[attach]},authPublic,intro,cover
         // {title,type,happenDate,authPublic,[label],content,markdown,[office],[image],[video],[attach],intro,cover,[authUser],[authGro]}
-        boolean isIndividual = isEmpty(archive.getGroupId());
+        boolean isIndividual = isEmpty(archive.getGroupId(), true);
         JSONObject object = new JSONObject();
         try {
             object.put("title", archive.getTitle())// 必要字段
@@ -140,9 +140,12 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
-                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
-                    .put("authUser", new JSONArray(archive.getAuthUser()))
-                    .put("authGro", new JSONArray(archive.getAuthGro()));
+                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())));
+            if (archive.getAuthPublic() == Seclusion.Type.Group) {
+                object.put("authGro", new JSONArray(archive.getAuthGro()));
+            } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
+                object.put("authUser", new JSONArray(archive.getAuthUser()));
+            }
             if (!isIndividual) {
                 object.put("groupId", archive.getGroupId());// 必要字段
             }

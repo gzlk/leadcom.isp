@@ -68,6 +68,8 @@ import jp.wasabeef.richeditor.RichEditor;
  */
 public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
+    public static final String MULTIMEDIA = "multimedia";
+    public static final String ATTACHABLE = "attachable";
     private static final String PARAM_UPLOAD_TYPE = "aecf_upload_type";
     private static final String PARAM_ARCHIVE = "aecf_archive_content";
     private static final String PARAM_EDITOR_TYPE = "aecf_archive_editor_type";
@@ -98,9 +100,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         return aecf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, boolean attachable) {
-        String params = format("%s,%d", groupId, attachable ? TYPE_ATTACHMENT : TYPE_MULTIMEDIA);
-        fragment.openActivity(ArchiveEditorFragment.class.getName(), params, true, true);
+    public static void open(BaseFragment fragment, String groupId, String attachType) {
+        String params = format("%s,%d", groupId, attachType.equals(ATTACHABLE) ? TYPE_ATTACHMENT : TYPE_MULTIMEDIA);
+        fragment.openActivity(ArchiveEditorFragment.class.getName(), params, REQUEST_CREATE, true, true);
     }
 
     @Override

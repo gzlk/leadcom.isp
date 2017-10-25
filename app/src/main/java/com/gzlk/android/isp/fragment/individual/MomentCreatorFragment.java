@@ -183,6 +183,10 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private void addMoment(ArrayList<String> images) {
         Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
         String content = StringHelper.escapeToHtml(momentContent.getValue());
+        int auth = seclusion.getStatus();
+        if (auth == Seclusion.Type.Private) {
+            auth = 2;
+        }
         MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
             @Override
             public void onResponse(Moment moment, boolean success, String message) {
@@ -191,7 +195,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     resultSucceededActivity();
                 }
             }
-        }).add(address, content, images, "", seclusion.getStatus() + 1);
+        }).add(address, content, images, "", auth);
     }
 
     @Override

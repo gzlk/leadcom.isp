@@ -64,10 +64,10 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
             case R.id.ui_archive_creator_selector_normal:
                 break;
             case R.id.ui_archive_creator_selector_rich_text:
-                resultData("multimedia");
+                resultData(ArchiveEditorFragment.MULTIMEDIA);
                 break;
             case R.id.ui_archive_creator_selector_attachment:
-                resultData("attachment");
+                resultData(ArchiveEditorFragment.ATTACHABLE);
                 break;
         }
     }

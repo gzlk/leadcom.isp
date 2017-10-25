@@ -11,6 +11,8 @@ import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
+import com.gzlk.android.isp.fragment.main.IndividualFragment;
 import com.gzlk.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -38,6 +40,7 @@ public class ArchivesFragment extends BaseOrganizationFragment {
     public static ArchivesFragment newInstance(String params) {
         ArchivesFragment af = new ArchivesFragment();
         Bundle bundle = new Bundle();
+        // 组织id
         bundle.putString(PARAM_QUERY_ID, params);
         af.setArguments(bundle);
         return af;
@@ -115,8 +118,12 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                 }
                 break;
             case REQUEST_CHANGE:
+            case REQUEST_CREATE:
                 // 新增组织档案、组织档案管理页面返回时，重新刷新第一页
                 onSwipeRefreshing();
+                break;
+            case REQUEST_SELECT:
+                ArchiveEditorFragment.open(ArchivesFragment.this, mQueryId, getResultedData(data));
                 break;
         }
         super.onActivityResult(requestCode, data);

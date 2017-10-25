@@ -102,7 +102,11 @@ public abstract class Request<T> {
     }
 
     protected static boolean isEmpty(String text) {
-        return StringHelper.isEmpty(text);
+        return isEmpty(text, false);
+    }
+
+    protected static boolean isEmpty(String text, boolean nullable) {
+        return StringHelper.isEmpty(text, nullable);
     }
 
     protected void log(String log) {

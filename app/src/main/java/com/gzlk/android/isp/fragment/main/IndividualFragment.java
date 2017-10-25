@@ -434,8 +434,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
             case REQUEST_SELECT:
-                String type = getResultedData(data);
-                ArchiveEditorFragment.open(IndividualFragment.this, mQueryId, type.equals("attachment"));
+                // 个人档案不需要groupId
+                ArchiveEditorFragment.open(IndividualFragment.this, "", getResultedData(data));
                 break;
             case REQUEST_CREATE:
                 onSwipeRefreshing();

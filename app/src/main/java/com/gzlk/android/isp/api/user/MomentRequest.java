@@ -119,6 +119,31 @@ public class MomentRequest extends Request<Moment> {
         httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
+    public void add(Moment moment) {
+        // {location,content,[image],video,type,authPublic}
+        JSONObject object = new JSONObject();
+        try {
+            int type = Moment.Type.TEXT;
+            object.put("location", checkNull(moment.getLocation()));
+            if (!isEmpty(moment.getContent())) {
+                object.put("content", checkNull(moment.getContent()));
+            }
+            if (moment.getImage().size() > 0) {
+                type = Moment.Type.IMAGE;
+                object.put("image", new JSONArray(moment.getImage()));
+            }
+            if (!isEmpty(moment.getVideo())) {
+                type = Moment.Type.VIDEO;
+                object.put("video", checkNull(moment.getVideo()));
+            }
+            object.put("type", type).put("authPublic", moment.getAuthPublic());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
+    }
+
     private static final String QB_USER_ID = "userId";
     private static final String QB_MOMENT = "momentId";
 
