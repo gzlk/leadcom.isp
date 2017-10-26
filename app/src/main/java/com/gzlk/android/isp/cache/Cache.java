@@ -26,6 +26,10 @@ import java.util.Date;
 
 public class Cache {
 
+    public static boolean isReleasable() {
+        return BuildConfig.BUILD_TYPE.equals("beta") || BuildConfig.BUILD_TYPE.equals("release");
+    }
+
     private static Cache cache;
 
     /**

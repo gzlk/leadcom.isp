@@ -4,16 +4,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
+import com.gzlk.android.isp.fragment.organization.ArchiveRecommendableFragment;
 import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.gzlk.android.isp.fragment.organization.OnOrganizationChangedListener;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
-import com.gzlk.android.isp.fragment.organization.ArchiveRecommendableFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
@@ -204,7 +203,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     public void rightIconClick(View view) {
         if (getDisplayedPage() == 0) {
             // 新建组织
-            if (!BuildConfig.RELEASEABLE) {
+            if (!Cache.isReleasable()) {
                 String string = PreferenceHelper.get(R.string.pf_static_temp_organization_create_alert, "");
                 if (isEmpty(string)) {
                     // 提醒测试人员这个功能目前只是为了测试方便而设置，release版本会取消

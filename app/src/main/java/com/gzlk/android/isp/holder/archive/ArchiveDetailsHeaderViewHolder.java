@@ -7,8 +7,8 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -97,7 +97,7 @@ public class ArchiveDetailsHeaderViewHolder extends BaseViewHolder {
         descView.makeExpandable();
         contentView.setVisibility(StringHelper.isEmpty(archive.getMarkdown()) ? View.GONE : View.VISIBLE);
         if (!isEmpty(archive.getMarkdown())) {
-            int type = BuildConfig.RELEASEABLE ? 1 : 0;
+            int type = Cache.isReleasable() ? 1 : 0;
             int mType = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
             String url = format("%s?test=%d&%sDocId=%s", BASE_URL, type, (mType == Archive.Type.GROUP ? "gro" : "user"), archive.getId());
             contentView.loadUrl(url);

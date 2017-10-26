@@ -10,7 +10,7 @@ import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
-import com.gzlk.android.isp.BuildConfig;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.etc.Cryptography;
@@ -195,7 +195,7 @@ public class BaseApplication extends Application {
      */
     public String getCachePath(String dir) {
         StringBuilder sb = new StringBuilder();
-        if (BuildConfig.RELEASEABLE && dir.equals(DB_DIR)) {
+        if (Cache.isReleasable() && dir.equals(DB_DIR)) {
             // release时，db文件放在内置私有目录下
             sb.append(gotCacheDir());
         } else {

@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.activity.WelcomeActivity;
@@ -125,7 +124,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     private SDKOptions options() {
         SDKOptions options = new SDKOptions();
         options.appKey = getAppKey();
-        log(format("app key: %s, isForTest: %s, is release: %s", options.appKey, isForTest, BuildConfig.RELEASEABLE));
+        log(format("app key: %s, isForTest: %s, is release: %s", options.appKey, isForTest, Cache.isReleasable()));
 
         options.statusBarNotificationConfig = getNotificationConfig();
 
@@ -177,7 +176,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     }
 
     private static int get(int res, int resBeta) {
-        return BuildConfig.RELEASEABLE ? resBeta : res;
+        return Cache.isReleasable() ? resBeta : res;
     }
 
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可

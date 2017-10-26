@@ -19,13 +19,11 @@ import com.gzlk.android.isp.fragment.main.SystemMessageFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
-import com.gzlk.android.isp.nim.action.BlankAction;
 import com.gzlk.android.isp.nim.action.CameraAction;
 import com.gzlk.android.isp.nim.action.FileAction;
 import com.gzlk.android.isp.nim.action.ImageAction;
 import com.gzlk.android.isp.nim.action.IssueAction;
 import com.gzlk.android.isp.nim.action.LocationAction;
-import com.gzlk.android.isp.nim.action.MinutesAction;
 import com.gzlk.android.isp.nim.action.NoticeAction;
 import com.gzlk.android.isp.nim.action.SignAction;
 import com.gzlk.android.isp.nim.action.VoteAction;
@@ -278,7 +276,7 @@ public class NimSessionHelper {
         actions.add(new ImageAction());
         // 相机拍摄照片
         actions.add(new CameraAction());
-        if (!BuildConfig.RELEASEABLE) {
+        if (!Cache.isReleasable()) {
             // 相机录制视频
             //actions.add(new VideoCaptureAction());
             // 相册选择视频
