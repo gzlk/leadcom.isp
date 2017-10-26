@@ -191,7 +191,8 @@ public class ActivityViewHolder extends BaseViewHolder {
         @Override
         protected void onDisplayImage(Context context, ImageView imageView, String s) {
             int size = getDimension(R.dimen.ui_static_dp_55);
-            ImageLoader.getInstance().displayImage(s, imageView, new ImageSize(size, size));
+            String url = (isEmpty(s) || s.contains("null")) ? ("drawable://" + R.mipmap.img_default_user_header) : s;
+            ImageLoader.getInstance().displayImage(url, imageView, new ImageSize(size, size));
         }
 
         //重写该方法自定义生成ImageView方式，用于九宫格头像中的一个个图片控件，可以设置ScaleType等属性

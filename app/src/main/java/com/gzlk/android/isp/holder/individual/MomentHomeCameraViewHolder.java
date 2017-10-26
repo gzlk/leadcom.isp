@@ -61,6 +61,9 @@ public class MomentHomeCameraViewHolder extends BaseViewHolder {
     @Click({R.id.ui_holder_view_moment_camera_icon,
             R.id.ui_holder_view_moment_camera_message_layer})
     private void elementClick(View view) {
+        if (view.getId() == R.id.ui_holder_view_moment_camera_message_layer) {
+            messageView.setVisibility(View.GONE);
+        }
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }

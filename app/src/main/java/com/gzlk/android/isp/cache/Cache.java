@@ -68,7 +68,7 @@ public class Cache {
     }
 
     private static int get(int res, int resBeta) {
-        return BuildConfig.RELEASEABLE ? resBeta : res;
+        return isReleasable() ? resBeta : res;
     }
 
     public void setCurrentUser(User user) {
