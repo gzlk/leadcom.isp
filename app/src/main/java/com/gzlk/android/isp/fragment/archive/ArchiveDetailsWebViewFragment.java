@@ -13,6 +13,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
@@ -161,7 +162,7 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                 displayLoading(false);
                 if (success && null != archive) {
                     mAdapter.update(archive);
-                    //loadingComments();
+                    loadingComments();
                 }
             }
         }).find(archiveType, mQueryId, false);
@@ -187,20 +188,28 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
-            if (viewType == VT_ARCHIVE) {
-                if (null == detailsViewHolder) {
-                    detailsViewHolder = new ArchiveDetailsViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
-                    detailsViewHolder.setOnViewHolderElementClickListener(elementClickListener);
-                }
-                return detailsViewHolder;
+            switch (viewType) {
+                case VT_ARCHIVE:
+                    if (null == detailsViewHolder) {
+                        detailsViewHolder = new ArchiveDetailsViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                        detailsViewHolder.setOnViewHolderElementClickListener(elementClickListener);
+                    }
+                    return detailsViewHolder;
+                case VT_COMMENT:
+                    ArchiveDetailsCommentViewHolder adcvh = new ArchiveDetailsCommentViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                    return adcvh;
             }
             return null;
         }
 
         @Override
         public int itemLayout(int viewType) {
-            if (viewType == VT_ARCHIVE)
-                return R.layout.holder_view_archive_details;
+            switch (viewType) {
+                case VT_ARCHIVE:
+                    return R.layout.holder_view_archive_details;
+                case VT_COMMENT:
+                    return R.layout.holder_view_archive_details_comment;
+            }
             return 0;
         }
 
@@ -219,6 +228,8 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof ArchiveDetailsViewHolder) {
                 ((ArchiveDetailsViewHolder) holder).showContent((Archive) item);
+            } else if (holder instanceof ArchiveDetailsCommentViewHolder) {
+                ((ArchiveDetailsCommentViewHolder) holder).showContent((Comment) item);
             }
         }
 
