@@ -15,7 +15,7 @@ import com.gzlk.android.isp.api.user.PublicMomentRequest;
 import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -33,9 +33,9 @@ import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
 import com.gzlk.android.isp.holder.individual.CollectionItemViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualHeaderViewHolder;
+import com.gzlk.android.isp.holder.individual.MomentCommentTextViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentHomeCameraViewHolder;
-import com.gzlk.android.isp.holder.individual.MomentCommentTextViewHolder;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
@@ -583,7 +583,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     private void archiveClick(Archive archive) {
         if (null != archive) {
             int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-            ArchiveDetailsFragment.open(IndividualFragment.this, type, archive.getId(), REQUEST_DELETE);
+            ArchiveDetailsWebViewFragment.open(IndividualFragment.this, archive.getId(), type);
+            //ArchiveDetailsFragment.open(IndividualFragment.this, type, archive.getId(), REQUEST_DELETE);
         }
     }
 

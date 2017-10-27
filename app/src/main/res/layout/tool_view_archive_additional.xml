@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_tool_view_archive_additional_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
+    android:baselineAligned="false"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="@dimen/ui_base_dimen_margin_padding">
@@ -40,22 +42,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <com.hlk.hlklib.lib.view.CustomTextView
-            android:id="@+id/ui_tool_view_archive_additional_like_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/ui_static_dp_5"
-            android:text="@string/ui_icon_like_hollow"
-            android:textColor="@color/textColorHint"
-            android:textSize="@dimen/ui_base_text_size_big" />
-
-        <TextView
-            android:id="@+id/ui_tool_view_archive_additional_like_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/temp_number_value"
-            android:textColor="@color/textColorHint"
-            android:textSize="@dimen/ui_base_text_size_small" />
+        <include layout="@layout/tool_view_archive_additional_like" />
     </LinearLayout>
 
     <LinearLayout
@@ -66,22 +53,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <com.hlk.hlklib.lib.view.CustomTextView
-            android:id="@+id/ui_tool_view_archive_additional_collection_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/ui_static_dp_5"
-            android:text="@string/ui_icon_pentagon_corner_hollow"
-            android:textColor="@color/textColorHint"
-            android:textSize="@dimen/ui_base_text_size_big" />
-
-        <TextView
-            android:id="@+id/ui_tool_view_archive_additional_collection_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/temp_number_value"
-            android:textColor="@color/textColorHint"
-            android:textSize="@dimen/ui_base_text_size_small" />
+        <include layout="@layout/tool_view_archive_additional_collect" />
     </LinearLayout>
 
     <LinearLayout

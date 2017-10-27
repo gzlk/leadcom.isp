@@ -8,7 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -129,7 +129,8 @@ public class IndividualArchivesFragment extends BaseSwipeRefreshSupportFragment 
             // 打开档案详情页
             Archive archive = mAdapter.get(index);
             int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-            ArchiveDetailsFragment.open(IndividualArchivesFragment.this, type, archive.getId(), REQUEST_CHANGE);
+            ArchiveDetailsWebViewFragment.open(IndividualArchivesFragment.this, archive.getId(), type);
+            //ArchiveDetailsFragment.open(IndividualArchivesFragment.this, type, archive.getId(), REQUEST_CHANGE);
         }
     };
 

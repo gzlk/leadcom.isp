@@ -7,9 +7,8 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -112,7 +111,8 @@ public class HomeArchiveFragment extends BaseSwipeRefreshSupportFragment {
             // 到档案详情
             Archive arc = mAdapter.get(index);
             int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-            openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
+            ArchiveDetailsWebViewFragment.open(HomeArchiveFragment.this, arc.getId(), type);
+            //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
         }
     };
 

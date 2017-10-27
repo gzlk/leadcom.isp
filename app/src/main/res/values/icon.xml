@@ -25,6 +25,8 @@
     <string name="ui_icon_attachment">&#xe63f;</string>
     <string name="ui_icon_delete">&#xe602;</string>
     <string name="ui_icon_edit">&#xe624;</string>
+    <string name="ui_icon_edit_pen">&#xe629;</string>
+    <string name="ui_icon_edit_pen_solid">&#xe673;</string>
     <string name="ui_icon_setting">&#xe601;</string>
     <string name="ui_icon_search">&#xe63e;</string>
     <string name="ui_icon_qr_code">&#xe63b;</string>

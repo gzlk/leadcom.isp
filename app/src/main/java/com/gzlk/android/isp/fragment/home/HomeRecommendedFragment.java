@@ -17,7 +17,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -311,18 +311,8 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
             RecommendArchive archive = getArchiveByCover(url);
             if (null != archive) {
                 // 打开档案详情页
-
-//                String type = archive.getType();
-//                String target = archive.getTargetPath();
-//                if (isEmpty(target)) {
-//                    ToastHelper.make().showMsg("无效的url路径");
-//                } else {
-//                    if (isEmpty(type) || type.equals("inner")) {
-//                        openActivity(InnerWebViewFragment.class.getName(), format("%s,%s", archive.getTargetPath(), archive.getTitle()), true, false);
-//                    } else {
-//                        openDefaultWeb(archive.getTargetPath());
-//                    }
-//                }
+                int type = archive.getType() == RecommendArchive.RecommendType.GROUP ? Archive.Type.GROUP : Archive.Type.USER;
+                ArchiveDetailsWebViewFragment.open(HomeRecommendedFragment.this, archive.getDocId(), type);
             } else {
                 ToastHelper.make().showMsg("无效的推荐内容");
             }
@@ -394,12 +384,14 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
             } else if (model instanceof RecommendArchive) {
                 RecommendArchive recommend = (RecommendArchive) model;
                 int type = recommend.getType() == RecommendArchive.RecommendType.USER ? Archive.Type.USER : Archive.Type.GROUP;
-                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, recommend.getDocId()), true, false);
+                ArchiveDetailsWebViewFragment.open(HomeRecommendedFragment.this, recommend.getDocId(), type);
+                //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, recommend.getDocId()), true, false);
             } else if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
                 int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
+                ArchiveDetailsWebViewFragment.open(HomeRecommendedFragment.this, arc.getId(), type);
+                //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
             } else if (model instanceof PriorityPlace) {
                 // 编辑推荐
                 PriorityPlace place = (PriorityPlace) model;

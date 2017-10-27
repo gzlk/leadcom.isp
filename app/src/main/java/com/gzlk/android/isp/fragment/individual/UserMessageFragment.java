@@ -9,7 +9,7 @@ import com.gzlk.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.UserMsgRequest;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -186,7 +186,8 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                             break;
                         default:
                             int type = msg.getSourceType() == UserMessage.SourceType.USER_ARCHIVE ? Archive.Type.USER : Archive.Type.GROUP;
-                            ArchiveDetailsFragment.open(UserMessageFragment.this, type, msg.getSourceId(), REQUEST_CHANGE);
+                            ArchiveDetailsWebViewFragment.open(UserMessageFragment.this, msg.getSourceId(), type);
+                            //ArchiveDetailsFragment.open(UserMessageFragment.this, type, msg.getSourceId(), REQUEST_CHANGE);
                             break;
                     }
                     break;

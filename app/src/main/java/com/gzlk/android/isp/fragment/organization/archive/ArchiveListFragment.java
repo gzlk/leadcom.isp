@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -164,7 +164,8 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 openActivity(ArchiveHandlerFragment.class.getName(), format("%d,%s,", ArchiveHandlerFragment.TYPE_APPROVE, acv.getId()), true, false);
             } else {
                 // 全部页面中，打开档案详情页
-                ArchiveDetailsFragment.open(ArchiveListFragment.this,Archive.Type.GROUP,acv.getId(), REQUEST_DELETE);
+                ArchiveDetailsWebViewFragment.open(ArchiveListFragment.this, acv.getId(), Archive.Type.GROUP);
+                //ArchiveDetailsFragment.open(ArchiveListFragment.this,Archive.Type.GROUP,acv.getId(), REQUEST_DELETE);
                 //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
             }
         }

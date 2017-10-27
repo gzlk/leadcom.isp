@@ -10,7 +10,7 @@ import com.gzlk.android.isp.api.archive.RecommendArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
-import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -130,7 +130,9 @@ public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragmen
         @Override
         public void onClick(int index) {
             RecommendArchive archive = mAdapter.get(index);
-            ArchiveDetailsFragment.open(ArchiveRecommendableFragment.this, (null == archive.getUserDoc() ? Archive.Type.GROUP : Archive.Type.USER), archive.getDocId(), REQUEST_CHANGE);
+            int type = archive.getType() == RecommendArchive.RecommendType.GROUP ? Archive.Type.GROUP : Archive.Type.USER;
+            ArchiveDetailsWebViewFragment.open(ArchiveRecommendableFragment.this, archive.getDocId(), type);
+            //ArchiveDetailsFragment.open(ArchiveRecommendableFragment.this, (null == archive.getUserDoc() ? Archive.Type.GROUP : Archive.Type.USER), archive.getDocId(), REQUEST_CHANGE);
         }
     };
 
