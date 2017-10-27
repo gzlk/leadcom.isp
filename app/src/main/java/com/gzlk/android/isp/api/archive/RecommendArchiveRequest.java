@@ -3,6 +3,7 @@ package com.gzlk.android.isp.api.archive;
 import com.gzlk.android.isp.api.Request;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.query.ListQuery;
 import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.query.SingleQuery;
 import com.gzlk.android.isp.model.Dao;
@@ -36,6 +37,9 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
     }
 
     private static class MultipleRecommend extends PaginationQuery<RecommendArchive> {
+    }
+
+    private static class ListRecommend extends ListQuery<RecommendArchive> {
     }
 
     private static final String RECOMMEND = "/group/groDocRcmd";
@@ -156,5 +160,12 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
     public void front(int pageNumber) {
         String params = format("%s?%s&pageNumber=%d", url(LIST + "/front"), SUMMARY, pageNumber);
         httpRequest(getRequest(MultipleRecommend.class, params, "", HttpMethods.Get));
+    }
+
+    /**
+     * 首页头条推荐内容
+     */
+    public void focusImage() {
+        httpRequest(getRequest(ListRecommend.class, "/operate/focusImage/list/all", "", HttpMethods.Get));
     }
 }

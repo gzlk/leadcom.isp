@@ -183,7 +183,6 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             ImageDisplayer displayer = new ImageDisplayer(Activity());
-            displayer.setLargeImageSupport(true);
             displayer.displayImage(images.get(position), getScreenWidth(), getScreenHeight(), false, false);
             container.addView(displayer);
             return displayer;

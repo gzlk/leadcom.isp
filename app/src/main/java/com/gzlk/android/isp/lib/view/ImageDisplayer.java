@@ -87,7 +87,6 @@ public class ImageDisplayer extends RelativeLayout {
                 imageWidth = array.getDimensionPixelOffset(R.styleable.ImageDisplayer_id_image_width, 0);
                 imageHeight = array.getDimensionPixelOffset(R.styleable.ImageDisplayer_id_image_height, 0);
             }
-            largeImageSupport = array.getBoolean(R.styleable.ImageDisplayer_id_is_large_image, false);
             scaleType = array.getInt(R.styleable.ImageDisplayer_id_image_scale_type, 0);
             isShowHeader = array.getBoolean(R.styleable.ImageDisplayer_id_show_header, false);
         } finally {
@@ -96,7 +95,7 @@ public class ImageDisplayer extends RelativeLayout {
     }
 
     private int srcDrawable = 0, scaleType;
-    private boolean largeImageSupport, isShowHeader;
+    private boolean  isShowHeader;
     private RoundedImageView imageView;
     private CircleProgressBar progressBar;
     private CorneredView selectContainer, deleteContainer;
@@ -104,12 +103,12 @@ public class ImageDisplayer extends RelativeLayout {
 
     private void initializeViews() {
         View view = LayoutInflater.from(getContext()).inflate(getLayout(), this);
-        imageView = (RoundedImageView) view.findViewById(R.id.ui_tool_image_view_image);
-        progressBar = (CircleProgressBar) view.findViewById(R.id.ui_tool_image_view_loading);
-        deleteContainer = (CorneredView) view.findViewById(R.id.ui_tool_image_view_delete_container);
-        deleteIconTextView = (CustomTextView) view.findViewById(R.id.ui_tool_image_view_delete_icon);
-        selectContainer = (CorneredView) view.findViewById(R.id.ui_tool_image_view_select_container);
-        selectIconTextView = (CustomTextView) view.findViewById(R.id.ui_tool_image_view_select_icon);
+        imageView = view.findViewById(R.id.ui_tool_image_view_image);
+        progressBar = view.findViewById(R.id.ui_tool_image_view_loading);
+        deleteContainer = view.findViewById(R.id.ui_tool_image_view_delete_container);
+        deleteIconTextView = view.findViewById(R.id.ui_tool_image_view_delete_icon);
+        selectContainer = view.findViewById(R.id.ui_tool_image_view_select_container);
+        selectIconTextView = view.findViewById(R.id.ui_tool_image_view_select_icon);
 
         imageView.setOnClickListener(onClickListener);
         deleteContainer.setOnClickListener(onClickListener);
@@ -240,8 +239,8 @@ public class ImageDisplayer extends RelativeLayout {
         displayImage2();
     }
 
-    public void setShowHeader(boolean showHeader) {
-        isShowHeader = showHeader;
+    public void setShowHeader(boolean shown) {
+        isShowHeader = shown;
     }
 
     private void calculateSize() {
@@ -277,13 +276,6 @@ public class ImageDisplayer extends RelativeLayout {
             ImageLoader.getInstance().displayImage(url, new ImageViewAware(imageView), null,
                     new ImageSize(imageWidth, imageHeight), mImageLoadingListener, mImageLoadingProgressListener);
         }
-    }
-
-    /**
-     * 设置大图预览模式
-     */
-    public void setLargeImageSupport(boolean largeSupport) {
-        largeImageSupport = largeSupport;
     }
 
     private ImageLoadingListener mImageLoadingListener = new ImageLoadingListener() {

@@ -79,6 +79,10 @@ public class RecommendArchive extends Model {
     @Column(Archive.Field.Check)
     private int check;                  // 档案是否已审核(0.未审核,1.已审核)
 
+    public Archive getDoc() {
+        return null == userDoc ? groDoc : userDoc;
+    }
+
     public int getType() {
         return type;
     }

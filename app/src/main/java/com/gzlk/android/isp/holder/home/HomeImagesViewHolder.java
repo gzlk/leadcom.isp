@@ -1,11 +1,9 @@
 package com.gzlk.android.isp.holder.home;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
@@ -21,8 +19,8 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
-import com.gzlk.android.isp.model.common.FocusImage;
-import com.gzlk.android.isp.share.Shareable;
+import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.archive.RecommendArchive;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -97,19 +95,19 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         titleView.setLayoutParams(params);
     }
 
-    public void addImages(List<FocusImage> list) {
+    public void addImages(List<RecommendArchive> list) {
         if (null != list && list.size() > 0) {
             indicator.removeAllViews();
             dots.clear();
-            urls.clear();
+            recommendArchives.clear();
             images.clear();
-            urls.addAll(list);
+            recommendArchives.addAll(list);
             int size = list.size();
             if (size > 1) {
-                urls.add(0, list.get(size - 1));
-                urls.add(list.get(0));
+                recommendArchives.add(0, list.get(size - 1));
+                recommendArchives.add(list.get(0));
             }
-            for (int i = 0; i < urls.size(); i++) {
+            for (int i = 0; i < recommendArchives.size(); i++) {
                 // 图片
                 ImageDisplayer imageDisplayer = new ImageDisplayer(viewPager.getContext());
                 imageDisplayer.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -131,10 +129,10 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
             }
         }
         mAdapter.notifyDataSetChanged();
-        if (urls.size() > 0) {
+        if (recommendArchives.size() > 0) {
             container.setVisibility(View.VISIBLE);
-            viewPager.setCurrentItem(urls.size() > 1 ? 1 : 0, false);
-            if (urls.size() == 1) {
+            viewPager.setCurrentItem(recommendArchives.size() > 1 ? 1 : 0, false);
+            if (recommendArchives.size() == 1) {
                 onPageSelected(0);
             }
         } else {
@@ -143,7 +141,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     }
 
     private ImageAdapter mAdapter;
-    private ArrayList<FocusImage> urls = new ArrayList<>();
+    private ArrayList<RecommendArchive> recommendArchives = new ArrayList<>();
     private ArrayList<ImageDisplayer> images = new ArrayList<>();
 
     @Override
@@ -154,7 +152,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     @Override
     public void onPageSelected(int position) {
         currentPosition = position;
-        titleView.setText(urls.get(currentPosition).getTitle());
+        titleView.setText(recommendArchives.get(currentPosition).getDoc().getTitle());
         //colorChange(position);
         changeDotsColor(position, getColor(R.color.textColorHintDark));
     }
@@ -166,48 +164,6 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
                 dots.get(i).setTextColor(i == position ? Color.WHITE : color);
             }
         }
-    }
-
-    private void colorChange(final int position) {
-        // 用来提取颜色的Bitmap
-        Bitmap bitmap = BitmapFactory.decodeFile(Shareable.getLocalPath(urls.get(position).getImageUrl()));
-        // Palette的部分
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-
-            /**
-             * 提取完之后的回调方法
-             */
-            @Override
-            public void onGenerated(Palette palette) {
-                Palette.Swatch vibrant = palette.getVibrantSwatch();
-                if (null != vibrant) {
-                    //titleView.setTextColor(colorBurn(vibrant.getRgb()));
-                    changeDotsColor(position, colorBurn(vibrant.getRgb()));
-                }
-            }
-
-            /**
-             * 颜色加深处理
-             *
-             * @param RGBValues RGB的值，由alpha（透明度）、red（红）、green（绿）、blue（蓝）构成，
-             *                  Android中我们一般使用它的16进制，
-             *                  例如："#FFAABBCC",最左边到最右每两个字母就是代表alpha（透明度）、
-             *                  red（红）、green（绿）、blue（蓝）。每种颜色值占一个字节(8位)，值域0~255
-             *                  所以下面使用移位的方法可以得到每种颜色的值，然后每种颜色值减小一下，在合成RGB颜色，颜色就会看起来深一些了
-             * @return color
-             */
-            private int colorBurn(int RGBValues) {
-                int alpha = RGBValues >> 24;
-                int red = RGBValues >> 16 & 0xFF;
-                int green = RGBValues >> 8 & 0xFF;
-                int blue = RGBValues & 0xFF;
-                red = (int) Math.floor(red * (1 - 0.1));
-                green = (int) Math.floor(green * (1 - 0.1));
-                blue = (int) Math.floor(blue * (1 - 0.1));
-                return Color.argb(alpha, red, green, blue);
-            }
-
-        });
     }
 
     @Override
@@ -231,19 +187,33 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             return view == object;
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView(images.get(position));
         }
 
+        @NonNull
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
             ImageDisplayer displayer = images.get(position);
-            displayer.displayImage(urls.get(position).getImageUrl(), imageWidth, imageHeight, false, false);
+            Archive archive = recommendArchives.get(position).getDoc();
+            String cover = archive.getCover();
+            // 有封面显示封面
+            if (isEmpty(cover)) {
+                int size = archive.getImage().size();
+                // 有图片显示第一张图片
+                if (size > 0) {
+                    cover = archive.getImage().get(0).getUrl();
+                } else {
+                    // 没有图片设置为档案的id
+                    cover = archive.getId();
+                }
+            }
+            displayer.displayImage(cover, imageWidth, imageHeight, false, false);
             displayer.addOnImageClickListener(onImageClickListener);
             container.addView(displayer);
             return displayer;

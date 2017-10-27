@@ -12,7 +12,6 @@ import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.archive.LikeRequest;
 import com.gzlk.android.isp.api.archive.RecommendArchiveRequest;
-import com.gzlk.android.isp.api.common.FocusImageRequest;
 import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
@@ -20,7 +19,6 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.gzlk.android.isp.fragment.common.InnerWebViewFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
@@ -37,7 +35,6 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.archive.RecommendArchive;
-import com.gzlk.android.isp.model.common.FocusImage;
 import com.gzlk.android.isp.model.common.PriorityPlace;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
@@ -164,7 +161,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
         super.onViewPagerDisplayedChanged(visible);
         if (visible) {
             if (mType > TYPE_NOTHING) {
-                fetchingRecommended();
+                fetchingRecommendedArchives();
             }
         }
     }
@@ -212,13 +209,13 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
         if (mType == TYPE_ALL || mType == TYPE_ARCHIVE) {
             fetchingFocusImages();
         } else {
-            fetchingRecommended();
+            fetchingRecommendedArchives();
         }
     }
 
     @Override
     protected void onLoadingMore() {
-        fetchingRecommended();
+        fetchingRecommendedArchives();
     }
 
     @Override
@@ -234,22 +231,38 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
         setLoadingText(R.string.ui_text_home_focus_image_loading);
         displayLoading(true);
         displayNothing(false);
-        FocusImageRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<FocusImage>() {
+//        FocusImageRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<FocusImage>() {
+//            @Override
+//            public void onResponse(List<FocusImage> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+//                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+//                if (success) {
+//                    headline.clear();
+//                    if (null != list) {
+//                        headline.addAll(list);
+//                        homeImagesViewHolder.addImages(headline);
+//                    }
+//                }
+//                displayLoading(false);
+//                stopRefreshing();
+//                fetchingRecommended();
+//            }
+//        }).all();
+        RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
             @Override
-            public void onResponse(List<FocusImage> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
-                    images.clear();
+                    headline.clear();
                     if (null != list) {
-                        images.addAll(list);
-                        homeImagesViewHolder.addImages(images);
+                        headline.addAll(list);
+                        homeImagesViewHolder.addImages(headline);
                     }
                 }
                 displayLoading(false);
                 stopRefreshing();
-                fetchingRecommended();
+                fetchingRecommendedArchives();
             }
-        }).all();
+        }).focusImage();
     }
 
     private void initializeAdapter() {
@@ -262,18 +275,31 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
                     setTestData();
                     fetchingFocusImages();
                 } else {
-                    fetchingRecommended();
+                    fetchingRecommendedArchives();
                 }
             }
         }
     }
 
-    private List<FocusImage> images = new ArrayList<>();
+    /**
+     * 首页头条推荐
+     */
+    private List<RecommendArchive> headline = new ArrayList<>();
 
-    private FocusImage getImage(String imageUrl) {
-        for (FocusImage image : images) {
-            if (image.getImageUrl().equals(imageUrl)) {
-                return image;
+    private RecommendArchive getArchiveByCover(String imageUrl) {
+        for (RecommendArchive archive : headline) {
+            Archive doc = archive.getDoc();
+            String cover = doc.getCover();
+            if (isEmpty(cover)) {
+                // 封面为空时，查找第一张图片是否为当前url
+                int size = doc.getImage().size();
+                if (size > 0 && imageUrl.equals(doc.getImage().get(0).getUrl())) {
+                    return archive;
+                } else if (imageUrl.equals(doc.getId())) {
+                    return archive;
+                }
+            } else if (cover.equals(imageUrl)) {
+                return archive;
             }
         }
         return null;
@@ -282,21 +308,23 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
     private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
         public void onImageClick(ImageDisplayer displayer, String url) {
-            FocusImage image = getImage(url);
-            if (null != image) {
-                String type = image.getType();
-                String target = image.getTargetPath();
-                if (isEmpty(target)) {
-                    ToastHelper.make().showMsg("无效的url路径");
-                } else {
-                    if (isEmpty(type) || type.equals("inner")) {
-                        openActivity(InnerWebViewFragment.class.getName(), format("%s,%s", image.getTargetPath(), image.getTitle()), true, false);
-                    } else {
-                        openDefaultWeb(image.getTargetPath());
-                    }
-                }
+            RecommendArchive archive = getArchiveByCover(url);
+            if (null != archive) {
+                // 打开档案详情页
+
+//                String type = archive.getType();
+//                String target = archive.getTargetPath();
+//                if (isEmpty(target)) {
+//                    ToastHelper.make().showMsg("无效的url路径");
+//                } else {
+//                    if (isEmpty(type) || type.equals("inner")) {
+//                        openActivity(InnerWebViewFragment.class.getName(), format("%s,%s", archive.getTargetPath(), archive.getTitle()), true, false);
+//                    } else {
+//                        openDefaultWeb(archive.getTargetPath());
+//                    }
+//                }
             } else {
-                ToastHelper.make().showMsg("未指定的推荐内容");
+                ToastHelper.make().showMsg("无效的推荐内容");
             }
         }
     };
@@ -310,60 +338,6 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
         Uri content_url = Uri.parse(url);
         intent.setData(content_url);
         Activity().startActivity(intent);
-    }
-
-    private void fetchingRecommended() {
-        fetchingRecommendedArchives();
-//        if (mType == TYPE_ARCHIVE) {
-//            fetchingRecommendedArchives();
-//            return;
-//        }
-//        displayLoading(true);
-//        displayNothing(false);
-//        RecommendRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendContent>() {
-//            @Override
-//            public void onResponse(List<RecommendContent> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-//                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-//                initializeAdapter();
-//                if (success) {
-//                    if (null != list) {
-//                        if (list.size() >= pageSize) {
-//                            remotePageNumber++;
-//                            isLoadingComplete(false);
-//                        } else {
-//                            isLoadingComplete(true);
-//                        }
-//                        for (RecommendContent content : list) {
-//                            switch (content.getSourceType()) {
-////                                case RecommendContent.SourceType.ACTIVITY:
-////                                    if (null != content.getActivity()) {
-////                                        mAdapter.update(content.getActivity());
-////                                    }
-////                                    break;
-//                                case RecommendContent.SourceType.ARCHIVE:
-//                                    if (null != content.getGroDocRcmd()) {
-//                                        mAdapter.update(content.getGroDocRcmd());
-//                                    }
-//                                    break;
-//                                case RecommendContent.SourceType.PRIORITY_PLACE:
-//                                    if (null != content.getPriorityPlace()) {
-//                                        mAdapter.update(content.getPriorityPlace());
-//                                    }
-//                                    break;
-//                            }
-//                        }
-//                        //mAdapter.sort();
-//                    } else {
-//                        isLoadingComplete(true);
-//                    }
-//                } else {
-//                    isLoadingComplete(true);
-//                }
-//                stopRefreshing();
-//                displayLoading(false);
-//                displayNothing(mAdapter.getItemCount() < (mType == TYPE_ALL ? 2 : 1));
-//            }
-//        }).list(remotePageNumber);
     }
 
     private void fetchingRecommendedArchives() {
