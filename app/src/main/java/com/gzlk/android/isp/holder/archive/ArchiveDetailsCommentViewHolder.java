@@ -6,12 +6,15 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.archive.Comment;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 
 /**
  * <b>功能描述：</b><br />
@@ -32,27 +35,50 @@ public class ArchiveDetailsCommentViewHolder extends BaseViewHolder {
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_archive_details_comment_time)
     private TextView timeView;
+    @ViewId(R.id.ui_holder_view_archive_details_comment_delete)
+    private CustomTextView deleteView;
     @ViewId(R.id.ui_holder_view_archive_details_comment_content)
     private TextView contentView;
 
     private int imageSize;
+    private boolean deletable = false;
 
     public ArchiveDetailsCommentViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
-        imageSize = getDimension(R.dimen.ui_base_user_header_image_size_big);
+        imageSize = getDimension(R.dimen.ui_base_user_header_image_size);
+        headerView.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(ImageDisplayer displayer, String url) {
+                if (null != mOnViewHolderElementClickListener) {
+                    mOnViewHolderElementClickListener.onClick(headerView, getAdapterPosition());
+                }
+            }
+        });
+    }
+
+    public void setDeletable(boolean deletable) {
+        this.deletable = deletable;
     }
 
     public void showContent(Comment comment) {
         headerView.displayImage(comment.getHeadPhoto(), imageSize, false, false);
         String text;
         if (!isEmpty(comment.getToUserId())) {
-            text = StringHelper.getString(R.string.ui_individual_moment_comment_content_only_name_to, comment.getUserName(), comment.getToUserName(), comment.getContent());
+            text = StringHelper.getString(R.string.ui_individual_moment_comment_content_header_name_to, comment.getUserName(), comment.getToUserName());
         } else {
-            text = StringHelper.getString(R.string.ui_individual_moment_comment_content_only_name, comment.getUserName(), comment.getContent());
+            text = StringHelper.getString(R.string.ui_individual_moment_comment_content_header_name, comment.getUserName());
         }
         nameView.setText(Html.fromHtml(text));
         timeView.setText(fragment().formatTimeAgo(comment.getCreateDate()));
         contentView.setText(comment.getContent());
+        deleteView.setVisibility(deletable ? View.VISIBLE : View.GONE);
+    }
+
+    @Click({R.id.ui_holder_view_archive_details_comment_layout, R.id.ui_holder_view_archive_details_comment_delete})
+    private void elementClick(View view) {
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+        }
     }
 }

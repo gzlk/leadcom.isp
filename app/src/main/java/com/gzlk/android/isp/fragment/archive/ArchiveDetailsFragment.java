@@ -425,7 +425,7 @@ public class ArchiveDetailsFragment extends BaseChatInputSupportFragment {
                     refreshingDocument();
                 }
             }
-        }).add(commentType(), mQueryId, text);
+        }).add(commentType(), mQueryId, text, "");
     }
 
     private OnHandleBoundDataListener<Model> onHandlerBoundDataListener = new OnHandleBoundDataListener<Model>() {

@@ -16,38 +16,64 @@
 
         <com.gzlk.android.isp.lib.view.ImageDisplayer
             android:id="@+id/ui_holder_view_archive_details_comment_header"
-            android:layout_width="@dimen/ui_base_user_header_image_size_big"
-            android:layout_height="@dimen/ui_base_user_header_image_size_big"
+            android:layout_width="@dimen/ui_base_user_header_image_size"
+            android:layout_height="@dimen/ui_base_user_header_image_size"
             app:id_image_src="@mipmap/img_default_user_header"
-            app:id_image_type="oval" />
+            app:id_image_type="oval"
+            app:id_show_header="true" />
 
         <LinearLayout
+            android:id="@+id/ui_holder_view_archive_details_comment_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/ui_holder_view_archive_details_comment_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name_default" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/ui_holder_view_archive_details_comment_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name_default"
-                android:textColor="@color/textColorHint"
-                android:textSize="@dimen/ui_base_text_size_small" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/ui_holder_view_archive_details_comment_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name_default" />
+
+                    <TextView
+                        android:id="@+id/ui_holder_view_archive_details_comment_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name_default"
+                        android:textColor="@color/textColorHint"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+
+                </LinearLayout>
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:id="@+id/ui_holder_view_archive_details_comment_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/ui_static_dp_5"
+                    android:text="@string/ui_icon_delete"
+                    android:textColor="@color/colorCaution"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/ui_holder_view_archive_details_comment_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/ui_static_dp_3"
-                android:text="@string/app_name_default" />
+                android:text="@string/app_name_default"
+                android:textSize="@dimen/ui_base_text_size_small" />
         </LinearLayout>
     </LinearLayout>
 

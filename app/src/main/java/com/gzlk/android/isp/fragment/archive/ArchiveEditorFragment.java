@@ -2,12 +2,9 @@ package com.gzlk.android.isp.fragment.archive;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -37,6 +34,7 @@ import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Label;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveDraft;
@@ -383,12 +381,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public View onInitializeView() {
                 if (null == settingDialogView) {
                     settingDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_archive_setting, null);
-                    titleText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_title);
-                    publicText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_text);
-                    labelText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label_text);
-                    creatorText = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_creator);
-                    createTime = (TextView) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_create_time);
-                    coverView = (ImageDisplayer) settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover_image);
+                    titleText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_title);
+                    publicText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_text);
+                    labelText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label_text);
+                    creatorText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_creator);
+                    createTime = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_create_time);
+                    coverView = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover_image);
                 }
                 return settingDialogView;
             }
@@ -398,7 +396,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 titleText.setText(mArchive.getTitle());
                 creatorText.setText(mArchive.getUserName());
                 String text = mArchive.getCreateDate();
-                if (!isEmpty(text)) {
+                if (!isEmpty(text) && !text.equals(Model.DFT_DATE)) {
                     text = formatDate(mArchive.getCreateDate(), "yyyy.MM.dd");
                 } else {
                     text = "";
@@ -481,8 +479,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public View onInitializeView() {
                 if (null == imageDialogView) {
                     imageDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_image, null);
-                    imageAlt = (ClearEditText) imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_alt);
-                    imageUrl = (ClearEditText) imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_url);
+                    imageAlt = imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_alt);
+                    imageUrl = imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_url);
                 }
                 return imageDialogView;
             }
@@ -594,7 +592,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 case UP_VIDEO:
                     // 视频上传完毕，插入视频到编辑框中
                     String video = uploaded.get(0).getUrl();
-                    mEditor.insertVideo(StringHelper.getString(R.string.ui_text_archive_creator_editor_video_cover_default), video);
+                    mEditor.insertVideo("", video);
                     videoUrl.setValue("");
                     videoSize.setVisibility(View.GONE);
                     mArchive.getVideo().add(uploaded.get(0));
@@ -627,8 +625,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public View onInitializeView() {
                 if (null == musicDialogView) {
                     musicDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_music, null);
-                    musicUrl = (ClearEditText) musicDialogView.findViewById(R.id.ui_popup_rich_editor_music_url);
-                    musicSize = (TextView) musicDialogView.findViewById(R.id.ui_popup_rich_editor_music_size);
+                    musicUrl = musicDialogView.findViewById(R.id.ui_popup_rich_editor_music_url);
+                    musicSize = musicDialogView.findViewById(R.id.ui_popup_rich_editor_music_size);
                 }
                 return musicDialogView;
             }
@@ -693,9 +691,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public View onInitializeView() {
                 if (null == videoDialogView) {
                     videoDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_video, null);
-                    //videoCover = (ClearEditText) videoDialogView.findViewById(R.id.ui_popup_rich_editor_video_cover);
-                    videoUrl = (ClearEditText) videoDialogView.findViewById(R.id.ui_popup_rich_editor_video_url);
-                    videoSize = (TextView) videoDialogView.findViewById(R.id.ui_popup_rich_editor_video_size);
+                    //videoCover =  videoDialogView.findViewById(R.id.ui_popup_rich_editor_video_cover);
+                    videoUrl = videoDialogView.findViewById(R.id.ui_popup_rich_editor_video_url);
+                    videoSize = videoDialogView.findViewById(R.id.ui_popup_rich_editor_video_size);
                 }
                 return videoDialogView;
             }
@@ -736,7 +734,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     return false;
                 }
                 if (Utils.isUrl(url)) {
-                    mEditor.insertVideo(StringHelper.getString(R.string.ui_text_archive_creator_editor_video_cover_default), url);
+                    mEditor.insertVideo("", url);
                 } else {
                     uploadType = UP_VIDEO;
                     showUploading(true);
@@ -832,60 +830,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         view.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * 获取文件路径
-     *
-     * @param data intent数据
-     * @return 文件路径
-     */
-    private String filePathFromIntent(Intent data) {
-        if (null == data) {
-            return null;
-        }
-
-        Uri uri = data.getData();
-
-        String path = null;
-        try {
-            Cursor cursor = Activity().getContentResolver().query(uri, null, null, null, null);
-            if (cursor == null) {
-                //miui 2.3 有可能为null
-                path = uri.getPath();
-            } else {
-                cursor.moveToFirst();
-                path = cursor.getString(cursor.getColumnIndex("_data")); // 文件路径
-                cursor.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return path;
-    }
-
-    private void chooseLocalVideo() {
-        //if (Build.VERSION.SDK_INT >= 19) {
-        //    chooseVideoFromLocalKitKat();
-        //} else {
-        chooseVideoFromLocalBeforeKitKat(REQUEST_VIDEO);
-        //}
-    }
-
-    /**
-     * API19 之后选择视频
-     */
-    protected void chooseVideoFromLocalKitKat() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        try {
-            startActivityForResult(intent, REQUEST_VIDEO);
-        } catch (ActivityNotFoundException e) {
-            ToastHelper.make().showMsg(com.netease.nim.uikit.R.string.gallery_invalid);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-            ToastHelper.make().showMsg("看起来您的手机无法浏览视频文件，请联系开发人员");
-        }
-    }
-
     private String getPickType(int request) {
         switch (request) {
             case REQUEST_VIDEO:
@@ -926,8 +870,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public View onInitializeView() {
                 if (null == linkDialogView) {
                     linkDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_link, null);
-                    linkLabel = (ClearEditText) linkDialogView.findViewById(R.id.ui_popup_rich_editor_link_label);
-                    linkUrl = (ClearEditText) linkDialogView.findViewById(R.id.ui_popup_rich_editor_link_url);
+                    linkLabel = linkDialogView.findViewById(R.id.ui_popup_rich_editor_link_label);
+                    linkUrl = linkDialogView.findViewById(R.id.ui_popup_rich_editor_link_url);
                 }
                 return linkDialogView;
             }
@@ -982,8 +926,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public View onInitializeView() {
                 if (null == attachmentDialogView) {
                     attachmentDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_attachment, null);
-                    attachmentDesc = (TextView) attachmentDialogView.findViewById(R.id.ui_popup_rich_editor_attachment_description);
-                    recyclerView = (RecyclerView) attachmentDialogView.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
+                    attachmentDesc = attachmentDialogView.findViewById(R.id.ui_popup_rich_editor_attachment_description);
+                    recyclerView = attachmentDialogView.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
                     recyclerView.setLayoutManager(new CustomLinearLayoutManager(recyclerView.getContext()));
                     mAdapter = new FileAdapter();
                     recyclerView.setAdapter(mAdapter);

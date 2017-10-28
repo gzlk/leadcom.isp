@@ -55,11 +55,18 @@
         app:id_image_scale_type="centerCrop"
         app:id_image_src="@mipmap/img_image_default" />
 
-    <WebView
-        android:id="@+id/ui_holder_view_archive_details_content"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white" />
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="vertical">
+
+        <WebView
+            android:id="@+id/ui_holder_view_archive_details_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white" />
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -67,6 +74,7 @@
         android:background="@color/textColorHintLightLight" />
 
     <LinearLayout
+        android:id="@+id/ui_holder_view_archive_details_additional_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -82,7 +90,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/ui_holder_view_archive_details_comment"
+                android:id="@+id/ui_tool_view_archive_additional_comment_number"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
@@ -116,8 +124,7 @@
 
         <include
             android:id="@+id/ui_holder_view_archive_details_bottom_line"
-            layout="@layout/tool_view_half_line_horizontal"
-            android:visibility="gone" />
+            layout="@layout/tool_view_half_line_horizontal" />
     </LinearLayout>
 
 </LinearLayout>

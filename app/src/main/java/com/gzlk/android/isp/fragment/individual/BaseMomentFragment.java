@@ -135,14 +135,14 @@ public abstract class BaseMomentFragment extends BaseChatInputSupportFragment {
     /**
      * 评论说说
      */
-    protected void commentMoment(String content) {
+    protected void commentMoment(String content, String toUserId) {
         CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
                 super.onResponse(comment, success, message);
                 onCommentMomentComplete(comment, success);
             }
-        }).add(Comment.Type.MOMENT, mQueryId, content);
+        }).add(Comment.Type.MOMENT, mQueryId, content, toUserId);
     }
 
     protected void onCommentMomentComplete(Comment comment, boolean success) {

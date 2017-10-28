@@ -237,7 +237,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         @Override
         public void onInputComplete(String text, int length, int type) {
             if (!isEmpty(text)) {
-                commentMoment(text);
+                commentMoment(text, "");
             }
         }
     };

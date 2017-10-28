@@ -249,7 +249,7 @@ public class Utils {
         long yesterdayStart = todayBegin - DAY;
         long beforeYesterdayStart = yesterdayStart - DAY;
         if (time > now || time <= 0) {
-            return null;
+            return JUST_NOW;
         }
         if (time > todayBegin) {
             // 今天

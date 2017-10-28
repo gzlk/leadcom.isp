@@ -1,4 +1,4 @@
-package com.gzlk.android.isp.fragment.home;
+package com.gzlk.android.isp.fragment.main;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <b>功能描述：</b>首页 - 推荐内容<br />
+ * <b>功能描述：</b>首页 - 特色推荐内容<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/05/05 15:03 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -54,7 +54,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
+public class FeaturedFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final int TYPE_NOTHING = -1;
     /**
@@ -78,8 +78,8 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_SHOWN = "title_bar_shown";
 
-    public static HomeRecommendedFragment newInstance(String params) {
-        HomeRecommendedFragment hrf = new HomeRecommendedFragment();
+    public static FeaturedFragment newInstance(String params) {
+        FeaturedFragment hrf = new FeaturedFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_TYPE, Integer.valueOf(params));
         hrf.setArguments(bundle);
@@ -113,7 +113,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
 
     private SoftReference<View> toolBarView;
 
-    public HomeRecommendedFragment setToolBar(View view) {
+    public FeaturedFragment setToolBar(View view) {
         if (null == toolBarView || null == toolBarView.get()) {
             toolBarView = new SoftReference<>(view);
         }
@@ -312,7 +312,7 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
             if (null != archive) {
                 // 打开档案详情页
                 int type = archive.getType() == RecommendArchive.RecommendType.GROUP ? Archive.Type.GROUP : Archive.Type.USER;
-                ArchiveDetailsWebViewFragment.open(HomeRecommendedFragment.this, archive.getDocId(), type);
+                ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, archive.getDocId(), type);
             } else {
                 ToastHelper.make().showMsg("无效的推荐内容");
             }
@@ -384,13 +384,13 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
             } else if (model instanceof RecommendArchive) {
                 RecommendArchive recommend = (RecommendArchive) model;
                 int type = recommend.getType() == RecommendArchive.RecommendType.USER ? Archive.Type.USER : Archive.Type.GROUP;
-                ArchiveDetailsWebViewFragment.open(HomeRecommendedFragment.this, recommend.getDocId(), type);
+                ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, recommend.getDocId(), type);
                 //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, recommend.getDocId()), true, false);
             } else if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
                 int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                ArchiveDetailsWebViewFragment.open(HomeRecommendedFragment.this, arc.getId(), type);
+                ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, arc.getId(), type);
                 //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
             } else if (model instanceof PriorityPlace) {
                 // 编辑推荐
@@ -546,21 +546,21 @@ public class HomeRecommendedFragment extends BaseSwipeRefreshSupportFragment {
             switch (viewType) {
                 case VT_HEADER:
                     if (null == homeImagesViewHolder) {
-                        homeImagesViewHolder = new HomeImagesViewHolder(itemView, HomeRecommendedFragment.this);
+                        homeImagesViewHolder = new HomeImagesViewHolder(itemView, FeaturedFragment.this);
                         homeImagesViewHolder.setOnImageClickListener(onImageClickListener);
                     }
                     return homeImagesViewHolder;
                 case VT_ACTIVITY:
-                    ActivityHomeViewHolder holder = new ActivityHomeViewHolder(itemView, HomeRecommendedFragment.this);
+                    ActivityHomeViewHolder holder = new ActivityHomeViewHolder(itemView, FeaturedFragment.this);
                     holder.addOnViewHolderClickListener(onViewHolderClickListener);
                     return holder;
                 case VT_ARCHIVE:
-                    ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, HomeRecommendedFragment.this);
+                    ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, FeaturedFragment.this);
                     ahrvh.addOnViewHolderClickListener(onViewHolderClickListener);
                     ahrvh.setOnViewHolderElementClickListener(elementClickListener);
                     return ahrvh;
                 default:
-                    ArchiveManagementViewHolder ahvh = new ArchiveManagementViewHolder(itemView, HomeRecommendedFragment.this);
+                    ArchiveManagementViewHolder ahvh = new ArchiveManagementViewHolder(itemView, FeaturedFragment.this);
                     ahvh.addOnViewHolderClickListener(onViewHolderClickListener);
                     return ahvh;
             }

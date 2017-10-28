@@ -16,6 +16,8 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
+import java.util.Random;
+
 /**
  * <b>功能描述：</b><br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -37,11 +39,13 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
     private TextView authorView;
     @ViewId(R.id.ui_holder_view_archive_details_cover)
     private ImageDisplayer coverView;
+    @ViewId(R.id.ui_holder_view_archive_details_additional_layout)
+    private LinearLayout additionalView;
     @ViewId(R.id.ui_holder_view_archive_details_content)
     private WebView contentView;
-    @ViewId(R.id.ui_holder_view_archive_details_bottom_line)
-    private View bottomLine;
     // additional
+    @ViewId(R.id.ui_tool_view_archive_additional_comment_number)
+    private TextView commentView;
     @ViewId(R.id.ui_tool_view_archive_additional_like_icon)
     private CustomTextView likeIcon;
     @ViewId(R.id.ui_tool_view_archive_additional_like_number)
@@ -76,7 +80,14 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         titleView.setText(archive.getTitle());
         timeView.setText(fragment().formatDate(archive.getCreateDate(), R.string.ui_base_text_date_time_format));
         authorView.setText(StringHelper.getString(R.string.ui_text_archive_details_author_text, archive.getUserName()));
-        coverView.displayImage(archive.getCover(), width, height, false, false);
+        String cover = archive.getCover();
+        if (isEmpty(cover)) {
+            Random random = new Random(10);
+            cover = "drawable://" + (random.nextInt() % 2 == 0 ? R.drawable.img_activity_cover_1 : R.drawable.img_activity_cover_2);
+        }
+        coverView.displayImage(cover, width, height, false, false);
+        additionalView.setVisibility((archive.getLikeNum() <= 0 && archive.getCmtNum() <= 0 && archive.getColNum() <= 0) ? View.GONE : View.VISIBLE);
+        commentView.setText(StringHelper.getString(R.string.ui_text_archive_details_comment_title, archive.getCmtNum() > 0 ? (String.valueOf(archive.getCmtNum())) : ""));
         boolean liked = archive.getLike() == Archive.LikeType.LIKED;
         likeIcon.setText(liked ? R.string.ui_icon_like_solid : R.string.ui_icon_like_hollow);
         likeIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
@@ -88,7 +99,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         String content = archive.getContent();
         contentView.setVisibility((isEmpty(content) || content.equals("null")) ? View.GONE : View.VISIBLE);
         contentView.loadData(StringHelper.getString(R.string.ui_text_archive_details_content_html, content), "text/html; charset=UTF-8", null);
-        bottomLine.setVisibility(archive.getCmtNum() > 0 ? View.VISIBLE : View.GONE);
+        //bottomLine.setVisibility(archive.getCmtNum() > 0 ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_tool_view_archive_additional_like_layout, R.id.ui_tool_view_archive_additional_collection_layout})

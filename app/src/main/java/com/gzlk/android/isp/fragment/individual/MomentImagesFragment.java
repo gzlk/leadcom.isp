@@ -263,7 +263,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
             // 发布对本说说的评论
             String result = getResultedData(data);
             if (!isEmpty(result)) {
-                commentMoment(result);
+                commentMoment(result, "");
             }
         }
         super.onActivityResult(requestCode, data);

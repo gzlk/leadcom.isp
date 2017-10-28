@@ -76,6 +76,7 @@ public class CommentRequest extends Request<Comment> {
                 return "userDocId";
         }
     }
+
     /**
      * 获取档案评论的id
      * <ul>
@@ -115,14 +116,17 @@ public class CommentRequest extends Request<Comment> {
     /**
      * 新增档案的评论
      */
-    public void add(int type, String archiveId, String content) {
-        // {userDocId,content,accessToken}
-        // {groDocId,content,accessToken}
-        // {momentId,content,accessToken}
+    public void add(int type, String archiveId, String content, String toUserId) {
+        // {momentId,content,toUserId}
+        // {userDocId,content,toUserId}
+        // {groDocId,content,toUserId}
         JSONObject object = new JSONObject();
         try {
             object.put(getArchiveId(type), archiveId)
                     .put("content", checkNull(content));
+            if (!isEmpty(toUserId)) {
+                object.put("toUserId", toUserId);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

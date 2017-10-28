@@ -10,10 +10,6 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
-import com.gzlk.android.isp.fragment.home.HomeArchiveFragment;
-import com.gzlk.android.isp.fragment.home.HomeActivityFragment;
-import com.gzlk.android.isp.fragment.home.MomentFragment;
-import com.gzlk.android.isp.fragment.home.HomeRecommendedFragment;
 import com.gzlk.android.isp.holder.common.HorizontalRecyclerViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -67,13 +63,7 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
 
     @Override
     protected void initializeFragments() {
-        mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_ALL)));
-        // 首页公开的活动列表
-        //mFragments.add(new HomeActivityFragment());
-        // 首页公开的档案列表
-        //mFragments.add(new HomeArchiveFragment());
-        //mFragments.add(HomeRecommendedFragment.newInstance(String.valueOf(HomeRecommendedFragment.TYPE_EDITOR)));
-        //mFragments.add(new MomentFragment());
+        mFragments.add(FeaturedFragment.newInstance(String.valueOf(FeaturedFragment.TYPE_ALL)));
     }
 
     @Override

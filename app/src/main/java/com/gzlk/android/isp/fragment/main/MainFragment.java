@@ -9,16 +9,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
-import com.gzlk.android.isp.fragment.home.HomeRecommendedFragment;
 import com.gzlk.android.isp.fragment.individual.SettingFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
-import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.listener.NotificationChangeHandleCallback;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.hlk.hlklib.lib.inject.Click;
@@ -141,7 +138,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         leftIcon.setText(R.string.ui_icon_query);
         leftText.setText(null);
         rightIconContainer.setVisibility(View.GONE);
-        ((HomeRecommendedFragment) mFragments.get(0)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
+        ((FeaturedFragment) mFragments.get(0)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
         ((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground);
     }
 
@@ -159,7 +156,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
             // 档案推荐
-            mFragments.add(HomeRecommendedFragment.newInstance(format("%d", HomeRecommendedFragment.TYPE_ARCHIVE)));
+            mFragments.add(FeaturedFragment.newInstance(format("%d", FeaturedFragment.TYPE_ARCHIVE)));
             mFragments.add(new ActivityFragment());
             mFragments.add(new OrganizationFragment());
             mFragments.add(new IndividualFragment());
@@ -247,8 +244,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             if (i == 2 || fragment instanceof IndividualFragment) {
                 // 个人界面已经显示了，此时不再需要改变标题栏背景
                 needHandleTitleBar = !((IndividualFragment) mFragments.get(3)).isTitleBarShown();
-            } else if (i == 1 || fragment instanceof HomeRecommendedFragment) {
-                needHandleTitleBar = !((HomeRecommendedFragment) mFragments.get(0)).isTitleBarShown();
+            } else if (i == 1 || fragment instanceof FeaturedFragment) {
+                needHandleTitleBar = !((FeaturedFragment) mFragments.get(0)).isTitleBarShown();
             }
             fragment.setViewPagerDisplayedCurrent(position == i);
         }
@@ -315,7 +312,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
     private boolean isTitleBarShown() {
         if (getDisplayedPage() == 0) {
-            return ((HomeRecommendedFragment) mFragments.get(0)).isTitleBarShown();
+            return ((FeaturedFragment) mFragments.get(0)).isTitleBarShown();
         } else if (getDisplayedPage() == 3) {
             return ((IndividualFragment) mFragments.get(3)).isTitleBarShown();
         }
