@@ -332,7 +332,7 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
         collectNumber.setText(String.valueOf(archive.getColNum()));
 
         boolean liked = archive.getLike() == Archive.LikeType.LIKED;
-        likeIcon.setText(liked ? R.string.ui_icon_heart_solid : R.string.ui_icon_heart_hollow);
+        likeIcon.setText(liked ? R.string.ui_icon_like_solid : R.string.ui_icon_like_hollow);
         likeIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
 
         liked = archive.getCollection() == Archive.CollectionType.COLLECTED;

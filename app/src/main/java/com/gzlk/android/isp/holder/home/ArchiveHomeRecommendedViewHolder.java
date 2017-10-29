@@ -89,7 +89,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
 
         likesView.setText(String.valueOf(doc.getAddition().getLikeNum()));
         boolean liked = doc.getLike() == Archive.LikeType.LIKED;
-        likeIcon.setText(liked ? R.string.ui_icon_heart_solid : R.string.ui_icon_heart_hollow);
+        likeIcon.setText(liked ? R.string.ui_icon_like_solid : R.string.ui_icon_like_hollow);
         likeIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
 
         liked = doc.getCollection() == Archive.CollectionType.COLLECTED;

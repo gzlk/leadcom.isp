@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model.archive;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.organization.Organization;
 import com.gzlk.android.isp.model.user.User;
+import com.hlk.hlklib.lib.inject.Click;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -48,6 +49,34 @@ public class RecommendArchive extends Model {
         int RECOMMENDED = 1;
     }
 
+    /**
+     * 档案的推荐审核状态
+     */
+    public interface Check {
+        /**
+         * 推荐档案未通过审核
+         */
+        int UNCHECKED = 0;
+        /**
+         * 推荐档案已通过审核
+         */
+        int CHECKED = 1;
+    }
+
+    /**
+     * 推荐是否审核
+     */
+    public interface Handle {
+        /**
+         * 未审核
+         */
+        int UNHANDLED = 0;
+        /**
+         * 已审核
+         */
+        int HANDLED = 1;
+    }
+
     @Column(Archive.Field.Type)
     private int type;                   //档案类型(1.组织档案,2.个人档案)
     @Column(Organization.Field.GroupId)
@@ -77,7 +106,11 @@ public class RecommendArchive extends Model {
     @Column(Archive.Field.Recommend)
     private int recommend;              //当前组织是否推荐(0.未推荐,1.已推荐)
     @Column(Archive.Field.Check)
-    private int check;                  // 档案是否已审核(0.未审核,1.已审核)
+    private int check;                  // 审核是否通过(0.未通过,1.已通过)
+    @Column(Archive.Field.Sort)
+    private int sort;                   // 排序(数值型)
+    @Column(Archive.Field.Handle)
+    private int handle;                 // 推荐是否审核(0.未审核,1.已审核)
 
     public Archive getDoc() {
         return null == userDoc ? groDoc : userDoc;
@@ -205,11 +238,39 @@ public class RecommendArchive extends Model {
         this.recommend = recommend;
     }
 
+    public boolean isRecommended() {
+        return recommend == RecommendStatus.RECOMMENDED;
+    }
+
     public int getCheck() {
         return check;
     }
 
     public void setCheck(int check) {
         this.check = check;
+    }
+
+    public boolean isCheck() {
+        return check == Check.CHECKED;
+    }
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
+
+    public int getHandle() {
+        return handle;
+    }
+
+    public void setHandle(int handle) {
+        this.handle = handle;
+    }
+
+    public boolean isHandle() {
+        return handle == Handle.HANDLED;
     }
 }
