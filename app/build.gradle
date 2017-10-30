@@ -137,8 +137,8 @@ dependencies {
 
     // richeditor
     compile(name: 'richeditor-release', ext: 'aar')
-    compile(name: 'hlklib-release', ext: 'aar')
-    compile 'com.facebook.rebound:rebound:0.3.8'
+//    compile(name: 'hlklib-release', ext: 'aar')
+//    compile 'com.facebook.rebound:rebound:0.3.8'
 
     compile 'com.android.support:appcompat-v7:27.0.0'
     compile 'com.android.support:cardview-v7:27.0.0'
@@ -150,9 +150,9 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     // Google自动换行的layout
     compile 'com.google.android:flexbox:0.3.0'
-//    compile('com.github.hsiangleekwok:hlklib:1.0.6.3-SNAPSHOT') {
-////        changing = true;
-//    }
+    compile('com.github.hsiangleekwok:hlklib:1.0.6.3-SNAPSHOT') {
+//        changing = true;
+    }
     // jMail
     // https://mvnrepository.com/artifact/com.sun.mail/android-mail
     compile group: 'com.sun.mail', name: 'android-mail', version: '1.6.0-rc2'
@@ -214,8 +214,8 @@ dependencies {
     //compile(name: 'android-swipelayout-library-release', ext: 'aar')
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
     // 动画集合
-    compile 'com.daimajia.easing:library:2.0@aar'
-    compile 'com.daimajia.androidanimations:library:2.2@aar'
+    compile 'com.daimajia.easing:library:2.1@aar'
+    compile 'com.daimajia.androidanimations:library:2.3@aar'
 
     // 文件管理器
     compile(name: 'filepicker-release', ext: 'aar')
