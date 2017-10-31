@@ -112,6 +112,22 @@ public class Collection extends Model {
         int TOPIC = 5;
     }
 
+    public static Collection get(Archive archive) {
+        Collection col = new Collection();
+        col.setType(null == archive.getGroEntity() ? Type.USER_ARCHIVE : Type.GROUP_ARCHIVE);
+        col.setSourceType(null == archive.getGroEntity() ? SourceType.USER_ARCHIVE : SourceType.GROUP_ARCHIVE);
+        // 组织档案/个人档案不需要content
+        col.setContent("");
+        col.setCreatorId(archive.getUserId());
+        col.setCreatorName(archive.getUserName());
+        col.setCreatorHeadPhoto(archive.getHeadPhoto());
+
+        col.setSourceId(archive.getId());
+        col.setSourceTitle(archive.getTitle());
+        col.setLabel(archive.getLabel());
+        return col;
+    }
+
     //收藏的类型(1.文本,2.文档,3.图片,4.视频,5.附件,6.音频,7.位置,11.个人档案,12.组织档案,13.个人动态)
     @Column(Archive.Field.Type)
     private int type;
@@ -168,6 +184,9 @@ public class Collection extends Model {
     }
 
     public ArrayList<String> getLabel() {
+        if (null == label) {
+            label = new ArrayList<>();
+        }
         return label;
     }
 

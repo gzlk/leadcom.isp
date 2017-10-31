@@ -85,15 +85,15 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         // 去掉所有html标签
         contentView.setVisibility(isEmpty(doc.getContent()) ? View.GONE : View.VISIBLE);
         contentView.setText(isEmpty(doc.getContent()) ? "" : Utils.clearHtml(doc.getContent()));
-        commentsView.setText(String.valueOf(doc.getAddition().getCmtNum()));
+        commentsView.setText(String.valueOf(doc.getCmtNum()));
 
-        likesView.setText(String.valueOf(doc.getAddition().getLikeNum()));
+        likesView.setText(String.valueOf(doc.getLikeNum()));
         boolean liked = doc.getLike() == Archive.LikeType.LIKED;
         likeIcon.setText(liked ? R.string.ui_icon_like_solid : R.string.ui_icon_like_hollow);
         likeIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
 
         liked = doc.getCollection() == Archive.CollectionType.COLLECTED;
-        collectsView.setText(String.valueOf(doc.getAddition().getColNum()));
+        collectsView.setText(String.valueOf(doc.getColNum()));
         collectIcon.setText(liked ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
         collectIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
     }

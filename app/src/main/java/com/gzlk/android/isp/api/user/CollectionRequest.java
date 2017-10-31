@@ -107,6 +107,28 @@ public class CollectionRequest extends Request<Collection> {
         httpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
+    public void add(Collection collection, Position position) {
+        // {type,content,creatorId,creatorName,creatorHeadPhoto,sourceType,sourceId,sourceTitle,[label],{position}}
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("type", collection.getType())
+                    .put("content", checkNull(collection.getContent()))
+                    .put("creatorId", checkNull(collection.getCreatorId()))
+                    .put("creatorName", checkNull(collection.getCreatorName()))
+                    .put("creatorHeadPhoto", checkNull(collection.getCreatorHeadPhoto()))
+                    .put("sourceType", collection.getSourceType())
+                    .put("sourceId", collection.getSourceId())
+                    .put("sourceTitle", checkNull(collection.getSourceTitle()))
+                    .put("label", new JSONArray(collection.getLabel()))
+                    .put("position", new JSONObject(Position.toJson(position)));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+    }
+
     /**
      * 删除收藏
      */

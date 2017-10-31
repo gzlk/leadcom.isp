@@ -81,6 +81,7 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
 
     private void saveArchive(Archive archive) {
         if (null != archive) {
+            archive.resetAdditional(archive.getAddition());
             if (null == dao) {
                 dao = new Dao<>(Archive.class);
             }

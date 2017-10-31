@@ -757,6 +757,10 @@ public class Archive extends Additional {
         return likeId;
     }
 
+    public boolean isCollected() {
+        return collection == CollectionType.COLLECTED;
+    }
+
     public void setLikeId(String likeId) {
         this.likeId = likeId;
     }
@@ -767,6 +771,10 @@ public class Archive extends Additional {
 
     public void setLike(int like) {
         this.like = like;
+    }
+
+    public boolean isLiked() {
+        return like == LikeType.LIKED;
     }
 
     public Organization getGroEntity() {

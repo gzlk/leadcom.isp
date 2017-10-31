@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.helper.publishable;
 
 import com.gzlk.android.isp.api.archive.CommentRequest;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
@@ -8,6 +9,8 @@ import com.gzlk.android.isp.helper.publishable.listener.OnCommentListListener;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Moment;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>评论发布helper<br />
@@ -20,21 +23,19 @@ import com.gzlk.android.isp.model.user.Moment;
  * <b>修改备注：</b><br />
  */
 
-public class CommentHelper {
+public class CommentHelper extends Publishable{
 
     public static CommentHelper helper() {
         return new CommentHelper();
     }
 
-    private Archive mArchive;
-
+    @Override
     public CommentHelper setArchive(Archive archive) {
         mArchive = archive;
         return this;
     }
 
-    private Moment mMoment;
-
+    @Override
     public CommentHelper setMoment(Moment moment) {
         mMoment = moment;
         return this;
@@ -78,7 +79,9 @@ public class CommentHelper {
                 super.onResponse(comment, success, message);
                 if (null != addListener) {
                     if (null != mArchive) {
-                        mArchive.setCmtNum(mArchive.getCmtNum() + 1);
+                        if (success) {
+                            mArchive.setCmtNum(mArchive.getCmtNum() + 1);
+                        }
                         addListener.onComplete(success, comment, mArchive);
                     } else if (null != mMoment) {
                     }
@@ -94,13 +97,30 @@ public class CommentHelper {
                 super.onResponse(comment, success, message);
                 if (null != deleteListener) {
                     if (null != mArchive) {
-                        int cmt = mArchive.getCmtNum() - 1;
-                        mArchive.setCmtNum(cmt >= 0 ? cmt : 0);
+                        if (success) {
+                            int cmt = mArchive.getCmtNum() - 1;
+                            if (cmt <= 0) {
+                                cmt = 0;
+                            }
+                            mArchive.setCmtNum(cmt);
+                        }
                         deleteListener.onDeleted(success, mArchive);
                     } else if (null != mMoment) {
                     }
                 }
             }
         }).delete(commentType, archiveId, commentId);
+    }
+
+    public void list(int commentType, String archiveId, int pageNumber) {
+        CommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
+            @Override
+            public void onResponse(List<Comment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (null != listListener) {
+                    listListener.onList(list, success, pageSize);
+                }
+            }
+        }).list(commentType, archiveId, pageNumber);
     }
 }

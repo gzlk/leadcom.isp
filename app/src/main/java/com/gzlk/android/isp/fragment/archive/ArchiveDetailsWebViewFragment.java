@@ -10,8 +10,6 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
-import com.gzlk.android.isp.api.archive.CommentRequest;
-import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
@@ -19,8 +17,16 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.publishable.CollectHelper;
 import com.gzlk.android.isp.helper.publishable.CommentHelper;
+import com.gzlk.android.isp.helper.publishable.LikeHelper;
+import com.gzlk.android.isp.helper.publishable.listener.OnCollectedListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnCommentListListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnUncollectedListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsViewHolder;
@@ -30,6 +36,7 @@ import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
+import com.gzlk.android.isp.model.user.Collection;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
@@ -141,6 +148,8 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
     private CommentHelper commentHelper;
+    private LikeHelper likeHelper;
+    private CollectHelper collectHelper;
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -196,7 +205,10 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
         }
     };
 
-    @Click({R.id.ui_tool_view_archive_additional_comment_layout, R.id.ui_tool_view_simple_inputable_send})
+    @Click({R.id.ui_tool_view_archive_additional_comment_layout,
+            R.id.ui_tool_view_archive_additional_like_layout,
+            R.id.ui_tool_view_archive_additional_collection_layout,
+            R.id.ui_tool_view_simple_inputable_send})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_tool_view_simple_inputable_send:
@@ -208,6 +220,77 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                 restoreInputStatus();
                 showInputBoard(true);
                 break;
+            case R.id.ui_tool_view_archive_additional_like_layout:
+                checkLikeStatus();
+                break;
+            case R.id.ui_tool_view_archive_additional_collection_layout:
+                checkCollectStatus();
+                break;
+        }
+    }
+
+    private void checkLikeStatus() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        if (archive.isLiked()) {
+            // 取消赞
+            setLoadingText(R.string.ui_text_archive_details_unliking);
+            displayLoading(true);
+            likeHelper.setUnlikeListener(new OnUnlikeListener() {
+                @Override
+                public void onUnlike(boolean success, Model model) {
+                    displayLoading(false);
+                    if (success) {
+                        mAdapter.update(model);
+                        displayAdditional((Archive) model);
+                    }
+                }
+            }).unlike(commentType(), mQueryId);
+        } else {
+            // 赞
+            setLoadingText(R.string.ui_text_archive_details_liking);
+            displayLoading(true);
+            likeHelper.setLikeListener(new OnLikeListener() {
+                @Override
+                public void onLiked(boolean success, Model model) {
+                    displayLoading(false);
+                    if (success) {
+                        mAdapter.update(model);
+                        displayAdditional((Archive) model);
+                    }
+                }
+            }).like(commentType(), mQueryId);
+        }
+    }
+
+    private void checkCollectStatus() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        if (archive.isCollected()) {
+            // 取消收藏
+            setLoadingText(R.string.ui_text_archive_details_uncollecting);
+            displayLoading(true);
+            collectHelper.setUncollectedListener(new OnUncollectedListener() {
+                @Override
+                public void onUncollected(boolean success, Model model) {
+                    displayLoading(false);
+                    if (success) {
+                        mAdapter.update(model);
+                        displayAdditional((Archive) model);
+                    }
+                }
+            }).uncollect(archive.getColId());
+        } else {
+            setLoadingText(R.string.ui_text_archive_details_collecting);
+            displayLoading(true);
+            collectHelper.setCollectedListener(new OnCollectedListener() {
+                @Override
+                public void onCollected(boolean success, Model model) {
+                    displayLoading(false);
+                    if (success) {
+                        mAdapter.update(model);
+                        displayAdditional((Archive) model);
+                    }
+                }
+            }).collect(Collection.get(archive));
         }
     }
 
@@ -281,6 +364,22 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
         }).comment(commentType(), content, toUserId);
     }
 
+    private void deleteComment(final int index, String commentId) {
+        setLoadingText(R.string.ui_text_archive_details_comment_deleting);
+        displayLoading(true);
+        commentHelper.setCommentDeleteListener(new OnCommentDeleteListener() {
+            @Override
+            public void onDeleted(boolean success, Model model) {
+                displayLoading(false);
+                if (success) {
+                    mAdapter.remove(index);
+                    mAdapter.update(model);
+                    displayAdditional((Archive) model);
+                }
+            }
+        }).delete(commentType(), mQueryId, commentId);
+    }
+
     private int commentType() {
         return archiveType == Archive.Type.GROUP ? Comment.Type.GROUP : Comment.Type.USER;
     }
@@ -289,13 +388,16 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
         mAdapter.remove(nothingMore);
         setLoadingText(R.string.ui_text_document_details_loading_comments);
         displayLoading(true);
-        CommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
+        commentHelper.setCommentListListener(new OnCommentListListener() {
             @Override
-            public void onResponse(List<Comment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+            public void onList(List<Comment> list, boolean success, int pageSize) {
                 displayLoading(false);
-                isLoadingComplete(null == list || list.size() < pageSize);
+                int size = null == list ? 0 : list.size();
+                isLoadingComplete(size < pageSize);
                 if (success && null != list) {
+                    // 下一页
+                    remotePageNumber += size >= pageSize ? 1 : 0;
+
                     for (Comment comment : list) {
                         mAdapter.update(comment);
                     }
@@ -321,6 +423,12 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                     displayAdditional(archive);
                     if (null == commentHelper) {
                         commentHelper = CommentHelper.helper().setArchive(archive);
+                    }
+                    if (null == likeHelper) {
+                        likeHelper = LikeHelper.helper().setArchive(archive);
+                    }
+                    if (null == collectHelper) {
+                        collectHelper = CollectHelper.helper().setArchive(archive);
                     }
                     loadingComments();
                 }
@@ -376,32 +484,17 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                     // 删除评论
                     deleteComment(index, mAdapter.get(index).getId());
                     break;
+                case R.id.ui_tool_view_archive_additional_like_layout:
+                    // 点赞
+                    checkLikeStatus();
+                    break;
+                case R.id.ui_tool_view_archive_additional_collection_layout:
+                    // 收藏
+                    checkCollectStatus();
+                    break;
             }
         }
     };
-
-    private void deleteComment(final int index, String commentId) {
-        setLoadingText(R.string.ui_text_archive_details_comment_deleting);
-        displayLoading(true);
-        CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
-            @Override
-            public void onResponse(Comment comment, boolean success, String message) {
-                super.onResponse(comment, success, message);
-                displayLoading(false);
-                if (success) {
-                    mAdapter.remove(index);
-                    Archive archive = (Archive) mAdapter.get(mQueryId);
-                    int cmtNum = archive.getCmtNum() - 1;
-                    if (cmtNum <= 0) {
-                        cmtNum = 0;
-                    }
-                    archive.setCmtNum(cmtNum);
-                    mAdapter.update(archive);
-                    displayAdditional(archive);
-                }
-            }
-        }).delete(commentType(), mQueryId, commentId);
-    }
 
     private void showInputBoard(boolean showInput) {
         additionalLayout.setVisibility(showInput ? View.GONE : View.VISIBLE);

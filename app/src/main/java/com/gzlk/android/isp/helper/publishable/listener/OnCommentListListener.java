@@ -18,6 +18,10 @@ import java.util.List;
 public interface OnCommentListListener {
     /**
      * 评论列表
+     *
+     * @param list     拉取到的评论列表
+     * @param success  api是否调用成功
+     * @param pageSize 页码大小
      */
-    void onList(List<Comment> list);
+    void onList(List<Comment> list, boolean success, int pageSize);
 }
