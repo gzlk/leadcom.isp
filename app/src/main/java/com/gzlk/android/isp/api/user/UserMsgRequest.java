@@ -67,13 +67,13 @@ public class UserMsgRequest extends Request<UserMessage> {
      * 删除某条消息
      */
     public void delete(String msgId) {
-        httpRequest(getRequest(SingleMsg.class, format("%s?userInfoId=%s", url(LIST), msgId), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleMsg.class, format("%s?userInfoId=%s", url(DELETE), msgId), "", HttpMethods.Get));
     }
 
     /**
      * 情况消息
      */
     public void clear() {
-        httpRequest(getRequest(SingleMsg.class, format("%sByUser", url(LIST)), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleMsg.class, format("%sByUser", url(DELETE + "ByUser")), "", HttpMethods.Get));
     }
 }

@@ -66,6 +66,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
 
     private static final String PARAM_SELECTED = "upf_selected_index";
     private static final String PARAM_DELETED = "upf_deleted_index";
+    // 是否显示原有的固定属性列表
+    public static final boolean showStaticItems = false;
 
     public static UserPropertyFragment newInstance(String params) {
         UserPropertyFragment mf = new UserPropertyFragment();
@@ -404,74 +406,75 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             mAdapter.notifyItemChanged(1);
         }
 
-        // 性别
-        if (mAdapter.getItemCount() < 3) {
-            mAdapter.add(new Model() {{
-                setId(format(items[2], isEmpty(user.getSex()) ? invalid : user.getSex()));
-            }});
-        } else {
-            mAdapter.get(2).setId(format(items[2], isEmpty(user.getSex()) ? invalid : user.getSex()));
-            mAdapter.notifyItemChanged(2);
-        }
+        if (showStaticItems) {
+            // 性别
+            if (mAdapter.getItemCount() < 3) {
+                mAdapter.add(new Model() {{
+                    setId(format(items[2], isEmpty(user.getSex()) ? invalid : user.getSex()));
+                }});
+            } else {
+                mAdapter.get(2).setId(format(items[2], isEmpty(user.getSex()) ? invalid : user.getSex()));
+                mAdapter.notifyItemChanged(2);
+            }
 
-        // 生日
-        birthday = user.getBirthday();
-        if (mAdapter.getItemCount() < 4) {
-            mAdapter.add(new Model() {{
-                setId(format(items[3], getBirthday(user)));
-            }});
-        } else {
-            mAdapter.get(3).setId(format(items[3], getBirthday(user)));
-            mAdapter.notifyItemChanged(3);
-        }
+            // 生日
+            birthday = user.getBirthday();
+            if (mAdapter.getItemCount() < 4) {
+                mAdapter.add(new Model() {{
+                    setId(format(items[3], getBirthday(user)));
+                }});
+            } else {
+                mAdapter.get(3).setId(format(items[3], getBirthday(user)));
+                mAdapter.notifyItemChanged(3);
+            }
 
-        // 身份证
-        if (mAdapter.getItemCount() < 5) {
-            mAdapter.add(new Model() {{
-                setId(format(items[4], isEmpty(user.getIdNum()) ? invalid : user.getIdNum()));
-            }});
-        } else {
-            mAdapter.get(4).setId(format(items[4], isEmpty(user.getIdNum()) ? invalid : user.getIdNum()));
-            mAdapter.notifyItemChanged(4);
-        }
+            // 身份证
+            if (mAdapter.getItemCount() < 5) {
+                mAdapter.add(new Model() {{
+                    setId(format(items[4], isEmpty(user.getIdNum()) ? invalid : user.getIdNum()));
+                }});
+            } else {
+                mAdapter.get(4).setId(format(items[4], isEmpty(user.getIdNum()) ? invalid : user.getIdNum()));
+                mAdapter.notifyItemChanged(4);
+            }
 
-        // 单位
-        if (mAdapter.getItemCount() < 6) {
-            mAdapter.add(new Model() {{
-                setId(format(items[5], isEmpty(user.getCompany()) ? invalid : user.getCompany()));
-            }});
-        } else {
-            mAdapter.get(5).setId(format(items[5], isEmpty(user.getCompany()) ? invalid : user.getCompany()));
-            mAdapter.notifyItemChanged(5);
-        }
+            // 单位
+            if (mAdapter.getItemCount() < 6) {
+                mAdapter.add(new Model() {{
+                    setId(format(items[5], isEmpty(user.getCompany()) ? invalid : user.getCompany()));
+                }});
+            } else {
+                mAdapter.get(5).setId(format(items[5], isEmpty(user.getCompany()) ? invalid : user.getCompany()));
+                mAdapter.notifyItemChanged(5);
+            }
 
-        // 职务
-        if (mAdapter.getItemCount() < 7) {
-            mAdapter.add(new Model() {{
-                setId(format(items[6], isEmpty(user.getPosition()) ? invalid : user.getPosition()));
-            }});
-        } else {
-            mAdapter.get(6).setId(format(items[6], isEmpty(user.getPosition()) ? invalid : user.getPosition()));
-            mAdapter.notifyItemChanged(6);
-        }
+            // 职务
+            if (mAdapter.getItemCount() < 7) {
+                mAdapter.add(new Model() {{
+                    setId(format(items[6], isEmpty(user.getPosition()) ? invalid : user.getPosition()));
+                }});
+            } else {
+                mAdapter.get(6).setId(format(items[6], isEmpty(user.getPosition()) ? invalid : user.getPosition()));
+                mAdapter.notifyItemChanged(6);
+            }
 
-        // 注册时间
-        if (mAdapter.getItemCount() < 8) {
-            mAdapter.add(new Model() {{
-                setId(format(items[7], isEmpty(user.getCreateDate()) ? "-" : user.getCreateDate().substring(0, 10)));
-            }});
-        }
+            // 注册时间
+            if (mAdapter.getItemCount() < 8) {
+                mAdapter.add(new Model() {{
+                    setId(format(items[7], isEmpty(user.getCreateDate()) ? "-" : user.getCreateDate().substring(0, 10)));
+                }});
+            }
 
-        // 电话
-        if (mAdapter.getItemCount() < 9) {
-            mAdapter.add(new Model() {{
-                setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
-            }});
-        } else {
-            mAdapter.get(8).setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
-            mAdapter.notifyItemChanged(8);
+            // 电话
+            if (mAdapter.getItemCount() < 9) {
+                mAdapter.add(new Model() {{
+                    setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
+                }});
+            } else {
+                mAdapter.get(8).setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
+                mAdapter.notifyItemChanged(8);
+            }
         }
-
         // 自定义属性
         clearExtras();
         for (UserExtra extra : user.getExtra()) {

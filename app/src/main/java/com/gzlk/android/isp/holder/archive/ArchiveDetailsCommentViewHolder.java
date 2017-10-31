@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -72,7 +73,8 @@ public class ArchiveDetailsCommentViewHolder extends BaseViewHolder {
         nameView.setText(Html.fromHtml(text));
         timeView.setText(fragment().formatTimeAgo(comment.getCreateDate()));
         contentView.setText(comment.getContent());
-        deleteView.setVisibility(deletable ? View.VISIBLE : View.GONE);
+        // 档案作者可以删除所有评论，评论作者可以删除自己的评论
+        deleteView.setVisibility(deletable ? View.VISIBLE : (comment.getUserId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE));
     }
 
     @Click({R.id.ui_holder_view_archive_details_comment_layout, R.id.ui_holder_view_archive_details_comment_delete})

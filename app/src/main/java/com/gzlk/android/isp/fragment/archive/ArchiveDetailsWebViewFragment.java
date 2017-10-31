@@ -19,6 +19,8 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.publishable.CommentHelper;
+import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsViewHolder;
@@ -138,6 +140,7 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
     private DetailsAdapter mAdapter;
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
+    private CommentHelper commentHelper;
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -151,7 +154,7 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override
@@ -257,28 +260,25 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
     private void sendComment(String content, String toUserId) {
         setLoadingText(R.string.ui_text_archive_details_comment_sending);
         displayLoading(true);
-        CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
+        commentHelper.setCommentAddListener(new OnCommentAddListener() {
             @Override
-            public void onResponse(Comment comment, boolean success, String message) {
-                super.onResponse(comment, success, message);
+            public void onComplete(boolean success, Comment comment, Model model) {
                 displayLoading(false);
                 if (success) {
                     inputContent.setText("");
-                    restoreInputStatus();
                     if (null != comment && !isEmpty(comment.getId())) {
                         mAdapter.add(comment, mAdapter.getItemCount() - 1);
-                        Archive archive = (Archive) mAdapter.get(mQueryId);
-                        // 评论数+1并且直接显示
-                        archive.setCmtNum(archive.getCmtNum() + 1);
-                        mAdapter.update(archive);
-                        displayAdditional(archive);
+                        mAdapter.update(model);
+                        displayAdditional((Archive) model);
                         smoothScrollToBottom(mAdapter.getItemCount() - 1);
+                        restoreInputStatus();
                     } else {
                         loadingComments();
+                        restoreInputStatus();
                     }
                 }
             }
-        }).add(commentType(), mQueryId, content, toUserId);
+        }).comment(commentType(), content, toUserId);
     }
 
     private int commentType() {
@@ -319,6 +319,9 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                     deletable = archive.getUserId().equals(Cache.cache().userId);
                     mAdapter.update(archive);
                     displayAdditional(archive);
+                    if (null == commentHelper) {
+                        commentHelper = CommentHelper.helper().setArchive(archive);
+                    }
                     loadingComments();
                 }
             }

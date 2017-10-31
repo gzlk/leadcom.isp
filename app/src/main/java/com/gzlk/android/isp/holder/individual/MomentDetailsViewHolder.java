@@ -77,7 +77,7 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
                         Moment moment = (Moment) object;
                         int index = moment.getImage().indexOf(url);
                         if (isToDetails) {
-                            // 到图片详情页
+                            // 到说说图片详情页
                             MomentImagesFragment.open(fragment(), moment.getId(), index);
                         } else {
                             ImageViewerFragment.open(fragment(), index, moment.getImage());
@@ -91,6 +91,9 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         imageLine3.setOnImageClickListener(onImageClickListener);
     }
 
+    /**
+     * 设置点击图片时是否打开说说的图片详情页还是打开图片浏览页
+     */
     public void setToDetails(boolean to) {
         isToDetails = to;
     }

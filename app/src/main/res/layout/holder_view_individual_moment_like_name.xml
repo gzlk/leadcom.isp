@@ -56,7 +56,7 @@
 
         <include
             android:id="@+id/ui_holder_view_individual_moment_like_name_line"
-            layout="@layout/tool_view_half_line_horizontal"
+            layout="@layout/tool_view_half_line_horizontal_dark"
             android:visibility="gone" />
     </LinearLayout>
 

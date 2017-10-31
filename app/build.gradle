@@ -120,7 +120,6 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-    google()
 }
 //configurations.all {
 //    resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'

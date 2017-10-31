@@ -26,7 +26,6 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
-    buildToolsVersion '26.0.2'
 }
 
 dependencies {
@@ -36,14 +35,12 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
 
     compile 'me.everything:overscroll-decor-android:1.0.4'
-    compile 'com.github.bumptech.glide:glide:4.0.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.2'
 
     // 添加网易云信依赖。注意，版本号必须一致。
     // 基础功能 (必需)
     compile 'com.netease.nimlib:basesdk:3.8.0'
-    // 音视频需要
-    //compile 'com.netease.nimlib:avchat:3.8.0'
     // 全文检索服务需要
     compile 'com.netease.nimlib:lucene:3.8.0'
 
