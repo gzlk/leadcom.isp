@@ -44,6 +44,9 @@
     <string name="ui_individual_moment_list_user_not_exists">该用户不存在</string>
     <string name="ui_individual_moment_list_nothing">他目前还没有发布过任何内容</string>
     <string name="ui_individual_moment_list_loading">正在加载列表，请稍候&#8230;</string>
+    <string name="ui_individual_moment_list_commenting">发布评论请稍候&#8230;</string>
+    <string name="ui_individual_moment_list_comment_delete_warning">删除这条评论</string>
+    <string name="ui_individual_moment_list_comment_deleting">删除评论请稍候&#8230;</string>
     <string name="ui_individual_moment_comment_hint">输入评论内容</string>
     <string name="ui_individual_moment_comment_content_only_name" formatted="false">
         <![CDATA[<font color="#3cbaff">%s：</font>%s]]>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_holder_view_individual_moment_comment_name_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
@@ -23,6 +24,7 @@
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:layout_weight="1"
             android:background="@color/textColorHintLightLight"
+            android:paddingBottom="@dimen/ui_static_dp_3"
             android:paddingEnd="@dimen/ui_static_dp_3"
             android:paddingStart="@dimen/ui_static_dp_3"
             android:text="@string/app_name_default"

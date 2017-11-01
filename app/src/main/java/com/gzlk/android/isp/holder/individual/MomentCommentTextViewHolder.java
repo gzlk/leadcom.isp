@@ -9,6 +9,7 @@ import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 
@@ -44,5 +45,12 @@ public class MomentCommentTextViewHolder extends BaseViewHolder {
         }
         commentView.setText(EmojiUtility.getEmojiString(commentView.getContext(), text, true));
         lastPadding.setVisibility(comment.isLast() ? View.VISIBLE : View.GONE);
+    }
+
+    @Click({R.id.ui_holder_view_individual_moment_comment_name_container})
+    private void elementClick(View view) {
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+        }
     }
 }

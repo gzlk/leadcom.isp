@@ -95,7 +95,7 @@ public class CommentHelper extends Publishable {
         }).add(commentType, getHostId(), content, toUserId);
     }
 
-    public void delete(int commentType, String archiveId, String commentId) {
+    public void delete(int commentType, String archiveId, final String commentId) {
         CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
@@ -111,6 +111,14 @@ public class CommentHelper extends Publishable {
                         }
                         deleteListener.onDeleted(success, mArchive);
                     } else if (null != mMoment) {
+                        if (success) {
+                            int cmt = mMoment.getCmtNum() - 1;
+                            mMoment.setCmtNum(cmt >= 0 ? cmt : 0);
+                            Comment cmmt = new Comment();
+                            cmmt.setId(commentId);
+                            mMoment.getUserMmtCmtList().remove(cmmt);
+                        }
+                        deleteListener.onDeleted(success, mMoment);
                     }
                 }
             }

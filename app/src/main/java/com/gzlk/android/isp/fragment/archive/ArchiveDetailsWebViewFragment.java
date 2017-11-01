@@ -472,7 +472,7 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                 case R.id.ui_holder_view_archive_details_comment_layout:
                     // 回复评论或自己
                     Comment comment = (Comment) mAdapter.get(index);
-                    if (!comment.getUserId().equals(Cache.cache().userId)) {
+                    if (!comment.isMine()) {
                         selectedIndex = index;
                         // 要回复别人的评论
                         replyView.setText(StringHelper.getString(R.string.ui_text_archive_details_comment_hint_to, comment.getUserName()));

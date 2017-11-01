@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
@@ -26,8 +30,12 @@ import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
 import com.gzlk.android.isp.fragment.individual.UserMessageFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
+import com.gzlk.android.isp.helper.publishable.CommentHelper;
 import com.gzlk.android.isp.helper.publishable.LikeHelper;
+import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -52,6 +60,8 @@ import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.model.user.MomentPublic;
 import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
+import com.hlk.hlklib.lib.view.CorneredButton;
+import com.hlk.hlklib.lib.view.CorneredEditText;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -75,8 +85,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_SELECTED = "function_selected";
     private static final String PAGE_TAG = "ifmt_page_%d_";
     private static final String PARAM_SELECTED_MMT = "mmt_selected";
+    private static final String PARAM_SELECTED_CMT = "ifmt_selected_cmt";
     private boolean isTitleBarShown = false;
-    private int selectedFunction = 0, selectedMoment = 0;
+    private int selectedFunction = 0, selectedMoment = 0, selectedComment = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,6 +118,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         isTitleBarShown = bundle.getBoolean(PARAM_SHOWN, false);
         selectedFunction = bundle.getInt(PARAM_SELECTED, 0);
         selectedMoment = bundle.getInt(PARAM_SELECTED_MMT, 0);
+        selectedComment = bundle.getInt(PARAM_SELECTED_CMT, 0);
     }
 
     @Override
@@ -114,6 +126,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putBoolean(PARAM_SHOWN, isTitleBarShown);
         bundle.putInt(PARAM_SELECTED, selectedFunction);
         bundle.putInt(PARAM_SELECTED_MMT, selectedMoment);
+        bundle.putInt(PARAM_SELECTED_CMT, selectedComment);
         super.saveParamsToBundle(bundle);
     }
 
@@ -212,21 +225,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                             today.setContent(lastHeadPhoto);
                             mAdapter.notifyItemChanged(2);
                             for (MomentPublic moment : list) {
-                                moment.getUserMmt().resetAdditional(moment.getUserMmt().getAddition());
-                                mAdapter.update(moment.getUserMmt());
-                                clearMomentComments(moment.getUserMmt());
-                                int index = mAdapter.indexOf(moment.getUserMmt());
-                                int size = moment.getUserMmt().getUserMmtCmtList().size();
-                                for (Comment comment : moment.getUserMmt().getUserMmtCmtList()) {
-                                    index++;
-                                    mAdapter.add(comment, index);
-                                }
-                                if (size > 0) {
-                                    // 设置最后一个评论
-                                    Comment cmt = (Comment) mAdapter.get(index);
-                                    cmt.setLast(true);
-                                    mAdapter.update(cmt);
-                                }
+                                appendMoment(moment.getUserMmt());
                             }
                         }
                     }
@@ -236,6 +235,25 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).list(StructureFragment.selectedGroupId, remotePageNumber);
+    }
+
+    private void appendMoment(Moment moment) {
+        moment.resetAdditional(moment.getAddition());
+        mAdapter.update(moment);
+        clearMomentComments(moment);
+        int index = mAdapter.indexOf(moment);
+        int size = moment.getUserMmtCmtList().size();
+        for (Comment comment : moment.getUserMmtCmtList()) {
+            index++;
+            comment.setLast(false);
+            mAdapter.add(comment, index);
+        }
+        if (size > 0) {
+            // 设置最后一个评论
+            Comment cmt = (Comment) mAdapter.get(index);
+            cmt.setLast(true);
+            mAdapter.update(cmt);
+        }
     }
 
     private void clearMomentComments(Moment moment) {
@@ -514,7 +532,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case R.id.ui_tooltip_menu_moment_comment:
                 case R.id.ui_tooltip_menu_moment_comment1:
                     // 发表评论，打开详情页评论
-                    MomentDetailsFragment.open(IndividualFragment.this, mAdapter.get(selectedMoment).getId());
+                    selectedComment = 0;
+                    openCommentReplyDialog();
+                    //MomentDetailsFragment.open(IndividualFragment.this, mAdapter.get(selectedMoment).getId());
                     break;
                 case R.id.ui_tooltip_menu_moment_praise:
                     // 点赞说说
@@ -592,9 +612,185 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                         showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
                     }
                     break;
+                case R.id.ui_holder_view_individual_moment_comment_name_container:
+                    selectedComment = index;
+                    Comment comment = (Comment) mAdapter.get(selectedComment);
+                    if (comment.isMine()) {
+                        openCommentDeleteDialog(comment.getMomentId(), comment.getId());
+                    } else {
+                        openCommentReplyDialog();
+                    }
+                    break;
             }
         }
     };
+
+    private View commentDeleteDialog;
+
+    private void openCommentDeleteDialog(final String momentId, final String commentId) {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == commentDeleteDialog) {
+                    commentDeleteDialog = View.inflate(Activity(), R.layout.popup_dialog_comment_delete, null);
+                }
+                return commentDeleteDialog;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                deleteComment(momentId, commentId);
+                return true;
+            }
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    }
+
+    private void deleteComment(String momentId, final String commentId) {
+        setLoadingText(R.string.ui_individual_moment_list_comment_deleting);
+        displayLoading(true);
+        CommentHelper.helper().setMoment((Moment) mAdapter.get(momentId)).setCommentDeleteListener(new OnCommentDeleteListener() {
+            @Override
+            public void onDeleted(boolean success, Model model) {
+                displayLoading(false);
+                if (success) {
+                    appendMoment((Moment) model);
+                }
+            }
+        }).delete(Comment.Type.MOMENT, momentId, commentId);
+    }
+
+    private View replyDialogView, inputableView;
+    private TextView replyName;
+    private CorneredEditText replyContent;
+    private CorneredButton replyButton;
+
+    private void openCommentReplyDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == replyDialogView) {
+                    replyDialogView = View.inflate(Activity(), R.layout.popup_dialog_comment_input, null);
+                    inputableView = replyDialogView.findViewById(R.id.ui_tool_view_simple_inputable_layout);
+                    inputableView.setVisibility(View.VISIBLE);
+                    replyName = replyDialogView.findViewById(R.id.ui_tool_view_simple_inputable_reply);
+                    replyContent = replyDialogView.findViewById(R.id.ui_tool_view_simple_inputable_text);
+                    replyContent.setHint(R.string.ui_text_archive_details_comment_hint);
+                    replyContent.addTextChangedListener(inputTextWatcher);
+                    replyButton = replyDialogView.findViewById(R.id.ui_tool_view_simple_inputable_send);
+                }
+                return replyDialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, final DialogHelper helper) {
+                replyContent.setText("");
+                Model model = mAdapter.get(selectedComment);
+                if (model instanceof Comment) {
+                    Comment comment = (Comment) model;
+                    if (comment.isMine()) {
+                        // 直接发布评论
+                        replyName.setVisibility(View.GONE);
+                    } else {
+                        replyName.setText(StringHelper.getString(R.string.ui_text_archive_details_comment_hint_to, comment.getUserName()));
+                        replyName.setVisibility(View.VISIBLE);
+                    }
+                }
+                replyContent.setOnImeBackKeyListener(new CorneredEditText.OnImeBackKeyListener() {
+                    @Override
+                    public void onBackKey(EditText editText) {
+                        Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                helper.dismiss();
+                            }
+                        }, 100);
+                    }
+                });
+            }
+
+            private TextWatcher inputTextWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    int size = null == s ? 0 : s.length();
+                    replyButton.setVisibility(size > 0 ? View.VISIBLE : View.GONE);
+                }
+            };
+
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_tool_view_simple_inputable_send};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                if (view.getId() == R.id.ui_tool_view_simple_inputable_send) {
+                    // 发布评论
+                    String content = replyContent.getValue();
+                    if (!isEmpty(content)) {
+                        comment(content);
+                    }
+                }
+                Utils.hidingInputBoard(replyContent);
+                return true;
+            }
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
+        Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                replyContent.setFocusable(true);
+                replyContent.setFocusableInTouchMode(true);
+                replyContent.requestFocus();
+                Utils.showInputBoard(replyContent);
+            }
+        }, 100);
+    }
+
+    private void comment(String content) {
+        setLoadingText(R.string.ui_individual_moment_list_commenting);
+        displayLoading(true);
+        if (selectedComment > 0) {
+            Model model = mAdapter.get(selectedComment);
+            if (model instanceof Comment) {
+                Comment comment = (Comment) model;
+                if (comment.isMine()) {
+                    comment(comment.getMomentId(), content, "");
+                } else {
+                    comment(comment.getMomentId(), content, comment.getUserId());
+                }
+            }
+        } else {
+            // 直接评论
+            comment(mAdapter.get(selectedMoment).getId(), content, "");
+        }
+    }
+
+    private void comment(String momentId, String content, String toUserId) {
+        CommentHelper.helper().setMoment((Moment) mAdapter.get(momentId)).setCommentAddListener(new OnCommentAddListener() {
+            @Override
+            public void onComplete(boolean success, Comment comment, Model model) {
+                displayLoading(false);
+                if (success) {
+                    appendMoment((Moment) model);
+                }
+            }
+        }).comment(Comment.Type.MOMENT, content, toUserId);
+    }
 
     private OnHandleBoundDataListener<Model> momentBoundDataListener = new OnHandleBoundDataListener<Model>() {
         @Override
@@ -663,7 +859,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case VT_NO_MORE:
                     return new NothingMoreViewHolder(itemView, fragment);
                 case VT_COMMENT:
-                    return new MomentCommentTextViewHolder(itemView, fragment);
+                    MomentCommentTextViewHolder mctvh = new MomentCommentTextViewHolder(itemView, fragment);
+                    mctvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
+                    return mctvh;
             }
             return null;
         }
@@ -727,6 +925,20 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             } else if (holder instanceof MomentCommentTextViewHolder) {
                 ((MomentCommentTextViewHolder) holder).showContent((Comment) item);
             }
+        }
+
+        /**
+         * 查找指定id的节点
+         */
+        public Model get(String queryId) {
+            Iterator<Model> iterable = iterator();
+            while (iterable.hasNext()) {
+                Model model = iterable.next();
+                if (!isEmpty(model.getId()) && model.getId().equals(queryId)) {
+                    return model;
+                }
+            }
+            return null;
         }
 
         @Override

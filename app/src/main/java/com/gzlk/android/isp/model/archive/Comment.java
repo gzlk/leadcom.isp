@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.archive;
 
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
@@ -56,6 +57,10 @@ public class Comment extends ArchiveInfo {
     private String toHeadPhoto;
     @Ignore
     private boolean isLast;
+
+    public boolean isMine() {
+        return !isEmpty(userId) && userId.equals(Cache.cache().userId);
+    }
 
     public String getContent() {
         return content;
