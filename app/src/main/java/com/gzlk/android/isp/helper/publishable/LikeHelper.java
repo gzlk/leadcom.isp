@@ -4,6 +4,7 @@ import com.gzlk.android.isp.api.archive.LikeRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.user.Moment;
@@ -64,7 +65,13 @@ public class LikeHelper extends Publishable {
                         }
                         likeListener.onLiked(success, mArchive);
                     } else if (null != mMoment) {
-
+                        if (success) {
+                            mMoment.getUserMmtLikeList().add(like);
+                            mMoment.setLikeNum(mMoment.getLikeNum() + 1);
+                            mMoment.setLikeId(like.getId());
+                            mMoment.setLike(Archive.LikeType.LIKED);
+                        }
+                        likeListener.onLiked(success, mMoment);
                     }
                 }
             }
@@ -85,6 +92,17 @@ public class LikeHelper extends Publishable {
                             mArchive.setLike(Archive.LikeType.UN_LIKE);
                         }
                         unlikeListener.onUnlike(success, mArchive);
+                    } else if (null != mMoment) {
+                        if (success) {
+                            int num = mMoment.getLikeNum() - 1;
+                            mMoment.setLikeNum(num >= 0 ? num : 0);
+                            mMoment.setLike(Archive.LikeType.UN_LIKE);
+                            ArchiveLike del = new ArchiveLike();
+                            del.setId(mMoment.getLikeId());
+                            mMoment.getUserMmtLikeList().remove(del);
+                            mMoment.setLikeId("");
+                        }
+                        unlikeListener.onUnlike(success, mMoment);
                     }
                 }
             }

@@ -9,6 +9,9 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.TooltipHelper;
+import com.gzlk.android.isp.helper.publishable.LikeHelper;
+import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentCommentHeaderViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
@@ -68,6 +71,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     private MomentDetailsAdapter mAdapter;
     private MomentPraiseViewHolder praiseViewHolder;
     private int mSelectedIndex = -1;
+    private LikeHelper likeHelper;
 
     @Override
     public void doingInResume() {
@@ -165,20 +169,17 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     protected void onFetchingMomentComplete(Moment moment, boolean success) {
         if (success) {
             mMoment = moment;
+            if (null == likeHelper) {
+                likeHelper = LikeHelper.helper().setMoment(mMoment);
+            }
             // 拉取回来之后立即显示
             if (!mAdapter.exist(moment)) {
                 mAdapter.add(moment, 0);
             } else {
                 mAdapter.update(moment);
             }
-            checkIsMyPraised();
             onSwipeRefreshing();
         }
-    }
-
-    @Override
-    protected void onCheckIsMyPraisedComplete(boolean success) {
-        mMoment.setMyPraised(success);
     }
 
     private void checkPraises(boolean removable) {
@@ -200,28 +201,6 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         }
     }
 
-    @Override
-    protected void onPraiseMomentComplete(ArchiveLike archiveLike, boolean success) {
-        if (success) {
-            mMoment.setMyPraised(true);
-            if (null != archiveLike) {
-                likes.add(archiveLike);
-                checkPraises(false);
-            } else {
-                fetchingPraises();
-            }
-        }
-    }
-
-    @Override
-    protected void onDeletePraiseMomentComplete(boolean success) {
-        if (success) {
-            mMoment.setMyPraised(false);
-            fetchingPraises();
-        }
-    }
-
-    @Override
     protected void onCommentMomentComplete(Comment comment, boolean success) {
         if (success) {
             if (null != comment) {
@@ -237,7 +216,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         @Override
         public void onInputComplete(String text, int length, int type) {
             if (!isEmpty(text)) {
-                commentMoment(text, "");
+                //commentMoment(text, "");
             }
         }
     };
@@ -261,14 +240,45 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     // 发表评论
                     break;
                 case R.id.ui_tooltip_menu_moment_praise:
-                    praiseMoment();
+                    checkLikeStatus();
                     break;
                 case R.id.ui_tooltip_menu_moment_praised:
-                    deletePraiseMoment();
+                    checkLikeStatus();
                     break;
             }
         }
     };
+
+    private void checkLikeStatus() {
+        setLoadingText(R.string.ui_base_text_loading);
+        displayLoading(true);
+        praiseViewHolder.setHasShown(false);
+        if (mMoment.isLiked()) {
+            likeHelper.setUnlikeListener(new OnUnlikeListener() {
+                @Override
+                public void onUnlike(boolean success, Model model) {
+                    displayLoading(false);
+                    if (success) {
+                        mAdapter.update(model);
+                        likes.clear();
+                        likes.addAll(((Moment) model).getUserMmtLikeList());
+                    }
+                }
+            }).unlike(Comment.Type.MOMENT, mQueryId);
+        } else {
+            likeHelper.setLikeListener(new OnLikeListener() {
+                @Override
+                public void onLiked(boolean success, Model model) {
+                    displayLoading(false);
+                    if (success) {
+                        mAdapter.update(model);
+                        likes.clear();
+                        likes.addAll(((Moment) model).getUserMmtLikeList());
+                    }
+                }
+            }).like(Comment.Type.MOMENT, mQueryId);
+        }
+    }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
@@ -281,7 +291,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     // 打开快捷赞、评论菜单
                     mSelectedIndex = index;
                     // 已赞和未赞
-                    int layout = mMoment.isMyPraised() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
+                    int layout = mMoment.isLiked() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
                     showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
                     break;
             }

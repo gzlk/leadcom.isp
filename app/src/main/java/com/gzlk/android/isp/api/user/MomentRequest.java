@@ -144,6 +144,22 @@ public class MomentRequest extends Request<Moment> {
         httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 更改动态的隐私设置
+     */
+    public void update(String momentId, int authPublic) {
+        //{_id,authPublic}
+        JSONObject object = new JSONObject();
+        try {
+            object.put("_id", momentId)
+                    .put("authPublic", authPublic);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleMoment.class, url(UPDATE), object.toString(), HttpMethods.Post));
+    }
+
     private static final String QB_USER_ID = "userId";
     private static final String QB_MOMENT = "momentId";
 

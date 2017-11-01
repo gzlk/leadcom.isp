@@ -19,6 +19,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.ImageCompress;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.CoverPickFragment;
@@ -123,6 +124,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         mArchive.setId(Archive.getDraftId());
         // 标记是否为组织档案
         mArchive.setGroupId(mQueryId);
+        // 设置来源为自己
+        mArchive.setUserId(Cache.cache().userId);
+        mArchive.setUserName(Cache.cache().userName);
         // 默认为个人普通档案或组织普通档案
         mArchive.setType(Archive.ArchiveType.NORMAL);
         // 档案默认向所有人公开的
@@ -399,7 +403,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (!isEmpty(text) && !text.equals(Model.DFT_DATE)) {
                     text = formatDate(mArchive.getCreateDate(), "yyyy.MM.dd");
                 } else {
-                    text = "";
+                    text = Utils.formatDateOfNow("yyyy.MM.dd");
                 }
                 createTime.setText(text);
                 coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);

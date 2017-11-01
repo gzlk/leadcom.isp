@@ -73,15 +73,6 @@ public class Moment extends Additional {
     //图片
     @Column(Archive.Field.Image)
     private ArrayList<String> image;
-    // 我是否已赞
-    @Ignore
-    private boolean myPraised;
-    //当前用户是否收藏(0.未收藏,1.已收藏)
-    @Column(Archive.Field.Collected)
-    private int collection;
-    @Column(Archive.Field.CollectionId)
-    private String colId;          //当前用户收藏该动态后的收藏ID
-
     // 点赞相关
     @Ignore
     private ArrayList<ArchiveLike> userMmtLikeList;
@@ -181,36 +172,6 @@ public class Moment extends Additional {
 
     public void setImage(ArrayList<String> image) {
         this.image = image;
-    }
-
-    public boolean isMyPraised() {
-        return myPraised;
-    }
-
-    public void setMyPraised(boolean myPraised) {
-        this.myPraised = myPraised;
-    }
-
-    /**
-     * 当前用户是否收藏(0.未收藏,1.已收藏)
-     */
-    public int getCollection() {
-        return collection;
-    }
-
-    /**
-     * 当前用户是否收藏(0.未收藏,1.已收藏)
-     */
-    public void setCollection(int collection) {
-        this.collection = collection;
-    }
-
-    public String getColId() {
-        return colId;
-    }
-
-    public void setColId(String colId) {
-        this.colId = colId;
     }
 
     public ArrayList<ArchiveLike> getUserMmtLikeList() {

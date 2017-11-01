@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
+import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
@@ -19,12 +20,18 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.helper.publishable.CommentHelper;
+import com.gzlk.android.isp.helper.publishable.LikeHelper;
+import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.archive.ArchiveLike;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Comment;
+import com.gzlk.android.isp.model.common.Seclusion;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.share.ShareToQQ;
@@ -108,6 +115,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
     private TextView commentNum;
 
     private ArrayList<String> images;
+    private LikeHelper likeHelper;
 
     @Override
     public int getLayout() {
@@ -125,8 +133,9 @@ public class MomentImagesFragment extends BaseMomentFragment {
         });
         if (null == images) {
             images = new ArrayList<>();
-            //mMoment = new Dao<>(Moment.class).query(mQueryId);
             displayMomentDetails();
+        } else {
+            fetchingMoment();
         }
         detailContentTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         initializeAdapter();
@@ -136,6 +145,9 @@ public class MomentImagesFragment extends BaseMomentFragment {
         if (null == mMoment) {
             fetchingMoment();
         } else {
+            if (null == likeHelper) {
+                likeHelper = LikeHelper.helper().setMoment(mMoment);
+            }
             momentUser = mMoment.getUserId();
             momentName = mMoment.getUserName();
             if (null != mMoment.getImage()) {
@@ -149,7 +161,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
             setCustomTitle(formatDate(mMoment.getCreateDate(), R.string.ui_base_text_date_time_format_chs_hhmm));
             detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), mMoment.getContent(), true));
             detailContentTextView.makeExpandable();
-            checkIsMyPraised();
+            resetPraiseStatus();
         }
     }
 
@@ -177,42 +189,35 @@ public class MomentImagesFragment extends BaseMomentFragment {
 
     private void resetPraiseStatus() {
         // 已赞、赞
-        praiseText.setText(mMoment.isMyPraised() ? R.string.ui_base_text_praised : R.string.ui_base_text_praise);
-        praiseIcon.setTextColor(getColor(mMoment.isMyPraised() ? R.color.colorCaution : R.color.transparent_ff_white));
+        praiseText.setText(mMoment.isLiked() ? R.string.ui_base_text_praised : R.string.ui_base_text_praise);
+        praiseIcon.setTextColor(getColor(mMoment.isLiked() ? R.color.colorCaution : R.color.transparent_ff_white));
         praiseNum.setText(format("%d", mMoment.getLikeNum()));
         commentNum.setText(format("%d", mMoment.getCmtNum()));
     }
 
-    @Override
-    protected void onCheckIsMyPraisedComplete(boolean success) {
-        mMoment.setMyPraised(success);
-        resetPraiseStatus();
-    }
-
-    @Override
-    protected void onPraiseMomentComplete(ArchiveLike archiveLike, boolean success) {
-        if (success) {
-            // 赞+1
-            mMoment.setMyPraised(true);
-            fetchingMoment();
-        }
-    }
-
-    @Override
-    protected void onDeletePraiseMomentComplete(boolean success) {
-        if (success) {
-            mMoment.setMyPraised(false);
-            fetchingMoment();
-        }
-    }
-
-    @Override
-    protected void onCommentMomentComplete(Comment comment, boolean success) {
-        if (success) {
-            mMoment.setCmtNum(mMoment.getCmtNum() + 1);
-            resetPraiseStatus();
-            // 评论成功，转到说收详情页查看评论
-            MomentDetailsFragment.open(MomentImagesFragment.this, mQueryId);
+    private void checkMomentLikeStatus() {
+        setLoadingText(R.string.ui_base_text_loading);
+        displayLoading(true);
+        if (mMoment.isLiked()) {
+            likeHelper.setUnlikeListener(new OnUnlikeListener() {
+                @Override
+                public void onUnlike(boolean success, Model model) {
+                    displayLoading(false);
+                    if (success) {
+                        resetPraiseStatus();
+                    }
+                }
+            }).unlike(Comment.Type.MOMENT, mQueryId);
+        } else {
+            likeHelper.setLikeListener(new OnLikeListener() {
+                @Override
+                public void onLiked(boolean success, Model model) {
+                    displayLoading(false);
+                    if (success) {
+                        resetPraiseStatus();
+                    }
+                }
+            }).like(Comment.Type.MOMENT, mQueryId);
         }
     }
 
@@ -233,11 +238,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 if (!isPraising) {
                     isPraising = true;
                     // 赞、取消赞
-                    if (mMoment.isMyPraised()) {
-                        deletePraiseMoment();
-                    } else {
-                        praiseMoment();
-                    }
+                    checkMomentLikeStatus();
                     Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -257,13 +258,27 @@ public class MomentImagesFragment extends BaseMomentFragment {
         }
     }
 
+    private void commentMoment(String content) {
+        CommentHelper.helper().setMoment(mMoment).setCommentAddListener(new OnCommentAddListener() {
+            @Override
+            public void onComplete(boolean success, Comment comment, Model model) {
+                displayLoading(false);
+                resetPraiseStatus();
+                // 评论成功，转到说收详情页查看评论
+                MomentDetailsFragment.open(MomentImagesFragment.this, mQueryId);
+            }
+        }).comment(Comment.Type.MOMENT, content, "");
+    }
+
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         if (requestCode == MomentCommentFragment.REQ_COMMENT) {
             // 发布对本说说的评论
             String result = getResultedData(data);
             if (!isEmpty(result)) {
-                commentMoment(result, "");
+                setLoadingText(R.string.ui_base_text_loading);
+                displayLoading(true);
+                commentMoment(result);
             }
         }
         super.onActivityResult(requestCode, data);
@@ -278,8 +293,8 @@ public class MomentImagesFragment extends BaseMomentFragment {
             public View onInitializeView() {
                 if (null == dialogView) {
                     dialogView = View.inflate(Activity(), R.layout.popup_dialog_moment_details, null);
-                    toPrivacy = (CorneredButton) dialogView.findViewById(R.id.ui_dialog_moment_details_button_privacy);
-                    toDelete = (CorneredButton) dialogView.findViewById(R.id.ui_dialog_moment_details_button_delete);
+                    toPrivacy = dialogView.findViewById(R.id.ui_dialog_moment_details_button_privacy);
+                    toDelete = dialogView.findViewById(R.id.ui_dialog_moment_details_button_delete);
 
                     // 不是我自己时，不显示设为私密和删除按钮
                     toPrivacy.setVisibility(momentUser.equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
@@ -290,7 +305,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
-
+                toPrivacy.setText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public);
             }
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
@@ -313,6 +328,8 @@ public class MomentImagesFragment extends BaseMomentFragment {
     private void handlePopupClick(int id) {
         switch (id) {
             case R.id.ui_dialog_moment_details_button_privacy:
+                // 设为公开或私密
+                handleMomentAuthPublic();
                 break;
             case R.id.ui_dialog_moment_details_button_favorite:
                 // 收藏单张图片
@@ -329,6 +346,22 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 deleteMoment();
                 break;
         }
+    }
+
+    private void handleMomentAuthPublic() {
+        final int state = mMoment.getAuthPublic();
+        setLoadingText(state == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public);
+        displayLoading(true);
+        MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
+            @Override
+            public void onResponse(Moment moment, boolean success, String message) {
+                super.onResponse(moment, success, message);
+                displayLoading(false);
+                if (success) {
+                    mMoment.setAuthPublic(state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
+                }
+            }
+        }).update(mQueryId, state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
     }
 
     @Override

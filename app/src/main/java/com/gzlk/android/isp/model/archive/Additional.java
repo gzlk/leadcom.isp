@@ -25,6 +25,18 @@ public class Additional extends Model {
     @Column(Archive.Field.CollectNumber)
     private int colNum;      //收藏次数
 
+    //当前用户是否收藏(0.未收藏,1.已收藏)
+    @Column(Archive.Field.Collected)
+    private int collection;
+    @Column(Archive.Field.CollectionId)
+    private String colId;          //当前用户收藏该动态后的收藏ID
+
+    @Column(Archive.Field.LikeId)
+    private String likeId;
+    @Column(Archive.Field.Liked)
+    private int like;
+
+
     public void resetAdditional(Additional additional) {
         if (null != additional) {
             readNum = additional.getReadNum();
@@ -64,5 +76,51 @@ public class Additional extends Model {
 
     public void setColNum(int colNum) {
         this.colNum = colNum;
+    }
+
+    public boolean isCollected() {
+        return collection == Archive.CollectionType.COLLECTED;
+    }
+
+    /**
+     * 当前用户是否收藏(0.未收藏,1.已收藏)
+     */
+    public int getCollection() {
+        return collection;
+    }
+
+    /**
+     * 当前用户是否收藏(0.未收藏,1.已收藏)
+     */
+    public void setCollection(int collection) {
+        this.collection = collection;
+    }
+
+    public String getColId() {
+        return colId;
+    }
+
+    public void setColId(String colId) {
+        this.colId = colId;
+    }
+
+    public boolean isLiked() {
+        return like == Archive.LikeType.LIKED;
+    }
+
+    public String getLikeId() {
+        return likeId;
+    }
+
+    public void setLikeId(String likeId) {
+        this.likeId = likeId;
+    }
+
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
     }
 }

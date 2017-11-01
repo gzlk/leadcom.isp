@@ -39,6 +39,7 @@
             <include layout="@layout/tool_view_horizontal_progressbar" />
         </LinearLayout>
 
+        <include layout="@layout/tool_view_loading" />
     </RelativeLayout>
 
     <LinearLayout

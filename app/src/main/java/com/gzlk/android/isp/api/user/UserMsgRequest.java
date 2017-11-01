@@ -74,6 +74,6 @@ public class UserMsgRequest extends Request<UserMessage> {
      * 情况消息
      */
     public void clear() {
-        httpRequest(getRequest(SingleMsg.class, format("%sByUser", url(DELETE + "ByUser")), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleMsg.class, format("%sByUser", url(DELETE)), "", HttpMethods.Get));
     }
 }

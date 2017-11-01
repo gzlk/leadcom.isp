@@ -377,7 +377,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         if (null == labelHolder) {
             labelHolder = new SimpleClickableViewHolder(labelView, this);
         }
-        labelHolder.showContent(format(items[3], getLabels(null == activity ? null : activity.getLabels())));
+        labelHolder.showContent(format(items[3], getLabels(null == activity ? null : activity.getLabel())));
 
         if (null == creatorHolder) {
             creatorHolder = new SimpleClickableViewHolder(creatorView, this);
@@ -395,13 +395,12 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private String getLabels(List<Label> list) {
+    private String getLabels(List<String> list) {
         if (null == list || list.size() < 1) {
             return StringHelper.getString(R.string.ui_activity_entrance_labels_nothing);
         }
         int size = list.size();
-        return size == 1 ? list.get(0).getName() :
-                format("%s、%s", list.get(0).getName(), list.get(1).getName());
+        return size == 1 ? list.get(0) : format("%s、%s", list.get(0), list.get(1));
     }
 
     private void initializeAttachments(ArrayList<Attachment> list) {

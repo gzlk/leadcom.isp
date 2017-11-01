@@ -23,7 +23,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class CommentHelper extends Publishable{
+public class CommentHelper extends Publishable {
 
     public static CommentHelper helper() {
         return new CommentHelper();
@@ -84,6 +84,11 @@ public class CommentHelper extends Publishable{
                         }
                         addListener.onComplete(success, comment, mArchive);
                     } else if (null != mMoment) {
+                        if (success) {
+                            mMoment.getUserMmtCmtList().add(comment);
+                            mMoment.setCmtNum(mMoment.getCmtNum() + 1);
+                        }
+                        addListener.onComplete(success, comment, mMoment);
                     }
                 }
             }

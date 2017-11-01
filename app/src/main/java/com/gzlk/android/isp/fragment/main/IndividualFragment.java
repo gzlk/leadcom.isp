@@ -27,6 +27,9 @@ import com.gzlk.android.isp.fragment.individual.UserMessageFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
+import com.gzlk.android.isp.helper.publishable.LikeHelper;
+import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
@@ -515,13 +518,45 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case R.id.ui_tooltip_menu_moment_praise:
                     // 点赞说说
+                    checkMomentLikeStatus();
                     break;
                 case R.id.ui_tooltip_menu_moment_praised:
                     // 取消赞说说
+                    checkMomentLikeStatus();
                     break;
             }
         }
     };
+
+    private void checkMomentLikeStatus() {
+        Model model = mAdapter.get(selectedMoment);
+        if (model instanceof Moment) {
+            Moment moment = (Moment) model;
+            setLoadingText(R.string.ui_base_text_loading);
+            displayLoading(true);
+            if (moment.isLiked()) {
+                LikeHelper.helper().setMoment(moment).setUnlikeListener(new OnUnlikeListener() {
+                    @Override
+                    public void onUnlike(boolean success, Model model) {
+                        displayLoading(false);
+                        if (success) {
+                            mAdapter.update(model);
+                        }
+                    }
+                }).unlike(Comment.Type.MOMENT, moment.getId());
+            } else {
+                LikeHelper.helper().setMoment(moment).setLikeListener(new OnLikeListener() {
+                    @Override
+                    public void onLiked(boolean success, Model model) {
+                        displayLoading(false);
+                        if (success) {
+                            mAdapter.update(model);
+                        }
+                    }
+                }).like(Comment.Type.MOMENT, moment.getId());
+            }
+        }
+    }
 
     private OnViewHolderElementClickListener onViewHolderElementClickListener = new OnViewHolderElementClickListener() {
         @Override
@@ -536,7 +571,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     UserMessageFragment.open(IndividualFragment.this);
                     break;
                 case R.id.ui_holder_view_moment_details_container:
-                    // 这里已经是详情页，不再需要打开详情页了
+                    // 打开详情页了
                     Moment moment = (Moment) mAdapter.get(index);
                     if (moment.getImage().size() < 1) {
                         // 没有图片，直接打开说说详情页
@@ -553,7 +588,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     if (model instanceof Moment) {
                         Moment mmt = (Moment) model;
                         // 已赞和未赞
-                        int layout = mmt.isMyPraised() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
+                        int layout = mmt.isLiked() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
                         showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
                     }
                     break;
@@ -607,10 +642,6 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     ifvh.addOnFunctionChangeListener(functionChangeListener);
                     return ifvh;
                 case VT_MOMENT:
-//                    MomentViewHolder mvh = new MomentViewHolder(itemView, fragment);
-//                    mvh.addOnViewHolderClickListener(onViewHolderClickListener);
-//                    mvh.addOnGotPositionListener(gotPositionListener);
-//                    return mvh;
                     MomentDetailsViewHolder mdvh = new MomentDetailsViewHolder(itemView, fragment);
                     mdvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
                     mdvh.addOnHandlerBoundDataListener(momentBoundDataListener);

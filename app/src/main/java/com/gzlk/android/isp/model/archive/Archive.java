@@ -402,11 +402,6 @@ public class Archive extends Additional {
     //档案附加信息
     @Ignore
     private Additional addition;
-    //当前用户是否收藏(0.未收藏,1.已收藏)
-    @Column(Field.Collected)
-    private int collection;
-    @Column(Field.CollectionId)
-    private String colId;          //当前用户收藏该动态后的收藏ID
 
     // 存档相关
     @Column(Activity.Field.ActivityId)
@@ -431,10 +426,6 @@ public class Archive extends Additional {
     //审核时间
     @Column(Field.ApproveDate)
     private String approveDate;
-    @Column(Field.LikeId)
-    private String likeId;
-    @Column(Field.Liked)
-    private int like;
     @Ignore
     private Organization groEntity;
 
@@ -729,52 +720,6 @@ public class Archive extends Additional {
 
     public void setArchiverId(String archiverId) {
         this.archiverId = archiverId;
-    }
-
-    /**
-     * 当前用户是否收藏(0.未收藏,1.已收藏)
-     */
-    public int getCollection() {
-        return collection;
-    }
-
-    /**
-     * 当前用户是否收藏(0.未收藏,1.已收藏)
-     */
-    public void setCollection(int collection) {
-        this.collection = collection;
-    }
-
-    public String getColId() {
-        return colId;
-    }
-
-    public void setColId(String colId) {
-        this.colId = colId;
-    }
-
-    public String getLikeId() {
-        return likeId;
-    }
-
-    public boolean isCollected() {
-        return collection == CollectionType.COLLECTED;
-    }
-
-    public void setLikeId(String likeId) {
-        this.likeId = likeId;
-    }
-
-    public int getLike() {
-        return like;
-    }
-
-    public void setLike(int like) {
-        this.like = like;
-    }
-
-    public boolean isLiked() {
-        return like == LikeType.LIKED;
     }
 
     public Organization getGroEntity() {

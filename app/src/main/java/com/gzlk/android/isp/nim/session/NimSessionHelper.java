@@ -56,6 +56,7 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
+import com.netease.nimlib.sdk.msg.attachment.VideoAttachment;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
@@ -192,14 +193,8 @@ public class NimSessionHelper {
         NimUIKit.setMsgRevokeFilter(new MsgRevokeFilter() {
             @Override
             public boolean shouldIgnore(IMMessage message) {
-                if (message.getAttachment() != null) {
-                    // 视频通话消息和白板消息 不允许撤回
-                    return true;
-                } else if (Cache.cache().userId.equals(message.getSessionId())) {
-                    // 发给我的电脑 不允许撤回
-                    return true;
-                }
-                return false;
+                // 发给我的电脑 不允许撤回
+                return Cache.cache().userId.equals(message.getSessionId());
             }
         });
     }
