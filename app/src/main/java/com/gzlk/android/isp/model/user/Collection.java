@@ -115,16 +115,31 @@ public class Collection extends Model {
     public static Collection get(Archive archive) {
         Collection col = new Collection();
         col.setType(null == archive.getGroEntity() ? Type.USER_ARCHIVE : Type.GROUP_ARCHIVE);
-        col.setSourceType(null == archive.getGroEntity() ? SourceType.USER_ARCHIVE : SourceType.GROUP_ARCHIVE);
         // 组织档案/个人档案不需要content
         col.setContent("");
         col.setCreatorId(archive.getUserId());
         col.setCreatorName(archive.getUserName());
         col.setCreatorHeadPhoto(archive.getHeadPhoto());
 
+        col.setSourceType(null == archive.getGroEntity() ? SourceType.USER_ARCHIVE : SourceType.GROUP_ARCHIVE);
         col.setSourceId(archive.getId());
         col.setSourceTitle(archive.getTitle());
         col.setLabel(archive.getLabel());
+        return col;
+    }
+
+    public static Collection get(Moment moment) {
+        Collection col = new Collection();
+        col.setType(Type.USER_MOMENT);
+        col.setContent(moment.getContent());
+
+        col.setCreatorId(moment.getUserId());
+        col.setCreatorName(moment.getUserName());
+        col.setCreatorHeadPhoto(moment.getHeadPhoto());
+
+        col.setSourceType(SourceType.MOMENT);
+        col.setSourceId(moment.getId());
+        col.setSourceTitle("");
         return col;
     }
 
