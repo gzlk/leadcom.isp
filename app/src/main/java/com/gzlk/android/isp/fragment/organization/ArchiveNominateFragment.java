@@ -84,6 +84,14 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
+    @Override
+    protected void onViewPagerDisplayedChanged(boolean visible) {
+        super.onViewPagerDisplayedChanged(visible);
+        if (visible) {
+            onSwipeRefreshing();
+        }
+    }
+
     /**
      * 设置新的组织id并查找该组织的档案列表
      */
@@ -206,6 +214,7 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
                     RecommendArchive doc = mAdapter.get(index);
                     doc.setRecommend(RecommendArchive.RecommendStatus.RECOMMENDED);
                     mAdapter.notifyItemChanged(index);
+                    onSwipeRefreshing();
                 }
                 displayLoading(false);
             }
@@ -225,6 +234,7 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
                     RecommendArchive doc = mAdapter.get(index);
                     doc.setRecommend(RecommendArchive.RecommendStatus.UN_RECOMMEND);
                     mAdapter.notifyItemChanged(index);
+                    onSwipeRefreshing();
                 }
                 displayLoading(false);
             }

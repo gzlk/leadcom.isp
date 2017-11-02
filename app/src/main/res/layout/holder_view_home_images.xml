@@ -12,6 +12,7 @@
         android:id="@+id/ui_holder_view_home_image_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/ui_holder_view_home_image_indicator"
         android:ellipsize="end"
         android:maxLines="2"
         android:padding="@dimen/ui_static_dp_5"

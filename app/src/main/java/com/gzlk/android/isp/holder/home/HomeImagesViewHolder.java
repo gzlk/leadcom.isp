@@ -65,7 +65,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         dotPadding = getDimension(R.dimen.ui_static_dp_5);
         calculateImageHeight();
         initialize();
-        initializeTitlePosition();
+        //initializeTitlePosition();
     }
 
     /**

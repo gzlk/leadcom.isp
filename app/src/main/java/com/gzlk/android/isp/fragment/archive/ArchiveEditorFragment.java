@@ -592,7 +592,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     }
                     break;
                 case UP_MUSIC:
-                    // 视频上传完毕，插入视频到编辑框中
+                    // 音频上传完毕，插入音频到编辑框中
                     String music = uploaded.get(0).getUrl();
                     mEditor.insertAudio(music);
                     musicUrl.setValue("");
