@@ -183,6 +183,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View multimediaView;
     @ViewId(R.id.ui_archive_creator_rich_editor_attachment)
     private View attachmentView;
+    @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
+    private RecyclerView attachmentRecyclerView;
     // 创建成功的档案信息
     private Archive mArchive;
     /**
@@ -225,6 +227,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         attachmentView.setVisibility(editorType == TYPE_ATTACHMENT ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
+
+        attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
+        aAdapter = new AttachmentAdapter();
+        attachmentRecyclerView.setAdapter(aAdapter);
     }
 
     private void warningDraftExist(final ArchiveDraft draft, final int size) {
@@ -610,6 +616,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                                 mArchive.getAttach().add(attachment);
                             }
                         }
+                        aAdapter.update(mArchive.getAttach());
                     }
                     break;
             }
@@ -806,6 +813,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 break;
             case REQUEST_ATTACHMENT:
+
                 break;
             case REQUEST_DRAFT:
                 // 草稿选择完毕
@@ -923,6 +931,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private RecyclerView recyclerView;
     private TextView attachmentDesc;
     private FileAdapter mAdapter;
+    private AttachmentAdapter aAdapter;
 
     private void openAttachmentDialog() {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
@@ -941,7 +950,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
-
+                attachmentDesc.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
             }
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
@@ -964,6 +973,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onConfirm() {
                 uploadType = UP_ATTACH;
+                showUploading(true);
                 uploadFiles();
                 return true;
             }
@@ -1030,12 +1040,21 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private OnViewHolderClickListener attachmentViewHolderClickListener = new OnViewHolderClickListener() {
+    private OnViewHolderClickListener selectedAttachmentViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
             Attachment attachment = mAdapter.get(index);
             mArchive.getAttach().remove(attachment);
             mAdapter.remove(attachment);
+        }
+    };
+
+    private OnViewHolderClickListener uploadedAttachmentViewHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Attachment attachment = aAdapter.get(index);
+            mArchive.getAttach().remove(attachment);
+            aAdapter.remove(attachment);
         }
     };
 
@@ -1048,7 +1067,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
             AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveEditorFragment.this);
-            holder.addOnViewHolderClickListener(attachmentViewHolderClickListener);
+            holder.addOnViewHolderClickListener(selectedAttachmentViewHolderClickListener);
             return holder;
         }
 
@@ -1059,6 +1078,31 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public void onBindHolderOfView(final AttachmentViewHolder holder, int position, @Nullable Attachment item) {
+            holder.showContent(item);
+        }
+
+        @Override
+        protected int comparator(Attachment item1, Attachment item2) {
+            return 0;
+        }
+    }
+
+    private class AttachmentAdapter extends RecyclerViewAdapter<AttachmentViewHolder, Attachment> {
+
+        @Override
+        public AttachmentViewHolder onCreateViewHolder(View itemView, int viewType) {
+            AttachmentViewHolder holder = new AttachmentViewHolder(itemView, ArchiveEditorFragment.this);
+            holder.addOnViewHolderClickListener(uploadedAttachmentViewHolderClickListener);
+            return holder;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_attachment;
+        }
+
+        @Override
+        public void onBindHolderOfView(AttachmentViewHolder holder, int position, @Nullable Attachment item) {
             holder.showContent(item);
         }
 
