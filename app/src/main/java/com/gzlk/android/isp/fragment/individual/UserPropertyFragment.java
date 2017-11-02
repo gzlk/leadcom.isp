@@ -67,7 +67,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     private static final String PARAM_SELECTED = "upf_selected_index";
     private static final String PARAM_DELETED = "upf_deleted_index";
     // 是否显示原有的固定属性列表
-    public static final boolean showStaticItems = false;
+    public static final boolean showStaticItems = true;
 
     public static UserPropertyFragment newInstance(String params) {
         UserPropertyFragment mf = new UserPropertyFragment();
@@ -375,6 +375,12 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }).find(mQueryId, true);
     }
 
+    private static String privacyText = StringHelper.getString(R.string.ui_base_text_private);
+
+    private String getPrivacySetting(String value) {
+        return isMe() ? value : privacyText;
+    }
+
     private void checkUser(final User user) {
         // 自己需要在这里查看自己的个人档案吗？
         toArchive.setVisibility(View.VISIBLE);
@@ -410,10 +416,10 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             // 性别
             if (mAdapter.getItemCount() < 3) {
                 mAdapter.add(new Model() {{
-                    setId(format(items[2], isEmpty(user.getSex()) ? invalid : user.getSex()));
+                    setId(format(items[2], getPrivacySetting(isEmpty(user.getSex()) ? invalid : user.getSex())));
                 }});
             } else {
-                mAdapter.get(2).setId(format(items[2], isEmpty(user.getSex()) ? invalid : user.getSex()));
+                mAdapter.get(2).setId(format(items[2], getPrivacySetting(isEmpty(user.getSex()) ? invalid : user.getSex())));
                 mAdapter.notifyItemChanged(2);
             }
 
@@ -431,47 +437,47 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
             // 身份证
             if (mAdapter.getItemCount() < 5) {
                 mAdapter.add(new Model() {{
-                    setId(format(items[4], isEmpty(user.getIdNum()) ? invalid : user.getIdNum()));
+                    setId(format(items[4], getPrivacySetting(isEmpty(user.getIdNum()) ? invalid : user.getIdNum())));
                 }});
             } else {
-                mAdapter.get(4).setId(format(items[4], isEmpty(user.getIdNum()) ? invalid : user.getIdNum()));
+                mAdapter.get(4).setId(format(items[4], getPrivacySetting(isEmpty(user.getIdNum()) ? invalid : user.getIdNum())));
                 mAdapter.notifyItemChanged(4);
             }
 
             // 单位
             if (mAdapter.getItemCount() < 6) {
                 mAdapter.add(new Model() {{
-                    setId(format(items[5], isEmpty(user.getCompany()) ? invalid : user.getCompany()));
+                    setId(format(items[5], getPrivacySetting(isEmpty(user.getCompany()) ? invalid : user.getCompany())));
                 }});
             } else {
-                mAdapter.get(5).setId(format(items[5], isEmpty(user.getCompany()) ? invalid : user.getCompany()));
+                mAdapter.get(5).setId(format(items[5], getPrivacySetting(isEmpty(user.getCompany()) ? invalid : user.getCompany())));
                 mAdapter.notifyItemChanged(5);
             }
 
             // 职务
             if (mAdapter.getItemCount() < 7) {
                 mAdapter.add(new Model() {{
-                    setId(format(items[6], isEmpty(user.getPosition()) ? invalid : user.getPosition()));
+                    setId(format(items[6], getPrivacySetting(isEmpty(user.getPosition()) ? invalid : user.getPosition())));
                 }});
             } else {
-                mAdapter.get(6).setId(format(items[6], isEmpty(user.getPosition()) ? invalid : user.getPosition()));
+                mAdapter.get(6).setId(format(items[6], getPrivacySetting(isEmpty(user.getPosition()) ? invalid : user.getPosition())));
                 mAdapter.notifyItemChanged(6);
             }
 
             // 注册时间
             if (mAdapter.getItemCount() < 8) {
                 mAdapter.add(new Model() {{
-                    setId(format(items[7], isEmpty(user.getCreateDate()) ? "-" : user.getCreateDate().substring(0, 10)));
+                    setId(format(items[7], getPrivacySetting(isEmpty(user.getCreateDate()) ? "-" : user.getCreateDate().substring(0, 10))));
                 }});
             }
 
             // 电话
             if (mAdapter.getItemCount() < 9) {
                 mAdapter.add(new Model() {{
-                    setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
+                    setId(format(items[8], getPrivacySetting(isEmpty(user.getPhone()) ? invalid : user.getPhone())));
                 }});
             } else {
-                mAdapter.get(8).setId(format(items[8], isEmpty(user.getPhone()) ? invalid : user.getPhone()));
+                mAdapter.get(8).setId(format(items[8], getPrivacySetting(isEmpty(user.getPhone()) ? invalid : user.getPhone())));
                 mAdapter.notifyItemChanged(8);
             }
         }
@@ -501,6 +507,9 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
     }
 
     private String getBirthday(User user) {
+        if (!isMe()) {
+            return privacyText;
+        }
         String text = user.getBirthday();
         final String invalid = StringHelper.getString(R.string.ui_base_text_not_set);
         return isEmpty(user.getBirthday()) ? invalid : (text.length() < 10 ? text : text.substring(0, 10));
