@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.hlk.hlklib.lib.inject.Click;
@@ -57,6 +58,7 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
             R.id.ui_archive_creator_selector_rich_text,
             R.id.ui_archive_creator_selector_attachment})
     private void elementClick(View view) {
+        view.startAnimation(App.clickAnimation());
         switch (view.getId()) {
             case R.id.ui_archive_creator_selector_cancel:
                 finish();
