@@ -5,65 +5,81 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="@dimen/ui_static_dp_3"
     android:translationZ="@dimen/ui_base_translationZ">
 
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_tool_chatable_inputbar_recorder"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/ui_tool_chatable_inputbar_reply"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
-        android:minWidth="@dimen/ui_base_dimen_chat_bar_height"
-        android:text="@string/ui_icon_recorder" />
+        android:layout_marginStart="@dimen/ui_static_dp_5"
+        android:text="@string/app_name_default"
+        android:textColor="@color/textColorHint"
+        android:textSize="@dimen/ui_base_text_size_little"
+        android:visibility="gone" />
 
-    <com.hlk.hlklib.lib.emoji.EmojiClipboardCatchableEditText
-        android:id="@+id/ui_tool_chatable_inputbar_input"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:hint="@string/ui_base_text_input_hint"
-        android:maxHeight="80dp"
-        android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
-        android:padding="@dimen/ui_static_dp_5"
-        app:cet_active_border="@color/textColorHintLight"
-        app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
-        app:cet_normal_border="@android:color/white" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_tool_chatable_inputbar_emoji"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
-        android:minWidth="@dimen/ui_base_dimen_chat_bar_height"
-        android:text="@string/ui_icon_emoji" />
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_tool_chatable_inputbar_recorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
+            android:minWidth="@dimen/ui_base_dimen_chat_bar_height"
+            android:text="@string/ui_icon_recorder" />
 
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_tool_chatable_inputbar_append"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
-        android:minWidth="@dimen/ui_base_dimen_chat_bar_height"
-        android:text="@string/ui_icon_add" />
+        <com.hlk.hlklib.lib.emoji.EmojiClipboardCatchableEditText
+            android:id="@+id/ui_tool_chatable_inputbar_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:hint="@string/ui_base_text_input_hint"
+            android:maxHeight="80dp"
+            android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
+            android:padding="@dimen/ui_static_dp_5"
+            app:cet_active_border="@color/textColorHintLight"
+            app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
+            app:cet_normal_border="@android:color/white" />
 
-    <com.hlk.hlklib.lib.view.CorneredButton
-        android:id="@+id/ui_tool_chatable_inputbar_send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:gravity="center"
-        android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
-        android:minWidth="65dp"
-        android:text="@string/ui_base_text_send"
-        android:textColor="@android:color/white"
-        android:visibility="gone"
-        app:active_color="@android:color/holo_red_dark"
-        app:corner_size="@dimen/ui_base_dimen_button_corner_size"
-        app:normal_color="@color/colorPrimary" />
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_tool_chatable_inputbar_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
+            android:minWidth="@dimen/ui_base_dimen_chat_bar_height"
+            android:text="@string/ui_icon_emoji" />
 
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_tool_chatable_inputbar_append"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
+            android:minWidth="@dimen/ui_base_dimen_chat_bar_height"
+            android:text="@string/ui_icon_add" />
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_tool_chatable_inputbar_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:gravity="center"
+            android:minHeight="@dimen/ui_base_dimen_chat_bar_height"
+            android:minWidth="65dp"
+            android:text="@string/ui_base_text_send"
+            android:textColor="@android:color/white"
+            android:visibility="gone"
+            app:active_color="@android:color/holo_red_dark"
+            app:corner_size="@dimen/ui_base_dimen_button_corner_size"
+            app:normal_color="@color/colorPrimary" />
+
+    </LinearLayout>
 </LinearLayout>

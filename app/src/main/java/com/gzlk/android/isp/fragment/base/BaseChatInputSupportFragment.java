@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
@@ -65,6 +66,8 @@ public abstract class BaseChatInputSupportFragment extends BaseSwipeRefreshSuppo
     public EmojiClipboardCatchableEditText _inputText;
     @ViewId(R.id.ui_tool_chatable_inputbar_send)
     public CorneredButton _inputSend;
+    @ViewId(R.id.ui_tool_chatable_inputbar_reply)
+    public TextView replyName;
 
     // 普通文本输入方式
     public static final int TYPE_NORMAL = 0;
@@ -233,7 +236,7 @@ public abstract class BaseChatInputSupportFragment extends BaseSwipeRefreshSuppo
     /**
      * 给inputText设置焦点
      */
-    private void focusInputText(boolean openKeyboard) {
+    protected void focusInputText(boolean openKeyboard) {
         if (null == _inputText) return;
 
         _inputText.setFocusable(true);

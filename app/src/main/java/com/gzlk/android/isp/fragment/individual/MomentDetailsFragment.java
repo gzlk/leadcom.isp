@@ -7,9 +7,14 @@ import android.view.View;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
+import com.gzlk.android.isp.helper.publishable.CommentHelper;
 import com.gzlk.android.isp.helper.publishable.LikeHelper;
+import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -17,6 +22,7 @@ import com.gzlk.android.isp.holder.individual.MomentCommentHeaderViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentPraiseViewHolder;
 import com.gzlk.android.isp.listener.OnHandleBoundDataListener;
+import com.gzlk.android.isp.listener.OnKeyboardChangeListener;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
@@ -54,6 +60,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         fragment.openActivity(MomentDetailsFragment.class.getName(), momentId, true, false);
     }
 
+    private static boolean deletable = false;
+    private static int selectedComment = 0;
     private static final String PARAM_INDEX = "mdf_selected_index";
 
     @Override
@@ -68,10 +76,38 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         bundle.putInt(PARAM_INDEX, mSelectedIndex);
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mOnKeyboardChangeListener = new OnKeyboardChangeListener(Activity());
+        mOnKeyboardChangeListener.setKeyboardListener(new OnKeyboardChangeListener.KeyboardListener() {
+            @Override
+            public void onKeyboardChange(boolean isShow, int keyboardHeight) {
+                log(format("keyboard changed, show: %s, keyboard height: %d", isShow, keyboardHeight));
+                if (!isShow) {
+                    // 键盘隐藏时，设置评论状态为普通评论
+                    selectedComment = 0;
+                    replyName.setVisibility(View.GONE);
+                }
+            }
+        });
+        setInputHint(R.string.ui_text_archive_details_comment_hint);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (null != mOnKeyboardChangeListener) {
+            mOnKeyboardChangeListener.destroy();
+        }
+        super.onDestroy();
+    }
+
     private MomentDetailsAdapter mAdapter;
     private MomentPraiseViewHolder praiseViewHolder;
     private int mSelectedIndex = -1;
     private LikeHelper likeHelper;
+    private CommentHelper commentHelper;
+    private OnKeyboardChangeListener mOnKeyboardChangeListener;
 
     @Override
     public void doingInResume() {
@@ -172,6 +208,11 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             if (null == likeHelper) {
                 likeHelper = LikeHelper.helper().setMoment(mMoment);
             }
+            if (null == commentHelper) {
+                commentHelper = CommentHelper.helper().setMoment(mMoment);
+            }
+            // 我发布的动态可以删除全部评论
+            deletable = mMoment.isMine();
             // 拉取回来之后立即显示
             if (!mAdapter.exist(moment)) {
                 mAdapter.add(moment, 0);
@@ -201,25 +242,33 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         }
     }
 
-    protected void onCommentMomentComplete(Comment comment, boolean success) {
-        if (success) {
-            if (null != comment) {
-                mAdapter.add(comment);
-                smoothScrollToBottom(mAdapter.getItemCount() - 1);
-            } else {
-                fetchingComments();
-            }
-        }
-    }
-
     private OnInputCompleteListener onInputCompleteListener = new OnInputCompleteListener() {
         @Override
         public void onInputComplete(String text, int length, int type) {
             if (!isEmpty(text)) {
-                //commentMoment(text, "");
+                Comment comment = (Comment) mAdapter.get(selectedComment);
+                comment(text, comment.isMine() ? "" : comment.getUserId());
             }
         }
     };
+
+    private void comment(String content, String toUserId) {
+        setLoadingText(R.string.ui_individual_moment_list_commenting);
+        displayLoading(true);
+        commentHelper.setCommentAddListener(new OnCommentAddListener() {
+            @Override
+            public void onComplete(boolean success, Comment comment, Model model) {
+                displayLoading(false);
+                if (success) {
+                    mAdapter.update(comment);
+                    smoothScrollToBottom(mAdapter.getItemCount() - 1);
+                    selectedComment = 0;
+                    replyName.setVisibility(View.GONE);
+                    _inputText.setText("");
+                }
+            }
+        }).comment(Comment.Type.MOMENT, content, toUserId);
+    }
 
     private void initializeAdapter() {
         if (null == mAdapter) {
@@ -237,7 +286,10 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             switch (v.getId()) {
                 case R.id.ui_tooltip_menu_moment_comment:
                 case R.id.ui_tooltip_menu_moment_comment1:
-                    // 发表评论
+                    // 发表评论(不是回复别人)
+                    selectedComment = 0;
+                    replyName.setVisibility(View.GONE);
+                    openKeyboard();
                     break;
                 case R.id.ui_tooltip_menu_moment_praise:
                     checkLikeStatus();
@@ -248,6 +300,13 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             }
         }
     };
+
+    private void openKeyboard() {
+        _inputText.setFocusable(true);
+        _inputText.setFocusableInTouchMode(true);
+        _inputText.requestFocus();
+        Utils.showInputBoard(_inputText);
+    }
 
     private void checkLikeStatus() {
         setLoadingText(R.string.ui_base_text_loading);
@@ -262,6 +321,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                         mAdapter.update(model);
                         likes.clear();
                         likes.addAll(((Moment) model).getUserMmtLikeList());
+                        checkPraises(likes.size() <= 0);
                     }
                 }
             }).unlike(Comment.Type.MOMENT, mQueryId);
@@ -274,10 +334,25 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                         mAdapter.update(model);
                         likes.clear();
                         likes.addAll(((Moment) model).getUserMmtLikeList());
+                        checkPraises(likes.size() <= 0);
                     }
                 }
             }).like(Comment.Type.MOMENT, mQueryId);
         }
+    }
+
+    private void deleteComment(final int index) {
+        setLoadingText(R.string.ui_individual_moment_list_comment_deleting);
+        displayLoading(true);
+        commentHelper.setCommentDeleteListener(new OnCommentDeleteListener() {
+            @Override
+            public void onDeleted(boolean success, Model model) {
+                displayLoading(false);
+                if (success) {
+                    mAdapter.remove(index);
+                }
+            }
+        }).delete(Comment.Type.MOMENT, mQueryId, mAdapter.get(index).getId());
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
@@ -293,6 +368,17 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     // 已赞和未赞
                     int layout = mMoment.isLiked() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
                     showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+                    break;
+                case R.id.ui_holder_view_moment_comment_container:
+                    // 回复别人的评论或删除自己的评论
+                    selectedComment = index;
+                    Comment comment = (Comment) mAdapter.get(index);
+                    replyName.setVisibility(comment.isMine() ? View.GONE : View.VISIBLE);
+                    replyName.setText(StringHelper.getString(R.string.ui_text_archive_details_comment_hint_to, comment.getUserName()));
+                    openKeyboard();
+                    break;
+                case R.id.ui_holder_view_moment_comment_delete:
+                    deleteComment(index);
                     break;
             }
         }
@@ -337,6 +423,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 default:
                     MomentCommentHeaderViewHolder mcv = new MomentCommentHeaderViewHolder(itemView, MomentDetailsFragment.this);
                     mcv.addOnViewHolderClickListener(onViewHolderClickListener);
+                    mcv.setOnViewHolderElementClickListener(elementClickListener);
+                    mcv.setDeletable(deletable);
                     return mcv;
             }
         }

@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.model.user;
 
+import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.model.archive.Additional;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.Model;
@@ -78,6 +79,13 @@ public class Moment extends Additional {
     private ArrayList<ArchiveLike> userMmtLikeList;
     @Ignore
     private ArrayList<Comment> userMmtCmtList;
+
+    /**
+     * 是否是我发布的动态内容
+     */
+    public boolean isMine() {
+        return Cache.cache().userId.equals(userId);
+    }
 
     public String getUserId() {
         return userId;

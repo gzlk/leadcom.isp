@@ -31,7 +31,6 @@
             android:id="@+id/ui_tool_view_archive_additional_comment_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/temp_number_value"
             android:textColor="@color/textColorHint"
             android:textSize="@dimen/ui_base_text_size_small" />
     </LinearLayout>

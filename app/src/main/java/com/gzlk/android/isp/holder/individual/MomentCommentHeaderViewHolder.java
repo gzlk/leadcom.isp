@@ -8,7 +8,6 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
@@ -38,10 +37,13 @@ public class MomentCommentHeaderViewHolder extends BaseViewHolder {
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_moment_comment_time)
     private TextView timeView;
+    @ViewId(R.id.ui_holder_view_moment_comment_delete)
+    private CustomTextView deleteView;
     @ViewId(R.id.ui_holder_view_moment_comment_content)
     private TextView contentView;
 
     private int imageSize;
+    private boolean showDelete;
 
     public MomentCommentHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -55,6 +57,10 @@ public class MomentCommentHeaderViewHolder extends BaseViewHolder {
                 }
             }
         });
+    }
+
+    public void setDeletable(boolean deletable) {
+        showDelete = deletable;
     }
 
     public void showIcon(boolean shown) {
@@ -72,10 +78,14 @@ public class MomentCommentHeaderViewHolder extends BaseViewHolder {
         nameView.setText(Html.fromHtml(text));
         timeView.setText(fragment().formatTimeAgo(comment.getCreateDate()));
         contentView.setText(EmojiUtility.getEmojiString(contentView.getContext(), comment.getContent(), true));
+        // 我发布的评论可以删除
+        deleteView.setVisibility(showDelete ? View.VISIBLE : (comment.isMine() ? View.VISIBLE : View.GONE));
     }
 
-    @Click({R.id.ui_holder_view_moment_comment_container})
+    @Click({R.id.ui_holder_view_moment_comment_container, R.id.ui_holder_view_moment_comment_delete})
     private void elementClick(View view) {
-
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+        }
     }
 }
