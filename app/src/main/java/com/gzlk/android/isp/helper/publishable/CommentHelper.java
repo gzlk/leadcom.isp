@@ -86,7 +86,7 @@ public class CommentHelper extends Publishable {
                     } else if (null != mMoment) {
                         if (success) {
                             mMoment.getUserMmtCmtList().add(comment);
-                            mMoment.setCmtNum(mMoment.getCmtNum() + 1);
+                            mMoment.getAddition().setCmtNum(mMoment.getCmtNum() + 1);
                         }
                         addListener.onComplete(success, comment, mMoment);
                     }
@@ -112,8 +112,8 @@ public class CommentHelper extends Publishable {
                         deleteListener.onDeleted(success, mArchive);
                     } else if (null != mMoment) {
                         if (success) {
-                            int cmt = mMoment.getCmtNum() - 1;
-                            mMoment.setCmtNum(cmt >= 0 ? cmt : 0);
+                            int cmt = mMoment.getAddition().getCmtNum() - 1;
+                            mMoment.getAddition().setCmtNum(cmt >= 0 ? cmt : 0);
                             Comment cmmt = new Comment();
                             cmmt.setId(commentId);
                             mMoment.getUserMmtCmtList().remove(cmmt);

@@ -699,6 +699,9 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                         replyName.setText(StringHelper.getString(R.string.ui_text_archive_details_comment_hint_to, comment.getUserName()));
                         replyName.setVisibility(View.VISIBLE);
                     }
+                } else {
+                    // 直接发布评论
+                    replyName.setVisibility(View.GONE);
                 }
                 replyContent.setOnImeBackKeyListener(new CorneredEditText.OnImeBackKeyListener() {
                     @Override
@@ -746,8 +749,12 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                         comment(content);
                     }
                 }
-                Utils.hidingInputBoard(replyContent);
                 return true;
+            }
+        }).addOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                Utils.hidingInputBoard(replyContent);
             }
         }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
         Handler().postDelayed(new Runnable() {
