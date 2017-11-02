@@ -12,6 +12,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveRecommendViewHolder;
@@ -33,10 +34,10 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static ArchiveRecommendableFragment newInstance(String params) {
-        ArchiveRecommendableFragment raf = new ArchiveRecommendableFragment();
+    public static ArchiveNominateFragment newInstance(String params) {
+        ArchiveNominateFragment raf = new ArchiveNominateFragment();
         Bundle bundle = new Bundle();
         // 传入的组织 id
         bundle.putString(PARAM_QUERY_ID, params);
@@ -83,6 +84,20 @@ public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragmen
         return null;
     }
 
+    /**
+     * 设置新的组织id并查找该组织的档案列表
+     */
+    public void setNewQueryId(String queryId) {
+        if (!StringHelper.isEmpty(mQueryId) && mQueryId.equals(queryId)) {
+            return;
+        }
+        mQueryId = queryId;
+        remotePageNumber = 1;
+        if (null != mAdapter) {
+            loadingRecommended();
+        }
+    }
+
     private void loadingRecommended() {
         setLoadingText(R.string.ui_archive_recommend_loading);
         displayLoading(true);
@@ -91,6 +106,8 @@ public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragmen
             @Override
             public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                int size = null == list ? 0 : list.size();
+                isLoadingComplete(size < pageSize);
                 if (success) {
                     if (remotePageNumber <= 1) {
                         mAdapter.clear();
@@ -98,16 +115,9 @@ public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragmen
                     if (null != list) {
                         if (list.size() >= pageNumber) {
                             remotePageNumber++;
-                            isLoadingComplete(false);
-                        } else {
-                            isLoadingComplete(true);
                         }
                         mAdapter.update(list, false);
-                    } else {
-                        isLoadingComplete(true);
                     }
-                } else {
-                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
@@ -131,7 +141,7 @@ public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragmen
         public void onClick(int index) {
             RecommendArchive archive = mAdapter.get(index);
             int type = archive.getType() == RecommendArchive.RecommendType.GROUP ? Archive.Type.GROUP : Archive.Type.USER;
-            ArchiveDetailsWebViewFragment.open(ArchiveRecommendableFragment.this, archive.getDocId(), type);
+            ArchiveDetailsWebViewFragment.open(ArchiveNominateFragment.this, archive.getDocId(), type);
             //ArchiveDetailsFragment.open(ArchiveRecommendableFragment.this, (null == archive.getUserDoc() ? Archive.Type.GROUP : Archive.Type.USER), archive.getDocId(), REQUEST_CHANGE);
         }
     };
@@ -224,7 +234,7 @@ public class ArchiveRecommendableFragment extends BaseSwipeRefreshSupportFragmen
     private class RecommendAdapter extends RecyclerViewAdapter<ArchiveRecommendViewHolder, RecommendArchive> {
         @Override
         public ArchiveRecommendViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ArchiveRecommendViewHolder holder = new ArchiveRecommendViewHolder(itemView, ArchiveRecommendableFragment.this);
+            ArchiveRecommendViewHolder holder = new ArchiveRecommendViewHolder(itemView, ArchiveNominateFragment.this);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             holder.addOnHandlerBoundDataListener(onHandleBoundDataListener);
             return holder;

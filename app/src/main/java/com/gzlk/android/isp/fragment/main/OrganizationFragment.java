@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseViewPagerSupportFragment;
-import com.gzlk.android.isp.fragment.organization.ArchiveRecommendableFragment;
+import com.gzlk.android.isp.fragment.organization.ArchiveNominateFragment;
 import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.ContactFragment;
 import com.gzlk.android.isp.fragment.organization.CreateOrganizationFragment;
@@ -100,7 +100,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         boolean exists = false;
         int recommend = 0;
         for (int i = 0, len = mFragments.size(); i < len; i++) {
-            if (mFragments.get(i) instanceof ArchiveRecommendableFragment) {
+            if (mFragments.get(i) instanceof ArchiveNominateFragment) {
                 exists = true;
                 recommend = i;
             }
@@ -112,7 +112,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         }
         if (addable && !exists) {
             channel4.setVisibility(View.VISIBLE);
-            addFragment(ArchiveRecommendableFragment.newInstance(groupId));
+            addFragment(ArchiveNominateFragment.newInstance(groupId));
         }
     }
 
@@ -129,6 +129,9 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             String creatorId = item.getCreatorId();
             ((ContactFragment) mFragments.get(1)).setIsCreator(!isEmpty(creatorId) && creatorId.equals(Cache.cache().userId));
             ((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
+            if (mFragments.size() > 3) {
+                ((ArchiveNominateFragment) mFragments.get(3)).setNewQueryId(item.getId());
+            }
         }
     };
 

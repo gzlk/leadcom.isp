@@ -136,7 +136,10 @@ public class ArchivesFragment extends BaseOrganizationFragment {
             return;
         }
         mQueryId = queryId;
-        //fetchingRemoteArchives();
+        remotePageNumber = 1;
+        if (null != mAdapter) {
+            fetchingRemoteArchives();
+        }
     }
 
     // 我是否可以管理组织档案
@@ -183,7 +186,12 @@ public class ArchivesFragment extends BaseOrganizationFragment {
             @Override
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                int size = null == list ? 0 : list.size();
+                isLoadingComplete(size < pageSize);
                 if (success) {
+                    if (remotePageNumber <= 1) {
+                        mAdapter.clear();
+                    }
                     if (null != list) {
                         if (null != mAdapter) {
                             // 覆盖方式重置list
@@ -195,15 +203,8 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                         }
                         if (list.size() >= pageSize) {
                             remotePageNumber++;
-                            isLoadingComplete(false);
-                        } else {
-                            isLoadingComplete(true);
                         }
-                    } else {
-                        isLoadingComplete(true);
                     }
-                } else {
-                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 stopRefreshing();

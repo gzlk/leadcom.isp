@@ -1,6 +1,8 @@
 package com.gzlk.android.isp.application;
 
 import android.graphics.Bitmap;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
@@ -17,7 +19,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 import java.io.File;
 
@@ -48,6 +49,13 @@ public class App extends NimApplication {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 点击UI中的动画
+     */
+    public static Animation clickAnimation() {
+        return AnimationUtils.loadAnimation(app(), R.anim.item_click);
     }
 
     @Override
