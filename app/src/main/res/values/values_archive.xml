@@ -74,7 +74,23 @@
     <string name="ui_text_archive_details_comment_deleting">删除评论请稍侯&#8230;</string>
     <string name="ui_text_archive_details_author_text" formatted="false">作者：%s</string>
     <string name="ui_text_archive_details_content_html" formatted="false">
-        <![CDATA[<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title></title></head><body>%s</body></html>]]>
+        <![CDATA[
+            <!DOCTYPE html>
+            <html xmlns="http://www.w3.org/1999/xhtml">
+                <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                    <title></title>
+                    <style>
+                        video {
+                            width: 100per;
+                            max-width: 100per;
+                        }
+                    </style>
+                </head>
+                <body>%s</body>
+            </html>
+        ]]>
     </string>
     <string name="ui_text_archive_details_comment_nothing_more">已显示全部内容</string>
     <string name="ui_text_archive_details_liking">点赞档案&#8230;</string>

@@ -98,7 +98,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         collectNumber.setText(String.valueOf(archive.getColNum()));
         String content = archive.getContent();
         contentView.setVisibility((isEmpty(content) || content.equals("null")) ? View.GONE : View.VISIBLE);
-        contentView.loadData(StringHelper.getString(R.string.ui_text_archive_details_content_html, content), "text/html; charset=UTF-8", null);
+        contentView.loadData(StringHelper.getString(R.string.ui_text_archive_details_content_html, content).replace("100per","100%"), "text/html; charset=UTF-8", null);
         //bottomLine.setVisibility(archive.getCmtNum() > 0 ? View.VISIBLE : View.GONE);
     }
 
