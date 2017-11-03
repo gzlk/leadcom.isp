@@ -325,6 +325,8 @@ public class Utils {
 
     private static final String regEx_script = "<script[^>]*?>[\\s\\S]*?<\\/script>"; // 定义script的正则表达式
     private static final String regEx_style = "<style[^>]*?>[\\s\\S]*?<\\/style>"; // 定义style的正则表达式
+    private static final String regEx_img = "<img[^>]*?(\\/>|><\\/img>|>)"; // 定义img的正则表达式
+    private static final String regEx_video = "<video[^>]*?>[\\s\\S]*?<\\/video>"; // 定义img的正则表达式
     private static final String regEx_html = "<[^>]+>"; // 定义HTML标签的正则表达式
     private static final String regEx_space = "\\s*|\t|\r|\n";//定义空格回车换行符
 
@@ -348,6 +350,20 @@ public class Utils {
         Matcher m_space = p_space.matcher(htmlStr);
         htmlStr = m_space.replaceAll(""); // 过滤空格回车标签
         return htmlStr.trim(); // 返回文本字符串
+    }
+
+    /**
+     * HTML字符串里是否包含img标签
+     */
+    public static boolean hasImage(String html) {
+        return !StringHelper.isEmpty(html, true) && Pattern.compile(regEx_img).matcher(html).find();
+    }
+
+    /**
+     * HTML字符串里是否包含video标签
+     */
+    public static boolean hasVideo(String html) {
+        return !StringHelper.isEmpty(html, true) && Pattern.compile(regEx_video).matcher(html).find();
     }
 
     /**

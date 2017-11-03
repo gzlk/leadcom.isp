@@ -88,7 +88,10 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
     protected void onViewPagerDisplayedChanged(boolean visible) {
         super.onViewPagerDisplayedChanged(visible);
         if (visible) {
-            onSwipeRefreshing();
+            if (isEmpty(mQueryId) || !mQueryId.equals(StructureFragment.selectedGroupId)) {
+                mQueryId = StructureFragment.selectedGroupId;
+                onSwipeRefreshing();
+            }
         }
     }
 
@@ -99,10 +102,11 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
         if (!StringHelper.isEmpty(mQueryId) && mQueryId.equals(queryId)) {
             return;
         }
-        mQueryId = queryId;
+        //mQueryId = queryId;
         remotePageNumber = 1;
         if (null != mAdapter) {
-            loadingRecommended();
+            //onSwipeRefreshing();
+            mAdapter.clear();
         }
     }
 
@@ -173,12 +177,13 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
     private void tryRecommendArchive(RecommendArchive archive, int index) {
         Archive doc = null == archive.getUserDoc() ? archive.getGroDoc() : archive.getUserDoc();
         if (null != doc) {
-            if (archive.getRecommend() == 0) {
-                if (doc.getImage().size() < 1 && doc.getVideo().size() < 1) {
+            if (!archive.isRecommended()) {
+                if (!doc.isRecommendable()) {
                     // 无图无视频
                     ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_no_image_video);
                 } else {
-                    if (doc.getImage().size() > 0 || doc.getVideo().size() > 0) {
+                    // 有图或者视频，可以推荐
+                    if (Utils.hasImage(doc.getContent()) || Utils.hasVideo(doc.getContent())) {
                         recommendArchive(archive, index);
                     } else {
                         long len = getArchiveContentRealLength(doc.getContent());
@@ -252,7 +257,7 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_archive_recommend;
+            return R.layout.holder_view_archive_group_nominate;
         }
 
         @Override

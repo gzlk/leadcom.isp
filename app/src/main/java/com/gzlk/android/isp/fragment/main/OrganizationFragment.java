@@ -110,9 +110,14 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             removeFragment(recommend);
             channel4.setVisibility(View.GONE);
         }
-        if (addable && !exists) {
-            channel4.setVisibility(View.VISIBLE);
-            addFragment(ArchiveNominateFragment.newInstance(groupId));
+        if (addable) {
+            if (!exists) {
+                channel4.setVisibility(View.VISIBLE);
+                addFragment(ArchiveNominateFragment.newInstance(groupId));
+            }
+//            else {
+                //((ArchiveNominateFragment) mFragments.get(3)).setNewQueryId(groupId);
+//            }
         }
     }
 
@@ -128,10 +133,10 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
             String creatorId = item.getCreatorId();
             ((ContactFragment) mFragments.get(1)).setIsCreator(!isEmpty(creatorId) && creatorId.equals(Cache.cache().userId));
-            ((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
-            if (mFragments.size() > 3) {
-                ((ArchiveNominateFragment) mFragments.get(3)).setNewQueryId(item.getId());
-            }
+            //((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
+//            if (mFragments.size() > 3) {
+//                ((ArchiveNominateFragment) mFragments.get(3)).setNewQueryId(item.getId());
+//            }
         }
     };
 

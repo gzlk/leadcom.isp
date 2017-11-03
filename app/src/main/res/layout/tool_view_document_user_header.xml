@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_tool_view_document_user_header_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="@dimen/ui_base_dimen_margin_padding">
+    android:visibility="gone">
 
     <com.gzlk.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_tool_view_document_user_header_image"
-        android:layout_width="@dimen/ui_static_dp_35"
-        android:layout_height="@dimen/ui_static_dp_35"
+        android:layout_width="@dimen/ui_base_user_header_image_size_small"
+        android:layout_height="@dimen/ui_base_user_header_image_size_small"
         app:id_image_src="@mipmap/img_default_user_header"
         app:id_image_type="oval"
         app:id_show_header="true" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding">
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/ui_tool_view_document_user_header_name"
@@ -31,11 +34,9 @@
             android:id="@+id/ui_tool_view_document_user_header_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ui_tool_view_document_user_header_name"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-            android:layout_toRightOf="@+id/ui_tool_view_document_user_header_name"
             android:text="@string/app_name"
             android:textColor="@color/textColorHintLight"
             android:textSize="@dimen/ui_base_text_size_little" />
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

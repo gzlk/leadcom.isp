@@ -39,8 +39,8 @@ import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
+import com.gzlk.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.gzlk.android.isp.holder.individual.CollectionItemViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualFunctionViewHolder;
 import com.gzlk.android.isp.holder.individual.IndividualHeaderViewHolder;
@@ -856,8 +856,10 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     mhcvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
                     return mhcvh;
                 case VT_ARCHIVE:
-                    ArchiveViewHolder holder = new ArchiveViewHolder(itemView, fragment);
+                    ArchiveHomeRecommendedViewHolder holder = new ArchiveHomeRecommendedViewHolder(itemView, fragment);
                     holder.addOnViewHolderClickListener(onViewHolderClickListener);
+                    holder.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
+                    holder.setHeaderShaoable(true);
                     return holder;
                 case VT_COLLECTION:
                     CollectionItemViewHolder civh = new CollectionItemViewHolder(itemView, fragment);
@@ -883,7 +885,7 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 case VT_MOMENT:
                     return R.layout.holder_view_individual_moment_details;
                 case VT_ARCHIVE:
-                    return R.layout.holder_view_document;
+                    return R.layout.holder_view_archive_home_feature;
                 case VT_CAMERA:
                     return R.layout.holder_view_individual_moment_camera;
                 case VT_NO_MORE:
@@ -921,8 +923,8 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                 ((IndividualHeaderViewHolder) holder).showContent((User) item);
             } else if (holder instanceof MomentDetailsViewHolder) {
                 ((MomentDetailsViewHolder) holder).showContent((Moment) item);
-            } else if (holder instanceof ArchiveViewHolder) {
-                ((ArchiveViewHolder) holder).showContent((Archive) item);
+            } else if (holder instanceof ArchiveHomeRecommendedViewHolder) {
+                ((ArchiveHomeRecommendedViewHolder) holder).showContent((Archive) item);
             } else if (holder instanceof CollectionItemViewHolder) {
                 ((CollectionItemViewHolder) holder).showContent((Collection) item);
             } else if (holder instanceof MomentHomeCameraViewHolder) {

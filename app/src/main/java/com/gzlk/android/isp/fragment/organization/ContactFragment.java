@@ -246,7 +246,11 @@ public class ContactFragment extends BaseOrganizationFragment {
     protected void onViewPagerDisplayedChanged(boolean visible) {
         super.onViewPagerDisplayedChanged(visible);
         if (visible) {
-            refreshContact();
+            if (isEmpty(mQueryId) || !mQueryId.equals(StructureFragment.selectedGroupId)) {
+                mQueryId = StructureFragment.selectedGroupId;
+                onSwipeRefreshing();
+            }
+            //refreshContact();
         }
     }
 
@@ -269,7 +273,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             searchingListener.onSearching("");
             loadingQueryItem();
         } else {
-            refreshContact();
+            //refreshContact();
         }
     }
 
@@ -318,6 +322,9 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     @Override
     protected void fetchingRemoteMembers(String groupId, String squadId) {
+        if (isEmpty(groupId)) {
+            return;
+        }
         setLoadingText(R.string.ui_organization_contact_loading_text);
         displayLoading(true);
         displayNothing(false);

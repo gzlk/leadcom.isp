@@ -408,13 +408,14 @@ public class StructureFragment extends BaseOrganizationFragment {
 
     public void changeSelectedGroup() {
         if (selectedIndex < 0) return;
-        Organization organization = concernedViewHolder.get(selectedIndex);
-        if (null != organization) {
-            my = organization.getGroMember();
-            selectedGroupId = organization.getId();
+        Organization org = concernedViewHolder.get(selectedIndex);
+        if (null != org) {
+            my = org.getGroMember();
+            selectedGroupId = org.getId();
+            log(format("change group to %s, %s", org.getName(), org.getId()));
             // 显示我关注的组织列表
             clearConcerned();
-            ArrayList<Concern> concerns = organization.getConGroup();
+            ArrayList<Concern> concerns = org.getConGroup();
             SimpleClickableItem sciConcerned = new SimpleClickableItem(format(items[1], null == concerns ? 0 : concerns.size()));
             mAdapter.update(sciConcerned);
             if (null != concerns) {
@@ -427,7 +428,7 @@ public class StructureFragment extends BaseOrganizationFragment {
             SimpleClickableItem sci = new SimpleClickableItem(items[2]);
             mAdapter.update(sci);
             // 本组织下的小组列表
-            fetchingGroupSquads(organization.getId());
+            fetchingGroupSquads(org.getId());
             // 如果当前用户是管理员的话，增加推荐档案列表的显示
             if (my.isManager()) {
                 organizationFragment.addRecommendedArchives(true, selectedGroupId);
@@ -437,7 +438,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         }
         // 更改标题栏上的文字和icon
         if (null != organizationChangedListener) {
-            organizationChangedListener.onChanged(organization);
+            organizationChangedListener.onChanged(org);
         }
     }
 

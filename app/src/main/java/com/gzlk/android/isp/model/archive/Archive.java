@@ -579,6 +579,13 @@ public class Archive extends Additional {
         this.office = office;
     }
 
+    /**
+     * 是否可以推荐
+     */
+    public boolean isRecommendable() {
+        return Utils.hasImage(content) || Utils.hasVideo(content) || getImage().size() > 0 || getVideo().size() > 0;
+    }
+
     public ArrayList<Attachment> getImage() {
         if (null == image) {
             image = new ArrayList<>();

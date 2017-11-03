@@ -86,6 +86,9 @@
                             width: 100per;
                             max-width: 100per;
                         }
+                        img {
+                            width: 100per;
+                        }
                     </style>
                 </head>
                 <body>%s</body>

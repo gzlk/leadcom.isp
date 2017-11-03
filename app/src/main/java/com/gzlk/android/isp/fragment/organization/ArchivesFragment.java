@@ -12,12 +12,15 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
+import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
-import com.gzlk.android.isp.holder.archive.ArchiveViewHolder;
+import com.gzlk.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
+import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Member;
 
@@ -34,7 +37,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchivesFragment extends BaseOrganizationFragment {
+public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
 
     public static ArchivesFragment newInstance(String params) {
         ArchivesFragment af = new ArchivesFragment();
@@ -71,14 +74,30 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         setLoadingText(R.string.ui_organization_archive_loading);
         setNothingText(R.string.ui_organization_archive_nothing);
         initializeAdapter();
-        fetchingRemoteArchives();
     }
 
     @Override
     protected void onViewPagerDisplayedChanged(boolean visible) {
         super.onViewPagerDisplayedChanged(visible);
         if (visible) {
-            refreshArchives();
+            if (isEmpty(mQueryId) || !mQueryId.equals(StructureFragment.selectedGroupId)) {
+                mQueryId = StructureFragment.selectedGroupId;
+                onSwipeRefreshing();
+            }
+        }
+    }
+
+    /**
+     * 设置新的组织id并查找该组织的档案列表
+     */
+    public void setNewQueryId(String queryId) {
+        if (!StringHelper.isEmpty(mQueryId) && mQueryId.equals(queryId)) {
+            return;
+        }
+        //mQueryId = queryId;
+        remotePageNumber = 1;
+        if (null != mAdapter) {
+            mAdapter.clear();
         }
     }
 
@@ -126,20 +145,6 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                 break;
         }
         super.onActivityResult(requestCode, data);
-    }
-
-    /**
-     * 设置新的组织id并查找该组织的档案列表
-     */
-    public void setNewQueryId(String queryId) {
-        if (!StringHelper.isEmpty(mQueryId) && mQueryId.equals(queryId)) {
-            return;
-        }
-        mQueryId = queryId;
-        remotePageNumber = 1;
-        if (null != mAdapter) {
-            fetchingRemoteArchives();
-        }
     }
 
     // 我是否可以管理组织档案
@@ -196,10 +201,6 @@ public class ArchivesFragment extends BaseOrganizationFragment {
                         if (null != mAdapter) {
                             // 覆盖方式重置list
                             mAdapter.update(list, remotePageNumber <= 1);
-                            // 第一页的时候排序一下，把最新的放在最前面
-                            if (remotePageNumber <= 1) {
-                                mAdapter.sort();
-                            }
                         }
                         if (list.size() >= pageSize) {
                             remotePageNumber++;
@@ -219,6 +220,9 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         if (null == mAdapter) {
             mAdapter = new ArchiveAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            if (!isEmpty(mQueryId)) {
+                fetchingRemoteArchives();
+            }
         }
     }
 
@@ -226,36 +230,46 @@ public class ArchivesFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
-            Archive archive = mAdapter.get(index);
-
-            ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, archive.getId(), Archive.Type.GROUP);
-            //ArchiveDetailsFragment.open(ArchivesFragment.this, Archive.Type.GROUP, archive.getId(), REQUEST_DELETE);
-            //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, archive.getId()), REQUEST_DELETE, true, false);
+            ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index).getId(), Archive.Type.GROUP);
         }
     };
 
-    private class ArchiveAdapter extends RecyclerViewAdapter<ArchiveViewHolder, Archive> {
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_tool_view_document_user_header_image:
+                    // 点击头像，打开个人属性页
+                    UserPropertyFragment.open(ArchivesFragment.this, mAdapter.get(index).getUserId());
+                    break;
+            }
+        }
+    };
+
+    private class ArchiveAdapter extends RecyclerViewAdapter<ArchiveHomeRecommendedViewHolder, Archive> {
 
         @Override
-        public ArchiveViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ArchiveViewHolder holder = new ArchiveViewHolder(itemView, ArchivesFragment.this);
+        public ArchiveHomeRecommendedViewHolder onCreateViewHolder(View itemView, int viewType) {
+            ArchiveHomeRecommendedViewHolder holder = new ArchiveHomeRecommendedViewHolder(itemView, ArchivesFragment.this);
             holder.addOnViewHolderClickListener(viewHolderClickListener);
+            holder.setOnViewHolderElementClickListener(elementClickListener);
+            holder.setHeaderShaoable(true);
             return holder;
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_document;
+            return R.layout.holder_view_archive_home_feature;
         }
 
         @Override
-        public void onBindHolderOfView(ArchiveViewHolder holder, int position, @Nullable Archive item) {
+        public void onBindHolderOfView(ArchiveHomeRecommendedViewHolder holder, int position, @Nullable Archive item) {
             holder.showContent(item);
         }
 
         @Override
         protected int comparator(Archive item1, Archive item2) {
-            return -item1.getCreateDate().compareTo(item2.getCreateDate());
+            return 0;
         }
     }
 }

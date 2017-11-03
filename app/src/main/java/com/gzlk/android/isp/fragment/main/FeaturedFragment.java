@@ -560,7 +560,7 @@ public class FeaturedFragment extends BaseSwipeRefreshSupportFragment {
                     // 活动
                     return R.layout.holder_view_home_seminar;
                 case VT_ARCHIVE:
-                    return R.layout.holder_view_archive_home_recommended;
+                    return R.layout.holder_view_archive_home_feature;
                 default:
                     // 档案
                     return R.layout.holder_view_archive_management;

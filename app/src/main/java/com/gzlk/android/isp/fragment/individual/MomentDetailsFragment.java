@@ -246,8 +246,15 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         @Override
         public void onInputComplete(String text, int length, int type) {
             if (!isEmpty(text)) {
-                Comment comment = (Comment) mAdapter.get(selectedComment);
-                comment(text, comment.isMine() ? "" : comment.getUserId());
+                Model model = mAdapter.get(selectedComment);
+                if (model instanceof Comment) {
+                    // 回复评论或点击评论
+                    Comment comment = (Comment) model;
+                    comment(text, comment.isMine() ? "" : comment.getUserId());
+                } else {
+                    // 直接发布评论
+                    comment(text, "");
+                }
             }
         }
     };
