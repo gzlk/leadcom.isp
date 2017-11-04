@@ -1,13 +1,17 @@
 package com.gzlk.android.isp.helper.publishable;
 
 import com.gzlk.android.isp.api.archive.LikeRequest;
+import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.helper.publishable.listener.OnLikeListListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.user.Moment;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>点赞相关helper<br />
@@ -23,6 +27,15 @@ public class LikeHelper extends Publishable {
 
     public static LikeHelper helper() {
         return new LikeHelper();
+    }
+
+    @Override
+    public LikeHelper setModel(Model model) {
+        if (null == model) {
+            throw new IllegalArgumentException("Cannot set null object to like helper.");
+        }
+        super.setModel(model);
+        return this;
     }
 
     @Override
@@ -51,7 +64,14 @@ public class LikeHelper extends Publishable {
         return this;
     }
 
-    public void like(int likeType, String archiveId) {
+    private OnLikeListListener listListener;
+
+    public LikeHelper setOnLikeListListener(OnLikeListListener l) {
+        listListener = l;
+        return this;
+    }
+
+    public void like() {
         LikeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveLike>() {
             @Override
             public void onResponse(ArchiveLike like, boolean success, String message) {
@@ -75,10 +95,10 @@ public class LikeHelper extends Publishable {
                     }
                 }
             }
-        }).add(likeType, archiveId);
+        }).add(getMethodType(), getHostId());
     }
 
-    public void unlike(int likeType, String archiveId) {
+    public void unlike() {
         LikeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveLike>() {
             @Override
             public void onResponse(ArchiveLike like, boolean success, String message) {
@@ -106,6 +126,18 @@ public class LikeHelper extends Publishable {
                     }
                 }
             }
-        }).delete(likeType, archiveId);
+        }).delete(getMethodType(), getHostId());
+    }
+
+    public void list() {
+        LikeRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<ArchiveLike>() {
+            @Override
+            public void onResponse(List<ArchiveLike> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (null != listListener) {
+                    listListener.onList(list, success, pageSize);
+                }
+            }
+        }).list(getMethodType(), getHostId(), 1);
     }
 }

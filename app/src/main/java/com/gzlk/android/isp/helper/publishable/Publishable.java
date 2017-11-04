@@ -1,6 +1,8 @@
 package com.gzlk.android.isp.helper.publishable;
 
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Moment;
 
 /**
@@ -17,6 +19,32 @@ public abstract class Publishable {
 
     Archive mArchive;
     Moment mMoment;
+
+    String getHostId() {
+        if (null != mArchive) {
+            return mArchive.getId();
+        }
+        if (null != mMoment) {
+            return mMoment.getId();
+        }
+        return "";
+    }
+
+    int getMethodType() {
+        if (null != mArchive) {
+            return null == mArchive.getGroEntity() ? Comment.Type.USER : Comment.Type.GROUP;
+        }
+        return Comment.Type.MOMENT;
+    }
+
+    public Publishable setModel(Model model) {
+        if (model instanceof Archive) {
+            mArchive = (Archive) model;
+        } else if (model instanceof Moment) {
+            mMoment = (Moment) model;
+        }
+        return this;
+    }
 
     public abstract Publishable setArchive(Archive archive);
 

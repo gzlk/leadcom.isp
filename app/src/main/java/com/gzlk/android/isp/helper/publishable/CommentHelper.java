@@ -6,6 +6,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnCommentListListener;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Moment;
@@ -27,6 +28,15 @@ public class CommentHelper extends Publishable {
 
     public static CommentHelper helper() {
         return new CommentHelper();
+    }
+
+    @Override
+    public CommentHelper setModel(Model model) {
+        if (null == model) {
+            throw new IllegalArgumentException("Cannot set null object to comment helper.");
+        }
+        super.setModel(model);
+        return this;
     }
 
     @Override
@@ -62,17 +72,7 @@ public class CommentHelper extends Publishable {
         return this;
     }
 
-    private String getHostId() {
-        if (null != mArchive) {
-            return mArchive.getId();
-        }
-        if (null != mMoment) {
-            return mMoment.getId();
-        }
-        return null;
-    }
-
-    public void comment(int commentType, String content, String toUserId) {
+    public void comment(String content, String toUserId) {
         CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
@@ -92,10 +92,10 @@ public class CommentHelper extends Publishable {
                     }
                 }
             }
-        }).add(commentType, getHostId(), content, toUserId);
+        }).add(getMethodType(), getHostId(), content, toUserId);
     }
 
-    public void delete(int commentType, String archiveId, final String commentId) {
+    public void delete(final String commentId) {
         CommentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Comment>() {
             @Override
             public void onResponse(Comment comment, boolean success, String message) {
@@ -122,10 +122,10 @@ public class CommentHelper extends Publishable {
                     }
                 }
             }
-        }).delete(commentType, archiveId, commentId);
+        }).delete(getMethodType(), getHostId(), commentId);
     }
 
-    public void list(int commentType, String archiveId, int pageNumber) {
+    public void list(int pageNumber) {
         CommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
             @Override
             public void onResponse(List<Comment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -134,6 +134,6 @@ public class CommentHelper extends Publishable {
                     listListener.onList(list, success, pageSize);
                 }
             }
-        }).list(commentType, archiveId, pageNumber);
+        }).list(getMethodType(), getHostId(), pageNumber);
     }
 }

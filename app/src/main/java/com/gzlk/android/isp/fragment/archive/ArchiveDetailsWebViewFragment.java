@@ -13,20 +13,10 @@ import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.helper.publishable.CollectHelper;
-import com.gzlk.android.isp.helper.publishable.CommentHelper;
-import com.gzlk.android.isp.helper.publishable.LikeHelper;
-import com.gzlk.android.isp.helper.publishable.listener.OnCollectedListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnCommentListListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnUncollectedListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsViewHolder;
@@ -36,7 +26,6 @@ import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
-import com.gzlk.android.isp.model.user.Collection;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
@@ -57,7 +46,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
     private static final String PARAM_SELECTED = "adwvf_selected_comment";
@@ -147,9 +136,6 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
     private DetailsAdapter mAdapter;
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
-    private CommentHelper commentHelper;
-    private LikeHelper likeHelper;
-    private CollectHelper collectHelper;
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -179,7 +165,8 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
 
     @Override
     protected void onLoadingMore() {
-
+        mAdapter.remove(nothingMore);
+        loadingComments(mAdapter.get(mQueryId));
     }
 
     @Override
@@ -221,76 +208,11 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                 showInputBoard(true);
                 break;
             case R.id.ui_tool_view_archive_additional_like_layout:
-                checkLikeStatus();
+                like(mAdapter.get(mQueryId));
                 break;
             case R.id.ui_tool_view_archive_additional_collection_layout:
-                checkCollectStatus();
+                collect(mAdapter.get(mQueryId));
                 break;
-        }
-    }
-
-    private void checkLikeStatus() {
-        Archive archive = (Archive) mAdapter.get(mQueryId);
-        if (archive.isLiked()) {
-            // 取消赞
-            setLoadingText(R.string.ui_text_archive_details_unliking);
-            displayLoading(true);
-            likeHelper.setUnlikeListener(new OnUnlikeListener() {
-                @Override
-                public void onUnlike(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        mAdapter.update(model);
-                        displayAdditional((Archive) model);
-                    }
-                }
-            }).unlike(commentType(), mQueryId);
-        } else {
-            // 赞
-            setLoadingText(R.string.ui_text_archive_details_liking);
-            displayLoading(true);
-            likeHelper.setLikeListener(new OnLikeListener() {
-                @Override
-                public void onLiked(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        mAdapter.update(model);
-                        displayAdditional((Archive) model);
-                    }
-                }
-            }).like(commentType(), mQueryId);
-        }
-    }
-
-    private void checkCollectStatus() {
-        Archive archive = (Archive) mAdapter.get(mQueryId);
-        if (archive.isCollected()) {
-            // 取消收藏
-            setLoadingText(R.string.ui_text_archive_details_uncollecting);
-            displayLoading(true);
-            collectHelper.setUncollectedListener(new OnUncollectedListener() {
-                @Override
-                public void onUncollected(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        mAdapter.update(model);
-                        displayAdditional((Archive) model);
-                    }
-                }
-            }).uncollect(archive.getColId());
-        } else {
-            setLoadingText(R.string.ui_text_archive_details_collecting);
-            displayLoading(true);
-            collectHelper.setCollectedListener(new OnCollectedListener() {
-                @Override
-                public void onCollected(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        mAdapter.update(model);
-                        displayAdditional((Archive) model);
-                    }
-                }
-            }).collect(Collection.get(archive));
         }
     }
 
@@ -332,80 +254,13 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                 Comment comment = (Comment) model;
                 if (!comment.getUserId().equals(Cache.cache().userId)) {
                     // 评论别人
-                    sendComment(content, comment.getUserId());
+                    comment(mAdapter.get(mQueryId), content, comment.getUserId());
                 }
             } else {
-                sendComment(content, "");
+                // 直接评论
+                comment(mAdapter.get(mQueryId), content, "");
             }
         }
-    }
-
-    private void sendComment(String content, String toUserId) {
-        setLoadingText(R.string.ui_text_archive_details_comment_sending);
-        displayLoading(true);
-        commentHelper.setCommentAddListener(new OnCommentAddListener() {
-            @Override
-            public void onComplete(boolean success, Comment comment, Model model) {
-                displayLoading(false);
-                if (success) {
-                    inputContent.setText("");
-                    if (null != comment && !isEmpty(comment.getId())) {
-                        mAdapter.add(comment, mAdapter.getItemCount() - 1);
-                        mAdapter.update(model);
-                        displayAdditional((Archive) model);
-                        smoothScrollToBottom(mAdapter.getItemCount() - 1);
-                        restoreInputStatus();
-                    } else {
-                        loadingComments();
-                        restoreInputStatus();
-                    }
-                }
-            }
-        }).comment(commentType(), content, toUserId);
-    }
-
-    private void deleteComment(final int index, String commentId) {
-        setLoadingText(R.string.ui_text_archive_details_comment_deleting);
-        displayLoading(true);
-        commentHelper.setCommentDeleteListener(new OnCommentDeleteListener() {
-            @Override
-            public void onDeleted(boolean success, Model model) {
-                displayLoading(false);
-                if (success) {
-                    mAdapter.remove(index);
-                    mAdapter.update(model);
-                    displayAdditional((Archive) model);
-                }
-            }
-        }).delete(commentType(), mQueryId, commentId);
-    }
-
-    private int commentType() {
-        return archiveType == Archive.Type.GROUP ? Comment.Type.GROUP : Comment.Type.USER;
-    }
-
-    private void loadingComments() {
-        mAdapter.remove(nothingMore);
-        setLoadingText(R.string.ui_text_document_details_loading_comments);
-        displayLoading(true);
-        commentHelper.setCommentListListener(new OnCommentListListener() {
-            @Override
-            public void onList(List<Comment> list, boolean success, int pageSize) {
-                displayLoading(false);
-                int size = null == list ? 0 : list.size();
-                isLoadingComplete(size < pageSize);
-                if (success && null != list) {
-                    // 下一页
-                    remotePageNumber += size >= pageSize ? 1 : 0;
-
-                    for (Comment comment : list) {
-                        mAdapter.update(comment);
-                    }
-                }
-                stopRefreshing();
-                mAdapter.update(nothingMore);
-            }
-        }).list(commentType(), mQueryId, remotePageNumber);
     }
 
     private void loadingArchive() {
@@ -421,16 +276,7 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                     deletable = archive.getUserId().equals(Cache.cache().userId);
                     mAdapter.update(archive);
                     displayAdditional(archive);
-                    if (null == commentHelper) {
-                        commentHelper = CommentHelper.helper().setArchive(archive);
-                    }
-                    if (null == likeHelper) {
-                        likeHelper = LikeHelper.helper().setArchive(archive);
-                    }
-                    if (null == collectHelper) {
-                        collectHelper = CollectHelper.helper().setArchive(archive);
-                    }
-                    loadingComments();
+                    loadingComments(archive);
                 }
             }
 
@@ -481,16 +327,16 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                     }
                     break;
                 case R.id.ui_holder_view_archive_details_comment_delete:
-                    // 删除评论
-                    deleteComment(index, mAdapter.get(index).getId());
+                    selectedIndex = index;
+                    openCommentDeleteDialog();
                     break;
                 case R.id.ui_tool_view_archive_additional_like_layout:
                     // 点赞
-                    checkLikeStatus();
+                    like(mAdapter.get(mQueryId));
                     break;
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏
-                    checkCollectStatus();
+                    collect(mAdapter.get(mQueryId));
                     break;
             }
         }
@@ -513,6 +359,70 @@ public class ArchiveDetailsWebViewFragment extends BaseSwipeRefreshSupportFragme
                 smoothScrollToBottom(selectedIndex);
             }
         }, 100);
+    }
+
+    @Override
+    protected void onLikeComplete(boolean success, Model model) {
+        if (success) {
+            mAdapter.update(model);
+            displayAdditional((Archive) model);
+        }
+    }
+
+    @Override
+    protected void onCollectComplete(boolean success, Model model) {
+        if (success) {
+            mAdapter.update(model);
+            displayAdditional((Archive) model);
+        }
+    }
+
+    @Override
+    protected void onLoadingCommentComplete(boolean success, List<Comment> list) {
+        if (success && null != list) {
+            for (Comment comment : list) {
+                mAdapter.update(comment);
+            }
+        }
+        mAdapter.update(nothingMore);
+    }
+
+    @Override
+    protected void onCommentComplete(boolean success, Comment comment, Model model) {
+        if (success) {
+            inputContent.setText("");
+            if (null != comment && !isEmpty(comment.getId())) {
+                mAdapter.add(comment, mAdapter.getItemCount() - 1);
+                mAdapter.update(model);
+                displayAdditional((Archive) model);
+                smoothScrollToBottom(mAdapter.getItemCount() - 1);
+                restoreInputStatus();
+            } else {
+                restoreInputStatus();
+            }
+        }
+    }
+
+    @Override
+    protected void onCommentDeleteDialogCanceled() {
+        selectedIndex = mAdapter.getItemCount() - 1;
+    }
+
+    @Override
+    protected void onCommentDeleteDialogConfirmed() {
+        deleteComment(mAdapter.get(mQueryId), mAdapter.get(selectedIndex).getId());
+    }
+
+    @Override
+    protected void onDeleteCommentComplete(boolean success, Model model) {
+        if (success) {
+            if (mAdapter.get(selectedIndex) instanceof Comment) {
+                mAdapter.remove(selectedIndex);
+            }
+            selectedIndex = mAdapter.getItemCount() - 1;
+            mAdapter.update(model);
+            displayAdditional((Archive) model);
+        }
     }
 
     private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {

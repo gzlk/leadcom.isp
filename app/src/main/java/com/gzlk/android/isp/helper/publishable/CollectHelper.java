@@ -1,11 +1,10 @@
 package com.gzlk.android.isp.helper.publishable;
 
-import android.support.annotation.NonNull;
-
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.helper.publishable.listener.OnCollectedListener;
 import com.gzlk.android.isp.helper.publishable.listener.OnUncollectedListener;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
@@ -24,6 +23,15 @@ public class CollectHelper extends Publishable {
 
     public static CollectHelper helper() {
         return new CollectHelper();
+    }
+
+    @Override
+    public CollectHelper setModel(Model model) {
+        if (null == model) {
+            throw new IllegalArgumentException("Cannot set null object to collect helper.");
+        }
+        super.setModel(model);
+        return this;
     }
 
     @Override

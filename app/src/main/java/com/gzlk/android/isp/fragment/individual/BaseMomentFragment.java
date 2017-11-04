@@ -6,6 +6,7 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.fragment.base.BaseChatInputSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.gzlk.android.isp.model.archive.ArchiveLike;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.user.Moment;
@@ -23,7 +24,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseMomentFragment extends BaseChatInputSupportFragment {
+public abstract class BaseMomentFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void onSwipeRefreshing() {
@@ -84,35 +85,4 @@ public abstract class BaseMomentFragment extends BaseChatInputSupportFragment {
     protected void onDeleteMomentComplete(Moment moment, boolean success, String message) {
     }
 
-    /**
-     * 拉取评论列表
-     */
-    protected void fetchingComments() {
-        CommentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Comment>() {
-            @Override
-            public void onResponse(List<Comment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                onFetchingCommentsComplete(list, success, pageSize);
-            }
-        }).list(Comment.Type.MOMENT, mQueryId, remotePageNumber);
-    }
-
-    protected void onFetchingCommentsComplete(List<Comment> list, boolean success, int pageSize) {
-    }
-
-    /**
-     * 拉取赞列表
-     */
-    protected void fetchingPraises() {
-        LikeRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<ArchiveLike>() {
-            @Override
-            public void onResponse(List<ArchiveLike> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                onFetchingPraisesComplete(list, success, pageSize);
-            }
-        }).list(Comment.Type.MOMENT, mQueryId, 1);
-    }
-
-    protected void onFetchingPraisesComplete(List<ArchiveLike> list, boolean success, int pageSize) {
-    }
 }

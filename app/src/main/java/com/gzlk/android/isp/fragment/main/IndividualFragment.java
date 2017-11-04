@@ -21,8 +21,8 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
+import com.gzlk.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.individual.CollectionDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
 import com.gzlk.android.isp.fragment.individual.MomentDetailsFragment;
@@ -32,12 +32,6 @@ import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
-import com.gzlk.android.isp.helper.publishable.CommentHelper;
-import com.gzlk.android.isp.helper.publishable.LikeHelper;
-import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
 import com.gzlk.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
@@ -79,7 +73,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
+public class IndividualFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_SHOWN = "title_bar_shown";
     private static final String PARAM_SELECTED = "function_selected";
@@ -538,45 +532,15 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case R.id.ui_tooltip_menu_moment_praise:
                     // 点赞说说
-                    checkMomentLikeStatus();
+                    like(mAdapter.get(selectedMoment));
                     break;
                 case R.id.ui_tooltip_menu_moment_praised:
                     // 取消赞说说
-                    checkMomentLikeStatus();
+                    like(mAdapter.get(selectedMoment));
                     break;
             }
         }
     };
-
-    private void checkMomentLikeStatus() {
-        Model model = mAdapter.get(selectedMoment);
-        if (model instanceof Moment) {
-            Moment moment = (Moment) model;
-            setLoadingText(R.string.ui_base_text_loading);
-            displayLoading(true);
-            if (moment.isLiked()) {
-                LikeHelper.helper().setMoment(moment).setUnlikeListener(new OnUnlikeListener() {
-                    @Override
-                    public void onUnlike(boolean success, Model model) {
-                        displayLoading(false);
-                        if (success) {
-                            mAdapter.update(model);
-                        }
-                    }
-                }).unlike(Comment.Type.MOMENT, moment.getId());
-            } else {
-                LikeHelper.helper().setMoment(moment).setLikeListener(new OnLikeListener() {
-                    @Override
-                    public void onLiked(boolean success, Model model) {
-                        displayLoading(false);
-                        if (success) {
-                            mAdapter.update(model);
-                        }
-                    }
-                }).like(Comment.Type.MOMENT, moment.getId());
-            }
-        }
-    }
 
     private OnViewHolderElementClickListener onViewHolderElementClickListener = new OnViewHolderElementClickListener() {
         @Override
@@ -616,52 +580,44 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
                     selectedComment = index;
                     Comment comment = (Comment) mAdapter.get(selectedComment);
                     if (comment.isMine()) {
-                        openCommentDeleteDialog(comment.getMomentId(), comment.getId());
+                        openCommentDeleteDialog();
                     } else {
                         openCommentReplyDialog();
                     }
+                    break;
+                case R.id.ui_tool_view_archive_additional_comment_layout:
+                    // 个人档案评论
+                    ArchiveDetailsWebViewFragment.open(IndividualFragment.this, mAdapter.get(index).getId(), Archive.Type.USER);
+                    break;
+                case R.id.ui_tool_view_archive_additional_like_layout:
+                    // 个人档案点赞
+                    like(mAdapter.get(index));
+                    break;
+                case R.id.ui_tool_view_archive_additional_collection_layout:
+                    // 个人档案收藏
+                    collect(mAdapter.get(index));
                     break;
             }
         }
     };
 
-    private View commentDeleteDialog;
-
-    private void openCommentDeleteDialog(final String momentId, final String commentId) {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == commentDeleteDialog) {
-                    commentDeleteDialog = View.inflate(Activity(), R.layout.popup_dialog_comment_delete, null);
-                }
-                return commentDeleteDialog;
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-
-            }
-        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                deleteComment(momentId, commentId);
-                return true;
-            }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    @Override
+    protected void onCommentDeleteDialogCanceled() {
+        selectedComment = 0;
     }
 
-    private void deleteComment(String momentId, final String commentId) {
-        setLoadingText(R.string.ui_individual_moment_list_comment_deleting);
-        displayLoading(true);
-        CommentHelper.helper().setMoment((Moment) mAdapter.get(momentId)).setCommentDeleteListener(new OnCommentDeleteListener() {
-            @Override
-            public void onDeleted(boolean success, Model model) {
-                displayLoading(false);
-                if (success) {
-                    appendMoment((Moment) model);
-                }
-            }
-        }).delete(Comment.Type.MOMENT, momentId, commentId);
+    @Override
+    protected void onCommentDeleteDialogConfirmed() {
+        Comment comment = (Comment) mAdapter.get(selectedComment);
+        deleteComment(mAdapter.get(comment.getMomentId()), comment.getId());
+    }
+
+    @Override
+    protected void onDeleteCommentComplete(boolean success, Model model) {
+        if (success) {
+            selectedComment = 0;
+            appendMoment((Moment) model);
+        }
     }
 
     private View replyDialogView, inputableView;
@@ -744,10 +700,12 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             public boolean onClick(View view) {
                 if (view.getId() == R.id.ui_tool_view_simple_inputable_send) {
                     // 发布评论
-                    String content = replyContent.getValue();
+                    final String content = replyContent.getValue();
                     if (!isEmpty(content)) {
                         comment(content);
+                        return true;
                     }
+                    return false;
                 }
                 return true;
             }
@@ -755,6 +713,14 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onCancel() {
                 Utils.hidingInputBoard(replyContent);
+            }
+        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
+            @Override
+            public void onDismiss() {
+                View view = Activity().getCurrentFocus();
+                if (null != view) {
+                    Utils.hidingInputBoard(view);
+                }
             }
         }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
         Handler().postDelayed(new Runnable() {
@@ -769,34 +735,27 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void comment(String content) {
-        setLoadingText(R.string.ui_individual_moment_list_commenting);
-        displayLoading(true);
         if (selectedComment > 0) {
             Model model = mAdapter.get(selectedComment);
             if (model instanceof Comment) {
                 Comment comment = (Comment) model;
                 if (comment.isMine()) {
-                    comment(comment.getMomentId(), content, "");
+                    comment(mAdapter.get(comment.getMomentId()), content, "");
                 } else {
-                    comment(comment.getMomentId(), content, comment.getUserId());
+                    comment(mAdapter.get(comment.getMomentId()), content, comment.getUserId());
                 }
             }
         } else {
             // 直接评论
-            comment(mAdapter.get(selectedMoment).getId(), content, "");
+            comment(mAdapter.get(selectedMoment), content, "");
         }
     }
 
-    private void comment(String momentId, String content, String toUserId) {
-        CommentHelper.helper().setMoment((Moment) mAdapter.get(momentId)).setCommentAddListener(new OnCommentAddListener() {
-            @Override
-            public void onComplete(boolean success, Comment comment, Model model) {
-                displayLoading(false);
-                if (success) {
-                    appendMoment((Moment) model);
-                }
-            }
-        }).comment(Comment.Type.MOMENT, content, toUserId);
+    @Override
+    protected void onCommentComplete(boolean success, Comment comment, Model model) {
+        if (success) {
+            appendMoment((Moment) model);
+        }
     }
 
     private OnHandleBoundDataListener<Model> momentBoundDataListener = new OnHandleBoundDataListener<Model>() {
@@ -822,7 +781,20 @@ public class IndividualFragment extends BaseSwipeRefreshSupportFragment {
         if (null != archive) {
             int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
             ArchiveDetailsWebViewFragment.open(IndividualFragment.this, archive.getId(), type);
-            //ArchiveDetailsFragment.open(IndividualFragment.this, type, archive.getId(), REQUEST_DELETE);
+        }
+    }
+
+    @Override
+    protected void onLikeComplete(boolean success, Model model) {
+        if (success) {
+            mAdapter.update(model);
+        }
+    }
+
+    @Override
+    protected void onCollectComplete(boolean success, Model model) {
+        if (success) {
+            mAdapter.update(model);
         }
     }
 

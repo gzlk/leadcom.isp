@@ -138,7 +138,7 @@ public abstract class BaseChatInputSupportFragment extends BaseSwipeRefreshSuppo
      * 当BackKey触发时，查看表情框是否显示，此时优先隐藏表情框
      */
     @Override
-    public boolean onBackKeyPressed() {
+    protected boolean onBackKeyPressed() {
         if (!super.onBackKeyPressed()) {
             if (null != _mainInputContainer && _mainInputContainer.isEmojiLayoutShow()) {
                 _mainInputContainer.hideEmojiLayout();

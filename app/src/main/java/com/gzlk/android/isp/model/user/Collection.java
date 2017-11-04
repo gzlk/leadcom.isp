@@ -112,6 +112,15 @@ public class Collection extends Model {
         int TOPIC = 5;
     }
 
+    public static Collection get(Model model) {
+        if (model instanceof Archive) {
+            return get((Archive) model);
+        } else if (model instanceof Moment) {
+            return get((Moment) model);
+        }
+        return null;
+    }
+
     public static Collection get(Archive archive) {
         Collection col = new Collection();
         col.setType(null == archive.getGroEntity() ? Type.USER_ARCHIVE : Type.GROUP_ARCHIVE);

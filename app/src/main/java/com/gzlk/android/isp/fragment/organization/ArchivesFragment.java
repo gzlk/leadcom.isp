@@ -12,7 +12,7 @@ import com.gzlk.android.isp.api.listener.OnMultipleRequestListener;
 import com.gzlk.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -21,6 +21,7 @@ import com.gzlk.android.isp.helper.TooltipHelper;
 import com.gzlk.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
+import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.organization.Member;
 
@@ -37,7 +38,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
+public class ArchivesFragment extends BaseCmtLikeColFragment {
 
     public static ArchivesFragment newInstance(String params) {
         ArchivesFragment af = new ArchivesFragment();
@@ -242,9 +243,35 @@ public class ArchivesFragment extends BaseSwipeRefreshSupportFragment {
                     // 点击头像，打开个人属性页
                     UserPropertyFragment.open(ArchivesFragment.this, mAdapter.get(index).getUserId());
                     break;
+                case R.id.ui_tool_view_archive_additional_comment_layout:
+                    // 个人档案评论
+                    ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index).getId(), Archive.Type.GROUP);
+                    break;
+                case R.id.ui_tool_view_archive_additional_like_layout:
+                    // 个人档案点赞
+                    like(mAdapter.get(index));
+                    break;
+                case R.id.ui_tool_view_archive_additional_collection_layout:
+                    // 个人档案收藏
+                    collect(mAdapter.get(index));
+                    break;
             }
         }
     };
+
+    @Override
+    protected void onLikeComplete(boolean success, Model model) {
+        if (success) {
+            mAdapter.update((Archive) model);
+        }
+    }
+
+    @Override
+    protected void onCollectComplete(boolean success, Model model) {
+        if (success) {
+            mAdapter.update((Archive) model);
+        }
+    }
 
     private class ArchiveAdapter extends RecyclerViewAdapter<ArchiveHomeRecommendedViewHolder, Archive> {
 

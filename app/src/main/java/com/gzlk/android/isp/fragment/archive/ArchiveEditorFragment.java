@@ -86,6 +86,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
      * 附件方式
      */
     private static final int TYPE_ATTACHMENT = 2;
+    private static boolean editorFocused = false;
 
     public static ArchiveEditorFragment newInstance(String params) {
         ArchiveEditorFragment aecf = new ArchiveEditorFragment();
@@ -198,11 +199,18 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        editorFocused = false;
         super.onActivityCreated(savedInstanceState);
         mEditor.setPadding(10, 10, 10, 10);
         mEditor.setBackgroundColor(Color.WHITE);
         mEditor.setPlaceholder(StringHelper.getString(R.string.ui_text_archive_creator_content_hint));
         mEditor.setOnTextChangeListener(textChangeListener);
+        mEditor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editorFocused = true;
+            }
+        });
         // 每次最大选取1张图片
         maxSelectable = 1;
         // 压缩图片
@@ -219,7 +227,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         if (Build.VERSION.SDK_INT < 19) {
             toolbarTopLine.setVisibility(View.VISIBLE);
         }
-        mEditor.focusEditor();
+        //mEditor.focusEditor();
         // 检索是否有未提交的草稿
         List<ArchiveDraft> drafts = ArchiveDraft.getDraft(mQueryId);
         if (null != drafts && drafts.size() > 0) {
@@ -1112,6 +1120,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    private void tryFocusEditor() {
+        if (!editorFocused) {
+            mEditor.focusEditor();
+            editorFocused = true;
+        }
+    }
+
     @Click({R.id.ui_archive_creator_action_undo, R.id.ui_archive_creator_action_redo,
             R.id.ui_archive_creator_action_image, R.id.ui_archive_creator_action_font,
             R.id.ui_archive_creator_action_attachment, R.id.ui_archive_creator_action_video,
@@ -1137,6 +1152,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case R.id.ui_archive_creator_action_image:
                 mImageIcon.setTextColor(getColor(R.color.colorAccent));
+                tryFocusEditor();
                 openImageDialog();
                 break;
             case R.id.ui_archive_creator_action_font:
@@ -1152,12 +1168,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case R.id.ui_archive_creator_action_video:
                 mVideoIcon.setTextColor(getColor(R.color.colorAccent));
+                tryFocusEditor();
                 // 插入或上传一段视频
                 // 视频封面地址：http://120.25.124.199:8008/group1/M00/00/13/eBk66lngcsOAUoWUAAAcAlhYhMk172.png
                 openVideoDialog();
                 break;
             case R.id.ui_archive_creator_action_audio:
                 mAudioIcon.setTextColor(getColor(R.color.colorAccent));
+                tryFocusEditor();
                 // 插入或上传一段音乐
                 openMusicDialog();
                 break;

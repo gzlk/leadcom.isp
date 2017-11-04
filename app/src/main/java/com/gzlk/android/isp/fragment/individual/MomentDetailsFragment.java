@@ -11,13 +11,8 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
-import com.gzlk.android.isp.helper.publishable.CommentHelper;
-import com.gzlk.android.isp.helper.publishable.LikeHelper;
-import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnCommentDeleteListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentCommentHeaderViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentPraiseViewHolder;
@@ -63,6 +58,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     private static boolean deletable = false;
     private static int selectedComment = 0;
     private static final String PARAM_INDEX = "mdf_selected_index";
+    private Model noMore = Model.getNoMore();
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -74,6 +70,11 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_INDEX, mSelectedIndex);
+    }
+
+    @Override
+    protected void destroyView() {
+
     }
 
     @Override
@@ -105,8 +106,6 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     private MomentDetailsAdapter mAdapter;
     private MomentPraiseViewHolder praiseViewHolder;
     private int mSelectedIndex = -1;
-    private LikeHelper likeHelper;
-    private CommentHelper commentHelper;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
 
     @Override
@@ -134,19 +133,26 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         if (null != praiseViewHolder) {
             praiseViewHolder.setHasShown(false);
         }
-        fetchingPraises();
-        fetchingComments();
+        setSupportLoadingMore(true);
+        loadingLike(mAdapter.get(mQueryId));
+        loadingComments(mAdapter.get(mQueryId));
     }
 
     @Override
     protected void onLoadingMore() {
-        fetchingComments();
+        mAdapter.remove(noMore);
+        loadingComments(mAdapter.get(mQueryId));
+    }
+
+    @Override
+    protected String getLocalPageTag() {
+        return null;
     }
 
     private ArrayList<ArchiveLike> likes = new ArrayList<>();
 
     @Override
-    protected void onFetchingPraisesComplete(List<ArchiveLike> list, boolean success, int pageSize) {
+    protected void onLoadingLikeComplete(boolean success, List<ArchiveLike> list) {
         if (success) {
             if (null != list) {
                 likes.clear();
@@ -171,46 +177,26 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     }
 
     @Override
-    protected void onFetchingCommentsComplete(List<Comment> list, boolean success, int pageSize) {
+    protected void onLoadingCommentComplete(boolean success, List<Comment> list) {
         if (success) {
             if (null != list) {
                 if (remotePageNumber <= 1) {
                     // 第一页时清空评论列表
                     removeComments();
                 }
-                if (list.size() >= pageSize) {
-                    remotePageNumber++;
-                    isLoadingComplete(false);
-                } else {
-                    isLoadingComplete(true);
-                }
                 for (Comment comment : list) {
-                    if (!mAdapter.exist(comment)) {
-                        mAdapter.add(comment);
-                    } else {
-                        mAdapter.update(comment);
-                    }
+                    mAdapter.update(comment);
                 }
+                mAdapter.update(noMore);
                 smoothScrollToBottom(mAdapter.getItemCount() - 1);
-            } else {
-                isLoadingComplete(true);
             }
-        } else {
-            isLoadingComplete(true);
         }
-        stopRefreshing();
     }
 
     @Override
     protected void onFetchingMomentComplete(Moment moment, boolean success) {
         if (success) {
             mMoment = moment;
-            if (null == likeHelper) {
-                likeHelper = LikeHelper.helper().setMoment(mMoment);
-            }
-            if (null == commentHelper) {
-                commentHelper = CommentHelper.helper().setMoment(mMoment);
-            }
             // 我发布的动态可以删除全部评论
             deletable = mMoment.isMine();
             // 拉取回来之后立即显示
@@ -250,32 +236,14 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 if (model instanceof Comment) {
                     // 回复评论或点击评论
                     Comment comment = (Comment) model;
-                    comment(text, comment.isMine() ? "" : comment.getUserId());
+                    comment(mMoment, text, comment.isMine() ? "" : comment.getUserId());
                 } else {
                     // 直接发布评论
-                    comment(text, "");
+                    comment(mMoment, text, "");
                 }
             }
         }
     };
-
-    private void comment(String content, String toUserId) {
-        setLoadingText(R.string.ui_individual_moment_list_commenting);
-        displayLoading(true);
-        commentHelper.setCommentAddListener(new OnCommentAddListener() {
-            @Override
-            public void onComplete(boolean success, Comment comment, Model model) {
-                displayLoading(false);
-                if (success) {
-                    mAdapter.update(comment);
-                    smoothScrollToBottom(mAdapter.getItemCount() - 1);
-                    selectedComment = 0;
-                    replyName.setVisibility(View.GONE);
-                    _inputText.setText("");
-                }
-            }
-        }).comment(Comment.Type.MOMENT, content, toUserId);
-    }
 
     private void initializeAdapter() {
         if (null == mAdapter) {
@@ -299,10 +267,12 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     openKeyboard();
                     break;
                 case R.id.ui_tooltip_menu_moment_praise:
-                    checkLikeStatus();
+                    praiseViewHolder.setHasShown(false);
+                    like(mMoment);
                     break;
                 case R.id.ui_tooltip_menu_moment_praised:
-                    checkLikeStatus();
+                    praiseViewHolder.setHasShown(false);
+                    like(mMoment);
                     break;
             }
         }
@@ -313,53 +283,6 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         _inputText.setFocusableInTouchMode(true);
         _inputText.requestFocus();
         Utils.showInputBoard(_inputText);
-    }
-
-    private void checkLikeStatus() {
-        setLoadingText(R.string.ui_base_text_loading);
-        displayLoading(true);
-        praiseViewHolder.setHasShown(false);
-        if (mMoment.isLiked()) {
-            likeHelper.setUnlikeListener(new OnUnlikeListener() {
-                @Override
-                public void onUnlike(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        mAdapter.update(model);
-                        likes.clear();
-                        likes.addAll(((Moment) model).getUserMmtLikeList());
-                        checkPraises(likes.size() <= 0);
-                    }
-                }
-            }).unlike(Comment.Type.MOMENT, mQueryId);
-        } else {
-            likeHelper.setLikeListener(new OnLikeListener() {
-                @Override
-                public void onLiked(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        mAdapter.update(model);
-                        likes.clear();
-                        likes.addAll(((Moment) model).getUserMmtLikeList());
-                        checkPraises(likes.size() <= 0);
-                    }
-                }
-            }).like(Comment.Type.MOMENT, mQueryId);
-        }
-    }
-
-    private void deleteComment(final int index) {
-        setLoadingText(R.string.ui_individual_moment_list_comment_deleting);
-        displayLoading(true);
-        commentHelper.setCommentDeleteListener(new OnCommentDeleteListener() {
-            @Override
-            public void onDeleted(boolean success, Model model) {
-                displayLoading(false);
-                if (success) {
-                    mAdapter.remove(index);
-                }
-            }
-        }).delete(Comment.Type.MOMENT, mQueryId, mAdapter.get(index).getId());
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
@@ -385,7 +308,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     openKeyboard();
                     break;
                 case R.id.ui_holder_view_moment_comment_delete:
-                    deleteComment(index);
+                    selectedComment = index;
+                    openCommentDeleteDialog();
                     break;
             }
         }
@@ -408,9 +332,60 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         }
     };
 
+    @Override
+    protected void onDelayRefreshComplete(int type) {
+
+    }
+
+    @Override
+    protected void onCommentDeleteDialogCanceled() {
+        selectedComment = 0;
+    }
+
+    @Override
+    protected void onCommentDeleteDialogConfirmed() {
+        deleteComment(mMoment, mAdapter.get(selectedComment).getId());
+    }
+
+    @Override
+    protected void onDeleteCommentComplete(boolean success, Model model) {
+        if (success) {
+            if (mAdapter.get(selectedComment) instanceof Comment) {
+                mAdapter.remove(selectedComment);
+            }
+            selectedComment = 0;
+        }
+    }
+
+    @Override
+    protected void onLikeComplete(boolean success, Model model) {
+        if (success) {
+            mAdapter.update(model);
+            likes.clear();
+            likes.addAll(((Moment) model).getUserMmtLikeList());
+            checkPraises(likes.size() <= 0);
+        }
+    }
+
+    @Override
+    protected void onCollectComplete(boolean success, Model model) {
+
+    }
+
+    @Override
+    protected void onCommentComplete(boolean success, Comment comment, Model model) {
+        if (success) {
+            mAdapter.update(comment);
+            smoothScrollToBottom(mAdapter.getItemCount() - 1);
+            selectedComment = 0;
+            replyName.setVisibility(View.GONE);
+            _inputText.setText("");
+        }
+    }
+
     private class MomentDetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_MOMENT = 0, VT_PRAISE = 1, VT_COMMENT = 2;
+        private static final int VT_MOMENT = 0, VT_PRAISE = 1, VT_COMMENT = 2, VT_NOMORE = 3;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -427,6 +402,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                         praiseViewHolder.showContent(likes);
                     }
                     return praiseViewHolder;
+                case VT_NOMORE:
+                    return new NothingMoreViewHolder(itemView, MomentDetailsFragment.this);
                 default:
                     MomentCommentHeaderViewHolder mcv = new MomentCommentHeaderViewHolder(itemView, MomentDetailsFragment.this);
                     mcv.addOnViewHolderClickListener(onViewHolderClickListener);
@@ -443,6 +420,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 return VT_MOMENT;
             } else if (model instanceof Comment) {
                 return VT_COMMENT;
+            } else if (model.getId().equals(noMore.getId())) {
+                return VT_NOMORE;
             }
             return VT_PRAISE;
         }
@@ -454,6 +433,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     return R.layout.holder_view_individual_moment_details;
                 case VT_PRAISE:
                     return R.layout.holder_view_individual_moment_like_header;
+                case VT_NOMORE:
+                    return R.layout.holder_view_nothing_more;
                 default:
                     return R.layout.holder_view_individual_moment_comment_header;
             }
@@ -473,6 +454,20 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     hd.showContent(likes);
                 }
             }
+        }
+
+        /**
+         * 查找指定id的节点
+         */
+        public Model get(String queryId) {
+            Iterator<Model> iterable = iterator();
+            while (iterable.hasNext()) {
+                Model model = iterable.next();
+                if (!isEmpty(model.getId()) && model.getId().equals(queryId)) {
+                    return model;
+                }
+            }
+            return null;
         }
 
         @Override

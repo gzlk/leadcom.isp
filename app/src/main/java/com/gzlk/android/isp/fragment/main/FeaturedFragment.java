@@ -16,14 +16,8 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
-import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.gzlk.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.helper.publishable.CollectHelper;
-import com.gzlk.android.isp.helper.publishable.LikeHelper;
-import com.gzlk.android.isp.helper.publishable.listener.OnCollectedListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnUncollectedListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.gzlk.android.isp.holder.home.ActivityHomeViewHolder;
@@ -35,10 +29,8 @@ import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.archive.Archive;
-import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.archive.RecommendArchive;
 import com.gzlk.android.isp.model.common.PriorityPlace;
-import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
 import java.lang.ref.SoftReference;
@@ -56,7 +48,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class FeaturedFragment extends BaseSwipeRefreshSupportFragment {
+public class FeaturedFragment extends BaseCmtLikeColFragment {
 
     private static final int TYPE_NOTHING = -1;
     /**
@@ -79,6 +71,8 @@ public class FeaturedFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_TYPE = "hrf_param_type";
 
     private static final String PARAM_SHOWN = "title_bar_shown";
+
+    private static int selectedIndex = 0;
 
     public static FeaturedFragment newInstance(String params) {
         FeaturedFragment hrf = new FeaturedFragment();
@@ -233,22 +227,6 @@ public class FeaturedFragment extends BaseSwipeRefreshSupportFragment {
         setLoadingText(R.string.ui_text_home_focus_image_loading);
         displayLoading(true);
         displayNothing(false);
-//        FocusImageRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<FocusImage>() {
-//            @Override
-//            public void onResponse(List<FocusImage> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-//                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-//                if (success) {
-//                    headline.clear();
-//                    if (null != list) {
-//                        headline.addAll(list);
-//                        homeImagesViewHolder.addImages(headline);
-//                    }
-//                }
-//                displayLoading(false);
-//                stopRefreshing();
-//                fetchingRecommended();
-//            }
-//        }).all();
         RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
             @Override
             public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -387,13 +365,11 @@ public class FeaturedFragment extends BaseSwipeRefreshSupportFragment {
                 RecommendArchive recommend = (RecommendArchive) model;
                 int type = recommend.getType() == RecommendArchive.RecommendType.USER ? Archive.Type.USER : Archive.Type.GROUP;
                 ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, recommend.getDocId(), type);
-                //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, recommend.getDocId()), true, false);
             } else if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
                 int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
                 ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, arc.getId(), type);
-                //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", type, arc.getId()), true, false);
             } else if (model instanceof PriorityPlace) {
                 // 编辑推荐
                 PriorityPlace place = (PriorityPlace) model;
@@ -408,87 +384,34 @@ public class FeaturedFragment extends BaseSwipeRefreshSupportFragment {
             RecommendArchive archive = (RecommendArchive) mAdapter.get(index);
             boolean isGroup = archive.getType() == RecommendArchive.RecommendType.GROUP;
             Archive doc = isGroup ? archive.getGroDoc() : archive.getUserDoc();
-            int type = isGroup ? Comment.Type.GROUP : Comment.Type.USER;
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_additional_comment_layout:
-                    // 评论
+                    // 打开档案详情页评论
+                    ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, doc.getId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
                     break;
                 case R.id.ui_tool_view_archive_additional_like_layout:
                     // 赞或取消赞
-                    checkLikeStatus(type, doc, index);
+                    selectedIndex = index;
+                    like(doc);
                     break;
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏或取消收藏
-                    checkCollectStatus(type, doc, index);
+                    selectedIndex = index;
+                    collect(doc);
                     break;
             }
         }
     };
 
-    private void checkLikeStatus(final int type, Archive archive, final int index) {
-        if (archive.isLiked()) {
-            setLoadingText(R.string.ui_text_archive_details_unliking);
-            displayLoading(true);
-            LikeHelper.helper().setArchive(archive).setUnlikeListener(new OnUnlikeListener() {
-                @Override
-                public void onUnlike(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        resetArchive(type, (Archive) model, index);
-                    }
-                }
-            }).unlike(type, archive.getId());
-        } else {
-            setLoadingText(R.string.ui_text_archive_details_liking);
-            displayLoading(true);
-            LikeHelper.helper().setArchive(archive).setLikeListener(new OnLikeListener() {
-                @Override
-                public void onLiked(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        resetArchive(type, (Archive) model, index);
-                    }
-                }
-            }).like(type, archive.getId());
-        }
-    }
-
-    private void resetArchive(int type, Archive archive, int index) {
-        RecommendArchive recmd = (RecommendArchive) mAdapter.get(index);
-        if (type == Comment.Type.GROUP) {
+    private void resetArchive(Archive archive) {
+        RecommendArchive recmd = (RecommendArchive) mAdapter.get(selectedIndex);
+        if (recmd.getType() == RecommendArchive.RecommendType.GROUP) {
             recmd.setGroDoc(archive);
         } else {
             recmd.setUserDoc(archive);
         }
         mAdapter.update(recmd);
-    }
-
-    private void checkCollectStatus(final int type, final Archive archive, final int index) {
-        if (archive.isCollected()) {
-            setLoadingText(R.string.ui_text_archive_details_uncollecting);
-            displayLoading(true);
-            CollectHelper.helper().setArchive(archive).setUncollectedListener(new OnUncollectedListener() {
-                @Override
-                public void onUncollected(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        resetArchive(type, archive, index);
-                    }
-                }
-            }).uncollect(archive.getColId());
-        } else {
-            setLoadingText(R.string.ui_text_archive_details_collecting);
-            displayLoading(true);
-            CollectHelper.helper().setArchive(archive).setCollectedListener(new OnCollectedListener() {
-                @Override
-                public void onCollected(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        resetArchive(type, archive, index);
-                    }
-                }
-            }).collect(Collection.get(archive));
-        }
+        selectedIndex = 0;
     }
 
     private void isJoinedPublicAct(final String actId, final String tid) {
@@ -504,6 +427,20 @@ public class FeaturedFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).isJoinPublicAct(actId);
+    }
+
+    @Override
+    protected void onLikeComplete(boolean success, Model model) {
+        if (success) {
+            resetArchive((Archive) model);
+        }
+    }
+
+    @Override
+    protected void onCollectComplete(boolean success, Model model) {
+        if (success) {
+            resetArchive((Archive) model);
+        }
     }
 
     private class RecommendedAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {

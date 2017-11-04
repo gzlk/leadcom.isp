@@ -20,11 +20,6 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
-import com.gzlk.android.isp.helper.publishable.CommentHelper;
-import com.gzlk.android.isp.helper.publishable.LikeHelper;
-import com.gzlk.android.isp.helper.publishable.listener.OnCommentAddListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnLikeListener;
-import com.gzlk.android.isp.helper.publishable.listener.OnUnlikeListener;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
@@ -115,7 +110,6 @@ public class MomentImagesFragment extends BaseMomentFragment {
     private TextView commentNum;
 
     private ArrayList<String> images;
-    private LikeHelper likeHelper;
 
     @Override
     public int getLayout() {
@@ -145,9 +139,6 @@ public class MomentImagesFragment extends BaseMomentFragment {
         if (null == mMoment) {
             fetchingMoment();
         } else {
-            if (null == likeHelper) {
-                likeHelper = LikeHelper.helper().setMoment(mMoment);
-            }
             momentUser = mMoment.getUserId();
             momentName = mMoment.getUserName();
             if (null != mMoment.getImage()) {
@@ -195,38 +186,10 @@ public class MomentImagesFragment extends BaseMomentFragment {
         commentNum.setText(format("%d", mMoment.getCmtNum()));
     }
 
-    private void checkMomentLikeStatus() {
-        setLoadingText(R.string.ui_base_text_loading);
-        displayLoading(true);
-        if (mMoment.isLiked()) {
-            likeHelper.setUnlikeListener(new OnUnlikeListener() {
-                @Override
-                public void onUnlike(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        resetPraiseStatus();
-                    }
-                }
-            }).unlike(Comment.Type.MOMENT, mQueryId);
-        } else {
-            likeHelper.setLikeListener(new OnLikeListener() {
-                @Override
-                public void onLiked(boolean success, Model model) {
-                    displayLoading(false);
-                    if (success) {
-                        resetPraiseStatus();
-                    }
-                }
-            }).like(Comment.Type.MOMENT, mQueryId);
-        }
-    }
-
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return true;
     }
-
-    private boolean isPraising = false;
 
     @Click({R.id.ui_moment_detail_praise_container,
             R.id.ui_moment_detail_comment_container,
@@ -235,17 +198,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
         int id = view.getId();
         switch (id) {
             case R.id.ui_moment_detail_praise_container:
-                if (!isPraising) {
-                    isPraising = true;
-                    // 赞、取消赞
-                    checkMomentLikeStatus();
-                    Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            isPraising = false;
-                        }
-                    }, 1000);
-                }
+                like(mMoment);
                 break;
             case R.id.ui_moment_detail_comment_container:
                 // 评论
@@ -258,27 +211,13 @@ public class MomentImagesFragment extends BaseMomentFragment {
         }
     }
 
-    private void commentMoment(String content) {
-        CommentHelper.helper().setMoment(mMoment).setCommentAddListener(new OnCommentAddListener() {
-            @Override
-            public void onComplete(boolean success, Comment comment, Model model) {
-                displayLoading(false);
-                resetPraiseStatus();
-                // 评论成功，转到说收详情页查看评论
-                MomentDetailsFragment.open(MomentImagesFragment.this, mQueryId);
-            }
-        }).comment(Comment.Type.MOMENT, content, "");
-    }
-
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         if (requestCode == MomentCommentFragment.REQ_COMMENT) {
             // 发布对本说说的评论
             String result = getResultedData(data);
             if (!isEmpty(result)) {
-                setLoadingText(R.string.ui_base_text_loading);
-                displayLoading(true);
-                commentMoment(result);
+                comment(mMoment, result, "");
             }
         }
         super.onActivityResult(requestCode, data);
@@ -398,9 +337,6 @@ public class MomentImagesFragment extends BaseMomentFragment {
             public void onResponse(Collection collection, boolean success, String message) {
                 super.onResponse(collection, success, message);
                 if (success) {
-                    if (null != collection && !StringHelper.isEmpty(collection.getId())) {
-                        new Dao<>(Collection.class).save(collection);
-                    }
                     ToastHelper.make().showMsg(message);
                 }
             }
@@ -452,6 +388,25 @@ public class MomentImagesFragment extends BaseMomentFragment {
     }
 
     private MomentDetailsAdapter mAdapter;
+
+    @Override
+    protected void onLikeComplete(boolean success, Model model) {
+        if (success) {
+            resetPraiseStatus();
+        }
+    }
+
+    @Override
+    protected void onCollectComplete(boolean success, Model model) {
+
+    }
+
+    @Override
+    protected void onCommentComplete(boolean success, Comment comment, Model model) {
+        resetPraiseStatus();
+        // 评论成功，转到说收详情页查看评论
+        MomentDetailsFragment.open(MomentImagesFragment.this, mQueryId);
+    }
 
     private class MomentDetailsAdapter extends PagerAdapter {
 
