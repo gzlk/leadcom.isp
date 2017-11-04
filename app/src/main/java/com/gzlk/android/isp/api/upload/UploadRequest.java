@@ -73,6 +73,9 @@ public class UploadRequest extends Request<Upload> {
         String path = format("%s%s", URL, UPLOAD);
         log(format("upload file %s\nto %s", file, path));
         final String fileName = file.substring(file.lastIndexOf('/') + 1);
+
+        File f = new File(file);
+        final long fileSize = f.exists() ? f.length() : 0;
         OnHttpListener<Upload> listener = new OnHttpListener<Upload>(true, true) {
             @Override
             public void onSucceed(Upload data, Response<Upload> response) {
@@ -83,6 +86,7 @@ public class UploadRequest extends Request<Upload> {
                         data.setResult(object.getJSONObject("result"));
                         data.departData();
                         data.setName(fileName);
+                        data.setSize(fileSize);
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.onResponse(data, data.success(), data.getMsg());
                         }

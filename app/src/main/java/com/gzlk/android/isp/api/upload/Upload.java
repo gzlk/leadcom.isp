@@ -21,6 +21,7 @@ public class Upload extends Api {
     private JSONObject result;
     private String name;
     private String url;
+    private long size;
 
     /**
      * 分离文件名和url
@@ -64,5 +65,13 @@ public class Upload extends Api {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
     }
 }

@@ -18,6 +18,7 @@ import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveAttachmentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
@@ -26,6 +27,8 @@ import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
+import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
@@ -275,6 +278,9 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     // 档案创建者可以删除评论
                     deletable = archive.getUserId().equals(Cache.cache().userId);
                     mAdapter.update(archive);
+                    for (Attachment attachment : archive.getAttach()) {
+                        mAdapter.update(attachment);
+                    }
                     displayAdditional(archive);
                     loadingComments(archive);
                 }
@@ -337,6 +343,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏
                     collect(mAdapter.get(mQueryId));
+                    break;
+                case R.id.ui_holder_view_archive_attachment_layout:
+                    // 点击打开附件
+                    Attachment attachment = (Attachment) mAdapter.get(index);
+                    FilePreviewHelper.previewFile(Activity(), attachment.getUrl(), attachment.getName(), attachment.getExt());
                     break;
             }
         }
@@ -426,7 +437,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
-        private static final int VT_ARCHIVE = 0, VT_COMMENT = 1, VT_NOTHING = 2;
+        private static final int VT_ARCHIVE = 0, VT_COMMENT = 1, VT_NOTHING = 2, VT_ATTACHMENT = 3;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -442,6 +453,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     adcvh.setDeletable(deletable);
                     adcvh.setOnViewHolderElementClickListener(elementClickListener);
                     return adcvh;
+                case VT_ATTACHMENT:
+                    ArchiveAttachmentViewHolder aavh = new ArchiveAttachmentViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                    aavh.setOnViewHolderElementClickListener(elementClickListener);
+                    return aavh;
                 default:
                     return new NothingMoreViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
             }
@@ -454,6 +469,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     return R.layout.holder_view_archive_details;
                 case VT_COMMENT:
                     return R.layout.holder_view_archive_details_comment;
+                case VT_ATTACHMENT:
+                    return R.layout.holder_view_archive_attachment;
             }
             return R.layout.holder_view_archive_details_comment_nothing_more;
         }
@@ -465,6 +482,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 return VT_ARCHIVE;
             } else if (model instanceof Comment) {
                 return VT_COMMENT;
+            } else if (model instanceof Attachment) {
+                return VT_ATTACHMENT;
             }
             return VT_NOTHING;
         }
@@ -475,6 +494,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 ((ArchiveDetailsViewHolder) holder).showContent((Archive) item);
             } else if (holder instanceof ArchiveDetailsCommentViewHolder) {
                 ((ArchiveDetailsCommentViewHolder) holder).showContent((Comment) item);
+            } else if (holder instanceof ArchiveAttachmentViewHolder) {
+                ((ArchiveAttachmentViewHolder) holder).showContent((Attachment) item);
             }
         }
 

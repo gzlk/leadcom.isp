@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="middle"
-                android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="@color/textColorHint"
                 android:textSize="@dimen/ui_base_text_size_little" />
 

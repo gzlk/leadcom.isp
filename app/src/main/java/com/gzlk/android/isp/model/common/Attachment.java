@@ -43,6 +43,7 @@ public class Attachment extends Model {
         String Url = "url";
         String Pdf = "pdf";
         String FullPath = "fullPath";
+        String Size = "size";
     }
 
     /**
@@ -210,6 +211,7 @@ public class Attachment extends Model {
                     f.getName().contains("fullPath") || // fullPath
                     f.getName().contains("ext") ||      // ext
                     f.getName().startsWith("is") ||     // isSelectable, isSelected
+                    f.getName().startsWith("size") ||   // 文件大小
                     f.getName().startsWith("local");    // localDeleted
         }
 
@@ -247,6 +249,7 @@ public class Attachment extends Model {
     private String url;
     @Column(Field.Pdf)
     private String pdf;
+    private long size;
 
     public Attachment() {
     }
@@ -266,7 +269,7 @@ public class Attachment extends Model {
         setId(url);
     }
 
-    public Attachment(int type, String archiveId, String name, String url, String pdf) {
+    public Attachment(int type, String archiveId, String name, String url, String pdf, long size) {
         super();
         this.type = type;
         this.archiveId = archiveId;
@@ -275,6 +278,7 @@ public class Attachment extends Model {
         this.url = url;
         this.fullPath = url;
         this.pdf = pdf;
+        this.size = size;
         setId(this.url);
     }
 
@@ -383,5 +387,13 @@ public class Attachment extends Model {
 
     public void setPdf(String pdf) {
         this.pdf = pdf;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
     }
 }

@@ -166,7 +166,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
                 log(format("upload %s success: %s", uploadedFile, success));
                 if (success) {
                     // 默认为档案的附件
-                    Attachment attachment = new Attachment(Attachment.Type.ARCHIVE, "", upload.getName(), upload.getUrl(), "");
+                    Attachment attachment = new Attachment(Attachment.Type.ARCHIVE, "", upload.getName(), upload.getUrl(), "", upload.getSize());
                     uploadedFiles.add(attachment);
                     uploadingIndex++;
                     // 继续上传下一张图片
