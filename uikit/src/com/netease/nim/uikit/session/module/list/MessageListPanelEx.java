@@ -757,7 +757,7 @@ public class MessageListPanelEx {
 
             if (!NimUIKit.getMsgForwardFilter().shouldIgnore(selectedItem) && !recordOnly) {
                 // 6 forward to person
-                longClickItemForwardToPerson(selectedItem, alertDialog);
+                //longClickItemForwardToPerson(selectedItem, alertDialog);
                 // 7 forward to team
                 longClickItemForwardToTeam(selectedItem, alertDialog);
             }

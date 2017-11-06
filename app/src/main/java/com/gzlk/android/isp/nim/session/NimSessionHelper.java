@@ -26,6 +26,8 @@ import com.gzlk.android.isp.nim.action.IssueAction;
 import com.gzlk.android.isp.nim.action.LocationAction;
 import com.gzlk.android.isp.nim.action.NoticeAction;
 import com.gzlk.android.isp.nim.action.SignAction;
+import com.gzlk.android.isp.nim.action.VideoCaptureAction;
+import com.gzlk.android.isp.nim.action.VideoChooseAction;
 import com.gzlk.android.isp.nim.action.VoteAction;
 import com.gzlk.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
@@ -57,6 +59,8 @@ import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.attachment.VideoAttachment;
+import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
@@ -169,19 +173,18 @@ public class NimSessionHelper {
         NimUIKit.setMsgForwardFilter(new MsgForwardFilter() {
             @Override
             public boolean shouldIgnore(IMMessage message) {
-//                if (message.getDirect() == MsgDirectionEnum.In
-//                        && (message.getAttachStatus() == AttachStatusEnum.transferring
-//                        || message.getAttachStatus() == AttachStatusEnum.fail)) {
-//                    // 接收到的消息，附件没有下载成功，不允许转发
-//                    return true;
-//                }
+                if (message.getDirect() == MsgDirectionEnum.In &&
+                        (message.getAttachStatus() == AttachStatusEnum.transferring || message.getAttachStatus() == AttachStatusEnum.fail)) {
+                    // 接收到的消息，附件没有下载成功，不允许转发
+                    return true;
+                }
 //                else if (message.getMsgType() == MsgTypeEnum.custom && message.getAttachment() != null
 //                        && (message.getAttachment() instanceof SnapChatAttachment
 //                        || message.getAttachment() instanceof RTSAttachment)) {
 //                    // 白板消息和阅后即焚消息 不允许转发
 //                    return true;
 //                }
-                return true;
+                return false;
             }
         });
     }
@@ -273,9 +276,9 @@ public class NimSessionHelper {
         actions.add(new CameraAction());
         if (!Cache.isReleasable()) {
             // 相机录制视频
-            //actions.add(new VideoCaptureAction());
+            actions.add(new VideoCaptureAction());
             // 相册选择视频
-            //actions.add(new VideoChooseAction());
+            actions.add(new VideoChooseAction());
         }
         // 跟电脑对话时不需要发送位置
         if (type != SessionTypeEnum.System) {
