@@ -254,10 +254,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             Model model = mAdapter.get(selectedIndex);
             if (model instanceof Comment) {
                 Comment comment = (Comment) model;
-                if (!comment.getUserId().equals(Cache.cache().userId)) {
-                    // 评论别人
-                    comment(mAdapter.get(mQueryId), content, comment.getUserId());
-                }
+                comment(mAdapter.get(mQueryId), content, comment.isMine() ? "" : comment.getUserId());
             } else {
                 // 直接评论
                 comment(mAdapter.get(mQueryId), content, "");
@@ -376,12 +373,12 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         } else {
             restoreInputStatus();
         }
-        Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                smoothScrollToBottom(selectedIndex);
-            }
-        }, 100);
+//        Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                smoothScrollToBottom(selectedIndex);
+//            }
+//        }, 100);
     }
 
     @Override
@@ -420,7 +417,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 mAdapter.add(comment, mAdapter.getItemCount() - 1);
                 mAdapter.update(model);
                 displayAdditional((Archive) model);
-                smoothScrollToBottom(mAdapter.getItemCount() - 1);
+                //smoothScrollToBottom(mAdapter.getItemCount() - 1);
                 restoreInputStatus();
             } else {
                 restoreInputStatus();
