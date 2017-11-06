@@ -86,8 +86,6 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             public void onKeyboardChange(boolean isShow, int keyboardHeight) {
                 log(format("keyboard changed, show: %s, keyboard height: %d", isShow, keyboardHeight));
                 if (!isShow) {
-                    // 键盘隐藏时，设置评论状态为普通评论
-                    selectedComment = 0;
                     replyName.setVisibility(View.GONE);
                 }
             }
@@ -375,9 +373,10 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     @Override
     protected void onCommentComplete(boolean success, Comment comment, Model model) {
         if (success) {
-            mAdapter.update(comment);
-            smoothScrollToBottom(mAdapter.getItemCount() - 1);
             selectedComment = 0;
+            // 需要加到“后面没有了“前面
+            mAdapter.add(comment, mAdapter.getItemCount() - 1);
+            smoothScrollToBottom(mAdapter.getItemCount() - 1);
             replyName.setVisibility(View.GONE);
             _inputText.setText("");
         }

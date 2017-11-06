@@ -54,8 +54,8 @@ import java.util.List;
 public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
-    private static final String PARAM_SELECTED = "adwvf_selected_comment";
     private static boolean deletable = false;
+    private static int selectedIndex = 0;
 
     public static ArchiveDetailsWebViewFragment newInstance(String params) {
         ArchiveDetailsWebViewFragment adwvf = new ArchiveDetailsWebViewFragment();
@@ -78,14 +78,12 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         archiveType = bundle.getInt(PARAM_DOC_TYPE, Archive.Type.GROUP);
-        selectedIndex = bundle.getInt(PARAM_SELECTED, 0);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_DOC_TYPE, archiveType);
-        bundle.putInt(PARAM_SELECTED, selectedIndex);
     }
 
     @Override
@@ -137,7 +135,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private View additionalLayout;
 
     private Model nothingMore;
-    private int archiveType, selectedIndex;
+    private int archiveType;
     private DetailsAdapter mAdapter;
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
@@ -246,7 +244,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 评论发表完毕之后重置评论发布状态
     private void restoreInputStatus() {
-        selectedIndex = mAdapter.getItemCount() - 1;
         replyView.setVisibility(View.GONE);
         inputContent.setHint(R.string.ui_text_archive_details_comment_hint);
     }
@@ -417,6 +414,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     protected void onCommentComplete(boolean success, Comment comment, Model model) {
         if (success) {
             inputContent.setText("");
+            // 重置选择的评论id
+            selectedIndex = mAdapter.getItemCount() - 1;
             if (null != comment && !isEmpty(comment.getId())) {
                 mAdapter.add(comment, mAdapter.getItemCount() - 1);
                 mAdapter.update(model);
