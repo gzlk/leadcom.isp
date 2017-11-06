@@ -292,8 +292,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         mArchive.setTitle(title);
-        String html = mEditor.getHtml();
-        if (isEmpty(html)) {
+        if (isEmpty(mArchive.getContent())) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
             return;
         }
