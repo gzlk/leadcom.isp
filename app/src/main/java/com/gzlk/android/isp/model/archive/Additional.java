@@ -2,6 +2,7 @@ package com.gzlk.android.isp.model.archive;
 
 import com.gzlk.android.isp.model.Model;
 import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Ignore;
 
 /**
  * <b>功能描述：</b>档案、说说的附加信息：查看次数、点赞次数、评论次数、收藏次数<br />
@@ -16,6 +17,9 @@ import com.litesuits.orm.db.annotation.Column;
 
 public class Additional extends Model {
 
+    //档案附加信息
+    @Ignore
+    private Additional addition;
     @Column(Archive.Field.ReadNumber)
     private int readNum;     //阅读次数
     @Column(Archive.Field.LikeNumber)
@@ -36,6 +40,9 @@ public class Additional extends Model {
     @Column(Archive.Field.Liked)
     private int like;
 
+    public boolean isVisible() {
+        return likeNum > 0 || cmtNum > 0 || colNum > 0;
+    }
 
     public void resetAdditional(Additional additional) {
         if (null != additional) {
@@ -46,12 +53,25 @@ public class Additional extends Model {
         }
     }
 
+    public Additional getAddition() {
+        return addition;
+    }
+
+    public void setAddition(Additional addition) {
+        this.addition = addition;
+        // 重置附加信息
+        resetAdditional(this.addition);
+    }
+
     public int getReadNum() {
         return readNum;
     }
 
     public void setReadNum(int readNum) {
         this.readNum = readNum;
+        if (null != addition) {
+            addition.setReadNum(readNum);
+        }
     }
 
     public int getLikeNum() {
@@ -60,6 +80,9 @@ public class Additional extends Model {
 
     public void setLikeNum(int likeNum) {
         this.likeNum = likeNum;
+        if (null != addition) {
+            addition.setLikeNum(likeNum);
+        }
     }
 
     public int getCmtNum() {
@@ -68,6 +91,9 @@ public class Additional extends Model {
 
     public void setCmtNum(int cmtNum) {
         this.cmtNum = cmtNum;
+        if (null != addition) {
+            addition.setCmtNum(cmtNum);
+        }
     }
 
     public int getColNum() {
@@ -76,6 +102,9 @@ public class Additional extends Model {
 
     public void setColNum(int colNum) {
         this.colNum = colNum;
+        if (null != addition) {
+            addition.setColNum(colNum);
+        }
     }
 
     public boolean isCollected() {
@@ -94,6 +123,9 @@ public class Additional extends Model {
      */
     public void setCollection(int collection) {
         this.collection = collection;
+        if (null != addition) {
+            addition.setCollection(collection);
+        }
     }
 
     public String getColId() {
@@ -102,6 +134,9 @@ public class Additional extends Model {
 
     public void setColId(String colId) {
         this.colId = colId;
+        if (null != addition) {
+            addition.setColId(colId);
+        }
     }
 
     public boolean isLiked() {
@@ -114,6 +149,9 @@ public class Additional extends Model {
 
     public void setLikeId(String likeId) {
         this.likeId = likeId;
+        if (null != addition) {
+            addition.setLikeId(likeId);
+        }
     }
 
     public int getLike() {
@@ -122,5 +160,8 @@ public class Additional extends Model {
 
     public void setLike(int like) {
         this.like = like;
+        if (null != addition) {
+            addition.setLike(like);
+        }
     }
 }

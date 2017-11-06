@@ -19,12 +19,14 @@ import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveAttachmentViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveDetailsAdditionalViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
 import com.gzlk.android.isp.listener.OnKeyboardChangeListener;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.archive.Additional;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.common.Attachment;
@@ -290,6 +292,19 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private void displayAdditional(Archive archive) {
+
+        archive.getAddition().setId(format("additional_%s", archive.getId()));
+        if (archive.getAddition().isVisible()) {
+            int index = mAdapter.indexOf(archive.getAddition());
+            if (index > 0) {
+                mAdapter.update(archive.getAddition());
+            } else {
+                mAdapter.add(archive.getAddition(), 1 + archive.getAttach().size());
+            }
+        } else {
+            mAdapter.remove(archive.getAddition());
+        }
+
         commentNumber.setText(String.valueOf(archive.getCmtNum()));
         likeNumber.setText(String.valueOf(archive.getLikeNum()));
         collectNumber.setText(String.valueOf(archive.getColNum()));
@@ -437,7 +452,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
-        private static final int VT_ARCHIVE = 0, VT_COMMENT = 1, VT_NOTHING = 2, VT_ATTACHMENT = 3;
+        private static final int VT_ARCHIVE = 0, VT_COMMENT = 1, VT_NOTHING = 2, VT_ATTACHMENT = 3, VT_ADDITIONAL = 4;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -457,6 +472,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     ArchiveAttachmentViewHolder aavh = new ArchiveAttachmentViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
                     aavh.setOnViewHolderElementClickListener(elementClickListener);
                     return aavh;
+                case VT_ADDITIONAL:
+                    ArchiveDetailsAdditionalViewHolder adavh = new ArchiveDetailsAdditionalViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                    adavh.setOnViewHolderElementClickListener(elementClickListener);
+                    return adavh;
                 default:
                     return new NothingMoreViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
             }
@@ -471,6 +490,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     return R.layout.holder_view_archive_details_comment;
                 case VT_ATTACHMENT:
                     return R.layout.holder_view_archive_attachment;
+                case VT_ADDITIONAL:
+                    return R.layout.holder_view_archive_additional;
             }
             return R.layout.holder_view_archive_details_comment_nothing_more;
         }
@@ -484,6 +505,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 return VT_COMMENT;
             } else if (model instanceof Attachment) {
                 return VT_ATTACHMENT;
+            } else if (model instanceof Additional) {
+                return VT_ADDITIONAL;
             }
             return VT_NOTHING;
         }
@@ -496,6 +519,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 ((ArchiveDetailsCommentViewHolder) holder).showContent((Comment) item);
             } else if (holder instanceof ArchiveAttachmentViewHolder) {
                 ((ArchiveAttachmentViewHolder) holder).showContent((Attachment) item);
+            } else if (holder instanceof ArchiveDetailsAdditionalViewHolder) {
+                ((ArchiveDetailsAdditionalViewHolder) holder).showContent((Additional) item);
             }
         }
 

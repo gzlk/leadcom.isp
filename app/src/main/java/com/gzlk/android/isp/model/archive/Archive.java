@@ -399,9 +399,6 @@ public class Archive extends Additional {
     //最后一次修改时间
     @Column(Field.LastModifiedDate)
     private String lastModifiedDate;
-    //档案附加信息
-    @Ignore
-    private Additional addition;
 
     // 存档相关
     @Column(Activity.Field.ActivityId)
@@ -544,16 +541,6 @@ public class Archive extends Additional {
 
     public void setMarkdown(String markdown) {
         this.markdown = markdown;
-    }
-
-    public Additional getAddition() {
-        return addition;
-    }
-
-    public void setAddition(Additional addition) {
-        this.addition = addition;
-        // 重置附加信息
-        resetAdditional(this.addition);
     }
 
     public ArrayList<String> getLabel() {

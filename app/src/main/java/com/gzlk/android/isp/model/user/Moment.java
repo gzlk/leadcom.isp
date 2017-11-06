@@ -66,9 +66,6 @@ public class Moment extends Additional {
     //动态内容
     @Column(Archive.Field.Content)
     private String content;
-    //档案附加信息
-    @Ignore
-    private Additional addition;
     @Column(Archive.Field.Video)
     private String video;          //视频地址
     //图片
@@ -152,15 +149,6 @@ public class Moment extends Additional {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Additional getAddition() {
-        return addition;
-    }
-
-    public void setAddition(Additional addition) {
-        this.addition = addition;
-        resetAdditional(this.addition);
     }
 
     public String getVideo() {
