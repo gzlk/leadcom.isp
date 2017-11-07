@@ -598,7 +598,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 如果上传完毕的是图片，则插入图片
                     if (ImageCompress.isImage(Attachment.getExtension(url))) {
                         insertImage(url, imageAlt.getValue());
-                        mArchive.getImage().add(uploaded.get(0));
+                        //mArchive.getImage().add(uploaded.get(0));
                     }
                     break;
                 case UP_MUSIC:
@@ -607,7 +607,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     mEditor.insertAudio(music);
                     musicUrl.setValue("");
                     musicSize.setVisibility(View.GONE);
-                    mArchive.getAttach().add(uploaded.get(0));
+                    //mArchive.getAttach().add(uploaded.get(0));
                     break;
                 case UP_VIDEO:
                     // 视频上传完毕，插入视频到编辑框中
@@ -615,14 +615,20 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     mEditor.insertVideo("", video);
                     videoUrl.setValue("");
                     videoSize.setVisibility(View.GONE);
-                    mArchive.getVideo().add(uploaded.get(0));
+                    //mArchive.getVideo().add(uploaded.get(0));
                     break;
                 case UP_ATTACH:
                     // 上传了多个附件（一次最多9个）
                     //mEditor.insertHtml("");
                     if (null != uploaded) {
                         for (Attachment attachment : uploaded) {
-                            if (!mArchive.getAttach().contains(attachment)) {
+                            if (attachment.isImage()) {
+                                mArchive.getImage().add(attachment);
+                            } else if (attachment.isOffice()) {
+                                mArchive.getOffice().add(attachment);
+                            } else if (attachment.isVideo()) {
+                                mArchive.getVideo().add(attachment);
+                            } else {
                                 mArchive.getAttach().add(attachment);
                             }
                         }

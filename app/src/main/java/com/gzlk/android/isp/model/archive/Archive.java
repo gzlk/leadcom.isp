@@ -322,7 +322,7 @@ public class Archive extends Additional {
     /**
      * 当前登录者是否是本档案的管理员
      */
-    public boolean isManager() {
+    public boolean isAuthor() {
         return Cache.cache().userId.equals(userId);
     }
 

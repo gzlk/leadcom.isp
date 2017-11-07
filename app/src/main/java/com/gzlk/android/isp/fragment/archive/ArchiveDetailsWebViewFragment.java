@@ -11,12 +11,14 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
+import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveAttachmentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsAdditionalViewHolder;
@@ -24,7 +26,9 @@ import com.gzlk.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
 import com.gzlk.android.isp.listener.OnKeyboardChangeListener;
+import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
+import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Additional;
 import com.gzlk.android.isp.model.archive.Archive;
@@ -262,6 +266,81 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }
     }
 
+    private void openEditSelector() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                return View.inflate(Activity(), R.layout.popup_dialog_edit_selector, null);
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_button_editor_to_change, R.id.ui_dialog_button_editor_to_delete};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                int id = view.getId();
+                switch (id) {
+                    case R.id.ui_dialog_button_editor_to_change:
+                        break;
+                    case R.id.ui_dialog_button_editor_to_delete:
+                        Archive archive = (Archive) mAdapter.get(mQueryId);
+                        if (archive.isAuthor()) {
+                            warningDeleteDocument();
+                        } else {
+                            ToastHelper.make().showMsg(R.string.ui_text_document_details_delete_no_permission);
+                        }
+                        break;
+                }
+                return true;
+            }
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
+    }
+
+    private void warningDeleteDocument() {
+        SimpleDialogHelper.init(Activity()).show(R.string.ui_text_document_details_delete, R.string.ui_base_text_yes, R.string.ui_base_text_no_need, new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                deleteDocument();
+                return true;
+            }
+        }, null);
+    }
+
+    private void deleteDocument() {
+        setLoadingText(R.string.ui_text_document_details_deleting_document);
+        displayLoading(true);
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                displayLoading(false);
+                ToastHelper.make().showMsg(message);
+                if (success) {
+                    new Dao<>(Archive.class).delete(mQueryId);
+                    // 返回成功
+                    resultData(mQueryId);
+                }
+            }
+        }).delete(archiveType, mQueryId);
+    }
+
+    private void resetRightIconEvent() {
+        setRightText(R.string.ui_base_text_edit);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                openEditSelector();
+            }
+        });
+    }
+
     private void loadingArchive() {
         setLoadingText(R.string.ui_text_archive_details_loading);
         displayLoading(true);
@@ -271,9 +350,22 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 super.onResponse(archive, success, message);
                 displayLoading(false);
                 if (success && null != archive) {
+                    // 档案管理员/组织管理员/档案作者可以删除档案
+                    if (archive.isAuthor()) {
+                        //resetRightIconEvent();
+                    }
                     // 档案创建者可以删除评论
-                    deletable = archive.getUserId().equals(Cache.cache().userId);
+                    deletable = archive.isAuthor();
                     mAdapter.update(archive);
+                    for (Attachment attachment : archive.getImage()) {
+                        mAdapter.update(attachment);
+                    }
+                    for (Attachment attachment : archive.getVideo()) {
+                        mAdapter.update(attachment);
+                    }
+                    for (Attachment attachment : archive.getOffice()) {
+                        mAdapter.update(attachment);
+                    }
                     for (Attachment attachment : archive.getAttach()) {
                         mAdapter.update(attachment);
                     }
