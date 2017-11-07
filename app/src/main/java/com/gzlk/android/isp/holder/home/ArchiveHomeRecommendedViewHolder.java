@@ -115,6 +115,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
             timeView.setText(fragment().formatTimeAgo(archive.getCreateDate()));
         }
         coverView.displayImage(archive.getCover(), width, height, false, false);
+        coverView.setVisibility(isEmpty(archive.getCover()) ? View.GONE : View.VISIBLE);
         titleView.setText(archive.getTitle());
         // 去掉所有html标签
         contentView.setVisibility(isEmpty(archive.getContent()) ? View.GONE : View.VISIBLE);

@@ -75,7 +75,11 @@ public class Label extends Model {
                 ret += (isEmpty(ret) ? "" : "、") + label.getName();
             }
         }
-        ret += format("共%d个标签", labels.size());
+        if (labels.size() < 1) {
+            ret = "请选择标签";
+        } else {
+            ret += format("共%d个标签", labels.size());
+        }
         return ret;
     }
 
