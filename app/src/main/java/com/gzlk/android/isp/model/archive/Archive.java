@@ -570,7 +570,17 @@ public class Archive extends Additional {
      * 是否可以推荐
      */
     public boolean isRecommendable() {
-        return Utils.hasImage(content) || Utils.hasVideo(content) || getImage().size() > 0 || getVideo().size() > 0;
+        return getHtmlClearedLength() >= 70 ||
+                Utils.hasImage(content) ||
+                Utils.hasVideo(content) ||
+                getImage().size() > 0 ||
+                getVideo().size() > 0;
+    }
+
+    public int getHtmlClearedLength() {
+        String html = Utils.clearHtml(content);
+        if (isEmpty(html)) return 0;
+        return html.length();
     }
 
     public ArrayList<Attachment> getImage() {

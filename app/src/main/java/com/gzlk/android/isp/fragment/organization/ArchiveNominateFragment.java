@@ -168,12 +168,6 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    private long getArchiveContentRealLength(String content) {
-        String html = Utils.clearHtml(content);
-        if (isEmpty(html)) return 0;
-        return html.length();
-    }
-
     private void tryRecommendArchive(RecommendArchive archive, int index) {
         Archive doc = null == archive.getUserDoc() ? archive.getGroDoc() : archive.getUserDoc();
         if (null != doc) {
@@ -186,7 +180,7 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
                     if (Utils.hasImage(doc.getContent()) || Utils.hasVideo(doc.getContent())) {
                         recommendArchive(archive, index);
                     } else {
-                        long len = getArchiveContentRealLength(doc.getContent());
+                        long len = doc.getHtmlClearedLength();
                         if (len < 70) {
                             ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_too_short);
                         } else {

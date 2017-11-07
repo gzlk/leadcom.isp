@@ -12,6 +12,7 @@
         android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginTop="@dimen/ui_static_dp_5"
         android:elevation="@dimen/ui_base_translationZ"
         android:padding="@dimen/ui_base_dimen_margin_padding"
         app:cv_background="@android:color/white"
