@@ -77,6 +77,11 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 // 同步用户信息，如果同步失败则需要重新登录
                 syncUserInfo();
                 //checkNimStatus();
+            } else {
+                accountText.setValue(Cache.cache().userPhone);
+                if (!isEmpty(Cache.cache().userPhone)) {
+                    passwordText.requestFocus();
+                }
             }
         } else {
             // 尝试获取相关基本的运行时权限

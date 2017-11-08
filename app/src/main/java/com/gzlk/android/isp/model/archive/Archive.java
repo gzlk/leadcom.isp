@@ -294,22 +294,30 @@ public class Archive extends Additional {
                     if (null == office) {
                         office = new ArrayList<>();
                     }
-                    office.add(attachment);
+                    if (!office.contains(attachment)) {
+                        office.add(attachment);
+                    }
                 } else if (attachment.isImage()) {
                     if (null == image) {
                         image = new ArrayList<>();
                     }
-                    image.add(attachment);
+                    if (!image.contains(attachment)) {
+                        image.add(attachment);
+                    }
                 } else if (attachment.isVideo()) {
                     if (null == video) {
                         video = new ArrayList<>();
                     }
-                    video.add(attachment);
+                    if (!video.contains(attachment)) {
+                        video.add(attachment);
+                    }
                 } else {
                     if (null == attach) {
                         attach = new ArrayList<>();
                     }
-                    attach.add(attachment);
+                    if (!attach.contains(attachment)) {
+                        attach.add(attachment);
+                    }
                 }
             }
         }

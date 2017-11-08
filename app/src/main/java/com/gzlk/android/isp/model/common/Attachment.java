@@ -319,6 +319,14 @@ public class Attachment extends Model {
         type = getAttachmentType();
     }
 
+    @Override
+    public String getId() {
+        if (isEmpty(super.getId())) {
+            resetInformation();
+        }
+        return super.getId();
+    }
+
     public int getType() {
         if (type == AttachmentType.NONE) {
             resetInformation();

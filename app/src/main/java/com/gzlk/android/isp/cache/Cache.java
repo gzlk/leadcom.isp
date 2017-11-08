@@ -11,7 +11,6 @@ import com.gzlk.android.isp.model.user.User;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * <b>功能描述：</b>全局缓存<br />
@@ -31,6 +30,10 @@ public class Cache {
     }
 
     private static Cache cache;
+
+    private Cache() {
+        userPhone = PreferenceHelper.get(get(R.string.pf_last_login_user_account, R.string.pf_last_login_user_account_beta), "");
+    }
 
     /**
      * 获取当前全局实例缓存
@@ -81,10 +84,12 @@ public class Cache {
             userName = me.getName();
             accessToken = me.getAccessToken();
             NimSessionHelper.setAccount(userId);
+            userPhone = me.getPhone();
             // 保存网易云登录的账户和令牌
             PreferenceHelper.save(get(R.string.pf_last_login_user_id, R.string.pf_last_login_user_id_beta), userId);
             PreferenceHelper.save(get(R.string.pf_last_login_user_token, R.string.pf_last_login_user_token_beta), accessToken);
             PreferenceHelper.save(get(R.string.pf_last_login_user_nim_token, R.string.pf_last_login_user_nim_token_beta), nimToken);
+            PreferenceHelper.save(get(R.string.pf_last_login_user_account, R.string.pf_last_login_user_account_beta), userPhone);
         }
     }
 
@@ -110,7 +115,7 @@ public class Cache {
     /**
      * 当前登录用户的id、姓名、网易云信登录的token、api服务器的accessToken
      */
-    public String userId, nimToken, accessToken, userName;
+    public String userId, nimToken, accessToken, userName, userPhone;
 
     public ArrayList<String> groupIds = new ArrayList<>();
 }

@@ -21,6 +21,8 @@
     <color name="activeBorderColor">@color/colorPrimary</color>
 
     <color name="colorUnreadFlag">@color/color_fe4848</color>
+    <color name="colorBorderNormal">@color/color_dbdcdc</color>
+    <color name="colorBorderActive">@color/color_faaa2d</color>
 
     <color name="colorWord">@color/color_295391</color>
     <color name="colorExcel">@color/color_1f6b41</color>

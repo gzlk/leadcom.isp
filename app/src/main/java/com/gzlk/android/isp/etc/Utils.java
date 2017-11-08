@@ -329,6 +329,7 @@ public class Utils {
     private static final String regEx_video = "<video[^>]*?>[\\s\\S]*?<\\/video>"; // 定义img的正则表达式
     private static final String regEx_html = "<[^>]+>"; // 定义HTML标签的正则表达式
     private static final String regEx_space = "\\s*|\t|\r|\n";//定义空格回车换行符
+    private static final String regEx_style1 = "style\\=\\\"[^\\\"]*\\\"";
 
     /**
      * 清除 html 标签
@@ -349,7 +350,17 @@ public class Utils {
         Pattern p_space = Pattern.compile(regEx_space, Pattern.CASE_INSENSITIVE);
         Matcher m_space = p_space.matcher(htmlStr);
         htmlStr = m_space.replaceAll(""); // 过滤空格回车标签
+
+        // 过滤所有 style="xxx" 代码
+        //htmlStr = Pattern.compile(regEx_style1, Pattern.CASE_INSENSITIVE).matcher(htmlStr).replaceAll("");
         return htmlStr.trim(); // 返回文本字符串
+    }
+
+    /**
+     * 清除所有 style="xxx" 内容
+     */
+    public static String clearStyleEqualsXXX(String htmlStr) {
+        return Pattern.compile(regEx_style1, Pattern.CASE_INSENSITIVE).matcher(htmlStr).replaceAll("");
     }
 
     /**

@@ -21,7 +21,7 @@
             android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
             app:id_image_scale_type="centerCrop"
             app:id_image_src="@mipmap/img_default_user_header"
-            app:id_image_type="normal"
+            app:id_image_type="oval"
             app:id_show_header="true" />
 
         <LinearLayout

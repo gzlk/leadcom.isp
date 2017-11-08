@@ -174,7 +174,7 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
         imageView.displayImage(url, imageSize, false, false);
     }
 
-    private void showIcon(Attachment attachment){
+    private void showIcon(Attachment attachment) {
         imageView.setVisibility(View.GONE);
         iconContainer.setVisibility(View.VISIBLE);
         iconContainer.setNormalColor(getColor(attachment.iconColor()));
@@ -186,20 +186,8 @@ public class ArchiveManagementViewHolder extends BaseViewHolder {
     }
 
     private int filesCount(Archive archive) {
-        int cnt = 0;
-        if (null != archive.getOffice()) {
-            cnt += archive.getOffice().size();
-        }
-        if (null != archive.getImage()) {
-            cnt += archive.getImage().size();
-        }
-        if (null != archive.getVideo()) {
-            cnt += archive.getVideo().size();
-        }
-        if (null != archive.getAttach()) {
-            cnt += archive.getAttach().size();
-        }
-        return cnt;
+        return archive.getOffice().size() + archive.getImage().size() +
+                archive.getVideo().size() + archive.getAttach().size();
     }
 
     public void showContent(PriorityPlace place) {

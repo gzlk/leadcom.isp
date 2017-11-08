@@ -47,6 +47,13 @@ public class ArchiveRecommendViewHolder extends BaseViewHolder {
     public void showContent(RecommendArchive archive) {
         Archive doc = null != archive.getUserDoc() ? archive.getUserDoc() : archive.getGroDoc();
         String cover = null == doc ? "" : doc.getCover();
+        if (isEmpty(cover)) {
+            if (null != doc && doc.getImage().size() > 0) {
+                cover = doc.getImage().get(0).getUrl();
+            } else {
+                cover = "drawable://" + R.drawable.img_default_app_icon;
+            }
+        }
         imageView.displayImage(cover, getDimension(R.dimen.ui_static_dp_100), getDimension(R.dimen.ui_static_dp_80), false, false);
         titleView.setText(null == doc ? "" : doc.getTitle());
         String groupName = archive.getGroupName();

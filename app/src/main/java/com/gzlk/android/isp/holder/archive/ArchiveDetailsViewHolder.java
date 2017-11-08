@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
@@ -74,7 +75,8 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         coverView.setVisibility(isEmpty(cover) ? View.GONE : View.VISIBLE);
         String content = archive.getContent();
         contentView.setVisibility((isEmpty(content) || content.equals("null")) ? View.GONE : View.VISIBLE);
-        contentView.loadData(StringHelper.getString(R.string.ui_text_archive_details_content_html, content).replace("100per", "100%"), "text/html; charset=UTF-8", null);
+        content = Utils.clearStyleEqualsXXX(content);
+        contentView.loadData(StringHelper.getString(R.string.ui_text_archive_details_content_html, content).replace("width: 100per", "width: 100%"), "text/html; charset=UTF-8", null);
         //bottomLine.setVisibility(archive.getCmtNum() > 0 ? View.VISIBLE : View.GONE);
     }
 }

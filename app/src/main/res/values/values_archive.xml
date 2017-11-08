@@ -21,6 +21,7 @@
     <string name="ui_text_archive_creator_editor_create_cover">档案封面</string>
     <string name="ui_text_archive_creator_editor_create_cover_null">请给新建的档案挑选一个封面</string>
     <string name="ui_text_archive_creator_editor_create_label_null">请给新建的档案打上标签</string>
+    <string name="ui_text_archive_creator_editor_create_author_null">请提供档案的来源或作者信息</string>
     <string name="ui_text_archive_creator_editor_create_time">创建时间</string>
     <string name="ui_text_archive_creator_editor_video_cover_default">http://120.25.124.199:8008/group1/M00/00/13/eBk66lng0_yAOTQYAABKQjAngPs457.png</string>
     <string name="ui_text_archive_creator_editor_attachment_icon">http://120.25.124.199:8008/group1/M00/00/17/cErYIVnkBRiAOy1aAAAJiqCeKro218.png</string>

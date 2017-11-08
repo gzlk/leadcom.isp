@@ -46,6 +46,7 @@ import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.io.File;
@@ -307,6 +308,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
             return;
         }
+        String author = creatorText.getValue();
+        if (isEmpty(author)) {
+            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_author_null);
+            return;
+        }
+        mArchive.setUserName(author);
         mEditor.getMarkdown();
     }
 
@@ -392,7 +399,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private View settingDialogView;
     private ImageDisplayer coverView;
-    private TextView titleText, publicText, labelText, creatorText, createTime;
+    private TextView titleText, publicText, labelText, createTime;
+    private CorneredEditText creatorText;
 
     private void openSettingDialog() {
         mArchive.setTitle(titleView.getValue());

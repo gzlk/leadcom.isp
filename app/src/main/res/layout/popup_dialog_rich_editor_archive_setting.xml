@@ -180,12 +180,20 @@
                 android:paddingBottom="@dimen/ui_static_dp_5"
                 android:paddingTop="@dimen/ui_static_dp_5">
 
-                <TextView
+                <com.hlk.hlklib.lib.view.CorneredEditText
                     android:id="@+id/ui_popup_rich_editor_setting_creator"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="@dimen/ui_static_dp_5"
+                    android:singleLine="true"
                     android:text="@string/app_name_default"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:cet_active_border="@color/colorBorderActive"
+                    app:cet_corner_size="@dimen/ui_static_dp_5"
+                    app:cet_max_length="10"
+                    app:cet_normal_border="@color/colorBorderNormal"
+                    app:cet_value_extract_regex="@string/regex_normal_long_input_filter"
+                    app:cet_value_verify_regex="@string/regex_normal_long_input_verify" />
 
             </LinearLayout>
         </LinearLayout>
