@@ -57,8 +57,8 @@ public class MomentPraiseViewHolder extends BaseViewHolder {
 
     private void addHeaders(List<ArchiveLike> likes) {
         for (ArchiveLike like : likes) {
-            ImageDisplayer displayer = new ImageDisplayer(headers.getContext());
-            displayer.setShowHeader(true);
+            ImageDisplayer displayer = (ImageDisplayer) View.inflate(headers.getContext(), R.layout.tool_view_single_header_small, null);
+            //displayer.setShowHeader(true);
             displayer.displayImage(like.getHeadPhoto(), imageSize, false, false);
             headers.addView(displayer);
             int lines = headers.getFlexLines().size();
