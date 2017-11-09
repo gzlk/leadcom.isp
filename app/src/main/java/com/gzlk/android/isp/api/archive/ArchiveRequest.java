@@ -140,7 +140,8 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
-                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())));
+                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
+                    .put("source", archive.getSource());
             if (archive.getAuthPublic() == Seclusion.Type.Group) {
                 object.put("authGro", new JSONArray(archive.getAuthGro()));
             } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
@@ -168,6 +169,10 @@ public class ArchiveRequest extends Request<Archive> {
      * 更改封面图
      */
     public static final int TYPE_COVER = 3;
+    /**
+     * 更改档案来源
+     */
+    public static final int TYPE_SOURCE = 4;
 
     /**
      * 更新档案内容
@@ -193,6 +198,9 @@ public class ArchiveRequest extends Request<Archive> {
                     break;
                 case TYPE_COVER:
                     object.put("cover", archive.getCover());
+                    break;
+                case TYPE_SOURCE:
+                    object.put("source", archive.getSource());
                     break;
             }
         } catch (JSONException e) {

@@ -326,7 +326,8 @@ public class Utils {
     private static final String regEx_script = "<script[^>]*?>[\\s\\S]*?<\\/script>"; // 定义script的正则表达式
     private static final String regEx_style = "<style[^>]*?>[\\s\\S]*?<\\/style>"; // 定义style的正则表达式
     private static final String regEx_img = "<img[^>]*?(\\/>|><\\/img>|>)"; // 定义img的正则表达式
-    private static final String regEx_video = "<video[^>]*?>[\\s\\S]*?<\\/video>"; // 定义img的正则表达式
+    private static final String regEx_video = "<video[^>]*?>[\\s\\S]*?<\\/video>"; // 定义video的正则表达式
+    private static final String regEx_audio = "<audio[^>]*?>[\\s\\S]*?<\\/audio>"; // 定义audio的正则表达式
     private static final String regEx_html = "<[^>]+>"; // 定义HTML标签的正则表达式
     private static final String regEx_space = "\\s*|\t|\r|\n";//定义空格回车换行符
     private static final String regEx_style1 = "style\\=\\\"[^\\\"]*\\\"";
@@ -342,6 +343,14 @@ public class Utils {
         Pattern p_style = Pattern.compile(regEx_style, Pattern.CASE_INSENSITIVE);
         Matcher m_style = p_style.matcher(htmlStr);
         htmlStr = m_style.replaceAll(""); // 过滤style标签
+
+        Pattern p_video = Pattern.compile(regEx_video, Pattern.CASE_INSENSITIVE);
+        Matcher m_video = p_video.matcher(htmlStr);
+        htmlStr = m_video.replaceAll(""); // 过滤video标签
+
+        Pattern p_audio = Pattern.compile(regEx_audio, Pattern.CASE_INSENSITIVE);
+        Matcher m_audio = p_audio.matcher(htmlStr);
+        htmlStr = m_audio.replaceAll(""); // 过滤audio标签
 
         Pattern p_html = Pattern.compile(regEx_html, Pattern.CASE_INSENSITIVE);
         Matcher m_html = p_html.matcher(htmlStr);

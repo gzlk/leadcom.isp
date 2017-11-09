@@ -46,7 +46,6 @@ import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
-import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.io.File;
@@ -313,7 +312,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_author_null);
             return;
         }
-        mArchive.setUserName(author);
+        mArchive.setSource(author);
         mEditor.getMarkdown();
     }
 
@@ -400,7 +399,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View settingDialogView;
     private ImageDisplayer coverView;
     private TextView titleText, publicText, labelText, createTime;
-    private CorneredEditText creatorText;
+    private ClearEditText creatorText;
 
     private void openSettingDialog() {
         mArchive.setTitle(titleView.getValue());
@@ -422,7 +421,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
                 titleText.setText(mArchive.getTitle());
-                creatorText.setText(mArchive.getUserName());
+                creatorText.setValue(mArchive.getUserName());
+                creatorText.focusEnd();
                 String text = mArchive.getCreateDate();
                 if (!isEmpty(text) && !text.equals(Model.DFT_DATE)) {
                     text = formatDate(mArchive.getCreateDate(), "yyyy.MM.dd");

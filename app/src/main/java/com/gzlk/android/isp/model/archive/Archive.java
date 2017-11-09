@@ -433,6 +433,8 @@ public class Archive extends Additional {
     private String approveDate;
     @Ignore
     private Organization groEntity;
+    @Column(Field.Source)
+    private String source;
 
     public String getGroupId() {
         return groupId;
@@ -740,5 +742,13 @@ public class Archive extends Additional {
 
     public void setGroEntity(Organization groEntity) {
         this.groEntity = groEntity;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }
