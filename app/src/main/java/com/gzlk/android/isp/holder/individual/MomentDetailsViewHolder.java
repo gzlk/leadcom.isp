@@ -89,6 +89,14 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         imageLine1.setOnImageClickListener(onImageClickListener);
         imageLine2.setOnImageClickListener(onImageClickListener);
         imageLine3.setOnImageClickListener(onImageClickListener);
+        authorHeader.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(ImageDisplayer displayer, String url) {
+                if (null != mOnViewHolderElementClickListener) {
+                    mOnViewHolderElementClickListener.onClick(authorHeader, getAdapterPosition());
+                }
+            }
+        });
     }
 
     /**

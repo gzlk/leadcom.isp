@@ -8,10 +8,12 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
@@ -46,6 +48,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     private ExpandableTextView textContent;
     @ViewId(R.id.ui_tool_view_collection_content_image)
     private ImageDisplayer imageContent;
+
     @ViewId(R.id.ui_tool_view_collection_content_attachment)
     private LinearLayout attachmentContent;
     @ViewId(R.id.ui_tool_view_collection_content_attachment_icon)
@@ -57,6 +60,13 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_tool_view_collection_content_attachment_size)
     private TextView attachmentSize;
 
+    @ViewId(R.id.ui_tool_view_collection_content_archive)
+    private LinearLayout archiveLayout;
+    @ViewId(R.id.ui_tool_view_collection_content_archive_cover)
+    private ImageDisplayer archiveCover;
+    @ViewId(R.id.ui_tool_view_collection_content_archive_text)
+    private TextView archiveText;
+
     public CollectionItemViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
@@ -65,21 +75,22 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     public void showContent(Collection collection) {
         creatorName.setText(collection.getCreatorName());
         createTime.setText(fragment().formatTimeAgo(collection.getCreateDate()));
+        creatorImage.displayImage(collection.getCreatorHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         checkViews(collection.getType());
-        showCollection(collection.getType(), collection.getContent());
+        showCollection(collection);
     }
 
     private void checkViews(int type) {
         textContent.setVisibility(type == Collection.Type.TEXT ? View.VISIBLE : View.GONE);
         imageContent.setVisibility(type == Collection.Type.IMAGE ? View.VISIBLE : View.GONE);
         attachmentContent.setVisibility(type == Collection.Type.ATTACHMENT ? View.VISIBLE : View.GONE);
+        archiveLayout.setVisibility((type == Collection.Type.USER_MOMENT || type == Collection.Type.GROUP_ARCHIVE || type == Collection.Type.USER_ARCHIVE) ? View.VISIBLE : View.GONE);
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private void showCollection(int type, String content) {
-        switch (type) {
+    private void showCollection(Collection col) {
+        switch (col.getType()) {
             case Collection.Type.TEXT:
-                textContent.setText(EmojiUtility.getEmojiString(textContent.getContext(), content, true));
+                textContent.setText(EmojiUtility.getEmojiString(textContent.getContext(), col.getContent(), true));
                 textContent.makeExpandable();
                 break;
             case Collection.Type.IMAGE:
@@ -90,19 +101,36 @@ public class CollectionItemViewHolder extends BaseViewHolder {
                     params.width = width;
                     params.height = height;
                 }
-                imageContent.displayImage(content, width, height, false, false);
+                imageContent.displayImage(col.getContent(), width, height, false, false);
                 break;
             case Collection.Type.ATTACHMENT:
-                String name = content.substring(content.lastIndexOf('/') + 1);
-                String extension = name.substring(name.lastIndexOf('.') + 1);
-                attachmentExtension.setText(extension.toUpperCase(Locale.getDefault()));
-                attachmentIcon.setText(AttachmentViewHolder.getFileExtension(extension));
-                name = name.replace("." + extension, "");
-                attachmentName.setText(name);
-                String local = App.app().getLocalFilePath(content, App.OTHER_DIR);
+                Attachment attachment = new Attachment();
+                attachment.setName(col.getContent().substring(col.getContent().lastIndexOf('/') + 1));
+                attachment.setUrl(col.getContent());
+                attachment.resetInformation();
+                attachmentExtension.setText(attachment.getExt().toUpperCase(Locale.getDefault()));
+                attachmentIcon.setText(AttachmentViewHolder.getFileExtension(attachment.getExt()));
+                attachmentName.setText(attachment.getName());
+                String local = App.app().getLocalFilePath(attachment.getUrl(), App.OTHER_DIR);
                 File file = new File(local);
                 long size = file.length();
                 attachmentSize.setText(Utils.formatSize(size));
+                break;
+            case Collection.Type.USER_ARCHIVE:
+            case Collection.Type.GROUP_ARCHIVE:
+            case Collection.Type.USER_MOMENT:
+                if (col.getType() == Collection.Type.USER_MOMENT) {
+                    String image = "drawable://" + R.drawable.img_default_app_icon;
+                    if (col.getUserMmt().getImage().size() > 0) {
+                        image = col.getUserMmt().getImage().get(0);
+                    }
+                    archiveCover.displayImage(image, getDimension(R.dimen.ui_static_dp_50), false, false);
+                    archiveText.setText(StringHelper.getString(R.string.ui_text_collection_archive_text, "动态", ""));
+                } else {
+                    archiveCover.displayImage("drawable://" + R.drawable.img_default_archive, getDimension(R.dimen.ui_static_dp_50), false, false);
+                    archiveText.setText(StringHelper.getString(R.string.ui_text_collection_archive_text,
+                            (col.getType() == Collection.Type.GROUP_ARCHIVE ? "组织档案" : "个人档案"), col.getSourceTitle()));
+                }
                 break;
         }
     }

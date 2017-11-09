@@ -3,6 +3,7 @@ package com.gzlk.android.isp.model.user;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.vote.AppVote;
 import com.gzlk.android.isp.model.archive.Archive;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -63,11 +64,11 @@ public class Collection extends Model {
         /**
          * 分享
          */
-        int MOMENT = 8;
+        //int MOMENT = 8;
         /**
          * 连接
          */
-        int LINK = 10;
+        //int LINK = 10;
         /**
          * 个人档案
          */
@@ -149,6 +150,25 @@ public class Collection extends Model {
         col.setSourceType(SourceType.MOMENT);
         col.setSourceId(moment.getId());
         col.setSourceTitle("");
+        return col;
+    }
+
+    /**
+     * 收藏附件、视频、音频、图片
+     */
+    public static Collection get(String url) {
+        Collection col = new Collection();
+        Attachment attach = new Attachment();
+        attach.setUrl(url);
+        attach.resetInformation();
+        if (attach.isImage()) {
+            col.setType(Type.IMAGE);
+        } else if (attach.isVideo()) {
+            col.setType(Type.VIDEO);
+        } else {
+            col.setType(Type.ATTACHMENT);
+        }
+        col.setContent(url);
         return col;
     }
 

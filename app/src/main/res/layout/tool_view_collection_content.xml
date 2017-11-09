@@ -9,10 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/ui_static_dp_5"
-        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-        android:paddingStart="@dimen/ui_base_dimen_margin_padding"
-        android:paddingTop="@dimen/ui_static_dp_5"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
         app:cv_background="@android:color/white"
         app:cv_background_active="@color/textColorHintLightLight"
         app:cv_background_type="fill"
@@ -33,6 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/textColorHintLightLight"
+            android:visibility="gone"
             app:id_image_scale_type="centerCrop"
             app:id_image_src="@mipmap/img_image_default"
             app:id_show_loading="false" />
@@ -104,6 +102,32 @@
                 </LinearLayout>
 
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ui_tool_view_collection_content_archive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/textColorHintLightLight"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/ui_static_dp_5">
+
+            <com.gzlk.android.isp.lib.view.ImageDisplayer
+                android:id="@+id/ui_tool_view_collection_content_archive_cover"
+                android:layout_width="@dimen/ui_static_dp_50"
+                android:layout_height="@dimen/ui_static_dp_50"
+                app:id_image_src="@mipmap/img_image_default" />
+
+            <TextView
+                android:id="@+id/ui_tool_view_collection_content_archive_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@string/app_name_default" />
         </LinearLayout>
     </com.hlk.hlklib.lib.view.CorneredView>
 

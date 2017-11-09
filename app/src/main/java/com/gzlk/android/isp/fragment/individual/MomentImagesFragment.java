@@ -331,7 +331,6 @@ public class MomentImagesFragment extends BaseMomentFragment {
     @SuppressWarnings("ConstantConditions")
     private void tryCollection() {
         // 收藏当前显示的图片
-        String url = images.get(selected);
         CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
             @Override
             public void onResponse(Collection collection, boolean success, String message) {
@@ -340,7 +339,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).add(Collection.Type.IMAGE, url, momentUser, momentName, mMoment.getHeadPhoto(), Collection.SourceType.MOMENT, mMoment.getId(), "", null, null);
+        }).add(Collection.get(mMoment), null);
     }
 
     private void save() {

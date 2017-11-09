@@ -28,6 +28,7 @@ import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
 import com.gzlk.android.isp.fragment.individual.MomentDetailsFragment;
 import com.gzlk.android.isp.fragment.individual.MomentImagesFragment;
 import com.gzlk.android.isp.fragment.individual.UserMessageFragment;
+import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.organization.StructureFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
@@ -49,10 +50,12 @@ import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.model.user.MomentPublic;
 import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
@@ -514,10 +517,40 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
             } else if (model instanceof Archive) {
                 archiveClick((Archive) model);
             } else if (model instanceof Collection) {
-                openActivity(CollectionDetailsFragment.class.getName(), model.getId(), true, false);
+                collectionClick((Collection) model);
             }
         }
     };
+
+    private void collectionClick(Collection collection) {
+        switch (collection.getType()) {
+            case Collection.Type.TEXT:
+            case Collection.Type.IMAGE:
+                openActivity(CollectionDetailsFragment.class.getName(), collection.getId(), true, false);
+                break;
+            case Collection.Type.GROUP_ARCHIVE:
+                ArchiveDetailsWebViewFragment.open(this, collection.getSourceId(), Archive.Type.GROUP);
+                break;
+            case Collection.Type.USER_ARCHIVE:
+                ArchiveDetailsWebViewFragment.open(this, collection.getSourceId(), Archive.Type.USER);
+                break;
+            case Collection.Type.ATTACHMENT:
+                String name = collection.getContent().substring(collection.getContent().lastIndexOf('/') + 1);
+                Attachment att = new Attachment();
+                att.setUrl(collection.getContent());
+                att.setName(name);
+                att.resetInformation();
+                FilePreviewHelper.previewFile(Activity(), att.getUrl(), att.getName(), att.getExt());
+                break;
+            case Collection.Type.USER_MOMENT:
+                if (collection.getUserMmt().getImage().size() > 0) {
+                    MomentImagesFragment.open(this, collection.getSourceId(), 0);
+                } else {
+                    MomentDetailsFragment.open(this, collection.getSourceId());
+                }
+                break;
+        }
+    }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -553,6 +586,10 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_holder_view_moment_camera_message_layer:
                     // 打开消息列表
                     UserMessageFragment.open(IndividualFragment.this);
+                    break;
+                case R.id.ui_holder_view_moment_details_header:
+                    Moment m = (Moment) mAdapter.get(index);
+                    UserPropertyFragment.open(IndividualFragment.this, m.getUserId());
                     break;
                 case R.id.ui_holder_view_moment_details_container:
                     // 打开详情页了

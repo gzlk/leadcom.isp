@@ -7,6 +7,7 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
+import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.io.File;
@@ -68,6 +69,13 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
             firstEnter = false;
             loadingPdf();
         }
+        setRightText(R.string.ui_base_text_favorite);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+
+            }
+        });
     }
 
     @Override

@@ -166,6 +166,7 @@
 
     <string name="ui_text_collection_details_not_exists">收藏的内容不存在</string>
     <string name="ui_text_collection_details_create_at" formatted="false">收藏于%s</string>
+    <string name="ui_text_collection_archive_text" formatted="false">【%s】%s</string>
 
     <string-array name="ui_text_my_setting_items">
         <item>0</item>
