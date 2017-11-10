@@ -139,6 +139,9 @@ dependencies {
 //    compile(name: 'hlklib-release', ext: 'aar')
 //    compile 'com.facebook.rebound:rebound:0.3.8'
 
+    // 饺子视频播放器
+    compile 'cn.jzvd:jiaozivideoplayer:6.1.2'
+
     compile 'com.android.support:appcompat-v7:27.0.0'
     compile 'com.android.support:cardview-v7:27.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -200,9 +203,9 @@ dependencies {
     // 2D地图
     compile 'com.amap.api:map2d:5.2.0'
     // 搜索
-    compile 'com.amap.api:search:5.3.0'
+    compile 'com.amap.api:search:5.3.1'
     // 定位
-    compile 'com.amap.api:location:3.5.0'
+    compile 'com.amap.api:location:3.6.1'
 
     // 桌面提醒
     compile 'me.leolin:ShortcutBadger:1.1.17'

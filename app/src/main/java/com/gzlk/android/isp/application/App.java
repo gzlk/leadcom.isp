@@ -62,6 +62,7 @@ public class App extends NimApplication {
     public void onCreate() {
         super.onCreate();
         AppCrashHandler.getInstance(this);
+
         //PgyCrashManager.register(this);
         initializeNim();
         if (shouldInit()) {

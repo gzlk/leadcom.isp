@@ -105,6 +105,8 @@ public final class NimUIKit {
     // Android 7.0+文件提供者
     private static String fileProviderAuthority;
 
+    private static OnSessionMessageViewHolderClick messageViewHolderClick;
+
     /**
      * 初始化UIKit, 用户信息、联系人信息使用 {@link DefaultUserInfoProvider}，{@link DefaultContactProvider}
      * 若用户自行提供 userInfoProvider，contactProvider，请使用 {@link NimUIKit#init(Context, UserInfoProvider, ContactProvider)}
@@ -168,6 +170,20 @@ public final class NimUIKit {
         }
 
         NimUIKit.contactProvider = contactProvider;
+    }
+
+    /**
+     * 设置视频消息点击事件，可以在这里打开自定义的播放器窗口
+     */
+    public static void setOnSessionMessageViewHolderClick(OnSessionMessageViewHolderClick click) {
+        messageViewHolderClick = click;
+    }
+
+    /**
+     * 视频消息点击事件
+     */
+    public static OnSessionMessageViewHolderClick getOnSessionMessageViewHolderClick() {
+        return messageViewHolderClick;
     }
 
     // Uri文件提供者

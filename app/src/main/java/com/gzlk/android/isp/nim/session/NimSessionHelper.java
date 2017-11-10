@@ -29,6 +29,7 @@ import com.gzlk.android.isp.nim.action.SignAction;
 import com.gzlk.android.isp.nim.action.VideoCaptureAction;
 import com.gzlk.android.isp.nim.action.VideoChooseAction;
 import com.gzlk.android.isp.nim.action.VoteAction;
+import com.gzlk.android.isp.nim.activity.VideoPlayerActivity;
 import com.gzlk.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.gzlk.android.isp.nim.model.extension.MinutesAttachment;
 import com.gzlk.android.isp.nim.model.extension.NoticeAttachment;
@@ -43,6 +44,7 @@ import com.gzlk.android.isp.nim.viewholder.MsgViewHolderTip;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderTopic;
 import com.gzlk.android.isp.nim.viewholder.MsgViewHolderVote;
 import com.netease.nim.uikit.NimUIKit;
+import com.netease.nim.uikit.OnSessionMessageViewHolderClick;
 import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.session.SessionCustomization;
 import com.netease.nim.uikit.session.SessionEventListener;
@@ -111,6 +113,9 @@ public class NimSessionHelper {
 
         // 文件提供者
         NimUIKit.setFileProviderAuthority(StringHelper.format("%s.fileProvider", BuildConfig.APPLICATION_ID));
+
+        // 视频播放
+        NimUIKit.setOnSessionMessageViewHolderClick(onSessionMessageViewHolderClick);
     }
 
     /**
@@ -528,4 +533,13 @@ public class NimSessionHelper {
 //            }
 //        }
     }
+
+    private static OnSessionMessageViewHolderClick onSessionMessageViewHolderClick = new OnSessionMessageViewHolderClick() {
+        @Override
+        public void onClick(Context context, IMMessage message) {
+            VideoAttachment video = (VideoAttachment) message.getAttachment();
+            //VideoPlayerActivity.open(context, video.getDisplayName(), video.getUrl());
+            VideoPlayerActivity.start(context, video.getUrl());
+        }
+    };
 }
