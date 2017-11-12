@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
-import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.cache.Cache;
@@ -20,6 +19,8 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.helper.publishable.CollectHelper;
+import com.gzlk.android.isp.helper.publishable.listener.OnCollectedListener;
 import com.gzlk.android.isp.lib.view.ExpandableTextView;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
@@ -331,15 +332,14 @@ public class MomentImagesFragment extends BaseMomentFragment {
     @SuppressWarnings("ConstantConditions")
     private void tryCollection() {
         // 收藏当前显示的图片
-        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
+        CollectHelper.helper().setModel(mMoment).setCollectedListener(new OnCollectedListener() {
             @Override
-            public void onResponse(Collection collection, boolean success, String message) {
-                super.onResponse(collection, success, message);
+            public void onCollected(boolean success, Model model) {
                 if (success) {
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.make().showMsg("收藏成功");
                 }
             }
-        }).add(Collection.get(mMoment), null);
+        }).collect(Collection.get(mMoment));
     }
 
     private void save() {

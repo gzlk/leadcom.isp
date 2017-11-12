@@ -19,6 +19,7 @@ import com.gzlk.android.isp.helper.DialogHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.helper.publishable.Collectable;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveAttachmentViewHolder;
 import com.gzlk.android.isp.holder.archive.ArchiveDetailsAdditionalViewHolder;
@@ -350,6 +351,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 super.onResponse(archive, success, message);
                 displayLoading(false);
                 if (success && null != archive) {
+                    // 设置收藏的参数为档案
+                    Collectable.resetArchiveCollectionParams(archive);
                     // 档案管理员/组织管理员/档案作者可以删除档案
                     if (archive.isAuthor()) {
                         //resetRightIconEvent();

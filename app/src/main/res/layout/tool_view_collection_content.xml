@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:padding="@dimen/ui_base_dimen_margin_padding"
         app:cv_background="@android:color/white"
-        app:cv_background_active="@color/textColorHintLightLight"
+        app:cv_background_active="@color/textColorHintLightLightLight"
         app:cv_background_type="fill"
         app:cv_border_size="@dimen/ui_static_dp_zero">
 

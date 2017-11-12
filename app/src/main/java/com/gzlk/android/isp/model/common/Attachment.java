@@ -311,6 +311,10 @@ public class Attachment extends Model {
         return ImageCompress.isVideo(ext);
     }
 
+    public boolean isAudio() {
+        return ImageCompress.isAudio(ext);
+    }
+
     public void resetInformation() {
         setId(url);
         fullPath = url;

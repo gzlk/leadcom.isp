@@ -5,9 +5,14 @@ import android.view.View;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
+import com.gzlk.android.isp.model.user.Collection;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.io.File;
@@ -73,9 +78,23 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-
+                if (Utils.isUrl(mQueryId)) {
+                    tryCollectPdf();
+                }
             }
         });
+    }
+
+    private void tryCollectPdf() {
+        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
+            @Override
+            public void onResponse(Collection collection, boolean success, String message) {
+                super.onResponse(collection, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(message);
+                }
+            }
+        }).add(mQueryId);
     }
 
     @Override

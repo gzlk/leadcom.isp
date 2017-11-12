@@ -199,8 +199,16 @@ public final class ImageCompress {
             case "vob":
             case "mov":
                 return true;
+            default:
+                return VIDEO_EXTENSIONS.contains(extension + ",");
         }
-        return VIDEO_EXTENSIONS.contains(extension + ",");
+    }
+
+    /**
+     * 指定的文件扩展名是否为音频文件
+     */
+    public static boolean isAudio(String extension) {
+        return AUDIO_EXTENSIONS.contains(extension + ",");
     }
 
     /**

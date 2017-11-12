@@ -11,6 +11,7 @@ import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.TooltipHelper;
+import com.gzlk.android.isp.helper.publishable.Collectable;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.holder.common.NothingMoreViewHolder;
 import com.gzlk.android.isp.holder.individual.MomentCommentHeaderViewHolder;
@@ -195,6 +196,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     protected void onFetchingMomentComplete(Moment moment, boolean success) {
         if (success) {
             mMoment = moment;
+            Collectable.resetMomentCollectionParams(moment);
             // 我发布的动态可以删除全部评论
             deletable = mMoment.isMine();
             // 拉取回来之后立即显示

@@ -70,6 +70,14 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     public CollectionItemViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        creatorImage.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(ImageDisplayer displayer, String url) {
+                if (null != mOnViewHolderElementClickListener) {
+                    mOnViewHolderElementClickListener.onClick(creatorImage, getAdapterPosition());
+                }
+            }
+        });
     }
 
     public void showContent(Collection collection) {
@@ -83,7 +91,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     private void checkViews(int type) {
         textContent.setVisibility(type == Collection.Type.TEXT ? View.VISIBLE : View.GONE);
         imageContent.setVisibility(type == Collection.Type.IMAGE ? View.VISIBLE : View.GONE);
-        attachmentContent.setVisibility(type == Collection.Type.ATTACHMENT ? View.VISIBLE : View.GONE);
+        attachmentContent.setVisibility(type == Collection.Type.ATTACHMENT || type == Collection.Type.ARCHIVE ? View.VISIBLE : View.GONE);
         archiveLayout.setVisibility((type == Collection.Type.USER_MOMENT || type == Collection.Type.GROUP_ARCHIVE || type == Collection.Type.USER_ARCHIVE) ? View.VISIBLE : View.GONE);
     }
 
@@ -103,6 +111,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
                 }
                 imageContent.displayImage(col.getContent(), width, height, false, false);
                 break;
+            case Collection.Type.ARCHIVE:
             case Collection.Type.ATTACHMENT:
                 Attachment attachment = new Attachment();
                 attachment.setName(col.getContent().substring(col.getContent().lastIndexOf('/') + 1));
@@ -144,8 +153,8 @@ public class CollectionItemViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_collection_content_cover})
     private void click(View view) {
-        if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
     }
 }

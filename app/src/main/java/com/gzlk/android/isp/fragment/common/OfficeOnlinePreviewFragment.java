@@ -6,11 +6,16 @@ import android.os.Bundle;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.apache.poi.WordUtil;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.application.App;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.listener.OnTitleButtonClickListener;
 import com.gzlk.android.isp.model.common.Attachment;
+import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 
 import java.io.File;
@@ -125,6 +130,31 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         });
     }
 
+    private void resetCollectEvent() {
+        setRightText(R.string.ui_base_text_favorite);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                if (Utils.isUrl(mQueryId)) {
+                    // 收藏在线文档
+                    tryCollectOffice();
+                }
+            }
+        });
+    }
+
+    private void tryCollectOffice() {
+        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
+            @Override
+            public void onResponse(Collection collection, boolean success, String message) {
+                super.onResponse(collection, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(message);
+                }
+            }
+        }).add(mQueryId);
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected void onFileDownloadingComplete(String url, String local, boolean success) {
@@ -134,6 +164,8 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
             if (mMinutes) {
                 // 会议纪要时，需要共享出去
                 resetRightEvent();
+            } else {
+                resetCollectEvent();
             }
             String localReal = local + "." + mExtension;
             File target = new File(localReal);

@@ -8,7 +8,10 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.query.BoolQuery;
 import com.gzlk.android.isp.api.query.PaginationQuery;
 import com.gzlk.android.isp.api.query.SingleQuery;
+import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.publishable.Collectable;
 import com.gzlk.android.isp.model.archive.ArchiveSource;
+import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Position;
 import com.litesuits.http.request.param.HttpMethods;
@@ -122,6 +125,45 @@ public class CollectionRequest extends Request<Collection> {
                     .put("sourceTitle", checkNull(collection.getSourceTitle()))
                     .put("label", new JSONArray(collection.getLabel()))
                     .put("position", new JSONObject(Position.toJson(position)));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+    }
+
+    public void add(String content) {
+        // {type,content,creatorId,creatorName,creatorHeadPhoto,sourceType,sourceId,sourceTitle,[label],{position}}
+
+        int type = Collection.Type.TEXT;
+        if (Utils.isUrl(content)) {
+            Attachment att = new Attachment();
+            att.setUrl(content);
+            att.resetInformation();
+            if (att.isOffice()) {
+                // 文档
+                type = Collection.Type.ARCHIVE;
+            } else if (att.isImage()) {
+                type = Collection.Type.IMAGE;
+            } else if (att.isVideo()) {
+                type = Collection.Type.VIDEO;
+            } else if (att.isAudio()) {
+                type = Collection.Type.AUDIO;
+            } else {
+                type = Collection.Type.ATTACHMENT;
+            }
+        }
+        JSONObject object = new JSONObject();
+        try {
+            object.put("type", type)
+                    .put("content", checkNull(content))
+                    .put("creatorId", checkNull(Collectable.creatorId))
+                    .put("creatorName", checkNull(Collectable.creatorName))
+                    .put("creatorHeadPhoto", checkNull(Collectable.creatorHeader))
+                    .put("sourceType", Collectable.sourceType)
+                    .put("sourceId", Collectable.sourceId)
+                    .put("sourceTitle", checkNull(Collectable.sourceTitle))
+                    .put("label", new JSONArray("[]"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

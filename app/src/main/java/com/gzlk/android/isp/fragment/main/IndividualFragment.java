@@ -535,6 +535,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 ArchiveDetailsWebViewFragment.open(this, collection.getSourceId(), Archive.Type.USER);
                 break;
             case Collection.Type.ATTACHMENT:
+            case Collection.Type.ARCHIVE:
                 String name = collection.getContent().substring(collection.getContent().lastIndexOf('/') + 1);
                 Attachment att = new Attachment();
                 att.setUrl(collection.getContent());
@@ -633,6 +634,17 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 个人档案收藏
                     collect(mAdapter.get(index));
+                    break;
+                case R.id.ui_tool_view_document_user_header_image:
+                    Archive archive = (Archive) mAdapter.get(index);
+                    UserPropertyFragment.open(IndividualFragment.this, archive.getUserId());
+                    break;
+                case R.id.ui_holder_view_collection_header:
+                    Collection collection = (Collection) mAdapter.get(index);
+                    UserPropertyFragment.open(IndividualFragment.this, collection.getCreatorId());
+                    break;
+                case R.id.ui_holder_view_collection_content_cover:
+                    collectionClick((Collection) mAdapter.get(index));
                     break;
             }
         }
@@ -872,7 +884,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     return holder;
                 case VT_COLLECTION:
                     CollectionItemViewHolder civh = new CollectionItemViewHolder(itemView, fragment);
-                    civh.addOnViewHolderClickListener(onViewHolderClickListener);
+                    civh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
                     return civh;
                 case VT_NO_MORE:
                     return new NothingMoreViewHolder(itemView, fragment);

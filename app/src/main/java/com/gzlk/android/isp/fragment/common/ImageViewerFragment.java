@@ -10,12 +10,15 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.lib.view.ImageDisplayer;
+import com.gzlk.android.isp.model.user.Collection;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -90,6 +93,8 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
     private TextView titleLeftText;
     @ViewId(R.id.ui_ui_custom_title_right_icon)
     private CustomTextView titleRightIcon;
+    @ViewId(R.id.ui_ui_custom_title_right_text)
+    private TextView titleRightText;
     @ViewId(R.id.ui_tool_view_pager)
     private ViewPager viewPager;
 
@@ -107,8 +112,23 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
                 finish();
                 break;
             case R.id.ui_ui_custom_title_right_container:
+                // 收藏
+                tryCollectImage();
                 break;
         }
+    }
+
+    private void tryCollectImage() {
+        if (images.size() < 1) return;
+        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
+            @Override
+            public void onResponse(Collection collection, boolean success, String message) {
+                super.onResponse(collection, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(message);
+                }
+            }
+        }).add(images.get(selectedIndex));
     }
 
     @Override
@@ -120,6 +140,7 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
         if (images.size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_viewer_image_nothing);
         } else {
+            titleRightText.setText(R.string.ui_base_text_favorite);
             initializeAdapter();
         }
     }
