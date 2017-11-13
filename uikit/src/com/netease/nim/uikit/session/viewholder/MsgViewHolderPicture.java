@@ -1,5 +1,6 @@
 package com.netease.nim.uikit.session.viewholder;
 
+import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.R;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 import com.netease.nim.uikit.session.activity.WatchMessagePictureActivity;
@@ -20,7 +21,11 @@ public class MsgViewHolderPicture extends MsgViewHolderThumbBase {
 
     @Override
     protected void onItemClick() {
-        WatchMessagePictureActivity.start(context, message);
+        if (null != NimUIKit.getOnSessionMessageViewHolderClick()) {
+            NimUIKit.getOnSessionMessageViewHolderClick().onClick(context, message);
+        } else {
+            WatchMessagePictureActivity.start(context, message);
+        }
     }
 
     @Override

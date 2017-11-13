@@ -139,14 +139,17 @@ public class CollectionRequest extends Request<Collection> {
         if (Utils.isUrl(content)) {
             Attachment att = new Attachment();
             att.setUrl(content);
+            att.setName(content.substring(content.lastIndexOf('/') + 1));
             att.resetInformation();
             if (att.isOffice()) {
                 // 文档
                 type = Collection.Type.ARCHIVE;
             } else if (att.isImage()) {
                 type = Collection.Type.IMAGE;
+                content = content.replace("#.jpg", "");
             } else if (att.isVideo()) {
                 type = Collection.Type.VIDEO;
+                content = content.replace("#.mp4", "");
             } else if (att.isAudio()) {
                 type = Collection.Type.AUDIO;
             } else {

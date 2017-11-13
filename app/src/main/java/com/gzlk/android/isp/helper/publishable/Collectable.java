@@ -1,8 +1,16 @@
 package com.gzlk.android.isp.helper.publishable;
 
+import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.activity.Activity;
+import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
+import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.nim.session.NimSessionHelper;
+import com.netease.nim.uikit.NimUIKit;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 /**
  * <b>功能描述：</b>收藏相关参数设定<br />
@@ -35,5 +43,28 @@ public class Collectable {
         creatorId = moment.getUserId();
         creatorName = moment.getUserName();
         creatorHeader = moment.getHeadPhoto();
+    }
+
+    public static void resetSessionCollectionParams(IMMessage message) {
+        Model model = NimSessionHelper.getObject(message.getSessionId());
+        if (null != model) {
+            UserInfoProvider.UserInfo user = NimUIKit.getUserInfoProvider().getUserInfo(message.getFromAccount());
+            if (null != user) {
+                creatorId = user.getAccount();
+                creatorName = user.getName();
+                creatorHeader = user.getAvatar();
+            }
+            if (model instanceof Activity) {
+                Activity act = (Activity) model;
+                sourceId = act.getId();
+                sourceTitle = act.getTitle();
+                sourceType = Collection.SourceType.ACTIVITY;
+            } else if (model instanceof AppTopic) {
+                AppTopic topic = (AppTopic) model;
+                sourceId = topic.getId();
+                sourceTitle = topic.getTitle();
+                sourceType = Collection.SourceType.TOPIC;
+            }
+        }
     }
 }

@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.afollestad.easyvideoplayer.EasyVideoPlayer xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ui_nim_video_player"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</com.afollestad.easyvideoplayer.EasyVideoPlayer>
+    <com.afollestad.easyvideoplayer.EasyVideoPlayer
+        android:id="@+id/ui_nim_video_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/ui_viewer_image_title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent_40">
+
+        <include layout="@layout/tool_view_activity_normal_title" />
+    </LinearLayout>
+
+</RelativeLayout>

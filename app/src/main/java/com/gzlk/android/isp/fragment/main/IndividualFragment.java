@@ -55,6 +55,7 @@ import com.gzlk.android.isp.model.user.Collection;
 import com.gzlk.android.isp.model.user.Moment;
 import com.gzlk.android.isp.model.user.MomentPublic;
 import com.gzlk.android.isp.model.user.User;
+import com.gzlk.android.isp.nim.activity.VideoPlayerActivity;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.hlk.hlklib.lib.view.CorneredButton;
@@ -549,6 +550,9 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 } else {
                     MomentDetailsFragment.open(this, collection.getSourceId());
                 }
+                break;
+            case Collection.Type.VIDEO:
+                VideoPlayerActivity.start(Activity(), collection.getContent());
                 break;
         }
     }

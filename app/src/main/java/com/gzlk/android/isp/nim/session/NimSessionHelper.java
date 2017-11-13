@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -14,9 +15,12 @@ import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.activity.ActivityPropertiesFragment;
 import com.gzlk.android.isp.fragment.activity.topic.TopicPropertyFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
+import com.gzlk.android.isp.fragment.common.ImageViewerFragment;
 import com.gzlk.android.isp.fragment.individual.UserPropertyFragment;
 import com.gzlk.android.isp.fragment.main.SystemMessageFragment;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.helper.publishable.Collectable;
 import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.topic.AppTopic;
 import com.gzlk.android.isp.nim.action.CameraAction;
@@ -49,6 +53,7 @@ import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.session.SessionCustomization;
 import com.netease.nim.uikit.session.SessionEventListener;
 import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nim.uikit.session.activity.WatchMessagePictureActivity;
 import com.netease.nim.uikit.session.helper.MessageHelper;
 import com.netease.nim.uikit.session.module.MsgForwardFilter;
 import com.netease.nim.uikit.session.module.MsgRevokeFilter;
@@ -56,18 +61,24 @@ import com.netease.nim.uikit.team.model.TeamExtras;
 import com.netease.nim.uikit.team.model.TeamRequestCode;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
+import com.netease.nimlib.sdk.msg.attachment.ImageAttachment;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.attachment.VideoAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>网易云信Session<br />
@@ -493,7 +504,7 @@ public class NimSessionHelper {
         return teamCustomization;
     }
 
-    private static Model getObject(String sessionId) {
+    public static Model getObject(String sessionId) {
         AppTopic topic = AppTopic.queryByTid(sessionId);
         if (null != topic) {
             return topic;
@@ -537,9 +548,50 @@ public class NimSessionHelper {
     private static OnSessionMessageViewHolderClick onSessionMessageViewHolderClick = new OnSessionMessageViewHolderClick() {
         @Override
         public void onClick(Context context, IMMessage message) {
-            VideoAttachment video = (VideoAttachment) message.getAttachment();
-            //VideoPlayerActivity.open(context, video.getDisplayName(), video.getUrl());
-            VideoPlayerActivity.start(context, video.getUrl());
+            // 群聊收藏准备
+            Collectable.resetSessionCollectionParams(message);
+            if (message.getAttachment() instanceof ImageAttachment) {
+                // 查询当前session的所有图片聊天记录
+                queryNimImageMessages(context, message);
+            } else {
+                VideoAttachment video = (VideoAttachment) message.getAttachment();
+                //VideoPlayerActivity.open(context, video.getDisplayName(), video.getUrl());
+                VideoPlayerActivity.start(context, video.getUrl());
+            }
         }
     };
+
+    private static void queryNimImageMessages(final Context context, final IMMessage message) {
+
+        IMMessage anchor = MessageBuilder.createEmptyMessage(message.getSessionId(), message.getSessionType(), 0);
+
+        NIMClient.getService(MsgService.class).queryMessageListByType(MsgTypeEnum.image, anchor, Integer.MAX_VALUE).setCallback(new RequestCallback<List<IMMessage>>() {
+            @Override
+            public void onSuccess(List<IMMessage> param) {
+                Collections.reverse(param);
+                ArrayList<String> list = new ArrayList<>();
+                int selected = -1;
+                for (int i = 0, size = param.size(); i < size; i++) {
+                    IMMessage msg = param.get(i);
+                    if (selected < 0) {
+                        if (msg.getUuid().equals(message.getUuid())) {
+                            selected = i;
+                        }
+                    }
+                    list.add(((ImageAttachment) msg.getAttachment()).getUrl());
+                }
+                ImageViewerFragment.open(context, selected, list);
+            }
+
+            @Override
+            public void onFailed(int code) {
+                ToastHelper.make().showMsg("查询消息失败：" + code);
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+                exception.printStackTrace();
+            }
+        });
+    }
 }

@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.common;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.BaseActivity;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.CollectionRequest;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
@@ -57,6 +59,12 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
         String json = StringHelper.replaceJson(Json.gson().toJson(urls, new TypeToken<ArrayList<String>>() {
         }.getType()), false);
         fragment.openActivity(ImageViewerFragment.class.getName(), format("%d,%s", selectedIndex, json), false, false, true);
+    }
+
+    public static void open(Context context, int selectedIndex, ArrayList<String> urls) {
+        String json = StringHelper.replaceJson(Json.gson().toJson(urls, new TypeToken<ArrayList<String>>() {
+        }.getType()), false);
+        BaseActivity.openActivity(context, ImageViewerFragment.class.getName(), format("%d,%s", selectedIndex, json), false, false, true);
     }
 
     private int selectedIndex = 0;
@@ -128,7 +136,7 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).add(images.get(selectedIndex));
+        }).add(images.get(selectedIndex) + "#.jpg");
     }
 
     @Override

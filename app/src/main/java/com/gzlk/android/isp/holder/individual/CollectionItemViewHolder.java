@@ -92,7 +92,11 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         textContent.setVisibility(type == Collection.Type.TEXT ? View.VISIBLE : View.GONE);
         imageContent.setVisibility(type == Collection.Type.IMAGE ? View.VISIBLE : View.GONE);
         attachmentContent.setVisibility(type == Collection.Type.ATTACHMENT || type == Collection.Type.ARCHIVE ? View.VISIBLE : View.GONE);
-        archiveLayout.setVisibility((type == Collection.Type.USER_MOMENT || type == Collection.Type.GROUP_ARCHIVE || type == Collection.Type.USER_ARCHIVE) ? View.VISIBLE : View.GONE);
+        archiveLayout.setVisibility((type == Collection.Type.USER_MOMENT ||
+                type == Collection.Type.GROUP_ARCHIVE ||
+                type == Collection.Type.USER_ARCHIVE) ||
+                type == Collection.Type.VIDEO
+                ? View.VISIBLE : View.GONE);
     }
 
     private void showCollection(Collection col) {
@@ -128,6 +132,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
             case Collection.Type.USER_ARCHIVE:
             case Collection.Type.GROUP_ARCHIVE:
             case Collection.Type.USER_MOMENT:
+            case Collection.Type.VIDEO:
                 if (col.getType() == Collection.Type.USER_MOMENT) {
                     String image = "drawable://" + R.drawable.img_default_app_icon;
                     if (col.getUserMmt().getImage().size() > 0) {
@@ -135,6 +140,9 @@ public class CollectionItemViewHolder extends BaseViewHolder {
                     }
                     archiveCover.displayImage(image, getDimension(R.dimen.ui_static_dp_50), false, false);
                     archiveText.setText(StringHelper.getString(R.string.ui_text_collection_archive_text, "动态", ""));
+                } else if (col.getType() == Collection.Type.VIDEO) {
+                    archiveCover.displayImage("drawable://" + R.drawable.img_image_video, getDimension(R.dimen.ui_static_dp_50), false, false);
+                    archiveText.setText(StringHelper.getString(R.string.ui_text_collection_archive_text, "视频", ""));
                 } else {
                     archiveCover.displayImage("drawable://" + R.drawable.img_default_archive, getDimension(R.dimen.ui_static_dp_50), false, false);
                     archiveText.setText(StringHelper.getString(R.string.ui_text_collection_archive_text,
