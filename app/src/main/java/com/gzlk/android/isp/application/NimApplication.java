@@ -94,12 +94,12 @@ public class NimApplication extends BaseActivityManagedApplication {
             // 我的测试key
             return getString(R.string.netease_nim_app_key_test);
         }
-        //if (BuildConfig.RELEASEABLE) {
-        // release 版的 app key
-        return getString(R.string.netease_nim_app_key);
-        //}
+        if (Cache.isReleasable()) {
+            // release 版的 app key
+            return getString(R.string.netease_nim_app_key_release);
+        }
         // beta 版的 app key
-        //return getString(R.string.netease_nim_app_key_beta);
+        return getString(R.string.netease_nim_app_key_alpha);
     }
 
     private static StatusBarNotificationConfig getNotificationConfig() {
@@ -289,7 +289,7 @@ public class NimApplication extends BaseActivityManagedApplication {
                                 break;
                         }
                         NimMessage.save(msg);
-                        if(msg.isSavable()){
+                        if (msg.isSavable()) {
                             if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
                                 // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
                                 Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);

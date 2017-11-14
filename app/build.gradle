@@ -29,10 +29,10 @@ android {
         resValue "string", "app_name_default", "树脉"
         //resValue "string", "baidu_map_lbsapi_key", "q35ELQ6M9AwVTOkEYFc34sFMe33ItqMT"
         // 正式(leadcom): e0535dd95633dfa23a6aba3a06628a55
-        // 测试(leadcom): 3c9e1b9e424ccd215d6a828602d20407
+        // 测试(leadcom): cabed7db0d8c095ffc5453dede7d6d18
         // 测试：3da0be9ec7ac70fea20f94a8fa8c84ce
-        resValue "string", "netease_nim_app_key", "e0535dd95633dfa23a6aba3a06628a55"
-        resValue "string", "netease_nim_app_key_beta", "3c9e1b9e424ccd215d6a828602d20407"
+        resValue "string", "netease_nim_app_key_release", "e0535dd95633dfa23a6aba3a06628a55"
+        resValue "string", "netease_nim_app_key_alpha", "cabed7db0d8c095ffc5453dede7d6d18"
         resValue "string", "netease_nim_app_key_test", "3da0be9ec7ac70fea20f94a8fa8c84ce"
         resValue "string", "tencent_app_id_qq", "tencent1105414666"
         resValue "string", "tencent_app_id_wx", "wxdf350061d9a7666b"
