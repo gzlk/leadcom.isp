@@ -41,7 +41,6 @@ public class MinutesAttachment extends CustomAttachment {
     @Override
     protected void parseData(JSONObject data) {
         super.parseData(data);
-        super.parseData(data);
         try {
             if (data.has("url")) {
                 url = data.getString("url");
