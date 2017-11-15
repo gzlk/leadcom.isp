@@ -142,8 +142,10 @@ public class MomentImagesFragment extends BaseMomentFragment {
         } else {
             momentUser = mMoment.getUserId();
             momentName = mMoment.getUserName();
-            if (null != mMoment.getImage()) {
-                images.addAll(mMoment.getImage());
+            for (String string : mMoment.getImage()) {
+                if (!images.contains(string)) {
+                    images.add(string);
+                }
             }
             if (null != mAdapter) {
                 mAdapter.notifyDataSetChanged();
