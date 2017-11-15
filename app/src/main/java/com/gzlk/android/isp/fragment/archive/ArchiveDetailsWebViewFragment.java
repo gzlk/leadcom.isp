@@ -230,7 +230,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         if (!parent) {
             if (inputLayout.getVisibility() == View.VISIBLE) {
                 showInputBoard(false);
-                return true;
+                //return true;
             }
         }
         return parent;
