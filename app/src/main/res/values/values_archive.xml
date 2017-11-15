@@ -73,7 +73,9 @@
     <string name="ui_text_archive_details_comment_title" formatted="false">评论 %s</string>
     <string name="ui_text_archive_details_comment_sending">正在发布评论请稍侯&#8230;</string>
     <string name="ui_text_archive_details_comment_deleting">删除评论请稍侯&#8230;</string>
-    <string name="ui_text_archive_details_author_text" formatted="false">作者：%s</string>
+    <string name="ui_text_archive_details_author_text" formatted="false">
+        <![CDATA[作者:<font color="#3cbaff">%s</font>　来源:<font color="#3cbaff">%s</font>]]>
+    </string>
     <string name="ui_text_archive_details_content_html" formatted="false">
         <![CDATA[
             <!DOCTYPE html>

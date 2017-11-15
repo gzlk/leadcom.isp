@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.holder.archive;
 
+import android.text.Html;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -14,8 +15,6 @@ import com.gzlk.android.isp.lib.view.ImageDisplayer;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
-
-import java.util.Random;
 
 /**
  * <b>功能描述：</b><br />
@@ -65,7 +64,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
     public void showContent(Archive archive) {
         titleView.setText(archive.getTitle());
         timeView.setText(fragment().formatDate(archive.getCreateDate(), R.string.ui_base_text_date_time_format));
-        authorView.setText(StringHelper.getString(R.string.ui_text_archive_details_author_text, archive.getUserName()));
+        authorView.setText(Html.fromHtml(StringHelper.getString(R.string.ui_text_archive_details_author_text, archive.getUserName(), archive.getSource())));
         String cover = archive.getCover();
 //        if (isEmpty(cover)) {
 //            Random random = new Random(10);
