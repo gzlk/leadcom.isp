@@ -8,6 +8,7 @@ import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.crash.AppCrashHandler;
 import com.gzlk.android.isp.crash.storage.StorageUtil;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.user.User;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
@@ -19,6 +20,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AuthInfo;
 
 import java.io.File;
 
@@ -66,6 +69,7 @@ public class App extends NimApplication {
         //PgyCrashManager.register(this);
         initializeNim();
         if (shouldInit()) {
+            WbSdk.install(this, new AuthInfo(this, StringHelper.getString(R.string.weibo_app_key), "https://api.weibo.com/oauth2/default.html", ""));
             StorageUtil.init(this, null);
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();

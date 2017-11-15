@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
@@ -16,8 +18,8 @@ import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.MultiImageObject;
 import com.sina.weibo.sdk.api.TextObject;
+import com.sina.weibo.sdk.api.VideoSourceObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
-import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.share.WbShareCallback;
 import com.sina.weibo.sdk.share.WbShareHandler;
 
@@ -37,8 +39,6 @@ import java.util.ArrayList;
 
 public class ShareToWeiBo extends Shareable implements WbShareCallback {
 
-    private static final String APP_KEY = StringHelper.getString(R.string.weibo_app_key);
-    private static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
     private WbShareHandler shareHandler;
 
     @Override
@@ -65,9 +65,6 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
 
     private ShareToWeiBo(Context context) {
         ctx = context;
-        if (!WbSdk.isWbInstall(ctx)) {
-            WbSdk.install(ctx, new AuthInfo(ctx, APP_KEY, REDIRECT_URL, ""));
-        }
         shareHandler = new WbShareHandler((Activity) ctx);
         shareHandler.registerApp();
         shareHandler.setProgressColor(0xff33b5e5);
@@ -84,6 +81,14 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
     public void onNewInstance(Intent intent) {
         if (null != instance && null != instance.get()) {
             instance.get().shareHandler.doResultIntent(intent, this);
+            Bundle bundle = intent.getExtras();
+            if (null != bundle) {
+                int resultCode = bundle.getInt("_weibo_resp_errcode", -1);
+                if (resultCode != 0) {
+                    String msg = bundle.getString("_weibo_resp_errstr", "");
+                    LogHelper.log("Weibo", StringHelper.format("Weibo share failed(%d): %s", resultCode, msg));
+                }
+            }
         }
     }
 
@@ -102,9 +107,9 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
             throw new IllegalArgumentException("Cannot share blank text and empty image to WeiBo.");
         }
         WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
-        if (!isEmpty(textContent)) {
-            weiboMessage.textObject = getTextObject(textContent);
-        }
+        //if (!isEmpty(textContent)) {
+        weiboMessage.textObject = getTextObject(textContent);
+        //}
         if (null != images) {
             if (images.size() <= 1) {
                 weiboMessage.imageObject = getImageObject(images.get(0));
@@ -153,5 +158,17 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
         }
         multiImageObject.setImageList(uris);
         return multiImageObject;
+    }
+
+    /**
+     * 视频分享
+     */
+    private VideoSourceObject getVideoObject(String url) {
+        if (Utils.isUrl(url)) {
+            throw new IllegalArgumentException("Cannot share video with http url, please use local path.");
+        }
+        VideoSourceObject videoSourceObject = new VideoSourceObject();
+        videoSourceObject.videoPath = FilePreviewHelper.getUriFromFile(url);
+        return videoSourceObject;
     }
 }
