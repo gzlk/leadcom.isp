@@ -170,7 +170,8 @@ public class ContactFragment extends BaseOrganizationFragment {
     private void initializeTitleEvent() {
         if (showType == TYPE_SQUAD) {
             // 有邀请成员到小组的权限时才显示 + 号
-            if (null != squadRole && squadRole.hasOperation(GRPOperation.SQUAD_MEMBER_INVITE)) {
+            if ((null != squadRole && squadRole.hasOperation(GRPOperation.SQUAD_MEMBER_INVITE)) ||
+                    (StructureFragment.my.squadMemberInvitable())) {
                 setRightIcon(R.string.ui_icon_add);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override

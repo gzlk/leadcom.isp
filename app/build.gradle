@@ -20,7 +20,7 @@ android {
         }
         ndk {
             // 设置支持的SO库架构(网易云信)
-            abiFilters "armeabi-v7a", "arm64-v8a", "x86"//, "x86_64"
+            abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
         manifestPlaceholders = [APP_PKG_NAME: applicationId]
         resValue "string", "app_internal_version", getInternalVersion()
@@ -93,9 +93,8 @@ android {
             variant.outputs.all { output ->
                 def outputFile = output.outputFile
                 if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                    File outputDirectory = new File(outputFile.parent);
                     def fileName = "${variant.flavorName}_v${variant.versionName}_${variant.buildType.name}_${getInternalVersion()}.apk"
-                    outputFileName = new File(outputDirectory, fileName)
+                    outputFileName = fileName
                 }
             }
         }
@@ -114,6 +113,7 @@ repositories {
         //url 'https://repo1.maven.org/maven2/com/github/hsiangleekwok/hlklib/'
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
+    // 微博
     maven { url "https://dl.bintray.com/thelasterstar/maven/" }
     // 视频播放器
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
@@ -165,7 +165,7 @@ dependencies {
     compile group: 'com.sun.mail', name: 'android-activation', version: '1.6.0-rc2'
 
     // 微博SDK
-    compile 'com.sina.weibo.sdk:core:4.1.6:openDefaultRelease@aar'
+    compile 'com.sina.weibo.sdk:core:4.1.9:openDefaultRelease@aar'
 
     // 微信SDK
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'

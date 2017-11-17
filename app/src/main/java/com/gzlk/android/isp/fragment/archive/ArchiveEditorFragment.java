@@ -1007,7 +1007,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 log("attachment dialog dismissed");
                 mAttachmentIcon.setTextColor(getColor(R.color.textColorHint));
             }
-        }).setPopupType(DialogHelper.FADE).show();
+        }).setConfirmText(R.string.ui_text_archive_creator_editor_attachment_dialog_confirm_text).setPopupType(DialogHelper.FADE).show();
     }
 
     // 文件选择
