@@ -1,3 +1,4 @@
 /build
 hlklib*-release.aar
 signingConfigs.gradle
+Native_Libs.jar
