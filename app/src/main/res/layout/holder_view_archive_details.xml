@@ -34,7 +34,7 @@
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/app_name_default"
             android:textColor="@color/textColorHintLight"
-            android:textSize="@dimen/ui_base_text_size_small" />
+            android:textSize="@dimen/ui_base_text_size_little" />
 
         <TextView
             android:id="@+id/ui_holder_view_archive_details_author"
@@ -42,7 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/app_name_default"
-            android:textSize="@dimen/ui_base_text_size_small" />
+            android:textColor="@color/textColorHintDark"
+            android:textSize="@dimen/ui_base_text_size_little" />
     </LinearLayout>
 
     <com.gzlk.android.isp.lib.view.ImageDisplayer

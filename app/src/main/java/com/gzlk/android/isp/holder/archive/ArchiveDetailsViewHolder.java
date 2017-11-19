@@ -64,7 +64,8 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
     public void showContent(Archive archive) {
         titleView.setText(archive.getTitle());
         timeView.setText(fragment().formatDate(archive.getCreateDate(), R.string.ui_base_text_date_time_format));
-        authorView.setText(Html.fromHtml(StringHelper.getString(R.string.ui_text_archive_details_author_text, archive.getUserName(), archive.getSource())));
+        String source = (isEmpty(archive.getSource()) || archive.getSource().equals(archive.getUserName())) ? "" : StringHelper.getString(R.string.ui_text_archive_details_source_text, archive.getSource());
+        authorView.setText(StringHelper.getString(R.string.ui_text_archive_details_author_text, archive.getUserName(), source));
         String cover = archive.getCover();
 //        if (isEmpty(cover)) {
 //            Random random = new Random(10);

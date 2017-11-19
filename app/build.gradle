@@ -203,12 +203,24 @@ dependencies {
      Common SL  	PowerPoint PPT and PPTX	poi-scratchpad and poi-ooxml
      Common SS  	Excel XLS and XLSX  	poi-ooxml	        WorkbookFactory and friends all require poi-ooxml, not just core poi
      * */
+    // 分析依赖项
+    // gradlew -q app:dependencies
     // https://mvnrepository.com/artifact/org.apache.poi/poi
-    compile group: 'org.apache.poi', name: 'poi', version: '3.17-beta1'
+    compile group: 'org.apache.poi', name: 'poi', version: '3.17'
     // https://mvnrepository.com/artifact/org.apache.poi/poi-scratchpad
-    compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17-beta1'
+    compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17'
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    //compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17-beta1'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
+    // https://mvnrepository.com/artifact/fr.opensagres.xdocreport/org.apache.poi.xwpf.converter.core
+    //compile group: 'fr.opensagres.xdocreport', name: 'org.apache.poi.xwpf.converter.core', version: '1.0.6'
+    compile('fr.opensagres.xdocreport:org.apache.poi.xwpf.converter.core:1.0.6') {
+        exclude group: 'org.apache.poi', module: 'ooxml-schemas'
+    }
+    // https://mvnrepository.com/artifact/fr.opensagres.xdocreport/org.apache.poi.xwpf.converter.xhtml
+    //compile group: 'fr.opensagres.xdocreport', name: 'org.apache.poi.xwpf.converter.xhtml', version: '1.0.6'
+    compile('fr.opensagres.xdocreport:org.apache.poi.xwpf.converter.xhtml:1.0.6') {
+        exclude group: 'org.apache.poi', module: 'ooxml-schemas'
+    }
 
     // 高德地图
     // 2D地图
