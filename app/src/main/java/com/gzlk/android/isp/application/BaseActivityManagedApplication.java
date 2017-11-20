@@ -106,8 +106,6 @@ public class BaseActivityManagedApplication extends OrmApplication {
      */
     public void logout() {
         log("manual exit.");
-        // 清空已登录信息
-        PreferenceHelper.save(R.string.pf_last_login_user_id, "");
         // 关闭数据库
         closeOrm();
         exitDirectly();

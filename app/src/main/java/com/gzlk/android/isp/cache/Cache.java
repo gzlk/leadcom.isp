@@ -52,6 +52,7 @@ public class Cache {
         nimToken = null;
         accessToken = null;
         me = null;
+        PreferenceHelper.save(get(R.string.pf_last_login_user_id, R.string.pf_last_login_user_id_beta), "");
     }
 
     public User me;
