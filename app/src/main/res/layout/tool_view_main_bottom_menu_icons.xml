@@ -48,6 +48,11 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/ui_static_dp_25"
+        android:layout_weight="1" />
+
     <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_tool_main_bottom_icon_3"
         android:layout_width="0dp"

@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.application.NimApplication;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -73,6 +74,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private LinearLayout icon2Unread;
     @ViewId(R.id.ui_tool_main_bottom_icon_unread_num)
     private TextView icon2UnreadNum;
+    @ViewId(R.id.ui_tool_main_bottom_clickable_center_icon)
+    private View iconCenter;
     @ViewId(R.id.ui_tool_main_bottom_icon_3)
     private CustomTextView iconView3;
     @ViewId(R.id.ui_tool_main_bottom_icon_4)
@@ -266,6 +269,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     }
 
     @Click({R.id.ui_tool_main_bottom_clickable_1, R.id.ui_tool_main_bottom_clickable_2,
+            R.id.ui_tool_main_bottom_clickable_center,
             R.id.ui_tool_main_bottom_clickable_3, R.id.ui_tool_main_bottom_clickable_4,
             R.id.ui_ui_custom_title_right_icon_1, R.id.ui_ui_custom_title_right_icon_2_container,
             R.id.ui_ui_custom_title_left_container, R.id.ui_ui_custom_title_right_container,
@@ -278,6 +282,9 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 break;
             case R.id.ui_tool_main_bottom_clickable_2:
                 setDisplayPage(1);
+                break;
+            case R.id.ui_tool_main_bottom_clickable_center:
+                iconCenter.startAnimation(App.clickAnimation());
                 break;
             case R.id.ui_tool_main_bottom_clickable_3:
                 setDisplayPage(2);
