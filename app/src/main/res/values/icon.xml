@@ -67,11 +67,13 @@
     <string name="ui_icon_radio_disabled">&#xe6e5;</string>
     <string name="ui_icon_heart_solid">&#xe681;</string>
     <string name="ui_icon_heart_hollow">&#xe650;</string>
+    <string name="ui_icon_document">&#xe646;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>
     <string name="ui_icon_system_announcement">&#xe600;</string>
     <string name="ui_icon_system_notification">&#xe636;</string>
+    <string name="ui_icon_notification_solid">&#xe64c;</string>
     <string name="ui_icon_system_secretary">&#xe90a;</string>
     
     <!--组织通讯录页面新增两个icon-->

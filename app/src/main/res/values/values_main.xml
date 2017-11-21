@@ -30,4 +30,9 @@
     <string name="ui_full_text_query_loading">正在查询&#8230;</string>
     <string name="ui_full_text_query_nothing_static">输入要查询的内容</string>
     <string name="ui_full_text_query_nothing">没有找到更多内容</string>
+
+    <string name="ui_main_shortcut_activity">发布活动</string>
+    <string name="ui_main_shortcut_archive_group">组织档案</string>
+    <string name="ui_main_shortcut_archive_user">个人档案</string>
+    <string name="ui_main_shortcut_moment">发布动态</string>
 </resources>
