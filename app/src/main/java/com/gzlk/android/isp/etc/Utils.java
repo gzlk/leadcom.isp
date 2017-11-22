@@ -294,7 +294,7 @@ public class Utils {
     public static String formatSize(long size) {
         if (size <= 0) return "0B";
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + digitalUnits[digitGroups];
+        return new DecimalFormat("###0.00").format(size / Math.pow(1024, digitGroups)) + " " + digitalUnits[digitGroups];
     }
 
     public static String formatDistance(double distance) {

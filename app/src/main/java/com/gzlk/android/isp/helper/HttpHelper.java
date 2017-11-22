@@ -82,6 +82,10 @@ public class HttpHelper {
      */
     public void cancel() {
         canceled = true;
+        if (null != currentRequest) {
+            // 停止下载
+            currentRequest.cancel();
+        }
     }
 
     private boolean canceled = false;
@@ -144,6 +148,7 @@ public class HttpHelper {
      * 当前正在处理的任务地址
      */
     private String handlingTask = "";
+    private FileRequest currentRequest;
 
     private void downloading() {
         if (canceled) {
@@ -165,8 +170,8 @@ public class HttpHelper {
             if (needDown) {
                 // 文件不存在时才下载
                 handlingTask = local;
-                FileRequest request = new FileRequest(url, local).setHttpListener(fileHttpListener);
-                http().executeAsync(request);
+                currentRequest = new FileRequest(url, local).setHttpListener(fileHttpListener);
+                http().executeAsync(currentRequest);
             } else {
                 notifySuccess(local);
                 handlingIndex++;
@@ -187,10 +192,14 @@ public class HttpHelper {
         return App.app().getLocalFilePath(httpUrl, dir);
     }
 
+    private LiteHttp liteHttp;
+
     private LiteHttp http() {
-        LiteHttp liteHttp = LiteHttp.build(App.app()).create();
-        // 10秒网络超时
-        liteHttp.getConfig().setConnectTimeout(300000);
+        if (null == liteHttp) {
+            liteHttp = LiteHttp.build(App.app()).create();
+            // 10秒网络超时
+            liteHttp.getConfig().setConnectTimeout(300000);
+        }
         return liteHttp;
     }
 

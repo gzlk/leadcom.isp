@@ -94,6 +94,9 @@
             </intent-filter>
         </activity>
 
+        <!--在线更新时后台下载服务-->
+        <service android:name=".service.DownloadingService" />
+
         <activity
             android:name=".activity.ContainerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

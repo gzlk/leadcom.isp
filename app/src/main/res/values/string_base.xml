@@ -91,6 +91,9 @@
     <string name="ui_base_text_reject">拒绝</string>
     <string name="ui_base_text_ok">好</string>
     <string name="ui_base_text_ok_ba">好吧</string>
+    <string name="ui_base_text_abandon">放弃</string>
+    <string name="ui_base_text_stop">停止</string>
+    <string name="ui_base_text_retry">再试一次</string>
     <string name="ui_base_text_think_again">再想想</string>
     <string name="ui_base_text_new">新建</string>
     <string name="ui_base_text_launch">发起</string>

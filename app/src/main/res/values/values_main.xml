@@ -18,13 +18,19 @@
     </string>
 
     <string name="ui_system_updatable" formatted="false">
-        <![CDATA[<b>更新应用</b><br/>%s有新版本可用，更新并试一试最新功能吧。]]>
+        <![CDATA[<b>更新应用</b><br/>%s有新版本可用。<br/>安装新版本然后试一试最新功能吧。]]>
     </string>
     <string name="ui_system_updating">正在下载更新，请稍候&#8230;</string>
     <string name="ui_system_updating_background">后台下载</string>
     <string name="ui_system_updating_percentage_default">100%</string>
     <string name="ui_system_updating_percentage_size_default">10.23M/35.53MB</string>
     <string name="ui_system_updating_percentage_size" formatted="false">%s/%s</string>
+    <string name="ui_system_updating_failure">下载失败，请检查您的网络之后重试！</string>
+    <string name="ui_system_updating_background_title_downloading" formatted="false">正在下载%s更新</string>
+    <string name="ui_system_updating_background_title_complete">下载完毕</string>
+    <string name="ui_system_updating_background_title_failure">下载失败</string>
+    <string name="ui_system_updating_background_content_complete">点击安装新版本</string>
+    <string name="ui_system_updating_background_content_failure">点击这里重试</string>
 
     <string-array name="ui_full_text_query_base_items">
         <item>0||成员|0</item>
