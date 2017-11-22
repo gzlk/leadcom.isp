@@ -18,7 +18,6 @@
         android:layout_height="@dimen/ui_base_dimen_button_height"
         android:gravity="center"
         android:text="@string/ui_base_text_i_known"
-        android:textSize="@dimen/ui_base_text_size_big"
         app:active_color="@color/buttonDialogActiveColor"
         app:left_bottom_corner_size="@dimen/ui_base_dimen_margin_padding"
         app:normal_color="@color/buttonDialogNormalColor"

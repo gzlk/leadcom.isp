@@ -20,6 +20,11 @@
     <string name="ui_system_updatable" formatted="false">
         <![CDATA[<b>更新应用</b><br/>%s有新版本可用，更新并试一试最新功能吧。]]>
     </string>
+    <string name="ui_system_updating">正在下载更新，请稍候&#8230;</string>
+    <string name="ui_system_updating_background">后台下载</string>
+    <string name="ui_system_updating_percentage_default">100%</string>
+    <string name="ui_system_updating_percentage_size_default">10.23M/35.53MB</string>
+    <string name="ui_system_updating_percentage_size" formatted="false">%s/%s</string>
 
     <string-array name="ui_full_text_query_base_items">
         <item>0||成员|0</item>

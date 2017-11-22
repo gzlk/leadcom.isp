@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/ui_static_dp_70"
+        android:orientation="vertical"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        app:cv_border_size="@dimen/ui_static_dp_zero"
+        app:cv_left_top_corner="@dimen/ui_base_dimen_margin_padding"
+        app:cv_right_top_corner="@dimen/ui_base_dimen_margin_padding">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center"
+            android:text="@string/ui_system_updating" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                android:id="@+id/ui_popup_upgrade_progressbar"
+                style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/ui_base_dimen_margin_padding"
+                android:layout_weight="7.5"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="10"
+                app:mpb_progressBackgroundTint="@color/windowBackground"
+                app:mpb_progressStyle="horizontal"
+                app:mpb_progressTint="@color/colorPrimary"
+                app:mpb_showProgressBackground="true"
+                app:mpb_useIntrinsicPadding="true" />
+
+            <TextView
+                android:id="@+id/ui_popup_upgrade_percentage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_static_dp_5"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="@string/ui_system_updating_percentage_default"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/ui_base_text_size_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/ui_popup_upgrade_percentage_size"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="7.5"
+                android:gravity="end"
+                android:text="@string/ui_system_updating_percentage_size_default"
+                android:textColor="@color/textColorHintDark"
+                android:textSize="@dimen/ui_base_text_size_tiny" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/ui_static_dp_5"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+    <include layout="@layout/popup_dialog_single_button" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

@@ -14,6 +14,8 @@ package com.gzlk.android.isp.model.common;
 public class SystemUpdate {
 
     private String version;
+    private String patchCode;
+    private String resourceURI;
 
     public String getVersion() {
         return version;
@@ -21,5 +23,21 @@ public class SystemUpdate {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getPatchCode() {
+        return patchCode;
+    }
+
+    public void setPatchCode(String patchCode) {
+        this.patchCode = patchCode;
+    }
+
+    public String getResourceURI() {
+        return resourceURI;
+    }
+
+    public void setResourceURI(String resourceURI) {
+        this.resourceURI = resourceURI;
     }
 }

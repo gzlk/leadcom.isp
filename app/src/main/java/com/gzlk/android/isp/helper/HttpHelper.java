@@ -190,7 +190,7 @@ public class HttpHelper {
     private LiteHttp http() {
         LiteHttp liteHttp = LiteHttp.build(App.app()).create();
         // 10秒网络超时
-        liteHttp.getConfig().setConnectTimeout(10000);
+        liteHttp.getConfig().setConnectTimeout(300000);
         return liteHttp;
     }
 

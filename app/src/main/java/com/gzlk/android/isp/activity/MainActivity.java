@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.TextView;
 
 import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
@@ -13,15 +15,18 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.application.NimApplication;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.gzlk.android.isp.fragment.main.MainFragment;
 import com.gzlk.android.isp.fragment.organization.OrganizationPropertiesFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
+import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.SimpleDialogHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.listener.OnNimMessageEvent;
 import com.gzlk.android.isp.model.common.SystemUpdate;
 import com.gzlk.android.isp.model.organization.Invitation;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 import com.gzlk.android.isp.nim.model.notification.NimMessage;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.NimUIKit;
@@ -29,6 +34,8 @@ import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -121,6 +128,7 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.clear();
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -142,22 +150,96 @@ public class MainActivity extends TitleActivity {
                 super.onResponse(systemUpdate, success, message);
                 if (success) {
                     String ver = systemUpdate.getVersion();
-                    if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
-                        warningUpdatable();
-                    }
+                    //if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
+                    warningUpdatable("http://10.141.128.6/apks/everdigm.demo.1.0.0.201606241450.apk");
+                    //}
                 }
             }
         }).getClientVersion();
     }
 
-    private void warningUpdatable() {
+    private void warningUpdatable(final String url) {
         String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default));
         SimpleDialogHelper.init(this).show(text, R.string.ui_base_text_ok, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
+                // 打开下载对话框，并开始下载（下载对话框可以隐藏）
+                showUpgradeDownloadingDialog(url);
                 return true;
             }
         }, null);
+    }
+
+    private View upgradeDialogView;
+    private MaterialProgressBar upgradeProgress;
+    private TextView upgradePercentage, upgradePercentageSize;
+    private DialogHelper upgradeDialog;
+
+    private void showUpgradeDownloadingDialog(String url) {
+        upgradeDialog = DialogHelper.init(this).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == upgradeDialogView) {
+                    upgradeDialogView = View.inflate(MainActivity.this, R.layout.popup_dialog_upgrade, null);
+                    upgradeProgress = upgradeDialogView.findViewById(R.id.ui_popup_upgrade_progressbar);
+                    upgradePercentage = upgradeDialogView.findViewById(R.id.ui_popup_upgrade_percentage);
+                    upgradePercentageSize = upgradeDialogView.findViewById(R.id.ui_popup_upgrade_percentage_size);
+                }
+                return upgradeDialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).setConfirmText(R.string.ui_system_updating_background).setPopupType(DialogHelper.SLID_IN_BOTTOM);
+        upgradeDialog.show();
+        // 开始下载
+        downloading(url);
+    }
+
+    private void downloading(final String url) {
+        HttpHelper.helper().addCallback(new HttpHelper.HttpHelperCallback() {
+            @Override
+            public void onStart(int current, int total, String startedUrl) {
+                super.onStart(current, total, startedUrl);
+                upgradeProgress.setProgress(0);
+                upgradePercentage.setText("0%");
+                upgradePercentageSize.setText("");
+            }
+
+            @Override
+            public void onProgressing(int current, int total, int currentHandled, int currentTotal, String processingUrl) {
+                super.onProgressing(current, total, currentHandled, currentTotal, processingUrl);
+                if (null != upgradePercentage) {
+                    if (upgradeProgress.getMax() != currentTotal) {
+                        upgradeProgress.setMax(currentTotal);
+                    }
+                    upgradeProgress.setProgress(currentHandled);
+                    upgradePercentage.setText(StringHelper.format("%d%%", (int) (currentHandled * 1.0 / currentTotal * 100)));
+                    upgradePercentageSize.setText(getString(R.string.ui_system_updating_percentage_size, Utils.formatSize(currentHandled), Utils.formatSize(currentTotal)));
+                }
+            }
+
+            @Override
+            public void onSuccess(int current, int total, String successUrl) {
+                super.onSuccess(current, total, successUrl);
+                String path = HttpHelper.helper().getLocalFilePath(url, App.TEMP_DIR);
+                FilePreviewHelper.previewFile(MainActivity.this, path, "new_version", "apk");
+            }
+
+            @Override
+            public void onStop(int current, int total) {
+                if (null != upgradeDialog) {
+                    upgradeDialog.dismiss();
+                }
+                super.onStop(current, total);
+            }
+        }, Integer.toHexString(hashCode())).setLocalDirectory(App.TEMP_DIR).clearTask().addTask(url).setIgnoreExist(false).download();
+    }
+
+    private void removeCallback() {
+        HttpHelper.helper().removeCallback(Integer.toHexString(hashCode()));
     }
 
     private OnNimMessageEvent nimMessageEvent = new OnNimMessageEvent() {
