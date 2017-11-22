@@ -7,11 +7,13 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.gzlk.android.isp.BuildConfig;
+import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.NotificationHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 
 /**
  * <b>功能描述：</b><br />
@@ -160,6 +162,7 @@ public class DownloadingService extends Service {
                 super.onProgressing(current, total, currentHandled, currentTotal, processingUrl);
                 if (background) {
                     helper().show(currentHandled, currentTotal);
+                    FilePreviewHelper.previewFile(DownloadingService.this, processingUrl, "new_version", "apk");
                 } else {
                     if (null != onProgressListener) {
                         onProgressListener.onProgressing(currentHandled, currentTotal);
