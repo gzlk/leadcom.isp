@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.nim.file;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -48,7 +49,10 @@ public class FilePreviewHelper {
     public static void previewFile(Context context, String path, String fileName, String extension) {
         if (!TextUtils.isEmpty(extension)) {
             String ext = extension.toLowerCase(Locale.getDefault());
-            Activity activity = getActivity(context);
+            Context activity = getActivity(context);
+            if (null == activity && context instanceof Service) {
+                activity = context;
+            }
             if (null == activity) {
                 throw new IllegalArgumentException("cannot fetching Activity from context: " + context.toString());
             }

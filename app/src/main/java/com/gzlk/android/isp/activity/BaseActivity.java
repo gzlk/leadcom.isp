@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.activity;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -277,6 +278,11 @@ public class BaseActivity extends AppCompatActivity {
         b.putBoolean(ContainerActivity.REQUEST_BACK_KEY, supportBackKey);
         b.putBoolean(ContainerActivity.REQUEST_TRANSPARENT_STATUS_BAR, transparentStatusBar);
         intent.putExtra(ContainerActivity.EXTRA_BUNDLE, b);
-        ((Activity) context).startActivityForResult(intent, requestCode);
+        if (context instanceof Activity) {
+            ((Activity) context).startActivityForResult(intent, requestCode);
+        } else if (context instanceof Service) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ((Service) context).startActivity(intent);
+        }
     }
 }
