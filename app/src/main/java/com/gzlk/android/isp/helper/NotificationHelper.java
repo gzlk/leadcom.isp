@@ -58,9 +58,7 @@ public class NotificationHelper {
     }
 
     public NotificationHelper progress() {
-        builder.setContentTitle(StringHelper.getString(R.string.ui_system_updating_background_title_downloading, StringHelper.getString(R.string.app_name_default)))
-                .setContentText(StringHelper.getString(R.string.ui_system_updating))
-                .setContentIntent(null)
+        builder.setContentIntent(null)
                 .setAutoCancel(true)
                 .setOngoing(true)
                 .setSmallIcon(R.mipmap.ic_launcher);
@@ -68,7 +66,9 @@ public class NotificationHelper {
     }
 
     public void show(int progress, int total) {
-        builder.setProgress(total, progress, false);
+        builder.setContentTitle(StringHelper.getString(R.string.ui_system_updating_background_title_downloading, StringHelper.getString(R.string.app_name_default)))
+                .setContentText(StringHelper.getString(R.string.ui_system_updating))
+                .setProgress(total, progress, false);
         manager.notify(ID1, builder.build());
     }
 
