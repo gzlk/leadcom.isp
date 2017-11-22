@@ -88,8 +88,10 @@ public class NotificationHelper {
         manager.notify(ID1, builder.build());
     }
 
-    public void showRetry(Context context) {
-        Intent intent = new Intent(DownloadingService.RETRY);
+    public void showRetry(Context context, String url) {
+        Intent intent = new Intent(context, DownloadingService.class);
+        intent.setAction(DownloadingService.RETRY);
+        intent.putExtra(DownloadingService.PARAM_URL, url);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentText(StringHelper.getString(R.string.ui_system_updating_background_content_failure))
                 .setContentTitle(StringHelper.getString(R.string.ui_system_updating_background_title_failure))

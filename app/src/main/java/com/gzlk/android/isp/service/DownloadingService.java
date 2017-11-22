@@ -25,7 +25,7 @@ import com.gzlk.android.isp.helper.StringHelper;
  */
 public class DownloadingService extends Service {
 
-    private static final String PARAM_URL = "ds_service_url";
+    public static final String PARAM_URL = "ds_service_url";
     private static final String START = BuildConfig.APPLICATION_ID + ".service.START";
     private static final String STOP = BuildConfig.APPLICATION_ID + ".service.STOP";
     private static final String BACK = BuildConfig.APPLICATION_ID + ".service.BACKGROUND";
@@ -105,6 +105,7 @@ public class DownloadingService extends Service {
         if (null != intent) {
             String action = intent.getAction();
             if (!isEmpty(action)) {
+                log(action);
                 assert action != null;
                 switch (action) {
                     case START:
@@ -121,6 +122,7 @@ public class DownloadingService extends Service {
                         background = true;
                         break;
                     case RETRY:
+                        downloadingUrl = intent.getStringExtra(PARAM_URL);
                         if (!isEmpty(downloadingUrl)) {
                             downloading(downloadingUrl);
                         }
@@ -140,7 +142,7 @@ public class DownloadingService extends Service {
         return notificationHelper;
     }
 
-    private void downloading(String url) {
+    private void downloading(final String url) {
         if (isEmpty(url)) {
             throw new IllegalArgumentException("download url is empty.");
         }
@@ -181,7 +183,7 @@ public class DownloadingService extends Service {
             public void onFailure(int current, int total, String failureUrl) {
                 super.onFailure(current, total, failureUrl);
                 if (background) {
-                    helper().showRetry(DownloadingService.this);
+                    helper().showRetry(DownloadingService.this, url);
                 } else {
                     if (null != onProgressListener) {
                         onProgressListener.onFailure();
