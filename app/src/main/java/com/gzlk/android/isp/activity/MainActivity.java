@@ -98,9 +98,6 @@ public class MainActivity extends TitleActivity {
         setMainFrameLayout(mainFragment);
         parseIntent();
         //registerUpgradeListener();
-
-        // 注册下载进度监听
-        DownloadingService.setOnProgressListener(progressListener);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -137,8 +134,6 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onDestroy() {
         downloadingUrl = "";
-        // 注销下载进度监听
-        DownloadingService.setOnProgressListener(null);
         NimApplication.removeNimMessageEvent(nimMessageEvent);
         //NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);
@@ -157,7 +152,7 @@ public class MainActivity extends TitleActivity {
                 if (success) {
                     String ver = systemUpdate.getVersion();
                     //if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
-                    warningUpdatable("http://tms.everdigm.com/apks/everdigm.demo.1.0.0.201606241450.apk");
+                    warningUpdatable("http://file.ws.126.net/3g/client/netease_newsreader_android.apk");
                     //}
                 }
             }
@@ -209,6 +204,8 @@ public class MainActivity extends TitleActivity {
             }
         }).setConfirmText(R.string.ui_system_updating_background).setPopupType(DialogHelper.SLID_IN_BOTTOM);
         upgradeDialog.show();
+        // 注册下载进度监听
+        DownloadingService.setOnProgressListener(progressListener);
         DownloadingService.start(this, downloadingUrl);
     }
 
@@ -252,7 +249,6 @@ public class MainActivity extends TitleActivity {
             if (null != upgradeDialog) {
                 upgradeDialog.dismiss();
             }
-            DownloadingService.stop(MainActivity.this);
         }
     };
 

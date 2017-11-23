@@ -53,7 +53,9 @@ public class HttpHelper {
      * 下载一个文件到默认目录
      */
     public HttpHelper addTask(String httpUrl) {
-        tasks.add(httpUrl);
+        if (!tasks.contains(httpUrl)) {
+            tasks.add(httpUrl);
+        }
         return this;
     }
 
@@ -352,6 +354,14 @@ public class HttpHelper {
      * Http执行进度回调
      */
     public static class HttpHelperCallback extends OnHttpListener<File> {
+
+        public HttpHelperCallback() {
+            super();
+        }
+
+        public HttpHelperCallback(boolean runOnUiThread) {
+            super(runOnUiThread);
+        }
 
         public void onCancel(int current, int total) {
         }

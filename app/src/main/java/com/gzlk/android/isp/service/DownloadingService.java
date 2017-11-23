@@ -3,7 +3,9 @@ package com.gzlk.android.isp.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.Nullable;
 
 import com.gzlk.android.isp.BuildConfig;
@@ -14,6 +16,7 @@ import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.NotificationHelper;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
+import com.gzlk.android.isp.nim.file.FilePreviewHelper;
 
 /**
  * <b>功能描述：</b><br />
@@ -72,6 +75,7 @@ public class DownloadingService extends Service {
     }
 
     private boolean background = false;
+    private boolean isDownloading = false;
     private NotificationHelper notificationHelper;
 
     private void log(String string) {
@@ -122,6 +126,8 @@ public class DownloadingService extends Service {
                         background = true;
                         break;
                     case RETRY:
+                        // 任务栏点击之后开始的是后台下载
+                        background = true;
                         url = intent.getStringExtra(PARAM_URL);
                         break;
                 }
@@ -143,25 +149,47 @@ public class DownloadingService extends Service {
         return notificationHelper;
     }
 
+    private String callbackTag() {
+        return Integer.toHexString(hashCode());
+    }
+
     private void downloading(final String url) {
         if (isEmpty(url)) {
             throw new IllegalArgumentException("download url is empty.");
         }
+        if (!isDownloading) {
+            isDownloading = true;
+        } else {
+            log("downloading was started.");
+            return;
+        }
+        log("downloading: " + url);
+        // 非主线程运行的callback
         HttpHelper.helper().addCallback(new HttpHelper.HttpHelperCallback() {
             @Override
             public void onStart(int current, int total, String startedUrl) {
                 super.onStart(current, total, startedUrl);
+                log(StringHelper.format("downloading start(background: %s)...", background));
+                //callStart();
                 if (null != onProgressListener) {
                     onProgressListener.onStart();
                 }
             }
 
+            int lastProgress = 0;
+
             @Override
             public void onProgressing(int current, int total, int currentHandled, int currentTotal, String processingUrl) {
                 super.onProgressing(current, total, currentHandled, currentTotal, processingUrl);
+                //log(StringHelper.format("downloading(background: %s) %d of %d, percentage: %f", background, currentHandled, currentTotal, (currentHandled * 1.0 / currentTotal * 100)));
                 if (background) {
-                    helper().show(currentHandled, currentTotal);
+                    int progress = (int) (currentHandled * 1.0 / currentTotal * 100);
+                    if (lastProgress != progress) {
+                        lastProgress = progress;
+                        helper().show(currentHandled, currentTotal);
+                    }
                 } else {
+                    //callProgress(currentHandled, currentTotal);
                     if (null != onProgressListener) {
                         onProgressListener.onProgressing(currentHandled, currentTotal);
                     }
@@ -171,37 +199,112 @@ public class DownloadingService extends Service {
             @Override
             public void onSuccess(int current, int total, String successUrl) {
                 super.onSuccess(current, total, successUrl);
+                log(StringHelper.format("downloading success(background: %s)...", background));
                 if (background) {
                     helper().showComplete(successUrl);
-                    //FilePreviewHelper.previewFile(DownloadingService.this, successUrl, "new_version", "apk");
+                    FilePreviewHelper.previewFile(DownloadingService.this, successUrl, "new_version", "apk");
                 } else {
+//                    callSuccess(successUrl);
                     if (null != onProgressListener) {
                         onProgressListener.onSuccess(successUrl);
                     }
                 }
+                isDownloading = false;
             }
 
             @Override
             public void onFailure(int current, int total, String failureUrl) {
                 super.onFailure(current, total, failureUrl);
+                log(StringHelper.format("downloading failure(background: %s)...", background));
                 if (background) {
                     helper().showRetry(DownloadingService.this, url);
                 } else {
+//                    callFailure();
                     if (null != onProgressListener) {
                         onProgressListener.onFailure();
                     }
                 }
+                isDownloading = false;
             }
 
             @Override
             public void onStop(int current, int total) {
                 super.onStop(current, total);
-                if (null != onProgressListener) {
-                    onProgressListener.onStop();
+                isDownloading = false;
+                log(StringHelper.format("downloading stop(background: %s)...", background));
+                if (!background) {
+//                    callStop();
+                    if (null != onProgressListener) {
+                        onProgressListener.onStop();
+                    }
                 }
-                HttpHelper.helper().removeCallback(Integer.toHexString(hashCode()));
+                HttpHelper.helper().removeCallback(callbackTag());
+                background = false;
+                // 下载结束之后停止服务
+                stopSelf();
             }
-        }, Integer.toHexString(hashCode())).setLocalDirectory(App.TEMP_DIR).clearTask().addTask(url).setIgnoreExist(false).download();
+        }, callbackTag()).setLocalDirectory(App.TEMP_DIR).clearTask().addTask(url).setIgnoreExist(false).download();
+    }
+
+    private void callStart() {
+        Message msg = eventHandler.obtainMessage(evtStart);
+        eventHandler.sendMessage(msg);
+    }
+
+    private void callSuccess(String url) {
+        Message msg = eventHandler.obtainMessage(evtSuccess);
+        msg.obj = url;
+        eventHandler.sendMessage(msg);
+    }
+
+    private void callFailure() {
+        Message msg = eventHandler.obtainMessage(evtFailure);
+        eventHandler.sendMessage(msg);
+    }
+
+    private void callProgress(int current, int total) {
+        Message msg = eventHandler.obtainMessage(evtProgress);
+        msg.obj = new Object[]{current, total};
+        eventHandler.sendMessage(msg);
+    }
+
+    private void callStop() {
+        Message msg = eventHandler.obtainMessage(evtStop);
+        eventHandler.sendMessage(msg);
+    }
+
+    private EventHandler eventHandler = new EventHandler();
+    private static final int evtStart = 1;
+    private static final int evtSuccess = 2;
+    private static final int evtFailure = 3;
+    private static final int evtProgress = 4;
+    private static final int evtStop = 5;
+
+    private static class EventHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            if (null == onProgressListener) {
+                return;
+            }
+            switch (msg.what) {
+                case evtStart:
+                    onProgressListener.onStart();
+                    break;
+                case evtSuccess:
+                    onProgressListener.onSuccess((String) msg.obj);
+                    break;
+                case evtFailure:
+                    onProgressListener.onFailure();
+                    break;
+                case evtProgress:
+                    Object[] objects = (Object[]) msg.obj;
+                    onProgressListener.onProgressing((int) objects[0], (int) objects[1]);
+                    break;
+                case evtStop:
+                    onProgressListener.onStop();
+                    break;
+            }
+        }
     }
 
     private static OnProgressListener onProgressListener;

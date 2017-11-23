@@ -130,6 +130,7 @@ public class FilePreviewHelper {
             }
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
             intent.setDataAndType(getUriFromFile(path), mimetype);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             context.startActivity(intent);
         } catch (Exception e) {

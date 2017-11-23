@@ -24,6 +24,10 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
         super();
     }
 
+    public OnHttpListener(boolean runOnUiThread){
+        super(runOnUiThread);
+    }
+
     public OnHttpListener(boolean readingNotify, boolean uploadingNotify) {
         super(true, readingNotify, uploadingNotify);
     }

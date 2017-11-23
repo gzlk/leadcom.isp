@@ -80,12 +80,16 @@ public class NotificationHelper {
     }
 
     public void showComplete(String localPath) {
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, getViewIntent(localPath), 0);
-        builder.setContentText(StringHelper.getString(R.string.ui_system_updating_background_content_complete))
-                .setContentTitle(StringHelper.getString(R.string.ui_system_updating_background_title_complete))
-                .setOngoing(false)
-                .setProgress(0, 0, false).setContentIntent(pendingIntent);
-        manager.notify(ID1, builder.build());
+        try {
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, getViewIntent(localPath), 0);
+            builder.setContentText(StringHelper.getString(R.string.ui_system_updating_background_content_complete))
+                    .setContentTitle(StringHelper.getString(R.string.ui_system_updating_background_title_complete))
+                    .setOngoing(false)
+                    .setProgress(0, 0, false).setContentIntent(pendingIntent);
+            manager.notify(ID1, builder.build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showRetry(Context context, String url) {
