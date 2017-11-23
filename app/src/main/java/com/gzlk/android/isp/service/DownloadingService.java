@@ -7,10 +7,12 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.gzlk.android.isp.BuildConfig;
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.HttpHelper;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.NotificationHelper;
+import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 
 /**
@@ -62,14 +64,14 @@ public class DownloadingService extends Service {
     /**
      * 重试下载
      */
-    public static void retry(Context context) {
+    public static Intent getRetryIntent(Context context, String url) {
         Intent intent = new Intent(context, DownloadingService.class);
         intent.setAction(RETRY);
-        context.startService(intent);
+        intent.putExtra(PARAM_URL, url);
+        return intent;
     }
 
     private boolean background = false;
-    private String downloadingUrl = "";
     private NotificationHelper notificationHelper;
 
     private void log(String string) {
@@ -107,12 +109,10 @@ public class DownloadingService extends Service {
             if (!isEmpty(action)) {
                 log(action);
                 assert action != null;
+                String url = "";
                 switch (action) {
                     case START:
-                        downloadingUrl = intent.getStringExtra(PARAM_URL);
-                        if (!isEmpty(downloadingUrl)) {
-                            downloading(downloadingUrl);
-                        }
+                        url = intent.getStringExtra(PARAM_URL);
                         break;
                     case STOP:
                         stopSelf();
@@ -122,11 +122,12 @@ public class DownloadingService extends Service {
                         background = true;
                         break;
                     case RETRY:
-                        downloadingUrl = intent.getStringExtra(PARAM_URL);
-                        if (!isEmpty(downloadingUrl)) {
-                            downloading(downloadingUrl);
-                        }
+                        url = intent.getStringExtra(PARAM_URL);
                         break;
+                }
+                if (!isEmpty(url)) {
+                    PreferenceHelper.save(getString(R.string.pf_static_downloading_url, BuildConfig.BUILD_TYPE), url);
+                    downloading(url);
                 }
             }
         } else {

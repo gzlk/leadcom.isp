@@ -21,4 +21,5 @@
 
     <string name="pf_static_keyboard_height">300000</string>
     <string name="pf_static_temp_organization_create_alert">300010</string>
+    <string name="pf_static_downloading_url" formatted="false">300020_%s</string>
 </resources>
