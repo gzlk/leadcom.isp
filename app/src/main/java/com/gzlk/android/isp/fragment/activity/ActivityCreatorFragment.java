@@ -18,6 +18,7 @@ import com.gzlk.android.isp.api.activity.ActRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.org.InvitationRequest;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.fragment.organization.GroupsContactPickerFragment;
 import com.gzlk.android.isp.helper.DialogHelper;
@@ -79,6 +80,10 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_GROUP, strings[1]);
         caf.setArguments(bundle);
         return caf;
+    }
+
+    public static void open(BaseFragment fragment, String groupId, String activityId) {
+        fragment.openActivity(ActivityCreatorFragment.class.getName(), format("%s,%s", activityId, groupId), REQUEST_CREATE, true, true);
     }
 
     private String memberJson = "[]", labelJson = "[]";

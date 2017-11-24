@@ -389,7 +389,7 @@ public class OrgStructureViewHolder extends BaseViewHolder {
 
     private OrganizationConcerned.OnContainerClickListener containerClickListener = new OrganizationConcerned.OnContainerClickListener() {
         @Override
-        public void onClick(String id) {
+        public void onClick(OrganizationConcerned concerned, String id) {
             openActivity(OrganizationPropertiesFragment.class.getName(), id, false, false, true);
         }
     };

@@ -389,7 +389,8 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
             // 打开新建动态页面
-            openActivity(MomentCreatorFragment.class.getName(), Json.gson().toJson(selected), REQUEST_CREATE, true, true);
+            MomentCreatorFragment.open(IndividualFragment.this, Json.gson().toJson(selected));
+            //openActivity(MomentCreatorFragment.class.getName(), Json.gson().toJson(selected), REQUEST_CREATE, true, true);
         }
     };
 

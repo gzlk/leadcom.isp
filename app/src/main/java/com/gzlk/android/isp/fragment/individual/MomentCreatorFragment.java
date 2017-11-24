@@ -14,6 +14,7 @@ import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
 import com.gzlk.android.isp.api.user.MomentRequest;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.archive.PrivacyFragment;
+import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
@@ -68,6 +69,10 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_IMAGE, params);
         mnf.setArguments(bundle);
         return mnf;
+    }
+
+    public static void open(BaseFragment fragment, String jsonSelected) {
+        fragment.openActivity(MomentCreatorFragment.class.getName(), jsonSelected, REQUEST_CREATE, true, true);
     }
 
     @Override

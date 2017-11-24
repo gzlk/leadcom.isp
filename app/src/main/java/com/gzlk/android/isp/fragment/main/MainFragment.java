@@ -285,6 +285,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 break;
             case R.id.ui_tool_main_bottom_clickable_center:
                 iconCenter.startAnimation(App.clickAnimation());
+                ShortcutFragment.open(MainFragment.this);
                 break;
             case R.id.ui_tool_main_bottom_clickable_3:
                 setDisplayPage(2);

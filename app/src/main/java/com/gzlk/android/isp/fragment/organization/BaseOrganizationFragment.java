@@ -12,8 +12,6 @@ import com.gzlk.android.isp.api.org.SquadRequest;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
-import com.gzlk.android.isp.model.Dao;
-import com.gzlk.android.isp.model.Model;
 import com.gzlk.android.isp.model.activity.Activity;
 import com.gzlk.android.isp.model.organization.Invitation;
 import com.gzlk.android.isp.model.organization.Member;

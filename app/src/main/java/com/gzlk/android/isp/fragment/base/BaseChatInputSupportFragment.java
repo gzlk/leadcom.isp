@@ -290,7 +290,7 @@ public abstract class BaseChatInputSupportFragment extends BaseSwipeRefreshSuppo
 
             _inputText.addTextChangedListener(_TextWatcher);
         } else {
-            log("Cannot initialize multimedia input mode with null layout container.");
+            log("Cannot initDirect multimedia input mode with null layout container.");
         }
         if (null != _emojiContainer) {
             _emojiContainer.setOnEmojiSelectedListener(onEmojiSelectedListener);

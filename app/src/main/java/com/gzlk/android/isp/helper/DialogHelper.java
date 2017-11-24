@@ -162,10 +162,10 @@ public class DialogHelper {
         if (null != mOnDialogInitializeListener) {
             root = mOnDialogInitializeListener.onInitializeView();
         } else {
-            throw new IllegalArgumentException("You must initialize the root view first.");
+            throw new IllegalArgumentException("You must initDirect the root view first.");
         }
         if (null == root) {
-            throw new IllegalArgumentException("Cannot initialize dialog with null content view.");
+            throw new IllegalArgumentException("Cannot initDirect dialog with null content view.");
         }
         initializeEvents(root);
         // 绑定数据

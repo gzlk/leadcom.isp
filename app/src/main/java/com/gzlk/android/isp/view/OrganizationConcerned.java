@@ -28,8 +28,15 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 
 public class OrganizationConcerned extends FrameLayout {
 
+    public static boolean initDirect = true;
+
     public OrganizationConcerned(Context context) {
         this(context, null);
+    }
+
+    public OrganizationConcerned(Context context, int layout) {
+        this(context);
+        init(layout);
     }
 
     public OrganizationConcerned(Context context, AttributeSet attrs) {
@@ -38,11 +45,13 @@ public class OrganizationConcerned extends FrameLayout {
 
     public OrganizationConcerned(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        if (initDirect) {
+            init(R.layout.tool_view_organziation_concerned_pager);
+        }
     }
 
-    private void init() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.tool_view_organziation_concerned_pager, this);
+    private void init(int layout) {
+        View view = LayoutInflater.from(getContext()).inflate(layout, this);
         ViewUtility.bind(this, view);
         imageDisplayer.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
@@ -69,7 +78,7 @@ public class OrganizationConcerned extends FrameLayout {
     private void click(View view) {
         if (null != onClickListener) {
             String id = (String) container.getTag(R.id.hlklib_ids_custom_view_click_tag);
-            onClickListener.onClick(id);
+            onClickListener.onClick(OrganizationConcerned.this, id);
         }
     }
 
@@ -80,6 +89,6 @@ public class OrganizationConcerned extends FrameLayout {
     }
 
     public interface OnContainerClickListener {
-        void onClick(String id);
+        void onClick(OrganizationConcerned concerned, String id);
     }
 }

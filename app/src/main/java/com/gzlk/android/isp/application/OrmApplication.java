@@ -41,7 +41,7 @@ public class OrmApplication extends BaseApplication {
      */
     public void initializeLiteOrm(final String dbName) {
         if (StringHelper.isEmpty(dbName)) {
-            throw new IllegalArgumentException("could not initialize database with null parameter.");
+            throw new IllegalArgumentException("could not initDirect database with null parameter.");
         }
 
         try {

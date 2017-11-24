@@ -414,7 +414,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     if (isEmpty(mQueryId)) {
                         ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
                     } else {
-                        openActivity(ActivityCreatorFragment.class.getName(), format(",%s", mQueryId), REQ_CREATE, true, true);
+                        ActivityCreatorFragment.open(ActivityFragment.this, mQueryId, "");
+                        //openActivity(ActivityCreatorFragment.class.getName(), format(",%s", mQueryId), REQ_CREATE, true, true);
                     }
                     break;
                 case R.id.ui_tooltip_menu_activity_manage:
@@ -427,7 +428,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQ_CREATE) {
+        if (requestCode == REQUEST_CREATE) {
             fetchingActivities();
         }
         super.onActivityResult(requestCode, data);
