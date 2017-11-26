@@ -36,7 +36,7 @@ import java.util.List;
 public class ShortcutFragment extends BaseOrganizationFragment {
 
     public static void open(BaseFragment fragment) {
-        fragment.openActivity(ShortcutFragment.class.getName(), "", false, false, true);
+        fragment.openActivity(ShortcutFragment.class.getName(), "", true, false);
     }
 
     @ViewId(R.id.ui_shortcut_to_group_activity)
@@ -51,18 +51,6 @@ public class ShortcutFragment extends BaseOrganizationFragment {
     private List<Organization> groups;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        OrganizationConcerned.initDirect = false;
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroy() {
-        OrganizationConcerned.initDirect = true;
-        super.onDestroy();
-    }
-
-    @Override
     public int getLayout() {
         return R.layout.fragment_shortcut;
     }
@@ -74,7 +62,7 @@ public class ShortcutFragment extends BaseOrganizationFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle("");
+        setCustomTitle(R.string.ui_main_shortcut_fragment_title);
         if (null == groups) {
             fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
         }
@@ -155,10 +143,11 @@ public class ShortcutFragment extends BaseOrganizationFragment {
             concerned.setOnContainerClickListener(clickListener);
             concerned.setTag(R.id.hlklib_ids_custom_view_click_tag, groupArchive);
             groupArchive.addView(concerned);
+
             OrganizationConcerned concerned1 = new OrganizationConcerned(Activity(), R.layout.tool_view_organization_item);
             concerned1.showOrganization(group);
             concerned1.setOnContainerClickListener(clickListener);
-            concerned.setTag(R.id.hlklib_ids_custom_view_click_tag, groupActivity);
+            concerned1.setTag(R.id.hlklib_ids_custom_view_click_tag, groupActivity);
             groupActivity.addView(concerned1);
         }
     }
@@ -168,7 +157,8 @@ public class ShortcutFragment extends BaseOrganizationFragment {
         public void onClick(OrganizationConcerned concerned, String id) {
             concerned.startAnimation(App.clickAnimation());
             View parent = (View) concerned.getTag(R.id.hlklib_ids_custom_view_click_tag);
-            if (parent.getId() == R.id.ui_shortcut_to_group_activity) {
+            int vid = parent.getId();
+            if (vid == R.id.ui_shortcut_to_group_activity) {
                 // 新建活动
                 ActivityCreatorFragment.open(ShortcutFragment.this, id, "");
             } else {

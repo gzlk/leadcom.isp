@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.gzlk.android.isp.BuildConfig;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.api.common.UpdateRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
@@ -151,9 +152,10 @@ public class MainActivity extends TitleActivity {
                 super.onResponse(systemUpdate, success, message);
                 if (success) {
                     String ver = systemUpdate.getVersion();
-                    //if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
-                    warningUpdatable("http://file.ws.126.net/3g/client/netease_newsreader_android.apk");
-                    //}
+                    //warningUpdatable("http://file.ws.126.net/3g/client/netease_newsreader_android.apk");
+                    if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
+                        warningUpdatable(systemUpdate.getResourceURI());
+                    }
                 }
             }
         }).getClientVersion();

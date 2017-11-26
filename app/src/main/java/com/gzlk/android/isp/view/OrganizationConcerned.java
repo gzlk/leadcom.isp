@@ -28,14 +28,13 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 
 public class OrganizationConcerned extends FrameLayout {
 
-    public static boolean initDirect = true;
-
     public OrganizationConcerned(Context context) {
         this(context, null);
     }
 
     public OrganizationConcerned(Context context, int layout) {
         this(context);
+        isBig = false;
         init(layout);
     }
 
@@ -45,9 +44,12 @@ public class OrganizationConcerned extends FrameLayout {
 
     public OrganizationConcerned(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (initDirect) {
-            init(R.layout.tool_view_organziation_concerned_pager);
-        }
+    }
+
+    private boolean isBig = true;
+
+    public void setContentLayout(int layoutRes) {
+        init(layoutRes);
     }
 
     private void init(int layout) {
@@ -69,7 +71,7 @@ public class OrganizationConcerned extends FrameLayout {
     private TextView textView;
 
     public void showOrganization(Organization organization) {
-        imageDisplayer.displayImage(organization.getLogo(), getResources().getDimensionPixelSize(R.dimen.ui_static_dp_80), false, false);
+        imageDisplayer.displayImage(organization.getLogo(), getResources().getDimensionPixelSize(isBig ? R.dimen.ui_static_dp_75 : R.dimen.ui_static_dp_60), false, false);
         textView.setText(organization.getName());
         container.setTag(R.id.hlklib_ids_custom_view_click_tag, organization.getId());
     }

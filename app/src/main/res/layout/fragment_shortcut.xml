@@ -21,7 +21,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ui_base_border_size_normal"
-                android:background="@color/textColorHint" />
+                android:background="@color/textColorHintLight" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -70,13 +70,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ui_base_border_size_normal"
-                android:background="@color/textColorHint" />
+                android:background="@color/textColorHintLight" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ui_base_border_size_normal"
                 android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-                android:background="@color/textColorHint" />
+                android:background="@color/textColorHintLight" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -124,13 +124,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ui_base_border_size_normal"
-                android:background="@color/textColorHint" />
+                android:background="@color/textColorHintLight" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ui_base_border_size_normal"
                 android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-                android:background="@color/textColorHint" />
+                android:background="@color/textColorHintLight" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -152,13 +152,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ui_base_border_size_normal"
-                android:background="@color/textColorHint" />
+                android:background="@color/textColorHintLight" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ui_base_border_size_normal"
                 android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-                android:background="@color/textColorHint" />
+                android:background="@color/textColorHintLight" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -218,7 +218,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/ui_base_border_size_normal"
-                android:background="@color/textColorHint" />
+                android:background="@color/textColorHintLight" />
 
         </LinearLayout>
     </ScrollView>

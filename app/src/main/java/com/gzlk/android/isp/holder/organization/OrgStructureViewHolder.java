@@ -370,6 +370,7 @@ public class OrgStructureViewHolder extends BaseViewHolder {
                 concerned = map.get(id);
             } else {
                 concerned = new OrganizationConcerned(viewPager.getContext());
+                concerned.setContentLayout(R.layout.tool_view_organziation_concerned_pager);
                 concerned.setOnContainerClickListener(containerClickListener);
                 concerned.showOrganization(org);
                 concerned.setTag(R.id.hlklib_ids_custom_view_click_tag, position);

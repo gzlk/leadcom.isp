@@ -10,8 +10,8 @@
 
     <com.gzlk.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_tool_organization_concerned_pager_logo"
-        android:layout_width="@dimen/ui_static_dp_75"
-        android:layout_height="@dimen/ui_static_dp_75"
+        android:layout_width="@dimen/ui_static_dp_60"
+        android:layout_height="@dimen/ui_static_dp_60"
         app:id_image_src="@mipmap/img_image_default"
         app:id_image_type="oval" />
 
