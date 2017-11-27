@@ -141,6 +141,9 @@ public class NimApplication extends BaseActivityManagedApplication {
         // 该值一般应根据屏幕尺寸来确定， 默认值为 Screen.width / 2
         options.thumbnailSize = getImageMaxEdge();
 
+        // 设置同步已读回执到各端
+        options.sessionReadAck = true;
+
         // 用户资料提供者, 目前主要用于提供用户资料，用于新消息通知栏中显示消息来源的头像和昵称
         options.userInfoProvider = new UserInfoProvider() {
             @Override
