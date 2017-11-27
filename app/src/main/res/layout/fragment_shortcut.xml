@@ -50,11 +50,11 @@
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
 
-                <com.google.android.flexbox.FlexboxLayout
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/ui_shortcut_to_group_activity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:flexWrap="nowrap" />
+                    android:cacheColorHint="@null" />
 
                 <TextView
                     android:id="@+id/ui_shortcut_to_group_activity_nothing"
@@ -104,11 +104,11 @@
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
 
-                <com.google.android.flexbox.FlexboxLayout
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/ui_shortcut_to_group_archive"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:flexWrap="nowrap" />
+                    android:cacheColorHint="@null" />
 
                 <TextView
                     android:id="@+id/ui_shortcut_to_group_archive_nothing"

@@ -1,11 +1,13 @@
 package com.gzlk.android.isp.fragment.main;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.flexbox.FlexboxLayout;
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.org.OrgRequest;
 import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.fragment.activity.ActivityCreatorFragment;
@@ -14,8 +16,10 @@ import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
+import com.gzlk.android.isp.holder.home.ShortcutGroupViewHolder;
+import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.organization.Organization;
-import com.gzlk.android.isp.view.OrganizationConcerned;
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
@@ -35,24 +39,38 @@ import java.util.List;
 
 public class ShortcutFragment extends BaseOrganizationFragment {
 
+    private static final int TYPE_ACTIVITY = 1, TYPE_ARCHIVE = 2;
+
     public static void open(BaseFragment fragment) {
         fragment.openActivity(ShortcutFragment.class.getName(), "", true, false);
     }
 
     @ViewId(R.id.ui_shortcut_to_group_activity)
-    private FlexboxLayout groupActivity;
+    private RecyclerView groupActivity;
     @ViewId(R.id.ui_shortcut_to_group_activity_nothing)
     private TextView groupActivityNothing;
     @ViewId(R.id.ui_shortcut_to_group_archive)
-    private FlexboxLayout groupArchive;
+    private RecyclerView groupArchive;
     @ViewId(R.id.ui_shortcut_to_group_archive_nothing)
     private TextView groupArchiveNothing;
 
+    private GroupAdapter actAdapter, arcAdapter;
     private List<Organization> groups;
 
     @Override
     public int getLayout() {
         return R.layout.fragment_shortcut;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        CustomLinearLayoutManager cllmActivity = new CustomLinearLayoutManager(groupActivity.getContext());
+        cllmActivity.setOrientation(CustomLinearLayoutManager.HORIZONTAL);
+        groupActivity.setLayoutManager(cllmActivity);
+        CustomLinearLayoutManager cllmArchive = new CustomLinearLayoutManager(groupArchive.getContext());
+        cllmArchive.setOrientation(CustomLinearLayoutManager.HORIZONTAL);
+        groupArchive.setLayoutManager(cllmArchive);
     }
 
     @Override
@@ -131,40 +149,62 @@ public class ShortcutFragment extends BaseOrganizationFragment {
         }
         groupActivityNothing.setVisibility(groups.size() < 1 ? View.VISIBLE : View.GONE);
         groupArchiveNothing.setVisibility(groups.size() < 1 ? View.VISIBLE : View.GONE);
-        showGroups();
-    }
-
-    private void showGroups() {
-        groupArchive.removeAllViews();
-        groupActivity.removeAllViews();
-        for (Organization group : groups) {
-            OrganizationConcerned concerned = new OrganizationConcerned(Activity(), R.layout.tool_view_organization_item);
-            concerned.showOrganization(group);
-            concerned.setOnContainerClickListener(clickListener);
-            concerned.setTag(R.id.hlklib_ids_custom_view_click_tag, groupArchive);
-            groupArchive.addView(concerned);
-
-            OrganizationConcerned concerned1 = new OrganizationConcerned(Activity(), R.layout.tool_view_organization_item);
-            concerned1.showOrganization(group);
-            concerned1.setOnContainerClickListener(clickListener);
-            concerned1.setTag(R.id.hlklib_ids_custom_view_click_tag, groupActivity);
-            groupActivity.addView(concerned1);
+        if (null == actAdapter) {
+            actAdapter = new GroupAdapter(TYPE_ACTIVITY);
+            groupActivity.setAdapter(actAdapter);
+        }
+        if (null == arcAdapter) {
+            arcAdapter = new GroupAdapter(TYPE_ARCHIVE);
+            groupArchive.setAdapter(arcAdapter);
+        }
+        for (Organization group : list) {
+            actAdapter.update(group);
+            arcAdapter.update(group);
         }
     }
 
-    private OrganizationConcerned.OnContainerClickListener clickListener = new OrganizationConcerned.OnContainerClickListener() {
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
-        public void onClick(OrganizationConcerned concerned, String id) {
-            concerned.startAnimation(App.clickAnimation());
-            View parent = (View) concerned.getTag(R.id.hlklib_ids_custom_view_click_tag);
-            int vid = parent.getId();
-            if (vid == R.id.ui_shortcut_to_group_activity) {
+        public void onClick(View view, int index) {
+            int type = (int) view.getTag(R.id.hlklib_ids_custom_view_click_tag);
+            if (type == TYPE_ACTIVITY) {
                 // 新建活动
-                ActivityCreatorFragment.open(ShortcutFragment.this, id, "");
-            } else {
+                ActivityCreatorFragment.open(ShortcutFragment.this, actAdapter.get(index).getId(), "");
+            } else if (type == TYPE_ARCHIVE) {
                 // 新建组织档案
-                ArchiveCreateSelectorFragment.open(ShortcutFragment.this, id);
+                ArchiveCreateSelectorFragment.open(ShortcutFragment.this, arcAdapter.get(index).getId());
             }
         }
     };
+
+    private class GroupAdapter extends RecyclerViewAdapter<ShortcutGroupViewHolder, Organization> {
+        private int type;
+
+        GroupAdapter(int type) {
+            super();
+            this.type = type;
+        }
+
+        @Override
+        public ShortcutGroupViewHolder onCreateViewHolder(View itemView, int viewType) {
+            ShortcutGroupViewHolder holder = new ShortcutGroupViewHolder(itemView, ShortcutFragment.this);
+            holder.setOnViewHolderElementClickListener(elementClickListener);
+            return holder;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.tool_view_organization_item;
+        }
+
+        @Override
+        public void onBindHolderOfView(ShortcutGroupViewHolder holder, int position, @Nullable Organization item) {
+            holder.showContent(item, type);
+        }
+
+        @Override
+        protected int comparator(Organization item1, Organization item2) {
+            return 0;
+        }
+    }
 }
