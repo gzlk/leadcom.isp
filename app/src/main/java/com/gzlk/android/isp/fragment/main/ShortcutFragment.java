@@ -1,5 +1,6 @@
 package com.gzlk.android.isp.fragment.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.gzlk.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
+import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.holder.home.ShortcutGroupViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
@@ -114,6 +116,16 @@ public class ShortcutFragment extends BaseOrganizationFragment {
     @Override
     protected void destroyView() {
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_SELECT:
+                ArchiveEditorFragment.open(ShortcutFragment.this, mQueryId, getResultedData(data));
+                break;
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     @Click({R.id.ui_archive_creator_selector_rich_text, R.id.ui_archive_creator_selector_attachment,
