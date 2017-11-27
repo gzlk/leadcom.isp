@@ -183,8 +183,9 @@ public class ShortcutFragment extends BaseOrganizationFragment {
                 // 新建活动
                 ActivityCreatorFragment.open(ShortcutFragment.this, actAdapter.get(index).getId(), "");
             } else if (type == TYPE_ARCHIVE) {
+                mQueryId = arcAdapter.get(index).getId();
                 // 新建组织档案
-                ArchiveCreateSelectorFragment.open(ShortcutFragment.this, arcAdapter.get(index).getId());
+                ArchiveCreateSelectorFragment.open(ShortcutFragment.this, mQueryId);
             }
         }
     };
