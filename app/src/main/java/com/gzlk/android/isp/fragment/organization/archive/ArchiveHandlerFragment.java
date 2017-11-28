@@ -15,17 +15,18 @@ import com.gzlk.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.holder.BaseViewHolder;
-import com.gzlk.android.isp.holder.archive.ArchiveDetailsHeaderViewHolder;
-import com.gzlk.android.isp.holder.attachment.AttachmentViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveAttachmentViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveDetailsAdditionalViewHolder;
+import com.gzlk.android.isp.holder.archive.ArchiveDetailsViewHolder;
 import com.gzlk.android.isp.lib.Json;
+import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
 import com.gzlk.android.isp.model.Model;
+import com.gzlk.android.isp.model.archive.Additional;
 import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
-
-import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>组织档案审批页面<br />
@@ -76,7 +77,8 @@ public class ArchiveHandlerFragment extends BaseSwipeRefreshSupportFragment {
 
     private int mType = TYPE_APPROVE;
     private String mContent = "";
-    private DocumentDetailsAdapter mAdapter;
+    private ArchiveDetailsAdapter mAdapter;
+    private ArchiveDetailsViewHolder detailsViewHolder;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -98,13 +100,17 @@ public class ArchiveHandlerFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    public void doingInResume() {
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         chatContainer.setVisibility(View.GONE);
         approveContainer.setVisibility(View.VISIBLE);
         rejectTextView.setText(mType == TYPE_APPROVE ? "审核不通过" : "放弃存档");
         rejectView.setVisibility(mType == TYPE_APPROVE ? View.VISIBLE : View.GONE);
         passedTextView.setText(mType == TYPE_APPROVE ? "审核通过" : "存为档案");
+    }
 
+    @Override
+    public void doingInResume() {
         if (StringHelper.isEmpty(mQueryId)) {
             closeWithWarning(R.string.ui_text_document_details_not_exists);
         } else {
@@ -227,57 +233,78 @@ public class ArchiveHandlerFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void loadingAttachments(final Archive archive) {
-        // office 文件列表
-        loadingAttachments(archive.getOffice());
-        // image
-        loadingAttachments(archive.getImage());
-        // video
-        loadingAttachments(archive.getVideo());
-        // other
-        loadingAttachments(archive.getAttach());
-    }
-
-    private void loadingAttachments(ArrayList<Attachment> list) {
-        if (null != list && list.size() > 0) {
-            for (Attachment att : list) {
-                mAdapter.update(att);
-            }
+        for (Attachment attachment : archive.getImage()) {
+            mAdapter.update(attachment);
         }
+        for (Attachment attachment : archive.getVideo()) {
+            mAdapter.update(attachment);
+        }
+        for (Attachment attachment : archive.getOffice()) {
+            mAdapter.update(attachment);
+        }
+        for (Attachment attachment : archive.getAttach()) {
+            mAdapter.update(attachment);
+        }
+//        archive.getAddition().setId(format("additional_%s", archive.getId()));
+//        if (archive.getAddition().isVisible()) {
+//            int index = mAdapter.indexOf(archive.getAddition());
+//            if (index > 0) {
+//                mAdapter.update(archive.getAddition());
+//            } else {
+//                mAdapter.add(archive.getAddition(), 1 + archive.getAttach().size());
+//            }
+//        } else {
+//            mAdapter.remove(archive.getAddition());
+//        }
     }
 
     private void initializeAdapter() {
         if (null == mAdapter) {
-            mAdapter = new DocumentDetailsAdapter();
+            mAdapter = new ArchiveDetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
             fetchingDocument();
         }
     }
 
-    private class DocumentDetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
-        private static final int VT_HEADER = 0, VT_ATTACHMENT = 3;
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+
+        }
+    };
+
+    private class ArchiveDetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+        private static final int VT_ARCHIVE = 0, VT_ATTACHMENT = 3, VT_ADDITIONAL = 4;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ArchiveHandlerFragment fragment = ArchiveHandlerFragment.this;
             switch (viewType) {
-                case VT_HEADER:
-                    return new ArchiveDetailsHeaderViewHolder(itemView, fragment);
+                case VT_ARCHIVE:
+                    if (null == detailsViewHolder) {
+                        detailsViewHolder = new ArchiveDetailsViewHolder(itemView, ArchiveHandlerFragment.this);
+                        detailsViewHolder.setOnViewHolderElementClickListener(elementClickListener);
+                    }
+                    return detailsViewHolder;
                 case VT_ATTACHMENT:
-                    return new AttachmentViewHolder(itemView, fragment);
+                    ArchiveAttachmentViewHolder aavh = new ArchiveAttachmentViewHolder(itemView, ArchiveHandlerFragment.this);
+                    aavh.setOnViewHolderElementClickListener(elementClickListener);
+                    return aavh;
                 default:
-                    return null;
+                    ArchiveDetailsAdditionalViewHolder adavh = new ArchiveDetailsAdditionalViewHolder(itemView, ArchiveHandlerFragment.this);
+                    adavh.setOnViewHolderElementClickListener(elementClickListener);
+                    return adavh;
             }
         }
 
         @Override
         public int itemLayout(int viewType) {
             switch (viewType) {
-                case VT_HEADER:
-                    return R.layout.tool_view_document_details_header;
+                case VT_ARCHIVE:
+                    return R.layout.holder_view_archive_details;
                 case VT_ATTACHMENT:
-                    return R.layout.holder_view_attachment;
+                    return R.layout.holder_view_archive_attachment;
                 default:
-                    return R.layout.holder_view_document_comment;
+                    return R.layout.holder_view_archive_additional;
             }
         }
 
@@ -285,18 +312,22 @@ public class ArchiveHandlerFragment extends BaseSwipeRefreshSupportFragment {
         public int getItemViewType(int position) {
             Model model = get(position);
             if (model instanceof Archive) {
-                return VT_HEADER;
+                return VT_ARCHIVE;
+            } else if (model instanceof Attachment) {
+                return VT_ATTACHMENT;
+            } else {
+                return VT_ADDITIONAL;
             }
-            return VT_ATTACHMENT;
         }
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-            if (holder instanceof ArchiveDetailsHeaderViewHolder) {
-                ((ArchiveDetailsHeaderViewHolder) holder).showContent((Archive) item);
-            } else if (holder instanceof AttachmentViewHolder) {
-                ((AttachmentViewHolder) holder).setEditable(false);
-                ((AttachmentViewHolder) holder).showContent((Attachment) item);
+            if (holder instanceof ArchiveDetailsViewHolder) {
+                ((ArchiveDetailsViewHolder) holder).showContent((Archive) item);
+            } else if (holder instanceof ArchiveAttachmentViewHolder) {
+                ((ArchiveAttachmentViewHolder) holder).showContent((Attachment) item);
+            } else if (holder instanceof ArchiveDetailsAdditionalViewHolder) {
+                ((ArchiveDetailsAdditionalViewHolder) holder).showContent((Additional) item);
             }
         }
 
