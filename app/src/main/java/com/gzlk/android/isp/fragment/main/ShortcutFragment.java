@@ -16,7 +16,6 @@ import com.gzlk.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.gzlk.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.fragment.individual.MomentCreatorFragment;
-import com.gzlk.android.isp.fragment.organization.ArchivesFragment;
 import com.gzlk.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.gzlk.android.isp.holder.home.ShortcutGroupViewHolder;
 import com.gzlk.android.isp.listener.OnViewHolderElementClickListener;
@@ -155,9 +154,10 @@ public class ShortcutFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onFetchingJoinedRemoteOrganizationsComplete(List<Organization> list) {
-        groups = list;
-        if (null == groups) {
+        if (null == list) {
             groups = new ArrayList<>();
+        } else {
+            groups = list;
         }
         groupActivityNothing.setVisibility(groups.size() < 1 ? View.VISIBLE : View.GONE);
         groupArchiveNothing.setVisibility(groups.size() < 1 ? View.VISIBLE : View.GONE);
@@ -171,7 +171,7 @@ public class ShortcutFragment extends BaseOrganizationFragment {
             arcAdapter = new GroupAdapter(TYPE_ARCHIVE);
             groupArchive.setAdapter(arcAdapter);
         }
-        for (Organization group : list) {
+        for (Organization group : groups) {
             actAdapter.update(group);
             arcAdapter.update(group);
         }
