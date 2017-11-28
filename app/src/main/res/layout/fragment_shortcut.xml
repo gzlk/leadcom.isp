@@ -61,10 +61,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-                    android:text="@string/ui_organization_structure_no_group_exist"
+                    android:text="@string/ui_main_shortcut_loading_group"
                     android:textColor="@color/textColorHint"
-                    android:textSize="@dimen/ui_base_text_size_little"
-                    android:visibility="gone" />
+                    android:textSize="@dimen/ui_base_text_size_little" />
             </LinearLayout>
 
             <View
@@ -115,10 +114,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
-                    android:text="@string/ui_organization_structure_no_group_exist"
+                    android:text="@string/ui_main_shortcut_loading_group"
                     android:textColor="@color/textColorHint"
-                    android:textSize="@dimen/ui_base_text_size_little"
-                    android:visibility="gone" />
+                    android:textSize="@dimen/ui_base_text_size_little" />
             </LinearLayout>
 
             <View

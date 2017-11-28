@@ -161,6 +161,8 @@ public class ShortcutFragment extends BaseOrganizationFragment {
         }
         groupActivityNothing.setVisibility(groups.size() < 1 ? View.VISIBLE : View.GONE);
         groupArchiveNothing.setVisibility(groups.size() < 1 ? View.VISIBLE : View.GONE);
+        groupArchiveNothing.setText(R.string.ui_organization_structure_no_group_exist);
+        groupActivityNothing.setText(R.string.ui_organization_structure_no_group_exist);
         if (null == actAdapter) {
             actAdapter = new GroupAdapter(TYPE_ACTIVITY);
             groupActivity.setAdapter(actAdapter);

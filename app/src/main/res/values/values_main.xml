@@ -43,6 +43,7 @@
     <string name="ui_full_text_query_nothing">没有找到更多内容</string>
 
     <string name="ui_main_shortcut_fragment_title">快捷通道</string>
+    <string name="ui_main_shortcut_loading_group">正在加载您的组织&#8230;</string>
     <string name="ui_main_shortcut_activity">发布活动</string>
     <string name="ui_main_shortcut_archive_group">组织档案</string>
     <string name="ui_main_shortcut_archive_user">个人档案</string>
