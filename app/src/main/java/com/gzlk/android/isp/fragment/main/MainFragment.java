@@ -113,7 +113,9 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         @Override
         public void onChanged() {
             int size = NimMessage.getUnHandled();
-            rightChatIconFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
+            if (null != rightChatIconFlag) {
+                rightChatIconFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
+            }
         }
     };
 
