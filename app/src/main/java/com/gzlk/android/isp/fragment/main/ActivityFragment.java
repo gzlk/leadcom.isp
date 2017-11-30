@@ -45,13 +45,10 @@ import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
-import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
-import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.netease.nimlib.sdk.team.model.Team;
 
@@ -145,75 +142,22 @@ public class ActivityFragment extends BaseOrganizationFragment {
         });
     }
 
-    private void queryUnreadMessage(String messageId) {
-        // 锚点
-        List<String> uuid = new ArrayList<>(1);
-        uuid.add(messageId);
-        List<IMMessage> messages = NIMClient.getService(MsgService.class).queryMessageListByUuidBlock(uuid);
-        if (messages == null || messages.size() < 1) {
-            log("no message found with id: " + messageId);
-            return;
-        }
-        IMMessage msg = messages.get(0);
-
-        log(format("(anchor)message from %s(%s), read: %s, session: %s, content: %s, time: %s",
-                msg.getFromAccount(), msg.getFromNick(), getMsgStatus(msg.getStatus()), msg.getSessionId(),
-                msg.getContent(), Utils.format("yyyy-MM-dd HH:mm:ss", msg.getTime())));
-
-        NIMClient.getService(MsgService.class).queryMessageListEx(msg, QueryDirectionEnum.QUERY_OLD, 10, false).setCallback(new RequestCallbackWrapper<List<IMMessage>>() {
-            @Override
-            public void onResult(int code, List<IMMessage> list, Throwable exception) {
-                if (code == ResponseCode.RES_SUCCESS) {
-                    if (null != list && list.size() > 0) {
-                        for (IMMessage msg : list) {
-                            //if (msg.getStatus() == MsgStatusEnum.unread) {
-                            log(format("message from %s(%s), read: %s, session: %s, content: %s, time: %s",
-                                    msg.getFromAccount(), msg.getFromNick(), getMsgStatus(msg.getStatus()), msg.getSessionId(),
-                                    msg.getContent(), Utils.format("yyyy-MM-dd HH:mm:ss", msg.getTime())));
-                            //}
-                        }
-                    }
-                } else {
-                    log("query unread message failed: " + code + ", exception: " + (null == exception ? "" : exception.getMessage()));
-                }
-            }
-        });
-    }
-
-    private String getMsgStatus(MsgStatusEnum status) {
-        switch (status) {
-            case fail:
-                return "fail";
-            case read:
-                return "read";
-            case draft:
-                return "draft";
-            case unread:
-                return "unread";
-            case sending:
-                return "sending";
-            case success:
-                return "success";
-            default:
-                return "unknown";
-        }
-    }
-
     private void resetUnreadFlags(List<RecentContact> contacts) {
         if (contacts.size() > 0) {
             List<String> uuid = new ArrayList<>(1);
             for (RecentContact cnt : contacts) {
                 Team team = null;
+                uuid.clear();
                 uuid.add(cnt.getRecentMessageId());
                 List<IMMessage> messages = NIMClient.getService(MsgService.class).queryMessageListByUuidBlock(uuid);
                 if (messages != null && messages.size() > 0) {
                     IMMessage msg = messages.get(0);
                     team = TeamDataCache.getInstance().getTeamById(msg.getSessionId());
                 }
-                log(format("recent contact(%s), id: %s, from account %s(%s), status: %s, content: %s", (null == team ? "unknown" : team.getName()),
-                        cnt.getContactId(), cnt.getFromAccount(), cnt.getFromNick(), getMsgStatus(cnt.getMsgStatus()), cnt.getContent()));
+                log(format("recent contact(%s,%s), unread: %d, contact id: %s, from account %s(%s), time: %s, content: %s", (null == team ? "unknown" : team.getName()),
+                        (null == team ? "-" : team.getId()), cnt.getUnreadCount(),
+                        cnt.getContactId(), cnt.getFromAccount(), cnt.getFromNick(), Utils.format("yyyy-MM-dd HH:mm:ss", cnt.getTime()), cnt.getContent()));
             }
-            //queryUnreadMessage(contacts.get(0).getRecentMessageId());
         } else {
             log("no recent contacts found.");
         }
