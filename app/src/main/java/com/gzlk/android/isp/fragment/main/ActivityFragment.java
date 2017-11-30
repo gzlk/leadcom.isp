@@ -41,16 +41,19 @@ import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
 import com.gzlk.android.isp.nim.model.extension.TopicAttachment;
 import com.gzlk.android.isp.nim.model.extension.VoteAttachment;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
+import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
-import com.netease.nimlib.sdk.msg.MessageBuilder;
+import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
-import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgStatusEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.netease.nimlib.sdk.team.model.Team;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -136,21 +139,84 @@ public class ActivityFragment extends BaseOrganizationFragment {
         NIMClient.getService(MsgService.class).queryRecentContacts().setCallback(new RequestCallbackWrapper<List<RecentContact>>() {
             @Override
             public void onResult(int code, List<RecentContact> recents, Throwable e) {
-                if (recents.size() > 0) {
-                    queryUnreadMessage();
-                }
                 // recents参数即为最近联系人列表（最近会话列表）
                 resetUnreadFlags(recents);
             }
         });
     }
 
-    private void queryUnreadMessage() {
-        IMMessage msg = MessageBuilder.createTextMessage("", SessionTypeEnum.Team, "query unread messages.");
-        //NIMClient.getService(MsgService.class).query
+    private void queryUnreadMessage(String messageId) {
+        // 锚点
+        List<String> uuid = new ArrayList<>(1);
+        uuid.add(messageId);
+        List<IMMessage> messages = NIMClient.getService(MsgService.class).queryMessageListByUuidBlock(uuid);
+        if (messages == null || messages.size() < 1) {
+            log("no message found with id: " + messageId);
+            return;
+        }
+        IMMessage msg = messages.get(0);
+
+        log(format("(anchor)message from %s(%s), read: %s, session: %s, content: %s, time: %s",
+                msg.getFromAccount(), msg.getFromNick(), getMsgStatus(msg.getStatus()), msg.getSessionId(),
+                msg.getContent(), Utils.format("yyyy-MM-dd HH:mm:ss", msg.getTime())));
+
+        NIMClient.getService(MsgService.class).queryMessageListEx(msg, QueryDirectionEnum.QUERY_OLD, 10, false).setCallback(new RequestCallbackWrapper<List<IMMessage>>() {
+            @Override
+            public void onResult(int code, List<IMMessage> list, Throwable exception) {
+                if (code == ResponseCode.RES_SUCCESS) {
+                    if (null != list && list.size() > 0) {
+                        for (IMMessage msg : list) {
+                            //if (msg.getStatus() == MsgStatusEnum.unread) {
+                            log(format("message from %s(%s), read: %s, session: %s, content: %s, time: %s",
+                                    msg.getFromAccount(), msg.getFromNick(), getMsgStatus(msg.getStatus()), msg.getSessionId(),
+                                    msg.getContent(), Utils.format("yyyy-MM-dd HH:mm:ss", msg.getTime())));
+                            //}
+                        }
+                    }
+                } else {
+                    log("query unread message failed: " + code + ", exception: " + (null == exception ? "" : exception.getMessage()));
+                }
+            }
+        });
+    }
+
+    private String getMsgStatus(MsgStatusEnum status) {
+        switch (status) {
+            case fail:
+                return "fail";
+            case read:
+                return "read";
+            case draft:
+                return "draft";
+            case unread:
+                return "unread";
+            case sending:
+                return "sending";
+            case success:
+                return "success";
+            default:
+                return "unknown";
+        }
     }
 
     private void resetUnreadFlags(List<RecentContact> contacts) {
+        if (contacts.size() > 0) {
+            List<String> uuid = new ArrayList<>(1);
+            for (RecentContact cnt : contacts) {
+                Team team = null;
+                uuid.add(cnt.getRecentMessageId());
+                List<IMMessage> messages = NIMClient.getService(MsgService.class).queryMessageListByUuidBlock(uuid);
+                if (messages != null && messages.size() > 0) {
+                    IMMessage msg = messages.get(0);
+                    team = TeamDataCache.getInstance().getTeamById(msg.getSessionId());
+                }
+                log(format("recent contact(%s), id: %s, from account %s(%s), status: %s, content: %s", (null == team ? "unknown" : team.getName()),
+                        cnt.getContactId(), cnt.getFromAccount(), cnt.getFromNick(), getMsgStatus(cnt.getMsgStatus()), cnt.getContent()));
+            }
+            //queryUnreadMessage(contacts.get(0).getRecentMessageId());
+        } else {
+            log("no recent contacts found.");
+        }
         if (null == mAdapter) {
             return;
         }

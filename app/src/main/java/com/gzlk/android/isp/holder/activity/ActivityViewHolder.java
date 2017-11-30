@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
 import com.gzlk.android.isp.holder.BaseViewHolder;
 import com.gzlk.android.isp.model.activity.Activity;
@@ -110,7 +111,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         if (null != members && members.size() > 0) {
             for (Member member : members) {
                 String head = member.getHeadPhoto();
-                if (isEmpty(head)) {
+                if (isEmpty(head) || !Utils.isUrl(head)) {
                     head = isEmpty(cover) ? "drawable://" + R.mipmap.img_default_user_header : cover;
                 }
                 img.add(head);
