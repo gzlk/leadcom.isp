@@ -44,9 +44,12 @@ import com.gzlk.android.isp.nim.session.NimSessionHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
+import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 
 import java.util.ArrayList;
@@ -133,10 +136,18 @@ public class ActivityFragment extends BaseOrganizationFragment {
         NIMClient.getService(MsgService.class).queryRecentContacts().setCallback(new RequestCallbackWrapper<List<RecentContact>>() {
             @Override
             public void onResult(int code, List<RecentContact> recents, Throwable e) {
+                if (recents.size() > 0) {
+                    queryUnreadMessage();
+                }
                 // recents参数即为最近联系人列表（最近会话列表）
                 resetUnreadFlags(recents);
             }
         });
+    }
+
+    private void queryUnreadMessage() {
+        IMMessage msg = MessageBuilder.createTextMessage("", SessionTypeEnum.Team, "query unread messages.");
+        //NIMClient.getService(MsgService.class).query
     }
 
     private void resetUnreadFlags(List<RecentContact> contacts) {
