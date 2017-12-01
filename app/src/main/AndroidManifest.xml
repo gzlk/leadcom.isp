@@ -89,7 +89,7 @@
                 <!-- note that the leading "/" is required for pathPrefix-->
                 <!-- Accepts URIs that begin with "example://gizmos” -->
                 <data
-                    android:host="android"
+                    android:host="com.leadcom"
                     android:scheme="leadcom" />
             </intent-filter>
         </activity>

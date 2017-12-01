@@ -86,6 +86,10 @@ public class MainActivity extends TitleActivity {
         supportTransparentStatusBar = true;
         isToolbarSupported = false;
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            // 从堆栈恢复时，设置一个新的空白intent，不再重复解析之前的intent
+            setIntent(new Intent());
+        }
         // 接收消息
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, true);
         // 接收自定义通知
@@ -323,6 +327,8 @@ public class MainActivity extends TitleActivity {
                 // 自定义系统通知
                 NimMessage msg = (NimMessage) intent.getSerializableExtra(EXTRA_NOTIFICATION);
                 handleNimMessageDetails(this, msg);
+            } else {
+                // 查看浏览器传过来的参数
             }
         }
     }
