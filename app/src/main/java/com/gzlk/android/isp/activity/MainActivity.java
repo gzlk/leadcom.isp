@@ -327,8 +327,6 @@ public class MainActivity extends TitleActivity {
                 // 自定义系统通知
                 NimMessage msg = (NimMessage) intent.getSerializableExtra(EXTRA_NOTIFICATION);
                 handleNimMessageDetails(this, msg);
-            } else {
-                // 查看浏览器传过来的参数
             }
         }
     }

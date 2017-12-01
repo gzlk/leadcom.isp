@@ -61,6 +61,17 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data
+                    android:host="com.leadcom"
+                    android:scheme="leadcom" />
             </intent-filter>
         </activity>
 
@@ -80,17 +91,6 @@
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Accepts URIs that begin with "http://www.leadcom.net.cn/android” -->
-                <data
-                    android:host="www.leadcom.net.cn"
-                    android:pathPrefix="/android"
-                    android:scheme="http" />
-                <!-- note that the leading "/" is required for pathPrefix-->
-                <!-- Accepts URIs that begin with "example://gizmos” -->
-                <data
-                    android:host="com.leadcom"
-                    android:scheme="leadcom" />
             </intent-filter>
         </activity>
 

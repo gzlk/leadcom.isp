@@ -8,9 +8,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.MainActivity;
 import com.gzlk.android.isp.adapter.RecyclerViewAdapter;
 import com.gzlk.android.isp.api.archive.ArchiveRequest;
 import com.gzlk.android.isp.api.listener.OnSingleRequestListener;
+import com.gzlk.android.isp.crash.system.SysInfoUtil;
 import com.gzlk.android.isp.etc.Utils;
 import com.gzlk.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.gzlk.android.isp.fragment.base.BaseFragment;
@@ -113,6 +115,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }
         if (null != mOnKeyboardChangeListener) {
             mOnKeyboardChangeListener.destroy();
+        }
+        if (!SysInfoUtil.stackResumed(Activity())) {
+            // 如果不是堆栈恢复的app则打开主页面，否则直接关闭即可
+            MainActivity.start(Activity());
         }
         super.onDestroy();
     }

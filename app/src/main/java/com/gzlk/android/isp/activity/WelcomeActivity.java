@@ -1,6 +1,7 @@
 package com.gzlk.android.isp.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.crash.system.SysInfoUtil;
+import com.gzlk.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.gzlk.android.isp.helper.PreferenceHelper;
 import com.gzlk.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.inject.Click;
@@ -169,6 +171,7 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.clear();
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -188,13 +191,29 @@ public class WelcomeActivity extends BaseActivity {
         } else {
             Intent intent = getIntent();
             if (null != intent) {
-                ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
-                if (null == messages) {
-                    // 如果消息为空则打开登录页面，同步用户信息后登录
-                    toLogin();
+                String action = intent.getAction();
+                if (!StringHelper.isEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                    Uri uri = intent.getData();
+                    if (null != uri) {
+                        String path = uri.getPath();
+                        String id = uri.getQueryParameter("id");
+                        String type = uri.getQueryParameter("type");
+                        if (path.contains("archive")) {
+                            openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%s", id, (StringHelper.isEmpty(type) ? "0" : type)), true, false);
+                        }
+                        finish();
+                    } else {
+                        switchToMain();
+                    }
                 } else {
-                    // 针对发过来的消息打开首页并按照intent内容提示用户
-                    switchToMain(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
+                    ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
+                    if (null == messages) {
+                        // 如果消息为空则打开登录页面，同步用户信息后登录
+                        toLogin();
+                    } else {
+                        // 针对发过来的消息打开首页并按照intent内容提示用户
+                        switchToMain(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
+                    }
                 }
             } else {
                 //switchToMain();
