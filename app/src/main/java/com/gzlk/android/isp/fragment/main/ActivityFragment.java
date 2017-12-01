@@ -41,6 +41,7 @@ import com.gzlk.android.isp.nim.model.extension.SigningNotifyAttachment;
 import com.gzlk.android.isp.nim.model.extension.TopicAttachment;
 import com.gzlk.android.isp.nim.model.extension.VoteAttachment;
 import com.gzlk.android.isp.nim.session.NimSessionHelper;
+import com.netease.nim.uikit.cache.SimpleCallback;
 import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
@@ -48,9 +49,11 @@ import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -142,25 +145,51 @@ public class ActivityFragment extends BaseOrganizationFragment {
         });
     }
 
-    private void resetUnreadFlags(List<RecentContact> contacts) {
-        if (contacts.size() > 0) {
-            List<String> uuid = new ArrayList<>(1);
-            for (RecentContact cnt : contacts) {
-                Team team = null;
-                uuid.clear();
-                uuid.add(cnt.getRecentMessageId());
-                List<IMMessage> messages = NIMClient.getService(MsgService.class).queryMessageListByUuidBlock(uuid);
-                if (messages != null && messages.size() > 0) {
-                    IMMessage msg = messages.get(0);
-                    team = TeamDataCache.getInstance().getTeamById(msg.getSessionId());
+    private void clearUnreadCount(List<RecentContact> list) {
+        if (null != list && list.size() > 0) {
+            for (RecentContact contact : list) {
+                if (contact.getUnreadCount() > 0) {
+                    clearUnreadCount(contact);
                 }
-                log(format("recent contact(%s,%s), unread: %d, contact id: %s, from account %s(%s), time: %s, content: %s", (null == team ? "unknown" : team.getName()),
-                        (null == team ? "-" : team.getId()), cnt.getUnreadCount(),
-                        cnt.getContactId(), cnt.getFromAccount(), cnt.getFromNick(), Utils.format("yyyy-MM-dd HH:mm:ss", cnt.getTime()), cnt.getContent()));
             }
-        } else {
-            log("no recent contacts found.");
         }
+    }
+
+    private void clearUnreadCount(RecentContact contact) {
+        List<String> uuid = new ArrayList<>(1);
+        uuid.add(contact.getRecentMessageId());
+        List<IMMessage> messages = NIMClient.getService(MsgService.class).queryMessageListByUuidBlock(uuid);
+        if (messages != null && messages.size() > 0) {
+            IMMessage msg = messages.get(0);
+            Team team = TeamDataCache.getInstance().getTeamById(msg.getSessionId());
+            if (null != team) {
+                clearUnreadCount(team.getId(), team.getName());
+            }
+        }
+    }
+
+    private void clearUnreadCount(final String teamId, final String teamName) {
+        TeamDataCache.getInstance().fetchTeamMember(teamId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
+            @Override
+            public void onResult(boolean success, TeamMember result) {
+                boolean cleanable = true;
+                if (success && null != result) {
+                    if (result.isInTeam()) {
+                        cleanable = false;
+                    }
+                }
+                if (cleanable) {
+                    NIMClient.getService(MsgService.class).clearUnreadCount(teamId, SessionTypeEnum.Team);
+                    log(format("clean unread count which i am not member of team: %s, %s", teamId, teamName));
+                    // 清理完毕未读消息之后重新显示未读数量
+                    showUnreadNum(NIMClient.getService(MsgService.class).getTotalUnreadCount() + inviteNumber);
+                }
+            }
+        });
+    }
+
+    private void resetUnreadFlags(List<RecentContact> contacts) {
+        clearUnreadCount(contacts);
         if (null == mAdapter) {
             return;
         }
