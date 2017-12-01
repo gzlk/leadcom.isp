@@ -639,8 +639,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                             } else {
                                 mArchive.getAttach().add(attachment);
                             }
+                            aAdapter.update(attachment);
                         }
-                        aAdapter.update(mArchive.getAttach());
+                        mAdapter.clear();
                     }
                     break;
             }
@@ -1078,6 +1079,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             Attachment attachment = aAdapter.get(index);
             mArchive.getAttach().remove(attachment);
+            mArchive.getImage().remove(attachment);
+            mArchive.getOffice().remove(attachment);
+            mArchive.getVideo().remove(attachment);
             aAdapter.remove(attachment);
         }
     };
