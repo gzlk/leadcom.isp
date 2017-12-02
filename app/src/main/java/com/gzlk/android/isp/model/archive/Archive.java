@@ -1,8 +1,10 @@
 package com.gzlk.android.isp.model.archive;
 
 import com.google.gson.reflect.TypeToken;
+import com.gzlk.android.isp.R;
 import com.gzlk.android.isp.cache.Cache;
 import com.gzlk.android.isp.etc.Utils;
+import com.gzlk.android.isp.helper.StringHelper;
 import com.gzlk.android.isp.lib.Json;
 import com.gzlk.android.isp.model.Dao;
 import com.gzlk.android.isp.model.Model;
@@ -470,6 +472,14 @@ public class Archive extends Additional {
 
     public String getContent() {
         return content;
+    }
+
+    public String getSharableSummary() {
+        if (isEmpty(content)) {
+            return StringHelper.getString(R.string.ui_base_share_text_share_summary_blank);
+        } else {
+            return content.length() > 100 ? content.substring(0, 100) : content;
+        }
     }
 
     public void setContent(String content) {

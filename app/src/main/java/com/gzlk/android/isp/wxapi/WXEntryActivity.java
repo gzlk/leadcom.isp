@@ -1,12 +1,17 @@
 package com.gzlk.android.isp.wxapi;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
+import com.gzlk.android.isp.share.ShareToWeiXin;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 /**
  * <b>功能描述：</b>接收发送到微信请求的响应结果<br />
@@ -20,6 +25,17 @@ import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
  */
 
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
+
+    private IWXAPI api;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //注册API
+        api = WXAPIFactory.createWXAPI(this, ShareToWeiXin.APP_ID);
+        api.handleIntent(getIntent(), this);
+        LogHelper.log("savedInstanceState", " sacvsa" + api.handleIntent(getIntent(), this));
+    }
 
     @Override
     public void onReq(BaseReq baseReq) {

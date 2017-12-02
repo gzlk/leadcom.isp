@@ -38,12 +38,16 @@ import com.gzlk.android.isp.model.archive.Archive;
 import com.gzlk.android.isp.model.archive.Comment;
 import com.gzlk.android.isp.model.common.Attachment;
 import com.gzlk.android.isp.nim.file.FilePreviewHelper;
+import com.gzlk.android.isp.share.ShareToQQ;
+import com.gzlk.android.isp.share.ShareToWeiBo;
+import com.gzlk.android.isp.share.ShareToWeiXin;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -417,10 +421,50 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             setCustomTitle(R.string.ui_text_archive_details_fragment_title);
+            setRightIcon(R.string.ui_icon_more);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    openShareDialog();
+                }
+            });
             mAdapter = new DetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
             loadingArchive();
         }
+    }
+
+    private String targetUrl = "http://120.25.124.199:8008/group1/M00/00/21/cErYIVohcxCAXdqZAAAIENZw73g7..html";
+
+    @Override
+    protected void shareToQQ() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), archive.getTitle(), archive.getSharableSummary(), targetUrl, archive.getCover(), null);
+    }
+
+    @Override
+    protected void shareToQZone() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        ArrayList<String> images = new ArrayList<>();
+        images.add(archive.getCover());
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), archive.getTitle(), archive.getSharableSummary(), targetUrl, archive.getCover(), images);
+    }
+
+    @Override
+    protected void shareToWeiXinSession() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, archive.getTitle(), archive.getSharableSummary(), targetUrl);
+    }
+
+    @Override
+    protected void shareToWeiXinTimeline() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, archive.getTitle(), archive.getSharableSummary(), targetUrl);
+    }
+
+    @Override
+    protected void shareToWeiBo() {
+        //ShareToWeiBo.init(Activity()).share(mMoment.getContent(), mMoment.getImage());
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

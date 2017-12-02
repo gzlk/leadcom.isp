@@ -16,6 +16,8 @@
     <dimen name="ui_base_share_dialog_icon_container">@dimen/ui_static_sp_40</dimen>
 
     <string name="ui_base_share_text_share_blank">请提供要分享的文本内容或图片</string>
+    <string name="ui_base_share_text_share_webpage_blank">请提供要分享的网页标题和地址</string>
+    <string name="ui_base_share_text_share_summary_blank">没有填写摘要信息</string>
 
     <string name="ui_base_share_text_share_to_qq_complete">已分享到QQ</string>
     <string name="ui_base_share_text_share_to_qq_cancel">分享到QQ已取消</string>

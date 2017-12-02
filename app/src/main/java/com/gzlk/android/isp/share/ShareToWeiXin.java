@@ -19,6 +19,7 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -40,7 +41,7 @@ import java.util.ArrayList;
 
 public class ShareToWeiXin extends Shareable {
 
-    private static final String APP_ID = StringHelper.getString(R.string.tencent_app_id_wx);
+    public static final String APP_ID = StringHelper.getString(R.string.tencent_app_id_wx);
 
     private static IWXAPI wxapi;
 
@@ -86,6 +87,41 @@ public class ShareToWeiXin extends Shareable {
                     break;
                 case TO_WX_TIMELINE:
                     shareToWeiXinTimeline(activityContext, text, images);
+                    break;
+                case TO_WX_FAVORITE:
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_register_failed);
+        }
+    }
+
+    /**
+     * 分享档案内容到微信
+     */
+    public static void shareToWeiXin(Context context, @ShareType int type, String title, String description, String url) {
+        if (isEmpty(title) || isEmpty(url)) {
+            ToastHelper.make().showMsg(R.string.ui_base_share_text_share_webpage_blank);
+            return;
+        }
+        if (regToWX(context)) {
+            WXWebpageObject webpage = new WXWebpageObject();
+            webpage.webpageUrl = url;
+
+            WXMediaMessage msg = new WXMediaMessage(webpage);
+            msg.title = title;
+            msg.description = description;
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+            msg.thumbData = bmpToByteArray(bitmap, true);
+
+            switch (type) {
+                case TO_WX_SESSION:
+                    sendMessage(msg, SendMessageToWX.Req.WXSceneSession);
+                    break;
+                case TO_WX_TIMELINE:
+                    sendMessage(msg, SendMessageToWX.Req.WXSceneTimeline);
                     break;
                 case TO_WX_FAVORITE:
                     break;
