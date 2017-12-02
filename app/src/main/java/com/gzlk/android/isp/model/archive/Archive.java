@@ -478,7 +478,8 @@ public class Archive extends Additional {
         if (isEmpty(content)) {
             return StringHelper.getString(R.string.ui_base_share_text_share_summary_blank);
         } else {
-            return content.length() > 100 ? content.substring(0, 100) : content;
+            String noHtml = Utils.clearHtml(content);
+            return noHtml.length() > 100 ? noHtml.substring(0, 100) : noHtml;
         }
     }
 

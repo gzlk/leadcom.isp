@@ -19,9 +19,11 @@ import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.MultiImageObject;
 import com.sina.weibo.sdk.api.TextObject;
 import com.sina.weibo.sdk.api.VideoSourceObject;
+import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.sina.weibo.sdk.share.WbShareCallback;
 import com.sina.weibo.sdk.share.WbShareHandler;
+import com.sina.weibo.sdk.utils.Utility;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -122,6 +124,24 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
                 }
             }
         }
+        shareHandler.shareMessage(weiboMessage, false);
+    }
+
+    /**
+     * 分享档案到微博
+     */
+    public void share(String title, String summary, String targetUrl, String image) {
+        WebpageObject mediaObject = new WebpageObject();
+        mediaObject.identify = Utility.generateGUID();
+        mediaObject.title = title;
+        mediaObject.description = summary;
+        // 设置 Bitmap 类型的图片到视频对象里设置缩略图。 注意：最终压缩过的缩略图大小不得超过 32kb。
+        mediaObject.thumbData = getThumb(image);
+        mediaObject.actionUrl = targetUrl;
+        mediaObject.defaultText = "Webpage 默认文案";
+
+        WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
+        weiboMessage.mediaObject = mediaObject;
         shareHandler.shareMessage(weiboMessage, false);
     }
 

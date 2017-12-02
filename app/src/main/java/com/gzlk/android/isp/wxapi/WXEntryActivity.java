@@ -1,9 +1,12 @@
 package com.gzlk.android.isp.wxapi;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.gzlk.android.isp.R;
+import com.gzlk.android.isp.activity.MainActivity;
+import com.gzlk.android.isp.application.App;
 import com.gzlk.android.isp.helper.LogHelper;
 import com.gzlk.android.isp.helper.ToastHelper;
 import com.gzlk.android.isp.share.ShareToWeiXin;
@@ -32,14 +35,30 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //注册API
-        api = WXAPIFactory.createWXAPI(this, ShareToWeiXin.APP_ID);
+        api = WXAPIFactory.createWXAPI(this, ShareToWeiXin.APP_ID, false);
         api.handleIntent(getIntent(), this);
         LogHelper.log("savedInstanceState", " sacvsa" + api.handleIntent(getIntent(), this));
     }
 
     @Override
-    public void onReq(BaseReq baseReq) {
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        api.handleIntent(intent, this);
+    }
 
+    /**
+     * 微信主动请求我们
+     **/
+    @Override
+    public void onReq(BaseReq baseReq) {
+        try {
+            Intent intent = new Intent(App.app(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            App.app().startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

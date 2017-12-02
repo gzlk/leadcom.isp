@@ -453,18 +453,19 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     @Override
     protected void shareToWeiXinSession() {
         Archive archive = (Archive) mAdapter.get(mQueryId);
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, archive.getTitle(), archive.getSharableSummary(), targetUrl);
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, archive.getTitle(), archive.getSharableSummary(), targetUrl, archive.getCover());
     }
 
     @Override
     protected void shareToWeiXinTimeline() {
         Archive archive = (Archive) mAdapter.get(mQueryId);
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, archive.getTitle(), archive.getSharableSummary(), targetUrl);
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, archive.getTitle(), archive.getSharableSummary(), targetUrl, archive.getCover());
     }
 
     @Override
     protected void shareToWeiBo() {
-        //ShareToWeiBo.init(Activity()).share(mMoment.getContent(), mMoment.getImage());
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        ShareToWeiBo.init(Activity()).share(archive.getTitle(), archive.getSharableSummary(), targetUrl, archive.getCover());
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

@@ -38,20 +38,23 @@ import java.io.File;
 
 public class App extends NimApplication {
 
+    private static App instance;
+
     /**
      * 获取全局Application实例
      */
     public static App app() {
-        try {
-            App app = (App) getApplicationUsingReflectionOfAppGlobals();
-            if (null == app) {
-                app = (App) getApplicationUsingReflectionOfActivityThread();
-            }
-            return app;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return instance;
+//        try {
+//            App app = (App) getApplicationUsingReflectionOfAppGlobals();
+//            if (null == app) {
+//                app = (App) getApplicationUsingReflectionOfActivityThread();
+//            }
+//            return app;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
     }
 
     /**
@@ -64,6 +67,7 @@ public class App extends NimApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         AppCrashHandler.getInstance(this);
 
         //PgyCrashManager.register(this);

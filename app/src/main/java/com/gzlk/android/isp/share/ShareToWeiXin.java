@@ -45,17 +45,9 @@ public class ShareToWeiXin extends Shareable {
 
     private static IWXAPI wxapi;
 
-    private static final int THUMB_WIDTH = 150, THUMB_HEIGHT = 150;
-    /**
-     * 缩略图最大不超过32K
-     */
-    private static final int MAX_THUMB_FILE_SIZE = 32 * 1024;
-
-    private static void log(String string) {
-        LogHelper.log("WXShare", string);
-    }
 
     private static boolean regToWX(Context context) {
+        TAG = "WXShare";
         wxapi = WXAPIFactory.createWXAPI(context, APP_ID);
         if (wxapi.isWXAppInstalled()) {
             if (wxapi.isWXAppSupportAPI()) {
@@ -101,7 +93,7 @@ public class ShareToWeiXin extends Shareable {
     /**
      * 分享档案内容到微信
      */
-    public static void shareToWeiXin(Context context, @ShareType int type, String title, String description, String url) {
+    public static void shareToWeiXin(Context context, @ShareType int type, String title, String description, String url, String image) {
         if (isEmpty(title) || isEmpty(url)) {
             ToastHelper.make().showMsg(R.string.ui_base_share_text_share_webpage_blank);
             return;
@@ -113,8 +105,7 @@ public class ShareToWeiXin extends Shareable {
             WXMediaMessage msg = new WXMediaMessage(webpage);
             msg.title = title;
             msg.description = description;
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
-            msg.thumbData = bmpToByteArray(bitmap, true);
+            msg.thumbData = getThumb(image);
 
             switch (type) {
                 case TO_WX_SESSION:
@@ -238,50 +229,9 @@ public class ShareToWeiXin extends Shareable {
 
         WXMediaMessage message = new WXMediaMessage();
         message.mediaObject = object;
-        Bitmap thumb = Bitmap.createScaledBitmap(bitmap, THUMB_WIDTH, THUMB_HEIGHT, true);
-        byte[] data = bmpToByteArray(thumb, true);
-        thumb.recycle();
-        if (data.length > MAX_THUMB_FILE_SIZE) {
-            // 如果缩略图的大小超过了32K则重新生成缩略图
-            log("WX thumb size > 32K(" + Utils.formatSize(data.length) + "), now re-scale image.");
-            String tempThumb = App.app().getTempLocalPath(App.THUMB_DIR);
-            ImageCompress.compressBitmap(localPath, tempThumb, THUMB_WIDTH, THUMB_HEIGHT);
-            message.thumbData = readFile(tempThumb);
-        } else {
-            message.thumbData = data;
-        }
+        message.thumbData = getThumb(url);
         log("WX compressed thumb size = " + Utils.formatSize(message.thumbData.length));
         return message;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static byte[] readFile(String path) {
-        File file = new File(path);
-        byte[] temp = new byte[(int) file.length()];
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            fis.read(temp, 0, temp.length);
-            fis.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return temp;
-    }
-
-    private static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, output);
-        if (needRecycle) {
-            bmp.recycle();
-        }
-
-        byte[] result = output.toByteArray();
-        try {
-            output.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
 }
