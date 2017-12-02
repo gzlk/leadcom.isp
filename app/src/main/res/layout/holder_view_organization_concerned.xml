@@ -12,7 +12,7 @@
         android:layout_centerInParent="true"
         android:text="@string/ui_organization_structure_no_group_exist" />
 
-    <com.gzlk.android.isp.lib.view.WrapContentViewPager
+    <com.leadcom.android.isp.lib.view.WrapContentViewPager
         android:id="@+id/ui_organization_structure_concerned_list"
         android:layout_width="@dimen/ui_static_dp_120"
         android:layout_height="wrap_content"

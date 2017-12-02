@@ -10,7 +10,7 @@
         layout="@layout/holder_view_simple_clickable_gravity_left"
         android:visibility="gone" />
 
-    <com.gzlk.android.isp.lib.view.ExpandableTextView
+    <com.leadcom.android.isp.lib.view.ExpandableTextView
         android:id="@+id/ui_activity_sign_details_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

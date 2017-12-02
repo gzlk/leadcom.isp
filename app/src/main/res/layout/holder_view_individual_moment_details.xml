@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.gzlk.android.isp.lib.view.ImageDisplayer
+        <com.leadcom.android.isp.lib.view.ImageDisplayer
             android:id="@+id/ui_holder_view_moment_details_header"
             android:layout_width="@dimen/ui_base_user_header_image_size_small"
             android:layout_height="@dimen/ui_base_user_header_image_size_small"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_name_default" />
 
-            <com.gzlk.android.isp.lib.view.ExpandableTextView
+            <com.leadcom.android.isp.lib.view.ExpandableTextView
                 android:id="@+id/ui_holder_view_moment_details_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

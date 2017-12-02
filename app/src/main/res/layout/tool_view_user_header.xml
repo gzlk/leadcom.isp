@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.gzlk.android.isp.lib.view.ImageDisplayer xmlns:android="http://schemas.android.com/apk/res/android"
+<com.leadcom.android.isp.lib.view.ImageDisplayer xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/ui_base_user_header_image_size_small"
     android:layout_height="@dimen/ui_base_user_header_image_size_small"

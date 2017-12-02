@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_individual_moment_image_1"
         android:layout_width="@dimen/ui_base_image_line_image_size"
         android:layout_height="@dimen/ui_base_image_line_image_size"
@@ -15,7 +15,7 @@
         app:id_image_src="@mipmap/img_image_default"
         app:id_image_type="normal" />
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_individual_moment_image_2"
         android:layout_width="@dimen/ui_base_image_line_image_size"
         android:layout_height="@dimen/ui_base_image_line_image_size"
@@ -25,7 +25,7 @@
         app:id_image_src="@mipmap/img_image_default"
         app:id_image_type="normal" />
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_individual_moment_image_3"
         android:layout_width="@dimen/ui_base_image_line_image_size"
         android:layout_height="@dimen/ui_base_image_line_image_size"

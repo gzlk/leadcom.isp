@@ -29,7 +29,7 @@
             android:textColor="@android:color/white" />
     </com.hlk.hlklib.lib.view.CorneredView>
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_attachment_image"
         android:layout_width="@dimen/ui_static_dp_30"
         android:layout_height="@dimen/ui_static_dp_30"

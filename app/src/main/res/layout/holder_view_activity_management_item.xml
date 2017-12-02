@@ -11,7 +11,7 @@
     app:cv_active_border="@color/colorPrimary"
     app:cv_normal_border="@android:color/white">
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_activity_management_item_image"
         android:layout_width="@dimen/ui_static_dp_100"
         android:layout_height="@dimen/ui_static_dp_80"

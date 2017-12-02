@@ -43,7 +43,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <com.gzlk.android.isp.lib.view.ImageDisplayer
+            <com.leadcom.android.isp.lib.view.ImageDisplayer
                 android:id="@+id/ui_individual_2d_code_header"
                 android:layout_width="@dimen/ui_static_dp_50"
                 android:layout_height="@dimen/ui_static_dp_50"
@@ -79,7 +79,7 @@
 
         </LinearLayout>
 
-        <com.gzlk.android.isp.lib.view.ImageDisplayer
+        <com.leadcom.android.isp.lib.view.ImageDisplayer
             android:id="@+id/ui_individual_2d_code_code"
             android:layout_width="@dimen/ui_static_dp_240"
             android:layout_height="@dimen/ui_static_dp_240"

@@ -18,7 +18,7 @@
         android:textSize="@dimen/ui_base_text_size_big"
         android:visibility="gone" />
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_contact_header"
         android:layout_width="@dimen/ui_static_dp_30"
         android:layout_height="@dimen/ui_static_dp_30"

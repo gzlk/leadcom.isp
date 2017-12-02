@@ -10,7 +10,7 @@
     android:orientation="horizontal"
     android:padding="@dimen/ui_static_dp_5">
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_group_interest_cover"
         android:layout_width="@dimen/ui_static_dp_35"
         android:layout_height="@dimen/ui_static_dp_35"

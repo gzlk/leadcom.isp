@@ -13,7 +13,7 @@
     app:cv_border_size="@dimen/ui_base_border_size_normal"
     app:cv_normal_border="@android:color/white">
 
-    <com.gzlk.android.isp.lib.view.ExpandableTextView
+    <com.leadcom.android.isp.lib.view.ExpandableTextView
         android:id="@+id/ui_holder_view_document_comment_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

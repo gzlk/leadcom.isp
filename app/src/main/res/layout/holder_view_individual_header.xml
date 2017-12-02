@@ -25,7 +25,7 @@
             android:padding="@dimen/ui_static_dp_3"
             app:cv_corner_size="@dimen/ui_static_dp_30">
 
-            <com.gzlk.android.isp.lib.view.ImageDisplayer
+            <com.leadcom.android.isp.lib.view.ImageDisplayer
                 android:id="@+id/ui_holder_view_user_header"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

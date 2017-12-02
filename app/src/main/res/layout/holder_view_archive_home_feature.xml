@@ -28,7 +28,7 @@
 
     <include layout="@layout/tool_view_document_user_header" />
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_archive_home_recommend_cover"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ui_static_dp_120"

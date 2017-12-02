@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:padding="@dimen/ui_static_dp_8">
 
-    <com.gzlk.android.isp.lib.view.ImageDisplayer
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_tool_organization_concerned_pager_logo"
         android:layout_width="@dimen/ui_static_dp_60"
         android:layout_height="@dimen/ui_static_dp_60"

@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <com.gzlk.android.isp.lib.view.SlidView
+        <com.leadcom.android.isp.lib.view.SlidView
             android:id="@+id/ui_phone_contact_slid_view"
             android:layout_width="@dimen/ui_static_dp_30"
             android:layout_height="match_parent"

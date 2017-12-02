@@ -28,7 +28,7 @@
             android:layout_marginTop="@dimen/ui_static_dp_5"
             android:visibility="gone" />
 
-        <com.gzlk.android.isp.lib.view.ExpandableTextView
+        <com.leadcom.android.isp.lib.view.ExpandableTextView
             android:id="@+id/ui_holder_view_activity_vote_item_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

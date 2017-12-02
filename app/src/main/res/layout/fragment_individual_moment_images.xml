@@ -13,7 +13,7 @@
 
         <include layout="@layout/tool_view_view_pager" />
 
-        <com.gzlk.android.isp.lib.view.ExpandableTextView
+        <com.leadcom.android.isp.lib.view.ExpandableTextView
             android:id="@+id/ui_moment_detail_content_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

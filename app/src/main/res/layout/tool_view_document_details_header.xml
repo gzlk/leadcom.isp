@@ -34,7 +34,7 @@
             layout="@layout/holder_view_simple_clickable"
             android:visibility="gone" />
 
-        <com.gzlk.android.isp.lib.view.ExpandableTextView
+        <com.leadcom.android.isp.lib.view.ExpandableTextView
             android:id="@+id/ui_tool_view_document_details_header_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
