@@ -326,8 +326,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setContent(html);
                 log("HTML: " + text);
             } else if (text.contains("mark:")) {
+                text = Utils.clearContentHtml(text);
                 mArchive.setMarkdown(text.replace("mark:", ""));
                 log("MARK: " + text);
+                mArchive.setContent(Utils.clearContentHtml(mArchive.getContent()));
                 createArchive();
             }
         }

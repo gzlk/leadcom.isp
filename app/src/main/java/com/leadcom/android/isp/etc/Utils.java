@@ -333,9 +333,12 @@ public class Utils {
     private static final String regEx_style1 = "style\\=\\\"[^\\\"]*\\\"";
 
     /**
-     * 清除 html 标签
+     * 清除所有 html 标签(在显示档案摘要或内容时)
      */
     public static String clearHtml(String htmlStr) {
+        if (StringHelper.isEmpty(htmlStr, true)) {
+            htmlStr = "";
+        }
         Pattern p_script = Pattern.compile(regEx_script, Pattern.CASE_INSENSITIVE);
         Matcher m_script = p_script.matcher(htmlStr);
         htmlStr = m_script.replaceAll(""); // 过滤script标签
@@ -361,8 +364,26 @@ public class Utils {
         htmlStr = m_space.replaceAll(""); // 过滤空格回车标签
 
         // 过滤所有 style="xxx" 代码
-        //htmlStr = Pattern.compile(regEx_style1, Pattern.CASE_INSENSITIVE).matcher(htmlStr).replaceAll("");
+        htmlStr = clearStyleEqualsXXX(htmlStr);
         return htmlStr.trim(); // 返回文本字符串
+    }
+
+    public static String clearContentHtml(String htmlString) {
+
+        if (StringHelper.isEmpty(htmlString, true)) {
+            htmlString = "";
+        }
+        Pattern p_script = Pattern.compile(regEx_script, Pattern.CASE_INSENSITIVE);
+        Matcher m_script = p_script.matcher(htmlString);
+        htmlString = m_script.replaceAll(""); // 过滤script标签
+
+        Pattern p_style = Pattern.compile(regEx_style, Pattern.CASE_INSENSITIVE);
+        Matcher m_style = p_style.matcher(htmlString);
+        htmlString = m_style.replaceAll(""); // 过滤style标签
+
+        // 过滤所有 style="xxx" 代码
+        htmlString = clearStyleEqualsXXX(htmlString);
+        return htmlString.trim(); // 返回文本字符串
     }
 
     /**
