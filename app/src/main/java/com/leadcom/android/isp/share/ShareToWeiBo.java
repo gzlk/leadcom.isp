@@ -110,7 +110,7 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
         }
         WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
         //if (!isEmpty(textContent)) {
-        weiboMessage.textObject = getTextObject(textContent);
+        weiboMessage.textObject = getTextObject(textContent, "");
         //}
         if (null != images) {
             if (images.size() <= 1) {
@@ -142,14 +142,15 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
 
         WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
         weiboMessage.mediaObject = mediaObject;
+        weiboMessage.textObject = getTextObject(getString(R.string.ui_base_share_title), targetUrl);
         shareHandler.shareMessage(weiboMessage, false);
     }
 
-    private TextObject getTextObject(String text) {
+    private TextObject getTextObject(String text, String action) {
         TextObject textObject = new TextObject();
         textObject.text = text;
         textObject.title = getString(R.string.ui_base_share_title);
-        textObject.actionUrl = "http://www.baidu.com";
+        textObject.actionUrl = isEmpty(action) ? "http://www.baidu.com" : action;
         return textObject;
     }
 
