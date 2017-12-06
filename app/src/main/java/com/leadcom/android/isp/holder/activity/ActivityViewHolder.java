@@ -5,26 +5,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredView;
+import com.hlk.hlklib.lib.view.NineRectangleGridImageView;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Invitation;
-import com.leadcom.android.isp.model.organization.Member;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CorneredView;
-import com.hlk.hlklib.lib.view.NineRectangleGridImageView;
-import com.netease.nim.uikit.NimUIKit;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.team.TeamService;
-import com.netease.nimlib.sdk.team.model.TeamMember;
-import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 
@@ -100,24 +92,11 @@ public class ActivityViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Activity activity) {
-        String cover = activity.getCover();
         List<String> img = new ArrayList<>();
-//        if (hasImage) {
-//            img.add(activity.getCover());
-//        } else {
-//
-//        }
-        List<Member> members = Activity.getMembers(activity.getId());
-        if (null != members && members.size() > 0) {
-            for (Member member : members) {
-                String head = member.getHeadPhoto();
-                if (isEmpty(head) || !Utils.isUrl(head)) {
-                    head = isEmpty(cover) ? "drawable://" + R.mipmap.img_default_user_header : cover;
-                }
-                img.add(head);
-            }
+        if (activity.getHeadPhotoList().size() < 1) {
+            img.add(activity.getCover());
         } else {
-            fetchingActivityMembers(activity.getTid(), cover);
+            img.addAll(activity.getHeadPhotoList());
         }
         headers.setAdapter(adapter);
         headers.setImagesData(img);
@@ -143,41 +122,6 @@ public class ActivityViewHolder extends BaseViewHolder {
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
         titleView.setText(topic.getTitle());
         descView.setText(topic.getAccessToken());
-    }
-
-    private void showHeaders(List<String> list) {
-        headers.setImagesData(list);
-    }
-
-    private void fetchingActivityMembers(String tid, final String cover) {
-        // 该操作有可能只是从本地数据库读取缓存数据，也有可能会从服务器同步新的数据，因此耗时可能会比较长。
-        NIMClient.getService(TeamService.class).queryMemberList(tid)
-                .setCallback(new RequestCallback<List<TeamMember>>() {
-                    @Override
-                    public void onSuccess(List<TeamMember> members) {
-                        //showTeamMembers(members);
-                        List<String> list = new ArrayList<>();
-                        for (TeamMember member : members) {
-                            UserInfoProvider.UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
-                            String header = null != userInfo ? userInfo.getAvatar() : "";
-                            if (isEmpty(header) || header.contains("null")) {
-                                header = isEmpty(cover) ? "drawable://" + R.mipmap.img_default_user_header : cover;
-                            }
-                            list.add(header);
-                        }
-                        showHeaders(list);
-                    }
-
-                    @Override
-                    public void onFailed(int i) {
-
-                    }
-
-                    @Override
-                    public void onException(Throwable throwable) {
-
-                    }
-                });
     }
 
     @Click({R.id.ui_holder_view_activity_item_container})

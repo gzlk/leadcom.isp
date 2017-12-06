@@ -133,7 +133,7 @@ public class Activity extends Model {
     //状态：1.活跃 2.结束
     @Column(Field.Status)
     private int status;
-    //活动公开状态 1.向所有人公开 2。关闭（只向组织内公开） 参见ActivityConstant中的状态定义
+    //活动公开范围: 1.向所有人公开 2。关闭（只向组织内公开） 参见ActivityConstant中的状态定义 3.向指定人公开
     @Column(Archive.Field.AuthPublic)
     private int authPublic;
     //标签
@@ -177,6 +177,12 @@ public class Activity extends Model {
     // 活动中的成员列表
     @Ignore
     private ArrayList<Member> actMemberList;
+    //成员头像列表(最多九张)
+    @Ignore
+    private ArrayList<String> headPhotoList;
+    //活动议题列表
+    @Ignore
+    private ArrayList<Activity> actTopicList;
 
     public String getTitle() {
         return title;
@@ -374,5 +380,24 @@ public class Activity extends Model {
 
     public void setActMemberList(ArrayList<Member> actMemberList) {
         this.actMemberList = actMemberList;
+    }
+
+    public ArrayList<String> getHeadPhotoList() {
+        if (null == headPhotoList) {
+            headPhotoList = new ArrayList<>();
+        }
+        return headPhotoList;
+    }
+
+    public void setHeadPhotoList(ArrayList<String> headPhotoList) {
+        this.headPhotoList = headPhotoList;
+    }
+
+    public ArrayList<Activity> getActTopicList() {
+        return actTopicList;
+    }
+
+    public void setActTopicList(ArrayList<Activity> actTopicList) {
+        this.actTopicList = actTopicList;
     }
 }
