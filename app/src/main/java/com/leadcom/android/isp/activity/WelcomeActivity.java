@@ -197,8 +197,9 @@ public class WelcomeActivity extends BaseActivity {
                         String path = uri.getPath();
                         String id = uri.getQueryParameter("id");
                         String type = uri.getQueryParameter("type");
+                        int tp = StringHelper.isEmpty(type) ? 0 : Integer.valueOf(type);
                         if (path.contains("archive")) {
-                            openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%s", id, (StringHelper.isEmpty(type) ? "0" : type)), true, false);
+                            openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
                         }
                         finish();
                     } else {
