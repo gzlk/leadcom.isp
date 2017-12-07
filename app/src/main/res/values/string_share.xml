@@ -2,7 +2,7 @@
 <resources>
 
     <string name="ui_base_share_dialog_title">分享到：</string>
-    <string name="ui_base_share_title">来自树脉的分享</string>
+    <string name="ui_base_share_title" formatted="false">%s 来自 #树脉# </string>
 
     <string name="ui_base_share_dialog_to_qq">QQ</string>
     <string name="ui_base_share_dialog_to_qzone">QQ空间</string>

@@ -35,6 +35,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -335,14 +336,8 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Override
     protected void onFetchingRemoteMembersComplete(List<Member> list) {
         if (null != list && list.size() > 0) {
-            for (Member member : list) {
-                if (!members.contains(member)) {
-                    members.add(member);
-                } else {
-                    int index = members.indexOf(member);
-                    members.set(index, member);
-                }
-            }
+            members.clear();
+            members.addAll(list);
             //Collections.sort(members, new MemberComparator());
             searchingListener.onSearching(searchingText);
         }
@@ -360,19 +355,29 @@ public class ContactFragment extends BaseOrganizationFragment {
             } else {
                 searchingText = "";
                 for (Member member : members) {
-                    if (mAdapter.exist(member)) {
-                        mAdapter.update(member);
-                    } else {
-                        mAdapter.add(member);
-                    }
+                    mAdapter.update(member);
                 }
                 if (showType != TYPE_ORG) {
                     mAdapter.sort();
                 }
+                clearAdapterNotExists();
             }
             stopRefreshing();
         }
     };
+
+    private void clearAdapterNotExists() {
+        Iterator<Member> iterator = mAdapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Member member = iterator.next();
+            if (!members.contains(member)) {
+                iterator.remove();
+                mAdapter.notifyItemRemoved(index);
+            }
+            index++;
+        }
+    }
 
     private void searching(String text) {
         searchingText = text;

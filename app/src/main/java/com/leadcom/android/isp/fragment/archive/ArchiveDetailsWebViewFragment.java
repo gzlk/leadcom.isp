@@ -478,7 +478,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void shareToWeiBo() {
-        ShareToWeiBo.init(Activity()).share(share.getTitle(), share.getDescription(), share.getTargetPath(), share.getImageUrl());
+        ShareToWeiBo.init(Activity()).share(share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

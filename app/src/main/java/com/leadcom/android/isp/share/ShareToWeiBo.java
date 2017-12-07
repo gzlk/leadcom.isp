@@ -110,7 +110,7 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
         }
         WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
         //if (!isEmpty(textContent)) {
-        weiboMessage.textObject = getTextObject(textContent, "");
+        weiboMessage.textObject = getTextObject(textContent, "", "");
         //}
         if (null != images) {
             if (images.size() <= 1) {
@@ -138,19 +138,19 @@ public class ShareToWeiBo extends Shareable implements WbShareCallback {
         // 设置 Bitmap 类型的图片到视频对象里设置缩略图。 注意：最终压缩过的缩略图大小不得超过 32kb。
         mediaObject.thumbData = getThumb(image);
         mediaObject.actionUrl = targetUrl;
-        mediaObject.defaultText = "Webpage 默认文案";
+        mediaObject.defaultText = title;
 
         WeiboMultiMessage weiboMessage = new WeiboMultiMessage();
         weiboMessage.mediaObject = mediaObject;
-        weiboMessage.textObject = getTextObject(getString(R.string.ui_base_share_title), targetUrl);
+        weiboMessage.textObject = getTextObject(title, title, targetUrl);
         shareHandler.shareMessage(weiboMessage, false);
     }
 
-    private TextObject getTextObject(String text, String action) {
+    private TextObject getTextObject(String text, String title, String action) {
         TextObject textObject = new TextObject();
-        textObject.text = text;
-        textObject.title = getString(R.string.ui_base_share_title);
-        textObject.actionUrl = isEmpty(action) ? "http://www.baidu.com" : action;
+        textObject.text = StringHelper.getString(R.string.ui_base_share_title, text);// 显示在文本编辑框里的内容
+        textObject.title = title;
+        textObject.actionUrl = isEmpty(action) ? "" : action;
         return textObject;
     }
 
