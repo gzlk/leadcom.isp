@@ -69,6 +69,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
     private static boolean deletable = false;
     private static int selectedIndex = 0;
+    /**
+     * 标记是否是app内部打开的详情页
+     */
+    private static boolean innerOpen = false;
 
     public static ArchiveDetailsWebViewFragment newInstance(String params) {
         ArchiveDetailsWebViewFragment adwvf = new ArchiveDetailsWebViewFragment();
@@ -83,6 +87,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     public static void open(BaseFragment fragment, String archiveId, int archiveType) {
+        innerOpen = true;
         String params = format("%s,%d", archiveId, archiveType);
         fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), params, REQUEST_DELETE, true, false);
     }
@@ -123,9 +128,12 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             mOnKeyboardChangeListener.destroy();
         }
         if (!SysInfoUtil.stackResumed(Activity())) {
-            // 如果不是堆栈恢复的app则打开主页面，否则直接关闭即可
-            MainActivity.start(Activity());
+            if (!innerOpen) {
+                // 如果不是堆栈恢复的app则打开主页面，否则直接关闭即可
+                MainActivity.start(Activity());
+            }
         }
+        innerOpen = false;
         super.onDestroy();
     }
 

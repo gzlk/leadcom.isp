@@ -197,7 +197,10 @@ public class WelcomeActivity extends BaseActivity {
                         String path = uri.getPath();
                         String id = uri.getQueryParameter("id");
                         String type = uri.getQueryParameter("type");
-                        int tp = StringHelper.isEmpty(type) ? 0 : Integer.valueOf(type);
+                        int tp = StringHelper.isEmpty(type, true) ? 2 : Integer.valueOf(type);
+                        if (StringHelper.isEmpty(type, true)) {
+                            log("传入的参数错误：type = null");
+                        }
                         if (path.contains("archive")) {
                             openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
                         }
