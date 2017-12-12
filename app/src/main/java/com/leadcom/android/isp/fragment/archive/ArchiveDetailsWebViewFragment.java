@@ -464,24 +464,24 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void shareToQQ() {
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), share.getTitle(), share.getDescription(), share.getTargetPath(), share.getImageUrl(), null);
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), null);
     }
 
     @Override
     protected void shareToQZone() {
         ArrayList<String> img = new ArrayList<>();
         img.add(share.getImageUrl());
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), share.getTitle(), share.getDescription(), share.getTargetPath(), share.getImageUrl(), img);
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), img);
     }
 
     @Override
     protected void shareToWeiXinSession() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, share.getTitle(), share.getDescription(), share.getTargetPath(), share.getImageUrl());
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
     }
 
     @Override
     protected void shareToWeiXinTimeline() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, share.getTitle(), share.getDescription(), share.getTargetPath(), share.getImageUrl());
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
     }
 
     @Override

@@ -1,18 +1,14 @@
 package com.leadcom.android.isp.application;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
 import android.text.TextUtils;
 
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.activity.WelcomeActivity;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.crash.system.SysInfoUtil;
 import com.leadcom.android.isp.helper.LogHelper;
-import com.leadcom.android.isp.helper.NotificationHelper;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -265,6 +261,9 @@ public class NimApplication extends BaseActivityManagedApplication {
                 if (!StringHelper.isEmpty(json)) {
                     NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
                     if (null != msg) {
+                        if (isEmpty(msg.getId())) {
+                            msg.setId(msg.getUuid());
+                        }
                         switch (msg.getType()) {
                             case NimMessage.Type.ACTIVITY_END:
                             case NimMessage.Type.ACTIVITY_EXIT:
@@ -293,11 +292,11 @@ public class NimApplication extends BaseActivityManagedApplication {
                         }
                         NimMessage.save(msg);
                         if (msg.isSavable()) {
-                            if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
-                                // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
-                                Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
-                                NotificationHelper.helper(NimApplication.this).show(getString(R.string.ui_nim_action_notice), msg.getMsgContent(), extra);
-                            }
+//                            if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
+//                                // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
+//                                Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
+//                                NotificationHelper.helper(NimApplication.this).show(getString(R.string.ui_nim_action_notice), msg.getMsgContent(), extra);
+//                            }
                             dispatchCallbacks();
                         }
                         dispatchEvents(msg);

@@ -4,18 +4,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
-import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
-
-import java.util.Date;
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 /**
  * <b>功能描述：</b>系统消息<br />
@@ -57,30 +54,14 @@ public class SystemMessageViewHolder extends BaseViewHolder {
     public void showContent(NimMessage msg) {
         titleView.setText(getTitle(msg));
         descView.setText(msg.getMsgContent());
-        String time = Utils.formatTimeAgo(new Date(msg.getId()));
+        String time = fragment().formatTimeAgo(msg.getSendDate());
         timeView.setText(time);
-        unreadView.setVisibility(msg.isHandled() ? View.GONE : View.VISIBLE);
-    }
-
-    private String getHandleTitle(NimMessage msg) {
-        switch (msg.getType()) {
-            case NimMessage.Type.ACTIVITY_ALERT_ALL:
-            case NimMessage.Type.ACTIVITY_END:
-            case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
-            case NimMessage.Type.SQUAD_INVITE_ALERT:
-            case NimMessage.Type.TOPIC_END:
-            case NimMessage.Type.TOPIC_EXIT:
-            case NimMessage.Type.TOPIC_INVITE:
-            case NimMessage.Type.TOPIC_KICK_OUT:
-                return msg.isHandled() ? "" : "(未读)";
-            default:
-                return msg.isHandled() ? (msg.isHandleState() ? "(已同意)" : "(暂缓)") : "(未处理)";
-        }
+        unreadView.setVisibility(msg.isRead() ? View.GONE : View.VISIBLE);
     }
 
     private String getTitle(NimMessage msg) {
         if (isEmpty(msg.getMsgTitle())) {
-            return NimMessage.getType(msg.getType());
+            return NimMessage.getType(0 == msg.getType() ? msg.getMsgType() : msg.getType());
         }
         return msg.getMsgTitle();
     }

@@ -8,6 +8,9 @@ import com.daimajia.swipe.util.Attributes;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.api.common.PushMsgRequest;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -59,7 +62,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            loadingLocalMessages();
+            fetchingPushMessages();
         }
     };
 
@@ -118,8 +121,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                     warningClear();
                 }
             });
+            fetchingPushMessages();
         }
-        loadingLocalMessages();
     }
 
     private void warningClear() {
@@ -135,12 +138,18 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         }, null);
     }
 
-    private void loadingLocalMessages() {
-        List<NimMessage> list = NimMessage.query();
-        if (null != list) {
-            mAdapter.update(list, false);
-        }
-        displayNothing(mAdapter.getItemCount() < 1);
+    private void fetchingPushMessages() {
+        displayLoading(true);
+        displayNothing(false);
+        PushMsgRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<NimMessage>() {
+            @Override
+            public void onResponse(List<NimMessage> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    mAdapter.update(list);
+                }
+            }
+        }).list();
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
@@ -148,19 +157,17 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             // 点击查看通知
             NimMessage msg = mAdapter.get(index);
+            if (!msg.isRead()) {
+                updatePushMessage(msg.getUuid());
+            }
             if (!msg.isHandled()) {
                 msg.setHandled(true);
                 NimMessage.save(msg);
                 NimApplication.dispatchCallbacks();
             }
-//            if (!isEmpty(msg.getMsgTitle()) && !msg.isHandled()) {
-//                msg.setHandled(true);
-//                NimMessage.save(msg);
-//                NimApplication.dispatchCallbacks();
-//            }
-            if (msg.getType() == NimMessage.Type.ACTIVITY_INVITE && msg.isHandled()) {
+            if (msg.getMsgType() == NimMessage.Type.ACTIVITY_INVITE && msg.isRead()) {
                 // 活动邀请且已处理过的话
-                if (msg.isHandleState()) {
+                if (msg.isRead()) {
                     checkTeamMember(msg.getTid());
                 } else {
                     MainActivity.handleNimMessageDetails(Activity(), msg);
@@ -170,6 +177,15 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
     };
+
+    private void updatePushMessage(String uuid) {
+        PushMsgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<NimMessage>() {
+            @Override
+            public void onResponse(NimMessage nimMessage, boolean success, String message) {
+                super.onResponse(nimMessage, success, message);
+            }
+        }).update(uuid);
+    }
 
     private void checkTeamMember(final String tid) {
         displayLoading(true);
@@ -214,17 +230,28 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         SimpleDialogHelper.init(Activity()).show(R.string.ui_system_message_delete_warning, R.string.ui_base_text_yes, R.string.cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                long id = mAdapter.get(holder.getAdapterPosition()).getId();
+                NimMessage msg = mAdapter.get(holder.getAdapterPosition());
+                String id = msg.getId();
                 mAdapter.delete(holder);
                 removeCache(id);
+                removePushMessage(msg.getUuid());
                 return true;
             }
         }, null);
     }
 
-    private void removeCache(long id) {
+    private void removeCache(String id) {
         NimMessage.delete(id);
         NimApplication.dispatchCallbacks();
+    }
+
+    private void removePushMessage(String uuid) {
+        PushMsgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<NimMessage>() {
+            @Override
+            public void onResponse(NimMessage nimMessage, boolean success, String message) {
+                super.onResponse(nimMessage, success, message);
+            }
+        }).delete(uuid);
     }
 
     private class MessageAdapter extends RecyclerViewSwipeAdapter<SystemMessageViewHolder, NimMessage> {

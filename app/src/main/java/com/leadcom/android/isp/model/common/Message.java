@@ -1,8 +1,9 @@
 package com.leadcom.android.isp.model.common;
 
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.activity.Activity;
+import com.leadcom.android.isp.model.archive.Archive;
 import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Table;
 
 /**
  * <b>功能描述：</b>消息类<br />
@@ -14,11 +15,10 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table("message")
 public class Message extends Model {
 
     public static class Field {
-        public static final String FromUserId = "fromUserId";
+        static final String FromUserId = "fromUserId";
         public static final String FromUserName = "fromUserName";
         public static final String ToUserId = "toUserId";
         public static final String ToUserName = "toUserName";
@@ -41,18 +41,19 @@ public class Message extends Model {
     //消息类型 1.用户聊天短消息 2.发起的活动变更消息  3.参与的活动变更消息   4.发起的群体变更消息  5.参与的群体变更消息 6.新成员入群申请消息（消息常量在Constant中定义）
     @Column(Field.MessageType)
     private int msgType;
+    @Column(Archive.Field.Title)
+    private String msgTitle;// 原有属性
     //消息内容
     @Column(Field.MessageContent)
     private String msgContent;
     //发送时间
     @Column(Field.SendDate)
     private String sendDate;
-    //是否已读
-    @Column(Field.IsRead)
-    private String isRead;
     //uuid，用于查找发给多人的同一个消息
     @Column(Model.Field.UUID)
     private String uuid;
+    @Column(Activity.Field.Status)
+    private int status;        //状态(0.未读,1.已读,2.已处理)
 
     public String getFromUserId() {
         return fromUserId;
@@ -94,6 +95,14 @@ public class Message extends Model {
         this.msgType = msgType;
     }
 
+    public String getMsgTitle() {
+        return msgTitle;
+    }
+
+    public void setMsgTitle(String msgTitle) {
+        this.msgTitle = msgTitle;
+    }
+
     public String getMsgContent() {
         return msgContent;
     }
@@ -110,14 +119,6 @@ public class Message extends Model {
         this.sendDate = sendDate;
     }
 
-    public String getIsRead() {
-        return isRead;
-    }
-
-    public void setIsRead(String isRead) {
-        this.isRead = isRead;
-    }
-
     public String getUuid() {
         return uuid;
     }
@@ -125,4 +126,17 @@ public class Message extends Model {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public boolean isRead() {
+        return status >= 1;
+    }
+
 }

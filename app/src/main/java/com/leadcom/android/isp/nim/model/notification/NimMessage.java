@@ -1,11 +1,11 @@
 package com.leadcom.android.isp.nim.model.notification;
 
-import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
@@ -27,7 +27,7 @@ import java.util.List;
  */
 
 @Table(NimMessage.PARAM.TABLE)
-public class NimMessage implements MsgAttachment {
+public class NimMessage extends Message implements MsgAttachment {
 
     public interface PARAM {
         String TABLE = "notification";
@@ -44,32 +44,39 @@ public class NimMessage implements MsgAttachment {
     }
 
     public boolean equals(NimMessage msg) {
-        return null != msg && msg.getId() == getId();
+        return null != msg && !isEmpty(msg.getId()) && msg.getId().equals(getId());
     }
 
     public static void save(NimMessage msg) {
         if (msg.isSavable()) {
+            if (StringHelper.isEmpty(msg.getId(), true)) {
+                msg.setId(msg.getUuid());
+            }
             new Dao<>(NimMessage.class).save(msg);
         }
     }
 
     public static void save(List<NimMessage> msgs) {
+        for (NimMessage msg : msgs) {
+            if (StringHelper.isEmpty(msg.getId(), true)) {
+                msg.setId(msg.getUuid());
+            }
+        }
         new Dao<>(NimMessage.class).save(msgs);
     }
 
-    public static void delete(long msgId) {
+    public static void delete(String msgId) {
         Dao<NimMessage> dao = new Dao<>(NimMessage.class);
         NimMessage msg = dao.querySingle(Model.Field.Id, msgId);
         dao.delete(msg);
     }
 
-    public static NimMessage query(long msgId) {
+    public static NimMessage query(String msgId) {
         return new Dao<>(NimMessage.class).querySingle(Model.Field.Id, msgId);
     }
 
     public static List<NimMessage> query() {
-        QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
-                .appendOrderDescBy(Model.Field.Id);
+        QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class).appendOrderDescBy(Model.Field.Id);
         return new Dao<>(NimMessage.class).query(builder);
     }
 
@@ -106,6 +113,18 @@ public class NimMessage implements MsgAttachment {
      * 自定义消息类型
      */
     public interface Type {
+        /**
+         * 用户聊天短消息
+         */
+        int USER_CHAT = 1;
+        /**
+         * 活动回复消息
+         */
+        int ACTIVITY_REPLY = 2;
+        /**
+         * 事件回复消息
+         */
+        int EVENT_REPLY = 3;
         /**
          * 新成员申请加入组织
          */
@@ -262,20 +281,9 @@ public class NimMessage implements MsgAttachment {
         }
     }
 
-    @Column(Model.Field.Id)
-    private long id = Utils.timestamp();
-    // 自定义消息类型
+    // 推送类型(0.点对点自定义推送,1.群消息自定义推送)
     @Column(Archive.Field.Type)
     private int type;// 原有属性
-    // 自定义消息标题
-    @Column(Archive.Field.Title)
-    private String msgTitle;// 原有属性
-    // 自定义消息内容
-    @Column(Archive.Field.Content)
-    private String msgContent;// 原有属性
-    // 自定义消息id
-    @Column(Model.Field.UUID)
-    private String uuid;// 原有属性
     // 活动的tid
     @Column(Activity.Field.NimId)
     private String tid;// 原有属性
@@ -296,44 +304,12 @@ public class NimMessage implements MsgAttachment {
     @Column(PARAM.TOPICS)
     private ArrayList<String> subTidList;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public int getType() {
         return type;
     }
 
     public void setType(int type) {
         this.type = type;
-    }
-
-    public String getMsgTitle() {
-        return msgTitle;
-    }
-
-    public void setMsgTitle(String msgTitle) {
-        this.msgTitle = msgTitle;
-    }
-
-    public String getMsgContent() {
-        return msgContent;
-    }
-
-    public void setMsgContent(String msgContent) {
-        this.msgContent = msgContent;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public String getTid() {

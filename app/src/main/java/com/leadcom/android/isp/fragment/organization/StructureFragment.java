@@ -430,7 +430,7 @@ public class StructureFragment extends BaseOrganizationFragment {
             // 本组织下的小组列表
             fetchingGroupSquads(org.getId());
             // 如果当前用户是管理员的话，增加推荐档案列表的显示
-            if (my.isManager()) {
+            if (my.isManager() || my.isArchiveManager()) {
                 organizationFragment.addRecommendedArchives(true, selectedGroupId);
             } else {
                 organizationFragment.addRecommendedArchives(false, selectedGroupId);

@@ -50,6 +50,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_TID = "aef_param_tid";
     private static final String PARAM_MSG_ID = "aef_param_msg_id";
+    private static final String PARAM_MSG_UUID = "aef_param_uuid";
 
     public static ActivityEntranceFragment newInstance(String params) {
         ActivityEntranceFragment siaf = new ActivityEntranceFragment();
@@ -61,27 +62,32 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_TID, strings[1]);
         // nim 消息id
         if (strings.length > 2) {
-            bundle.putLong(PARAM_MSG_ID, Long.valueOf(strings[2]));
+            bundle.putString(PARAM_MSG_ID, strings[2]);
+        }
+        // nim 消息的uuid
+        if (strings.length > 3) {
+            bundle.putString(PARAM_MSG_UUID, strings[3]);
         }
         siaf.setArguments(bundle);
         return siaf;
     }
 
-    private String tid = "";
-    private long nimId = 0L;
+    private String tid = "", uuid = "", nimId = "";
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         tid = bundle.getString(PARAM_TID, "");
-        nimId = bundle.getLong(PARAM_MSG_ID, 0L);
+        nimId = bundle.getString(PARAM_MSG_ID, "");
+        uuid = bundle.getString(PARAM_MSG_UUID, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_TID, tid);
-        bundle.putLong(PARAM_MSG_ID, nimId);
+        bundle.putString(PARAM_MSG_ID, nimId);
+        bundle.putString(PARAM_MSG_UUID, uuid);
     }
 
     // view
@@ -383,7 +389,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         }
         creatorHolder.showContent(format(items[4], null == activity ? "" : activity.getCreatorName()));
 
-        if (nimId > 0) {
+        if (!isEmpty(nimId)) {
             NimMessage msg = NimMessage.query(nimId);
             if (null != msg) {
                 // 消息已经处理过说明已暂缓或已同意，不再显示拒绝按钮
