@@ -10,21 +10,31 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
+import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.lib.Json;
-import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.user.Collection;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.share.ShareToQQ;
+import com.leadcom.android.isp.share.ShareToWeiBo;
+import com.leadcom.android.isp.share.ShareToWeiXin;
+import com.leadcom.android.isp.task.CopyLocalFileTask;
+import com.leadcom.android.isp.view.ZoomableImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +49,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ImageViewerFragment extends BaseTransparentSupportFragment implements ViewPager.OnPageChangeListener {
+public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment implements ViewPager.OnPageChangeListener {
 
     protected static final String PARAM_SELECTED = "ivf_param_selected";
 
@@ -120,8 +130,59 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
                 finish();
                 break;
             case R.id.ui_ui_custom_title_right_container:
-                // 收藏
+                showMoreDialog();
+                break;
+        }
+    }
+
+    private View dialogView;
+
+    private void showMoreDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == dialogView) {
+                    dialogView = View.inflate(Activity(), R.layout.popup_dialog_moment_details, null);
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_privacy).setVisibility(View.GONE);
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_delete).setVisibility(View.GONE);
+                    //dialogView.findViewById(R.id.ui_dialog_moment_details_button_share).setVisibility(View.GONE);
+                }
+                return dialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_moment_details_button_privacy,
+                        R.id.ui_dialog_moment_details_button_favorite,
+                        R.id.ui_dialog_moment_details_button_share,
+                        R.id.ui_dialog_moment_details_button_save,
+                        R.id.ui_dialog_moment_details_button_delete};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                handlePopupClick(view.getId());
+                return true;
+            }
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
+    }
+
+    private void handlePopupClick(int id) {
+        switch (id) {
+            case R.id.ui_dialog_moment_details_button_favorite:
+                // 收藏单张图片
                 tryCollectImage();
+                break;
+            case R.id.ui_dialog_moment_details_button_share:
+                openShareDialog();
+                break;
+            case R.id.ui_dialog_moment_details_button_save:
+                // 保存单张图片到本地
+                save();
                 break;
         }
     }
@@ -140,6 +201,60 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
     }
 
     @Override
+    protected void shareToQQ() {
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "", "", "", images.get(selectedIndex), null);
+    }
+
+    @Override
+    protected void shareToQZone() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(images.get(selectedIndex));
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title, "分享图片"), "分享图片", "http://www.baidu.com", "", img);
+    }
+
+    @Override
+    protected void shareToWeiXinSession() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(images.get(selectedIndex));
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, "", img);
+    }
+
+    @Override
+    protected void shareToWeiXinTimeline() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(images.get(selectedIndex));
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, "分享图片", img);
+    }
+
+    @Override
+    protected void shareToWeiBo() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(images.get(selectedIndex));
+        ShareToWeiBo.init(Activity()).share("分享图片", img);
+    }
+
+    private void save() {
+        String url = images.get(selectedIndex);
+        String local = HttpHelper.helper().getLocalFilePath(url, App.IMAGE_DIR);
+        File file = new File(local);
+        if (file.exists()) {
+            new CopyLocalFileTask().exec(url, local);
+        } else {
+            // 文件不存在则重新下载
+            downloadFile(url);
+        }
+    }
+
+    @Override
+    protected void onFileDownloadingComplete(String url, String local, boolean success) {
+        super.onFileDownloadingComplete(url, local, success);
+        if (success) {
+            // 下载成功之后重新另存到外置SD卡公共Picture目录
+            save();
+        }
+    }
+
+    @Override
     public void doingInResume() {
         tryPaddingContent(titleContainer, false);
         titleLeftText.setText(null);
@@ -148,7 +263,7 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
         if (images.size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_viewer_image_nothing);
         } else {
-            titleRightText.setText(R.string.ui_base_text_favorite);
+            titleRightIcon.setText(R.string.ui_icon_more);
             initializeAdapter();
         }
     }
@@ -211,16 +326,20 @@ public class ImageViewerFragment extends BaseTransparentSupportFragment implemen
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ImageDisplayer displayer = new ImageDisplayer(Activity());
-            displayer.displayImage(images.get(position), getScreenWidth(), getScreenHeight(), false, false);
-            container.addView(displayer);
-            return displayer;
+            ZoomableImageView ziv = new ZoomableImageView(App.app());
+            //ziv.setScaleType(ImageView.ScaleType.CENTER);
+            ImageLoader.getInstance().displayImage(images.get(position), new ImageViewAware(ziv), null, null, null, null);
+            container.addView(ziv);
+            return ziv;
+//            ImageDisplayer displayer = (ImageDisplayer) View.inflate(container.getContext(), R.layout.tool_view_single_image, null);
+//            displayer.displayImage(images.get(position), getScreenWidth(), getScreenHeight(), false, false);
+//            container.addView(displayer);
+//            return displayer;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            ImageDisplayer displayer = (ImageDisplayer) object;
-            container.removeView(displayer);
+            container.removeView((View) object);
         }
     }
 }

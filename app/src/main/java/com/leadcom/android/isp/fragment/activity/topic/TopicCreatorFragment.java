@@ -117,7 +117,7 @@ public class TopicCreatorFragment extends BaseDownloadingUploadingSupportFragmen
 
     private void setTitleEvents() {
         setCustomTitle(R.string.ui_activity_topic_list_right_title_text);
-        setRightText(R.string.ui_base_text_new);
+        setRightText(R.string.ui_base_text_launch);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
