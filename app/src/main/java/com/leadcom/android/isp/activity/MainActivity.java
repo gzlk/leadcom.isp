@@ -23,6 +23,7 @@ import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
+import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.common.SystemUpdate;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
@@ -333,7 +334,7 @@ public class MainActivity extends TitleActivity {
 
     public static void handleNimMessageDetails(final AppCompatActivity activity, final NimMessage msg) {
         String yes = "", no = "";
-        switch (msg.getType()) {
+        switch (msg.getMsgType()) {
             case NimMessage.Type.GROUP_JOIN:
                 yes = StringHelper.getString(R.string.ui_base_text_ok);
                 no = StringHelper.getString(R.string.ui_base_text_reject);
@@ -348,7 +349,7 @@ public class MainActivity extends TitleActivity {
                 break;
             case NimMessage.Type.GROUP_INVITE:
                 // 受邀者出现的对话框是“好”,“不用了”
-                if (msg.isHandled() && msg.isHandleState()) {
+                if (msg.isHandled()) {
                     openActivity(activity, OrganizationPropertiesFragment.class.getName(), msg.getGroupId(), false, false, true);
                 } else {
                     yes = StringHelper.getString(R.string.ui_base_text_ok);
@@ -371,13 +372,13 @@ public class MainActivity extends TitleActivity {
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
             case NimMessage.Type.ACTIVITY_INVITE:
-                if (msg.isHandled()) {
-                    if (msg.isHandleState()) {
+                if (msg.isRead()) {
+                    if (msg.isHandled()) {
                         // 直接打开活动群聊页面
                         NimUIKit.startTeamSession(activity, msg.getTid());
                     } else {
                         // 消息已处理过且属于暂不参加则打开加入活动页面
-                        openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%d", msg.getTid(), msg.getId()), true, false);
+                        openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%s", msg.getTid(), msg.getId()), true, false);
                     }
                 } else {
                     // 活动邀请，下一步打开未处理活动页面
@@ -417,7 +418,7 @@ public class MainActivity extends TitleActivity {
             SimpleDialogHelper.init(activity).show(msg.getMsgContent(), yes, no, new DialogHelper.OnDialogConfirmListener() {
                 @Override
                 public boolean onConfirm() {
-                    switch (msg.getType()) {
+                    switch (msg.getMsgType()) {
                         case NimMessage.Type.GROUP_JOIN:
                             // 通过别人的入群申请
                             joinIntoGroupPassed(msg);
@@ -436,7 +437,7 @@ public class MainActivity extends TitleActivity {
                                 NimUIKit.startTeamSession(activity, msg.getTid());
                             } else {
                                 // 消息没有处理过则打开加入活动页面
-                                openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%d", msg.getTid(), msg.getId()), true, false);
+                                openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%s", msg.getTid(), msg.getId()), true, false);
                             }
                             break;
                         case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
@@ -461,7 +462,7 @@ public class MainActivity extends TitleActivity {
             }, new DialogHelper.OnDialogCancelListener() {
                 @Override
                 public void onCancel() {
-                    switch (msg.getType()) {
+                    switch (msg.getMsgType()) {
                         case NimMessage.Type.GROUP_JOIN:
                             // 拒绝别人的入群申请
                             joinIntoGroupDenied(msg);
@@ -484,9 +485,10 @@ public class MainActivity extends TitleActivity {
     }
 
     private static void saveMessage(NimMessage msg, boolean handled, boolean state) {
-        msg.setHandled(handled);
-        msg.setHandleState(state);
+        // 已处理
+        msg.setStatus(Message.Status.HANDLED);
         NimMessage.save(msg);
+        NimMessage.resetStatus(msg.getTid());
         NimApplication.dispatchCallbacks();
     }
 

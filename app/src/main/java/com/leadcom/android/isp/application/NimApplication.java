@@ -264,13 +264,13 @@ public class NimApplication extends BaseActivityManagedApplication {
                         if (isEmpty(msg.getId())) {
                             msg.setId(msg.getUuid());
                         }
-                        switch (msg.getType()) {
+                        switch (msg.getMsgType()) {
                             case NimMessage.Type.ACTIVITY_END:
                             case NimMessage.Type.ACTIVITY_EXIT:
                             case NimMessage.Type.ACTIVITY_KICK_OUT:
                                 // 活动结束、退出活动、被踢出活动时，清理活动中的未读消息条数
                                 clearUnreadCount(msg.getTid());
-                                if (msg.getType() == NimMessage.Type.ACTIVITY_END && null != msg.getSubTidList()) {
+                                if (msg.getMsgType() == NimMessage.Type.ACTIVITY_END && null != msg.getSubTidList()) {
                                     for (String tid : msg.getSubTidList()) {
                                         clearUnreadCount(tid);
                                     }
@@ -387,7 +387,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     }
 
     private static void resetBadgeNumber() {
-        int size = NimMessage.getUnHandled();
+        int size = NimMessage.getUnRead();
         size += NIMClient.getService(MsgService.class).getTotalUnreadCount();
         ShortcutBadger.applyCount(App.app(), size);
     }

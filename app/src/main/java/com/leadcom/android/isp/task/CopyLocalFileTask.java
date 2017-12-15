@@ -1,17 +1,17 @@
 package com.leadcom.android.isp.task;
 
-import android.content.ContentValues;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 
+import com.hlk.hlklib.tasks.AsyncedTask;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.hlk.hlklib.tasks.AsyncedTask;
-import com.netease.nim.uikit.common.util.C;
+import com.netease.nim.uikit.NimUIKit;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,10 +84,12 @@ public class CopyLocalFileTask  extends AsyncedTask<String, Integer, Boolean> {
         super.onPostExecute(result);
         if (result) {
             if (ImageCompress.isImage(Attachment.getExtension(localPath))) {
-                ContentValues values = new ContentValues(2);
-                values.put(MediaStore.Images.Media.MIME_TYPE, C.MimeType.MIME_JPEG);
-                values.put(MediaStore.Images.Media.DATA, localPath);
-                App.app().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                Uri uri= NimUIKit.getUriFromFile(App.app(),localPath);
+                App.app().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+//                ContentValues values = new ContentValues(2);
+//                values.put(MediaStore.Images.Media.MIME_TYPE, C.MimeType.MIME_JPEG);
+//                values.put(MediaStore.Images.Media.DATA, localPath);
+//                App.app().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 ToastHelper.make().showMsg(R.string.ui_base_text_downloading_image_completed);
             }else{
                 ToastHelper.make().showMsg(R.string.ui_base_text_downloading_file_completed);

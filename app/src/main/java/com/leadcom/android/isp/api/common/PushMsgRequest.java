@@ -8,6 +8,8 @@ import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.litesuits.http.request.param.HttpMethods;
 
+import java.util.List;
+
 /**
  * <b>功能描述：</b>系统推送消息<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -52,6 +54,22 @@ public class PushMsgRequest extends Request<NimMessage> {
         return this;
     }
 
+    @Override
+    protected void save(NimMessage nimMessage) {
+        if (null != nimMessage) {
+            nimMessage.setId(nimMessage.getUuid());
+        }
+        super.save(nimMessage);
+    }
+
+    @Override
+    protected void save(List<NimMessage> list) {
+        for (NimMessage msg : list) {
+            msg.setId(msg.getUuid());
+        }
+        super.save(list);
+    }
+
     /**
      * 拉取推送消息列表
      */
@@ -71,5 +89,12 @@ public class PushMsgRequest extends Request<NimMessage> {
      */
     public void delete(String uuid) {
         httpRequest(getRequest(SingleQuery.class, url(format("%s?uuid=%s", DELETE, uuid)), "", HttpMethods.Get));
+    }
+
+    /**
+     * 清空用户的推送消息
+     */
+    public void clearByUser() {
+        httpRequest(getRequest(SingleQuery.class, url("/deleteByUser"), "", HttpMethods.Get));
     }
 }

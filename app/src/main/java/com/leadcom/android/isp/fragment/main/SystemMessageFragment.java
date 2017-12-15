@@ -19,10 +19,11 @@ import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.SystemMessageViewHolder;
-import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
+import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.netease.nimlib.sdk.NIMClient;
@@ -30,6 +31,7 @@ import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -50,19 +52,19 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NimApplication.addNotificationChangeCallback(callback);
+        NimApplication.addNimMessageEvent(event);
     }
 
     @Override
     public void onDestroy() {
-        NimApplication.removeNotificationChangeCallback(callback);
+        NimApplication.removeNimMessageEvent(event);
         super.onDestroy();
     }
 
-    private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
+    private OnNimMessageEvent event = new OnNimMessageEvent() {
         @Override
-        public void onChanged() {
-            fetchingPushMessages();
+        public void onMessageEvent(NimMessage message) {
+            mAdapter.update(message);
         }
     };
 
@@ -129,13 +131,28 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         SimpleDialogHelper.init(Activity()).show(R.string.ui_system_message_clear_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                NimMessage.clear();
-                NimApplication.dispatchCallbacks();
-                mAdapter.clear();
-                displayNothing(mAdapter.getItemCount() < 1);
+                clearPushMessage();
                 return true;
             }
         }, null);
+    }
+
+    private void clearPushMessage() {
+        displayLoading(true);
+        displayNothing(false);
+        PushMsgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<NimMessage>() {
+            @Override
+            public void onResponse(NimMessage nimMessage, boolean success, String message) {
+                super.onResponse(nimMessage, success, message);
+                displayLoading(false);
+                if (success) {
+                    NimMessage.clear();
+                    NimApplication.dispatchCallbacks();
+                    mAdapter.clear();
+                    displayNothing(mAdapter.getItemCount() < 1);
+                }
+            }
+        }).clearByUser();
     }
 
     private void fetchingPushMessages() {
@@ -148,6 +165,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     mAdapter.update(list);
                 }
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() < 1);
             }
         }).list();
     }
@@ -157,17 +176,9 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             // 点击查看通知
             NimMessage msg = mAdapter.get(index);
-            if (!msg.isRead()) {
-                updatePushMessage(msg.getUuid());
-            }
-            if (!msg.isHandled()) {
-                msg.setHandled(true);
-                NimMessage.save(msg);
-                NimApplication.dispatchCallbacks();
-            }
             if (msg.getMsgType() == NimMessage.Type.ACTIVITY_INVITE && msg.isRead()) {
                 // 活动邀请且已处理过的话
-                if (msg.isRead()) {
+                if (msg.isHandled()) {
                     checkTeamMember(msg.getTid());
                 } else {
                     MainActivity.handleNimMessageDetails(Activity(), msg);
@@ -175,24 +186,45 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             } else {
                 MainActivity.handleNimMessageDetails(Activity(), msg);
             }
+            if (!msg.isRead()) {
+                updatePushMessage(msg.getUuid());
+            }
+//            if (!msg.isHandled()) {
+//                msg.setHandled(true);
+//                msg.setStatus(NimMessage.Status.READ);
+//                mAdapter.notifyItemChanged(index);
+//                NimMessage.resetStatus(msg.getUuid());
+//                NimApplication.dispatchCallbacks();
+//            }
         }
     };
 
-    private void updatePushMessage(String uuid) {
+    private void updatePushMessage(final String uuid) {
         PushMsgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<NimMessage>() {
             @Override
             public void onResponse(NimMessage nimMessage, boolean success, String message) {
                 super.onResponse(nimMessage, success, message);
+                if (success) {
+                    if (null != nimMessage) {
+                        mAdapter.update(nimMessage);
+                    } else {
+                        NimMessage msg = mAdapter.query(uuid);
+                        if (null != msg) {
+                            msg.setStatus(Message.Status.READ);
+                            mAdapter.update(msg);
+                            NimMessage.resetStatus(msg.getTid());
+                            NimApplication.dispatchCallbacks();
+                        }
+                    }
+                }
             }
         }).update(uuid);
     }
 
     private void checkTeamMember(final String tid) {
-        displayLoading(true);
         NIMClient.getService(TeamService.class).queryTeamMember(tid, Cache.cache().userId).setCallback(new RequestCallback<TeamMember>() {
             @Override
             public void onSuccess(TeamMember teamMember) {
-                displayLoading(false);
                 // 查找当前用户是否已经在群内
                 if (null != teamMember) {
                     if (teamMember.isInTeam()) {
@@ -231,17 +263,16 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onConfirm() {
                 NimMessage msg = mAdapter.get(holder.getAdapterPosition());
-                String id = msg.getId();
                 mAdapter.delete(holder);
-                removeCache(id);
+                removeCache(msg.getUuid());
                 removePushMessage(msg.getUuid());
                 return true;
             }
         }, null);
     }
 
-    private void removeCache(String id) {
-        NimMessage.delete(id);
+    private void removeCache(String uuid) {
+        NimMessage.deleteByUuid(uuid);
         NimApplication.dispatchCallbacks();
     }
 
@@ -292,6 +323,17 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public int getSwipeLayoutResourceId(int i) {
             return R.id.ui_holder_view_system_message_swipe_layout;
+        }
+
+        public NimMessage query(String uuid) {
+            Iterator<NimMessage> iterator = iterator();
+            while (iterator.hasNext()) {
+                NimMessage msg = iterator.next();
+                if (!isEmpty(msg.getUuid()) && msg.getUuid().equals(uuid)) {
+                    return msg;
+                }
+            }
+            return null;
         }
     }
 }

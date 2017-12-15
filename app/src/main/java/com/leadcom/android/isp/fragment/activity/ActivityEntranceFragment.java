@@ -22,6 +22,7 @@ import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
@@ -274,8 +275,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
         List<NimMessage> msgs = NimMessage.queryNoHandledByTid(tid);
         if (null != msgs) {
             for (NimMessage msg : msgs) {
-                msg.setHandled(true);
-                msg.setHandleState(agree);
+                msg.setStatus(Message.Status.HANDLED);
             }
             NimMessage.save(msgs);
             NimApplication.dispatchCallbacks();
@@ -395,7 +395,7 @@ public class ActivityEntranceFragment extends BaseSwipeRefreshSupportFragment {
                 // 消息已经处理过说明已暂缓或已同意，不再显示拒绝按钮
                 rejectButton.setVisibility(msg.isHandled() ? View.GONE : View.VISIBLE);
                 // 消息已经处理过且已经同意过，则不显示同意按钮
-                agreeButton.setVisibility(msg.isHandled() && msg.isHandleState() ? View.GONE : View.VISIBLE);
+                agreeButton.setVisibility(msg.isHandled() ? View.GONE : View.VISIBLE);
             }
         }
     }

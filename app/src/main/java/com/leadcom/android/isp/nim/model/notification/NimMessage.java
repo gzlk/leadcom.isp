@@ -10,6 +10,7 @@ import com.leadcom.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.assit.WhereBuilder;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 
 import java.util.ArrayList;
@@ -31,8 +32,6 @@ public class NimMessage extends Message implements MsgAttachment {
 
     public interface PARAM {
         String TABLE = "notification";
-        String HANDLED = "handled";
-        String HANDLE_STATE = "handleState";
         String APPID = "appId";
         String APPTID = "appTid";
         String TOPICS = "appTopics";
@@ -49,18 +48,18 @@ public class NimMessage extends Message implements MsgAttachment {
 
     public static void save(NimMessage msg) {
         if (msg.isSavable()) {
-            if (StringHelper.isEmpty(msg.getId(), true)) {
-                msg.setId(msg.getUuid());
-            }
+            //if (StringHelper.isEmpty(msg.getId(), true)) {
+            msg.setId(msg.getUuid());
+            //}
             new Dao<>(NimMessage.class).save(msg);
         }
     }
 
     public static void save(List<NimMessage> msgs) {
         for (NimMessage msg : msgs) {
-            if (StringHelper.isEmpty(msg.getId(), true)) {
-                msg.setId(msg.getUuid());
-            }
+            //if (StringHelper.isEmpty(msg.getId(), true)) {
+            msg.setId(msg.getUuid());
+            //}
         }
         new Dao<>(NimMessage.class).save(msgs);
     }
@@ -69,6 +68,12 @@ public class NimMessage extends Message implements MsgAttachment {
         Dao<NimMessage> dao = new Dao<>(NimMessage.class);
         NimMessage msg = dao.querySingle(Model.Field.Id, msgId);
         dao.delete(msg);
+    }
+
+    public static void deleteByUuid(String uuid) {
+        WhereBuilder builder = new WhereBuilder(NimMessage.class)
+                .where(Model.Field.UUID + " = ? ", uuid);
+        new Dao<>(NimMessage.class).delete(builder);
     }
 
     public static NimMessage query(String msgId) {
@@ -80,6 +85,20 @@ public class NimMessage extends Message implements MsgAttachment {
         return new Dao<>(NimMessage.class).query(builder);
     }
 
+    public static void resetStatus(String tid) {
+        Dao<NimMessage> dao = new Dao<>(NimMessage.class);
+        List<NimMessage> list = dao.query(Activity.Field.NimId, tid);
+        if (null != list && list.size() > 0) {
+            for (NimMessage msg : list) {
+                if (!msg.isRead()) {
+                    // 未读状态设置为已读
+                    msg.setStatus(Status.READ);
+                }
+            }
+            dao.save(list);
+        }
+    }
+
     /**
      * 查找同一个活动的未处理邀请
      */
@@ -87,14 +106,16 @@ public class NimMessage extends Message implements MsgAttachment {
         QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
                 .whereEquals(Activity.Field.NimId, tid)
                 .whereAppendAnd()
-                .whereEquals(PARAM.HANDLED, false)
+                .whereLessThan(Activity.Field.Status, Status.HANDLED)
                 .whereAppendAnd()
                 .whereEquals(Archive.Field.Type, Type.ACTIVITY_INVITE);
         return new Dao<>(NimMessage.class).query(builder);
     }
 
-    public static int getUnHandled() {
-        List<NimMessage> msgs = new Dao<>(NimMessage.class).query(NimMessage.PARAM.HANDLED, false);
+    public static int getUnRead() {
+        QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
+                .whereLessThan(Activity.Field.Status, Status.READ);
+        List<NimMessage> msgs = new Dao<>(NimMessage.class).query(builder);
         return null == msgs ? 0 : msgs.size();
     }
 
@@ -260,6 +281,10 @@ public class NimMessage extends Message implements MsgAttachment {
                 return "邀请您加入活动";
             case Type.ACTIVITY_END:
                 return "活动结束";
+            case Type.ACTIVITY_EXIT:
+                return "退出活动";
+            case Type.ACTIVITY_KICK_OUT:
+                return "踢出活动";
             case Type.SQUAD_INVITE:
                 return "邀请您加入小组";
             case Type.ACTIVITY_ALERT_ALL:
@@ -294,12 +319,6 @@ public class NimMessage extends Message implements MsgAttachment {
     private String appId;
     @Column(PARAM.APPTID)
     private String appTid;
-    // 是否已处理
-    @Column(PARAM.HANDLED)
-    private boolean handled;
-    // 处理状态，true=已处理，false=已拒绝
-    @Column(PARAM.HANDLE_STATE)
-    private boolean handleState;
     // 结束的活动的所有议题的tid(用于取消这些议题里的未读消息)
     @Column(PARAM.TOPICS)
     private ArrayList<String> subTidList;
@@ -342,22 +361,6 @@ public class NimMessage extends Message implements MsgAttachment {
 
     public void setAppTid(String appTid) {
         this.appTid = appTid;
-    }
-
-    public boolean isHandled() {
-        return handled;
-    }
-
-    public void setHandled(boolean handled) {
-        this.handled = handled;
-    }
-
-    public boolean isHandleState() {
-        return handleState;
-    }
-
-    public void setHandleState(boolean handleState) {
-        this.handleState = handleState;
     }
 
     public ArrayList<String> getSubTidList() {

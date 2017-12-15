@@ -71,7 +71,6 @@ public class UploadRequest extends Request<Upload> {
     private JsonRequest<Upload> request(final String file) {
         MultipartBody body = new MultipartBody().addPart(new FilePart("file", new File(file)));
         String path = format("%s%s", URL, UPLOAD);
-        log(format("upload file %s\nto %s", file, path));
         final String fileName = file.substring(file.lastIndexOf('/') + 1);
 
         File f = new File(file);
@@ -87,6 +86,7 @@ public class UploadRequest extends Request<Upload> {
                         data.departData();
                         data.setName(fileName);
                         data.setSize(fileSize);
+                        log(format("upload file %s\nto %s", file, data.getUrl()));
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.onResponse(data, data.success(), data.getMsg());
                         }

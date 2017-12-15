@@ -112,7 +112,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            int size = NimMessage.getUnHandled();
+            int size = NimMessage.getUnRead();
             if (null != rightChatIconFlag) {
                 rightChatIconFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
             }

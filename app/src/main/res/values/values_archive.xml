@@ -20,6 +20,8 @@
     <string name="ui_text_archive_creator_editor_create_new">新建档案</string>
     <string name="ui_text_archive_creator_editor_create_cover">档案封面</string>
     <string name="ui_text_archive_creator_editor_create_cover_null">请给新建的档案挑选一个封面</string>
+    <string name="ui_text_archive_creator_editor_create_cover_notime">还在上传其他附件，请稍候&#8230;</string>
+    <string name="ui_text_archive_creator_editor_create_cover_invalid" formatted="false">封面图片可能不符合要求(%s)</string>
     <string name="ui_text_archive_creator_editor_create_label_null">请给新建的档案打上标签</string>
     <string name="ui_text_archive_creator_editor_create_author_null">请提供档案的来源或作者信息</string>
     <string name="ui_text_archive_creator_editor_create_time">创建时间</string>
@@ -65,6 +67,7 @@
     <string name="ui_text_archive_creator_editor_attachment_dialog_confirm_text">上传附件</string>
 
     <string name="ui_text_archive_creator_editor_title_invalid">档案题名不能为空</string>
+    <string name="ui_text_archive_creator_editor_title_empty"><![CDATA[<font color="#dbdcdc">请输入档案题名</font>]]></string>
     <string name="ui_text_archive_creator_editor_content_invalid">档案内容不能为空</string>
 
     <string name="ui_text_archive_details_fragment_title">档案详细内容</string>

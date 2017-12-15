@@ -47,9 +47,6 @@ public class NimMessageParser implements MsgAttachmentParser {
             if (object.has(KEY_UUID)) {
                 msg.setUuid(object.getString(KEY_UUID));
             }
-            if (object.has(KEY_HANDLED)) {
-                msg.setHandled(object.getBoolean(KEY_HANDLED));
-            }
             if (object.has(KEY_TOPICS)) {
                 String json = object.getJSONArray(KEY_TOPICS).toString();
                 ArrayList<String> subTidList = Json.gson().fromJson(json, new TypeToken<ArrayList<String>>() {

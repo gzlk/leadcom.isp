@@ -17,15 +17,33 @@ import com.litesuits.orm.db.annotation.Column;
  */
 public class Message extends Model {
 
-    public static class Field {
-        static final String FromUserId = "fromUserId";
-        public static final String FromUserName = "fromUserName";
-        public static final String ToUserId = "toUserId";
-        public static final String ToUserName = "toUserName";
-        public static final String MessageType = "messageType";
-        public static final String MessageContent = "messageContent";
-        public static final String SendDate = "sendDate";
-        public static final String IsRead = "isRead";
+    public interface Field {
+        String FromUserId = "fromUserId";
+        String FromUserName = "fromUserName";
+        String ToUserId = "toUserId";
+        String ToUserName = "toUserName";
+        String MessageType = "messageType";
+        String MessageContent = "messageContent";
+        String SendDate = "sendDate";
+        String IsRead = "isRead";
+    }
+
+    /**
+     * 消息的读取状态
+     */
+    public interface Status {
+        /**
+         * 未读
+         */
+        int UNREAD = 0;
+        /**
+         * 已读
+         */
+        int READ = 1;
+        /**
+         * 已处理
+         */
+        int HANDLED = 2;
     }
 
     //消息来源
@@ -136,7 +154,10 @@ public class Message extends Model {
     }
 
     public boolean isRead() {
-        return status >= 1;
+        return status >= Status.READ;
     }
 
+    public boolean isHandled() {
+        return status == Status.HANDLED;
+    }
 }
