@@ -1,4 +1,4 @@
-package com.leadcom.android.isp.fragment.individual;
+package com.leadcom.android.isp.fragment.individual.moment;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.individual.BaseMomentFragment;
+import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;

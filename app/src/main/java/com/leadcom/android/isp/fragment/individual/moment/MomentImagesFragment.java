@@ -1,7 +1,8 @@
-package com.leadcom.android.isp.fragment.individual;
+package com.leadcom.android.isp.fragment.individual.moment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.method.ScrollingMovementMethod;
@@ -9,12 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.emoji.EmojiUtility;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CorneredButton;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.individual.BaseMomentFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -22,7 +29,6 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.publishable.CollectHelper;
 import com.leadcom.android.isp.helper.publishable.listener.OnCollectedListener;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
-import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
@@ -34,11 +40,9 @@ import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
 import com.leadcom.android.isp.task.CopyLocalFileTask;
-import com.hlk.hlklib.lib.emoji.EmojiUtility;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CorneredButton;
-import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.view.ZoomableImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -417,22 +421,22 @@ public class MomentImagesFragment extends BaseMomentFragment {
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             return view == object;
         }
 
+        @NonNull
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            ImageDisplayer displayer = new ImageDisplayer(Activity());
-            displayer.displayImage(images.get(position), getScreenWidth(), getScreenHeight(), false, false);
-            container.addView(displayer);
-            return displayer;
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            ZoomableImageView ziv = new ZoomableImageView(App.app());
+            ImageLoader.getInstance().displayImage(images.get(position), new ImageViewAware(ziv), null, null, null, null);
+            container.addView(ziv);
+            return ziv;
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            ImageDisplayer displayer = (ImageDisplayer) object;
-            container.removeView(displayer);
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            container.removeView((View) object);
         }
     }
 }

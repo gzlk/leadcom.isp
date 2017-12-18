@@ -15,6 +15,7 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.organization.Member;
 
@@ -112,6 +113,15 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
+            if (!isEmpty(mTitle) && mTitle.contains("(下级)")) {
+                setRightText(R.string.ui_organization_top_channel_3);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        ArchivesFragment.open(OrganizationContactFragment.this, mQueryId, mTitle);
+                    }
+                });
+            }
             mAdapter = new ContactAdapter();
             mRecyclerView.setAdapter(mAdapter);
             setLoadingText(R.string.ui_organization_contact_loading_text);

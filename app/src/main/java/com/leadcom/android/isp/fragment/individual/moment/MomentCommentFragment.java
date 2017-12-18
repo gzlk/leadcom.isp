@@ -1,4 +1,4 @@
-package com.leadcom.android.isp.fragment.individual;
+package com.leadcom.android.isp.fragment.individual.moment;
 
 import android.os.Bundle;
 

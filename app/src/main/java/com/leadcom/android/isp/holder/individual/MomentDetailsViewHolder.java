@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
-import com.leadcom.android.isp.fragment.individual.MomentImagesFragment;
+import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;

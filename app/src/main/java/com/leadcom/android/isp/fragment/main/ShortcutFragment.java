@@ -15,7 +15,7 @@ import com.leadcom.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.MomentCreatorFragment;
+import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.leadcom.android.isp.holder.home.ShortcutGroupViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
