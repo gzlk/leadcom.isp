@@ -139,7 +139,7 @@ public class ShareToWeiXin extends Shareable {
      */
     private static void shareToWeiXinTimeline(Context context, String text, ArrayList<String> images) {
         if (isEmpty(text)) {
-            if (images.size() < 1) {
+            if (images.size() < 2) {
                 // 发送单个图片到朋友圈
                 sendMessage(getSingleImageObject(images.get(0)), SendMessageToWX.Req.WXSceneTimeline);
             } else {
@@ -147,9 +147,9 @@ public class ShareToWeiXin extends Shareable {
                 shareMultimediaMessageToWeiXinTimeLine(context, text, images);
             }
         } else {
-            if (images.size() < 1) {
+            if (images.size() < 2) {
                 // 只发送文字到朋友圈
-                sendMessage(getTextObject(text), SendMessageToWX.Req.WXSceneTimeline);
+                sendMessage(getSingleImageObject(images.get(0)), SendMessageToWX.Req.WXSceneTimeline);
             } else {
                 // 发送图文消息到朋友圈
                 shareMultimediaMessageToWeiXinTimeLine(context, text, images);

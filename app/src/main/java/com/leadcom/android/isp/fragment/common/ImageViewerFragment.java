@@ -2,6 +2,7 @@ package com.leadcom.android.isp.fragment.common;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -320,25 +321,21 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             return view == object;
         }
 
+        @NonNull
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
             ZoomableImageView ziv = new ZoomableImageView(App.app());
-            //ziv.setScaleType(ImageView.ScaleType.CENTER);
             ImageLoader.getInstance().displayImage(images.get(position), new ImageViewAware(ziv), null, null, null, null);
             container.addView(ziv);
             return ziv;
-//            ImageDisplayer displayer = (ImageDisplayer) View.inflate(container.getContext(), R.layout.tool_view_single_image, null);
-//            displayer.displayImage(images.get(position), getScreenWidth(), getScreenHeight(), false, false);
-//            container.addView(displayer);
-//            return displayer;
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((View) object);
         }
     }
