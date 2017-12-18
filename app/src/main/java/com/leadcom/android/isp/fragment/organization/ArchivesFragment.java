@@ -13,6 +13,7 @@ import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -40,16 +41,47 @@ import java.util.List;
 
 public class ArchivesFragment extends BaseCmtLikeColFragment {
 
+    private static final String PARAM_TITLE = "af_title";
+    private static final String PARAM_HAS_TITLE = "af_has_title";
+
     public static ArchivesFragment newInstance(String params) {
         ArchivesFragment af = new ArchivesFragment();
         Bundle bundle = new Bundle();
+        String[] strings = splitParameters(params);
         // 组织id
-        bundle.putString(PARAM_QUERY_ID, params);
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        if (strings.length > 1) {
+            bundle.putString(PARAM_TITLE, strings[1]);
+            bundle.putBoolean(PARAM_HAS_TITLE, Boolean.valueOf(strings[2]));
+        }
         af.setArguments(bundle);
         return af;
     }
 
+    /**
+     * 打开具有标题栏的组织档案列表页面
+     */
+    public static void open(BaseFragment fragment, String groupId, String groupName) {
+        fragment.openActivity(ArchivesFragment.class.getName(), format("%s,%s,true", groupId, groupName, true), true, false);
+    }
+
+    private boolean hasTitle = false;
+    private String mTitle = "";
     private ArchiveAdapter mAdapter;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        hasTitle = bundle.getBoolean(PARAM_HAS_TITLE, false);
+        mTitle = bundle.getString(PARAM_TITLE, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_HAS_TITLE, hasTitle);
+        bundle.putString(PARAM_TITLE, mTitle);
+    }
 
     @Override
     protected void onSwipeRefreshing() {
@@ -112,7 +144,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return hasTitle;
     }
 
     @Override
@@ -219,6 +251,9 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
+            if (hasTitle) {
+                setCustomTitle(mTitle);
+            }
             mAdapter = new ArchiveAdapter();
             mRecyclerView.setAdapter(mAdapter);
             if (!isEmpty(mQueryId)) {

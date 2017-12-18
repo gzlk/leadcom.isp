@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -301,6 +302,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             if (isEmpty(mArchive.getCover())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_null);
                 return;
+            } else {
+                String ext = Attachment.getExtension(mArchive.getCover());
+                if (!ImageCompress.isImage(ext)) {
+                    ToastHelper.make().showMsg(getString(R.string.ui_text_archive_creator_editor_create_cover_invalid, ext));
+                }
             }
         }
         if (mArchive.getLabel().size() < 1) {
@@ -422,7 +428,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
-                titleText.setText(mArchive.getTitle());
+                if (isEmpty(mArchive.getTitle())) {
+                    titleText.setText(Html.fromHtml(getString(R.string.ui_text_archive_creator_editor_title_empty)));
+                } else {
+                    titleText.setText(mArchive.getTitle());
+                }
                 creatorText.setValue(mArchive.getUserName());
                 creatorText.focusEnd();
                 String text = mArchive.getCreateDate();
@@ -462,8 +472,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         openLabelPicker();
                         break;
                     case R.id.ui_popup_rich_editor_setting_cover:
-                        // 选择封面，到封面拾取器
-                        CoverPickFragment.open(ArchiveEditorFragment.this, false, mArchive.getCover(), 1, 1);
+                        if (uploadType != UP_NOTHING) {
+                            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_notime);
+                        } else {
+                            // 选择封面，到封面拾取器
+                            CoverPickFragment.open(ArchiveEditorFragment.this, false, mArchive.getCover(), 1, 1);
+                        }
                         break;
                     case R.id.ui_popup_rich_editor_setting_commit:
                         tryCreateArchive();
@@ -647,6 +661,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     }
                     break;
             }
+            // 上传完毕，设置上传方式为nothing
+            uploadType = UP_NOTHING;
             // 插入完毕之后清空已上传的文件列表
             getUploadedFiles().clear();
         }
@@ -792,7 +808,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             case REQUEST_COVER:
                 mArchive.setCover(getResultedData(data));
                 if (null != coverView) {
-                    coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
+                    Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
+                        }
+                    }, 2000);
                 }
                 if (!isDraft()) {
                     updateArchive(ArchiveRequest.TYPE_COVER);
