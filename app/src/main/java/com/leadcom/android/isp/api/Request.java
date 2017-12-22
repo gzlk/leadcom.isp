@@ -84,16 +84,15 @@ public abstract class Request<T> {
     /**
      * http网络访问层
      */
-    protected LiteHttp liteHttp;
+    protected LiteHttp http;
 
     protected String accessToken;
 
     public Request() {
         HttpLog.isPrint = false;
-        liteHttp = LiteHttp.build(App.app()).create();
+        http = LiteHttp.build(App.app()).create();
         // 15 秒网络超时
-        liteHttp
-                .getConfig()
+        http.getConfig()
                 .setConnectTimeout(15000)
                 .setSocketTimeout(15000);
         accessToken = Cache.cache().accessToken;
@@ -127,7 +126,7 @@ public abstract class Request<T> {
      * 发起网络请求
      */
     protected void httpRequest(JsonRequest request) {
-        liteHttp.executeAsync(request);
+        http.executeAsync(request);
     }
 
     protected Dao<T> dao;

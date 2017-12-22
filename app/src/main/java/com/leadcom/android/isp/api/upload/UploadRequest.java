@@ -125,7 +125,9 @@ public class UploadRequest extends Request<Upload> {
      * 上传单个文件
      */
     public void upload(final String file) {
-        liteHttp.getConfig().setConnectTimeout(300000).setSocketTimeout(300000);
-        liteHttp.executeAsync(request(file));
+        http.getConfig()
+                .setConnectTimeout(300000)
+                .setSocketTimeout(300000);
+        http.executeAsync(request(file));
     }
 }
