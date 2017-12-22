@@ -166,8 +166,7 @@ public final class ImageCompress {
     public static boolean isImage(String extension) {
         if (StringHelper.isEmpty(extension)) return false;
         // 后缀名长度不能超过10个字符
-        if (extension.length() > 10)
-            throw new IllegalArgumentException("extension length must less than 10");
+        if (extension.length() > 10) return false;
 
         switch (extension.toLowerCase(Locale.getDefault())) {
             case "gif":

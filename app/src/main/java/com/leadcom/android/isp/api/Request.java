@@ -91,8 +91,11 @@ public abstract class Request<T> {
     public Request() {
         HttpLog.isPrint = false;
         liteHttp = LiteHttp.build(App.app()).create();
-        // 10秒网络超时
-        liteHttp.getConfig().setConnectTimeout(5000).setSocketTimeout(5000);
+        // 15 秒网络超时
+        liteHttp
+                .getConfig()
+                .setConnectTimeout(15000)
+                .setSocketTimeout(15000);
         accessToken = Cache.cache().accessToken;
         initializeDao();
     }
