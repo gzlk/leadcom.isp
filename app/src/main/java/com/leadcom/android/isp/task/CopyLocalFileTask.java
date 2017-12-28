@@ -1,8 +1,10 @@
 package com.leadcom.android.isp.task;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 
 import com.hlk.hlklib.tasks.AsyncedTask;
 import com.leadcom.android.isp.R;
@@ -11,7 +13,9 @@ import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.netease.nim.uikit.NimUIKit;
+import com.netease.nim.uikit.common.util.C;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,15 +33,18 @@ import java.io.InputStream;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class CopyLocalFileTask  extends AsyncedTask<String, Integer, Boolean> {
+public class CopyLocalFileTask extends AsyncedTask<String, Integer, Boolean> {
 
-    private String error = "", localPath = "";
+    private String error = "", localPath = "", targetPath = "";
 
     @Override
     protected Boolean doInBackground(String... params) {
         String url = params[0];
         localPath = params[1];
         String name = url.substring(url.lastIndexOf('/'));
+        if (url.contains(FilePreviewHelper.NIM)) {
+            name += ".jpg";
+        }
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/" + App.ROOT_DIR;
         try {
             File f = new File(path);
@@ -52,8 +59,8 @@ public class CopyLocalFileTask  extends AsyncedTask<String, Integer, Boolean> {
             if (file.exists()) {
                 long totalLength = file.length();
                 InputStream inputStream = new FileInputStream(localPath);
-                String out = path + name;
-                FileOutputStream fos = new FileOutputStream(out);
+                targetPath = path + name;
+                FileOutputStream fos = new FileOutputStream(targetPath);
                 byte[] buffer = new byte[4096];
                 int handled = 0;
                 int read;
@@ -83,15 +90,16 @@ public class CopyLocalFileTask  extends AsyncedTask<String, Integer, Boolean> {
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
         if (result) {
-            if (ImageCompress.isImage(Attachment.getExtension(localPath))) {
-                Uri uri= NimUIKit.getUriFromFile(App.app(),localPath);
-                App.app().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-//                ContentValues values = new ContentValues(2);
-//                values.put(MediaStore.Images.Media.MIME_TYPE, C.MimeType.MIME_JPEG);
-//                values.put(MediaStore.Images.Media.DATA, localPath);
-//                App.app().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            if (ImageCompress.isImage(Attachment.getExtension(targetPath))) {
+                //Uri uri = NimUIKit.getUriFromFile(App.app(), targetPath);
+                //App.app().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+                //App.app().sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, uri));
+                ContentValues values = new ContentValues(2);
+                values.put(MediaStore.Images.Media.MIME_TYPE, C.MimeType.MIME_JPEG);
+                values.put(MediaStore.Images.Media.DATA, targetPath);
+                App.app().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 ToastHelper.make().showMsg(R.string.ui_base_text_downloading_image_completed);
-            }else{
+            } else {
                 ToastHelper.make().showMsg(R.string.ui_base_text_downloading_file_completed);
             }
         } else {

@@ -35,6 +35,7 @@ import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
 import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
 import com.leadcom.android.isp.nim.model.extension.NoticeAttachment;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
@@ -259,6 +260,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_topic);
             } else if (attachment instanceof MinutesAttachment) {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_minutes);
+            }else if(attachment instanceof ArchiveAttachment){
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_archive);
             }
         }
         return ret;
