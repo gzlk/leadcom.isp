@@ -176,8 +176,9 @@ public abstract class Request<T> {
             public void onSucceed(Api<T> data, Response<Api<T>> response) {
                 super.onSucceed(data, response);
                 log(format("url(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s)", methods, url, accessToken,
-                        (isEmpty(body) ? "" : format("body: %s\n", body)), data.success(), data.getCode(), data.getMsg()));
-                if (data.success()) {
+                        (isEmpty(body) ? "" : format("body: %s\n", body)), (null == data ? "null" : data.success()),
+                        (null == data ? "null" : data.getCode()), (null == data ? "null" : data.getMsg())));
+                if (null != data && data.success()) {
                     if (data instanceof PaginationQuery) {
                         if (null != onMultipleRequestListener) {
                             PaginationQuery<T> paginationQuery = (PaginationQuery<T>) data;
@@ -220,8 +221,8 @@ public abstract class Request<T> {
                         }
                     }
                 } else {
-                    ToastHelper.make().showMsg(data.getMsg());
-                    fireFailedListenerEvents(data.getMsg());
+                    ToastHelper.make().showMsg(null == data ? "content is null" : data.getMsg());
+                    fireFailedListenerEvents(null == data ? "content is null" : data.getMsg());
                 }
             }
 

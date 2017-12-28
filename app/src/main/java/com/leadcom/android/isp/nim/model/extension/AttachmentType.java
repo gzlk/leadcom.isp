@@ -32,4 +32,8 @@ interface AttachmentType {
      * 会议纪要
      */
     int MINUTES = 5;
+    /**
+     * 分享的档案
+     */
+    int ARCHIVE = 6;
 }

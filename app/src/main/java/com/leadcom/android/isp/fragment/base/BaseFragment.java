@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.etc.Utility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.ContainerActivity;
 import com.leadcom.android.isp.activity.LoginActivity;
@@ -23,7 +24,6 @@ import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
-import com.hlk.hlklib.etc.Utility;
 
 import java.util.Locale;
 
@@ -410,6 +410,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 是否可以分享到第三方媒体
      */
     protected boolean SHAREABLE = false;
+    protected boolean INTERNAL_SHAREABLE = true;
     // 分享
     private View shareDialog;
 
@@ -428,12 +429,13 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
-
+                shareDialog.findViewById(R.id.ui_dialog_share_to_app).setVisibility(INTERNAL_SHAREABLE ? View.VISIBLE : View.GONE);
             }
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
             public int[] clickEventHandleIds() {
                 return new int[]{
+                        R.id.ui_dialog_share_to_app,
                         R.id.ui_dialog_share_to_qq,
                         R.id.ui_dialog_share_to_qzone,
                         R.id.ui_dialog_share_to_wx_chat,
@@ -444,7 +446,12 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
             @Override
             public boolean onClick(View view) {
+                //view.startAnimation(App.clickAnimation());
                 switch (view.getId()) {
+                    case R.id.ui_dialog_share_to_app:
+                        // App内部分享
+                        shareToApp();
+                        break;
                     case R.id.ui_dialog_share_to_qq:
                         shareToQQ();
                         break;
@@ -464,6 +471,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                 return true;
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    }
+
+    protected void shareToApp() {
     }
 
     protected void shareToQQ() {

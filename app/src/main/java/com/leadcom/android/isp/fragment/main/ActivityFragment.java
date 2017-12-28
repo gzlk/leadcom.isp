@@ -109,7 +109,9 @@ public class ActivityFragment extends BaseOrganizationFragment {
         //  注册/注销观察者
         NIMClient.getService(MsgServiceObserve.class).observeRecentContact(messageObserver, true);
         tryPaddingContent(true);
-        mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
+        if (null != mainFragment) {
+            mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
+        }
     }
 
     @Override

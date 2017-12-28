@@ -49,6 +49,7 @@
     <string name="ui_icon_caution_triangle">&#xe640;</string>
     <string name="ui_icon_select_solid">&#xe668;</string>
     <string name="ui_icon_select_line">&#xe605;</string>
+    <string name="ui_icon_select_big_bold">&#xe660;</string>
     <string name="ui_icon_contact">&#xe611;</string>
     <string name="ui_icon_pentagon_solid">&#xe620;</string>
     <string name="ui_icon_pentagon_hollow">&#xe684;</string>

@@ -11,6 +11,7 @@
         android:layout_centerInParent="true"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
+        app:riv_corner_radius="@dimen/ui_base_share_dialog_button_corner_size"
         app:riv_oval="true" />
 
     <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar

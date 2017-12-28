@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="@dimen/ui_static_dp_300"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:cv_border_size="@dimen/ui_static_dp_zero"
+            app:cv_left_top_corner="@dimen/ui_base_dimen_margin_padding"
+            app:cv_right_top_corner="@dimen/ui_base_dimen_margin_padding">
+
+            <TextView
+                android:id="@+id/ui_dialog_share_in_app_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingEnd="@dimen/ui_static_dp_20"
+                android:paddingStart="@dimen/ui_static_dp_20"
+                android:paddingTop="@dimen/ui_base_dimen_margin_padding"
+                android:singleLine="true"
+                android:text="@string/ui_base_share_to_app_dialog_title" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|top"
+                android:paddingBottom="@dimen/ui_base_dimen_margin_padding"
+                android:paddingEnd="@dimen/ui_static_dp_20"
+                android:paddingStart="@dimen/ui_static_dp_20"
+                android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+
+                <TextView
+                    android:id="@+id/ui_dialog_share_in_app_title_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/ui_static_dp_5"
+                    android:autoLink="none"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="@string/app_name_default"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+                <com.leadcom.android.isp.lib.view.ImageDisplayer
+                    android:id="@+id/ui_dialog_share_in_app_image"
+                    android:layout_width="@dimen/ui_static_dp_50"
+                    android:layout_height="@dimen/ui_static_dp_50"
+                    android:layout_below="@+id/ui_dialog_share_in_app_title_label"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
+                    android:visibility="gone"
+                    app:id_image_scale_type="centerCrop" />
+
+                <TextView
+                    android:id="@+id/ui_dialog_share_in_app_summary_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ui_dialog_share_in_app_title_label"
+                    android:layout_toEndOf="@+id/ui_dialog_share_in_app_image"
+                    android:autoLink="none"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:text="@string/app_name_default"
+                    android:textColor="@color/textColorHint"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+            </RelativeLayout>
+        </com.hlk.hlklib.lib.view.CorneredView>
+
+        <include layout="@layout/popup_dialog_default_buttons" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

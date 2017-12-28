@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.model.common;
 
+import com.google.gson.reflect.TypeToken;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
 
 /**
@@ -31,6 +33,18 @@ public class ShareInfo extends Model {
     private String imageUrl;
     private String description;
     private String targetPath;
+
+    public static String toJson(ShareInfo info) {
+        if (null == info) return "{}";
+        return Json.gson().toJson(info, new TypeToken<ShareInfo>() {
+        }.getType());
+    }
+
+    public static ShareInfo fromJson(String json) {
+        if (isEmpty(json)) return null;
+        return Json.gson().fromJson(json, new TypeToken<ShareInfo>() {
+        }.getType());
+    }
 
     public String getTitle() {
         return title;

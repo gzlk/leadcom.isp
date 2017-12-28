@@ -45,6 +45,9 @@ public class BaseAttachmentParser implements MsgAttachmentParser {
                 case AttachmentType.TOPIC:
                     attachment = new TopicAttachment();
                     break;
+                case AttachmentType.ARCHIVE:
+                    attachment = new ArchiveAttachment();
+                    break;
             }
             if (null != attachment) {
                 attachment.fromJson(data);

@@ -4,6 +4,8 @@
     <string name="ui_base_share_dialog_title">分享到：</string>
     <string name="ui_base_share_title" formatted="false">%s 来自 #树脉# </string>
 
+    <dimen name="ui_base_share_button_size">@dimen/ui_static_dp_60</dimen>
+
     <string name="ui_base_share_dialog_to_qq">QQ</string>
     <string name="ui_base_share_dialog_to_qzone">QQ空间</string>
     <string name="ui_base_share_dialog_to_wx_chat">微信</string>
@@ -12,7 +14,7 @@
 
     <dimen name="ui_base_share_dialog_button_corner_size">@dimen/ui_static_dp_8</dimen>
     <dimen name="ui_base_share_dialog_button_icon_margin">@dimen/ui_static_dp_10</dimen>
-    <dimen name="ui_base_share_dialog_icon_text_size">@dimen/ui_static_sp_30</dimen>
+    <dimen name="ui_base_share_dialog_icon_text_size">@dimen/ui_static_sp_34</dimen>
     <dimen name="ui_base_share_dialog_icon_container">@dimen/ui_static_sp_40</dimen>
 
     <string name="ui_base_share_text_share_blank">请提供要分享的文本内容或图片</string>
@@ -41,4 +43,10 @@
     <string name="ui_base_share_text_share_to_weibo_cancel">微博分享已取消</string>
     <string name="ui_base_share_text_share_to_weibo_failed">微博分享失败</string>
     <string name="ui_base_share_text_share_to_weibo_not_support_multi_image">您的微博客户端不支持同时分享多个图片</string>
+
+    <string name="ui_base_share_to_app_fragment_title">分享到活动</string>
+    <string name="ui_base_share_to_app_dialog_title" formatted="false">发送到 %s</string>
+    <string name="ui_base_share_to_app_success">已发送</string>
+    <string name="ui_base_share_to_app_return_to_chat">留在会话页面</string>
+    <string name="ui_base_share_to_app_return_to_archive">返回档案</string>
 </resources>

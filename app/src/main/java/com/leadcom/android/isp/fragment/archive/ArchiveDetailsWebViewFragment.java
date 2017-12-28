@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.archive;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -20,6 +21,7 @@ import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.crash.system.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
@@ -48,6 +50,7 @@ import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
+import com.netease.nim.uikit.NimUIKit;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -445,6 +448,17 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_SELECT) {
+            finish();
+            // 需要跳转到会话页面并且关闭档案详情页
+            String teamId = getResultedData(data);
+            NimUIKit.startTeamSession(Activity(), teamId);
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
     private void fetchingShareInfo() {
         if (null == share) {
             ShareRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ShareInfo>() {
@@ -460,6 +474,12 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         } else {
             openShareDialog();
         }
+    }
+
+    @Override
+    protected void shareToApp() {
+        // 打开群聊列表选择要分享到的群聊
+        ActivityShareListFragment.open(this, share);
     }
 
     @Override
