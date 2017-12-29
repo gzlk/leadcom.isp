@@ -390,6 +390,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         public void onImageSelected(ArrayList<String> selected) {
             // 打开新建动态页面
             MomentCreatorFragment.open(IndividualFragment.this, Json.gson().toJson(selected));
+            getWaitingForUploadFiles().clear();
             //openActivity(MomentCreatorFragment.class.getName(), Json.gson().toJson(selected), REQUEST_CREATE, true, true);
         }
     };

@@ -22,7 +22,9 @@ import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragm
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
+import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.common.SystemUpdate;
 import com.leadcom.android.isp.model.organization.Invitation;
@@ -159,7 +161,12 @@ public class MainActivity extends TitleActivity {
                     String ver = systemUpdate.getVersion();
                     //warningUpdatable("http://file.ws.126.net/3g/client/netease_newsreader_android.apk");
                     if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
-                        warningUpdatable(systemUpdate.getResourceURI());
+                        String url = systemUpdate.getResourceURI();
+                        if (StringHelper.isEmpty(url) || !Utils.isUrl(url)) {
+                            SimpleDialogHelper.init(MainActivity.this).show(R.string.ui_system_updatable_url_invalid);
+                        } else {
+                            warningUpdatable(systemUpdate.getResourceURI());
+                        }
                     }
                 }
             }

@@ -51,6 +51,7 @@ import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
 import com.netease.nim.uikit.NimUIKit;
+import com.sun.mail.imap.Utility;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -70,8 +71,8 @@ import java.util.List;
 public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
+    private static final String PARAM_CMT_INDEX = "adwvf_archive_cmt_index";
     private static boolean deletable = false;
-    private static int selectedIndex = 0;
     /**
      * 标记是否是app内部打开的详情页
      */
@@ -99,12 +100,14 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         archiveType = bundle.getInt(PARAM_DOC_TYPE, Archive.Type.GROUP);
+        selectedIndex = bundle.getInt(PARAM_CMT_INDEX, 0);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_DOC_TYPE, archiveType);
+        bundle.putInt(PARAM_CMT_INDEX, selectedIndex);
     }
 
     @Override
@@ -163,7 +166,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private View additionalLayout;
 
     private Model nothingMore;
-    private int archiveType;
+    private int archiveType, selectedIndex;
     private DetailsAdapter mAdapter;
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
@@ -404,6 +407,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }).find(archiveType, mQueryId, false);
     }
 
+    private int getAdditionalPosition(Archive archive) {
+        return archive.getOffice().size() + archive.getImage().size() + archive.getAttach().size() + archive.getVideo().size();
+    }
+
     private void displayAdditional(Archive archive) {
 
         archive.getAddition().setId(format("additional_%s", archive.getId()));
@@ -412,7 +419,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             if (index > 0) {
                 mAdapter.update(archive.getAddition());
             } else {
-                mAdapter.add(archive.getAddition(), 1 + archive.getAttach().size());
+                mAdapter.add(archive.getAddition(), 1 + getAdditionalPosition(archive));
             }
         } else {
             mAdapter.remove(archive.getAddition());
@@ -430,7 +437,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         collectIcon.setText(liked ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
         collectIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
     }
-
 
     private void initializeAdapter() {
         if (null == mAdapter) {
@@ -588,10 +594,20 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     protected void onLoadingCommentComplete(boolean success, List<Comment> list) {
         if (success && null != list) {
             for (Comment comment : list) {
-                mAdapter.update(comment);
+                int index = mAdapter.indexOf(comment);
+                if (index >= 0) {
+                    mAdapter.update(comment);
+                } else {
+                    mAdapter.add(comment);
+                }
             }
+            mAdapter.sort();
         }
         mAdapter.update(nothingMore);
+    }
+
+    private int getLastIndex() {
+        return mAdapter.indexOf(nothingMore);
     }
 
     @Override
@@ -599,9 +615,9 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         if (success) {
             inputContent.setText("");
             // 重置选择的评论id
-            selectedIndex = mAdapter.getItemCount() - 1;
+            selectedIndex = 0;
             if (null != comment && !isEmpty(comment.getId())) {
-                mAdapter.add(comment, mAdapter.getItemCount() - 1);
+                mAdapter.add(comment, getLastIndex());
                 mAdapter.update(model);
                 displayAdditional((Archive) model);
                 //smoothScrollToBottom(mAdapter.getItemCount() - 1);
@@ -609,12 +625,13 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             } else {
                 restoreInputStatus();
             }
+            Utils.hidingInputBoard(inputContent);
         }
     }
 
     @Override
     protected void onCommentDeleteDialogCanceled() {
-        selectedIndex = mAdapter.getItemCount() - 1;
+        selectedIndex = 0;
     }
 
     @Override
@@ -628,7 +645,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             if (mAdapter.get(selectedIndex) instanceof Comment) {
                 mAdapter.remove(selectedIndex);
             }
-            selectedIndex = mAdapter.getItemCount() - 1;
+            // 删除成功之后index清零
+            selectedIndex = 0;
             mAdapter.update(model);
             displayAdditional((Archive) model);
         }
@@ -723,6 +741,9 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
         @Override
         protected int comparator(Model item1, Model item2) {
+            if (item1 instanceof Comment && item2 instanceof Comment) {
+                return ((Comment) item1).getCreateDate().compareTo(((Comment) item2).getCreateDate());
+            }
             return 0;
         }
     }
