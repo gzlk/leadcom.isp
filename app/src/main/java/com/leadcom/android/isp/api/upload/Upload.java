@@ -2,7 +2,6 @@ package com.leadcom.android.isp.api.upload;
 
 import com.leadcom.android.isp.api.Api;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -18,60 +17,84 @@ import org.json.JSONObject;
 
 public class Upload extends Api {
 
-    private JSONObject result;
-    private String name;
-    private String url;
-    private long size;
+    private String orgName;
+    private String filePath;
+    private long fileSize;
+    private String createTime;
+    private String id;
+    private String objectId;
+    private String objectType;
 
-    /**
-     * 分离文件名和url
-     */
-    void departData() {
-        if (null != result) {
-            try {
-                name = result.names().getString(0);
-                url = result.getString(name);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    public Upload() {
+        super();
+    }
+
+    public Upload(JSONObject object) {
+        super();
+        if (null != object) {
+            orgName = object.optString("orgName", "");
+            createTime = object.optString("createTime", "");
+            fileSize = object.optLong("fileSize", 0);
+            filePath = object.optString("filePath", "");
+            id = object.optString("id", "");
+            objectId = object.optString("objectId", "");
+            objectType = object.optString("objectType", "");
         }
     }
 
-    /**
-     * 文件上传之后的url
-     */
-    public JSONObject getResult() {
-        return result;
+    public String getOrgName() {
+        return orgName;
     }
 
-    /**
-     * 文件上传之后的url
-     */
-    public void setResult(JSONObject result) {
-        this.result = result;
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 
-    public String getName() {
-        return name;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
-    public String getUrl() {
-        return url;
+    public long getFileSize() {
+        return fileSize;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
-    public long getSize() {
-        return size;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
     }
 }

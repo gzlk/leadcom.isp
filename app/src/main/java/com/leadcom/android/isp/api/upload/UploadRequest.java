@@ -1,9 +1,12 @@
 package com.leadcom.android.isp.api.upload;
 
+import android.os.Environment;
+
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.listener.OnUploadingListener;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnHttpListener;
 import com.litesuits.http.request.AbstractRequest;
@@ -16,6 +19,8 @@ import com.litesuits.http.response.Response;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <b>功能描述：</b>上传文件<br />
@@ -35,6 +40,7 @@ public class UploadRequest extends Request<Upload> {
     }
 
     private static final String UPLOAD = "/upload/uploadFile";
+    private static final String UPLOAD_EX = "/upload/uploadFileExe";
 
     @Override
     protected String url(String action) {
@@ -68,27 +74,44 @@ public class UploadRequest extends Request<Upload> {
 
     private OnUploadingListener<String> onUploadingListener;
 
-    private JsonRequest<Upload> request(final String file) {
-        MultipartBody body = new MultipartBody().addPart(new FilePart("file", new File(file)));
-        String path = format("%s%s", URL, UPLOAD);
-        final String fileName = file.substring(file.lastIndexOf('/') + 1);
+    private JsonRequest<Upload> request(ArrayList<String> files) {
+        final long timeStart = Utils.timestamp();
+        MultipartBody body = new MultipartBody();
+        int i = 0;
+        for (String file : files) {
+            body.addPart(new FilePart(format("file%d", i), new File(file)));
+            i++;
+        }
+        final int size = i;
+        String path = format("%s%s", URL, UPLOAD_EX);
 
-        File f = new File(file);
-        final long fileSize = f.exists() ? f.length() : 0;
         OnHttpListener<Upload> listener = new OnHttpListener<Upload>(true, true) {
             @Override
             public void onSucceed(Upload data, Response<Upload> response) {
                 super.onSucceed(data, response);
+                long timeEnd = Utils.timestamp();
                 if (data.success()) {
                     try {
                         JSONObject object = new JSONObject(response.getRawString());
-                        data.setResult(object.getJSONObject("result"));
-                        data.departData();
-                        data.setName(fileName);
-                        data.setSize(fileSize);
-                        log(format("upload file %s\nto %s", file, data.getUrl()));
-                        if (null != onSingleRequestListener) {
-                            onSingleRequestListener.onResponse(data, data.success(), data.getMsg());
+                        JSONObject result = object.optJSONObject("result");
+                        ArrayList<Upload> list = new ArrayList<>();
+                        long total = 0;
+                        if (null != result) {
+                            Iterator<String> keys = result.keys();
+                            StringBuilder log = new StringBuilder();
+                            while (keys.hasNext()) {
+                                String key = keys.next();
+                                JSONObject obj = result.optJSONObject(key);
+                                Upload upload = new Upload(obj);
+                                total += upload.getFileSize();
+                                list.add(upload);
+                                log.append(format("upload %s(%s) to %s", upload.getOrgName(), Utils.formatSize(upload.getFileSize()), upload.getFilePath())).append("\r");
+                            }
+                            log(log.toString());
+                        }
+                        log(format("uploading %d files(total size: %s), %s, used time: %dms", size, Utils.formatSize(total), data.success(), timeEnd - timeStart));
+                        if (null != onMultipleRequestListener) {
+                            onMultipleRequestListener.onResponse(list, data.success(), 0, 0, 0, 0);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -109,9 +132,9 @@ public class UploadRequest extends Request<Upload> {
             @Override
             public void onUploading(AbstractRequest<Upload> request, long total, long len) {
                 super.onUploading(request, total, len);
-                if (null != onUploadingListener) {
-                    onUploadingListener.onUploading(file, total, len);
-                }
+//                if (null != onUploadingListener) {
+//                    onUploadingListener.onUploading(file, total, len);
+//                }
             }
         };
         return new JsonRequest<Upload>(path, Upload.class)
@@ -125,9 +148,15 @@ public class UploadRequest extends Request<Upload> {
      * 上传单个文件
      */
     public void upload(final String file) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(file);
+        upload(list);
+    }
+
+    public void upload(ArrayList<String> files) {
         http.getConfig()
                 .setConnectTimeout(300000)
                 .setSocketTimeout(300000);
-        http.executeAsync(request(file));
+        http.executeAsync(request(files));
     }
 }

@@ -142,7 +142,8 @@ public class ActRequest extends Request<Activity> {
                     .put("beginDate", beginDate)
                     .put("site", site)
                     .put("label", new JSONArray(labels))
-                    .put("attachList", new JSONArray(Attachment.getJson(attachments)));
+                    .put("attachList", new JSONArray(Attachment.getJson(attachments)))
+                    .put("fileIds", Attachment.getFieldIds(attachments));
         } catch (JSONException e) {
             e.printStackTrace();
         }

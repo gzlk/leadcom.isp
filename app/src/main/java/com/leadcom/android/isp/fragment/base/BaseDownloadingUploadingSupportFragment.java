@@ -6,19 +6,18 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.listener.OnUploadingListener;
 import com.leadcom.android.isp.api.upload.Upload;
 import com.leadcom.android.isp.api.upload.UploadRequest;
-import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.listener.OnUploadingListener;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.hlk.hlklib.lib.inject.ViewId;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,15 +118,12 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         }
     }
 
-    private int uploadingIndex = 0;
-
     /**
      * 上传文件
      */
     protected void uploadFiles() {
         if (getWaitingForUploadFiles().size() > 0) {
             showImageHandlingDialog(R.string.ui_base_text_uploading);
-            uploadingIndex = 0;
             uploading();
         } else {
             log("no file(s) waiting for upload.");
@@ -139,44 +135,28 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     }
 
     private void uploading() {
-        if (uploadingIndex > waitingForUploadFiles.size() - 1) {
-            // 上传完毕
-            hideImageHandlingDialog();
-            // 上传完毕之后清空本地已选择的文件列表以便下次再选择
-            waitingForUploadFiles.clear();
-            if (null != mOnFileUploadingListener) {
-                mOnFileUploadingListener.onUploadingComplete(uploadedFiles);
-            }
-        } else {
-            String string = waitingForUploadFiles.get(uploadingIndex);
-            File file = new File(string);
-            final long size = file.length();
-            log(format("now start upload file(size: %d): %s", size, string));
-            onImageUploading(uploadingIndex, string, size, 0L);
-            uploadFile(string, uploadingSuccess, uploadingListener);
-        }
+        UploadRequest.request().setOnMultipleRequestListener(uploadingSuccess)
+                .setOnUploadingListener(uploadingListener).upload(waitingForUploadFiles);
     }
 
-    private OnSingleRequestListener<Upload> uploadingSuccess = new OnSingleRequestListener<Upload>() {
+    private OnMultipleRequestListener<Upload> uploadingSuccess = new OnMultipleRequestListener<Upload>() {
         @Override
-        public void onResponse(Upload upload, boolean success, String message) {
-            super.onResponse(upload, success, message);
-            if (uploadingIndex < waitingForUploadFiles.size()) {
-                String uploadedFile = waitingForUploadFiles.get(uploadingIndex);
-                log(format("upload %s success: %s", uploadedFile, success));
-                if (success) {
-                    // 默认为档案的附件
-                    Attachment attachment = new Attachment(Attachment.Type.ARCHIVE, "", upload.getName(), upload.getUrl(), "", upload.getSize());
-                    uploadedFiles.add(attachment);
-                    uploadingIndex++;
-                    // 继续上传下一张图片
-                    uploading();
-                } else {
-                    // 上传失败时停止上传
-                    hideImageHandlingDialog();
-                    onUploadingFailed();
+        public void onResponse(List<Upload> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+            if (success) {
+                if (null != list && list.size() > 0) {
+                    for (Upload upload : list) {
+                        uploadedFiles.add(new Attachment(upload));
+                    }
+                }
+                // 上传完毕
+                hideImageHandlingDialog();
+
+                if (null != mOnFileUploadingListener) {
+                    mOnFileUploadingListener.onUploadingComplete(uploadedFiles);
                 }
             } else {
+                // 上传失败
                 hideImageHandlingDialog();
                 onUploadingFailed();
             }
@@ -188,7 +168,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         public void onUploading(String s, long total, long length) {
             super.onUploading(s, total, length);
             // 上传进度
-            onImageUploading(uploadingIndex, s, total, length);
+            //onImageUploading(uploadingIndex, s, total, length);
         }
     };
 
@@ -208,7 +188,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(false);
             progressDialogView = View.inflate(Activity(), R.layout.popup_dialog_image_handling, null);
-            handlingTextView = (TextView) progressDialogView.findViewById(R.id.ui_dialog_image_handling_text);
+            handlingTextView = progressDialogView.findViewById(R.id.ui_dialog_image_handling_text);
         }
         if (needShowUploading && !progressDialog.isShowing()) {
             progressDialog.show();
@@ -243,14 +223,6 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
     public void onDestroyView() {
         hideImageHandlingDialog();
         super.onDestroyView();
-    }
-
-    /**
-     * 上传文件
-     */
-    protected void uploadFile(String file, OnSingleRequestListener<Upload> successListener, OnUploadingListener<String> uploadingListener) {
-        UploadRequest.request().setOnSingleRequestListener(successListener)
-                .setOnUploadingListener(uploadingListener).upload(file);
     }
 
     @ViewId(R.id.ui_tool_horizontal_progressbar)

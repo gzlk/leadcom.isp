@@ -622,6 +622,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 如果上传完毕的是图片，则插入图片
                     if (ImageCompress.isImage(Attachment.getExtension(url))) {
                         insertImage(url, imageAlt.getValue());
+                        mArchive.addFileId(uploaded.get(0).getId());
                         //mArchive.getImage().add(uploaded.get(0));
                     }
                     break;
@@ -631,6 +632,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     mEditor.insertAudio(music);
                     musicUrl.setValue("");
                     musicSize.setVisibility(View.GONE);
+                    mArchive.addFileId(uploaded.get(0).getId());
                     //mArchive.getAttach().add(uploaded.get(0));
                     break;
                 case UP_VIDEO:
@@ -639,6 +641,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     mEditor.insertVideo("", video);
                     videoUrl.setValue("");
                     videoSize.setVisibility(View.GONE);
+                    mArchive.addFileId(uploaded.get(0).getId());
                     //mArchive.getVideo().add(uploaded.get(0));
                     break;
                 case UP_ATTACH:
@@ -656,6 +659,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                                 mArchive.getAttach().add(attachment);
                             }
                             aAdapter.update(attachment);
+                            mArchive.addFileId(uploaded.get(0).getId());
                         }
                         mAdapter.clear();
                     }

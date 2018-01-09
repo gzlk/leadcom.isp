@@ -93,12 +93,13 @@ public class MomentRequest extends Request<Moment> {
      * @param videoUrl   视频地址(一个动态对应一个视频)
      * @param authPublic 公开范围(1.公开,2.不公开)
      */
-    public void add(String location, String content, ArrayList<String> image, String videoUrl, int authPublic) {
+    public void add(String location, String content, ArrayList<String> image, String videoUrl, int authPublic, String fileIds) {
         // {location,content,[image],video,type,authPublic}
         JSONObject object = new JSONObject();
         try {
             int type = Moment.Type.TEXT;
-            object.put("location", checkNull(location));
+            object.put("location", checkNull(location))
+                    .put("fileIds", checkNull(fileIds));
             if (!isEmpty(content)) {
                 object.put("content", checkNull(content));
             }

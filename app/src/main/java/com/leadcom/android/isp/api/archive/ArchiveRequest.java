@@ -141,7 +141,8 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
-                    .put("source", archive.getSource());
+                    .put("source", archive.getSource())
+                    .put("fileIds", checkNull(archive.getFileIds()));
             if (archive.getAuthPublic() == Seclusion.Type.Group) {
                 object.put("authGro", new JSONArray(archive.getAuthGro()));
             } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {

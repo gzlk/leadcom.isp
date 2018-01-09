@@ -45,6 +45,8 @@ import java.util.List;
 
 public class MomentDetailsFragment extends BaseMomentFragment {
 
+    private static final String PARAM_CMT_INDEX = "mdf_cmt_index";
+
     public static MomentDetailsFragment newInstance(String params) {
         MomentDetailsFragment mdf = new MomentDetailsFragment();
         Bundle bundle = new Bundle();
@@ -59,7 +61,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     }
 
     private static boolean deletable = false;
-    private static int selectedComment = 0;
+    private int selectedComment = 0;
     private static final String PARAM_INDEX = "mdf_selected_index";
     private Model noMore = Model.getNoMore();
 
@@ -67,12 +69,14 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mSelectedIndex = bundle.getInt(PARAM_INDEX, -1);
+        selectedComment = bundle.getInt(PARAM_CMT_INDEX, 0);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_INDEX, mSelectedIndex);
+        bundle.putInt(PARAM_CMT_INDEX, selectedComment);
     }
 
     @Override

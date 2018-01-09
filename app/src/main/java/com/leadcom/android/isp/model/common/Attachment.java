@@ -3,6 +3,7 @@ package com.leadcom.android.isp.model.common;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.upload.Upload;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
@@ -162,6 +163,32 @@ public class Attachment extends Model {
         return false;
     }
 
+    /**
+     * 根据后缀名判断是否是 Excel 文档
+     */
+    public static boolean isExcel(String ext) {
+        if (StringHelper.isEmpty(ext)) return false;
+        switch (ext) {
+            case "xls":
+            case "xlsx":
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 根据后缀名判断是否是 Power Point 文档
+     */
+    public static boolean isPowerPoint(String ext) {
+        if (StringHelper.isEmpty(ext)) return false;
+        switch (ext) {
+            case "ppt":
+            case "pptx":
+                return true;
+        }
+        return false;
+    }
+
     public static String getFileName(String path) {
         if (StringHelper.isEmpty(path)) return null;
         return path.substring(path.lastIndexOf('/') + 1);
@@ -267,6 +294,28 @@ public class Attachment extends Model {
         ext = getExtension(localPath);
         url = name;
         setId(url);
+    }
+
+    public Attachment(Upload upload) {
+        super();
+        type = Type.ARCHIVE;
+        archiveId = "";
+        name = upload.getOrgName();
+        ext = getExtension(name);
+        url = upload.getFilePath();
+        fullPath = upload.getFilePath();
+        pdf = "";
+        size = upload.getFileSize();
+        setId(upload.getId());
+    }
+
+    public static String getFieldIds(ArrayList<Attachment> list) {
+        if (null == list || list.size() < 1) return "";
+        String ret = "";
+        for (Attachment att : list) {
+            ret += (isEmpty(ret) ? "" : ",") + att.getId();
+        }
+        return ret;
     }
 
     public Attachment(int type, String archiveId, String name, String url, String pdf, long size) {

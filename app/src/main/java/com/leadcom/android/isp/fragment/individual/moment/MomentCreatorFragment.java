@@ -158,7 +158,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             compressImage();
             //uploadFiles();
         } else {
-            addMoment(null);
+            addMoment(null, "");
         }
     }
 
@@ -181,11 +181,11 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             for (Attachment att : uploaded) {
                 temp.add(att.getUrl());
             }
-            addMoment(temp);
+            addMoment(temp, Attachment.getFieldIds(uploaded));
         }
     };
 
-    private void addMoment(ArrayList<String> images) {
+    private void addMoment(ArrayList<String> images, String fileIds) {
         Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
         String content = StringHelper.escapeToHtml(momentContent.getValue());
         int auth = seclusion.getStatus();
@@ -200,7 +200,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
                     resultSucceededActivity();
                 }
             }
-        }).add(address, content, images, "", auth);
+        }).add(address, content, images, "", auth, fileIds);
     }
 
     @Override

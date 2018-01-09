@@ -183,6 +183,8 @@ public class Activity extends Model {
     //活动议题列表
     @Ignore
     private ArrayList<Activity> actTopicList;
+    @Ignore
+    private String fileIds;  //文件ID，多个ID用逗号隔开
 
     public String getTitle() {
         return title;

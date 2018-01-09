@@ -51,7 +51,6 @@ import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
 import com.netease.nim.uikit.NimUIKit;
-import com.sun.mail.imap.Utility;
 
 import java.util.ArrayList;
 import java.util.Iterator;

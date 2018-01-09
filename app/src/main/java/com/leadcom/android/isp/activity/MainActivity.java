@@ -165,7 +165,7 @@ public class MainActivity extends TitleActivity {
                         if (StringHelper.isEmpty(url) || !Utils.isUrl(url)) {
                             SimpleDialogHelper.init(MainActivity.this).show(R.string.ui_system_updatable_url_invalid);
                         } else {
-                            warningUpdatable(systemUpdate.getResourceURI());
+                            warningUpdatable(url);
                         }
                     }
                 }

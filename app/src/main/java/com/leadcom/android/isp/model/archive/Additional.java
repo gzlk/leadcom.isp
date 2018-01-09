@@ -39,6 +39,8 @@ public class Additional extends Model {
     private String likeId;
     @Column(Archive.Field.Liked)
     private int like;
+    @Ignore
+    private String fileIds;  //文件ID，多个ID用逗号隔开
 
     public boolean isVisible() {
         return likeNum > 0 || cmtNum > 0 || colNum > 0;
@@ -163,5 +165,23 @@ public class Additional extends Model {
         if (null != addition) {
             addition.setLike(like);
         }
+    }
+
+    public void addFileId(String fileId) {
+        if (isEmpty(fileIds)) {
+            fileIds = fileId;
+        } else {
+            if (!fileIds.contains(fileId)) {
+                fileIds += "," + fileId;
+            }
+        }
+    }
+
+    public String getFileIds() {
+        return fileIds;
+    }
+
+    public void setFileIds(String fileIds) {
+        this.fileIds = fileIds;
     }
 }

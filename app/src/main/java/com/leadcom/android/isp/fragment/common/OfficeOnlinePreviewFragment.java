@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.apache.poi.ExcelUtil;
 import com.leadcom.android.isp.apache.poi.WordUtil;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
@@ -176,10 +177,15 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
             }
 
             if (Attachment.isWord(mExtension)) {
-                // 下载完毕，打开word预览
+                // 下载完毕，打开 word 预览
                 WordUtil word = new WordUtil(localReal);
                 log(word.htmlPath);
                 loadingUrl("file:///" + word.htmlPath);
+            } else if (Attachment.isExcel(mExtension) && mExtension.equals("xls")) {
+                // 下载完毕，打开 excel 预览
+                ExcelUtil excel = new ExcelUtil(localReal);
+                log(excel.htmlPath);
+                loadingUrl("file:///" + excel.htmlPath);
             } else {
                 // 下载完毕，使用本地第三方app打开office文档
                 finish();
