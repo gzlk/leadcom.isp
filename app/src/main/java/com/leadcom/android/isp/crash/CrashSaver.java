@@ -108,7 +108,7 @@ class CrashSaver {
             CharSequence cs = CrashSnapshot.snapshot(context, uncaught, timestamp, stackTrace, count);
             mBufferedWriter.append(cs);
             mBufferedWriter.flush();
-            new CrashSender(context).execute(cs.toString());
+            //new CrashSender(context).execute(cs.toString());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

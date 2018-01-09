@@ -4,10 +4,15 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.BaseApplication;
 import com.leadcom.android.isp.helper.LogHelper;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -39,10 +44,10 @@ public class FileUtil {
     @SuppressWarnings("ConstantConditions")
     public static boolean isFileExists(String fileName) {
         String dir_path = App.app().getCachePath(BaseApplication.HTML_DIR);
-        String file_path = String.format("%s/%s", dir_path, fileName);
+        String file_path = String.format("%s%s", dir_path, fileName);
         try {
             File myFile = new File(file_path);
-            return myFile.exists();
+            return myFile.exists() && myFile.length() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,7 +57,7 @@ public class FileUtil {
     @SuppressWarnings({"ResultOfMethodCallIgnored", "ConstantConditions"})
     public static String createFile(String fileName) {
         String dirPath = App.app().getCachePath(BaseApplication.HTML_DIR);
-        String filePath = String.format("%s/%s", dirPath, fileName);
+        String filePath = String.format("%s%s", dirPath, fileName);
         try {
             File myFile = new File(filePath);
             myFile.createNewFile();
@@ -60,6 +65,34 @@ public class FileUtil {
             e.printStackTrace();
         }
         return filePath;
+    }
+
+    public static void writeFile(String content, String path) {
+        //createHtmlDir(path);
+        OutputStream os = null;
+        BufferedWriter bw = null;
+        try {
+            File file = new File(path);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            os = new FileOutputStream(file);
+            bw = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            bw.write(content);
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            try {
+                if (bw != null)
+                    bw.close();
+                if (os != null)
+                    os.close();
+            } catch (IOException ie) {
+                ie.printStackTrace();
+            }
+        }
     }
 
     public static ZipEntry getPicEntry(ZipFile docxFile, int picIndex) {
