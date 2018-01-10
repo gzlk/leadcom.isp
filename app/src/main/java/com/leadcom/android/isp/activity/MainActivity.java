@@ -55,6 +55,11 @@ public class MainActivity extends TitleActivity {
 
     public static final String EXTRA_NOTIFICATION = "leadcom.extra.notification";
 
+    /**
+     * app内部打开
+     */
+    public static boolean innerOpen = true;
+
     public static void start(Context context) {
         start(context, 0);
     }
@@ -64,6 +69,7 @@ public class MainActivity extends TitleActivity {
     }
 
     public static void start(Context context, Intent extras) {
+        innerOpen = true;
         context.startActivity(getIntent(context, extras));
     }
 
@@ -142,6 +148,7 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onDestroy() {
         downloadingUrl = "";
+        innerOpen = false;
         NimApplication.removeNimMessageEvent(nimMessageEvent);
         //NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, false);

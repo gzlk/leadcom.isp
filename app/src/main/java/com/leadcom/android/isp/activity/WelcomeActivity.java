@@ -179,7 +179,7 @@ public class WelcomeActivity extends BaseActivity {
         overridePendingTransition(0, 0);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     private void handleIntent() {
         if (StringHelper.isEmpty(Cache.cache().userId)) {
             // 判断当前app是否正在运行
@@ -190,33 +190,33 @@ public class WelcomeActivity extends BaseActivity {
         } else {
             Intent intent = getIntent();
             if (null != intent) {
-                String action = intent.getAction();
-                if (!StringHelper.isEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
-                    Uri uri = intent.getData();
-                    if (null != uri) {
-                        String path = uri.getPath();
-                        String id = uri.getQueryParameter("id");
-                        String type = uri.getQueryParameter("type");
-                        int tp = StringHelper.isEmpty(type, true) ? 2 : Integer.valueOf(type);
-                        if (StringHelper.isEmpty(type, true)) {
-                            log("传入的参数错误：type = null");
+                ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
+                if (null == messages) {
+                    String action = intent.getAction();
+                    if (!StringHelper.isEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                        Uri uri = intent.getData();
+                        if (null != uri) {
+                            String path = uri.getPath();
+                            String id = uri.getQueryParameter("id");
+                            String type = uri.getQueryParameter("type");
+                            int tp = StringHelper.isEmpty(type, true) ? 2 : Integer.valueOf(type);
+                            if (StringHelper.isEmpty(type, true)) {
+                                log("传入的参数错误：type = null");
+                            }
+                            if (path.contains("archive")) {
+                                openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
+                            }
+                            finish();
+                        } else {
+                            toLogin();
                         }
-                        if (path.contains("archive")) {
-                            openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
-                        }
-                        finish();
                     } else {
-                        switchToMain();
-                    }
-                } else {
-                    ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
-                    if (null == messages) {
                         // 如果消息为空则打开登录页面，同步用户信息后登录
                         toLogin();
-                    } else {
-                        // 针对发过来的消息打开首页并按照intent内容提示用户
-                        switchToMain(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
                     }
+                } else {
+                    // 针对发过来的消息打开首页并按照intent内容提示用户
+                    switchToMain(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
                 }
             } else {
                 //switchToMain();

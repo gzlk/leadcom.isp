@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.activity.ActivityPropertiesFragment;
 import com.leadcom.android.isp.fragment.activity.topic.TopicPropertyFragment;
@@ -325,7 +326,10 @@ public class NimSessionHelper {
                 @Override
                 public void onActivityResult(final Activity activity, int requestCode, int resultCode, Intent data) {
                     super.onActivityResult(activity, requestCode, resultCode, data);
-
+                    // 查看主窗口是否存在，不存在时打开
+                    if (!MainActivity.innerOpen) {
+                        MainActivity.start(activity);
+                    }
                 }
 
                 @Override
