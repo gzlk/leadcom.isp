@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.apache.poi.ExcelUtil;
+import com.leadcom.android.isp.apache.poi.PptUtil;
 import com.leadcom.android.isp.apache.poi.WordUtil;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
@@ -186,6 +187,10 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
                 ExcelUtil excel = new ExcelUtil(localReal);
                 log(excel.htmlPath);
                 loadingUrl("file:///" + excel.htmlPath);
+//            } else if (Attachment.isPowerPoint(mExtension)) {
+//                PptUtil ppt = new PptUtil(localReal);
+//                log(ppt.htmlPath);
+//                loadingUrl("file:///" + ppt.htmlPath);
             } else {
                 // 下载完毕，使用本地第三方app打开office文档
                 finish();

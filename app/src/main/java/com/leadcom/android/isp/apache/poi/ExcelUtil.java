@@ -103,30 +103,6 @@ public class ExcelUtil {
                 FileUtil.writeFile(htmlExcel, targetPath);
             }
         }
-//        InputStream is = null;
-//        try {
-//            File sourcefile = new File(sourcePath);
-//            is = new FileInputStream(sourcefile);
-//            Workbook wb = WorkbookFactory.create(is);
-//            if (wb instanceof XSSFWorkbook) {
-//                XSSFWorkbook xWb = (XSSFWorkbook) wb;
-//                htmlExcel = getExcelInfo(xWb);
-//            } else if (wb instanceof HSSFWorkbook) {
-//                HSSFWorkbook hWb = (HSSFWorkbook) wb;
-//                htmlExcel = getExcelInfo(hWb);
-//                FileUtil.writeFile(htmlExcel, targetPath);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                assert is != null;
-//                is.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-        //return htmlExcel;
     }
 
     private static String getExcelInfo(Workbook wb) {
@@ -279,7 +255,7 @@ public class ExcelUtil {
      * 251 * 处理表格样式 252 * @param wb 253 * @param sheet 254 * @param cell 255
      * * @param sb 256
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "unused"})
     private static void dealExcelStyle(Workbook wb, Sheet sheet, Cell cell, StringBuffer sb) {
 
         CellStyle cellStyle = cell.getCellStyle();
