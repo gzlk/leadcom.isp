@@ -37,7 +37,7 @@ import java.util.zip.ZipFile;
  * <b>修改备注：</b><br />
  */
 
-public class WordUtil {
+public class WordUtils {
 
     private final static String TAG = "POIWordUtil";
     public String htmlPath;
@@ -64,12 +64,12 @@ public class WordUtil {
     private String divRight = "<div align=\"right\">", divEnd = "</div>";
     private String imgBegin = "<img src=\"%s\" >";
 
-    public WordUtil(String docName) {
+    public WordUtils(String docName) {
         docPath = docName;
-        String fileName = FileUtil.getFileName(docPath);
-        htmlPath = FileUtil.createFile(fileName + ".html");
+        String fileName = FileUtils.getFileName(docPath);
+        htmlPath = FileUtils.createFile(fileName + ".html");
         // 判断已转换的文件是否存在，不用每次打开时都转换，节省时间
-        if (!FileUtil.isFileExists(htmlPath)) {
+        if (!FileUtils.isFileExists(htmlPath)) {
             LogHelper.log(TAG, "htmlPath=" + htmlPath);
             try {
                 output = new FileOutputStream(new File(htmlPath));
@@ -205,9 +205,9 @@ public class WordUtil {
                             output.write(columnBegin.getBytes());
                         }
                         if (tagBegin.equalsIgnoreCase("pic")) { // 检测到图片
-                            ZipEntry pic_entry = FileUtil.getPicEntry(docxFile, picIndex);
+                            ZipEntry pic_entry = FileUtils.getPicEntry(docxFile, picIndex);
                             if (pic_entry != null) {
-                                byte[] pictureBytes = FileUtil.getPictureBytes(docxFile, pic_entry);
+                                byte[] pictureBytes = FileUtils.getPictureBytes(docxFile, pic_entry);
                                 writeDocumentPicture(pictureBytes);
                             }
                             picIndex++; // 转换一张后，索引+1
@@ -350,8 +350,8 @@ public class WordUtil {
     }
 
     private void writeDocumentPicture(byte[] pictureBytes) {
-        String picturePath = FileUtil.createFile(FileUtil.getFileName(docPath) + presentPicture + ".jpg");
-        FileUtil.writePicture(picturePath, pictureBytes);
+        String picturePath = FileUtils.createFile(FileUtils.getFileName(docPath) + presentPicture + ".jpg");
+        FileUtils.writePicture(picturePath, pictureBytes);
         presentPicture++;
         String imageString = String.format(imgBegin, picturePath);
         try {

@@ -35,12 +35,13 @@ import java.io.InputStream;
  */
 public class CopyLocalFileTask extends AsyncedTask<String, Integer, Boolean> {
 
-    private String error = "", localPath = "", targetPath = "";
+    private String error = "";
+    private String targetPath = "";
 
     @Override
     protected Boolean doInBackground(String... params) {
         String url = params[0];
-        localPath = params[1];
+        String localPath = params[1];
         String name = url.substring(url.lastIndexOf('/'));
         if (url.contains(FilePreviewHelper.NIM)) {
             name += ".jpg";

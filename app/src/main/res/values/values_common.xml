@@ -2,5 +2,7 @@
 <resources>
 
     <string name="ui_text_viewer_image_nothing">没有可以显示的图片</string>
+    <string name="ui_text_viewer_invalid_save_path">无效的文件保存路径</string>
+    <string name="ui_text_viewer_select_save_to_path">请选择要保存到的文件夹</string>
 
 </resources>

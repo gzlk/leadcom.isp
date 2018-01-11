@@ -1,15 +1,21 @@
 package com.leadcom.android.isp.fragment.common;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.apache.poi.FileUtils;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
+import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.user.Collection;
@@ -31,6 +37,7 @@ import java.io.File;
 public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
 
     private static final String PARAM_NAME = "pdf_viewer_param_name";
+    private static String localReal = "";
 
     public static PdfViewerFragment newInstance(String params) {
         PdfViewerFragment pvf = new PdfViewerFragment();
@@ -42,6 +49,13 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
         firstEnter = true;
         return pvf;
     }
+
+    public static void open(Context context, String path, String fileName) {
+        localReal = "";
+        String params = format("%s,%s", path, fileName);
+        BaseActivity.openActivity(context, PdfViewerFragment.class.getName(), params, true, false);
+    }
+
 
     private String displayName = "";
     private static boolean firstEnter = true;
@@ -56,6 +70,12 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_NAME, displayName);
+    }
+
+    @Override
+    public void onDestroy() {
+        localReal = "";
+        super.onDestroy();
     }
 
     // UI
@@ -74,15 +94,57 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
             firstEnter = false;
             loadingPdf();
         }
-        setRightText(R.string.ui_base_text_favorite);
+        setRightIcon(R.string.ui_icon_more);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
                 if (Utils.isUrl(mQueryId)) {
-                    tryCollectPdf();
+                    showDialog();
                 }
             }
         });
+    }
+
+    private View dialogView;
+    private CorneredButton saveButton;
+
+    private void showDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == dialogView) {
+                    dialogView = View.inflate(Activity(), R.layout.popup_dialog_moment_details, null);
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_privacy).setVisibility(View.GONE);
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_share).setVisibility(View.GONE);
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_delete).setVisibility(View.GONE);
+                    saveButton = dialogView.findViewById(R.id.ui_dialog_moment_details_button_save);
+                }
+                return dialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+                saveButton.setText(R.string.ui_base_text_save_to);
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_moment_details_button_favorite, R.id.ui_dialog_moment_details_button_save};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_dialog_moment_details_button_favorite:
+                        tryCollectPdf();
+                        break;
+                    case R.id.ui_dialog_moment_details_button_save:
+                        tryCopy();
+                        break;
+                }
+                return true;
+            }
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
     }
 
     private void tryCollectPdf() {
@@ -95,6 +157,23 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
                 }
             }
         }).add(mQueryId);
+    }
+
+    private void tryCopy() {
+        if (!isEmpty(localReal)) {
+            String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            String targetPath = downloadPath + "/" + displayName;
+            if (!targetPath.contains(".pdf")) {
+                targetPath += ".pdf";
+            }
+            try {
+                FileUtils.fileCopy(localReal, targetPath);
+                ToastHelper.make().showMsg("文件已保存到：" + downloadPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToastHelper.make().showMsg("文件保存失败：" + e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -124,7 +203,8 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
     protected void onFileDownloadingComplete(String url, String local, boolean success) {
         if (success) {
             if (!isEmpty(local)) {
-                loadLocalPdfDocument(local);
+                localReal = local;
+                loadLocalPdfDocument(localReal);
             }
         }
         if (null != materialHorizontalProgressBar) {

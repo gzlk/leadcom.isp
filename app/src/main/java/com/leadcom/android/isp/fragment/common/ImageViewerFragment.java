@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.common;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -305,6 +306,42 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
 
     }
 
+    private View.OnClickListener imageViewClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            animateTitle(titleContainer.getVisibility() != View.VISIBLE);
+        }
+    };
+
+    private void animateTitle(final boolean shown) {
+        float y = BaseActivity.getStatusHeight(Activity()) + Activity().getActionBarSize();
+        titleContainer.animate().translationY(shown ? 0 : -y).alpha(shown ? 1 : -1).setDuration(duration()).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (shown) {
+                    titleContainer.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!shown) {
+                    titleContainer.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        }).start();
+    }
+
     private List<String> images = new ArrayList<>();
 
     private void changePosition() {
@@ -331,6 +368,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
             ZoomableImageView ziv = new ZoomableImageView(App.app());
             ImageLoader.getInstance().displayImage(images.get(position), new ImageViewAware(ziv), null, null, null, null);
             container.addView(ziv);
+            ziv.setOnClickListener(imageViewClickListener);
             return ziv;
         }
 

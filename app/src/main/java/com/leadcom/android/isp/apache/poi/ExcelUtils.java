@@ -46,16 +46,16 @@ import java.util.Map;
  * <b>修改备注：</b><br />
  */
 
-public class ExcelUtil {
+public class ExcelUtils {
 
     private final static String TAG = "POIExcelUtil";
     public String htmlPath;
 
-    public ExcelUtil(String xlsName) {
-        String fileName = FileUtil.getFileName(xlsName);
-        htmlPath = FileUtil.createFile(fileName + ".html");
+    public ExcelUtils(String xlsName) {
+        String fileName = FileUtils.getFileName(xlsName);
+        htmlPath = FileUtils.createFile(fileName + ".html");
         // 判断已转换的文件是否存在，不用每次打开时都转换，节省时间
-        if (!FileUtil.isFileExists(htmlPath)) {
+        if (!FileUtils.isFileExists(htmlPath)) {
             LogHelper.log(TAG, "htmlPath=" + htmlPath);
             excelToHtml(xlsName, htmlPath);
         } else {
@@ -100,7 +100,7 @@ public class ExcelUtil {
                 }
             }
             if (!StringHelper.isEmpty(htmlExcel)) {
-                FileUtil.writeFile(htmlExcel, targetPath);
+                FileUtils.writeFile(htmlExcel, targetPath);
             }
         }
     }

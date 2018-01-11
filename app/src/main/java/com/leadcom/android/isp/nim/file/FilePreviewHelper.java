@@ -148,8 +148,7 @@ public class FilePreviewHelper {
      * 预览在线或本地PDF文档
      */
     private static void previewPdf(Context context, String path, String fileName) {
-        String param = StringHelper.format("%s,%s", path, fileName);
-        BaseActivity.openActivity(context, PdfViewerFragment.class.getName(), param, true, false);
+        PdfViewerFragment.open(context, path, fileName);
     }
 
     /**

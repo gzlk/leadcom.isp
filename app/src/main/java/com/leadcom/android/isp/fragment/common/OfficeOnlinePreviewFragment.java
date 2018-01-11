@@ -2,15 +2,20 @@ package com.leadcom.android.isp.fragment.common;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
 
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.apache.poi.ExcelUtil;
-import com.leadcom.android.isp.apache.poi.WordUtil;
+import com.leadcom.android.isp.apache.poi.ExcelUtils;
+import com.leadcom.android.isp.apache.poi.FileUtils;
+import com.leadcom.android.isp.apache.poi.WordUtils;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -38,6 +43,7 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     private static final String PARAM_EXT = "oopf_extension";
     private static final String PARAM_MINUTES = "oopf_is_minutes";
     private static final String PARAM_DOWNLOADED = "oopf_is_downloaded";
+    private static String localReal = "";
 
     public static OfficeOnlinePreviewFragment newInstance(String params) {
         OfficeOnlinePreviewFragment oopf = new OfficeOnlinePreviewFragment();
@@ -56,6 +62,7 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     }
 
     public static void open(Context context, int req, String url, String title, String extension, boolean isMinute) {
+        localReal = "";
         String params = format("%s,%s,%s,%s", url, title, extension, isMinute);
         BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), params, req, true, false);
     }
@@ -76,6 +83,12 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         bundle.putString(PARAM_EXT, mExtension);
         bundle.putBoolean(PARAM_MINUTES, mMinutes);
         bundle.putBoolean(PARAM_DOWNLOADED, mDownloaded);
+    }
+
+    @Override
+    public void onDestroy() {
+        localReal = "";
+        super.onDestroy();
     }
 
     private String mTitle, mExtension;
@@ -132,16 +145,61 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     }
 
     private void resetCollectEvent() {
-        setRightText(R.string.ui_base_text_favorite);
+        setRightIcon(R.string.ui_icon_more);
+        //setRightText(R.string.ui_base_text_favorite);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
                 if (Utils.isUrl(mQueryId)) {
+                    // 显示更多对话框
+                    showDialog();
                     // 收藏在线文档
-                    tryCollectOffice();
+                    //tryCollectOffice();
                 }
             }
         });
+    }
+
+    private View dialogView;
+    private CorneredButton saveButton;
+
+    private void showDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == dialogView) {
+                    dialogView = View.inflate(Activity(), R.layout.popup_dialog_moment_details, null);
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_privacy).setVisibility(View.GONE);
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_share).setVisibility(View.GONE);
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_delete).setVisibility(View.GONE);
+                    saveButton = dialogView.findViewById(R.id.ui_dialog_moment_details_button_save);
+                }
+                return dialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+                saveButton.setText(R.string.ui_base_text_save_to);
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_moment_details_button_favorite, R.id.ui_dialog_moment_details_button_save};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.ui_dialog_moment_details_button_favorite:
+                        tryCollectOffice();
+                        break;
+                    case R.id.ui_dialog_moment_details_button_save:
+                        tryCopy();
+                        break;
+                }
+                return true;
+            }
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
     }
 
     private void tryCollectOffice() {
@@ -156,6 +214,23 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         }).add(mQueryId);
     }
 
+    private void tryCopy() {
+        if (!isEmpty(localReal)) {
+            String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            String targetPath = downloadPath + "/" + mTitle;
+            if (!isEmpty(mExtension) && !targetPath.contains(mExtension)) {
+                targetPath += "." + mExtension;
+            }
+            try {
+                FileUtils.fileCopy(localReal, targetPath);
+                ToastHelper.make().showMsg("文件已保存到：" + downloadPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToastHelper.make().showMsg("文件保存失败：" + e.getMessage());
+            }
+        }
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected void onFileDownloadingComplete(String url, String local, boolean success) {
@@ -168,7 +243,7 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
             } else {
                 resetCollectEvent();
             }
-            String localReal = local + "." + mExtension;
+            localReal = local + "." + mExtension;
             File target = new File(localReal);
             if (!target.exists()) {
                 // 重命名
@@ -178,12 +253,12 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
 
             if (Attachment.isWord(mExtension)) {
                 // 下载完毕，打开 word 预览
-                WordUtil word = new WordUtil(localReal);
+                WordUtils word = new WordUtils(localReal);
                 log(word.htmlPath);
                 loadingUrl("file:///" + word.htmlPath);
             } else if (Attachment.isExcel(mExtension) && mExtension.equals("xls")) {
                 // 下载完毕，打开 excel 预览
-                ExcelUtil excel = new ExcelUtil(localReal);
+                ExcelUtils excel = new ExcelUtils(localReal);
                 log(excel.htmlPath);
                 loadingUrl("file:///" + excel.htmlPath);
 //            } else if (Attachment.isPowerPoint(mExtension)) {
