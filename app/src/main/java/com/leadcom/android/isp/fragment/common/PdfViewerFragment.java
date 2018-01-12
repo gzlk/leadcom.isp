@@ -98,7 +98,7 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                if (Utils.isUrl(mQueryId)) {
+                if (Utils.isUrl(localReal) || Utils.isLocalPath(localReal)) {
                     showDialog();
                 }
             }
@@ -189,7 +189,7 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
     private void loadingPdf() {
         if (mQueryId.charAt(0) == '/') {
             // 本地文件直接加载
-            loadLocalPdfDocument(mQueryId);
+            onFileDownloadingComplete(mQueryId, mQueryId, true);
         } else {
             if (null != materialHorizontalProgressBar) {
                 materialHorizontalProgressBar.setVisibility(View.VISIBLE);

@@ -323,6 +323,13 @@ public class Utils {
         return matcher.find();
     }
 
+    /**
+     * 判断字符串是否为本地路径
+     */
+    public static boolean isLocalPath(String path) {
+        return !StringHelper.isEmpty(path) && path.charAt(0) == '/';
+    }
+
     private static final String regEx_script = "<script[^>]*?>[\\s\\S]*?<\\/script>"; // 定义script的正则表达式
     private static final String regEx_style = "<style[^>]*?>[\\s\\S]*?<\\/style>"; // 定义style的正则表达式
     private static final String regEx_img = "<img[^>]*?(\\/>|><\\/img>|>)"; // 定义img的正则表达式
