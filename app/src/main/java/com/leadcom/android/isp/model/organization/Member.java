@@ -146,7 +146,19 @@ public class Member extends Leaguer {
     }
 
     public static void save(Member member) {
+        if (null != member.getActRole()) {
+            member.setActRoleId(member.getActRole().getId());
+            Role.save(member.getActRole());
+        }
+        if (null != member.getGroRole()) {
+            member.setGroRoleId(member.getGroRole().getId());
+            Role.save(member.getGroRole());
+        }
         new Dao<>(Member.class).save(member);
+    }
+
+    public static Member query(String memberId) {
+        return new Dao<>(Member.class).query(memberId);
     }
 
     public static void remove(String memberId) {
@@ -240,6 +252,10 @@ public class Member extends Leaguer {
     private Role groRole;
     @Ignore
     private Role actRole;
+    @Column(Activity.Field.ActivityRoleId)
+    private String actRoleId;
+    @Column(Organization.Field.GroupRoleId)
+    private String groRoleId;
 
     public String getGroupId() {
         return groupId;
@@ -291,7 +307,7 @@ public class Member extends Leaguer {
 
     public Role getGroRole() {
         if (null == groRole) {
-            groRole = Role.getRole(getRoleId());
+            groRole = Role.getRole(groRoleId);
             if (null != groRole) {
                 setRoleName(groRole.getRoleName());
             }
@@ -303,12 +319,31 @@ public class Member extends Leaguer {
         this.groRole = groRole;
     }
 
+    public String getGroRoleId() {
+        return groRoleId;
+    }
+
+    public void setGroRoleId(String groRoleId) {
+        this.groRoleId = groRoleId;
+    }
+
     public Role getActRole() {
+        if (null == actRole) {
+            actRole = Role.getRole(actRoleId);
+        }
         return actRole;
     }
 
     public void setActRole(Role actRole) {
         this.actRole = actRole;
+    }
+
+    public String getActRoleId() {
+        return actRoleId;
+    }
+
+    public void setActRoleId(String actRoleId) {
+        this.actRoleId = actRoleId;
     }
 
     /**

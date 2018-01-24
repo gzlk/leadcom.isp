@@ -58,6 +58,7 @@ public class Organization extends Model {
         String GroupLogo = "groupLogo";
         String ModifyDate = "modifyDate";
         String Concerned = "concerned";
+        String GroupRoleId = "groupRoleId";
     }
 
     public static Organization get(String id) {

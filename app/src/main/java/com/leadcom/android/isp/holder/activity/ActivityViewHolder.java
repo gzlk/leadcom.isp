@@ -11,6 +11,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.NineRectangleGridImageView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.activity.Activity;
@@ -136,7 +137,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         @Override
         protected void onDisplayImage(Context context, ImageView imageView, String s) {
             int size = getDimension(R.dimen.ui_static_dp_55);
-            String url = (isEmpty(s) || s.contains("null")) ? ("drawable://" + R.mipmap.img_default_user_header) : s;
+            String url = (isEmpty(s) || (!Utils.isUrl(s) && !Utils.isLocalPath(s))) ? ("drawable://" + R.mipmap.img_default_user_header) : s;
             ImageLoader.getInstance().displayImage(url, imageView, new ImageSize(size, size));
         }
 

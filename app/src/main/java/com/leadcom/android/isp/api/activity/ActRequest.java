@@ -13,6 +13,7 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.Label;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -76,8 +77,6 @@ public class ActRequest extends Request<Activity> {
     private Dao<Organization> orgDao = new Dao<>(Organization.class);
     // 附件保存dao
     private Dao<Attachment> attDao = new Dao<>(Attachment.class);
-    // 标签dao
-    private Dao<Label> labelDao = new Dao<>(Label.class);
 
     private void saveAttachment(ArrayList<Attachment> list, String archiveId) {
         if (null != list && list.size() > 0) {
@@ -90,17 +89,15 @@ public class ActRequest extends Request<Activity> {
         }
     }
 
-    private void saveLabels(ArrayList<Label> list) {
-        if (null != list && list.size() > 0) {
-            labelDao.save(list);
-        }
-    }
-
     @Override
     protected void save(Activity activity) {
         if (null != activity) {
             orgDao.save(activity.getGroup());
             saveAttachment(activity.getAttachList(), activity.getId());
+            if (null != activity.getActMember()) {
+                activity.setActMemberId(activity.getActMember().getId());
+                Member.save(activity.getActMember());
+            }
         }
         super.save(activity);
     }
@@ -111,6 +108,10 @@ public class ActRequest extends Request<Activity> {
             for (Activity activity : list) {
                 orgDao.save(activity.getGroup());
                 saveAttachment(activity.getAttachList(), activity.getId());
+                if (null != activity.getActMember()) {
+                    activity.setActMemberId(activity.getActMember().getId());
+                    Member.save(activity.getActMember());
+                }
             }
         }
         super.save(list);

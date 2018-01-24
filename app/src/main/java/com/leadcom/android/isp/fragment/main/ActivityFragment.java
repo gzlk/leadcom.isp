@@ -260,7 +260,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_topic);
             } else if (attachment instanceof MinutesAttachment) {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_minutes);
-            }else if(attachment instanceof ArchiveAttachment){
+            } else if (attachment instanceof ArchiveAttachment) {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_archive);
             }
         }
@@ -349,6 +349,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
                     }
                 } else {
                     isLoadingComplete(true);
+                    list = Activity.getByGroupId(mQueryId);
                 }
                 updateActivityList(list);
                 displayLoading(false);
@@ -458,8 +459,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
             showTooltip(view, R.id.ui_tooltip_activity_management, true, TooltipHelper.TYPE_LEFT, onClickListener);
         }
     }
-
-    private static final int REQ_CREATE = ACTIVITY_BASE_REQUEST + 20;
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override

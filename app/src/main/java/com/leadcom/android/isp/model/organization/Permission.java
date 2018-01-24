@@ -27,6 +27,10 @@ public class Permission extends Model {
         public static final String PermissionCode = "permissionCode";
     }
 
+    public static void save(List<Permission> list) {
+        new Dao<>(Permission.class).save(list);
+    }
+
     /**
      * 根据权限id集查询权限列表
      */

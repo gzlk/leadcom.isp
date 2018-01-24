@@ -57,6 +57,9 @@ public class Activity extends Model {
         String ActivityImage = "activityImage";
         String IsLocalStorage = "isLocalStorage";
         String UsedTimes = "usedTimes";
+        String UserHeaders = "userHeaders";
+        String ActivityMemberId = "activityMemberId";
+        String ActivityRoleId = "activityRoleId";
     }
 
     /**
@@ -103,6 +106,13 @@ public class Activity extends Model {
      */
     public static Activity getByTid(String tid) {
         return new Dao<>(Activity.class).querySingle(Field.NimId, tid);
+    }
+
+    /**
+     * 根据groupId查询活动列表
+     */
+    public static List<Activity> getByGroupId(String groupId) {
+        return new Dao<>(Activity.class).query(Organization.Field.GroupId, groupId);
     }
 
     public static Activity get(String id) {
@@ -174,11 +184,13 @@ public class Activity extends Model {
     // 当前角色所在活动里的成员信息
     @Ignore
     private Member actMember;
+    @Column(Field.ActivityMemberId)
+    private String actMemberId;
     // 活动中的成员列表
     @Ignore
     private ArrayList<Member> actMemberList;
     //成员头像列表(最多九张)
-    @Ignore
+    @Column(Field.UserHeaders)
     private ArrayList<String> headPhotoList;
     //活动议题列表
     @Ignore
@@ -369,11 +381,22 @@ public class Activity extends Model {
     }
 
     public Member getActMember() {
+        if (null == actMember) {
+            actMember = Member.query(actMemberId);
+        }
         return actMember;
     }
 
     public void setActMember(Member actMember) {
         this.actMember = actMember;
+    }
+
+    public String getActMemberId() {
+        return actMemberId;
+    }
+
+    public void setActMemberId(String actMemberId) {
+        this.actMemberId = actMemberId;
     }
 
     public ArrayList<Member> getActMemberList() {
@@ -401,5 +424,13 @@ public class Activity extends Model {
 
     public void setActTopicList(ArrayList<Activity> actTopicList) {
         this.actTopicList = actTopicList;
+    }
+
+    public String getFileIds() {
+        return fileIds;
+    }
+
+    public void setFileIds(String fileIds) {
+        this.fileIds = fileIds;
     }
 }

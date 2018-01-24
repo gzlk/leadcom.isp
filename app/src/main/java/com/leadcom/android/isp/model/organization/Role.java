@@ -53,6 +53,13 @@ public class Role extends Model {
         int NORMAL = 5;
     }
 
+    public static void save(Role role) {
+        // 保存权限列表
+        role.savePermissionIds();
+        new Dao<>(Role.class).save(role);
+        Permission.save(role.getPerList());
+    }
+
     /**
      * 通过角色id查找角色的详细信息
      */
