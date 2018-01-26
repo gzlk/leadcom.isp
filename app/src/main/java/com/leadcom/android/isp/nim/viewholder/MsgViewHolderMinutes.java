@@ -4,7 +4,7 @@ import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
+import com.leadcom.android.isp.fragment.common.FilePreviewX5Fragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
@@ -55,6 +55,6 @@ public class MsgViewHolderMinutes extends MsgViewHolderBase {
     protected void onItemClick() {
         String url = minutes.getUrl();
         String title = StringHelper.getString(R.string.ui_nim_action_minutes);
-        OfficeOnlinePreviewFragment.open(context, BaseFragment.ACTIVITY_BASE_REQUEST, url, title, Attachment.getExtension(url), false);
+        FilePreviewX5Fragment.open(context, BaseFragment.ACTIVITY_BASE_REQUEST, url, title, Attachment.getExtension(url), false);
     }
 }

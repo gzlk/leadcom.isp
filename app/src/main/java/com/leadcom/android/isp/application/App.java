@@ -22,6 +22,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.auth.AuthInfo;
+import com.tencent.smtt.sdk.QbSdk;
 
 import java.io.File;
 
@@ -69,10 +70,20 @@ public class App extends NimApplication {
         super.onCreate();
         instance = this;
         AppCrashHandler.getInstance(this);
-
-        //PgyCrashManager.register(this);
         initializeNim();
         if (shouldInit()) {
+            // 初始化疼熏X5浏览器内核
+            QbSdk.initX5Environment(this, new QbSdk.PreInitCallback() {
+                @Override
+                public void onCoreInitFinished() {
+                    log("X5 environment core initialize finished.");
+                }
+
+                @Override
+                public void onViewInitFinished(boolean b) {
+                    log("X5 onViewInitFinished: " + b);
+                }
+            });
             WbSdk.install(this, new AuthInfo(this, StringHelper.getString(R.string.weibo_app_key), "https://api.weibo.com/oauth2/default.html", ""));
             StorageUtil.init(this, null);
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));

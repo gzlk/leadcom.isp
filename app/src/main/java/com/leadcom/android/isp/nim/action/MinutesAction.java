@@ -6,7 +6,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.activity.AppMinutesRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
+import com.leadcom.android.isp.fragment.common.FilePreviewX5Fragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -60,7 +60,7 @@ public class MinutesAction extends BaseAction {
         // 打开会议纪要详情页面
         int requestCode = makeRequestCode(RequestCode.REQ_MINUTES_DETAILS);
         String ext = Attachment.getExtension(url);
-        OfficeOnlinePreviewFragment.open(getActivity(), requestCode, url, StringHelper.getString(R.string.ui_nim_action_minutes), ext, true);
+        FilePreviewX5Fragment.open(getActivity(), requestCode, url, StringHelper.getString(R.string.ui_nim_action_minutes), ext, true);
     }
 
     @Override

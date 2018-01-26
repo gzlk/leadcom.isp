@@ -5,74 +5,82 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.apache.poi.ExcelUtils;
-import com.leadcom.android.isp.apache.poi.FileUtils;
-import com.leadcom.android.isp.apache.poi.WordUtils;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
-import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
+import com.leadcom.android.isp.view.SuperFileView2;
 
 import java.io.File;
 
 /**
- * <b>功能描述：</b>Office文档在线预览页面<br />
+ * <b>功能描述：</b>采用疼熏X5内核的文件浏览服务<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
- * <b>创建时间：</b>2017/06/21 22:37 <br />
+ * <b>创建时间：</b>2018/01/24 13:49 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
- * <b>最新版本：</b>Version: 1.0.0 <br />
- * <b>修改时间：</b>2017/06/21 22:37 <br />
+ * <b>最新版本：</b>version: 1.0.0 <br />
+ * <b>修改时间：</b>2017/10/04 18:50 <br />
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
+public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragment {
 
-public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
-
-    private static final String PARAM_TITLE = "oopf_title";
-    private static final String PARAM_EXT = "oopf_extension";
-    private static final String PARAM_MINUTES = "oopf_is_minutes";
-    private static final String PARAM_DOWNLOADED = "oopf_is_downloaded";
+    private static final String PARAM_TITLE = "fpx5_title";
+    private static final String PARAM_EXT = "fpx5_ext";
+    private static final String PARAM_MINUTE = "fpx5_minute";
+    private static final String PARAM_DOWNLOADED = "fpx5_downloaded";
     private static String localReal = "";
 
-    public static OfficeOnlinePreviewFragment newInstance(String params) {
-        OfficeOnlinePreviewFragment oopf = new OfficeOnlinePreviewFragment();
+    public static FilePreviewX5Fragment newInstance(String params) {
+        FilePreviewX5Fragment fpx5 = new FilePreviewX5Fragment();
         String[] strings = splitParameters(params);
         Bundle bundle = new Bundle();
-        // url地址
+        // url 地址，或者本地地址
         bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 标题
+        // 标题栏文字，或者文件名
         bundle.putString(PARAM_TITLE, strings[1]);
-        // 后缀
+        // 文档的后缀名
         bundle.putString(PARAM_EXT, strings[2]);
-        // 是否会议纪要文档
-        bundle.putBoolean(PARAM_MINUTES, Boolean.valueOf(strings[3]));
-        oopf.setArguments(bundle);
-        return oopf;
+        // 如果时word文档的话，标记是否为会议记录
+        bundle.putBoolean(PARAM_MINUTE, Boolean.valueOf(strings[3]));
+        fpx5.setArguments(bundle);
+        return fpx5;
     }
 
-    public static void open(Context context, int req, String url, String title, String extension, boolean isMinute) {
+    public static void open(Context ctx, int req, String url, String title, String ext, boolean isMinute) {
         localReal = "";
-        String params = format("%s,%s,%s,%s", url, title, extension, isMinute);
-        BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), params, req, true, false);
+        String params = format("%s,%s,%s,%s", url, title, ext, isMinute);
+        BaseActivity.openActivity(ctx, FilePreviewX5Fragment.class.getName(), params, req, true, false);
     }
+
+    @ViewId(R.id.ui_viewer_x5_root)
+    private SuperFileView2 mSuperFileView;
+
+    private String mTitle, mExt;
+    private boolean mMinute, mDownloaded;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
+        // 标题
         mTitle = bundle.getString(PARAM_TITLE, "");
-        mExtension = bundle.getString(PARAM_EXT, "");
-        mMinutes = bundle.getBoolean(PARAM_MINUTES, false);
+        // 文档后缀名
+        mExt = bundle.getString(PARAM_EXT, "");
+        // 是否会议记录，如果是，需要分享出去
+        mMinute = bundle.getBoolean(PARAM_MINUTE, false);
+        // 是否已下载完毕
         mDownloaded = bundle.getBoolean(PARAM_DOWNLOADED, false);
     }
 
@@ -80,19 +88,15 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_TITLE, mTitle);
-        bundle.putString(PARAM_EXT, mExtension);
-        bundle.putBoolean(PARAM_MINUTES, mMinutes);
+        bundle.putString(PARAM_EXT, mExt);
+        bundle.putBoolean(PARAM_MINUTE, mMinute);
         bundle.putBoolean(PARAM_DOWNLOADED, mDownloaded);
     }
 
     @Override
-    public void onDestroy() {
-        localReal = "";
-        super.onDestroy();
+    public int getLayout() {
+        return R.layout.fragment_viewer_x5_common;
     }
-
-    private String mTitle, mExtension;
-    private boolean mMinutes, mDownloaded = false;
 
     @Override
     public void doingInResume() {
@@ -105,19 +109,17 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
                 String local = "";
                 if (mQueryId.contains(FilePreviewHelper.NIM)) {
                     local = HttpHelper.helper().getLocalFilePath(mQueryId, App.ARCHIVE_DIR);
-                    String localReal = local + "." + mExtension;
+                    String localReal = local + "." + mExt;
                     File file = new File(localReal);
                     needDown = !file.exists();
-                } else {
-                    // 非网易云文件，直接尝试下载
-                    needDown = true;
-                }
+                } else needDown = mQueryId.charAt(0) != '/';
+
                 if (needDown) {
                     showImageHandlingDialog(R.string.ui_base_text_loading);
                     // 先下载然后再预览
                     downloadFile(mQueryId, App.ARCHIVE_DIR);
                 } else {
-                    onFileDownloadingComplete(mQueryId, local, true);
+                    onFileDownloadingComplete(mQueryId, mQueryId, true);
                 }
             }
         }
@@ -129,9 +131,34 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     }
 
     @Override
-    protected String loadingUrl() {
-        log("preview online office: " + mQueryId);
-        return mQueryId;
+    protected void destroyView() {
+        if (null != mSuperFileView) {
+            mSuperFileView.onStopDisplay();
+        }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Override
+    protected void onFileDownloadingComplete(String url, String local, boolean success) {
+        mDownloaded = true;
+        hideImageHandlingDialog();
+        if (success) {
+            if (mMinute) {
+                // 会议纪要时，需要共享出去
+                resetRightEvent();
+            } else {
+                resetCollectEvent();
+            }
+            localReal = local + "." + mExt;
+            File target = new File(localReal);
+            if (!target.exists()) {
+                // 重命名
+                File source = new File(local);
+                source.renameTo(target);
+            }
+
+            mSuperFileView.displayFile(new File(localReal));
+        }
     }
 
     private void resetRightEvent() {
@@ -218,11 +245,11 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         if (!isEmpty(localReal)) {
             String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
             String targetPath = downloadPath + "/" + mTitle;
-            if (!isEmpty(mExtension) && !targetPath.contains(mExtension)) {
-                targetPath += "." + mExtension;
+            if (!isEmpty(mExt) && !targetPath.contains(mExt)) {
+                targetPath += "." + mExt;
             }
             try {
-                FileUtils.fileCopy(localReal, targetPath);
+                //FileUtils.fileCopy(localReal, targetPath);
                 ToastHelper.make().showMsg("文件已保存到：" + downloadPath);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -231,45 +258,4 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    @Override
-    protected void onFileDownloadingComplete(String url, String local, boolean success) {
-        mDownloaded = true;
-        hideImageHandlingDialog();
-        if (success) {
-            if (mMinutes) {
-                // 会议纪要时，需要共享出去
-                resetRightEvent();
-            } else {
-                resetCollectEvent();
-            }
-            localReal = local + "." + mExtension;
-            File target = new File(localReal);
-            if (!target.exists()) {
-                // 重命名
-                File source = new File(local);
-                source.renameTo(target);
-            }
-
-            if (Attachment.isWord(mExtension)) {
-                // 下载完毕，打开 word 预览
-                WordUtils word = new WordUtils(localReal);
-                log(word.htmlPath);
-                loadingUrl("file:///" + word.htmlPath);
-            } else if (Attachment.isExcel(mExtension) && mExtension.equals("xls")) {
-                // 下载完毕，打开 excel 预览
-                ExcelUtils excel = new ExcelUtils(localReal);
-                log(excel.htmlPath);
-                loadingUrl("file:///" + excel.htmlPath);
-//            } else if (Attachment.isPowerPoint(mExtension)) {
-//                PptUtil ppt = new PptUtil(localReal);
-//                log(ppt.htmlPath);
-//                loadingUrl("file:///" + ppt.htmlPath);
-            } else {
-                // 下载完毕，使用本地第三方app打开office文档
-                finish();
-                FilePreviewHelper.previewMimeFile(Activity(), localReal, mExtension);
-            }
-        }
-    }
 }
