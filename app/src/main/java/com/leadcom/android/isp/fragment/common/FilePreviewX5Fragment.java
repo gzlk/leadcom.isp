@@ -106,7 +106,7 @@ public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragme
         } else {
             if (!mDownloaded) {
                 boolean needDown;
-                String local = "";
+                String local;
                 if (mQueryId.contains(FilePreviewHelper.NIM)) {
                     local = HttpHelper.helper().getLocalFilePath(mQueryId, App.ARCHIVE_DIR);
                     String localReal = local + "." + mExt;
@@ -130,6 +130,7 @@ public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragme
         return true;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void destroyView() {
         if (null != mSuperFileView) {
@@ -249,7 +250,7 @@ public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragme
                 targetPath += "." + mExt;
             }
             try {
-                //FileUtils.fileCopy(localReal, targetPath);
+                Utils.fileCopy(localReal, targetPath);
                 ToastHelper.make().showMsg("文件已保存到：" + downloadPath);
             } catch (Exception e) {
                 e.printStackTrace();
