@@ -266,6 +266,10 @@ public class NimMessage extends Message implements MsgAttachment {
          * 个人动态评论
          */
         int MOMENT_COMMENT = 36;
+        /**
+         * 活动中发送的通知
+         */
+        int ACTIVITY_NOTIFY = 37;
     }
 
     /**
@@ -301,6 +305,8 @@ public class NimMessage extends Message implements MsgAttachment {
                 return "踢出议题";
             case Type.TOPIC_END:
                 return "结束议题";
+            case Type.ACTIVITY_NOTIFY:
+                return "活动通知";
             default:
                 return StringHelper.format("不晓得是什么通知(%d)", type);
         }

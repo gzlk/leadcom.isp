@@ -464,6 +464,7 @@ public class MainActivity extends TitleActivity {
                             //        StringHelper.format("%d,,%s", ContactFragment.TYPE_SQUAD, msg.getGroupId()), true, false);
                             break;
                         case NimMessage.Type.TOPIC_INVITE:
+                        case NimMessage.Type.ACTIVITY_NOTIFY:
                             saveMessage(msg, true, true);
                             NimUIKit.startTeamSession(activity, msg.getTid());
                             break;
