@@ -188,7 +188,6 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                         default:
                             int type = msg.getSourceType() == UserMessage.SourceType.USER_ARCHIVE ? Archive.Type.USER : Archive.Type.GROUP;
                             ArchiveDetailsWebViewFragment.open(UserMessageFragment.this, msg.getSourceId(), type);
-                            //ArchiveDetailsFragment.open(UserMessageFragment.this, type, msg.getSourceId(), REQUEST_CHANGE);
                             break;
                     }
                     break;

@@ -154,7 +154,6 @@ public class ArchiveNominateFragment extends BaseSwipeRefreshSupportFragment {
             RecommendArchive archive = mAdapter.get(index);
             int type = archive.getType() == RecommendArchive.RecommendType.GROUP ? Archive.Type.GROUP : Archive.Type.USER;
             ArchiveDetailsWebViewFragment.open(ArchiveNominateFragment.this, archive.getDocId(), type);
-            //ArchiveDetailsFragment.open(ArchiveRecommendableFragment.this, (null == archive.getUserDoc() ? Archive.Type.GROUP : Archive.Type.USER), archive.getDocId(), REQUEST_CHANGE);
         }
     };
 

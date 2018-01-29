@@ -3,11 +3,14 @@ package com.leadcom.android.isp.fragment.archive;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
@@ -25,6 +28,7 @@ import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
+import com.leadcom.android.isp.fragment.organization.StructureFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -36,8 +40,11 @@ import com.leadcom.android.isp.holder.archive.ArchiveDetailsAdditionalViewHolder
 import com.leadcom.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.leadcom.android.isp.holder.archive.ArchiveDetailsViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
+import com.leadcom.android.isp.holder.common.TextViewHolder;
+import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.listener.OnKeyboardChangeListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
@@ -46,6 +53,8 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
+import com.leadcom.android.isp.model.organization.Concern;
+import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
@@ -53,11 +62,12 @@ import com.leadcom.android.isp.share.ShareToWeiXin;
 import com.netease.nim.uikit.NimUIKit;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>档案详情页，webview展现档案内容<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/10/27 14:10 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -70,12 +80,17 @@ import java.util.List;
 public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
+    private static final String PARAM_DOC_DRAFT = "adwvf_archive_draft";
     private static final String PARAM_CMT_INDEX = "adwvf_archive_cmt_index";
     private static boolean deletable = false;
     /**
      * 标记是否是app内部打开的详情页
      */
     private static boolean innerOpen = false;
+    /**
+     * 是否可推送
+     */
+    public static boolean pushable = false;
 
     public static ArchiveDetailsWebViewFragment newInstance(String params) {
         ArchiveDetailsWebViewFragment adwvf = new ArchiveDetailsWebViewFragment();
@@ -85,6 +100,9 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         bundle.putString(PARAM_QUERY_ID, strings[0]);
         // 档案类型：组织档案或个人档案
         bundle.putInt(PARAM_DOC_TYPE, Integer.valueOf(strings[1]));
+        if (strings.length > 2) {
+            bundle.putBoolean(PARAM_DOC_DRAFT, Integer.valueOf(strings[2]) > 0);
+        }
         adwvf.setArguments(bundle);
         return adwvf;
     }
@@ -100,6 +118,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         super.getParamsFromBundle(bundle);
         archiveType = bundle.getInt(PARAM_DOC_TYPE, Archive.Type.GROUP);
         selectedIndex = bundle.getInt(PARAM_CMT_INDEX, 0);
+        isDraft = bundle.getBoolean(PARAM_DOC_DRAFT, false);
     }
 
     @Override
@@ -107,6 +126,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_DOC_TYPE, archiveType);
         bundle.putInt(PARAM_CMT_INDEX, selectedIndex);
+        bundle.putBoolean(PARAM_DOC_DRAFT, isDraft);
     }
 
     @Override
@@ -139,6 +159,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             }
         }
         innerOpen = false;
+        pushable = false;
         super.onDestroy();
     }
 
@@ -166,6 +187,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private Model nothingMore;
     private int archiveType, selectedIndex;
+    private boolean isDraft;
     private DetailsAdapter mAdapter;
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
@@ -371,39 +393,60 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private void loadingArchive() {
         setLoadingText(R.string.ui_text_archive_details_loading);
         displayLoading(true);
+        if (isDraft) {
+            loadingSharedArchive();
+        } else {
+            ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+                @Override
+                public void onResponse(Archive archive, boolean success, String message) {
+                    super.onResponse(archive, success, message);
+                    displayLoading(false);
+                    if (success && null != archive) {
+                        displayArchive(archive);
+                    }
+                }
+
+            }).find(archiveType, mQueryId, false);
+        }
+    }
+
+    private void loadingSharedArchive() {
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 displayLoading(false);
                 if (success && null != archive) {
-                    // 设置收藏的参数为档案
-                    Collectable.resetArchiveCollectionParams(archive);
-                    // 档案管理员/组织管理员/档案作者可以删除档案
-                    if (archive.isAuthor()) {
-                        //resetRightIconEvent();
-                    }
-                    // 档案创建者可以删除评论
-                    deletable = archive.isAuthor();
-                    mAdapter.update(archive);
-                    for (Attachment attachment : archive.getImage()) {
-                        mAdapter.update(attachment);
-                    }
-                    for (Attachment attachment : archive.getVideo()) {
-                        mAdapter.update(attachment);
-                    }
-                    for (Attachment attachment : archive.getOffice()) {
-                        mAdapter.update(attachment);
-                    }
-                    for (Attachment attachment : archive.getAttach()) {
-                        mAdapter.update(attachment);
-                    }
-                    displayAdditional(archive);
-                    loadingComments(archive);
+                    displayArchive(archive);
                 }
             }
+        }).findShare(mQueryId, archiveType + 1);
+    }
 
-        }).find(archiveType, mQueryId, false);
+    private void displayArchive(Archive archive) {
+        // 设置收藏的参数为档案
+        Collectable.resetArchiveCollectionParams(archive);
+        // 档案管理员/组织管理员/档案作者可以删除档案
+        if (archive.isAuthor()) {
+            //resetRightIconEvent();
+        }
+        // 档案创建者可以删除评论
+        deletable = archive.isAuthor();
+        mAdapter.update(archive);
+        for (Attachment attachment : archive.getImage()) {
+            mAdapter.update(attachment);
+        }
+        for (Attachment attachment : archive.getVideo()) {
+            mAdapter.update(attachment);
+        }
+        for (Attachment attachment : archive.getOffice()) {
+            mAdapter.update(attachment);
+        }
+        for (Attachment attachment : archive.getAttach()) {
+            mAdapter.update(attachment);
+        }
+        displayAdditional(archive);
+        loadingComments(archive);
     }
 
     private int getAdditionalPosition(Archive archive) {
@@ -440,15 +483,29 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             setCustomTitle(R.string.ui_text_archive_details_fragment_title);
-            setRightIcon(R.string.ui_icon_more);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
-                @Override
-                public void onClick() {
-                    fetchingShareInfo();
-                }
-            });
+            if (isDraft) {
+                // 草稿档案只能查看
+                additionalLayout.setVisibility(View.GONE);
+            }
+            if (!isDraft) {
+                // 非草稿档案，可以分享等等
+                setRightIcon(pushable ? 0 : R.string.ui_icon_more);
+                setRightText(pushable ? R.string.ui_base_text_push : 0);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        if (pushable) {
+                            // 打开推送页面
+                            openPushDialog();
+                        } else {
+                            fetchingShareInfo();
+                        }
+                    }
+                });
+            }
             mAdapter = new DetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
+
             loadingArchive();
         }
     }
@@ -462,6 +519,139 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             NimUIKit.startTeamSession(Activity(), teamId);
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    private View pushDialog;
+    private RecyclerView concerned;
+    private ConcernAdapter cAdapter;
+
+    private void openPushDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == pushDialog) {
+                    pushDialog = View.inflate(Activity(), R.layout.popup_dialog_archive_push, null);
+                    concerned = pushDialog.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
+                    concerned.setLayoutManager(new CustomLinearLayoutManager(concerned.getContext()));
+                    cAdapter = new ConcernAdapter();
+                    concerned.setAdapter(cAdapter);
+                    showConcernedGroups();
+                }
+                return pushDialog;
+            }
+
+            private void showConcernedGroups() {
+                Model supper = new Model();
+                supper.setId("supper");
+                supper.setAccessToken("上级组织");
+                Model sub = new Model();
+                sub.setId("subgroup");
+                sub.setAccessToken("下级组织");
+                ArrayList<Concern> concerns = StructureFragment.selectedOrganization.getConGroup();
+                for (Concern concern : concerns) {
+                    if (concern.getType() == Concern.Type.UPPER) {
+                        if (!cAdapter.exist(supper)) {
+                            cAdapter.add(supper);
+                        }
+                        cAdapter.update(concern);
+                    }
+                }
+                for (Concern concern : concerns) {
+                    if (concern.getType() == Concern.Type.SUBGROUP) {
+                        if (!cAdapter.exist(sub)) {
+                            cAdapter.add(sub);
+                        }
+                        cAdapter.update(concern);
+                    }
+                }
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                tryPushArchive();
+                return true;
+            }
+        }).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
+    }
+
+    private void tryPushArchive() {
+        ArrayList<String> groupIds = new ArrayList<>();
+        for (int i = 0; i < cAdapter.getItemCount(); i++) {
+            Model model = cAdapter.get(i);
+            if (model.isSelected()) {
+                groupIds.add(model.getId());
+            }
+        }
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(message);
+                }
+            }
+        }).push(groupIds, mQueryId);
+    }
+
+    private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Concern concern = (Concern) cAdapter.get(index);
+            concern.setSelected(!concern.isSelected());
+            cAdapter.update(concern);
+        }
+    };
+
+    private class ConcernAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+
+        private static final int TP_TITLE = 0, TP_GROUP = 1;
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            if (viewType == TP_GROUP) {
+                GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                holder.setSelectable(true);
+                holder.addOnViewHolderClickListener(clickListener);
+                return holder;
+            } else {
+                TextViewHolder tvh = new TextViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                tvh.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+                return tvh;
+            }
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return viewType == TP_TITLE ? R.layout.holder_view_text_olny : R.layout.holder_view_group_interesting_item;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            Model model = get(position);
+            if (model.getId().equals("supper") || model.getId().equals("subgroup")) {
+                return TP_TITLE;
+            }
+            return TP_GROUP;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof GroupInterestViewHolder) {
+                ((GroupInterestViewHolder) holder).showContent((Organization) item);
+            } else if (holder instanceof TextViewHolder) {
+                assert item != null;
+                ((TextViewHolder) holder).showContent(item.getAccessToken());
+            }
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return 0;
+        }
     }
 
     private void fetchingShareInfo() {

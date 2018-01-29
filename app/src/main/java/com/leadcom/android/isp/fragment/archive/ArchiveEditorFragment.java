@@ -16,18 +16,28 @@ import com.github.angads25.filepicker.model.DialogConfigs;
 import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
+import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.activity.CoverPickFragment;
 import com.leadcom.android.isp.fragment.activity.LabelPickFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.organization.GroupsContactPickerFragment;
+import com.leadcom.android.isp.helper.DateTimeHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.DictionaryHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -40,18 +50,20 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Label;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveDraft;
+import com.leadcom.android.isp.model.archive.Dictionary;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
+import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.organization.Organization;
-import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
-import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.model.organization.SubMember;
+import com.leadcom.android.isp.share.ShareToQQ;
+import com.leadcom.android.isp.share.ShareToWeiBo;
+import com.leadcom.android.isp.share.ShareToWeiXin;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import jp.wasabeef.richeditor.RichEditor;
@@ -133,6 +145,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         mArchive.setType(Archive.ArchiveType.NORMAL);
         // 档案默认向所有人公开的
         mArchive.setAuthPublic(Seclusion.Type.Public);
+        // 默认草稿作者为当前登录用户
+        mArchive.setUserId(Cache.cache().userId);
+        mArchive.setUserName(Cache.cache().userName);
+        // 默认草稿的创建日期为当前日期
+        mArchive.setCreateDate(Utils.format(getString(R.string.ui_base_text_date_time_format), Utils.timestamp()));
     }
 
     @Override
@@ -189,6 +206,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private RecyclerView attachmentRecyclerView;
     // 创建成功的档案信息
     private Archive mArchive;
+    private ShareInfo share;
     /**
      * 当前上传的文件类型：1=图片，2=音乐，3=视频
      */
@@ -406,7 +424,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private View settingDialogView;
     private ImageDisplayer coverView;
-    private TextView titleText, publicText, labelText, createTime;
+    private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText, participantText;
     private ClearEditText creatorText;
 
     private void openSettingDialog() {
@@ -422,6 +440,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     creatorText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_creator);
                     createTime = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_create_time);
                     coverView = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover_image);
+                    propertyText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property_text);
+                    categoryText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category_text);
+                    participantText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_participant_text);
+                    happenDate = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time_text);
                 }
                 return settingDialogView;
             }
@@ -451,26 +473,45 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 // 这一步一定要在最后设置，否则状态会被重置
                 seclusion.setStatus(mArchive.getAuthPublic());
                 publicText.setText(PrivacyFragment.getPrivacy(seclusion));
+                if (isEmpty(mArchive.getProperty())) {
+                    propertyText.setText(R.string.ui_text_archive_details_editor_setting_property_title);
+                } else {
+                    propertyText.setText(mArchive.getProperty());
+                }
+                if (isEmpty(mArchive.getCategory())) {
+                    categoryText.setText(R.string.ui_text_archive_details_editor_setting_category_title);
+                } else {
+                    categoryText.setText(mArchive.getCategory());
+                }
+                if (isEmpty(mArchive.getParticipant())) {
+                    participantText.setText(R.string.ui_text_archive_details_editor_setting_participant_title);
+                } else {
+                    participantText.setText(mArchive.getParticipant());
+                }
+                if (isEmpty(mArchive.getHappenDate())) {
+                    happenDate.setText(R.string.ui_text_archive_details_editor_setting_time_title);
+                } else {
+                    happenDate.setText(mArchive.getHappenDate().substring(0, 10));
+                }
             }
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
             public int[] clickEventHandleIds() {
                 return new int[]{
-                        R.id.ui_popup_rich_editor_setting_public,
-                        R.id.ui_popup_rich_editor_setting_label,
                         R.id.ui_popup_rich_editor_setting_cover,
+                        R.id.ui_popup_rich_editor_setting_time,
+                        R.id.ui_popup_rich_editor_setting_property,
+                        R.id.ui_popup_rich_editor_setting_category,
+                        R.id.ui_popup_rich_editor_setting_participant,
+                        R.id.ui_popup_rich_editor_setting_public,
+                        //R.id.ui_popup_rich_editor_setting_label,
+                        R.id.ui_popup_rich_editor_setting_share,
                         R.id.ui_popup_rich_editor_setting_commit};
             }
 
             @Override
             public boolean onClick(View view) {
                 switch (view.getId()) {
-                    case R.id.ui_popup_rich_editor_setting_public:
-                        openSecuritySetting();
-                        break;
-                    case R.id.ui_popup_rich_editor_setting_label:
-                        openLabelPicker();
-                        break;
                     case R.id.ui_popup_rich_editor_setting_cover:
                         if (uploadType != UP_NOTHING) {
                             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_notime);
@@ -479,12 +520,71 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                             CoverPickFragment.open(ArchiveEditorFragment.this, false, mArchive.getCover(), 1, 1);
                         }
                         break;
+                    case R.id.ui_popup_rich_editor_setting_time:
+                        // 发生时间
+                        DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
+                            @Override
+                            public void onPicked(Date date) {
+                                mArchive.setHappenDate(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date));
+                                happenDate.setText(mArchive.getHappenDate().substring(0, 10));
+                            }
+                        }).show(ArchiveEditorFragment.this, true, true, true, true, mArchive.getHappenDate());
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_property:
+                        // 档案性质
+                        DictionaryHelper.helper(ArchiveEditorFragment.this).setOnDictionarySelectedListener(selectedListener).showDialog(Dictionary.Type.ARCHIVE_NATURE, mArchive.getProperty());
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_category:
+                        // 档案类型
+                        DictionaryHelper.helper(ArchiveEditorFragment.this).setOnDictionarySelectedListener(selectedListener).showDialog(Dictionary.Type.ARCHIVE_TYPE, mArchive.getCategory());
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_participant:
+                        GroupsContactPickerFragment.open(ArchiveEditorFragment.this, mQueryId);
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_public:
+                        openSecuritySetting();
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_label:
+                        openLabelPicker();
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_share:
+                        getDraftShareInfo();
+                        break;
                     case R.id.ui_popup_rich_editor_setting_commit:
                         tryCreateArchive();
                         break;
                 }
                 return false;
             }
+
+            private void getDraftShareInfo() {
+                ShareRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ShareInfo>() {
+                    @Override
+                    public void onResponse(ShareInfo info, boolean success, String message) {
+                        super.onResponse(info, success, message);
+                        if (success && null != info) {
+                            share = info;
+                            openShareDialog();
+                        }
+                    }
+                }).getDraftShareInfo(mArchive);
+            }
+
+            private DictionaryHelper.OnDictionarySelectedListener selectedListener = new DictionaryHelper.OnDictionarySelectedListener() {
+                @Override
+                public void onSelected(String selectedType, String selectedName) {
+                    switch (selectedType) {
+                        case Dictionary.Type.ARCHIVE_NATURE:
+                            mArchive.setProperty(selectedName);
+                            propertyText.setText(selectedName);
+                            break;
+                        case Dictionary.Type.ARCHIVE_TYPE:
+                            mArchive.setCategory(selectedName);
+                            categoryText.setText(selectedName);
+                            break;
+                    }
+                }
+            };
 
             private void openSecuritySetting() {
                 Seclusion seclusion = PrivacyFragment.getSeclusion("");
@@ -511,6 +611,39 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 LabelPickFragment.open(ArchiveEditorFragment.this, mQueryId, "", LabelPickFragment.TYPE_ARCHIVE, string);
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
+    }
+
+    @Override
+    protected void shareToApp() {
+        // 打开群聊列表选择要分享到的群聊
+        ActivityShareListFragment.open(this, share);
+    }
+
+    @Override
+    protected void shareToQQ() {
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), null);
+    }
+
+    @Override
+    protected void shareToQZone() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(share.getImageUrl());
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), img);
+    }
+
+    @Override
+    protected void shareToWeiBo() {
+        ShareToWeiBo.init(Activity()).share(share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
+    }
+
+    @Override
+    protected void shareToWeiXinSession() {
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
+    }
+
+    @Override
+    protected void shareToWeiXinTimeline() {
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
     }
 
     // 插入图片的对话框
@@ -873,6 +1006,18 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive = Archive.fromJson(StringHelper.replaceJson(draftJson, true));
                 titleView.setValue(mArchive.getTitle());
                 mEditor.setHtml(mArchive.getContent());
+                break;
+            case REQUEST_MEMBER:
+                List<SubMember> members = Json.gson().fromJson(getResultedData(data), new TypeToken<ArrayList<SubMember>>() {
+                }.getType());
+                String names = "";
+                if (null != members && members.size() > 0) {
+                    for (SubMember member : members) {
+                        names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                    }
+                }
+                mArchive.setParticipant(names);
+                participantText.setText(names);
                 break;
         }
         super.onActivityResult(requestCode, data);

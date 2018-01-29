@@ -106,4 +106,15 @@
     <string name="ui_text_archive_details_unliking">取消赞&#8230;</string>
     <string name="ui_text_archive_details_collecting">收藏档案&#8230;</string>
     <string name="ui_text_archive_details_uncollecting">取消档案收藏&#8230;</string>
+
+    <string name="ui_text_archive_details_editor_setting_time_title">发生时间</string>
+    <string name="ui_text_archive_details_editor_setting_site_title">发生地点</string>
+    <string name="ui_text_archive_details_editor_setting_property_title">档案性质</string>
+    <string name="ui_text_archive_details_editor_setting_category_title">档案类型</string>
+    <string name="ui_text_archive_details_editor_setting_participant_title">参与人员</string>
+    <string name="ui_text_archive_details_editor_setting_share_title">草稿分享</string>
+    <string name="ui_text_archive_details_editor_setting_commit_title">提交审核</string>
+    <dimen name="ui_dimen_archive_details_editor_setting_item_vertical_padding">@dimen/ui_static_dp_8</dimen>
+
+    <string name="ui_text_archive_details_push_dialog_title">推送到：</string>
 </resources>

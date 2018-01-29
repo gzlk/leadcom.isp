@@ -2,11 +2,14 @@ package com.leadcom.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -142,7 +145,12 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
                     .put("source", archive.getSource())
-                    .put("fileIds", checkNull(archive.getFileIds()));
+                    .put("fileIds", checkNull(archive.getFileIds()))
+                    .put("site", checkNull(archive.getSite()))
+                    .put("property", checkNull(archive.getProperty()))
+                    .put("category", checkNull(archive.getCategory()))
+                    .put("participant", checkNull(archive.getParticipant()))
+                    .put("happenDate", archive.getHappenDate());
             if (archive.getAuthPublic() == Seclusion.Type.Group) {
                 object.put("authGro", new JSONArray(archive.getAuthGro()));
             } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
@@ -422,6 +430,14 @@ public class ArchiveRequest extends Request<Archive> {
         }
     }
 
+    /**
+     * 查询分享出去的档案的详情
+     */
+    public void findShare(String archiveId, int archiveType) {
+        String params = format("/system/share/findDoc?docId=%sdocType=%d", archiveId, archiveType);
+        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+    }
+
     private void findFromRemote(String archiveId, int type) {
         // 调用网络数据
         String params = format("%s=%s", getArchiveId(type), archiveId);
@@ -581,5 +597,18 @@ public class ArchiveRequest extends Request<Archive> {
         // abstrSize,abstrRow,pageSize,pageNumber
         String params = format("/group/groDoc/listPublic?%s&pageNumber=%d", SUMMARY, pageNumber);
         httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
+    }
+
+    /**
+     * 推送组织档案
+     */
+    public void push(ArrayList<String> groupIdList, String groupDocId) {
+        if (null == groupIdList || groupIdList.size() < 1) {
+            ToastHelper.make().showMsg("无效的推送：被推送的组织为空");
+        } else {
+            String json = Json.gson().toJson(groupIdList);
+            String params = format("%s?groupIdList=%s&groDocId=%s", group("/push"), json, groupDocId);
+            httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+        }
     }
 }

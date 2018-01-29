@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_dialog_button_cancel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/ui_static_dp_80"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/ui_text_archive_details_push_dialog_title"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding">
+
+            <include layout="@layout/tool_view_recycler_view_warp_content" />
+
+        </LinearLayout>
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_dialog_button_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+            android:layout_marginEnd="@dimen/durban_dp_30"
+            android:layout_marginStart="@dimen/durban_dp_30"
+            android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center"
+            android:minHeight="@dimen/ui_base_dimen_button_height"
+            android:text="@string/ui_base_text_push"
+            android:textColor="@android:color/white"
+            app:active_color="@color/buttonActivityColor"
+            app:corner_size="@dimen/ui_static_dp_5"
+            app:normal_color="@color/buttonNormalColor" />
+    </LinearLayout>
+</RelativeLayout>

@@ -38,6 +38,10 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
      * 待审核档案
      */
     public static final int TYPE_APPROVING = 3;
+    /**
+     * 未通过的档案
+     */
+    public static final int TYPE_DENIED = 4;
 
     private static final String PARAM_TYPE = "alf_list_type";
     private static final String PARAM_SEARCHING_TEXT = "alf_searching_text";
@@ -158,15 +162,13 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
 //                openActivity(ArchiveHandlerFragment.class.getName(), format("%d,%s,%s", ArchiveHandlerFragment.TYPE_ARCHIVE, acv.getId(), replaceJson(json, false)), true, false);
                 // 打开档案详细页，存档或
                 //openActivity(ActivityArchivingManagementFragment.class.getName(), acv.getActId(), true, false);
-                //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
             } else if (mType == TYPE_APPROVING) {
                 // 待审核档案
                 openActivity(ArchiveHandlerFragment.class.getName(), format("%d,%s,", ArchiveHandlerFragment.TYPE_APPROVE, acv.getId()), true, false);
             } else {
                 // 全部页面中，打开档案详情页
+                ArchiveDetailsWebViewFragment.pushable = true;
                 ArchiveDetailsWebViewFragment.open(ArchiveListFragment.this, acv.getId(), Archive.Type.GROUP);
-                //ArchiveDetailsFragment.open(ArchiveListFragment.this,Archive.Type.GROUP,acv.getId(), REQUEST_DELETE);
-                //openActivity(ArchiveDetailsFragment.class.getName(), format("%d,%s", Archive.Type.GROUP, acv.getId()), true, false);
             }
         }
     };
@@ -215,6 +217,10 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 setNothingText(R.string.ui_archive_management_nothing_3);
                 setLoadingText(R.string.ui_archive_management_loading_3);
                 loadingApprovingArchive();
+                break;
+            case TYPE_DENIED:
+                setNothingText(R.string.ui_archive_management_nothing_4);
+                setLoadingText(R.string.ui_archive_management_loading_4);
                 break;
         }
     }

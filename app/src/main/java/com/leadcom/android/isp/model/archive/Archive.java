@@ -72,6 +72,10 @@ public class Archive extends Additional {
          * 草稿
          */
         String ARCHIVE_DRAFT = "archiveDraft";
+        /**
+         * 档案类型
+         */
+        String ARCHIVE_CATEGORY = "archiveCategory";
     }
 
     public interface Field {
@@ -124,6 +128,14 @@ public class Archive extends Additional {
         String ToUserName = "toUserName";
         String ToHeadPhoto = "toHeadPhoto";
         String DraftJson = "draftJson";
+        String Property = "property";
+        String Category = "category";
+        String Participant = "participant";
+        String TypeName = "typeName";
+        String Code = "code";
+        String Description = "description";
+        String ParentId="parentId";
+        String TypeCode="typeCode";
     }
 
     /**
@@ -437,6 +449,18 @@ public class Archive extends Additional {
     private Organization groEntity;
     @Column(Field.Source)
     private String source;
+    // 档案发生地点
+    @Column(Activity.Field.Site)
+    private String site;
+    // 档案性质
+    @Column(Field.Property)
+    private String property;
+    // 档案类型
+    @Column(Field.Category)
+    private String category;
+    // 档案参与人
+    @Column(Field.Participant)
+    private String participant;
 
     public String getGroupId() {
         return groupId;
@@ -761,5 +785,37 @@ public class Archive extends Additional {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
+    }
+
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty(String property) {
+        this.property = property;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getParticipant() {
+        return participant;
+    }
+
+    public void setParticipant(String participant) {
+        this.participant = participant;
     }
 }

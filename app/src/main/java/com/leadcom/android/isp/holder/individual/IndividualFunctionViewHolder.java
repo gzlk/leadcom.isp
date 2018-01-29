@@ -97,7 +97,6 @@ public class IndividualFunctionViewHolder extends BaseViewHolder {
                 @Override
                 public void onClick(View v) {
                     // 新建个人档案
-                    //openActivity(ArchiveCreatorFragment.class.getName(), format("%d,", Archive.Type.USER), true, true);
                     ArchiveCreateSelectorFragment.open(fragment(), "");
                 }
             });

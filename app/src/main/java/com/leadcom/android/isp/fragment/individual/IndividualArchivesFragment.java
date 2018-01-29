@@ -130,7 +130,6 @@ public class IndividualArchivesFragment extends BaseSwipeRefreshSupportFragment 
             Archive archive = mAdapter.get(index);
             int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
             ArchiveDetailsWebViewFragment.open(IndividualArchivesFragment.this, archive.getId(), type);
-            //ArchiveDetailsFragment.open(IndividualArchivesFragment.this, type, archive.getId(), REQUEST_CHANGE);
         }
     };
 

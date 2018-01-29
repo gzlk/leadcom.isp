@@ -140,16 +140,19 @@
     <string name="ui_organization_archive_nothing">没有更多组织档案了</string>
     <string name="ui_organization_management_transfer_warning">您是本组织的创建者，转让管理权之后您会降级为普通成员，您确定要这样做吗？</string>
 
-    <string name="ui_archive_management_title_button_1">已审核</string>
-    <string name="ui_archive_management_title_button_2">未存档活动档案</string>
-    <string name="ui_archive_management_title_button_3">未审核组织档案</string>
+    <string name="ui_archive_management_title_button_1">已审核档案</string>
+    <string name="ui_archive_management_title_button_2">待存档活动</string>
+    <string name="ui_archive_management_title_button_3">未审核档案</string>
+    <string name="ui_archive_management_title_button_4">未通过</string>
     <string name="ui_archive_management_title_right_text">活动文件</string>
     <string name="ui_archive_management_loading_1">正在加载文档列表请稍候&#8230;</string>
     <string name="ui_archive_management_loading_2">正在加载待存档文件列表请稍候&#8230;</string>
     <string name="ui_archive_management_loading_3">正在加载待审核文档列表请稍候&#8230;</string>
+    <string name="ui_archive_management_loading_4">正在加载未审核通过的档案列表请稍候&#8230;</string>
     <string name="ui_archive_management_nothing_1">暂时没有更多档案了</string>
     <string name="ui_archive_management_nothing_2">暂时没有其他待存档的活动内容了</string>
     <string name="ui_archive_management_nothing_3">暂时没有更多需要审核的内容了</string>
+    <string name="ui_archive_management_nothing_4">暂时没有更多需未通过审核的内容了</string>
     <string name="ui_archive_management_list_item_create_date" formatted="false">发布日期：%s</string>
     <string name="ui_archive_management_list_item_status" formatted="false">状态：%s</string>
 

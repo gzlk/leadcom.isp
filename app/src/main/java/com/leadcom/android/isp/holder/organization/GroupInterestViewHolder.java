@@ -3,6 +3,7 @@ package com.leadcom.android.isp.holder.organization;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -29,17 +30,29 @@ public class GroupInterestViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_group_interest_cover)
     private ImageDisplayer coverView;
+    @ViewId(R.id.ui_holder_view_group_interest_select)
+    private CustomTextView selector;
     @ViewId(R.id.ui_holder_view_group_interest_name)
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_interest_button)
     private CorneredButton buttonView;
+
+    private boolean selectable = false;
 
     public GroupInterestViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
 
+    public void setSelectable(boolean selectable) {
+        this.selectable = selectable;
+    }
+
     public void showContent(Organization organization) {
+        coverView.setVisibility(selectable ? View.GONE : View.VISIBLE);
+        buttonView.setVisibility(selectable ? View.GONE : View.VISIBLE);
+        selector.setVisibility(selectable ? View.VISIBLE : View.GONE);
+        selector.setTextColor(getColor(organization.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         String cover = organization.getLogo();
         if (isEmpty(cover)) {
             cover = "drawable://" + R.mipmap.img_image_loading_fail;
@@ -57,10 +70,21 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         buttonView.setNormalColor(getColor(organization.isConcerned() ? R.color.color_3eb135 : R.color.colorPrimary));
     }
 
-    @Click({R.id.ui_holder_view_group_interest_button})
+    @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button})
     private void elementClick(View view) {
-        if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        switch (view.getId()) {
+            case R.id.ui_holder_view_group_interest_root:
+                if (buttonView.getVisibility() == View.GONE) {
+                    if (null != mOnViewHolderClickListener) {
+                        mOnViewHolderClickListener.onClick(getAdapterPosition());
+                    }
+                }
+                break;
+            default:
+                if (null != mOnViewHolderClickListener) {
+                    mOnViewHolderClickListener.onClick(getAdapterPosition());
+                }
+                break;
         }
     }
 }

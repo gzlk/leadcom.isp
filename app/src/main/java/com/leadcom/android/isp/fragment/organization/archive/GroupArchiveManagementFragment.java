@@ -24,10 +24,10 @@ import com.hlk.hlklib.lib.view.CorneredButton;
  * <b>修改备注：</b><br />
  */
 
-public class OrgArchiveManagementFragment extends BaseViewPagerSupportFragment {
+public class GroupArchiveManagementFragment extends BaseViewPagerSupportFragment {
 
-    public static OrgArchiveManagementFragment newInstance(String params) {
-        OrgArchiveManagementFragment mf = new OrgArchiveManagementFragment();
+    public static GroupArchiveManagementFragment newInstance(String params) {
+        GroupArchiveManagementFragment mf = new GroupArchiveManagementFragment();
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, params);
         mf.setArguments(bundle);
@@ -42,6 +42,8 @@ public class OrgArchiveManagementFragment extends BaseViewPagerSupportFragment {
     private CorneredButton button2;
     @ViewId(R.id.ui_tool_view_archive_management_title_button3)
     private CorneredButton button3;
+    @ViewId(R.id.ui_tool_view_archive_management_title_button4)
+    private CorneredButton button4;
 
     private SearchableViewHolder searchableViewHolder;
 
@@ -69,6 +71,9 @@ public class OrgArchiveManagementFragment extends BaseViewPagerSupportFragment {
         // 未审核组织档案
         param = format("%s,%d", mQueryId, ArchiveListFragment.TYPE_APPROVING);
         mFragments.add(ArchiveListFragment.newInstance(param));
+        // 未通过审核的档案
+        //param = format("%s,%d", mQueryId, ArchiveListFragment.TYPE_DENIED);
+        //mFragments.add(ArchiveListFragment.newInstance(param));
     }
 
     @Override
@@ -84,6 +89,9 @@ public class OrgArchiveManagementFragment extends BaseViewPagerSupportFragment {
 
         button3.setNormalColor(position == 2 ? color1 : Color.WHITE);
         button3.setTextColor(position == 2 ? Color.WHITE : color2);
+
+        button4.setNormalColor(position == 3 ? color1 : Color.WHITE);
+        button4.setTextColor(position == 3 ? Color.WHITE : color2);
 
         for (int i = 0, len = mFragments.size(); i < len; i++) {
             ArchiveListFragment my = (ArchiveListFragment) mFragments.get(i);

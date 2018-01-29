@@ -13,6 +13,7 @@
     <string name="ui_icon_wx_chat">&#xe675;</string>
     <string name="ui_icon_wx_moment">&#xe625;</string>
     <string name="ui_icon_weibo">&#xe603;</string>
+    <string name="ui_icon_share">&#xe661;</string>
     <string name="ui_icon_share_qq">&#xe852;</string>
     <string name="ui_icon_share_qzone">&#xe663;</string>
     <string name="ui_icon_share_wx_chat">&#xe659;</string>

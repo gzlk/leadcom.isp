@@ -4,8 +4,14 @@ import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.SingleQuery;
+import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.litesuits.http.request.param.HttpMethods;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * <b>功能描述：</b>获取档案分享内容<br />
@@ -19,7 +25,7 @@ import com.litesuits.http.request.param.HttpMethods;
  */
 public class ShareRequest extends Request<ShareInfo> {
 
-    public static ShareRequest request(){
+    public static ShareRequest request() {
         return new ShareRequest();
     }
 
@@ -62,5 +68,33 @@ public class ShareRequest extends Request<ShareInfo> {
         directlySave = false;
         String params = format("%s?id=%s&contentType=%d&docType=%d", url("/getShareInfo"), archiveId, contentType, archiveType);
         httpRequest(getRequest(SingleShare.class, params, "", HttpMethods.Get));
+    }
+
+    /**
+     * 获取档案草稿分享内容
+     */
+    public void getDraftShareInfo(Archive archive) {
+        directlySave = false;
+        JSONObject object = new JSONObject();
+        try {
+            object.put("title", archive.getTitle())// 必要字段
+                    .put("cover", checkNull(archive.getCover()))
+                    .put("type", archive.getType())// 必要字段
+                    .put("groupId", archive.getGroupId())// 必要字段
+                    .put("content", archive.getContent())
+                    .put("markdown", archive.getMarkdown())
+                    .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
+                    .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
+                    .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
+                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
+                    .put("fileIds", checkNull(archive.getFileIds()))
+                    .put("userId", archive.getUserId())
+                    .put("userName", archive.getUserName())
+                    .put("createDate", archive.getCreateDate());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleShare.class, url("/getDraftShareInfo"), object.toString(), HttpMethods.Post));
     }
 }

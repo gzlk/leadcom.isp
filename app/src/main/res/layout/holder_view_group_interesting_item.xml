@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_group_interest_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/ui_base_border_size_normal"
@@ -17,6 +18,15 @@
         app:id_image_scale_type="centerCrop"
         app:id_image_src="@mipmap/img_default_user_header"
         app:id_image_type="oval" />
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_group_interest_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_icon_select_solid"
+        android:textColor="@color/textColorHintLight"
+        android:textSize="@dimen/ui_base_text_size_big"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/ui_holder_view_group_interest_name"

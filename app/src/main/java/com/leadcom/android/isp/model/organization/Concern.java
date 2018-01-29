@@ -15,7 +15,29 @@ import com.leadcom.android.isp.helper.StringHelper;
  */
 public class Concern extends Organization {
 
-    // 关注类型：1=上级组织，2=友好组织
+    /**
+     * 关注的类型
+     */
+    public interface Type {
+        /**
+         * 当前组织
+         */
+        int SELF = 0;
+        /**
+         * 上级组织
+         */
+        int UPPER = 1;
+        /**
+         * 下级组织
+         */
+        int SUBGROUP = 2;
+        /**
+         * 友好组织
+         */
+        int FRIEND = 3;
+    }
+
+    // 关注类型:1.上级组织 2.下级组织 3.友好组织
     private int type;
 
     public int getType() {

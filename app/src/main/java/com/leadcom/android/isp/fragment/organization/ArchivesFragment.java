@@ -15,7 +15,7 @@ import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
-import com.leadcom.android.isp.fragment.organization.archive.OrgArchiveManagementFragment;
+import com.leadcom.android.isp.fragment.organization.archive.GroupArchiveManagementFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
@@ -205,13 +205,12 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
                         ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
                     } else {
                         // 新建组织档案
-                        //openActivity(ArchiveCreatorFragment.class.getName(), format("%d,,%s", Archive.Type.GROUP, mQueryId), REQUEST_CHANGE, true, true);
                         ArchiveCreateSelectorFragment.open(ArchivesFragment.this, mQueryId);
                     }
                     break;
                 case R.id.ui_tooltip_menu_organization_document_manage:
                     // 管理组织档案
-                    openActivity(OrgArchiveManagementFragment.class.getName(), mQueryId, REQUEST_CHANGE, false, false);
+                    openActivity(GroupArchiveManagementFragment.class.getName(), mQueryId, REQUEST_CHANGE, false, false);
                     break;
             }
         }

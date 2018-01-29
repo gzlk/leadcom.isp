@@ -12,6 +12,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CornerTagView;
 import com.hlk.hlklib.lib.view.CorneredView;
+import com.leadcom.android.isp.model.archive.Dictionary;
 
 /**
  * <b>功能描述：</b>活动标签<br />
@@ -43,6 +44,12 @@ public class ActivityLabelViewHolder extends BaseViewHolder {
         containerView.setNormalColor(getColor(label.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         tagView.setVisibility(label.isSelected() ? View.VISIBLE : View.GONE);
         //itemView.setTranslationZ(label.isSelected() ? getDimension(R.dimen.ui_base_translationZ_small) : 0);
+    }
+
+    public void showContent(Dictionary dictionary) {
+        textView.setText(dictionary.getName());
+        containerView.setNormalColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        tagView.setVisibility(dictionary.isSelected() ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_holder_view_activity_label_container})

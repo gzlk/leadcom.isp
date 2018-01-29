@@ -402,6 +402,10 @@ public class StructureFragment extends BaseOrganizationFragment {
      */
     public static Member my;
     /**
+     * 当前选中的组织
+     */
+    public static Organization selectedOrganization;
+    /**
      * 当前选中的组织的id
      */
     public static String selectedGroupId = "";
@@ -409,6 +413,7 @@ public class StructureFragment extends BaseOrganizationFragment {
     public void changeSelectedGroup() {
         if (selectedIndex < 0) return;
         Organization org = concernedViewHolder.get(selectedIndex);
+        selectedOrganization = org;
         if (null != org) {
             my = org.getGroMember();
             selectedGroupId = org.getId();
