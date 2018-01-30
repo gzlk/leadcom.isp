@@ -419,7 +419,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private View settingDialogView;
     private ImageDisplayer coverView;
-    private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText, participantText;
+    private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText;
+    private ClearEditText participantText;
     private ClearEditText creatorText;
 
     private void openSettingDialog() {
@@ -479,10 +480,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     categoryText.setText(mArchive.getCategory());
                 }
                 if (isEmpty(mArchive.getParticipant())) {
-                    participantText.setText(R.string.ui_text_archive_details_editor_setting_participant_title);
+                    participantText.setValue("");
                 } else {
-                    participantText.setText(mArchive.getParticipant());
+                    participantText.setValue(mArchive.getParticipant());
                 }
+                participantText.focusEnd();
                 if (isEmpty(mArchive.getHappenDate())) {
                     happenDate.setText(R.string.ui_text_archive_details_editor_setting_time_title);
                 } else {
@@ -1016,7 +1018,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 }
                 mArchive.setParticipant(names);
-                participantText.setText(names);
+                participantText.setValue(names);
+                if (!isEmpty(names)) {
+                    participantText.focusEnd();
+                }
                 break;
         }
         super.onActivityResult(requestCode, data);

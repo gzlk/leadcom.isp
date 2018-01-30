@@ -7,6 +7,9 @@
     <!--中文过滤：纯中文，不带符号-->
     <string name="regex_normal_input_filter_chs_only">[\u4E00-\u9FA5]+</string>
 
+    <!--中文过滤：纯中文，和顿号、-->
+    <string name="regex_normal_input_filter_chs_and_chs_dot">[\u3001\u4E00-\u9FA5]+</string>
+
     <!--数字过滤：纯数字-->
     <string name="regex_normal_input_filter_num_only">\\d+</string>
 

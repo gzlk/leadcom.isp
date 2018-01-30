@@ -117,4 +117,6 @@
     <dimen name="ui_dimen_archive_details_editor_setting_item_vertical_padding">@dimen/ui_static_dp_8</dimen>
 
     <string name="ui_text_archive_details_push_dialog_title">推送到：</string>
+    <string name="ui_text_archive_details_push_user_names_title">手动添加参与人</string>
+    <string name="ui_text_archive_details_push_user_names_hint">请以顿号(、)隔开多个人名</string>
 </resources>
