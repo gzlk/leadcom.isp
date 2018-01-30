@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
-import com.netease.nim.uikit.session.actions.BaseAction;
-import com.netease.nim.uikit.session.constant.RequestCode;
-import com.netease.nim.uikit.session.helper.VideoMessageHelper;
+import com.netease.nim.uikit.business.session.actions.BaseAction;
+import com.netease.nim.uikit.business.session.constant.RequestCode;
+import com.netease.nim.uikit.business.session.helper.VideoMessageHelper;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
@@ -40,7 +40,7 @@ public abstract class ChooseVideoAction extends BaseAction {
 
     @Override
     public void onClick() {
-        videoHelper().setVideoSources(makeRequestCode(RequestCode.GET_LOCAL_VIDEO), makeRequestCode(RequestCode.CAPTURE_VIDEO));
+        videoHelper().showVideoSource(makeRequestCode(RequestCode.GET_LOCAL_VIDEO), makeRequestCode(RequestCode.CAPTURE_VIDEO));
         if (isChoose) {
             // 从相册中选取视频文件
             videoHelper().chooseVideoFromLocal();

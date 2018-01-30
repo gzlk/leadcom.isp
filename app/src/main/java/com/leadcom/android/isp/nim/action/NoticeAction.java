@@ -13,7 +13,7 @@ import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.nim.constant.RequestCode;
 import com.leadcom.android.isp.nim.model.extension.NoticeAttachment;
-import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nim.uikit.business.session.actions.BaseAction;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;

@@ -15,7 +15,7 @@ import com.leadcom.android.isp.model.activity.sign.AppSigning;
 import com.leadcom.android.isp.nim.constant.RequestCode;
 import com.leadcom.android.isp.nim.constant.SigningNotifyType;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
-import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nim.uikit.business.session.actions.BaseAction;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;

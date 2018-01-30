@@ -9,11 +9,11 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.nim.searching.SearchingHistoryActivity;
 import com.hlk.hlklib.lib.view.CorneredEditText;
+import com.netease.nim.uikit.business.session.module.Container;
+import com.netease.nim.uikit.business.session.module.ModuleProxy;
+import com.netease.nim.uikit.business.session.module.list.MessageListPanelEx;
+import com.netease.nim.uikit.common.activity.ToolBarOptions;
 import com.netease.nim.uikit.common.activity.UI;
-import com.netease.nim.uikit.model.ToolBarOptions;
-import com.netease.nim.uikit.session.module.Container;
-import com.netease.nim.uikit.session.module.ModuleProxy;
-import com.netease.nim.uikit.session.module.list.MessageListPanelEx;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
@@ -108,6 +108,11 @@ public class SessionHistoryActivity extends UI implements ModuleProxy {
     @Override
     public boolean isLongClickEnabled() {
         return false;
+    }
+
+    @Override
+    public void onItemFooterClick(IMMessage message) {
+
     }
 
     @Override

@@ -18,7 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import com.netease.nim.uikit.common.fragment.TFragment;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.sys.ReflectionUtil;
-import com.netease.nim.uikit.model.ToolBarOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +90,7 @@ public abstract class UI extends AppCompatActivity {
 
         if (options.isNeedNavigate) {
             toolbar.setNavigationIcon(options.navigateId);
+            toolbar.setContentInsetStartWithNavigation(0);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

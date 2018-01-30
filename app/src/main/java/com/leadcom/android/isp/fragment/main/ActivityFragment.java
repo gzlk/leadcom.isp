@@ -42,8 +42,8 @@ import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
 import com.leadcom.android.isp.nim.model.extension.TopicAttachment;
 import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
-import com.netease.nim.uikit.cache.SimpleCallback;
-import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.api.model.SimpleCallback;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
@@ -174,7 +174,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private void clearUnreadCount(final String teamId, final String teamName) {
         TeamDataCache.getInstance().fetchTeamMember(teamId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
             @Override
-            public void onResult(boolean success, TeamMember result) {
+            public void onResult(boolean success, TeamMember result, int code) {
                 boolean cleanable = true;
                 if (success && null != result) {
                     if (result.isInTeam()) {

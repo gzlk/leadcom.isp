@@ -10,8 +10,8 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
+import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
-import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
 
 /**
  * <b>功能描述：</b>群聊里档案分享的显示Holder<br />

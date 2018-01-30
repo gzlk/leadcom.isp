@@ -7,8 +7,8 @@ import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.fragment.activity.notice.NoticeDetailsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.nim.model.extension.NoticeAttachment;
+import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
-import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
 
 /**
  * <b>功能描述：</b>网易云信对话列表里显示通知<br />

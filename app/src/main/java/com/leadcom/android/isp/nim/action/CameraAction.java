@@ -5,9 +5,9 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 
 import com.leadcom.android.isp.R;
+import com.netease.nim.uikit.business.session.actions.PickImageAction;
+import com.netease.nim.uikit.business.session.constant.RequestCode;
 import com.netease.nim.uikit.common.media.picker.activity.PickImageActivity;
-import com.netease.nim.uikit.session.actions.PickImageAction;
-import com.netease.nim.uikit.session.constant.RequestCode;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 

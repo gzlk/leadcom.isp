@@ -49,17 +49,18 @@ import com.leadcom.android.isp.nim.viewholder.MsgViewHolderSignNotify;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderTip;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderTopic;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderVote;
-import com.netease.nim.uikit.NimUIKit;
-import com.netease.nim.uikit.OnSessionMessageViewHolderClick;
-import com.netease.nim.uikit.cache.TeamDataCache;
-import com.netease.nim.uikit.session.SessionCustomization;
-import com.netease.nim.uikit.session.SessionEventListener;
-import com.netease.nim.uikit.session.actions.BaseAction;
-import com.netease.nim.uikit.session.helper.MessageHelper;
-import com.netease.nim.uikit.session.module.MsgForwardFilter;
-import com.netease.nim.uikit.session.module.MsgRevokeFilter;
-import com.netease.nim.uikit.team.model.TeamExtras;
-import com.netease.nim.uikit.team.model.TeamRequestCode;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.OnSessionMessageViewHolderClick;
+import com.netease.nim.uikit.api.model.session.SessionCustomization;
+import com.netease.nim.uikit.api.model.session.SessionEventListener;
+import com.netease.nim.uikit.api.wrapper.NimMessageRevokeObserver;
+import com.netease.nim.uikit.business.session.actions.BaseAction;
+import com.netease.nim.uikit.business.session.helper.MessageHelper;
+import com.netease.nim.uikit.business.session.module.MsgForwardFilter;
+import com.netease.nim.uikit.business.session.module.MsgRevokeFilter;
+import com.netease.nim.uikit.business.team.model.TeamExtras;
+import com.netease.nim.uikit.business.team.model.TeamRequestCode;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -225,16 +226,7 @@ public class NimSessionHelper {
      * 注册消息撤回监听器
      */
     private static void registerMsgRevokeObserver() {
-        NIMClient.getService(MsgServiceObserve.class).observeRevokeMessage(new Observer<IMMessage>() {
-            @Override
-            public void onEvent(IMMessage message) {
-                if (message == null) {
-                    return;
-                }
-
-                MessageHelper.getInstance().onRevokeMessage(message);
-            }
-        }, true);
+        NIMClient.getService(MsgServiceObserve.class).observeRevokeMessage(new NimMessageRevokeObserver(), true);
     }
 
     public static void startP2PSession(Context context, String account) {

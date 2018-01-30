@@ -5,12 +5,16 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.bumptech.glide.Glide;
-import com.netease.nim.uikit.NimUIKit;
+import com.bumptech.glide.request.RequestOptions;
 import com.netease.nim.uikit.R;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.nos.model.NosThumbParam;
 import com.netease.nimlib.sdk.nos.util.NosThumbImageUtil;
+import com.netease.nimlib.sdk.robot.model.RobotAttachment;
 import com.netease.nimlib.sdk.team.model.Team;
-import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
+import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 
 /**
  * Created by huangjun on 2015/11/13.
@@ -19,6 +23,7 @@ public class HeadImageView extends CircleImageView {
 
     public static final int DEFAULT_AVATAR_THUMB_SIZE = (int) NimUIKit.getContext().getResources().getDimension(R.dimen.avatar_max_size);
     public static final int DEFAULT_AVATAR_NOTIFICATION_ICON_SIZE = (int) NimUIKit.getContext().getResources().getDimension(R.dimen.avatar_notification_size);
+    private static final int DEFAULT_AVATAR_RES_ID = R.drawable.nim_avatar_default;
 
     public HeadImageView(Context context) {
         super(context);
@@ -35,12 +40,36 @@ public class HeadImageView extends CircleImageView {
     /**
      * 加载用户头像（默认大小的缩略图）
      *
+     * @param url 头像地址
+     */
+    public void loadAvatar(final String url) {
+        doLoadImage(url, DEFAULT_AVATAR_RES_ID, DEFAULT_AVATAR_THUMB_SIZE);
+    }
+
+    /**
+     * 加载用户头像（默认大小的缩略图）
+     *
      * @param account 用户账号
      */
     public void loadBuddyAvatar(String account) {
-        final UserInfoProvider.UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(account);
-        doLoadImage(userInfo != null ? userInfo.getAvatar() : null, NimUIKit.getUserInfoProvider()
-                .getDefaultIconResId(), DEFAULT_AVATAR_THUMB_SIZE);
+        final UserInfo userInfo = NimUIKit.getUserInfoProvider().getUserInfo(account);
+        doLoadImage(userInfo != null ? userInfo.getAvatar() : null, DEFAULT_AVATAR_RES_ID, DEFAULT_AVATAR_THUMB_SIZE);
+    }
+
+    /**
+     * 加载用户头像（默认大小的缩略图）
+     *
+     * @param message 消息
+     */
+    public void loadBuddyAvatar(IMMessage message) {
+        String account = message.getFromAccount();
+        if (message.getMsgType() == MsgTypeEnum.robot) {
+            RobotAttachment attachment = (RobotAttachment) message.getAttachment();
+            if (attachment.isRobotSend()) {
+                account = attachment.getFromRobotAccount();
+            }
+        }
+        loadBuddyAvatar(account);
     }
 
     /**
@@ -61,11 +90,14 @@ public class HeadImageView extends CircleImageView {
          * 如果图片来源是非网易云信云存储，请不要使用NosThumbImageUtil
          */
         final String thumbUrl = makeAvatarThumbNosUrl(url, thumbSize);
-        Glide.with(getContext().getApplicationContext())
-                .load(thumbUrl).asBitmap().centerCrop()
+        RequestOptions requestOptions = new RequestOptions()
+                .centerCrop()
                 .placeholder(defaultResId)
                 .error(defaultResId)
-                .override(thumbSize, thumbSize)
+                .override(thumbSize, thumbSize);
+        Glide.with(getContext().getApplicationContext()).asBitmap()
+                .load(thumbUrl)
+                .apply(requestOptions)
                 .into(this);
     }
 

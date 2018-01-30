@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.leadcom.android.isp.R;
+import com.netease.nim.uikit.business.session.module.Container;
+import com.netease.nim.uikit.business.session.module.ModuleProxy;
+import com.netease.nim.uikit.business.session.module.list.MessageListPanelEx;
+import com.netease.nim.uikit.business.uinfo.UserInfoHelper;
+import com.netease.nim.uikit.common.activity.ToolBarOptions;
 import com.netease.nim.uikit.common.activity.UI;
-import com.netease.nim.uikit.model.ToolBarOptions;
-import com.netease.nim.uikit.session.module.Container;
-import com.netease.nim.uikit.session.module.ModuleProxy;
-import com.netease.nim.uikit.session.module.list.MessageListPanelEx;
-import com.netease.nim.uikit.uinfo.UserInfoHelper;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
@@ -106,5 +106,10 @@ public class DisplayMessageActivity extends UI implements ModuleProxy {
     @Override
     public boolean isLongClickEnabled() {
         return true;
+    }
+
+    @Override
+    public void onItemFooterClick(IMMessage message) {
+
     }
 }

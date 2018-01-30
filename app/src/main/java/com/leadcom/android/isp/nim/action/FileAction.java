@@ -6,7 +6,7 @@ import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nim.uikit.business.session.actions.BaseAction;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 

@@ -10,14 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
-import com.netease.nim.uikit.cache.NimUserInfoCache;
-import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.business.session.emoji.MoonUtil;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
-import com.netease.nim.uikit.session.emoji.MoonUtil;
+import com.netease.nim.uikit.impl.cache.NimUserInfoCache;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.netease.nimlib.sdk.team.model.TeamMember;
+import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 
 import java.util.List;
 
@@ -100,9 +102,11 @@ public class SearchMessageAdapter extends BaseAdapter {
             labelWidth -= ScreenUtil.dip2px(70 + 70);
             tvNickname.setMaxWidth(labelWidth);
             if (message.getSessionType() == SessionTypeEnum.Team) {
-                tvNickname.setText(TeamDataCache.getInstance().getTeamMemberDisplayName(message.getSessionId(), message.getFromAccount()));
+                TeamMember member = TeamDataCache.getInstance().getTeamMember(message.getSessionId(), message.getFromAccount());
+                tvNickname.setText(null == member ? "[未知成员]" : member.getTeamNick());
             } else {
-                tvNickname.setText(NimUserInfoCache.getInstance().getUserDisplayName(message.getFromAccount()));
+                UserInfo user = NimUserInfoCache.getInstance().getUserInfo(message.getFromAccount());
+                tvNickname.setText(null == user ? "[未知用户]" : user.getName());
             }
         }
 

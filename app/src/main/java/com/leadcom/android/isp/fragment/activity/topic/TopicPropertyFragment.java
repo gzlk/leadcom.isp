@@ -44,11 +44,12 @@ import com.leadcom.android.isp.nim.activity.SessionHistoryActivity;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
-import com.netease.nim.uikit.cache.SimpleCallback;
-import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.api.model.SimpleCallback;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.team.TeamService;
+import com.netease.nimlib.sdk.team.constant.TeamMessageNotifyTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
 
 import java.util.ArrayList;
@@ -238,7 +239,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         @Override
         public void onChange(int index, boolean togged) {
             // 消息免打扰
-            NIMClient.getService(TeamService.class).muteTeam(mQueryId, togged);
+            NIMClient.getService(TeamService.class).muteTeam(mQueryId, togged ? TeamMessageNotifyTypeEnum.Mute : TeamMessageNotifyTypeEnum.All);
         }
     };
 
@@ -476,7 +477,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
         } else {
             TeamDataCache.getInstance().fetchTeamById(mQueryId, new SimpleCallback<Team>() {
                 @Override
-                public void onResult(boolean success, Team result) {
+                public void onResult(boolean success, Team result, int code) {
                     if (success && result != null) {
                         muteHolder.showContent(format(items[3], result.mute() ? 1 : 0));
                     } else {

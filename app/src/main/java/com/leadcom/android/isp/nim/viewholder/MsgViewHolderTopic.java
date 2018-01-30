@@ -12,8 +12,8 @@ import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.nim.model.extension.TopicAttachment;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
+import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
-import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
 
 import java.util.List;
 

@@ -12,10 +12,10 @@ import com.leadcom.android.isp.nim.constant.SigningNotifyType;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
-import com.netease.nim.uikit.NimUIKit;
-import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
-import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
@@ -52,12 +52,12 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
 
     @Override
     protected void inflateContentView() {
-        iconContainer = (CorneredView) view.findViewById(R.id.message_item_sign_notify_icon_container);
-        notifyIcon = (CustomTextView) view.findViewById(R.id.message_item_sign_notify_icon);
-        titleTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_title_label);
-        contentTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_content_label);
-        timeTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_time_label);
-        addressTextView = (TextView) view.findViewById(R.id.message_item_sign_notify_address_label);
+        iconContainer = view.findViewById(R.id.message_item_sign_notify_icon_container);
+        notifyIcon = view.findViewById(R.id.message_item_sign_notify_icon);
+        titleTextView = view.findViewById(R.id.message_item_sign_notify_title_label);
+        contentTextView = view.findViewById(R.id.message_item_sign_notify_content_label);
+        timeTextView = view.findViewById(R.id.message_item_sign_notify_time_label);
+        addressTextView = view.findViewById(R.id.message_item_sign_notify_address_label);
     }
 
     private SigningNotifyAttachment notify;
@@ -116,7 +116,7 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
                 msg.setFromAccount(Cache.cache().userId);
                 String nick = "";
                 if (message.getSessionType() == SessionTypeEnum.Team) {
-                    nick = TeamDataCache.getInstance().getTeamMemberDisplayNameYou(message.getSessionId(), message.getFromAccount());
+                    nick = TeamDataCache.getInstance().getTeamMember(message.getSessionId(), message.getFromAccount()).getTeamNick();
                 } else if (message.getSessionType() == SessionTypeEnum.P2P) {
                     nick = message.getFromAccount().equals(NimUIKit.getAccount()) ? "你" : "对方";
                 }

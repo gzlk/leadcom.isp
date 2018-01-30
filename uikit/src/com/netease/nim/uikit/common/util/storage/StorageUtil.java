@@ -13,7 +13,7 @@ public class StorageUtil {
     // 外置存储卡默认预警临界值
     private static final long THRESHOLD_WARNING_SPACE = 100 * M;
     // 保存文件时所需的最小空间的默认值
-    public static final long THRESHOLD_MIN_SPCAE = 20 * M;
+    static final long THRESHOLD_MIN_SPCAE = 20 * M;
 
     public static void init(Context context, String rootPath) {
         ExternalStorage.getInstance().init(context, rootPath);
@@ -107,13 +107,13 @@ public class StorageUtil {
     }
 
     public static String getSystemImagePath() {
-        String picturePath;
         if (Build.VERSION.SDK_INT > 7) {
-            picturePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+            String picturePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+            return picturePath + "/nim/";
         } else {
-            picturePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+            String picturePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+            return picturePath + "/nim/";
         }
-        return picturePath + "/leadcom/";
     }
 
     public static boolean isInvalidVideoFile(String filePath) {

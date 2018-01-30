@@ -55,7 +55,7 @@ import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
-import com.netease.nim.uikit.NimUIKit;
+import com.netease.nim.uikit.api.NimUIKit;
 
 import java.util.ArrayList;
 import java.util.Iterator;

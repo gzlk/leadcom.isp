@@ -1,7 +1,7 @@
 package com.leadcom.android.isp.nim.action;
 
 import com.leadcom.android.isp.R;
-import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nim.uikit.business.session.actions.BaseAction;
 
 /**
  * <b>功能描述：</b>空白按钮<br />

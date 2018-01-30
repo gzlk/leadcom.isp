@@ -8,8 +8,8 @@ import com.leadcom.android.isp.fragment.common.FilePreviewX5Fragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
+import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
-import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
 
 /**
  * <b>功能描述：</b>网易云信对话列表里显示会议纪要<br />

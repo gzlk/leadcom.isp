@@ -15,7 +15,7 @@ import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.common.Address;
-import com.netease.nim.uikit.LocationProvider;
+import com.netease.nim.uikit.api.model.location.LocationProvider;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 
 /**

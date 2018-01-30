@@ -32,7 +32,6 @@
     <color name="contact_search_hit">#02d3a9</color>
     <color name="color_black_333333_90_transparent">#e5333333</color>
     <color name="color_black_000000_88_transparent">#e0000000</color>
-    <color name="color_white_ffffff_70_white">#b3ffffff</color>
 
     <!-- main bg color -->
     <color name="main_bg_color">#FFFFFF</color>
@@ -62,4 +61,5 @@
     <color name="color_black_ff999999">#ff999999</color>
     <color name="color_gray_bfc2c5">#bfc2c5</color>
 
+    <color name="robot_link_element_text_blue">#248DFA</color>
 </resources>

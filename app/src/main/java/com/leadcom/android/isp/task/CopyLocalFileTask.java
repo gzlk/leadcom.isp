@@ -1,8 +1,6 @@
 package com.leadcom.android.isp.task;
 
 import android.content.ContentValues;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
@@ -14,7 +12,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
-import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.common.util.C;
 
 import java.io.File;

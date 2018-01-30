@@ -1,6 +1,5 @@
 package com.leadcom.android.isp.application;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -19,7 +18,9 @@ import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
-import com.netease.nim.uikit.NimUIKit;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.UIKitOptions;
+import com.netease.nim.uikit.api.wrapper.NimUserInfoProvider;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.SDKOptions;
@@ -27,17 +28,16 @@ import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
+import com.netease.nimlib.sdk.mixpush.MixPushConfig;
 import com.netease.nimlib.sdk.mixpush.NIMPushClient;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -85,20 +85,20 @@ public class NimApplication extends BaseActivityManagedApplication {
      */
     protected void initializeNim() {
         // 判断是否为小米手机
-        if (isXiaomiDevice()) {
-            // 此处 certificate 请传入为开发者配置好的小米证书名称
-            NIMPushClient.registerMiPush(this, "leadcomMiPush", "2882303761517709778", "5141770974778");
-        }
-        // 判断是否为华为手机
-        if (isHuaweiDevice()) {
-
-        }
+//        if (isXiaomiDevice()) {
+//            // 此处 certificate 请传入为开发者配置好的小米证书名称
+//            NIMPushClient.registerMiPush(this, "leadcomMiPush", "2882303761517709778", "5141770974778");
+//        }
+//        // 判断是否为华为手机
+//        if (isHuaweiDevice()) {
+//
+//        }
         // SDK初始化（启动后台服务，若已经存在用户登录信息， SDK 将完成自动登录）
         NIMClient.init(this, loginInfo(), options());
         // 注册自定义网易云消息解析器，必须在主进程中。
         if (shouldInit()) {
             // 初始化，使用 uikit 默认的用户信息提供者
-            NimUIKit.init(this);
+            NimUIKit.init(this, buildUIKitOptions());
 
             NimSessionHelper.init();
 
@@ -108,6 +108,13 @@ public class NimApplication extends BaseActivityManagedApplication {
 
             observerRecentContact(true);
         }
+    }
+
+    private UIKitOptions buildUIKitOptions() {
+        UIKitOptions options = new UIKitOptions();
+        // 设置app图片/音频/日志等缓存目录
+        options.appCacheDir = Environment.getExternalStorageDirectory() + "/" + ROOT_DIR + "/nim";//NimSDKOptionConfig.getAppCacheDir(this) + "/app";
+        return options;
     }
 
     @Override
@@ -158,6 +165,8 @@ public class NimApplication extends BaseActivityManagedApplication {
 
         options.statusBarNotificationConfig = getNotificationConfig();
 
+        // 配置数据库加密秘钥
+        options.databaseEncryptKey = "NETEASE";
         // 配置保存图片，文件，log 等数据的目录
         // 如果 options 中没有设置这个值，SDK 会使用下面代码示例中的位置作为 SDK 的数据目录。
         // 该目录目前包含 log, file, image, audio, video, thumb 这6个目录。
@@ -174,34 +183,48 @@ public class NimApplication extends BaseActivityManagedApplication {
         // 设置同步已读回执到各端
         options.sessionReadAck = true;
 
+        // 动图的缩略图直接下载原图
+        options.animatedImageThumbnailEnabled = true;
+
+        // 采用异步加载SDK
+        options.asyncInitSDK = true;
+
+        // 是否是弱IM场景
+        options.reducedIM = false;
+
+        // 是否检查manifest 配置，调试阶段打开，调试通过之后请关掉
+        options.checkManifestConfig = !Cache.isReleasable();
+
+        // 配置第三方推送
+        options.mixPushConfig = buildMixPushConfig();
+
         // 用户资料提供者, 目前主要用于提供用户资料，用于新消息通知栏中显示消息来源的头像和昵称
-        options.userInfoProvider = new UserInfoProvider() {
-            @Override
-            public UserInfo getUserInfo(String account) {
-                return null;
-            }
-
-            @Override
-            public int getDefaultIconResId() {
-                return R.mipmap.img_default_user_header;
-            }
-
-            @Override
-            public Bitmap getTeamIcon(String tid) {
-                return null;
-            }
-
-            @Override
-            public Bitmap getAvatarForMessageNotifier(String account) {
-                return null;
-            }
-
-            @Override
-            public String getDisplayNameForMessageNotifier(String account, String sessionId, SessionTypeEnum sessionType) {
-                return null;
-            }
-        };
+        options.userInfoProvider = new NimUserInfoProvider(this);
         return options;
+    }
+
+    private static MixPushConfig buildMixPushConfig() {
+
+        // 第三方推送配置
+        MixPushConfig config = new MixPushConfig();
+
+        // 小米推送
+        config.xmAppId = "2882303761517709778";
+        config.xmAppKey = "5141770974778";
+        config.xmCertificateName = "leadcomMiPush";
+
+        // 华为推送
+        config.hwCertificateName = "leadcomHwPush";
+
+        // 魅族推送
+        //config.mzAppId = "111710";
+        //config.mzAppKey = "282bdd3a37ec4f898f47c5bbbf9d2369";
+        //config.mzCertificateName = "DEMO_MZ_PUSH";
+
+        // fcm 推送，适用于海外用户
+        //config.fcmCertificateName = "DEMO_FCM_PUSH";
+
+        return config;
     }
 
     private int getImageMaxEdge() {

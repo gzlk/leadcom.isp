@@ -33,15 +33,16 @@ import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.nim.activity.SessionHistoryActivity;
-import com.netease.nim.uikit.cache.SimpleCallback;
-import com.netease.nim.uikit.cache.TeamDataCache;
-import com.netease.nim.uikit.session.helper.MessageListPanelHelper;
+import com.netease.nim.uikit.api.model.SimpleCallback;
+import com.netease.nim.uikit.business.session.helper.MessageListPanelHelper;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.constant.TeamMemberType;
+import com.netease.nimlib.sdk.team.constant.TeamMessageNotifyTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 
@@ -212,13 +213,13 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         Team team = TeamDataCache.getInstance().getTeamById(mSessionId);
         if (null != team) {
             // 静音=1，反之=0
-            resetNotificationStatus(team.mute());
+            resetNotificationStatus(team.getMessageNotifyType() == TeamMessageNotifyTypeEnum.Mute);
         } else {
             TeamDataCache.getInstance().fetchTeamById(mSessionId, new SimpleCallback<Team>() {
                 @Override
-                public void onResult(boolean success, Team result) {
+                public void onResult(boolean success, Team result, int code) {
                     if (success && result != null) {
-                        resetNotificationStatus(result.mute());
+                        resetNotificationStatus(result.getMessageNotifyType() == TeamMessageNotifyTypeEnum.Mute);
                     } else {
                         ToastHelper.make().showMsg(R.string.ui_activity_property_not_exist);
                     }
@@ -306,7 +307,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         final String groupId = act.getGroupId();
         TeamDataCache.getInstance().fetchTeamMember(mSessionId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
             @Override
-            public void onResult(boolean success, TeamMember result) {
+            public void onResult(boolean success, TeamMember result, int code) {
                 if (success && null != result) {
                     if (result.getType() == TeamMemberType.Manager || result.getType() == TeamMemberType.Owner) {
                         warningTransferOwner(groupId);
@@ -334,7 +335,7 @@ public class ActivityPropertiesFragment extends BaseTransparentPropertyFragment 
         public void onChange(int index, boolean togged) {
             if (index == 5) {
                 // 消息免打扰
-                NIMClient.getService(TeamService.class).muteTeam(mSessionId, togged);
+                NIMClient.getService(TeamService.class).muteTeam(mSessionId, togged ? TeamMessageNotifyTypeEnum.Mute : TeamMessageNotifyTypeEnum.All);
             }
         }
     };

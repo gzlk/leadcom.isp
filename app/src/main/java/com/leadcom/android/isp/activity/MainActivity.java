@@ -22,9 +22,7 @@ import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragm
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.common.SystemUpdate;
 import com.leadcom.android.isp.model.organization.Invitation;
@@ -32,7 +30,7 @@ import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.leadcom.android.isp.service.DownloadingService;
-import com.netease.nim.uikit.NimUIKit;
+import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;

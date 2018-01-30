@@ -14,11 +14,11 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 
 import com.leadcom.android.isp.R;
-import com.netease.nim.uikit.cache.NimUserInfoCache;
-import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.common.activity.ToolBarOptions;
 import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.ui.listview.AutoRefreshListView;
-import com.netease.nim.uikit.model.ToolBarOptions;
+import com.netease.nim.uikit.impl.cache.NimUserInfoCache;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
@@ -26,6 +26,7 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.TeamMember;
+import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -298,7 +299,8 @@ public class SearchingHistoryActivity extends UI {
                         filter.add(account);
                         continue;
                     }
-                    if (match(NimUserInfoCache.getInstance().getUserName(account), query)) {
+                    NimUserInfo userInfo = NimUserInfoCache.getInstance().getUserInfo(account);
+                    if (match(null == userInfo ? "no" : userInfo.getName(), query)) {
                         filter.add(account);
                         continue;
                     }

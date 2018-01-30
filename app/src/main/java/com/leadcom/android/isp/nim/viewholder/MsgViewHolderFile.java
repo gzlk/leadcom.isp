@@ -12,10 +12,10 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.nim.file.FileIcons;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
+import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 import com.netease.nim.uikit.common.util.file.AttachmentStore;
 import com.netease.nim.uikit.common.util.file.FileUtil;
-import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.msg.MsgService;
@@ -55,10 +55,10 @@ public class MsgViewHolderFile extends MsgViewHolderBase {
 
     @Override
     protected void inflateContentView() {
-        fileIcon = (ImageView) view.findViewById(R.id.message_item_file_icon_image);
-        fileNameLabel = (TextView) view.findViewById(R.id.message_item_file_name_label);
-        fileStatusLabel = (TextView) view.findViewById(R.id.message_item_file_status_label);
-        progressBar = (ProgressBar) view.findViewById(R.id.message_item_file_transfer_progress_bar);
+        fileIcon = view.findViewById(R.id.message_item_file_icon_image);
+        fileNameLabel = view.findViewById(R.id.message_item_file_name_label);
+        fileStatusLabel = view.findViewById(R.id.message_item_file_status_label);
+        progressBar = view.findViewById(R.id.message_item_file_transfer_progress_bar);
     }
 
     @Override

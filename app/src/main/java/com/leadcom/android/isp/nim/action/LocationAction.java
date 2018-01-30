@@ -5,9 +5,9 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 
 import com.leadcom.android.isp.R;
-import com.netease.nim.uikit.LocationProvider;
-import com.netease.nim.uikit.NimUIKit;
-import com.netease.nim.uikit.session.actions.BaseAction;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.model.location.LocationProvider;
+import com.netease.nim.uikit.business.session.actions.BaseAction;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 

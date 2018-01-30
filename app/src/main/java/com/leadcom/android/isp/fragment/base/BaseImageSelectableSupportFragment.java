@@ -25,7 +25,7 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnTaskPreparedListener;
 import com.leadcom.android.isp.task.CompressImageTask;
-import com.netease.nim.uikit.NimUIKit;
+import com.netease.nim.uikit.api.NimUIKit;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.durban.Controller;
 import com.yanzhenjie.durban.Durban;

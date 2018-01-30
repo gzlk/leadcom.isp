@@ -18,8 +18,8 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.AppNotice;
-import com.netease.nim.uikit.cache.SimpleCallback;
-import com.netease.nim.uikit.cache.TeamDataCache;
+import com.netease.nim.uikit.api.model.SimpleCallback;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.team.constant.TeamMemberType;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 
@@ -118,7 +118,7 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
     private void tryResetRightEvent() {
         TeamDataCache.getInstance().fetchTeamMember(mQueryId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
             @Override
-            public void onResult(boolean success, TeamMember result) {
+            public void onResult(boolean success, TeamMember result, int code) {
                 if (success && null != result) {
                     if (result.getType() == TeamMemberType.Manager || result.getType() == TeamMemberType.Owner) {
                         // 活动管理者或创建者可以新建通知

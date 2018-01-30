@@ -10,7 +10,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.common.Address;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.netease.nim.uikit.LocationProvider;
+import com.netease.nim.uikit.api.model.location.LocationProvider;
 
 /**
  * <b>功能描述：</b>百度地图地址定位页面<br />

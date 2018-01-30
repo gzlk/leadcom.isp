@@ -10,8 +10,8 @@ import com.leadcom.android.isp.fragment.activity.vote.VoteDetailsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
-import com.netease.nim.uikit.session.viewholder.MsgViewHolderBase;
 
 /**
  * <b>功能描述：</b>网易云信对话列表里显示投票<br />
