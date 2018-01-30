@@ -39,6 +39,19 @@
 -dontwarn com.xiaomi.push.**
 -keep class com.xiaomi.** {*;}
 
+# 华为推送SDK
+-ignorewarning
+-keepattributes *Annotation*
+-keepattributes Exceptions
+-keepattributes Signature
+# hmscore-support: remote transport
+-keep class * extends com.huawei.hms.core.aidl.IMessageEntity { *; }
+# hmscore-support: remote transport
+-keepclasseswithmembers class * implements com.huawei.hms.support.api.transport.DatagramTransport {
+<init>(...); }
+# manifest: provider for updates
+-keep public class com.huawei.hms.update.provider.UpdateProvider { public *; protected *; }
+
 # 图库
 -dontwarn com.yanzhenjie.album.**
 -keep class com.yanzhenjie.album.**{*;}
@@ -50,14 +63,14 @@
 
 # 高德地图
 #3D 地图 V5.0.0之前：
--keep   class com.amap.api.maps.**{*;}
--keep   class com.autonavi.amap.mapcore.*{*;}
--keep   class com.amap.api.trace.**{*;}
+-keep class com.amap.api.maps.**{*;}
+-keep class com.autonavi.amap.mapcore.*{*;}
+-keep class com.amap.api.trace.**{*;}
 
 #3D 地图 V5.0.0之后：
--keep   class com.amap.api.maps.**{*;}
--keep   class com.autonavi.**{*;}
--keep   class com.amap.api.trace.**{*;}
+-keep class com.amap.api.maps.**{*;}
+-keep class com.autonavi.**{*;}
+-keep class com.amap.api.trace.**{*;}
 
 #定位
 -keep class com.amap.api.location.**{*;}

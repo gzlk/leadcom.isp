@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import com.hlk.hlklib.etc.Cryptography;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -84,6 +86,13 @@ public class BaseApplication extends Application {
             }
         }
         return ret;
+    }
+
+    /**
+     * 获取当前手机的制造商
+     */
+    public String manufacturer() {
+        return Build.MANUFACTURER.toLowerCase(Locale.getDefault());
     }
 
     @Override

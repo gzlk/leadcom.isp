@@ -27,6 +27,7 @@ import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
+import com.netease.nimlib.sdk.mixpush.NIMPushClient;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
@@ -36,6 +37,7 @@ import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -56,9 +58,41 @@ public class NimApplication extends BaseActivityManagedApplication {
     private static boolean isForTest = false;
 
     /**
+     * 小米系列
+     */
+    private static final String XIAOMI = "xiaomi";
+    /**
+     * 华为系列
+     */
+    private static final String HUAWEI = "huawei";
+
+    /**
+     * 是否是小米手机
+     */
+    private boolean isXiaomiDevice() {
+        return manufacturer().equals(XIAOMI);
+    }
+
+    /**
+     * 是否是华为手机
+     */
+    private boolean isHuaweiDevice() {
+        return manufacturer().equals(HUAWEI);
+    }
+
+    /**
      * 初始化网易云
      */
     protected void initializeNim() {
+        // 判断是否为小米手机
+        if (isXiaomiDevice()) {
+            // 此处 certificate 请传入为开发者配置好的小米证书名称
+            NIMPushClient.registerMiPush(this, "leadcomMiPush", "2882303761517709778", "5141770974778");
+        }
+        // 判断是否为华为手机
+        if (isHuaweiDevice()) {
+
+        }
         // SDK初始化（启动后台服务，若已经存在用户登录信息， SDK 将完成自动登录）
         NIMClient.init(this, loginInfo(), options());
         // 注册自定义网易云消息解析器，必须在主进程中。
