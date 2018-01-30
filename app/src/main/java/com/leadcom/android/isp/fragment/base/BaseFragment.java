@@ -15,16 +15,21 @@ import com.leadcom.android.isp.activity.ContainerActivity;
 import com.leadcom.android.isp.activity.LoginActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.main.MainFragment;
+import com.leadcom.android.isp.helper.ClipboardHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
+import com.leadcom.android.isp.share.ShareToWeiXin;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -413,6 +418,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     protected boolean INTERNAL_SHAREABLE = true;
     // 分享
     private View shareDialog;
+    protected ShareInfo mShareInfo;
 
     /**
      * 打开分享选择对话框
@@ -440,7 +446,8 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                         R.id.ui_dialog_share_to_qzone,
                         R.id.ui_dialog_share_to_wx_chat,
                         R.id.ui_dialog_share_to_wx_moment,
-                        R.id.ui_dialog_share_to_weibo
+                        R.id.ui_dialog_share_to_weibo,
+                        R.id.ui_dialog_share_to_link
                 };
             }
 
@@ -467,6 +474,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                     case R.id.ui_dialog_share_to_weibo:
                         shareToWeiBo();
                         break;
+                    case R.id.ui_dialog_share_to_link:
+                        shareToLink();
+                        break;
                 }
                 return true;
             }
@@ -474,21 +484,35 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     }
 
     protected void shareToApp() {
+        // 打开群聊列表选择要分享到的群聊
+        ActivityShareListFragment.open(this, mShareInfo);
     }
 
     protected void shareToQQ() {
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), mShareInfo.getTitle(), Utils.clearHtml(mShareInfo.getDescription()), mShareInfo.getTargetPath(), mShareInfo.getImageUrl(), null);
     }
 
     protected void shareToQZone() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(mShareInfo.getImageUrl());
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), mShareInfo.getTitle(), Utils.clearHtml(mShareInfo.getDescription()), mShareInfo.getTargetPath(), mShareInfo.getImageUrl(), img);
     }
 
     protected void shareToWeiXinSession() {
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, mShareInfo.getTitle(), Utils.clearHtml(mShareInfo.getDescription()), mShareInfo.getTargetPath(), mShareInfo.getImageUrl());
     }
 
     protected void shareToWeiXinTimeline() {
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, mShareInfo.getTitle(), Utils.clearHtml(mShareInfo.getDescription()), mShareInfo.getTargetPath(), mShareInfo.getImageUrl());
     }
 
     protected void shareToWeiBo() {
+        ShareToWeiBo.init(Activity()).share(mShareInfo.getTitle(), Utils.clearHtml(mShareInfo.getDescription()), mShareInfo.getTargetPath(), mShareInfo.getImageUrl());
+    }
+
+    protected void shareToLink() {
+        ClipboardHelper.copyToClipboard(Activity(), mShareInfo.getTargetPath());
+        ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_link_copied);
     }
 
     /**

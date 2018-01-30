@@ -267,10 +267,41 @@
                     android:textSize="@dimen/ui_base_text_size_small" />
             </LinearLayout>
 
-            <View
+            <LinearLayout
+                android:id="@+id/ui_dialog_share_to_link"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/ui_static_dp_6"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.hlk.hlklib.lib.view.CorneredView
+                    android:layout_width="@dimen/ui_base_share_button_size"
+                    android:layout_height="@dimen/ui_base_share_button_size"
+                    android:elevation="@dimen/ui_base_translationZ"
+                    android:gravity="center"
+                    app:cv_background="@android:color/white"
+                    app:cv_background_active="@color/colorPrimary"
+                    app:cv_border_size="@dimen/ui_static_dp_zero"
+                    app:cv_corner_size="@dimen/ui_static_dp_55">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
+                        android:text="@string/ui_icon_rich_editor_link"
+                        android:textColor="@color/textColorHintDark"
+                        android:textSize="@dimen/ui_base_share_dialog_icon_text_size" />
+
+                </com.hlk.hlklib.lib.view.CorneredView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ui_static_dp_3"
+                    android:text="@string/ui_base_share_dialog_to_link"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+            </LinearLayout>
 
             <View
                 android:layout_width="0dp"

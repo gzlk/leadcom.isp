@@ -29,7 +29,6 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.activity.CoverPickFragment;
 import com.leadcom.android.isp.fragment.activity.LabelPickFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -56,9 +55,6 @@ import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.SubMember;
-import com.leadcom.android.isp.share.ShareToQQ;
-import com.leadcom.android.isp.share.ShareToWeiBo;
-import com.leadcom.android.isp.share.ShareToWeiXin;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -206,7 +202,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private RecyclerView attachmentRecyclerView;
     // 创建成功的档案信息
     private Archive mArchive;
-    private ShareInfo share;
     /**
      * 当前上传的文件类型：1=图片，2=音乐，3=视频
      */
@@ -558,16 +553,20 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
 
             private void getDraftShareInfo() {
-                ShareRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ShareInfo>() {
-                    @Override
-                    public void onResponse(ShareInfo info, boolean success, String message) {
-                        super.onResponse(info, success, message);
-                        if (success && null != info) {
-                            share = info;
-                            openShareDialog();
+                if (null == mShareInfo) {
+                    ShareRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ShareInfo>() {
+                        @Override
+                        public void onResponse(ShareInfo info, boolean success, String message) {
+                            super.onResponse(info, success, message);
+                            if (success && null != info) {
+                                mShareInfo = info;
+                                openShareDialog();
+                            }
                         }
-                    }
-                }).getDraftShareInfo(mArchive);
+                    }).getDraftShareInfo(mArchive);
+                } else {
+                    openShareDialog();
+                }
             }
 
             private DictionaryHelper.OnDictionarySelectedListener selectedListener = new DictionaryHelper.OnDictionarySelectedListener() {
@@ -612,39 +611,39 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
-
-    @Override
-    protected void shareToApp() {
-        // 打开群聊列表选择要分享到的群聊
-        ActivityShareListFragment.open(this, share);
-    }
-
-    @Override
-    protected void shareToQQ() {
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), null);
-    }
-
-    @Override
-    protected void shareToQZone() {
-        ArrayList<String> img = new ArrayList<>();
-        img.add(share.getImageUrl());
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), img);
-    }
-
-    @Override
-    protected void shareToWeiBo() {
-        ShareToWeiBo.init(Activity()).share(share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-    }
-
-    @Override
-    protected void shareToWeiXinSession() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-    }
-
-    @Override
-    protected void shareToWeiXinTimeline() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-    }
+//
+//    @Override
+//    protected void shareToApp() {
+//        // 打开群聊列表选择要分享到的群聊
+//        ActivityShareListFragment.open(this, share);
+//    }
+//
+//    @Override
+//    protected void shareToQQ() {
+//        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), null);
+//    }
+//
+//    @Override
+//    protected void shareToQZone() {
+//        ArrayList<String> img = new ArrayList<>();
+//        img.add(share.getImageUrl());
+//        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), img);
+//    }
+//
+//    @Override
+//    protected void shareToWeiBo() {
+//        ShareToWeiBo.init(Activity()).share(share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
+//    }
+//
+//    @Override
+//    protected void shareToWeiXinSession() {
+//        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
+//    }
+//
+//    @Override
+//    protected void shareToWeiXinTimeline() {
+//        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
+//    }
 
     // 插入图片的对话框
     private View imageDialogView;

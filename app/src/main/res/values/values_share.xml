@@ -11,6 +11,7 @@
     <string name="ui_base_share_dialog_to_wx_chat">微信</string>
     <string name="ui_base_share_dialog_to_wx_moment">朋友圈</string>
     <string name="ui_base_share_dialog_to_weibo">微博</string>
+    <string name="ui_base_share_dialog_to_link">复制连接</string>
 
     <dimen name="ui_base_share_dialog_button_corner_size">@dimen/ui_static_dp_8</dimen>
     <dimen name="ui_base_share_dialog_button_icon_margin">@dimen/ui_static_dp_10</dimen>
@@ -43,6 +44,8 @@
     <string name="ui_base_share_text_share_to_weibo_cancel">微博分享已取消</string>
     <string name="ui_base_share_text_share_to_weibo_failed">微博分享失败</string>
     <string name="ui_base_share_text_share_to_weibo_not_support_multi_image">您的微博客户端不支持同时分享多个图片</string>
+
+    <string name="ui_base_share_text_share_to_link_copied">链接已复制到剪切板</string>
 
     <string name="ui_base_share_to_app_fragment_title">分享到活动</string>
     <string name="ui_base_share_to_app_dialog_title" formatted="false">发送到 %s</string>

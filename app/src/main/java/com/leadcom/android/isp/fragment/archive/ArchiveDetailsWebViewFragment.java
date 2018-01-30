@@ -24,7 +24,6 @@ import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.crash.system.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
@@ -56,13 +55,9 @@ import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
-import com.leadcom.android.isp.share.ShareToQQ;
-import com.leadcom.android.isp.share.ShareToWeiBo;
-import com.leadcom.android.isp.share.ShareToWeiXin;
 import com.netease.nim.uikit.NimUIKit;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -191,7 +186,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private DetailsAdapter mAdapter;
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
-    private ShareInfo share;
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -655,13 +649,13 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private void fetchingShareInfo() {
-        if (null == share) {
+        if (null == mShareInfo) {
             ShareRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ShareInfo>() {
                 @Override
                 public void onResponse(ShareInfo shareInfo, boolean success, String message) {
                     super.onResponse(shareInfo, success, message);
                     if (success && null != shareInfo) {
-                        share = shareInfo;
+                        mShareInfo = shareInfo;
                         openShareDialog();
                     }
                 }
@@ -670,39 +664,39 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             openShareDialog();
         }
     }
-
-    @Override
-    protected void shareToApp() {
-        // 打开群聊列表选择要分享到的群聊
-        ActivityShareListFragment.open(this, share);
-    }
-
-    @Override
-    protected void shareToQQ() {
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), null);
-    }
-
-    @Override
-    protected void shareToQZone() {
-        ArrayList<String> img = new ArrayList<>();
-        img.add(share.getImageUrl());
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), img);
-    }
-
-    @Override
-    protected void shareToWeiXinSession() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-    }
-
-    @Override
-    protected void shareToWeiXinTimeline() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-    }
-
-    @Override
-    protected void shareToWeiBo() {
-        ShareToWeiBo.init(Activity()).share(share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-    }
+//
+//    @Override
+//    protected void shareToApp() {
+//        // 打开群聊列表选择要分享到的群聊
+//        ActivityShareListFragment.open(this, share);
+//    }
+//
+//    @Override
+//    protected void shareToQQ() {
+//        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), null);
+//    }
+//
+//    @Override
+//    protected void shareToQZone() {
+//        ArrayList<String> img = new ArrayList<>();
+//        img.add(share.getImageUrl());
+//        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), img);
+//    }
+//
+//    @Override
+//    protected void shareToWeiXinSession() {
+//        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
+//    }
+//
+//    @Override
+//    protected void shareToWeiXinTimeline() {
+//        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
+//    }
+//
+//    @Override
+//    protected void shareToWeiBo() {
+//        ShareToWeiBo.init(Activity()).share(share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
+//    }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
