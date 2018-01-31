@@ -60,22 +60,13 @@
         <!-- 网易云通信进程间通信service -->
         <service android:name="com.netease.nimlib.service.ResponseService" />
 
-        <!-- 安卓保活配置 -->
-        <service
-            android:name="com.netease.cosine.core.CosineService"
-            android:process=":cosine" />
-
-        <receiver
-            android:name="com.netease.cosine.target.CosineReceiver"
-            android:exported="true"
-            android:process=":cosine" />
-
-        <meta-data
-            android:name="com.netease.cosine.target"
-            android:value="" />
-        <meta-data
-            android:name="com.netease.cosine.target.receiver"
-            android:value="com.netease.nimlib.service.NimReceiver" />
+        <!-- 云信进程间通信provider -->
+        <!-- android:authorities="{包名}.ipc.provider", 请将com.netease.nim.demo替换为自己的包名 -->
+        <provider
+            android:name="com.netease.nimlib.ipc.NIMContentProvider"
+            android:authorities="com.netease.nim.demo.ipc.provider"
+            android:exported="false"
+            android:process=":core" />
 
         <!--高德地图-->
         <meta-data
@@ -149,6 +140,15 @@
                 <action android:name="com.xiaomi.mipush.ERROR" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name="${APP_PKG_NAME}.receiver.MiPushMessageReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE" />
+                <action android:name="com.xiaomi.mipush.MESSAGE_ARRIVED" />
+                <action android:name="com.xiaomi.mipush.ERROR" />
+            </intent-filter>
+        </receiver>
 
         <!--华为推送配置-->
         <meta-data
@@ -157,7 +157,7 @@
 
         <provider
             android:name="com.huawei.hms.update.provider.UpdateProvider"
-            android:authorities="com.netease.nim.demo.hms.update.provider"
+            android:authorities="${APP_PKG_NAME}.hms.update.provider"
             android:exported="false"
             android:grantUriPermissions="true" />
 
@@ -176,6 +176,19 @@
             <meta-data
                 android:name="CS_cloud_ablitity"
                 android:value="successRateAnalytics" />
+        </receiver>
+
+        <receiver android:name="${APP_PKG_NAME}.receiver.HwPushMessageReceiver">
+            <intent-filter>
+                <!-- 必须,用于接收token -->
+                <action android:name="com.huawei.android.push.intent.REGISTRATION" />
+                <!-- 必须，用于接收消息 -->
+                <action android:name="com.huawei.android.push.intent.RECEIVE" />
+                <!-- 可选，用于点击通知栏或通知栏上的按钮后触发onEvent回调 -->
+                <action android:name="com.huawei.android.push.intent.CLICK" />
+                <!-- 可选，查看push通道是否连接，不查看则不需要 -->
+                <action android:name="com.huawei.intent.action.PUSH_STATE" />
+            </intent-filter>
         </receiver>
 
         <receiver android:name="com.huawei.hms.support.api.push.PushEventReceiver">

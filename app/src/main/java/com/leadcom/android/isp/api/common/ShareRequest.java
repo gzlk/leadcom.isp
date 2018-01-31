@@ -72,14 +72,15 @@ public class ShareRequest extends Request<ShareInfo> {
 
     /**
      * 获取档案草稿分享内容
+     * @param type 3=个人档案草稿，4=组织档案草稿
      */
-    public void getDraftShareInfo(Archive archive) {
+    public void getDraftShareInfo(Archive archive, int type) {
         directlySave = false;
         JSONObject object = new JSONObject();
         try {
             object.put("title", archive.getTitle())// 必要字段
                     .put("cover", checkNull(archive.getCover()))
-                    .put("type", archive.getType())// 必要字段
+                    .put("type", type)// 必要字段
                     .put("groupId", archive.getGroupId())// 必要字段
                     .put("content", archive.getContent())
                     .put("markdown", archive.getMarkdown())

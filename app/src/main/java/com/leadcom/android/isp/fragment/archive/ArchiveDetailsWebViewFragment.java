@@ -75,7 +75,6 @@ import java.util.List;
 public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
-    private static final String PARAM_DOC_DRAFT = "adwvf_archive_draft";
     private static final String PARAM_CMT_INDEX = "adwvf_archive_cmt_index";
     private static boolean deletable = false;
     /**
@@ -95,9 +94,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         bundle.putString(PARAM_QUERY_ID, strings[0]);
         // 档案类型：组织档案或个人档案
         bundle.putInt(PARAM_DOC_TYPE, Integer.valueOf(strings[1]));
-        if (strings.length > 2) {
-            bundle.putBoolean(PARAM_DOC_DRAFT, Integer.valueOf(strings[2]) > 0);
-        }
         adwvf.setArguments(bundle);
         return adwvf;
     }
@@ -112,8 +108,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         archiveType = bundle.getInt(PARAM_DOC_TYPE, Archive.Type.GROUP);
+        isDraft = archiveType >= 3;
         selectedIndex = bundle.getInt(PARAM_CMT_INDEX, 0);
-        isDraft = bundle.getBoolean(PARAM_DOC_DRAFT, false);
     }
 
     @Override
@@ -121,7 +117,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_DOC_TYPE, archiveType);
         bundle.putInt(PARAM_CMT_INDEX, selectedIndex);
-        bundle.putBoolean(PARAM_DOC_DRAFT, isDraft);
     }
 
     @Override
@@ -439,8 +434,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         for (Attachment attachment : archive.getAttach()) {
             mAdapter.update(attachment);
         }
-        displayAdditional(archive);
-        loadingComments(archive);
+        if (!isDraft) {
+            displayAdditional(archive);
+            loadingComments(archive);
+        }
     }
 
     private int getAdditionalPosition(Archive archive) {

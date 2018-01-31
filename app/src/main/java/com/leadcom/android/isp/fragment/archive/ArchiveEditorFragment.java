@@ -322,7 +322,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }
-        if (mArchive.getLabel().size() < 1) {
+        // 组织档案需要标签
+        if (isEmpty(mQueryId) && mArchive.getLabel().size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
             return;
         }
@@ -386,8 +387,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         super.onStop();
     }
 
+
     private void saveDraft() {
         mArchive.setTitle(titleView.getValue());
+        mArchive.setSite(siteText.getValue());
+        mArchive.setSource(creatorText.getValue());
+        // 保存可能手动输入添加的参与人
+        mArchive.setParticipant(participantText.getValue());
         // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
         if (isDraft() && (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent()))) {
             ArchiveDraft draft = new ArchiveDraft();
@@ -420,7 +426,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View settingDialogView;
     private ImageDisplayer coverView;
     private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText;
-    private ClearEditText participantText;
+    private ClearEditText participantText, siteText;
     private ClearEditText creatorText;
 
     private void openSettingDialog() {
@@ -439,7 +445,19 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     propertyText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property_text);
                     categoryText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category_text);
                     participantText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_participant_text);
+                    siteText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_site_text);
                     happenDate = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time_text);
+                    // 根据个人档案和组织档案显示某些元素
+                    if (isEmpty(mQueryId)) {
+                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(View.GONE);
+                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_site).setVisibility(View.GONE);
+                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property).setVisibility(View.GONE);
+                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category).setVisibility(View.GONE);
+                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_participant).setVisibility(View.GONE);
+                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share).setVisibility(View.GONE);
+                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(View.VISIBLE);
+                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_createtime).setVisibility(View.VISIBLE);
+                    }
                 }
                 return settingDialogView;
             }
@@ -451,7 +469,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 } else {
                     titleText.setText(mArchive.getTitle());
                 }
-                creatorText.setValue(mArchive.getUserName());
+                String source = mArchive.getSource();
+                creatorText.setValue(isEmpty(source) ? mArchive.getUserName() : source);
                 creatorText.focusEnd();
                 String text = mArchive.getCreateDate();
                 if (!isEmpty(text) && !text.equals(Model.DFT_DATE)) {
@@ -469,6 +488,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 // 这一步一定要在最后设置，否则状态会被重置
                 seclusion.setStatus(mArchive.getAuthPublic());
                 publicText.setText(PrivacyFragment.getPrivacy(seclusion));
+
+                siteText.setValue(mArchive.getSite());
+                siteText.focusEnd();
+
                 if (isEmpty(mArchive.getProperty())) {
                     propertyText.setText(R.string.ui_text_archive_details_editor_setting_property_title);
                 } else {
@@ -501,7 +524,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         R.id.ui_popup_rich_editor_setting_category,
                         R.id.ui_popup_rich_editor_setting_participant,
                         R.id.ui_popup_rich_editor_setting_public,
-                        //R.id.ui_popup_rich_editor_setting_label,
+                        R.id.ui_popup_rich_editor_setting_label,
                         R.id.ui_popup_rich_editor_setting_share,
                         R.id.ui_popup_rich_editor_setting_commit};
             }
@@ -565,7 +588,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                                 openShareDialog();
                             }
                         }
-                    }).getDraftShareInfo(mArchive);
+                    }).getDraftShareInfo(mArchive, isEmpty(mQueryId) ? 3 : 4);
                 } else {
                     openShareDialog();
                 }

@@ -145,19 +145,20 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
                     .put("source", archive.getSource())
-                    .put("fileIds", checkNull(archive.getFileIds()))
-                    .put("site", checkNull(archive.getSite()))
-                    .put("property", checkNull(archive.getProperty()))
-                    .put("category", checkNull(archive.getCategory()))
-                    .put("participant", checkNull(archive.getParticipant()))
-                    .put("happenDate", archive.getHappenDate());
+                    .put("fileIds", checkNull(archive.getFileIds()));
             if (archive.getAuthPublic() == Seclusion.Type.Group) {
                 object.put("authGro", new JSONArray(archive.getAuthGro()));
             } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
                 object.put("authUser", new JSONArray(archive.getAuthUser()));
             }
             if (!isIndividual) {
-                object.put("groupId", archive.getGroupId());// 必要字段
+                object.put("groupId", archive.getGroupId())// 必要字段
+                        // 组织档案需要增加以下参数
+                        .put("site", checkNull(archive.getSite()))
+                        .put("property", checkNull(archive.getProperty()))
+                        .put("category", checkNull(archive.getCategory()))
+                        .put("participant", checkNull(archive.getParticipant()))
+                        .put("happenDate", archive.getHappenDate());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -434,7 +435,7 @@ public class ArchiveRequest extends Request<Archive> {
      * 查询分享出去的档案的详情
      */
     public void findShare(String archiveId, int archiveType) {
-        String params = format("/system/share/findDoc?docId=%sdocType=%d", archiveId, archiveType);
+        String params = format("/system/share/findDoc?docId=%s&docType=%d", archiveId, archiveType);
         httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
     }
 

@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/ui_static_dp_80"
+        android:layout_marginStart="@dimen/ui_static_dp_70"
         android:background="@android:color/white"
         android:clickable="true"
         android:focusable="true"
@@ -161,8 +161,7 @@
                             app:cet_edit_normal_border="@color/colorBorderNormal"
                             app:cet_edit_padding="@dimen/ui_static_dp_5"
                             app:cet_edit_value_extract_regex="@string/regex_normal_long_input_filter"
-                            app:cet_edit_value_max_length="30"
-                            app:cet_edit_value_verify_regex="@string/regex_normal_long_input_verify" />
+                            app:cet_edit_value_max_length="30" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -292,7 +291,7 @@
                             android:layout_weight="1"
                             app:cet_edit_active_border="@color/colorBorderActive"
                             app:cet_edit_corner_size="@dimen/ui_static_dp_5"
-                            app:cet_edit_hint="@string/ui_text_archive_details_editor_setting_participant_title"
+                            app:cet_edit_hint="@string/ui_text_archive_details_editor_setting_participant_hint"
                             app:cet_edit_max_lines="5"
                             app:cet_edit_maximum_height="@dimen/ui_static_dp_80"
                             app:cet_edit_normal_border="@color/colorBorderNormal"
@@ -351,9 +350,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <include
-                    layout="@layout/tool_view_half_line_horizontal"
-                    android:visibility="gone" />
+                <include layout="@layout/tool_view_half_line_horizontal" />
 
                 <LinearLayout
                     android:id="@+id/ui_popup_rich_editor_setting_label"
@@ -441,6 +438,7 @@
                 <include layout="@layout/tool_view_half_line_horizontal" />
 
                 <LinearLayout
+                    android:id="@+id/ui_popup_rich_editor_setting_createtime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
