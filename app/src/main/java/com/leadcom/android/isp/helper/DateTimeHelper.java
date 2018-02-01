@@ -7,6 +7,7 @@ import com.bigkoo.pickerview.TimePickerView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.model.Model;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -48,7 +49,7 @@ public class DateTimeHelper {
                 .isDialog(isDialog)
                 .isCenterLabel(true)
                 .build();
-        if (StringHelper.isEmpty(date)) {
+        if (StringHelper.isEmpty(date) || date.equals(Model.DFT_DATE)) {
             tpv.setDate(Calendar.getInstance());
         } else {
             Calendar calendar = Calendar.getInstance();

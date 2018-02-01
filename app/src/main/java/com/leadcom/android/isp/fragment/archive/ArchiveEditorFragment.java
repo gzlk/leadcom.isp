@@ -146,6 +146,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         mArchive.setUserName(Cache.cache().userName);
         // 默认草稿的创建日期为当前日期
         mArchive.setCreateDate(Utils.format(getString(R.string.ui_base_text_date_time_format), Utils.timestamp()));
+        // 默认草稿的发生日期
+        mArchive.setHappenDate(Utils.format(getString(R.string.ui_base_text_date_time_format), Utils.timestamp()));
     }
 
     @Override
@@ -390,10 +392,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void saveDraft() {
         mArchive.setTitle(titleView.getValue());
-        mArchive.setSite(siteText.getValue());
-        mArchive.setSource(creatorText.getValue());
-        // 保存可能手动输入添加的参与人
-        mArchive.setParticipant(participantText.getValue());
+        if (null != siteText) {
+            mArchive.setSite(siteText.getValue());
+            mArchive.setSource(creatorText.getValue());
+            // 保存可能手动输入添加的参与人
+            mArchive.setParticipant(participantText.getValue());
+        }
         // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
         if (isDraft() && (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent()))) {
             ArchiveDraft draft = new ArchiveDraft();
