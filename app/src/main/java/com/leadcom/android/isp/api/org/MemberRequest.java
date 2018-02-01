@@ -75,18 +75,13 @@ public class MemberRequest extends Request<Member> {
         return format("%s%s", api, action);
     }
 
-    private Dao<Role> roleDao = new Dao<>(Role.class);
-
     private void saveMemberRole(Member member) {
         if (null != member) {
             if (null != member.getGroRole()) {
+                Role.save(member.getGroRole());
                 Role role = member.getGroRole();
                 member.setRoleId(role.getId());
                 member.setRoleName(role.getRoleName());
-                // 保存角色的权限列表
-                role.savePermissionIds();
-                // 保存角色信息
-                roleDao.save(role);
             }
         }
     }
