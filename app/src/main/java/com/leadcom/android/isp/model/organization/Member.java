@@ -36,34 +36,12 @@ import java.util.List;
 public class Member extends Leaguer {
 
     public interface Code {
-        //组织成员角色ID
-        /**
-         * 组织管理员Id
-         */
-        String GROUP_MANAGER_ROLE_ID = "592fc0d0cb220a23640a0395";          //组织管理员
-        String GROUP_COMMON_MEMBER_ROLE_ID = "592fc373cb220a23640a039a";    //普通成员
-        String GROUP_DOC_MANAGER_ROLE_ID = "592fce2dcb220a32d8c88f52";      //档案管理员
-        String GROUP_SQUAD_MANAGER_ROLE_ID = "594a0d0031bbf76228c90e62";    //小组管理员
-        //组织成员角色编码
-        String GROUP_MANAGER_ROLE_CODE = "f43c7aedfe22410ea885e707aa79ac6a";        //组织管理员
-        String GROUP_COMMON_MEMBER_ROLE_CODE = "a498fcf70a4c48178ee72726be47ce13";  //普通成员
-        String GROUP_DOC_MANAGER_ROLE_CODE = "66a2932a2d5c435bb95a3dc42b435f4e";    //档案管理员
-        String GROUP_SQUAD_MANAGER_ROLE_CODE = "b76a597176ba465e8fd306bb91cb7f3c";  //小组管理员
-        //组织成员角色名称
-        String GROUP_MANAGER_ROLE_NAME = "组织管理员";
-        String GROUP_COMMON_MEMBER_ROLE_NAME = "普通成员";
-        String GROUP_DOC_MANAGER_ROLE_NAME = "档案管理员";
-        String GROUP_SQUAD_MANAGER_ROLE_NAME = "小组管理员";
 
-        // 活动成员角色id
-        /**
-         * 活动管理员角色ID
-         */
-        String ACT_MANAGER_ROLE_ID = "58f8640fad41ef4aa0290624";
-        /**
-         * 活动成员角色ID
-         */
-        String ACT_MEMBER_ROLE_ID = "58f863fdad41ef4aa0290623";
+        //组织成员角色编码
+        String GROUP_ROLE_CODE_MANAGER = "f43c7aedfe22410ea885e707aa79ac6a";        //组织管理员
+        String GROUP_ROLE_CODE_COMMON_MEMBER = "a498fcf70a4c48178ee72726be47ce13";  //普通成员
+        String GROUP_ROLE_CODE_DOC_MANAGER = "66a2932a2d5c435bb95a3dc42b435f4e";    //档案管理员
+        String GROUP_ROLE_CODE_SQUAD_MANAGER = "b76a597176ba465e8fd306bb91cb7f3c";  //小组管理员
 
         // 活动成员角色code
         /**
@@ -74,15 +52,6 @@ public class Member extends Leaguer {
          * 活动成员角色code
          */
         String ACT_MEMBER_ROLE_CODE = "50d6aaf585e049fd836fc85817c29aac";
-        // 活动成员角色name
-        /**
-         * 活动管理员名称
-         */
-        String ACT_MANAGER_ROLE_NAME = "活动管理员";
-        /**
-         * 活动成员名称
-         */
-        String ACT_MEMBER_ROLE_NAME = "活动参与者";
     }
 
     /**
@@ -307,7 +276,7 @@ public class Member extends Leaguer {
 
     public Role getGroRole() {
         if (null == groRole) {
-            groRole = Role.getRole(groRoleId);
+            groRole = Role.getRoleById(groRoleId);
             if (null != groRole) {
                 setRoleName(groRole.getRoleName());
             }
@@ -329,7 +298,7 @@ public class Member extends Leaguer {
 
     public Role getActRole() {
         if (null == actRole) {
-            actRole = Role.getRole(actRoleId);
+            actRole = Role.getRoleById(actRoleId);
         }
         return actRole;
     }
@@ -367,15 +336,15 @@ public class Member extends Leaguer {
     /**
      * 是否是群管理员
      */
-    public boolean isManager() {
-        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_MANAGER_ROLE_CODE);
+    public boolean isGroupManager() {
+        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_ROLE_CODE_MANAGER);
     }
 
     /**
      * 是否小组管理员
      */
     public boolean isSquadManager() {
-        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_SQUAD_MANAGER_ROLE_CODE);
+        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
     }
 
     /**
@@ -394,15 +363,15 @@ public class Member extends Leaguer {
     /**
      * 是否普通成员
      */
-    public boolean isMember() {
-        return null == getGroRole() || getGroRole().getRolCode().equals(Code.GROUP_COMMON_MEMBER_ROLE_CODE);
+    public boolean isGroupMember() {
+        return null == getGroRole() || getGroRole().getRolCode().equals(Code.GROUP_ROLE_CODE_COMMON_MEMBER);
     }
 
     /**
      * 是否档案管理员
      */
     public boolean isArchiveManager() {
-        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_DOC_MANAGER_ROLE_CODE);
+        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_ROLE_CODE_DOC_MANAGER);
     }
 
     /**

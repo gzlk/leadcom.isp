@@ -497,9 +497,8 @@ public class ContactFragment extends BaseOrganizationFragment {
 //        setLoadingText(me.isOwner() ? R.string.ui_organization_contact_transferring_owner : R.string.ui_organization_contact_transferring_management);
 //        displayLoading(true);
 //        Role role = new Role();
-//        role.setId(me.isOwner() ? Member.Code.GROUP_OWNER_ROLE_ID : Member.Code.GROUP_MANAGER_ROLE_ID);
 //        role.setRoleName(me.isOwner() ? Member.Code.GROUP_OWNER_ROLE_NAME : Member.Code.GROUP_MANAGER_ROLE_NAME);
-//        role.setRolCode(me.isOwner() ? Member.Code.GROUP_OWNER_ROLE_CODE : Member.Code.GROUP_MANAGER_ROLE_CODE);
+//        role.setRolCode(me.isOwner() ? Member.Code.GROUP_OWNER_ROLE_CODE : Member.Code.GROUP_ROLE_CODE_MANAGER);
 //        updateMember(member, role, true);
     }
 
@@ -507,11 +506,10 @@ public class ContactFragment extends BaseOrganizationFragment {
      * 重置我的角色为普通角色
      */
     private void resetMyCharacter() {
-        Member me = StructureFragment.my;
-        me.getGroRole().setId(Member.Code.GROUP_COMMON_MEMBER_ROLE_ID);
-        me.getGroRole().setRolCode(Member.Code.GROUP_COMMON_MEMBER_ROLE_CODE);
-        me.getGroRole().setRoleName(Member.Code.GROUP_COMMON_MEMBER_ROLE_NAME);
-        me.getGroRole().getPerList().clear();
+        Role normal = Role.getRoleByCode(Member.Code.GROUP_ROLE_CODE_COMMON_MEMBER);
+        assert normal != null;
+        StructureFragment.my.setGroRole(normal);
+        StructureFragment.my.setGroRoleId(normal.getId());
     }
 
     private void updateMember(Member member, final Role toRole, final boolean resettable) {
@@ -553,7 +551,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             if (isEmpty(name)) {
                 name = member.getPhone();
             }
-            String text = StringHelper.getString(member.isManager() ? R.string.ui_organization_contact_unset_to_manager : R.string.ui_organization_contact_set_to_manager, name);
+            String text = StringHelper.getString(member.isGroupManager() ? R.string.ui_organization_contact_unset_to_manager : R.string.ui_organization_contact_set_to_manager, name);
             warningEditManager(text, holder.getAdapterPosition());
             return null;
         }
@@ -571,20 +569,13 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     private void resetManager(final int index) {
         Member member = mAdapter.get(index);
-        setLoadingText(member.isManager() ? R.string.ui_organization_contact_unseting_manager : R.string.ui_organization_contact_seting_manager);
+        setLoadingText(member.isGroupManager() ? R.string.ui_organization_contact_unseting_manager : R.string.ui_organization_contact_seting_manager);
         displayLoading(true);
-        boolean isManager = member.isManager();
-        Role role = new Role();
-        role.setId(isManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_ID :
-                showType == TYPE_ORG ? Member.Code.GROUP_MANAGER_ROLE_ID : Member.Code.GROUP_SQUAD_MANAGER_ROLE_ID);
-        role.setRoleName(isManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_NAME :
-                showType == TYPE_ORG ? Member.Code.GROUP_MANAGER_ROLE_NAME : Member.Code.GROUP_SQUAD_MANAGER_ROLE_NAME);
-        role.setRolCode(isManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_CODE :
-                showType == TYPE_ORG ? Member.Code.GROUP_MANAGER_ROLE_CODE : Member.Code.GROUP_SQUAD_MANAGER_ROLE_CODE);
+        boolean isManager = member.isGroupManager();
+        Role role = Role.getRoleByCode(isManager ? Member.Code.GROUP_ROLE_CODE_COMMON_MEMBER :
+                showType == TYPE_ORG ? Member.Code.GROUP_ROLE_CODE_MANAGER : Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
         updateMember(member, role, false);
     }
-
-    private static final int REQ_MEMBER = ACTIVITY_BASE_REQUEST + 10;
 
     // 设置为档案管理员
     private ContactViewHolder.OnSetArchiveManagerListener archiveManagerListener = new ContactViewHolder.OnSetArchiveManagerListener() {
@@ -598,11 +589,8 @@ public class ContactFragment extends BaseOrganizationFragment {
         Member member = mAdapter.get(index);
         setLoadingText(member.isArchiveManager() ? R.string.ui_organization_contact_unset_to_archive_manager : R.string.ui_organization_contact_set_to_archive_manager);
         displayLoading(true);
-        Role role = new Role();
         boolean isArchiveManager = member.isArchiveManager();
-        role.setId(isArchiveManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_ID : Member.Code.GROUP_DOC_MANAGER_ROLE_ID);
-        role.setRolCode(isArchiveManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_CODE : Member.Code.GROUP_DOC_MANAGER_ROLE_CODE);
-        role.setRoleName(isArchiveManager ? Member.Code.GROUP_COMMON_MEMBER_ROLE_NAME : Member.Code.GROUP_DOC_MANAGER_ROLE_NAME);
+        Role role = Role.getRoleByCode(isArchiveManager ? Member.Code.GROUP_ROLE_CODE_COMMON_MEMBER : Member.Code.GROUP_ROLE_CODE_DOC_MANAGER);
         updateMember(member, role, false);
     }
 
@@ -707,7 +695,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 //                    holder.button0Text(R.string.ui_organization_contact_transfer_manager);
 //                    holder.showButton0(true);
 //                }
-//                else if ((null != me) && me.isOwner() && member.isManager()) {
+//                else if ((null != me) && me.isOwner() && member.isGroupManager()) {
 //                    holder.button0Text(R.string.ui_organization_contact_transfer_owner);
 //                    holder.showButton0(true);
 //                }
@@ -715,12 +703,12 @@ public class ContactFragment extends BaseOrganizationFragment {
 //                    holder.showButton0(false);
 //                }
 //                holder.button0Text(R.string.ui_organization_contact_transfer_manager);
-//                holder.showButton0(!isMe && (null != me) && me.isManager() && member.isManager());
+//                holder.showButton0(!isMe && (null != me) && me.isGroupManager() && member.isGroupManager());
 //                //} else if (showType == TYPE_SQUAD) {
 //                // 小组内转让组群
 //                holder.button0Text(R.string.ui_organization_contact_transfer_owner);
 //                // 我是群主且对方是管理员时才允许转让群组
-//                holder.showButton0(!isMe && (null != me) && me.isOwner() && member.isManager());
+//                holder.showButton0(!isMe && (null != me) && me.isOwner() && member.isGroupManager());
 //            } else {
 //                holder.showButton0(false);
 //            }
@@ -729,14 +717,14 @@ public class ContactFragment extends BaseOrganizationFragment {
                 // 组织内可以显示设为档案管理员或取消档案管理员
                 // 对方不是管理员且不是档案管理员时，可以将其设为档案管理员
                 holder.button0d5Text((null != member && member.isArchiveManager()) ? R.string.ui_organization_contact_unset_archive_manager : R.string.ui_organization_contact_set_archive_manager);
-                holder.showButton0d5(!isMe && (null != me) && me.memberRoleEditable() && (null != member && member.isMember()));
+                holder.showButton0d5(!isMe && (null != me) && me.memberRoleEditable() && (null != member && !member.isGroupManager()));
             } else {
                 holder.showButton0d5(false);
             }
 
             if (showType == TYPE_ORG) {
                 // 显示设为管理员或取消管理员
-                holder.button1Text((null != member && member.isManager()) ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
+                holder.button1Text((null != member && member.isGroupManager()) ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
                 // 我是群主或管理员且有编辑成员角色属性时，可以设置
                 holder.showButton1(!isMe && (null != me) && me.memberRoleEditable());
             } else {
@@ -745,7 +733,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 
             if (showType == TYPE_ORG) {
                 // 我且具有删除成员权限，且对方是普通成员时显示删除按钮
-                holder.showButton2(!isMe && (null != me) && me.memberDeletable() && (null != member && member.isMember()));
+                holder.showButton2(!isMe && (null != me) && me.memberDeletable() && (null != member && !member.isGroupManager()));
             } else {
                 // 小组成员删除权限
                 holder.showButton2(!isMe && (null != squadRole && squadRole.hasOperation(GRPOperation.SQUAD_MEMBER_DELETE)));

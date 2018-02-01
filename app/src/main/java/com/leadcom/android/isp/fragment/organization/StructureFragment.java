@@ -9,8 +9,10 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
+import com.leadcom.android.isp.api.org.RoleRequest;
 import com.leadcom.android.isp.api.org.SimpleOrgRequest;
 import com.leadcom.android.isp.api.org.SimpleOutput;
 import com.leadcom.android.isp.api.org.SquadRequest;
@@ -37,6 +39,7 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -416,6 +419,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         selectedOrganization = org;
         if (null != org) {
             my = org.getGroMember();
+            checkAndReloadRoles();
             selectedGroupId = org.getId();
             log(format("change group to %s, %s", org.getName(), org.getId()));
             // 显示我关注的组织列表
@@ -435,7 +439,7 @@ public class StructureFragment extends BaseOrganizationFragment {
             // 本组织下的小组列表
             fetchingGroupSquads(org.getId());
             // 如果当前用户是管理员的话，增加推荐档案列表的显示
-            if (my.isManager() || my.isArchiveManager()) {
+            if (my.isGroupManager() || my.isArchiveManager()) {
                 organizationFragment.addRecommendedArchives(true, selectedGroupId);
             } else {
                 organizationFragment.addRecommendedArchives(false, selectedGroupId);
@@ -444,6 +448,48 @@ public class StructureFragment extends BaseOrganizationFragment {
         // 更改标题栏上的文字和icon
         if (null != organizationChangedListener) {
             organizationChangedListener.onChanged(org);
+        }
+    }
+
+    /**
+     * 检测并尝试重新拉取角色列表
+     */
+    private void checkAndReloadRoles() {
+        if (!Role.roleGettable) return;
+
+        boolean reloadable = false;
+        Role role = my.getGroRole();
+        if (null != role) {
+            String roleCode = role.getRolCode();
+            List<Role> list = Role.getRolesByCode(roleCode);
+            if (null == list || list.size() < 1) {
+                reloadable = true;
+            } else if (list.size() > 1) {
+                // 如果角色code有多个角色实例，则清空角色表并重新拉取角色列表
+                Role.clear();
+                reloadable = true;
+            } else {
+                Role exist = list.get(0);
+                if (!role.getId().equals(exist.getId())) {
+                    reloadable = true;
+                } else if (isEmpty(role.getRoleName())) {
+                    reloadable = true;
+                }
+            }
+        } else {
+            reloadable = true;
+        }
+        if (reloadable) {
+            // 需要重新拉取角色列表
+            RoleRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Role>() {
+                @Override
+                public void onResponse(List<Role> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                    super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                    if (success && null != list && list.size() > 0) {
+                        Role.roleGettable = false;
+                    }
+                }
+            }).list();
         }
     }
 

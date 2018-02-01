@@ -64,7 +64,7 @@
         <!-- android:authorities="{包名}.ipc.provider", 请将com.netease.nim.demo替换为自己的包名 -->
         <provider
             android:name="com.netease.nimlib.ipc.NIMContentProvider"
-            android:authorities="com.netease.nim.demo.ipc.provider"
+            android:authorities="${APP_PKG_NAME}.ipc.provider"
             android:exported="false"
             android:process=":core" />
 

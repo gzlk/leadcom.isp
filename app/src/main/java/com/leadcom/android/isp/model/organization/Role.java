@@ -7,6 +7,7 @@ import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>组织内角色<br />
@@ -26,6 +27,11 @@ public class Role extends Model {
         String RoleCode = "roleCode";
         String PermissionIds = "permissionIds";
     }
+
+    /**
+     * 是否需要重新拉取角色列表
+     */
+    public static boolean roleGettable = true;
 
     /**
      * 角色类型
@@ -54,44 +60,49 @@ public class Role extends Model {
     }
 
     public static void save(Role role) {
-        // 保存权限列表
-        role.savePermissionIds();
-        new Dao<>(Role.class).save(role);
-        Permission.save(role.getPerList());
+        if (null != role && !isEmpty(role.getId())) {
+            // 保存权限列表
+            role.savePermissionIds();
+            new Dao<>(Role.class).save(role);
+            Permission.save(role.getPerList());
+        }
+    }
+
+    public static void save(List<Role> list) {
+        if (null != list && list.size() > 0) {
+            for (Role role : list) {
+                save(role);
+            }
+        }
     }
 
     /**
      * 通过角色id查找角色的详细信息
      */
-    public static Role getRole(String roleId) {
+    public static Role getRoleById(String roleId) {
         return new Dao<>(Role.class).query(roleId);
     }
 
     /**
-     * 通过roleName获取roleType
+     * 通过角色code查找角色的详细信息
      */
-    private static int getRoleType(String roleId) {
-        if (isEmpty(roleId) ||
-                roleId.equals(Member.Code.GROUP_COMMON_MEMBER_ROLE_ID) ||
-                roleId.equals(Member.Code.ACT_MEMBER_ROLE_ID)) {
-            // 组织普通成员、活动普通成员
-            return Type.NORMAL;
-        }
-        if (roleId.equals("群创建者") || roleId.equals("活动发起者")) {
-            return Type.CREATOR;
-        }
-        if (roleId.equals(Member.Code.GROUP_SQUAD_MANAGER_ROLE_ID)) {
-            return Type.SQUAD_MANAGER;
-        }
-        if (roleId.equals(Member.Code.GROUP_MANAGER_ROLE_ID) ||
-                roleId.equals(Member.Code.ACT_MANAGER_ROLE_ID)) {
-            // 组织管理员、小组管理员、活动管理员
-            return Type.MANAGER;
-        }
-        if (roleId.equals(Member.Code.GROUP_DOC_MANAGER_ROLE_ID)) {
-            return Type.ARCHIVE_MANAGER;
-        }
-        return Type.NORMAL;
+    public static Role getRoleByCode(String roleCode) {
+        List<Role> roles = getRolesByCode(roleCode);
+        return null == roles || roles.size() < 1 ? null : roles.get(0);
+    }
+
+    /**
+     * 通过角色code查找角色的详细信息
+     */
+    public static List<Role> getRolesByCode(String roleCode) {
+        return new Dao<>(Role.class).query(Field.RoleCode, roleCode);
+    }
+
+    /**
+     * 删除所有角色
+     */
+    public static void clear() {
+        new Dao<>(Role.class).clear();
     }
 
     //角色名称
@@ -101,8 +112,6 @@ public class Role extends Model {
     @Column(Field.RoleCode)
     private String rolCode;
 
-    @Ignore
-    private int roleType;
     //角色所拥有的权限
     @Ignore
     private ArrayList<Permission> perList;
@@ -126,17 +135,6 @@ public class Role extends Model {
         this.rolCode = rolCode;
     }
 
-    public int getRoleType() {
-        if (0 == roleType) {
-            roleType = getRoleType(roleName);
-        }
-        return roleType;
-    }
-
-    public void setRoleType(int roleType) {
-        this.roleType = roleType;
-    }
-
     public ArrayList<Permission> getPerList() {
         getPermissions();
         return perList;
@@ -151,8 +149,9 @@ public class Role extends Model {
      * 角色是否具有某项操作权限
      */
     public boolean hasOperation(String operation) {
-        if (null == getPerList() || getPerList().size() < 1) return false;
-        for (Permission per : getPerList()) {
+        ArrayList<Permission> list = getPerList();
+        if (null == list || list.size() < 1) return false;
+        for (Permission per : list) {
             if (per.getPerCode().contains(operation)) {
                 return true;
             }

@@ -170,11 +170,11 @@ public class ContactViewHolder extends BaseViewHolder {
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
-        managerView.setText(member.isManager() ? R.string.ui_icon_group_manager :
+        managerView.setText(member.isGroupManager() ? R.string.ui_icon_group_manager :
                 (member.isArchiveManager() ? R.string.ui_icon_archive_manager :
                         (member.isSquadManager() ? R.string.ui_icon_group_manager : R.string.ui_icon_group_manager)));
-        managerView.setTextColor(getColor(member.isManager() ? R.color.color_dfc371 : R.color.colorPrimary));
-        managerView.setVisibility((member.isManager() || member.isArchiveManager() || member.isSquadManager()) ? View.VISIBLE : View.GONE);
+        managerView.setTextColor(getColor(member.isGroupManager() ? R.color.color_dfc371 : R.color.colorPrimary));
+        managerView.setVisibility((member.isGroupManager() || member.isArchiveManager() || member.isSquadManager()) ? View.VISIBLE : View.GONE);
 
         buttonInvite.setVisibility(buttonInviteVisible ? (isMe ? View.GONE : View.VISIBLE) : View.GONE);
         lockFlag.setVisibility(member.isLocalDeleted() ? View.VISIBLE : View.GONE);
