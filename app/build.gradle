@@ -20,7 +20,7 @@ android {
 //        }
         ndk {
             // 设置支持的SO库架构(网易云信)
-            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "x86", "x86_64"
         }
         manifestPlaceholders = [APP_PKG_NAME: applicationId]
         resValue "string", "app_internal_version", getInternalVersion()
@@ -160,6 +160,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.2'
     compile 'com.android.support:palette-v7:27.0.2'
     compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:exifinterface:27.0.2'
     compile 'com.google.code.gson:gson:2.8.1'
     // Google自动换行的layout
     compile 'com.google.android:flexbox:0.3.0'
@@ -206,11 +207,11 @@ dependencies {
     // 分析依赖项
     // gradlew -q app:dependencies
     // https://mvnrepository.com/artifact/org.apache.poi/poi
-    //compile group: 'org.apache.poi', name: 'poi', version: '3.17'
+    compile group: 'org.apache.poi', name: 'poi', version: '3.17'
     // https://mvnrepository.com/artifact/org.apache.poi/poi-scratchpad
-    //compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17'
+    compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17'
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    //compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 
     // 高德地图
     // 2D地图
@@ -224,7 +225,7 @@ dependencies {
     compile 'me.leolin:ShortcutBadger:1.1.17'
 
     // pdf阅读器
-    //compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
+    compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
     // 视频播放器
     compile 'com.afollestad:easyvideoplayer:0.3.0'
 

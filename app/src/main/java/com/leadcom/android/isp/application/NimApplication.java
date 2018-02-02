@@ -113,7 +113,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     private UIKitOptions buildUIKitOptions() {
         UIKitOptions options = new UIKitOptions();
         // 设置app图片/音频/日志等缓存目录
-        options.appCacheDir = Environment.getExternalStorageDirectory() + "/" + ROOT_DIR + "/nim";//NimSDKOptionConfig.getAppCacheDir(this) + "/app";
+        options.appCacheDir = Environment.getExternalStorageDirectory() + "/" + ROOT_DIR + "/nim/";//NimSDKOptionConfig.getAppCacheDir(this) + "/app";
         return options;
     }
 

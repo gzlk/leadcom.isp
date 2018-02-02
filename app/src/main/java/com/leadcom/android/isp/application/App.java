@@ -9,6 +9,7 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.crash.AppCrashHandler;
 import com.leadcom.android.isp.crash.storage.StorageUtil;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.user.User;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
@@ -82,6 +83,15 @@ public class App extends NimApplication {
         }
     }
 
+    private boolean x5Usable = false;
+
+    /**
+     * 疼熏内核文件浏览是否可用
+     */
+    public boolean isX5Usable() {
+        return x5Usable;
+    }
+
     private void initializeX5() {
         // 初始化疼熏X5浏览器内核
         QbSdk.setDownloadWithoutWifi(true);
@@ -89,27 +99,13 @@ public class App extends NimApplication {
             @Override
             public void onCoreInitFinished() {
                 log("X5 environment core initialize finished.");
+                //x5Usable = true;
             }
 
             @Override
             public void onViewInitFinished(boolean b) {
                 log("X5 onViewInitFinished: " + b);
-            }
-        });
-        QbSdk.setTbsListener(new TbsListener() {
-            @Override
-            public void onDownloadFinish(int i) {
-                log("TBS onDownloadFinish: " + i);
-            }
-
-            @Override
-            public void onInstallFinish(int i) {
-                log("TBS onInstallFinish: " + i);
-            }
-
-            @Override
-            public void onDownloadProgress(int i) {
-                //log("TBS onDownloadProgress: " + i);
+                x5Usable = b;
             }
         });
     }

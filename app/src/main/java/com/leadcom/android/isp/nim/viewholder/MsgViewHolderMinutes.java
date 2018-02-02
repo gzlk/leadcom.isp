@@ -3,8 +3,10 @@ package com.leadcom.android.isp.nim.viewholder;
 import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.FilePreviewX5Fragment;
+import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
@@ -40,8 +42,8 @@ public class MsgViewHolderMinutes extends MsgViewHolderBase {
 
     @Override
     protected void inflateContentView() {
-        titleTextView = (TextView) view.findViewById(R.id.message_item_minutes_title_label);
-        contentTextView = (TextView) view.findViewById(R.id.message_item_minutes_content_label);
+        titleTextView = view.findViewById(R.id.message_item_minutes_title_label);
+        contentTextView = view.findViewById(R.id.message_item_minutes_content_label);
     }
 
     @Override
@@ -55,6 +57,10 @@ public class MsgViewHolderMinutes extends MsgViewHolderBase {
     protected void onItemClick() {
         String url = minutes.getUrl();
         String title = StringHelper.getString(R.string.ui_nim_action_minutes);
-        FilePreviewX5Fragment.open(context, BaseFragment.ACTIVITY_BASE_REQUEST, url, title, Attachment.getExtension(url), false);
+        if (App.app().isX5Usable()) {
+            FilePreviewX5Fragment.open(context, BaseFragment.ACTIVITY_BASE_REQUEST, url, title, Attachment.getExtension(url), false);
+        } else {
+            OfficeOnlinePreviewFragment.open(context, BaseFragment.ACTIVITY_BASE_REQUEST, url, title, Attachment.getExtension(url), false);
+        }
     }
 }

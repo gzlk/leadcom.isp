@@ -14,12 +14,16 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.FilePreviewX5Fragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.InnerWebViewFragment;
+import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
+import com.leadcom.android.isp.fragment.common.PdfViewerFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.nim.activity.VideoPlayerActivity;
 import com.netease.nim.uikit.api.NimUIKit;
 
@@ -39,7 +43,6 @@ import java.util.Locale;
 public class FilePreviewHelper {
 
     public static final String NIM = "netease.com";
-    private static final String OFFICE_PREVIEW = "https://view.officeapps.live.com/op/view.aspx?src=";
 
     /**
      * 根据文件类型打开相应的文件预览
@@ -57,35 +60,37 @@ public class FilePreviewHelper {
 
             if (ImageCompress.isImage(ext)) {
                 previewImage(activity, path);
-            } else {
+            } else if (App.app().isX5Usable()) {
+                // 如果疼熏文件浏览内核可用，则直接用疼熏内核，否则用POI打开文件
                 boolean minutes = !StringHelper.isEmpty(fileName) && fileName.equals(StringHelper.getString(R.string.ui_nim_action_minutes));
                 FilePreviewX5Fragment.open(activity, BaseFragment.REQUEST_CHANGE, path, fileName, ext, minutes);
+                return;
             }
-//            if (ext.equals("pdf")) {
-//                previewPdf(activity, path, fileName);
-//                return;
-//            } else if (ImageCompress.isImage(ext)) {
-//                previewImage(activity, path);
-//                return;
-//            } else if (Attachment.isOffice(ext)) {
-//                previewOnlineOffice(activity, path, fileName, ext);
-//                return;
-//            } else if (ImageCompress.isVideo(ext)) {
-//                previewVideo(activity, path, fileName, extension);
-//                return;
-//            } else if (path.contains(NIM) && extension.contains("txt")) {
-//                // 文本文件的在线预览方式
-//                //BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
-//                previewOnline(activity, path, fileName);
-//                return;
-//            }
-//            // 如果path是网址，则打开内置在线预览
-//            if (Utils.isUrl(path)) {
-//                previewOnline(activity, path, fileName);
-//            } else {
-//                // 如果是本地文件，则尝试使用第三方app打开
-//                previewMimeFile(activity, path, extension);
-//            }
+            if (ext.equals("pdf")) {
+                previewPdf(activity, path, fileName);
+                return;
+            } else if (ImageCompress.isImage(ext)) {
+                previewImage(activity, path);
+                return;
+            } else if (Attachment.isOffice(ext)) {
+                previewOnlineOffice(activity, path, fileName, ext);
+                return;
+            } else if (ImageCompress.isVideo(ext)) {
+                previewVideo(activity, path, fileName, extension);
+                return;
+            } else if (path.contains(NIM) && extension.contains("txt")) {
+                // 文本文件的在线预览方式
+                //BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
+                previewOnline(activity, path, fileName);
+                return;
+            }
+            // 如果path是网址，则打开内置在线预览
+            if (Utils.isUrl(path)) {
+                previewOnline(activity, path, fileName);
+            } else {
+                // 如果是本地文件，则尝试使用第三方app打开
+                previewMimeFile(activity, path, extension);
+            }
         }
     }
 
@@ -153,7 +158,7 @@ public class FilePreviewHelper {
      * 预览在线或本地PDF文档
      */
     private static void previewPdf(Context context, String path, String fileName) {
-        //PdfViewerFragment.open(context, path, fileName);
+        PdfViewerFragment.open(context, path, fileName);
     }
 
     /**
@@ -177,6 +182,6 @@ public class FilePreviewHelper {
         //String url = path.contains(NIM) ? StringHelper.format("%s%s", OFFICE_PREVIEW, path) : path;
         boolean minutes = !StringHelper.isEmpty(fileName) && fileName.equals(StringHelper.getString(R.string.ui_nim_action_minutes));
         String param = StringHelper.format("%s,%s,%s,%s", path, fileName, extension, (minutes ? "true" : "false"));
-        //BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), param, true, false);
+        BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), param, true, false);
     }
 }

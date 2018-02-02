@@ -197,6 +197,6 @@ public class FileUtils {
 
     public static String getExternalPackageDirectory(Context context) {
         String externalPath = Environment.getExternalStorageDirectory().getPath();
-        return externalPath + File.separator + context.getPackageName();
+        return externalPath + File.separator + "/leadcom/";
     }
 }

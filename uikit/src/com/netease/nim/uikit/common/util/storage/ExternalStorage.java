@@ -66,7 +66,7 @@ public class ExternalStorage {
 
     private void loadStorageState(Context context) {
         String externalPath = Environment.getExternalStorageDirectory().getPath();
-        this.sdkStorageRoot = externalPath + "/" + context.getPackageName() + "/";
+        this.sdkStorageRoot = externalPath + "/leadcom/nim/";
     }
 
     private void createSubFolders() {

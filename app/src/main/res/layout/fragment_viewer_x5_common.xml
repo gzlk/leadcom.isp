@@ -7,4 +7,10 @@
         android:id="@+id/ui_viewer_x5_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.leadcom.android.isp.view.X5WebView
+        android:id="@+id/ui_viewer_x5_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </RelativeLayout>
