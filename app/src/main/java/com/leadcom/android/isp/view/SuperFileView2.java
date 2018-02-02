@@ -71,6 +71,8 @@ public class SuperFileView2 extends FrameLayout implements TbsReaderView.ReaderC
             boolean bool = this.mTbsReaderView.preOpen(getFileType(mFile.toString()), false);
             if (bool) {
                 this.mTbsReaderView.openFile(localBundle);
+            } else {
+                ToastHelper.make().showMsg("Cannot open file with X5 core.");
             }
         } else {
             ToastHelper.make().showMsg("文件路径无效！");
