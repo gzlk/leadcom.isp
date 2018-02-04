@@ -17,6 +17,7 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.crash.system.InstallUtil;
 import com.leadcom.android.isp.crash.system.NetworkUtil;
 import com.leadcom.android.isp.crash.system.SysInfoUtil;
+import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 
 import java.io.BufferedReader;
@@ -234,6 +235,11 @@ public class CrashSnapshot {
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
         sb.append(System.getProperty("line.separator"));
+        sb.append("log trace:").append(System.getProperty("line.separator"));
+        sb.append(LogHelper.getCache());
+        sb.append(System.getProperty("line.separator"));
+        sb.append(System.getProperty("line.separator"));
+        LogHelper.clearCache();
         return sb.toString();
     }
 
