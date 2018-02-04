@@ -73,15 +73,29 @@ public class Shareable {
         return null;
     }
 
+    private static byte[] getAppIcon() {
+        Bitmap bitmap = BitmapFactory.decodeResource(App.app().getResources(), R.drawable.img_default_app_icon);
+        return bmpToByteArray(bitmap, true);
+    }
+
     protected static byte[] getThumb(String imageUrl) {
         // url为空时返回app的默认图标
         if (isEmpty(imageUrl)) {
-            Bitmap bitmap = BitmapFactory.decodeResource(App.app().getResources(), R.drawable.img_default_app_icon);
-            return bmpToByteArray(bitmap, true);
+            return getAppIcon();
         }
         String localPath = getLocalPath(imageUrl);
 
-        Bitmap thumb = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(localPath), THUMB_WIDTH, THUMB_HEIGHT, true);
+        Bitmap source = null;
+        try {
+            source = BitmapFactory.decodeFile(localPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (null == source) {
+            return getAppIcon();
+        }
+
+        Bitmap thumb = Bitmap.createScaledBitmap(source, THUMB_WIDTH, THUMB_HEIGHT, true);
         byte[] data = bmpToByteArray(thumb, true);
         thumb.recycle();
         if (data.length > MAX_THUMB_FILE_SIZE) {
