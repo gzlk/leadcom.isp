@@ -48,19 +48,20 @@ public class FilePreviewHelper {
      * 根据文件类型打开相应的文件预览
      */
     public static void previewFile(Context context, String path, String fileName, String extension) {
+        Context activity = getActivity(context);
+        if (null == activity && context instanceof Service) {
+            activity = context;
+        }
+        if (null == activity) {
+            throw new IllegalArgumentException("cannot fetching Activity from context: " + context.toString());
+        }
+
         if (!TextUtils.isEmpty(extension)) {
             String ext = extension.toLowerCase(Locale.getDefault());
-            Context activity = getActivity(context);
-            if (null == activity && context instanceof Service) {
-                activity = context;
-            }
-            if (null == activity) {
-                throw new IllegalArgumentException("cannot fetching Activity from context: " + context.toString());
-            }
 
             if (ImageCompress.isImage(ext)) {
                 previewImage(activity, path);
-            } else if (App.app().isX5Usable()) {
+            } else if (!ext.equals("apk") && App.app().isX5Usable()) {
                 // 如果疼熏文件浏览内核可用，则直接用疼熏内核，否则用POI打开文件
                 boolean minutes = !StringHelper.isEmpty(fileName) && fileName.equals(StringHelper.getString(R.string.ui_nim_action_minutes));
                 FilePreviewX5Fragment.open(activity, BaseFragment.REQUEST_CHANGE, path, fileName, ext, minutes);
@@ -91,6 +92,10 @@ public class FilePreviewHelper {
                 // 如果是本地文件，则尝试使用第三方app打开
                 previewMimeFile(activity, path, extension);
             }
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_base_text_file_ext_not_valid);
+            // 强制用text方式打开文件
+            previewMimeFile(activity, path, "txt");
         }
     }
 
