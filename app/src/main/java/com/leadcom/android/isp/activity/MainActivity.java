@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.TextView;
 
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
@@ -22,21 +20,18 @@ import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragm
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.UpgradeHelper;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.common.SystemUpdate;
 import com.leadcom.android.isp.model.organization.Invitation;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
-import com.leadcom.android.isp.service.DownloadingService;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -170,7 +165,7 @@ public class MainActivity extends TitleActivity {
                         if (StringHelper.isEmpty(url) || !Utils.isUrl(url)) {
                             SimpleDialogHelper.init(MainActivity.this).show(R.string.ui_system_updatable_url_invalid);
                         } else {
-                            warningUpdatable(url);
+                            warningUpdatable(url, ver);
                         }
                     }
                 }
@@ -178,109 +173,18 @@ public class MainActivity extends TitleActivity {
         }).getClientVersion();
     }
 
-    private void warningUpdatable(String url) {
+    private void warningUpdatable(final String url, final String version) {
         downloadingUrl = url;
-        String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default));
+        String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default), version);
         SimpleDialogHelper.init(this).show(text, R.string.ui_base_text_ok, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 // 打开下载对话框，并开始下载（下载对话框可以隐藏）
-                showUpgradeDownloadingDialog();
-                return true;
-            }
-        }, null);
-    }
-
-    private View upgradeDialogView;
-    private MaterialProgressBar upgradeProgress;
-    private TextView upgradePercentage, upgradePercentageSize;
-    private DialogHelper upgradeDialog;
-
-    private void showUpgradeDownloadingDialog() {
-        upgradeDialog = DialogHelper.init(this).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == upgradeDialogView) {
-                    upgradeDialogView = View.inflate(MainActivity.this, R.layout.popup_dialog_upgrade, null);
-                    upgradeProgress = upgradeDialogView.findViewById(R.id.ui_popup_upgrade_progressbar);
-                    upgradePercentage = upgradeDialogView.findViewById(R.id.ui_popup_upgrade_percentage);
-                    upgradePercentageSize = upgradeDialogView.findViewById(R.id.ui_popup_upgrade_percentage_size);
-                }
-                return upgradeDialogView;
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-                upgradeProgress.setProgress(0);
-                upgradePercentage.setText("0%");
-                upgradePercentageSize.setText("");
-            }
-        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                DownloadingService.background(MainActivity.this);
-                return true;
-            }
-        }).setConfirmText(R.string.ui_system_updating_background).setPopupType(DialogHelper.SLID_IN_BOTTOM);
-        upgradeDialog.show();
-        // 注册下载进度监听
-        DownloadingService.setOnProgressListener(progressListener);
-        DownloadingService.start(this, downloadingUrl);
-    }
-
-    private DownloadingService.OnProgressListener progressListener = new DownloadingService.OnProgressListener() {
-        @Override
-        public void onStart() {
-            upgradeProgress.setProgress(0);
-            upgradePercentage.setText("0%");
-            upgradePercentageSize.setText("");
-        }
-
-        @Override
-        public void onProgressing(int current, int total) {
-            if (null != upgradePercentage) {
-                if (upgradeProgress.getMax() != total) {
-                    upgradeProgress.setMax(total);
-                }
-                upgradeProgress.setProgress(current);
-                upgradePercentage.setText(StringHelper.format("%d%%", (int) (current * 1.0 / total * 100)));
-                upgradePercentageSize.setText(getString(R.string.ui_system_updating_percentage_size, Utils.formatSize(current), Utils.formatSize(total)));
-            }
-        }
-
-        @Override
-        public void onSuccess(String path) {
-            FilePreviewHelper.previewFile(MainActivity.this, path, "new_version", "apk");
-        }
-
-        @Override
-        public void onFailure() {
-            // 关闭下载对话框
-            if (null != upgradeDialog) {
-                upgradeDialog.dismiss();
-            }
-            // 提示下载失败，需要重试或者放弃
-            warningDownloadFailure();
-        }
-
-        @Override
-        public void onStop() {
-            if (null != upgradeDialog) {
-                upgradeDialog.dismiss();
-            }
-        }
-    };
-
-    private void warningDownloadFailure() {
-        SimpleDialogHelper.init(this).show(R.string.ui_system_updating_failure, R.string.ui_base_text_retry, R.string.ui_base_text_abandon, new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                upgradeDialogView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        showUpgradeDownloadingDialog();
-                    }
-                }, 300);
+                //showUpgradeDownloadingDialog();
+                String app = getString(R.string.app_name_default);
+                String title = getString(R.string.ui_system_updating_title, app);
+                String description = getString(R.string.ui_system_updating_description);
+                UpgradeHelper.helper(MainActivity.this, version).startDownload(url, title, description);
                 return true;
             }
         }, null);

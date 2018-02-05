@@ -9,8 +9,6 @@ import android.support.v4.app.NotificationCompat;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.MainActivity;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
-import com.leadcom.android.isp.service.DownloadingService;
 
 /**
  * <b>功能描述：</b>系统通知<br />
@@ -26,7 +24,6 @@ import com.leadcom.android.isp.service.DownloadingService;
 public class NotificationHelper {
 
     private static final int ID = 0x00FF00FF;
-    private static final int ID1 = 0x00FF00FE;
 
     public static NotificationHelper helper(Context context) {
         return new NotificationHelper(context);
@@ -55,50 +52,5 @@ public class NotificationHelper {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.mipmap.ic_launcher);
         manager.notify(ID, builder.build());
-    }
-
-    public NotificationHelper progress() {
-        builder.setContentIntent(null)
-                .setAutoCancel(true)
-                .setOngoing(true)
-                .setSmallIcon(R.mipmap.ic_launcher);
-        return this;
-    }
-
-    public void show(int progress, int total) {
-        builder.setContentTitle(StringHelper.getString(R.string.ui_system_updating_background_title_downloading, StringHelper.getString(R.string.app_name_default)))
-                .setContentText(StringHelper.getString(R.string.ui_system_updating))
-                .setProgress(total, progress, false);
-        manager.notify(ID1, builder.build());
-    }
-
-    private Intent getViewIntent(String path) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(FilePreviewHelper.getUriFromFile(path), "application/vnd.android.package-archive");
-        return intent;
-    }
-
-    public void showComplete(String localPath) {
-        try {
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, getViewIntent(localPath), 0);
-            builder.setContentText(StringHelper.getString(R.string.ui_system_updating_background_content_complete))
-                    .setContentTitle(StringHelper.getString(R.string.ui_system_updating_background_title_complete))
-                    .setOngoing(false)
-                    .setProgress(0, 0, false).setContentIntent(pendingIntent);
-            manager.notify(ID1, builder.build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void showRetry(Context context, String url) {
-        Intent intent = DownloadingService.getRetryIntent(context, url);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentText(StringHelper.getString(R.string.ui_system_updating_background_content_failure))
-                .setContentTitle(StringHelper.getString(R.string.ui_system_updating_background_title_failure))
-                .setContentIntent(pendingIntent)
-                .setProgress(0, 0, false).setOngoing(false);
-        manager.notify(ID1, builder.build());
     }
 }

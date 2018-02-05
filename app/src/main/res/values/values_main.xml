@@ -18,12 +18,15 @@
     </string>
 
     <string name="ui_system_updatable" formatted="false">
-        <![CDATA[<b>更新应用</b><br/>%s有新版本可用。<br/>安装新版本然后试一试最新功能吧。]]>
+        <![CDATA[<b>更新应用</b><br/>%s有新版本(v%s)可用。<br/>安装新版本然后试一试最新功能吧。]]>
     </string>
     <string name="ui_system_updatable_url_invalid">
         <![CDATA[有新版本可用，但下载地址无效。<br/>请联系管理员。]]>
     </string>
     <string name="ui_system_updating">正在下载，请稍候&#8230;</string>
+    <string name="ui_system_updating_exist">下载任务正在进行中请稍候&#8230;</string>
+    <string name="ui_system_updating_title" formatted="false">新的%s版本</string>
+    <string name="ui_system_updating_description">正在下载&#8230;</string>
     <string name="ui_system_updating_background">后台下载</string>
     <string name="ui_system_updating_percentage_default">100%</string>
     <string name="ui_system_updating_percentage_size_default">10.23M/35.53MB</string>

@@ -2,6 +2,7 @@
 <resources>
 
     <string name="pf_is_guide_page_shown">100000</string>
+    <string name="pf_downloading_task_id" formatted="false">100001_%s</string>
 
     <!--alpha-->
     <string name="pf_last_login_user_id">200000</string>
@@ -22,4 +23,5 @@
     <string name="pf_static_keyboard_height">300000</string>
     <string name="pf_static_temp_organization_create_alert">300010</string>
     <string name="pf_static_downloading_url" formatted="false">300020_%s</string>
+
 </resources>
