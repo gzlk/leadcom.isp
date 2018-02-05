@@ -827,7 +827,7 @@ public class MessageListPanelEx {
 
             if (!NimUIKitImpl.getMsgForwardFilter().shouldIgnore(selectedItem) && !recordOnly) {
                 // 6 forward to person
-                longClickItemForwardToPerson(selectedItem, alertDialog);
+                //longClickItemForwardToPerson(selectedItem, alertDialog);
                 // 7 forward to team
                 longClickItemForwardToTeam(selectedItem, alertDialog);
             }
@@ -1185,6 +1185,9 @@ public class MessageListPanelEx {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (null == data) {
             return;
         }
         final ArrayList<String> selected = data.getStringArrayListExtra(ContactSelectActivity.RESULT_DATA);
