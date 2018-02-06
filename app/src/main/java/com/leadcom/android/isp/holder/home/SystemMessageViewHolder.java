@@ -61,7 +61,7 @@ public class SystemMessageViewHolder extends BaseViewHolder {
 
     private String getTitle(NimMessage msg) {
         if (isEmpty(msg.getMsgTitle())) {
-            return NimMessage.getType(0 == msg.getType() ? msg.getMsgType() : msg.getType());
+            return NimMessage.getMsgType(0 == msg.getType() ? msg.getMsgType() : msg.getType());
         }
         return msg.getMsgTitle();
     }

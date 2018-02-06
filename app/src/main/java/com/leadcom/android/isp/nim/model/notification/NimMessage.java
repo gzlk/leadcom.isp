@@ -1,6 +1,5 @@
 package com.leadcom.android.isp.nim.model.notification;
 
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
@@ -35,15 +34,6 @@ public class NimMessage extends Message implements MsgAttachment {
         String APPID = "appId";
         String APPTID = "appTid";
         String TOPICS = "appTopics";
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        return null != object && (getClass() == object.getClass()) && (object instanceof NimMessage) && equals((NimMessage) object);
-    }
-
-    public boolean equals(NimMessage msg) {
-        return null != msg && !isEmpty(msg.getId()) && msg.getId().equals(getId());
     }
 
     public static void save(NimMessage msg) {
@@ -123,198 +113,6 @@ public class NimMessage extends Message implements MsgAttachment {
         new Dao<>(NimMessage.class).clear();
     }
 
-    /**
-     * 查看本条消息是否可以保存
-     */
-    public boolean isSavable() {
-        return type < Type.USER_ARCHIVE_LIKE || type > Type.MOMENT_COMMENT;
-    }
-
-    /**
-     * 自定义消息类型
-     */
-    public interface Type {
-        /**
-         * 用户聊天短消息
-         */
-        int USER_CHAT = 1;
-        /**
-         * 活动回复消息
-         */
-        int ACTIVITY_REPLY = 2;
-        /**
-         * 事件回复消息
-         */
-        int EVENT_REPLY = 3;
-        /**
-         * 新成员申请加入组织
-         */
-        int GROUP_JOIN = 4;
-        /**
-         * 批准新成员加入
-         */
-        int GROUP_JOIN_APPROVE = 6;
-        /**
-         * 不批准新成员加入
-         */
-        int GROUP_JOIN_DISAPPROVE = 7;
-        /**
-         * 邀请新成员加入组织
-         */
-        int GROUP_INVITE = 8;
-        /**
-         * 新成员同意加入组织
-         */
-        int GROUP_INVITE_AGREE = 9;
-        /**
-         * 新成员不同意加入组织
-         */
-        int GROUP_INVITE_DISAGREE = 10;
-        /**
-         * 被踢出组织
-         */
-        int GROUP_KICK_OUT = 11;
-        /**
-         * 主动加入活动
-         */
-        int ACTIVITY_JOIN = 14;
-        /**
-         * 主动加入活动的回复
-         */
-        int ACTIVITY_JOIN_REPLY = 15;
-        /**
-         * 活动成员邀请
-         */
-        int ACTIVITY_INVITE = 16;
-        /**
-         * 活动邀请的回复
-         */
-        int ACTIVITY_INVITE_REPLY = 17;
-        /**
-         * 被踢出活动
-         */
-        int ACTIVITY_KICK_OUT = 18;
-        /**
-         * 小组成员邀请小组外人员加入小组
-         */
-        int SQUAD_INVITE = 19;
-        /**
-         * 被邀请者同意加入小组
-         */
-        int SQUAD_INVITE_AGREE = 20;
-        /**
-         * 被邀请者拒绝加入小组
-         */
-        int SQUAD_INVITE_DISAGREE = 21;
-        /**
-         * 活动通知(对所有活动成员)
-         */
-        int ACTIVITY_ALERT_ALL = 22;
-        /**
-         * 活动通知(对选定成员)
-         */
-        int ACTIVITY_ALERT_SELECTED = 23;
-        /**
-         * 邀请到小组（仅通知）
-         */
-        int SQUAD_INVITE_ALERT = 24;
-        /**
-         * 成员退出活动
-         */
-        int ACTIVITY_EXIT = 25;
-        /**
-         * 活动结束通知
-         */
-        int ACTIVITY_END = 26;
-        /**
-         * 邀请活动议题成员
-         */
-        int TOPIC_INVITE = 27;
-        /**
-         * 退出活动议题
-         */
-        int TOPIC_EXIT = 28;
-        /**
-         * 踢出活动议题成员
-         */
-        int TOPIC_KICK_OUT = 29;
-        /**
-         * 结束活动议题
-         */
-        int TOPIC_END = 30;
-        /**
-         * 个人档案点赞
-         */
-        int USER_ARCHIVE_LIKE = 31;
-        /**
-         * 个人档案评论
-         */
-        int USER_ARCHIVE_COMMENT = 32;
-        /**
-         * 组织档案点赞
-         */
-        int GROUP_ARCHIVE_LIKE = 33;
-        /**
-         * 组织档案评论
-         */
-        int GROUP_ARCHIVE_COMMENT = 34;
-        /**
-         * 个人动态点赞
-         */
-        int MOMENT_LIKE = 35;
-        /**
-         * 个人动态评论
-         */
-        int MOMENT_COMMENT = 36;
-        /**
-         * 活动中发送的通知
-         */
-        int ACTIVITY_NOTIFY = 37;
-    }
-
-    /**
-     * 获取类型文字
-     */
-    public static String getType(int type) {
-        switch (type) {
-            case Type.GROUP_JOIN:
-                return "申请加入组织";
-            case Type.GROUP_INVITE:
-                return "邀请您加入组织";
-            case Type.ACTIVITY_INVITE:
-                return "邀请您加入活动";
-            case Type.ACTIVITY_END:
-                return "活动结束";
-            case Type.ACTIVITY_EXIT:
-                return "退出活动";
-            case Type.ACTIVITY_KICK_OUT:
-                return "踢出活动";
-            case Type.SQUAD_INVITE:
-                return "邀请您加入小组";
-            case Type.ACTIVITY_ALERT_ALL:
-                return "活动通知";
-            case Type.ACTIVITY_ALERT_SELECTED:
-                return "系统通知";
-            case Type.SQUAD_INVITE_ALERT:
-                return "加入小组";
-            case Type.TOPIC_INVITE:
-                return "邀请您加入议题";
-            case Type.TOPIC_EXIT:
-                return "退出议题";
-            case Type.TOPIC_KICK_OUT:
-                return "踢出议题";
-            case Type.TOPIC_END:
-                return "结束议题";
-            case Type.ACTIVITY_NOTIFY:
-                return "活动通知";
-            default:
-                return StringHelper.format("不晓得是什么通知(%d)", type);
-        }
-    }
-
-    // 推送类型(0.点对点自定义推送,1.群消息自定义推送)
-    @Column(Archive.Field.Type)
-    private int type;// 原有属性
     // 活动的tid
     @Column(Activity.Field.NimId)
     private String tid;// 原有属性
@@ -322,20 +120,12 @@ public class NimMessage extends Message implements MsgAttachment {
     @Column(Organization.Field.GroupId)
     private String groupId;// 原有属性
     @Column(PARAM.APPID)
-    private String appId;
+    private String appId;// 原有属性
     @Column(PARAM.APPTID)
-    private String appTid;
+    private String appTid;// 原有属性
     // 结束的活动的所有议题的tid(用于取消这些议题里的未读消息)
     @Column(PARAM.TOPICS)
-    private ArrayList<String> subTidList;
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
+    private ArrayList<String> subTidList;// 原有属性
 
     public String getTid() {
         return tid;
