@@ -1,6 +1,7 @@
 package com.netease.nim.uikit.business.session.viewholder;
 
 import com.netease.nim.uikit.R;
+import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.business.session.activity.WatchVideoActivity;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 import com.netease.nim.uikit.common.util.media.BitmapDecoder;
@@ -22,7 +23,11 @@ public class MsgViewHolderVideo extends MsgViewHolderThumbBase {
 
     @Override
     protected void onItemClick() {
-        WatchVideoActivity.start(context, message);
+        if (null != NimUIKit.getOnSessionMessageViewHolderClick()) {
+            NimUIKit.getOnSessionMessageViewHolderClick().onClick(context, message);
+        } else {
+            WatchVideoActivity.start(context, message);
+        }
     }
 
     @Override

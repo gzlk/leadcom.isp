@@ -27,7 +27,7 @@ import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 public class SystemMessageViewHolder extends BaseViewHolder {
 
-    @ViewId(R.id.ui_holder_view_system_message_swipe_layout)
+    @ViewId(R.id.ui_holder_view_swipe_layout)
     private SwipeLayout swipeLayout;
     @ViewId(R.id.ui_holder_view_system_message_icon_container)
     private CorneredView iconContainer;
@@ -45,10 +45,6 @@ public class SystemMessageViewHolder extends BaseViewHolder {
     public SystemMessageViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
-    }
-
-    public SwipeLayout getSwipeLayout() {
-        return swipeLayout;
     }
 
     public void showContent(NimMessage msg) {

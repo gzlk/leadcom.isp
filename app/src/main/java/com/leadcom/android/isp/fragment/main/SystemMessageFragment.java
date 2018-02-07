@@ -113,7 +113,6 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new MessageAdapter();
-            mAdapter.setMode(Attributes.Mode.Single);
             mRecyclerView.setAdapter(mAdapter);
             setRightIcon(R.string.ui_icon_delete);
             setRightText(R.string.ui_base_text_clear);
@@ -263,7 +262,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onConfirm() {
                 NimMessage msg = mAdapter.get(holder.getAdapterPosition());
-                mAdapter.delete(holder);
+                mAdapter.remove(msg);
                 removeCache(msg.getUuid());
                 removePushMessage(msg.getUuid());
                 return true;
@@ -286,14 +285,6 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private class MessageAdapter extends RecyclerViewSwipeAdapter<SystemMessageViewHolder, NimMessage> {
-
-        private void delete(SystemMessageViewHolder holder) {
-            mItemManger.removeShownLayouts(holder.getSwipeLayout());
-            int pos = holder.getAdapterPosition();
-            remove(pos);
-            notifyItemRemoved(pos);
-            mItemManger.closeAllItems();
-        }
 
         @Override
         public SystemMessageViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -322,7 +313,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int getSwipeLayoutResourceId(int i) {
-            return R.id.ui_holder_view_system_message_swipe_layout;
+            return R.id.ui_holder_view_swipe_layout;
         }
 
         public NimMessage query(String uuid) {
