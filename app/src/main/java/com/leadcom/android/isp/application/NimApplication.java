@@ -321,6 +321,9 @@ public class NimApplication extends BaseActivityManagedApplication {
                         if (isEmpty(msg.getId())) {
                             msg.setId(msg.getUuid());
                         }
+                        if (0 == msg.getMsgType()) {
+                            msg.setMsgType(msg.getType());
+                        }
                         switch (msg.getMsgType()) {
                             case NimMessage.Type.ACTIVITY_END:
                             case NimMessage.Type.ACTIVITY_EXIT:

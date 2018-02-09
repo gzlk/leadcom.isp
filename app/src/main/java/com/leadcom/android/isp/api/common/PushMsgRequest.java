@@ -55,17 +55,23 @@ public class PushMsgRequest extends Request<NimMessage> {
     }
 
     @Override
-    protected void save(NimMessage nimMessage) {
-        if (null != nimMessage) {
-            nimMessage.setId(nimMessage.getUuid());
+    protected void save(NimMessage msg) {
+        if (null != msg) {
+            msg.setId(msg.getUuid());
+            if (0 == msg.getType()) {
+                msg.setType(msg.getMsgType());
+            }
         }
-        super.save(nimMessage);
+        super.save(msg);
     }
 
     @Override
     protected void save(List<NimMessage> list) {
         for (NimMessage msg : list) {
             msg.setId(msg.getUuid());
+            if (0 == msg.getType()) {
+                msg.setType(msg.getMsgType());
+            }
         }
         super.save(list);
     }
@@ -74,7 +80,6 @@ public class PushMsgRequest extends Request<NimMessage> {
      * 拉取推送消息列表
      */
     public void list() {
-        directlySave = false;
         httpRequest(getRequest(MultiplePush.class, url(LIST), "", HttpMethods.Get));
     }
 
