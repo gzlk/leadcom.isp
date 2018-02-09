@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
@@ -116,7 +117,7 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     public void showContent(Moment moment) {
         authorHeader.displayImage(moment.getHeadPhoto(), imageSize, false, false);
         authorName.setText(moment.getUserName());
-        momentContent.setText(moment.getContent());
+        momentContent.setText(EmojiUtility.getEmojiString(momentContent.getContext(), moment.getContent(), true));
         momentContent.makeExpandable();
         momentContent.setVisibility(isEmpty(moment.getContent()) ? View.GONE : View.VISIBLE);
         timeView.setText(fragment().formatTimeAgo(moment.getCreateDate()));

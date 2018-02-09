@@ -74,6 +74,7 @@ public class PushMsgRequest extends Request<NimMessage> {
      * 拉取推送消息列表
      */
     public void list() {
+        directlySave = false;
         httpRequest(getRequest(MultiplePush.class, url(LIST), "", HttpMethods.Get));
     }
 

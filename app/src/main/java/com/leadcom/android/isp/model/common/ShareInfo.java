@@ -3,6 +3,9 @@ package com.leadcom.android.isp.model.common;
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.archive.Archive;
+import com.litesuits.orm.db.annotation.Column;
+import com.litesuits.orm.db.annotation.Table;
 
 /**
  * <b>功能描述：</b>要分享的内容<br />
@@ -25,13 +28,20 @@ import com.leadcom.android.isp.model.Model;
  * }
  * </p>
  */
+@Table("shareInfo")
 public class ShareInfo extends Model {
 
+    @Column(Archive.Field.Title)
     private String title;
+    @Column("ContentType")
     private int contentType;
+    @Column("ArchiveType")
     private int docType;
+    @Column("ImageUrl")
     private String imageUrl;
+    @Column(Archive.Field.Description)
     private String description;
+    @Column("TargetPath")
     private String targetPath;
 
     public static String toJson(ShareInfo info) {

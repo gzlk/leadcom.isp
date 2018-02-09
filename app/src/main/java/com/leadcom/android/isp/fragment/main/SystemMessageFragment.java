@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.daimajia.swipe.util.Attributes;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;

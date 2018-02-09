@@ -3,12 +3,9 @@ package com.leadcom.android.isp.holder.home;
 import android.view.View;
 import android.widget.TextView;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CorneredView;
-import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -27,12 +24,6 @@ import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 public class SystemMessageViewHolder extends BaseViewHolder {
 
-    @ViewId(R.id.ui_holder_view_swipe_layout)
-    private SwipeLayout swipeLayout;
-    @ViewId(R.id.ui_holder_view_system_message_icon_container)
-    private CorneredView iconContainer;
-    @ViewId(R.id.ui_holder_view_system_message_icon)
-    private CustomTextView iconView;
     @ViewId(R.id.ui_holder_view_system_message_title)
     private TextView titleView;
     @ViewId(R.id.ui_holder_view_system_message_time)
@@ -57,7 +48,7 @@ public class SystemMessageViewHolder extends BaseViewHolder {
 
     private String getTitle(NimMessage msg) {
         if (isEmpty(msg.getMsgTitle())) {
-            return NimMessage.getMsgType(0 == msg.getType() ? msg.getMsgType() : msg.getType());
+            return NimMessage.getMsgType(msg.getMsgType());
         }
         return msg.getMsgTitle();
     }
