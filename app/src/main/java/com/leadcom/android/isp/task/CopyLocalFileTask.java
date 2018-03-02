@@ -40,7 +40,7 @@ public class CopyLocalFileTask extends AsyncedTask<String, Integer, Boolean> {
         String url = params[0];
         String localPath = params[1];
         String name = url.substring(url.lastIndexOf('/'));
-        if (url.contains(FilePreviewHelper.NIM)) {
+        if (FilePreviewHelper.isNimFile(url)) {
             name += ".jpg";
         }
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/" + App.ROOT_DIR;

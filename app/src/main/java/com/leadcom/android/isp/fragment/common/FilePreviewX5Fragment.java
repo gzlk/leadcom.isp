@@ -113,7 +113,7 @@ public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragme
             if (!mDownloaded) {
                 boolean needDown;
                 String local;
-                if (mQueryId.contains(FilePreviewHelper.NIM)) {
+                if (FilePreviewHelper.isNimFile(mQueryId)) {
                     local = HttpHelper.helper().getLocalFilePath(mQueryId, App.ARCHIVE_DIR);
                     String localReal = local + "." + mExt;
                     File file = new File(localReal);

@@ -368,7 +368,7 @@ public class Attachment extends Model {
         setId(url);
         fullPath = url;
         // 网易云只能通过文件名获取扩展名
-        ext = getExtension(url.contains(FilePreviewHelper.NIM) ? name : url);
+        ext = getExtension(FilePreviewHelper.isNimFile(url) ? name : url);
         type = getAttachmentType();
     }
 

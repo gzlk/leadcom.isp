@@ -103,7 +103,7 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
             if (!mDownloaded) {
                 boolean needDown;
                 String local = "";
-                if (mQueryId.contains(FilePreviewHelper.NIM)) {
+                if (FilePreviewHelper.isNimFile(mQueryId)) {
                     local = HttpHelper.helper().getLocalFilePath(mQueryId, App.ARCHIVE_DIR);
                     String localReal = local + "." + mExtension;
                     File file = new File(localReal);

@@ -42,7 +42,15 @@ import java.util.Locale;
 
 public class FilePreviewHelper {
 
-    public static final String NIM = "netease.com";
+    private static final String NIM = "netease.com";
+    private static final String NIM_ATTACH = "https://nim";
+
+    /**
+     * 判断是否是云信附件
+     */
+    public static boolean isNimFile(String url) {
+        return !StringHelper.isEmpty(url, true) && (url.contains(NIM) || url.contains(NIM_ATTACH));
+    }
 
     /**
      * 根据文件类型打开相应的文件预览
@@ -79,7 +87,7 @@ public class FilePreviewHelper {
             } else if (ImageCompress.isVideo(ext)) {
                 previewVideo(activity, path, fileName, extension);
                 return;
-            } else if (path.contains(NIM) && extension.contains("txt")) {
+            } else if (isNimFile(path) && extension.contains("txt")) {
                 // 文本文件的在线预览方式
                 //BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
                 previewOnline(activity, path, fileName);

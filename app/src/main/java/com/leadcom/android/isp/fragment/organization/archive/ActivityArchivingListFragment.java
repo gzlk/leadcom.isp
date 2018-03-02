@@ -197,7 +197,7 @@ public class ActivityArchivingListFragment extends BaseSwipeRefreshSupportFragme
             } else {
                 String url = archive.getUrl();
                 String name = archive.getName();
-                String ext = Attachment.getExtension(url.contains(FilePreviewHelper.NIM) ? name : url);
+                String ext = Attachment.getExtension(FilePreviewHelper.isNimFile(url) ? name : url);
                 FilePreviewHelper.previewFile(Activity(), url, name, ext);
             }
         }
