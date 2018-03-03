@@ -4,8 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/ui_static_dp_5"
-    android:minWidth="@dimen/ui_static_dp_120"
     android:animateLayoutChanges="true"
+    android:minWidth="@dimen/ui_static_dp_120"
     app:cardCornerRadius="@dimen/ui_static_dp_10"
     app:cardElevation="@dimen/ui_base_translationZ_small">
 
@@ -30,9 +30,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ui_static_dp_5"
-            android:ellipsize="middle"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="center_horizontal"
-            android:maxLength="8"
+            android:marqueeRepeatLimit="3"
+            android:singleLine="true"
             android:text="@string/app_name"
             android:textSize="@dimen/ui_base_text_size_small" />
     </LinearLayout>
