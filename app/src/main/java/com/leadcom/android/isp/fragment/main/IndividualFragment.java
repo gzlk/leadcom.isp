@@ -463,9 +463,15 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 break;
             case REQUEST_DELETE:
                 // 上层返回的有更改的或删除的
-                Model model = new Model();
-                model.setId(getResultedData(data));
-                mAdapter.remove(model);
+                String id = getResultedData(data);
+                Model result = getResultModel(data, RESULT_ARCHIVE);
+                if (null != result) {
+                    mAdapter.update(result);
+                } else {
+                    Model model = new Model();
+                    model.setId(id);
+                    mAdapter.remove(model);
+                }
                 break;
         }
         super.onActivityResult(requestCode, data);

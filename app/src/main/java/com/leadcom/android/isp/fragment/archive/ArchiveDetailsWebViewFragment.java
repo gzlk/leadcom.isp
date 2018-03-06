@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.archive;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -270,7 +271,16 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 //return true;
             }
         }
+        resetResultData();
         return parent;
+    }
+
+    private void resetResultData() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        Intent intent = new Intent();
+        intent.putExtra(RESULT_ARCHIVE, archive);
+        intent.putExtra(RESULT_STRING, archive.getId());
+        Activity().setResult(Activity.RESULT_OK, intent);
     }
 
     private OnKeyboardChangeListener.KeyboardListener keyboardListener = new OnKeyboardChangeListener.KeyboardListener() {

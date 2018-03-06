@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.individual;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.archive.ArchiveViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.user.User;
 
@@ -121,6 +123,21 @@ public class IndividualArchivesFragment extends BaseSwipeRefreshSupportFragment 
             mRecyclerView.setAdapter(mAdapter);
             fetchingArchives();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_DELETE:
+                // 上层返回的有更改的或删除的
+                String id = getResultedData(data);
+                Model result = getResultModel(data, RESULT_ARCHIVE);
+                if (null != result) {
+                    mAdapter.update((Archive) result);
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.organization.archive;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.leadcom.android.isp.R;
@@ -8,6 +9,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 
 import java.util.ArrayList;
@@ -138,6 +140,25 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
                 loadingArchive();
             }
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_DELETE:
+                // 上层返回的有更改的或删除的
+                String id = getResultedData(data);
+                Model result = getResultModel(data, RESULT_ARCHIVE);
+                if (null != result) {
+                    mAdapter.update(result);
+                } else {
+                    Model model = new Model();
+                    model.setId(id);
+                    mAdapter.remove(model);
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     private void initializeAdapter() {

@@ -162,7 +162,10 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
         switch (requestCode) {
             case REQUEST_DELETE:
                 String id = getResultedData(data);
-                if (!isEmpty(id)) {
+                Model result = getResultModel(data, RESULT_ARCHIVE);
+                if (null != result) {
+                    mAdapter.update((Archive) result);
+                } else if (!isEmpty(id)) {
                     Archive archive = new Archive();
                     archive.setId(id);
                     mAdapter.remove(archive);

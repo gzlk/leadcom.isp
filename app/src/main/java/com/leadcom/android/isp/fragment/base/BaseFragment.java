@@ -24,6 +24,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
@@ -175,6 +176,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 返回数据时的字段名称
      */
     public static final String RESULT_STRING = "_result_string_";
+    public static final String RESULT_ARCHIVE = "_result_archive_";
 
     /**
      * 返回上一页Activity并指定要返回的数据内容，以便上一页通过onActivityResult捕获消息
@@ -193,6 +195,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     public static String getResultedData(Intent data) {
         if (null == data) return null;
         return data.getStringExtra(RESULT_STRING);
+    }
+
+    public static Model getResultModel(Intent data, String name) {
+        return null == data ? null : (Model) data.getSerializableExtra(name);
     }
 
     protected void closeWithWarning(int text) {

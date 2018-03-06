@@ -2,12 +2,11 @@ package com.leadcom.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
-import com.google.gson.Gson;
-import com.leadcom.android.isp.api.query.SingleQuery;
-import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.PaginationQuery;
+import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;

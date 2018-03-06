@@ -100,6 +100,32 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
         bundle.putBoolean(PARAM_SHOWN, isTitleBarShown);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_DELETE:
+                // 上层返回的有更改的或删除的
+                String id = getResultedData(data);
+                Model result = getResultModel(data, RESULT_ARCHIVE);
+                if (null != result) {
+                    RecommendArchive archive = (RecommendArchive) mAdapter.get(selectedIndex);
+                    boolean isGroup = archive.getType() == RecommendArchive.RecommendType.GROUP;
+                    if (isGroup) {
+                        archive.setGroDoc((Archive) result);
+                    } else {
+                        archive.setUserDoc((Archive) result);
+                    }
+                    mAdapter.update(archive);
+                } else {
+                    Model model = new Model();
+                    model.setId(id);
+                    mAdapter.remove(model);
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
     /**
      * 标题栏是否已经显示了
      */
@@ -362,6 +388,7 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
                 Activity act = (Activity) model;
                 isJoinedPublicAct(act.getId(), act.getTid());
             } else if (model instanceof RecommendArchive) {
+                selectedIndex = index;
                 RecommendArchive recommend = (RecommendArchive) model;
                 int type = recommend.getType() == RecommendArchive.RecommendType.USER ? Archive.Type.USER : Archive.Type.GROUP;
                 ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, recommend.getDocId(), type);
@@ -387,6 +414,7 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_additional_comment_layout:
                     // 打开档案详情页评论
+                    selectedIndex = index;
                     ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, doc.getId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
                     break;
                 case R.id.ui_tool_view_archive_additional_like_layout:

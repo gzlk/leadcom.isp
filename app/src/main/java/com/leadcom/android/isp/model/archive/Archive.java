@@ -134,8 +134,8 @@ public class Archive extends Additional {
         String TypeName = "typeName";
         String Code = "code";
         String Description = "description";
-        String ParentId="parentId";
-        String TypeCode="typeCode";
+        String ParentId = "parentId";
+        String TypeCode = "typeCode";
     }
 
     /**
@@ -461,6 +461,17 @@ public class Archive extends Additional {
     // 档案参与人
     @Column(Field.Participant)
     private String participant;
+
+    @Override
+    public void resetAdditional(Additional additional) {
+        super.resetAdditional(additional);
+        if (null != additional) {
+            additional.setLike(getLike());
+            additional.setLikeId(getLikeId());
+            additional.setColId(getColId());
+            additional.setCollection(getCollection());
+        }
+    }
 
     public String getGroupId() {
         return groupId;
