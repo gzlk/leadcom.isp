@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.holder.home;
 
+import android.text.Html;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -119,7 +120,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         titleView.setText(archive.getTitle());
         // 去掉所有html标签
         contentView.setVisibility(isEmpty(archive.getContent()) ? View.GONE : View.VISIBLE);
-        contentView.setText(isEmpty(archive.getContent()) ? "" : Utils.clearHtml(archive.getContent()));
+        contentView.setText(isEmpty(archive.getContent()) ? "" : Html.fromHtml(Utils.clearHtml(archive.getContent())));
         commentsView.setText(String.valueOf(archive.getCmtNum()));
 
         likesView.setText(String.valueOf(archive.getLikeNum()));
