@@ -1,10 +1,13 @@
 package com.netease.nim.uikit.business.session.module.input;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -39,6 +42,7 @@ import com.netease.nim.uikit.common.ui.dialog.EasyAlertDialogHelper;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.string.StringUtil;
 import com.netease.nim.uikit.impl.NimUIKitImpl;
+import com.netease.nim.uikit.support.permission.MPermission;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.media.record.AudioRecorder;
 import com.netease.nimlib.sdk.media.record.IAudioRecordCallback;
@@ -620,22 +624,42 @@ public class InputPanel implements IEmoticonSelectedListener, IAudioRecordCallba
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    touched = true;
-                    initAudioRecord();
-                    onStartAudioRecord();
-                } else if (event.getAction() == MotionEvent.ACTION_CANCEL
-                        || event.getAction() == MotionEvent.ACTION_UP) {
-                    touched = false;
-                    onEndAudioRecord(isCancelled(v, event));
-                } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    touched = true;
-                    cancelAudioRecord(isCancelled(v, event));
+                if (hasAudioRecordPermission()) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        touched = true;
+                        initAudioRecord();
+                        onStartAudioRecord();
+                    } else if (event.getAction() == MotionEvent.ACTION_CANCEL
+                            || event.getAction() == MotionEvent.ACTION_UP) {
+                        touched = false;
+                        onEndAudioRecord(isCancelled(v, event));
+                    } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                        touched = true;
+                        cancelAudioRecord(isCancelled(v, event));
+                    }
+                } else {
+                    grandAudioRecordPermission(v.getContext());
                 }
-
                 return false;
             }
         });
+    }
+
+    /**
+     * 是否有录音权限
+     */
+    private boolean hasAudioRecordPermission() {
+        return ContextCompat.checkSelfPermission(NimUIKitImpl.getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * 申请录音权限
+     */
+    private void grandAudioRecordPermission(Context context) {
+        MPermission
+                .with((Activity) context)
+                .permissions(Manifest.permission.RECORD_AUDIO)
+                .setRequestCode(100).request();
     }
 
     // 上滑取消录音判断

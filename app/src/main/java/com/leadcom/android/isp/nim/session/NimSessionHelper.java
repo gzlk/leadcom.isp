@@ -1,11 +1,8 @@
 package com.leadcom.android.isp.nim.session;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
@@ -63,7 +60,6 @@ import com.netease.nim.uikit.business.session.module.MsgRevokeFilter;
 import com.netease.nim.uikit.business.team.model.TeamExtras;
 import com.netease.nim.uikit.business.team.model.TeamRequestCode;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
-import com.netease.nim.uikit.support.permission.MPermission;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
@@ -232,11 +228,7 @@ public class NimSessionHelper {
     }
 
     public static void startP2PSession(Context context, String account) {
-        if (hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
-            startP2PSession(context, account, null);
-        } else {
-            grantPermission(context, Manifest.permission.RECORD_AUDIO);
-        }
+        startP2PSession(context, account, null);
     }
 
     private static void startP2PSession(Context context, String account, IMMessage anchor) {
@@ -249,23 +241,8 @@ public class NimSessionHelper {
         }
     }
 
-    public static boolean hasPermission(Context context, String permission) {
-        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    public static void grantPermission(Context context, String permission) {
-        MPermission
-                .with((Activity) context)
-                .permissions(permission)
-                .setRequestCode(100).request();
-    }
-
     public static void startTeamSession(Context context, String tid) {
-        if (hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
-            startTeamSession(context, tid, null);
-        } else {
-            grantPermission(context, Manifest.permission.RECORD_AUDIO);
-        }
+        startTeamSession(context, tid, null);
     }
 
     public static void startTeamSession(Context context, String tid, IMMessage anchor) {

@@ -54,7 +54,7 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     public void onFailure(HttpException e, Response<T> response) {
         super.onFailure(e, response);
         HttpStatus status = response.getHttpStatus();
-        ToastHelper.make(null).showMsg(StringHelper.format("当前网咯不给力(%d)，请重试", (null == status ? -1 : status.getCode()), e.getMessage()));
+        ToastHelper.make(null).showMsg(StringHelper.format("网咯不给力(%d)，请重试", (null == status ? -1 : status.getCode()), e.getMessage()));
         onFailed();
     }
 
