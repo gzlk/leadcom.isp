@@ -2,11 +2,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@drawable/ui_background_main_bottom_bar">
+    android:layout_alignParentBottom="true"
+    android:clipChildren="false"
+    android:elevation="@dimen/cardview_default_elevation">
+
+    <View
+        android:id="@+id/ui_tool_main_bottom_clickable_top_padding"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_static_dp_8"
+        android:background="@android:color/transparent" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/ui_tool_main_bottom_clickable_top_padding"
+        android:layout_marginTop="@dimen/ui_static_dp_negative_1"
+        android:background="@drawable/ui_background_main_bottom_bar">
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="@dimen/ui_static_dp_38"
+        android:layout_height="@dimen/ui_static_dp_38"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ui_background_oval_gray"
+        android:padding="@dimen/ui_static_dp_5">
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ui_tool_main_bottom_clickable_top_padding"
+        android:background="@color/windowBackground"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
@@ -16,4 +44,22 @@
     </LinearLayout>
 
     <include layout="@layout/tool_view_main_bottom_menu_clickable" />
+
+    <RelativeLayout
+        android:id="@+id/ui_tool_main_bottom_clickable_center_icon"
+        android:layout_width="@dimen/ui_static_dp_35"
+        android:layout_height="@dimen/ui_static_dp_35"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/ui_static_dp_3"
+        android:background="@drawable/ui_background_oval_primary"
+        android:padding="@dimen/ui_static_dp_5">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/ui_icon_add"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+    </RelativeLayout>
 </RelativeLayout>

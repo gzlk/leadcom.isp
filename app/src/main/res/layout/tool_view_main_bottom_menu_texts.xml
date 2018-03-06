@@ -12,7 +12,7 @@
         android:gravity="center_horizontal"
         android:text="@string/ui_text_main_bottom_button_text_1"
         android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/ui_base_text_size_small" />
+        android:textSize="@dimen/ui_text_size_main_bottom_text" />
 
     <TextView
         android:id="@+id/ui_tool_main_bottom_text_2"
@@ -21,12 +21,16 @@
         android:layout_weight="1"
         android:gravity="center_horizontal"
         android:text="@string/ui_text_main_bottom_button_text_2"
-        android:textSize="@dimen/ui_base_text_size_small" />
+        android:textSize="@dimen/ui_text_size_main_bottom_text" />
 
     <TextView
+        android:id="@+id/ui_tool_main_bottom_text_2d5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_text_main_bottom_button_text_2d5"
+        android:textSize="@dimen/ui_text_size_main_bottom_text" />
 
     <TextView
         android:id="@+id/ui_tool_main_bottom_text_3"
@@ -35,7 +39,7 @@
         android:layout_weight="1"
         android:gravity="center_horizontal"
         android:text="@string/ui_text_main_bottom_button_text_3"
-        android:textSize="@dimen/ui_base_text_size_small" />
+        android:textSize="@dimen/ui_text_size_main_bottom_text" />
 
     <TextView
         android:id="@+id/ui_tool_main_bottom_text_4"
@@ -44,5 +48,5 @@
         android:layout_weight="1"
         android:gravity="center_horizontal"
         android:text="@string/ui_text_main_bottom_button_text_4"
-        android:textSize="@dimen/ui_base_text_size_small" />
+        android:textSize="@dimen/ui_text_size_main_bottom_text" />
 </LinearLayout>

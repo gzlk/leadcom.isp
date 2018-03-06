@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/textColorHintLight" />
+        </shape>
+    </item>
+    <item
+        android:bottom="@dimen/ui_base_border_size_normal"
+        android:left="@dimen/ui_base_border_size_normal"
+        android:right="@dimen/ui_base_border_size_normal"
+        android:top="@dimen/ui_base_border_size_normal">
+        <shape android:shape="oval">
+            <solid android:color="@color/windowBackground" />
+        </shape>
+    </item>
+</layer-list>
