@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/ui_icon_main_activity"
+            android:text="@string/ui_icon_chat_left_hollow"
             android:textColor="@color/textColorHintDark"
             android:textSize="@dimen/ui_text_size_main_bottom_icon" />
 

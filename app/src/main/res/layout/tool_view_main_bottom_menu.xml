@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:layout_alignParentBottom="true"
-    android:clipChildren="false"
-    android:elevation="@dimen/cardview_default_elevation">
+    android:background="@android:color/transparent">
 
     <View
         android:id="@+id/ui_tool_main_bottom_clickable_top_padding"

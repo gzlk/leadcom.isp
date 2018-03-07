@@ -84,6 +84,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     private TextView textView1;
     @ViewId(R.id.ui_tool_main_bottom_text_2)
     private TextView textView2;
+    @ViewId(R.id.ui_tool_main_bottom_text_2d5)
+    private TextView textView2d5;
     @ViewId(R.id.ui_tool_main_bottom_text_3)
     private TextView textView3;
     @ViewId(R.id.ui_tool_main_bottom_text_4)
@@ -208,6 +210,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
         iconView2.setTextColor(position == 1 ? color2 : color1);
         textView2.setTextColor(position == 1 ? color2 : color1);
+
+        textView2d5.setTextColor(color1);
 
         iconView3.setTextColor(position == 2 ? color2 : color1);
         textView3.setTextColor(position == 2 ? color2 : color1);

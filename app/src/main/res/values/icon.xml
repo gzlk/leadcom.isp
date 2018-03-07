@@ -58,6 +58,8 @@
     <string name="ui_icon_pentagon_corner_solid">&#xe628;</string>
     <string name="ui_icon_pentagon_corner_hollow">&#xe626;</string>
     <string name="ui_icon_home">&#xe607;</string>
+    <string name="ui_icon_chat_left_hollow">&#xe66d;</string>
+    <string name="ui_icon_chat_left_solid">&#xe66c;</string>
     <string name="ui_icon_main_activity">&#xe62e;</string>
     <string name="ui_icon_main_individual">&#xe899;</string>
     <string name="ui_icon_single_head">&#xe617;</string>
