@@ -56,8 +56,15 @@ public interface RecycleAdapter<T> {
      */
     boolean exist(T item);
 
-    /**查找指定item的索引位置*/
+    /**
+     * 查找指定item的索引位置
+     */
     int indexOf(T item);
+
+    /**
+     * 覆盖指定位置的item
+     */
+    void replace(T item, int index);
 
     /**
      * 更新一个item，如果item已存在则更新，否则添加到末尾

@@ -223,6 +223,8 @@ dependencies {
 
     // 桌面提醒
     compile 'me.leolin:ShortcutBadger:1.1.17'
+    // 仿iOS下拉回弹控件
+    compile 'me.everything:overscroll-decor-android:1.0.4'
 
     // pdf阅读器
     compile 'com.github.barteksc:android-pdf-viewer:2.6.1'

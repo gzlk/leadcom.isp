@@ -56,4 +56,6 @@
     <string name="ui_main_shortcut_archive_group">组织档案</string>
     <string name="ui_main_shortcut_archive_user">个人档案</string>
     <string name="ui_main_shortcut_moment">发布动态</string>
+
+    <string name="ui_recent_contacts_nothing">没有更多对话内容</string>
 </resources>

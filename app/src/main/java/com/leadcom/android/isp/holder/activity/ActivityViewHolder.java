@@ -18,6 +18,7 @@ import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Invitation;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 
@@ -123,6 +124,9 @@ public class ActivityViewHolder extends BaseViewHolder {
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
         titleView.setText(topic.getTitle());
         descView.setText(topic.getAccessToken());
+    }
+
+    public void showContent(RecentContact contact) {
     }
 
     @Click({R.id.ui_holder_view_activity_item_container})

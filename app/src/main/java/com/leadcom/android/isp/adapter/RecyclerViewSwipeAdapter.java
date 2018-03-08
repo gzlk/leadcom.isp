@@ -188,6 +188,14 @@ public abstract class RecyclerViewSwipeAdapter<VH extends RecyclerView.ViewHolde
     }
 
     @Override
+    public void replace(T item, int index) {
+        if (index >= 0 && index < innerList.size()) {
+            innerList.set(index, item);
+            notifyItemChanged(index);
+        }
+    }
+
+    @Override
     public void update(T item) {
         int index = indexOf(item);
         if (index >= 0) {

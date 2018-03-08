@@ -205,6 +205,14 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         return innerList.indexOf(item);
     }
 
+    @Override
+    public void replace(T item, int index) {
+        if (index >= 0 && index < innerList.size()) {
+            innerList.set(index, item);
+            notifyItemChanged(index);
+        }
+    }
+
     /**
      * 更新一个指定id的item内容
      */
