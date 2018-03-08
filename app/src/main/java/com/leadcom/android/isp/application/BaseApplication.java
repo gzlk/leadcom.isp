@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -208,18 +209,21 @@ public class BaseApplication extends Application {
      */
     public String getCachePath(String dir) {
         StringBuilder sb = new StringBuilder();
-        if (Cache.isReleasable() && dir.equals(DB_DIR)) {
-            // release时，db文件放在内置私有目录下
-            sb.append(gotCacheDir());
-        } else {
-            //if (dir.equals(DB_DIR)) {
-            // 缓存数据库和图像都存在内置app私有空间里
-            //    sb.add(gotCacheDir());
-            //} else {
-            sb.append(gotExternalCacheDir());
-            //}
-        }
+        //if (Cache.isReleasable() && dir.equals(DB_DIR)) {
+        // release时，db文件放在内置私有目录下
+        //    sb.append(gotCacheDir());
+        //} else {
+        //if (dir.equals(DB_DIR)) {
+        // 缓存数据库和图像都存在内置app私有空间里
+        //    sb.add(gotCacheDir());
+        //} else {
+        sb.append(gotExternalCacheDir());
+        //}
+        //}
         sb.append("/").append(ROOT_DIR).append("/").append(dir).append("/");
+        if (dir.equals(DB_DIR)) {
+            sb.append(BuildConfig.BUILD_TYPE).append("/");
+        }
         createDirs(sb.toString());
         return sb.toString();
     }
