@@ -330,6 +330,13 @@ public class Utils {
         return !StringHelper.isEmpty(path) && path.charAt(0) == '/';
     }
 
+    /**
+     * 判断字符串是否为drawable资源路径
+     */
+    public static boolean isDrawable(String path) {
+        return !StringHelper.isEmpty(path) && path.startsWith("drawable://");
+    }
+
     private static final String regEx_script = "<script[^>]*?>[\\s\\S]*?<\\/script>"; // 定义script的正则表达式
     private static final String regEx_style = "<style[^>]*?>[\\s\\S]*?<\\/style>"; // 定义style的正则表达式
     private static final String regEx_img = "<img[^>]*?(\\/>|><\\/img>|>)"; // 定义img的正则表达式

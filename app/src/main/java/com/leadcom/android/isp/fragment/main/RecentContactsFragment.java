@@ -10,7 +10,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.holder.activity.ActivityViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.netease.nim.uikit.api.NimUIKit;
+import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.business.recent.TeamMemberAitHelper;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
@@ -49,12 +49,16 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     // 置顶功能可直接使用，也可作为思路，供开发者充分利用RecentContact的tag字段
     public static final long RECENT_TAG_STICKY = 1; // 联系人置顶tag
 
+    public MainFragment mainFragment;
     private ContactAdapter mAdapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        enableSwipe(false);
+        isLoadingComplete(true);
         setNothingText(R.string.ui_recent_contacts_nothing);
+        tryPaddingContent(true);
     }
 
     @Override
@@ -224,6 +228,9 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         mAdapter.notifyDataSetChanged();
 
         int unreadNum = NIMClient.getService(MsgService.class).getTotalUnreadCount();
+        if (null != mainFragment) {
+            mainFragment.showUnreadFlag(unreadNum);
+        }
     }
 
     private void getRecentMessages() {
@@ -241,6 +248,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                             if (loadedRecent.getSessionType() == SessionTypeEnum.Team) {
                                 updateOfflineContactAited(loadedRecent);
                             }
+                            mAdapter.add(loadedRecent);
                         }
                     }
                 });
@@ -312,9 +320,9 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             RecentContact recent = mAdapter.get(index);
             if (recent.getSessionType() == SessionTypeEnum.Team) {
-                NimUIKit.startTeamSession(getActivity(), recent.getContactId());
+                NimSessionHelper.startTeamSession(Activity(), recent.getContactId());
             } else if (recent.getSessionType() == SessionTypeEnum.P2P) {
-                NimUIKit.startP2PSession(getActivity(), recent.getContactId());
+                NimSessionHelper.startP2PSession(Activity(), recent.getContactId());
             }
         }
     };

@@ -164,10 +164,11 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         if (mFragments.size() <= 0) {
             // 档案推荐
             mFragments.add(FeaturedFragment.newInstance(format("%d", FeaturedFragment.TYPE_ARCHIVE)));
-            mFragments.add(new ActivityFragment());
+            //mFragments.add(new ActivityFragment());
+            mFragments.add(new RecentContactsFragment());
             mFragments.add(new OrganizationFragment());
             mFragments.add(new IndividualFragment());
-            ((ActivityFragment) mFragments.get(1)).mainFragment = this;
+            ((RecentContactsFragment) mFragments.get(1)).mainFragment = this;
             ((OrganizationFragment) mFragments.get(2)).mainFragment = this;
         }
     }
@@ -183,7 +184,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     }
 
     public void setStructureFragment(StructureFragment fragment) {
-        ((ActivityFragment) mFragments.get(1)).structureFragment = fragment;
+        //((ActivityFragment) mFragments.get(1)).structureFragment = fragment;
     }
 
     public void setTitleText(String text) {

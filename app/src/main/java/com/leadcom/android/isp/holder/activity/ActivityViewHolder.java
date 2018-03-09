@@ -13,12 +13,25 @@ import com.hlk.hlklib.lib.view.NineRectangleGridImageView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Invitation;
+import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
+import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
+import com.leadcom.android.isp.nim.model.extension.NoticeAttachment;
+import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
+import com.leadcom.android.isp.nim.model.extension.TopicAttachment;
+import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
+import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 
@@ -127,6 +140,48 @@ public class ActivityViewHolder extends BaseViewHolder {
     }
 
     public void showContent(RecentContact contact) {
+        headers.setAdapter(adapter);
+        List<String> img = new ArrayList<>();
+        if (contact.getSessionType() == SessionTypeEnum.P2P) {
+            UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(contact.getContactId());
+            img.add(null == info ? "" : info.getAvatar());
+            titleView.setText(contact.getFromNick());
+            descView.setText(getRecentMsgType(contact));
+        } else if (contact.getSessionType() == SessionTypeEnum.Team) {
+            Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
+            img.add((null == team || isEmpty(team.getIcon())) ? ("drawable://" + R.drawable.img_default_group) : team.getIcon());
+            titleView.setText(null == team ? "无活动名称" : team.getName());
+            descView.setText(format("%s：%s", contact.getFromNick(), getRecentMsgType(contact)));
+        }
+        headers.setImagesData(img);
+        flagView.setVisibility(contact.getUnreadCount() > 0 ? View.VISIBLE : View.GONE);
+        unreadNum.setText(fragment().formatUnread(contact.getUnreadCount()));
+        timeView.setText(fragment().formatTimeAgo(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), contact.getTime())));
+        headers.setVisibility(View.VISIBLE);
+        iconText.setVisibility(View.GONE);
+        iconContainer.setBackground(getColor(R.color.textColorHintLight));
+        iconContainer.setBackground(getColor(R.color.textColorHintLight));
+    }
+
+    private String getRecentMsgType(RecentContact contact) {
+        String ret = contact.getContent();
+        if (ret.contains(StringHelper.getString(R.string.ui_nim_app_recent_contact_type_custom))) {
+            MsgAttachment attachment = contact.getAttachment();
+            if (attachment instanceof NoticeAttachment) {
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_notice);
+            } else if (attachment instanceof SigningNotifyAttachment) {
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_signing);
+            } else if (attachment instanceof VoteAttachment) {
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_vote);
+            } else if (attachment instanceof TopicAttachment) {
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_topic);
+            } else if (attachment instanceof MinutesAttachment) {
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_minutes);
+            } else if (attachment instanceof ArchiveAttachment) {
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_archive);
+            }
+        }
+        return ret;
     }
 
     @Click({R.id.ui_holder_view_activity_item_container})
@@ -141,7 +196,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         @Override
         protected void onDisplayImage(Context context, ImageView imageView, String s) {
             int size = getDimension(R.dimen.ui_static_dp_55);
-            String url = (isEmpty(s) || (!Utils.isUrl(s) && !Utils.isLocalPath(s))) ? ("drawable://" + R.mipmap.img_default_user_header) : s;
+            String url = (isEmpty(s) || (!Utils.isUrl(s) && !Utils.isLocalPath(s) && !Utils.isDrawable(s))) ? ("drawable://" + R.mipmap.img_default_user_header) : s;
             ImageLoader.getInstance().displayImage(url, imageView, new ImageSize(size, size));
         }
 
