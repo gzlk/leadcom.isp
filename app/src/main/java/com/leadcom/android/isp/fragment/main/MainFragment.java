@@ -140,13 +140,13 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
     @Override
     public void doingInResume() {
-        Activity().setRootViewPadding(toolBar, true);
+        //Activity().setRootViewPadding(toolBar, true);
         super.doingInResume();
-        leftIcon.setText(R.string.ui_icon_query);
-        leftText.setText(null);
-        rightIconContainer.setVisibility(View.GONE);
-        ((FeaturedFragment) mFragments.get(0)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
-        ((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground);
+        //leftIcon.setText(R.string.ui_icon_query);
+        //leftText.setText(null);
+        //rightIconContainer.setVisibility(View.GONE);
+        //((FeaturedFragment) mFragments.get(0)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
+        //((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
             // 档案推荐
-            mFragments.add(FeaturedFragment.newInstance(format("%d", FeaturedFragment.TYPE_ARCHIVE)));
+            mFragments.add(new HomeFragment());
             //mFragments.add(new ActivityFragment());
             mFragments.add(new RecentContactsFragment());
             mFragments.add(new OrganizationFragment());
@@ -219,55 +219,55 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
         iconView4.setTextColor(position == 3 ? color2 : color1);
         textView4.setTextColor(position == 3 ? color2 : color1);
-        switch (position) {
-            case 0:
-                // 首页
-                toolBarTitleText.setText(R.string.app_name_default);
-                showRightIcon(false);
-                break;
-            case 1:
-                // 活动
-                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_2);
-                break;
-            case 2:
-                // 组织
-                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_3);
-                break;
-            case 3:
-                // 个人
-                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_4);
-                showRightIcon(false);
-                break;
-        }
+//        switch (position) {
+//            case 0:
+//                // 首页
+//                toolBarTitleText.setText(R.string.app_name_default);
+//                showRightIcon(false);
+//                break;
+//            case 1:
+//                // 活动
+//                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_2);
+//                break;
+//            case 2:
+//                // 组织
+//                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_3);
+//                break;
+//            case 3:
+//                // 个人
+//                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_4);
+//                showRightIcon(false);
+//                break;
+//        }
 
-        if (position != 2) {
-            restoreTitleText();
-            // 活动页面也需要显示右上角的 + 用来显示活动管理菜单
-            //showRightIcon(position == 1);
-        } else {
-            ((OrganizationFragment) mFragments.get(2)).needChangeTitle();
-        }
+//        if (position != 2) {
+//            restoreTitleText();
+//            // 活动页面也需要显示右上角的 + 用来显示活动管理菜单
+//            //showRightIcon(position == 1);
+//        } else {
+//            ((OrganizationFragment) mFragments.get(2)).needChangeTitle();
+//        }
 
         boolean needHandleTitleBar = true;
         for (int i = 0, len = mFragments.size(); i < len; i++) {
             BaseTransparentSupportFragment fragment = mFragments.get(i);
-            if (i == 2 || fragment instanceof IndividualFragment) {
-                // 个人界面已经显示了，此时不再需要改变标题栏背景
-                needHandleTitleBar = !((IndividualFragment) mFragments.get(3)).isTitleBarShown();
-            } else if (i == 1 || fragment instanceof FeaturedFragment) {
-                needHandleTitleBar = !((FeaturedFragment) mFragments.get(0)).isTitleBarShown();
-            }
+//            if (i == 2 || fragment instanceof IndividualFragment) {
+//                // 个人界面已经显示了，此时不再需要改变标题栏背景
+//                needHandleTitleBar = !((IndividualFragment) mFragments.get(3)).isTitleBarShown();
+//            } else if (i == 1 || fragment instanceof FeaturedFragment) {
+//                needHandleTitleBar = !((FeaturedFragment) mFragments.get(0)).isTitleBarShown();
+//            }
             fragment.setViewPagerDisplayedCurrent(position == i);
         }
-        if (needHandleTitleBar) {
-            handleTitleBar(position);
-        }
-        if (position >= 1 && position < 3) {
-            transparentTitleText(false);
-        }
-        if (position == 0) {
-            displaySettingIcon(false);
-        }
+//        if (needHandleTitleBar) {
+//            handleTitleBar(position);
+//        }
+//        if (position >= 1 && position < 3) {
+//            transparentTitleText(false);
+//        }
+//        if (position == 0) {
+//            displaySettingIcon(false);
+//        }
     }
 
     @Override
