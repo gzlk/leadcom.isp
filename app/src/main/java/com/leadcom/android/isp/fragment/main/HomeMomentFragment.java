@@ -6,8 +6,11 @@ import android.view.View;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.user.PublicMomentRequest;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.organization.StructureFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentCommentTextViewHolder;
@@ -18,8 +21,10 @@ import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.user.Moment;
+import com.leadcom.android.isp.model.user.MomentPublic;
 
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -50,7 +55,7 @@ public class HomeMomentFragment extends BaseCmtLikeColFragment {
 
     @Override
     public void doingInResume() {
-
+        initializeAdapter();
     }
 
     @Override
@@ -65,17 +70,52 @@ public class HomeMomentFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-
+        remotePageNumber = 1;
+        fetchingMoment();
     }
 
     @Override
     protected void onLoadingMore() {
-
+        fetchingMoment();
     }
 
     @Override
     protected String getLocalPageTag() {
         return null;
+    }
+
+    private void initializeAdapter() {
+        if (null == mAdapter) {
+            mAdapter = new MomentAdapter();
+            mRecyclerView.setAdapter(mAdapter);
+            fetchingMoment();
+        }
+    }
+
+    private void fetchingMoment() {
+        mAdapter.remove(nothingMore);
+        PublicMomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<MomentPublic>() {
+            @Override
+            public void onResponse(List<MomentPublic> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                int count = null == list ? 0 : list.size();
+                // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
+                remotePageNumber += (count >= pageSize ? 1 : 0);
+                isLoadingComplete(count < pageSize);
+                displayLoading(false);
+                stopRefreshing();
+                if (success) {
+                    if (null != list) {
+                        for (MomentPublic moment : list) {
+                            appendMoment(moment.getUserMmt());
+                        }
+                    }
+                }
+                if (count < pageSize) {
+                    mAdapter.add(nothingMore);
+                }
+            }
+        }).list(StructureFragment.selectedGroupId, remotePageNumber);
     }
 
     private void appendMoment(Moment moment) {
@@ -204,7 +244,15 @@ public class HomeMomentFragment extends BaseCmtLikeColFragment {
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-
+            if (holder instanceof MomentDetailsViewHolder) {
+                ((MomentDetailsViewHolder) holder).showContent((Moment) item);
+            } else if (holder instanceof MomentHomeCameraViewHolder) {
+                ((MomentHomeCameraViewHolder) holder).showContent((Moment) item);
+            } else if (holder instanceof NothingMoreViewHolder) {
+                ((NothingMoreViewHolder) holder).showContent(item);
+            } else if (holder instanceof MomentCommentTextViewHolder) {
+                ((MomentCommentTextViewHolder) holder).showContent((Comment) item);
+            }
         }
 
         @Override
