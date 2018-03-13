@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
@@ -33,7 +32,6 @@ import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.leadcom.android.isp.model.common.PriorityPlace;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +46,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class FeaturedFragment extends BaseCmtLikeColFragment {
+public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
     private static final int TYPE_NOTHING = -1;
     /**
@@ -70,19 +68,15 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_TYPE = "hrf_param_type";
 
-    private static final String PARAM_SHOWN = "title_bar_shown";
-
     private static int selectedIndex = 0;
 
-    public static FeaturedFragment newInstance(String params) {
-        FeaturedFragment hrf = new FeaturedFragment();
+    public static HomeFeaturedFragment newInstance(String params) {
+        HomeFeaturedFragment hrf = new HomeFeaturedFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_TYPE, Integer.valueOf(params));
         hrf.setArguments(bundle);
         return hrf;
     }
-
-    private boolean isTitleBarShown = false;
 
     private int mType = TYPE_NOTHING;
 
@@ -90,14 +84,12 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mType = bundle.getInt(PARAM_TYPE, TYPE_ALL);
-        isTitleBarShown = bundle.getBoolean(PARAM_SHOWN, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_TYPE, mType);
-        bundle.putBoolean(PARAM_SHOWN, isTitleBarShown);
     }
 
     @Override
@@ -125,58 +117,6 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
         }
         super.onActivityResult(requestCode, data);
     }
-
-    /**
-     * 标题栏是否已经显示了
-     */
-    public boolean isTitleBarShown() {
-        return isTitleBarShown;
-    }
-
-    private SoftReference<View> toolBarView;
-
-    public FeaturedFragment setToolBar(View view) {
-        if (null == toolBarView || null == toolBarView.get()) {
-            toolBarView = new SoftReference<>(view);
-        }
-        return this;
-    }
-
-    private SoftReference<View> textView;
-
-    public void setToolBarTextView(View view) {
-        if (null == textView || null == textView.get()) {
-            textView = new SoftReference<>(view);
-        }
-    }
-
-    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-        private int scrolledY = 0;
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if (!isViewPagerDisplayedCurrent()) {
-                return;
-            }
-            scrolledY += dy;
-            if (scrolledY >= 0 && scrolledY <= 500) {
-                float alpha = scrolledY * 0.005f;
-                if (null != toolBarView && null != toolBarView.get()) {
-                    toolBarView.get().setAlpha(alpha);
-                    isTitleBarShown = toolBarView.get().getAlpha() >= 1;
-                }
-                if (null != textView && null != textView.get()) {
-                    textView.get().setAlpha(alpha);
-                }
-            }
-        }
-    };
 
     @Override
     protected void onViewPagerDisplayedChanged(boolean visible) {
@@ -274,7 +214,7 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new RecommendedAdapter();
-            mRecyclerView.addOnScrollListener(scrollListener);
+            //mRecyclerView.addOnScrollListener(scrollListener);
             mRecyclerView.setAdapter(mAdapter);
             if (getUserVisibleHint()) {
                 if (mType == TYPE_ALL || mType == TYPE_ARCHIVE) {
@@ -318,7 +258,7 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
             if (null != archive) {
                 // 打开档案详情页
                 int type = archive.getType() == RecommendArchive.RecommendType.GROUP ? Archive.Type.GROUP : Archive.Type.USER;
-                ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, archive.getDocId(), type);
+                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getDocId(), type);
             } else {
                 ToastHelper.make().showMsg("无效的推荐内容");
             }
@@ -391,12 +331,12 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
                 selectedIndex = index;
                 RecommendArchive recommend = (RecommendArchive) model;
                 int type = recommend.getType() == RecommendArchive.RecommendType.USER ? Archive.Type.USER : Archive.Type.GROUP;
-                ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, recommend.getDocId(), type);
+                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, recommend.getDocId(), type);
             } else if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
                 int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, arc.getId(), type);
+                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, arc.getId(), type);
             } else if (model instanceof PriorityPlace) {
                 // 编辑推荐
                 PriorityPlace place = (PriorityPlace) model;
@@ -415,7 +355,7 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_comment_layout:
                     // 打开档案详情页评论
                     selectedIndex = index;
-                    ArchiveDetailsWebViewFragment.open(FeaturedFragment.this, doc.getId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
+                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, doc.getId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
                     break;
                 case R.id.ui_tool_view_archive_additional_like_layout:
                     // 赞或取消赞
@@ -480,21 +420,21 @@ public class FeaturedFragment extends BaseCmtLikeColFragment {
             switch (viewType) {
                 case VT_HEADER:
                     if (null == homeImagesViewHolder) {
-                        homeImagesViewHolder = new HomeImagesViewHolder(itemView, FeaturedFragment.this);
+                        homeImagesViewHolder = new HomeImagesViewHolder(itemView, HomeFeaturedFragment.this);
                         homeImagesViewHolder.setOnImageClickListener(onImageClickListener);
                     }
                     return homeImagesViewHolder;
                 case VT_ACTIVITY:
-                    ActivityHomeViewHolder holder = new ActivityHomeViewHolder(itemView, FeaturedFragment.this);
+                    ActivityHomeViewHolder holder = new ActivityHomeViewHolder(itemView, HomeFeaturedFragment.this);
                     holder.addOnViewHolderClickListener(onViewHolderClickListener);
                     return holder;
                 case VT_ARCHIVE:
-                    ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, FeaturedFragment.this);
+                    ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, HomeFeaturedFragment.this);
                     ahrvh.addOnViewHolderClickListener(onViewHolderClickListener);
                     ahrvh.setOnViewHolderElementClickListener(elementClickListener);
                     return ahrvh;
                 default:
-                    ArchiveManagementViewHolder ahvh = new ArchiveManagementViewHolder(itemView, FeaturedFragment.this);
+                    ArchiveManagementViewHolder ahvh = new ArchiveManagementViewHolder(itemView, HomeFeaturedFragment.this);
                     ahvh.addOnViewHolderClickListener(onViewHolderClickListener);
                     return ahvh;
             }

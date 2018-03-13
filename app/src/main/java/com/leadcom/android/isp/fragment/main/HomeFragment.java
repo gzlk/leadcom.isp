@@ -1,7 +1,9 @@
 package com.leadcom.android.isp.fragment.main;
 
+import android.os.Bundle;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
@@ -19,12 +21,20 @@ import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
 
 public class HomeFragment extends BaseViewPagerSupportFragment {
 
+    @ViewId(R.id.ui_main_tool_bar_container)
+    private View toolBar;
     @ViewId(R.id.ui_main_home_top_channel_1_line)
     private View topLine1;
     @ViewId(R.id.ui_main_home_top_channel_2_line)
     private View topLine2;
     @ViewId(R.id.ui_main_home_top_channel_3_line)
     private View topLine3;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        tryPaddingContent(toolBar, false);
+    }
 
     @Override
     public int getLayout() {
@@ -40,12 +50,33 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
     protected void initializeFragments() {
         if (mFragments.size() < 1) {
             // 推荐
-            mFragments.add(FeaturedFragment.newInstance(format("%d", FeaturedFragment.TYPE_ARCHIVE)));
+            mFragments.add(HomeFeaturedFragment.newInstance(format("%d", HomeFeaturedFragment.TYPE_ARCHIVE)));
+            // 关注
+            mFragments.add(new HomeFollowedArchiveFragment());
+            // 动态
+            mFragments.add(new HomeMomentFragment());
         }
     }
 
     @Override
     protected void viewPagerSelectionChanged(int position) {
+        topLine1.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
+        topLine2.setVisibility(position == 1 ? View.VISIBLE : View.INVISIBLE);
+        topLine3.setVisibility(position == 2 ? View.VISIBLE : View.INVISIBLE);
+    }
 
+    @Click({R.id.ui_main_home_top_channel_1, R.id.ui_main_home_top_channel_2, R.id.ui_main_home_top_channel_3})
+    private void topClick(View view) {
+        switch (view.getId()){
+            case R.id.ui_main_home_top_channel_1:
+                setDisplayPage(0);
+                break;
+            case R.id.ui_main_home_top_channel_2:
+                setDisplayPage(1);
+                break;
+            case R.id.ui_main_home_top_channel_3:
+                setDisplayPage(2);
+                break;
+        }
     }
 }
