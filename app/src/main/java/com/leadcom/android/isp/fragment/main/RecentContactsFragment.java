@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -49,6 +50,8 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     // 置顶功能可直接使用，也可作为思路，供开发者充分利用RecentContact的tag字段
     public static final long RECENT_TAG_STICKY = 1; // 联系人置顶tag
 
+    @ViewId(R.id.ui_main_tool_bar_container)
+    private View toolBar;
     public MainFragment mainFragment;
     private ContactAdapter mAdapter;
 
@@ -58,7 +61,10 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         enableSwipe(false);
         isLoadingComplete(true);
         setNothingText(R.string.ui_recent_contacts_nothing);
-        tryPaddingContent(true);
+        tryPaddingContent(toolBar, false);
+        if (null != mainFragment) {
+            mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
+        }
     }
 
     @Override
@@ -75,6 +81,11 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void doingInResume() {
         initializeAdapter();
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_main_recent_contacts;
     }
 
     @Override
@@ -155,10 +166,9 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
             }
 
             if (index >= 0) {
-                mAdapter.replace(r, index);
-            } else {
-                mAdapter.add(r);
+                mAdapter.remove(index);
             }
+            mAdapter.add(r);
 
             if (r.getSessionType() == SessionTypeEnum.Team && cacheMessages.get(r.getContactId()) != null) {
                 TeamMemberAitHelper.setRecentContactAited(r, cacheMessages.get(r.getContactId()));

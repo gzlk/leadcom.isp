@@ -194,13 +194,6 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 //        toolBarTitleText.setText(text);
     }
 
-    public void restoreTitleText() {
-//        if (!StringHelper.isEmpty(oldTitleText)) {
-//            toolBarTitleText.setText(oldTitleText);
-//            oldTitleText = "";
-//        }
-    }
-
     @Override
     protected void viewPagerSelectionChanged(int position) {
         int color1 = getColor(R.color.textColorHintDark);
@@ -400,13 +393,6 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 .setInterpolator(new AccelerateDecelerateInterpolator()).start();
         //transparentTitleText(transparent);
         //displaySettingIcon(transparent);
-    }
-
-    private void transparentTitleText(boolean transparent) {
-        toolBarTitleText.animate()
-                .alpha(transparent ? 0 : 1)
-                .setDuration(duration())
-                .setInterpolator(new AccelerateDecelerateInterpolator()).start();
     }
 
     private void displaySettingIcon(final boolean show) {
