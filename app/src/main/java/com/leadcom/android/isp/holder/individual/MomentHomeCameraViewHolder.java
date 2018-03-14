@@ -27,6 +27,8 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 
 public class MomentHomeCameraViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_moment_camera_icon)
+    private View cameraIcon;
     @ViewId(R.id.ui_holder_view_moment_camera_message_layer)
     private LinearLayout messageView;
     @ViewId(R.id.ui_holder_view_moment_camera_message_header)
@@ -35,6 +37,7 @@ public class MomentHomeCameraViewHolder extends BaseViewHolder {
     private TextView messageNumber;
 
     private int imageSize;
+    private boolean showIcon;
 
     public MomentHomeCameraViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -46,6 +49,11 @@ public class MomentHomeCameraViewHolder extends BaseViewHolder {
                 messageView.performClick();
             }
         });
+    }
+
+    public void showIcon(boolean shown) {
+        showIcon = shown;
+        cameraIcon.setVisibility(showIcon ? View.VISIBLE : View.GONE);
     }
 
     public void showContent(Moment moment) {

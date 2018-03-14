@@ -180,6 +180,14 @@ public class MomentRequest extends Request<Moment> {
     }
 
     /**
+     * 首页的动态列表
+     */
+    public void listFront(int pageNumber) {
+        String param = format("%s/front?pageNumber=%d", url(LIST), pageNumber);
+        httpRequest(getRequest(MultiMoment.class, param, "", HttpMethods.Get));
+    }
+
+    /**
      * 查找指定的单个id的说说详情
      */
     public void find(@NonNull String momentId) {

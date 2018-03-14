@@ -7,10 +7,9 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
-import com.leadcom.android.isp.api.user.PublicMomentRequest;
+import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.organization.StructureFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentCommentTextViewHolder;
@@ -21,7 +20,6 @@ import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.user.Moment;
-import com.leadcom.android.isp.model.user.MomentPublic;
 
 import java.util.Iterator;
 import java.util.List;
@@ -94,9 +92,9 @@ public class HomeMomentFragment extends BaseCmtLikeColFragment {
 
     private void fetchingMoment() {
         mAdapter.remove(nothingMore);
-        PublicMomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<MomentPublic>() {
+        MomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Moment>() {
             @Override
-            public void onResponse(List<MomentPublic> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 int count = null == list ? 0 : list.size();
                 // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
@@ -104,18 +102,16 @@ public class HomeMomentFragment extends BaseCmtLikeColFragment {
                 isLoadingComplete(count < pageSize);
                 displayLoading(false);
                 stopRefreshing();
-                if (success) {
-                    if (null != list) {
-                        for (MomentPublic moment : list) {
-                            appendMoment(moment.getUserMmt());
-                        }
+                if (success && null != list) {
+                    for (Moment moment : list) {
+                        appendMoment(moment);
                     }
                 }
                 if (count < pageSize) {
                     mAdapter.add(nothingMore);
                 }
             }
-        }).list(StructureFragment.selectedGroupId, remotePageNumber);
+        }).listFront(remotePageNumber);
     }
 
     private void appendMoment(Moment moment) {

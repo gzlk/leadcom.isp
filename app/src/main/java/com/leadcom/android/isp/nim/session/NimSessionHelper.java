@@ -11,6 +11,8 @@ import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
+import com.leadcom.android.isp.api.activity.ActRequest;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.activity.ActivityPropertiesFragment;
 import com.leadcom.android.isp.fragment.activity.topic.TopicPropertyFragment;
@@ -513,8 +515,28 @@ public class NimSessionHelper {
         return null;
     }
 
-    private static void openGroupPropertyInfo(Context context, String sessionId) {
+    private static void openGroupPropertyInfo(final Context context, final String sessionId) {
         Model model = getObject(sessionId);
+        if (null != model) {
+            openProperty(context, model, sessionId);
+        } else {
+            // 本地找不到记录则拉取
+            ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<com.leadcom.android.isp.model.activity.Activity>() {
+                @Override
+                public void onResponse(com.leadcom.android.isp.model.activity.Activity activity, boolean success, String message) {
+                    super.onResponse(activity, success, message);
+                    if (success && null != activity) {
+                        openProperty(context, activity, sessionId);
+                    } else {
+                        // 本地找不到活动记录则按照网易自己的方式打开群属性页
+                        NimUIKit.startTeamInfo(context, sessionId);
+                    }
+                }
+            }).findTid(sessionId);
+        }
+    }
+
+    private static void openProperty(Context context, Model model, String sessionId) {
         if (null != model) {
             if (model instanceof AppTopic) {
                 // 议题属性页
@@ -522,23 +544,7 @@ public class NimSessionHelper {
             } else if (model instanceof com.leadcom.android.isp.model.activity.Activity) {
                 ActivityPropertiesFragment.open(context, model.getId(), sessionId);
             }
-        } else {
-            // 本地找不到活动记录则按照网易自己的方式打开群属性页
-            NimUIKit.startTeamInfo(context, sessionId);
         }
-//        AppTopic topic = AppTopic.queryByTid(sessionId);
-//        if (null != topic) {
-//            // 议题属性页
-//            TopicPropertyFragment.open(context, sessionId, BaseFragment.REQUEST_CHANGE);
-//        } else {
-//            com.gzlk.android.isp.model.activity.Activity act = com.gzlk.android.isp.model.activity.Activity.getByTid(sessionId);
-//            if (null != act) {
-//                ActivityPropertiesFragment.open(context, act.getId(), sessionId);
-//            } else {
-//                // 本地找不到活动记录则按照网易自己的方式打开群属性页
-//                NimUIKit.startTeamInfo(context, sessionId);
-//            }
-//        }
     }
 
     private static OnSessionMessageViewHolderClick onSessionMessageViewHolderClick = new OnSessionMessageViewHolderClick() {

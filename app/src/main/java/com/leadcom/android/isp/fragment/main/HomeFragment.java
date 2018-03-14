@@ -52,9 +52,9 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
             // 推荐
             mFragments.add(HomeFeaturedFragment.newInstance(format("%d", HomeFeaturedFragment.TYPE_ARCHIVE)));
             // 关注
-            mFragments.add(new HomeFollowedArchiveFragment());
+            mFragments.add(IndividualFragment.newInstance(String.valueOf(IndividualFragment.TYPE_ARCHIVE)));
             // 动态
-            mFragments.add(new HomeMomentFragment());
+            mFragments.add(IndividualFragment.newInstance(String.valueOf(IndividualFragment.TYPE_MOMENT)));
         }
     }
 
@@ -67,7 +67,7 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
 
     @Click({R.id.ui_main_home_top_channel_1, R.id.ui_main_home_top_channel_2, R.id.ui_main_home_top_channel_3})
     private void topClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.ui_main_home_top_channel_1:
                 setDisplayPage(0);
                 break;

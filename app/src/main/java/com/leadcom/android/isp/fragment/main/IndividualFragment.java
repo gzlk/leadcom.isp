@@ -3,33 +3,32 @@ package com.leadcom.android.isp.fragment.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.view.CorneredButton;
+import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
-import com.leadcom.android.isp.api.user.PublicMomentRequest;
+import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.application.NimApplication;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.CollectionDetailsFragment;
+import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
+import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
-import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
-import com.leadcom.android.isp.fragment.organization.StructureFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
@@ -37,8 +36,6 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.leadcom.android.isp.holder.individual.CollectionItemViewHolder;
-import com.leadcom.android.isp.holder.individual.IndividualFunctionViewHolder;
-import com.leadcom.android.isp.holder.individual.IndividualHeaderViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentCommentTextViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentHomeCameraViewHolder;
@@ -53,15 +50,10 @@ import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.model.user.Moment;
-import com.leadcom.android.isp.model.user.MomentPublic;
-import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.nim.activity.VideoPlayerActivity;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
-import com.hlk.hlklib.lib.view.CorneredButton;
-import com.hlk.hlklib.lib.view.CorneredEditText;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -84,8 +76,20 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     private static final String PAGE_TAG = "ifmt_page_%d_";
     private static final String PARAM_SELECTED_MMT = "mmt_selected";
     private static final String PARAM_SELECTED_CMT = "ifmt_selected_cmt";
+
+    public static final int TYPE_ARCHIVE = 0, TYPE_MOMENT = 1, TYPE_COLLECT = 2;
+
+    public static IndividualFragment newInstance(String params) {
+        IndividualFragment fragment = new IndividualFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, params);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     private boolean isTitleBarShown = false;
     private int selectedFunction = 0, selectedMoment = 0, selectedComment = 0;
+    private int function = TYPE_ARCHIVE;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,6 +117,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
+        function = Integer.valueOf(mQueryId);
         isTitleBarShown = bundle.getBoolean(PARAM_SHOWN, false);
         selectedFunction = bundle.getInt(PARAM_SELECTED, 0);
         selectedMoment = bundle.getInt(PARAM_SELECTED_MMT, 0);
@@ -173,30 +178,19 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         return format(PAGE_TAG, selectedFunction);
     }
 
-    /**
-     * 尝试自动刷新
-     */
-//    private void autoRefreshing() {
-//        if (!isNeedRefresh()) {
-//            return;
-//        }
-//        // 远程刷新的页码小于总页码时才刷新
-//        refreshing();
-//        performRefresh();
-//    }
     private void performRefresh() {
         mAdapter.remove(nothingMore);
         displayLoading(true);
-        switch (selectedFunction) {
-            case 0:
+        switch (function) {
+            case TYPE_MOMENT:
                 // 刷新动态列表
                 refreshingRemoteMoments();
                 break;
-            case 1:
+            case TYPE_ARCHIVE:
                 // 刷新档案列表
                 refreshingRemoteDocuments();
                 break;
-            case 2:
+            case TYPE_COLLECT:
                 // 刷新收藏列表
                 refreshingFavorites();
                 break;
@@ -207,24 +201,16 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
      * 拉取我的最新说说列表
      */
     private void refreshingRemoteMoments() {
-        //setLoadingText(R.string.ui_individual_moment_list_loading);
-        //displayLoading(true);
-        PublicMomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<MomentPublic>() {
+        MomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Moment>() {
             @Override
-            public void onResponse(List<MomentPublic> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 int count = null == list ? 0 : list.size();
-                adjustRemotePages(count, pageSize);
+                adjustRemotePages(count, pageSize, 1, lastHeadPhoto);
                 if (success) {
                     if (null != list) {
-                        if (selectedFunction == 0) {
-                            Moment today = (Moment) mAdapter.get(2);
-                            today.setAuthPublic(userInfoNum);
-                            today.setContent(lastHeadPhoto);
-                            mAdapter.notifyItemChanged(2);
-                            for (MomentPublic moment : list) {
-                                appendMoment(moment.getUserMmt());
-                            }
+                        for (Moment moment : list) {
+                            appendMoment(moment);
                         }
                     }
                 }
@@ -232,7 +218,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     mAdapter.add(nothingMore);
                 }
             }
-        }).list(StructureFragment.selectedGroupId, remotePageNumber);
+        }).listFront(remotePageNumber);
     }
 
     private void appendMoment(Moment moment) {
@@ -283,13 +269,11 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 int count = null == list ? 0 : list.size();
-                adjustRemotePages(count, pageSize);
+                adjustRemotePages(count, pageSize, userInfoNum, lastHeadPhoto);
                 if (success) {
                     if (null != list) {
-                        if (selectedFunction == 1) {
-                            for (Archive archive : list) {
-                                mAdapter.update(archive);
-                            }
+                        for (Archive archive : list) {
+                            mAdapter.update(archive);
                         }
                     }
                 }
@@ -297,7 +281,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     mAdapter.add(nothingMore);
                 }
             }
-        }).list(remotePageNumber, Cache.cache().userId);
+        }).listFront(remotePageNumber);
     }
 
     private void refreshingFavorites() {
@@ -310,13 +294,11 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
             public void onResponse(List<Collection> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 int count = null == list ? 0 : list.size();
-                adjustRemotePages(count, pageSize);
+                adjustRemotePages(count, pageSize, userInfoNum, lastHeadPhoto);
                 if (success) {
                     if (null != list) {
-                        if (selectedFunction == 2) {
-                            for (Collection collection : list) {
-                                mAdapter.update(collection);
-                            }
+                        for (Collection collection : list) {
+                            mAdapter.update(collection);
                         }
                     }
                 }
@@ -327,26 +309,34 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         }).list(Collection.Type.ALL_ARCHIVE, CollectionRequest.OPE_MONTH, remotePageNumber);
     }
 
-    private void adjustRemotePages(int fetchedCount, int pageSize) {
+    private void adjustRemotePages(int fetchedCount, int pageSize, int userInfoNum, String lastHeader) {
+        if (remotePageNumber <= 1) {
+            mAdapter.clear();
+        }
         // 如果当前拉取的是满页数据，则下次再拉取的时候拉取下一页
         remotePageNumber += (fetchedCount >= pageSize ? 1 : 0);
         isLoadingComplete(fetchedCount < pageSize);
         displayLoading(false);
         stopRefreshing();
+        if (userInfoNum > 0) {
+            Moment today = today();
+
+            today.setAuthPublic(userInfoNum);
+            today.setContent(lastHeader);
+            mAdapter.notifyItemChanged(2);
+            if (!mAdapter.exist(today())) {
+                mAdapter.add(today(), 0);
+            } else {
+                mAdapter.update(today);
+            }
+        } else {
+            mAdapter.remove(today());
+        }
     }
 
     private IndividualAdapter mAdapter;
-    private Model functions, nothingMore;
+    private Model nothingMore;
     private Moment cameraMoment;
-
-    // 功能列表
-    private Model functions() {
-        if (null == functions) {
-            functions = new Model();
-            functions.setId("only for functions");
-        }
-        return functions;
-    }
 
     // 今天
     private Moment today() {
@@ -359,29 +349,17 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         return cameraMoment;
     }
 
-    private void appendListHeader(boolean needToday) {
-        mAdapter.add(Cache.cache().me, 0);
-        mAdapter.add(functions(), 1);
-        if (needToday) {
-            mAdapter.add(today(), 2);
-        }
-    }
-
     private void initializeAdapter() {
         if (null == mAdapter) {
             // 这里不需要直接上传，只需要把选择的图片传递给新建动态页面即可，上传在那里实现
             isSupportDirectlyUpload = false;
             // 添加图片选择
             addOnImageSelectedListener(imageSelectedListener);
-            mRecyclerView.addOnScrollListener(scrollListener);
             mAdapter = new IndividualAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            appendListHeader(selectedFunction == 0);
+            mAdapter.add(today());
             // 自动加载本地缓存中的记录
             performRefresh();
-        } else {
-            // 更新我的信息
-            mAdapter.update(Cache.cache().me);
         }
     }
 
@@ -395,59 +373,11 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         }
     };
 
-    private SoftReference<View> toolBarView;
-
-    public IndividualFragment setToolBar(View view) {
-        if (null == toolBarView || null == toolBarView.get()) {
-            toolBarView = new SoftReference<>(view);
-        }
-        return this;
-    }
-
-    private SoftReference<View> textView;
-
-    public void setToolBarTextView(View view) {
-        if (null == textView || null == textView.get()) {
-            textView = new SoftReference<>(view);
-        }
-    }
-
-    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-        private int scrolledY = 0;
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if (!isViewPagerDisplayedCurrent()) {
-                return;
-            }
-            scrolledY += dy;
-            if (scrolledY >= 0 && scrolledY <= 500) {
-                float alpha = scrolledY * 0.005f;
-                if (null != toolBarView && null != toolBarView.get()) {
-                    toolBarView.get().setAlpha(alpha);
-                    isTitleBarShown = toolBarView.get().getAlpha() >= 1;
-                }
-                if (null != textView && null != textView.get()) {
-                    textView.get().setAlpha(alpha);
-                }
-            }
-        }
-    };
-
     private void resetList() {
         int size = mAdapter.getItemCount();
         while (size > 2) {
             mAdapter.remove(size - 1);
             size = mAdapter.getItemCount();
-        }
-        if (selectedFunction == 0) {
-            mAdapter.add(today());
         }
         setSupportLoadingMore(true);
     }
@@ -476,21 +406,6 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         }
         super.onActivityResult(requestCode, data);
     }
-
-    private IndividualFunctionViewHolder.OnFunctionChangeListener functionChangeListener = new IndividualFunctionViewHolder.OnFunctionChangeListener() {
-        @Override
-        public void onChange(int index) {
-            if (selectedFunction != index) {
-                setSupportLoadingMore(true);
-                // 重置本地页码
-                remotePageNumber = 1;
-                selectedFunction = index;
-                resetList();
-                // 尝试从服务器上拉取新纪录
-                performRefresh();
-            }
-        }
-    };
 
     private View openUserMsgDialogView;
 
@@ -599,6 +514,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_holder_view_moment_camera_message_layer:
                     // 打开消息列表
                     UserMessageFragment.open(IndividualFragment.this);
+                    mAdapter.remove(today());
                     break;
                 case R.id.ui_holder_view_moment_details_header:
                     Moment m = (Moment) mAdapter.get(index);
@@ -861,7 +777,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     private class IndividualAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_HEADER = 0, VT_FUNCTION = 1, VT_MOMENT = 2,
+        private static final int VT_MOMENT = 2,
                 VT_ARCHIVE = 3, VT_COLLECTION = 4, VT_CAMERA = 5, VT_NO_MORE = 6,
                 VT_COMMENT = 7;
 
@@ -869,14 +785,6 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             BaseFragment fragment = IndividualFragment.this;
             switch (viewType) {
-                case VT_HEADER:
-                    return new IndividualHeaderViewHolder(itemView, fragment);
-                case VT_FUNCTION:
-                    IndividualFunctionViewHolder ifvh = new IndividualFunctionViewHolder(itemView, fragment);
-                    // 初始化选中第一个
-                    ifvh.setSelected(0);
-                    ifvh.addOnFunctionChangeListener(functionChangeListener);
-                    return ifvh;
                 case VT_MOMENT:
                     MomentDetailsViewHolder mdvh = new MomentDetailsViewHolder(itemView, fragment);
                     mdvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
@@ -886,6 +794,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     return mdvh;
                 case VT_CAMERA:
                     MomentHomeCameraViewHolder mhcvh = new MomentHomeCameraViewHolder(itemView, fragment);
+                    mhcvh.showIcon(false);
                     mhcvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
                     return mhcvh;
                 case VT_ARCHIVE:
@@ -911,10 +820,6 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         @Override
         public int itemLayout(int viewType) {
             switch (viewType) {
-                case VT_HEADER:
-                    return R.layout.holder_view_individual_header;
-                case VT_FUNCTION:
-                    return R.layout.holder_view_individual_main_functions;
                 case VT_MOMENT:
                     return R.layout.holder_view_individual_moment_details;
                 case VT_ARCHIVE:
@@ -933,9 +838,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         @Override
         public int getItemViewType(int position) {
             Model model = get(position);
-            if (model instanceof User) {
-                return VT_HEADER;
-            } else if (model.getId().contains("moment")) {
+            if (model.getId().contains("moment")) {
                 return VT_CAMERA;
             } else if (model.getId().contains("no_more_any_things")) {
                 return VT_NO_MORE;
@@ -947,14 +850,12 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 return VT_COLLECTION;
             } else if (model instanceof Comment) {
                 return VT_COMMENT;
-            } else return VT_FUNCTION;
+            } else return 0;
         }
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-            if (holder instanceof IndividualHeaderViewHolder) {
-                ((IndividualHeaderViewHolder) holder).showContent((User) item);
-            } else if (holder instanceof MomentDetailsViewHolder) {
+            if (holder instanceof MomentDetailsViewHolder) {
                 ((MomentDetailsViewHolder) holder).showContent((Moment) item);
             } else if (holder instanceof ArchiveHomeRecommendedViewHolder) {
                 ((ArchiveHomeRecommendedViewHolder) holder).showContent((Archive) item);

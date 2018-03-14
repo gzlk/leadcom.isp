@@ -31,6 +31,7 @@ import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
@@ -149,7 +150,15 @@ public class ActivityViewHolder extends BaseViewHolder {
             descView.setText(getRecentMsgType(contact));
         } else if (contact.getSessionType() == SessionTypeEnum.Team) {
             Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
-            img.add((null == team || isEmpty(team.getIcon())) ? ("drawable://" + R.drawable.img_default_group) : team.getIcon());
+            List<TeamMember> members = TeamDataCache.getInstance().getTeamMemberList(contact.getContactId());
+            if (null != members && members.size() > 0) {
+                for (TeamMember member : members) {
+                    UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
+                    img.add(null == info ? "" : info.getAvatar());
+                }
+            } else {
+                img.add((null == team || isEmpty(team.getIcon())) ? ("drawable://" + R.drawable.img_default_group) : team.getIcon());
+            }
             titleView.setText(null == team ? "无活动名称" : team.getName());
             descView.setText(format("%s：%s", contact.getFromNick(), getRecentMsgType(contact)));
         }

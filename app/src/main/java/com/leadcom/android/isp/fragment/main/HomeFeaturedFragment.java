@@ -100,14 +100,17 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 String id = getResultedData(data);
                 Model result = getResultModel(data, RESULT_ARCHIVE);
                 if (null != result) {
-                    RecommendArchive archive = (RecommendArchive) mAdapter.get(selectedIndex);
-                    boolean isGroup = archive.getType() == RecommendArchive.RecommendType.GROUP;
-                    if (isGroup) {
-                        archive.setGroDoc((Archive) result);
-                    } else {
-                        archive.setUserDoc((Archive) result);
+                    if (selectedIndex > 0) {
+                        // 焦点图不需要更新点赞、收藏
+                        RecommendArchive archive = (RecommendArchive) mAdapter.get(selectedIndex);
+                        boolean isGroup = archive.getType() == RecommendArchive.RecommendType.GROUP;
+                        if (isGroup) {
+                            archive.setGroDoc((Archive) result);
+                        } else {
+                            archive.setUserDoc((Archive) result);
+                        }
+                        mAdapter.update(archive);
                     }
-                    mAdapter.update(archive);
                 } else {
                     Model model = new Model();
                     model.setId(id);
@@ -163,6 +166,11 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     @Override
     protected void destroyView() {
 
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_main_home_featured;
     }
 
     @Override

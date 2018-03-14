@@ -600,6 +600,14 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
+     * 首页 - 关注列表
+     */
+    public void listFront(int pageNumber) {
+        String params = format("/user/userDoc/list/front?pageNumber=%d", pageNumber);
+        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
+    }
+
+    /**
      * 推送组织档案
      */
     public void push(ArrayList<String> groupIdList, String groupDocId) {
