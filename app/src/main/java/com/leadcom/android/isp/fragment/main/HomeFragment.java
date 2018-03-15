@@ -31,12 +31,6 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
     private View topLine3;
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        tryPaddingContent(toolBar, false);
-    }
-
-    @Override
     public int getLayout() {
         return R.layout.fragment_main_home;
     }

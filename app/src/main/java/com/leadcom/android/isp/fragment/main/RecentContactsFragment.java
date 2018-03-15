@@ -64,7 +64,6 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         enableSwipe(false);
         isLoadingComplete(true);
         setNothingText(R.string.ui_recent_contacts_nothing);
-        tryPaddingContent(toolBar, false);
         if (null != mainFragment) {
             mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
         }

@@ -166,10 +166,10 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             mFragments.add(new HomeFragment());
             //mFragments.add(new ActivityFragment());
             mFragments.add(new RecentContactsFragment());
-            mFragments.add(new OrganizationFragment());
+            mFragments.add(new GroupFragment());
             mFragments.add(new IndividualFragment());
             ((RecentContactsFragment) mFragments.get(1)).mainFragment = this;
-            ((OrganizationFragment) mFragments.get(2)).mainFragment = this;
+            //((OrganizationFragment) mFragments.get(2)).mainFragment = this;
         }
     }
 

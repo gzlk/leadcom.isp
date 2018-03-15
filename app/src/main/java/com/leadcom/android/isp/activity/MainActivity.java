@@ -85,7 +85,7 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         supportPressAgainToExit = true;
-        supportTransparentStatusBar = true;
+        //supportTransparentStatusBar = true;
         isToolbarSupported = false;
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
