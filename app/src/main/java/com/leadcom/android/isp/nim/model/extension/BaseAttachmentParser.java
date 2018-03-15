@@ -48,6 +48,9 @@ public class BaseAttachmentParser implements MsgAttachmentParser {
                 case AttachmentType.ARCHIVE:
                     attachment = new ArchiveAttachment();
                     break;
+                case AttachmentType.STICKER:
+                    attachment = new StickerAttachment();
+                    break;
             }
             if (null != attachment) {
                 attachment.fromJson(data);
