@@ -28,7 +28,9 @@ public class SessionCustomization implements Serializable {
     public String backgroundUri;
     public int backgroundColor;
 
-    // UIKit
+    /**
+     * 是否包含 UIKit 包中的贴图内容
+     */
     public boolean withSticker;
 
     /**
@@ -46,6 +48,7 @@ public class SessionCustomization implements Serializable {
      * ActionBar点击响应资源
      */
     public int buttonSelectorResources = 0;
+
     /**
      * 如果OptionsButton的点击响应中需要startActivityForResult，可在此函数中处理结果。
      * 需要注意的是，由于加号中的Action的限制，RequestCode只能使用int的最低8位。

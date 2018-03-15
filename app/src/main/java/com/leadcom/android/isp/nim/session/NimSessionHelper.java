@@ -162,7 +162,7 @@ public class NimSessionHelper {
         NimUIKit.registerMsgItemViewHolder(MinutesAttachment.class, MsgViewHolderMinutes.class);
         // 分享的文档
         NimUIKit.registerMsgItemViewHolder(ArchiveAttachment.class, MsgViewHolderArchive.class);
-        // 额外表情包消息
+        // 贴图消息
         NimUIKit.registerMsgItemViewHolder(StickerAttachment.class, MsgViewHolderSticker.class);
         // 提示类消息
         NimUIKit.registerTipMsgViewHolder(MsgViewHolderTip.class);
@@ -436,7 +436,7 @@ public class NimSessionHelper {
             //buttons.add(chatButton);
             topicCustomization.buttons = buttons;
 
-            topicCustomization.withSticker = false;
+            topicCustomization.withSticker = true;
 
             topicCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector;
         }
@@ -498,7 +498,7 @@ public class NimSessionHelper {
             buttons.add(chatButton);
             teamCustomization.buttons = buttons;
 
-            teamCustomization.withSticker = false;
+            teamCustomization.withSticker = true;
 
             teamCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector;
         }

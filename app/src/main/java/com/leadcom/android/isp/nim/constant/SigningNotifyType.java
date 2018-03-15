@@ -32,8 +32,4 @@ public class SigningNotifyType {
      * 签到已结束的提醒
      */
     public static final int ENDED = 4;
-    /**
-     * 额外表情包内容
-     */
-    public static final int STICKER = 9;
 }

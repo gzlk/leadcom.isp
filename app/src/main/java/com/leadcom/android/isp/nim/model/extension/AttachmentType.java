@@ -36,4 +36,8 @@ interface AttachmentType {
      * 分享的档案
      */
     int ARCHIVE = 6;
+    /**
+     * 贴图
+     */
+    int STICKER = 9;
 }

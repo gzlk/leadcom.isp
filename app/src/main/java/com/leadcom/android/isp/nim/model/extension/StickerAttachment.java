@@ -17,7 +17,7 @@ public class StickerAttachment extends CustomAttachment {
     private String chartlet;
 
     public StickerAttachment() {
-        super(SigningNotifyType.STICKER);
+        super(AttachmentType.STICKER);
     }
 
     public StickerAttachment(String catalog, String emotion) {
