@@ -5,9 +5,12 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.holder.activity.ActivityViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -111,6 +114,12 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected String getLocalPageTag() {
         return null;
+    }
+
+    @Click({R.id.ui_recent_contacts_add})
+    private void viewClick(View view) {
+        view.startAnimation(App.clickAnimation());
+        ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
     }
 
     /**
