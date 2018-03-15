@@ -41,6 +41,7 @@ import com.leadcom.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
 import com.leadcom.android.isp.nim.model.extension.NoticeAttachment;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
+import com.leadcom.android.isp.nim.model.extension.StickerAttachment;
 import com.leadcom.android.isp.nim.model.extension.TopicAttachment;
 import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderArchive;
@@ -48,6 +49,7 @@ import com.leadcom.android.isp.nim.viewholder.MsgViewHolderFile;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderMinutes;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderNotice;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderSignNotify;
+import com.leadcom.android.isp.nim.viewholder.MsgViewHolderSticker;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderTip;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderTopic;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderVote;
@@ -160,6 +162,8 @@ public class NimSessionHelper {
         NimUIKit.registerMsgItemViewHolder(MinutesAttachment.class, MsgViewHolderMinutes.class);
         // 分享的文档
         NimUIKit.registerMsgItemViewHolder(ArchiveAttachment.class, MsgViewHolderArchive.class);
+        // 额外表情包消息
+        NimUIKit.registerMsgItemViewHolder(StickerAttachment.class, MsgViewHolderSticker.class);
         // 提示类消息
         NimUIKit.registerTipMsgViewHolder(MsgViewHolderTip.class);
     }
@@ -326,7 +330,7 @@ public class NimSessionHelper {
 
                 @Override
                 public MsgAttachment createStickerAttachment(String category, String item) {
-                    return null;//new StickerAttachment(category, item);
+                    return new StickerAttachment(category, item);
                 }
             };
 
@@ -366,7 +370,7 @@ public class NimSessionHelper {
 
                 @Override
                 public MsgAttachment createStickerAttachment(String category, String item) {
-                    return null;//new StickerAttachment(category, item);
+                    return new StickerAttachment(category, item);
                 }
             };
 
@@ -395,7 +399,7 @@ public class NimSessionHelper {
 
                 @Override
                 public MsgAttachment createStickerAttachment(String category, String item) {
-                    return null;//new StickerAttachment(category, item);
+                    return new StickerAttachment(category, item);
                 }
             };
 
@@ -459,7 +463,7 @@ public class NimSessionHelper {
 
                 @Override
                 public MsgAttachment createStickerAttachment(String category, String item) {
-                    return null;//new StickerAttachment(category, item);
+                    return new StickerAttachment(category, item);
                 }
             };
 
