@@ -34,10 +34,11 @@
         <item>友好</item>
     </string-array>
 
-    <string name="ui_organization_creator_fragment_title">增加一个组织(Debug)</string>
+    <string name="ui_organization_creator_fragment_title">增加组织</string>
+    <string name="ui_organization_creator_fragment_title_edit">修改组织信息</string>
     <string name="ui_organization_creator_warning">敬请知悉：<br />此功能目前只为测试方便而开发，正式release版本会屏蔽。</string>
     <string-array name="ui_organization_creator_items">
-        <item>0||Logo%s|2</item>
+        <item>0|Logo|%s|2</item>
         <item>|%s|名称|||30</item>
         <item>|%s|填写简介|||200</item>
     </string-array>
@@ -56,6 +57,12 @@
         <item>7|聊天文件||1</item>
         <item>8|查看聊天内容||1</item>
         <item>9|清空聊天记录||0</item>
+    </string-array>
+    <string-array name="ui_group_details_items">
+        <item>1|组织成员|%d人|1|0xe674</item>
+        <item>2|下属小组|%d个|1|0xe696</item>
+        <item>3|组织档案|%d篇|1|0xe670</item>
+        <item>4|上级下级|%d个|1|0xe678</item>
     </string-array>
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
 

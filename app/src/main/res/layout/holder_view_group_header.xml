@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_group_header_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/img_group_header_bg" />
+    android:layout_height="wrap_content"
+    android:background="@drawable/img_group_header_bg">
 
     <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_group_header_logo"
@@ -20,16 +17,18 @@
         app:id_image_type="oval" />
 
     <com.leadcom.android.isp.lib.view.ExpandableTextView
+        android:id="@+id/ui_holder_view_group_header_intro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/ui_holder_view_group_header_logo"
+        android:layout_marginBottom="@dimen/ui_static_dp_20"
         android:layout_marginEnd="@dimen/ui_static_dp_20"
-        android:layout_marginTop="@dimen/ui_static_dp_8"
         android:layout_toEndOf="@+id/ui_holder_view_group_header_logo"
-        android:text="@string/temp_long_text_value"
+        android:ellipsize="end"
+        android:minLines="4"
         android:textColor="@android:color/white"
         android:textSize="@dimen/ui_base_text_size_small"
         app:lessText="@string/ui_base_text_collapse"
-        app:maxLines="5"
+        app:maxLines="7"
         app:moreText="@string/ui_base_text_expand" />
 </RelativeLayout>

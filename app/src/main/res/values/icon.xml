@@ -141,4 +141,9 @@
     <string name="ui_icon_rich_editor_align_center">&#xe653;</string>
     <string name="ui_icon_rich_editor_align_right">&#xe77e;</string>
 
+    <!--组织相关-->
+    <string name="ui_icon_group_member">&#xe674;</string>
+    <string name="ui_icon_group_squad">&#xe696;</string>
+    <string name="ui_icon_group_archive">&#xe670;</string>
+    <string name="ui_icon_group_upper">&#xe678;</string>
 </resources>

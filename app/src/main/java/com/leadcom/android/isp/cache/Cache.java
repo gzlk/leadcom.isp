@@ -140,13 +140,25 @@ public class Cache {
     }
 
     public void updateGroup(Organization group) {
+        boolean exists = false;
         for (RelateGroup grp : groups) {
             if (grp.getGroupId().equals(group.getId())) {
                 grp.setGroupName(group.getName());
                 grp.setLogo(group.getLogo());
                 grp.setIntro(group.getIntro());
+                exists = true;
                 break;
             }
+        }
+        if (!exists) {
+            RelateGroup relate = new RelateGroup();
+            relate.setGroupId(group.getId());
+            relate.setGroupName(group.getName());
+            relate.setLogo(group.getLogo());
+            relate.setIntro(group.getIntro());
+            relate.setType(RelateGroup.Type.JOINED);
+            relate.setUserId(userId);
+            groups.add(relate);
         }
         saveGroups();
     }

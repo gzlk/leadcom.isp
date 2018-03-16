@@ -18,6 +18,7 @@ public class SimpleClickableItem extends Model {
     private String title;
     private String value;
     private String source;
+    private String icon;
     private boolean iconVisible = false;
     private boolean addVisible = false;
     private int additionalNum;
@@ -27,7 +28,7 @@ public class SimpleClickableItem extends Model {
         reset();
     }
 
-    private void reset() {
+    public void reset() {
         String[] strings = source.split("\\|", -1);
         setId(strings[0]);
         index = Integer.valueOf(strings[0]);
@@ -45,6 +46,9 @@ public class SimpleClickableItem extends Model {
                     //e.printStackTrace();
                 }
             }
+        }
+        if (strings.length > 4) {
+            icon = strings[4];
         }
     }
 
@@ -78,6 +82,14 @@ public class SimpleClickableItem extends Model {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public boolean isIconVisible() {

@@ -88,8 +88,12 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
             }.getType());
         } else {
             // 普通字符串
-            return params.split(",", -1);
+            return splitParameters(params, -1);
         }
+    }
+
+    protected static String[] splitParameters(String params, int limit) {
+        return params.split(",", limit);
     }
 
     /**

@@ -157,7 +157,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
         }
     }
 
-    private int index;
+    protected int index;
 
     @Click({R.id.ui_holder_view_simple_clickable,
             R.id.ui_tool_view_contact_button2})

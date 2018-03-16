@@ -148,9 +148,12 @@ public class OrgRequest extends Request<Organization> {
         JSONObject object = new JSONObject();
         try {
             object.put("_id", groupId)
-                    .put("name", checkNull(groupName))
                     .put("logo", checkNull(groupLogo))
                     .put("intro", checkNull(introduction));
+            if (!isEmpty(groupName)) {
+                // 更改组织名称
+                object.put("name", checkNull(groupName));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

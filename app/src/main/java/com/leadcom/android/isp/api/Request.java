@@ -178,9 +178,9 @@ public abstract class Request<T> {
             @Override
             public void onSucceed(Api<T> data, Response<Api<T>> response) {
                 super.onSucceed(data, response);
-                log(format("url(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s)", methods, url, accessToken,
+                log(format("url(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s)\n\nraw: %s", methods, url, accessToken,
                         (isEmpty(body) ? "" : format("body: %s\n", body)), (null == data ? "null" : data.success()),
-                        (null == data ? "null" : data.getCode()), (null == data ? "null" : data.getMsg())));
+                        (null == data ? "null" : data.getCode()), (null == data ? "null" : data.getMsg()), response.getRawString()));
                 if (null != data && data.success()) {
                     if (data instanceof PaginationQuery) {
                         if (null != onMultipleRequestListener) {

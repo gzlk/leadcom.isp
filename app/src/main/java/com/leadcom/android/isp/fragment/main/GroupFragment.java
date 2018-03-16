@@ -16,16 +16,28 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.common.QuantityRequest;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.CreateOrganizationFragment;
+import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
+import com.leadcom.android.isp.holder.home.GroupHeaderViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
+import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.common.Quantity;
+import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Organization;
 
 import java.util.List;
+
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 /**
  * <b>功能描述：</b>首页 - 组织<br />
@@ -53,11 +65,19 @@ public class GroupFragment extends BaseOrganizationFragment {
     private RecyclerView groupList;
 
     private GroupAdapter gAdapter;
+    private DetailsAdapter dAdapter;
+    private String[] items;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isFirst = true;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        isLoadingComplete(true);
     }
 
     @Override
@@ -67,6 +87,7 @@ public class GroupFragment extends BaseOrganizationFragment {
 
     @Override
     public void doingInResume() {
+        initializeDetailsAdapter();
         initializeGroupsAdapter();
     }
 
@@ -101,10 +122,17 @@ public class GroupFragment extends BaseOrganizationFragment {
         return null;
     }
 
+    private String changedId = "";
+
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQUEST_CREATE) {
-            // 组织创建成功，需要重新刷新组织列表
+        switch (requestCode) {
+            case REQUEST_CREATE:
+            case REQUEST_CHANGE:
+                changedId = getResultedData(data);
+                // 组织创建成功，需要重新刷新组织列表
+                fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
+                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -219,8 +247,12 @@ public class GroupFragment extends BaseOrganizationFragment {
                 initializeGroupsPosition();
                 // 初始化第一个组织
                 if (gAdapter.getItemCount() > 0) {
-                    onGroupChange(gAdapter.get(0));
+                    if (isEmpty(changedId)) {
+                        onGroupChange(gAdapter.get(0));
+                    }
                 }
+            } else if (!isEmpty(changedId)) {
+                onGroupChange(gAdapter.get(changedId));
             }
         }
         displayNothing(gAdapter.getItemCount() <= 0);
@@ -243,6 +275,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             onGroupChange(gAdapter.get(index));
+            showGroupSelector(false);
         }
     };
 
@@ -260,6 +293,42 @@ public class GroupFragment extends BaseOrganizationFragment {
                 gAdapter.update(org);
             }
         }
+        if (isEmpty(dAdapter.get(0).getId()) || !isEmpty(changedId) || !dAdapter.get(0).getId().equals(group.getId())) {
+            changedId = "";
+            dAdapter.replace(group, 0);
+            fetchingQuantity(group.getId());
+        }
+    }
+
+    private void fetchingQuantity(String groupId) {
+        QuantityRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Quantity>() {
+            @Override
+            public void onResponse(Quantity quantity, boolean success, String message) {
+                super.onResponse(quantity, success, message);
+                if (success && null != quantity) {
+                    for (int i = 1, len = dAdapter.getItemCount(); i < len; i++) {
+                        SimpleClickableItem item = (SimpleClickableItem) dAdapter.get(i);
+                        int index = item.getIndex();
+                        switch (index) {
+                            case 1:
+                                item.setSource(format(items[index - 1], quantity.getUserNum()));
+                                break;
+                            case 2:
+                                item.setSource(format(items[index - 1], quantity.getSquadNum()));
+                                break;
+                            case 3:
+                                item.setSource(format(items[index - 1], quantity.getDocNum()));
+                                break;
+                            case 4:
+                                item.setSource(format(items[index - 1], quantity.getConGroupNum()));
+                                break;
+                        }
+                        item.reset();
+                        dAdapter.update(item);
+                    }
+                }
+            }
+        }).findGroup(groupId);
     }
 
     private class GroupAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Organization> {
@@ -283,6 +352,99 @@ public class GroupFragment extends BaseOrganizationFragment {
 
         @Override
         protected int comparator(Organization item1, Organization item2) {
+            return 0;
+        }
+
+        Organization get(String groupId) {
+            for (int i = 0, len = getItemCount(); i < len; i++) {
+                Organization group = get(i);
+                if (group.getId().equals(groupId)) {
+                    return group;
+                }
+            }
+            return null;
+        }
+    }
+
+    private void initializeDetailsAdapter() {
+        if (null == items || items.length < 1) {
+            items = StringHelper.getStringArray(R.array.ui_group_details_items);
+        }
+        if (null == dAdapter) {
+            dAdapter = new DetailsAdapter();
+            mRecyclerView.setAdapter(dAdapter);
+            // ios style
+            OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+
+            dAdapter.add(new Organization());
+            for (String string : items) {
+                SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
+                dAdapter.add(item);
+            }
+        }
+    }
+
+    private OnViewHolderElementClickListener detailsElementClickListener = new OnViewHolderElementClickListener() {
+
+        @Override
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_holder_view_simple_clickable:
+                    handleItemClick(index);
+                    break;
+                case R.id.ui_holder_view_group_header_container:
+                case R.id.ui_holder_view_group_header_logo:
+                    // 打开组织编辑
+                    CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                    break;
+            }
+        }
+    };
+
+    private void handleItemClick(int index) {
+    }
+
+    /**
+     * 组织详细内容
+     */
+    private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+
+        private static final int VT_HEAD = 0, VT_DETAILS = 1;
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            if (viewType == VT_HEAD) {
+                GroupHeaderViewHolder ghv = new GroupHeaderViewHolder(itemView, GroupFragment.this);
+                ghv.setOnViewHolderElementClickListener(detailsElementClickListener);
+                return ghv;
+            }
+            GroupDetailsViewHolder gdv = new GroupDetailsViewHolder(itemView, GroupFragment.this);
+            gdv.setOnViewHolderElementClickListener(detailsElementClickListener);
+            return gdv;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return viewType == VT_HEAD ? R.layout.holder_view_group_header : R.layout.holder_view_group_details;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            Model model = get(position);
+            return model instanceof Organization ? VT_HEAD : VT_DETAILS;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof GroupHeaderViewHolder) {
+                ((GroupHeaderViewHolder) holder).showContent((Organization) item);
+            } else if (holder instanceof GroupDetailsViewHolder) {
+                ((GroupDetailsViewHolder) holder).showContent((SimpleClickableItem) item);
+            }
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
             return 0;
         }
     }

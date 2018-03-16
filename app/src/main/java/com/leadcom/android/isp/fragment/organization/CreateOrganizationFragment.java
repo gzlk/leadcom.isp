@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.os.Bundle;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
@@ -34,8 +35,33 @@ import java.util.ArrayList;
 
 public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment {
 
+    private static final String PARAM_NAME = "cof_name";
+    private static final String PARAM_LOGO = "cof_logo";
+    private static final String PARAM_INTRO = "cof_intro";
+
+    public static CreateOrganizationFragment newInstance(String params) {
+        CreateOrganizationFragment cof = new CreateOrganizationFragment();
+        String[] strings = splitParameters(params, 4);
+        Bundle bundle = new Bundle();
+        // 组织id
+        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        bundle.putString(PARAM_NAME, strings[1]);
+        bundle.putString(PARAM_LOGO, strings[2]);
+        bundle.putString(PARAM_INTRO, strings[3]);
+        cof.setArguments(bundle);
+        return cof;
+    }
+
     public static void open(BaseFragment fragment) {
-        fragment.openActivity(CreateOrganizationFragment.class.getName(), "", REQUEST_CREATE, true, true);
+        open(fragment, "", "", "", "");
+    }
+
+    public static void open(BaseFragment fragment, Organization group) {
+        open(fragment, group.getId(), group.getName(), group.getLogo(), group.getIntro());
+    }
+
+    private static void open(BaseFragment fragment, String groupId, String name, String logo, String intro) {
+        fragment.openActivity(CreateOrganizationFragment.class.getName(), format("%s,%s,%s,%s", groupId, name, logo, intro), isEmpty(groupId) ? REQUEST_CREATE : REQUEST_CHANGE, true, true);
     }
 
     // view
@@ -51,6 +77,23 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
     private SimpleInputableViewHolder nameHolder;
 
     private String[] items;
+    private String name, logo, intro;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        name = bundle.getString(PARAM_NAME, "");
+        logo = bundle.getString(PARAM_LOGO, "");
+        intro = bundle.getString(PARAM_INTRO, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_NAME, name);
+        bundle.putString(PARAM_LOGO, logo);
+        bundle.putString(PARAM_INTRO, intro);
+    }
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -66,7 +109,7 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
     public void doingInResume() {
         // 封面图只有一张
         maxSelectable = 1;
-        setCustomTitle(R.string.ui_organization_creator_fragment_title);
+        setCustomTitle(isEmpty(mQueryId) ? R.string.ui_organization_creator_fragment_title : R.string.ui_organization_creator_fragment_title_edit);
         setRightText(R.string.ui_base_text_save);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
@@ -116,12 +159,33 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
     }
 
     private void createOrganization() {
-        String desc = descView.getValue();
+        intro = descView.getValue();
         String name = nameHolder.getValue();
-        String logo = null;
         if (getUploadedFiles().size() > 0) {
             logo = getUploadedFiles().get(0).getUrl();
         }
+        if (!isEmpty(mQueryId)) {
+            updateOrganization(name.equals(this.name) ? "" : name, logo, intro);
+            return;
+        }
+        OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
+            @Override
+            public void onResponse(Organization organization, boolean success, String message) {
+                super.onResponse(organization, success, message);
+                if (success) {
+                    final String id = null == organization ? null : organization.getId();
+                    Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            resultData(id);
+                        }
+                    });
+                }
+            }
+        }).add(name, logo, intro);
+    }
+
+    private void updateOrganization(String name, String logo, String intro) {
         OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
             @Override
             public void onResponse(Organization organization, boolean success, String message) {
@@ -130,12 +194,12 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
                     Handler().post(new Runnable() {
                         @Override
                         public void run() {
-                            resultSucceededActivity();
+                            resultData(mQueryId);
                         }
                     });
                 }
             }
-        }).add(name, logo, desc);
+        }).update(mQueryId, name, logo, intro);
     }
 
     @Override
@@ -176,10 +240,14 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
             logoHolder = new SimpleClickableViewHolder(logoView, this);
             logoHolder.showContent(format(items[0], "(点击选择图片)"));
             logoHolder.addOnViewHolderClickListener(onViewHolderClickListener);
+            if (!isEmpty(logo)) {
+                logoHolder.showImage(logo);
+            }
         }
         if (null == nameHolder) {
             nameHolder = new SimpleInputableViewHolder(nameView, this);
-            nameHolder.showContent(format(items[1], ""));
+            nameHolder.showContent(format(items[1], name));
+            descView.setValue(intro);
         }
     }
 
