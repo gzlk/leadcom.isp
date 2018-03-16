@@ -116,7 +116,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
                 addFragment(ArchiveNominateFragment.newInstance(groupId));
             }
 //            else {
-                //((ArchiveNominateFragment) mFragments.get(3)).setNewQueryId(groupId);
+            //((ArchiveNominateFragment) mFragments.get(3)).setNewQueryId(groupId);
 //            }
         }
     }
@@ -241,7 +241,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     }
 
     private void toCreateOrganization() {
-        openActivity(CreateOrganizationFragment.class.getName(), "", true, true);
+        CreateOrganizationFragment.open(this);
     }
 
     @Override

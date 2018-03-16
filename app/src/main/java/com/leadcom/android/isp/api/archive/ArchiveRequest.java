@@ -600,9 +600,9 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
-     * 首页 - 关注列表
+     * 首页 - 关注的组织档案列表
      */
-    public void listFront(int pageNumber) {
+    public void listHomeFollowed(int pageNumber) {
         String params = format("/user/userDoc/list/front?pageNumber=%d", pageNumber);
         httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
     }

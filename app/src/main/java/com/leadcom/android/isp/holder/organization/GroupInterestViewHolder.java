@@ -32,6 +32,8 @@ public class GroupInterestViewHolder extends BaseViewHolder {
     private ImageDisplayer coverView;
     @ViewId(R.id.ui_holder_view_group_interest_select)
     private CustomTextView selector;
+    @ViewId(R.id.ui_holder_view_group_interest_select_line)
+    private CustomTextView selectorLine;
     @ViewId(R.id.ui_holder_view_group_interest_name)
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_interest_button)
@@ -50,9 +52,12 @@ public class GroupInterestViewHolder extends BaseViewHolder {
 
     public void showContent(Organization organization) {
         coverView.setVisibility(selectable ? View.GONE : View.VISIBLE);
-        buttonView.setVisibility(selectable ? View.GONE : View.VISIBLE);
-        selector.setVisibility(selectable ? View.VISIBLE : View.GONE);
+        buttonView.setVisibility(selectable || organization.isSelectable() ? View.GONE : View.VISIBLE);
+        selector.setVisibility(selectable && !organization.isSelectable() ? View.VISIBLE : View.GONE);
         selector.setTextColor(getColor(organization.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        // 勾选颜色
+        selectorLine.setVisibility(organization.isSelectable() ? View.VISIBLE : View.GONE);
+        selectorLine.setTextColor(getColor(organization.isSelected() ? R.color.colorPrimary : R.color.transparent_00));
         String cover = organization.getLogo();
         if (isEmpty(cover)) {
             cover = "drawable://" + R.mipmap.img_image_loading_fail;

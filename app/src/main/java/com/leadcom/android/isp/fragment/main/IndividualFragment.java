@@ -206,7 +206,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
             public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 int count = null == list ? 0 : list.size();
-                adjustRemotePages(count, pageSize, 1, lastHeadPhoto);
+                adjustRemotePages(count, pageSize, userInfoNum, lastHeadPhoto);
                 if (success) {
                     if (null != list) {
                         for (Moment moment : list) {
@@ -281,7 +281,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     mAdapter.add(nothingMore);
                 }
             }
-        }).listFront(remotePageNumber);
+        }).listHomeFollowed(remotePageNumber);
     }
 
     private void refreshingFavorites() {

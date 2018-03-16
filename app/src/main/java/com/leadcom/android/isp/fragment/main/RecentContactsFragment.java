@@ -268,6 +268,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                             }
                             mAdapter.add(loadedRecent);
                         }
+                        displayNothing(mAdapter.getItemCount() <= 0);
                     }
                 });
             }

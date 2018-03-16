@@ -6,6 +6,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -32,6 +33,10 @@ import java.util.ArrayList;
  */
 
 public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment {
+
+    public static void open(BaseFragment fragment) {
+        fragment.openActivity(CreateOrganizationFragment.class.getName(), "", REQUEST_CREATE, true, true);
+    }
 
     // view
     @ViewId(R.id.ui_group_creator_cover)
@@ -81,6 +86,7 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
             logoHolder.showImage(selected.get(0));
         }
     };
+
     private OnFileUploadingListener mOnFileUploadingListener = new OnFileUploadingListener() {
 
         @Override
@@ -90,6 +96,7 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
 
         @Override
         public void onUploadingComplete(ArrayList<Attachment> uploaded) {
+            // 上传完毕之后继续未完成的组织创建动作
             createOrganization();
         }
     };
@@ -98,11 +105,6 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
         String name = nameHolder.getValue();
         if (isEmpty(name)) {
             ToastHelper.make().showMsg(R.string.ui_organization_creator_name_invalid);
-            return;
-        }
-        String desc = descView.getValue();
-        if (isEmpty(desc)) {
-            ToastHelper.make().showMsg(R.string.ui_organization_creator_desc_invalid);
             return;
         }
         Utils.hidingInputBoard(nameView);
@@ -128,7 +130,7 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
                     Handler().post(new Runnable() {
                         @Override
                         public void run() {
-                            finish();
+                            resultSucceededActivity();
                         }
                     });
                 }

@@ -4,55 +4,73 @@
     android:id="@+id/ui_holder_view_group_interest_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
-    android:background="@android:color/white"
-    android:gravity="center_vertical"
-    android:minHeight="@dimen/ui_base_dimen_button_height"
-    android:orientation="horizontal"
-    android:padding="@dimen/ui_static_dp_5">
+    android:orientation="vertical">
 
-    <com.leadcom.android.isp.lib.view.ImageDisplayer
-        android:id="@+id/ui_holder_view_group_interest_cover"
-        android:layout_width="@dimen/ui_static_dp_35"
-        android:layout_height="@dimen/ui_static_dp_35"
-        app:id_image_scale_type="centerCrop"
-        app:id_image_src="@mipmap/img_default_user_header"
-        app:id_image_type="oval" />
-
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_holder_view_group_interest_select"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ui_icon_select_solid"
-        android:textColor="@color/textColorHintLight"
-        android:textSize="@dimen/ui_base_text_size_big"
-        android:visibility="gone" />
+        android:background="@drawable/ui_background_clickable"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/ui_base_dimen_button_height"
+        android:orientation="horizontal"
+        android:padding="@dimen/ui_static_dp_5">
 
-    <TextView
-        android:id="@+id/ui_holder_view_group_interest_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/ui_static_dp_5"
-        android:layout_weight="1"
-        android:text="@string/app_name_default" />
+        <com.leadcom.android.isp.lib.view.ImageDisplayer
+            android:id="@+id/ui_holder_view_group_interest_cover"
+            android:layout_width="@dimen/ui_static_dp_35"
+            android:layout_height="@dimen/ui_static_dp_35"
+            app:id_image_scale_type="centerCrop"
+            app:id_image_src="@mipmap/img_default_user_header"
+            app:id_image_type="oval" />
 
-    <com.hlk.hlklib.lib.view.CorneredButton
-        android:id="@+id/ui_holder_view_group_interest_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-        android:gravity="center"
-        android:minWidth="@dimen/ui_static_dp_60"
-        android:paddingBottom="@dimen/ui_static_dp_5"
-        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-        android:paddingStart="@dimen/ui_base_dimen_margin_padding"
-        android:paddingTop="@dimen/ui_static_dp_5"
-        android:text="@string/ui_organization_interesting_concern"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/ui_base_text_size_small"
-        app:active_color="@color/colorAccent"
-        app:background_type="fill"
-        app:corner_size="@dimen/ui_static_dp_15"
-        app:normal_color="@color/colorPrimary" />
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_group_interest_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_icon_select_solid"
+            android:textColor="@color/textColorHintLight"
+            android:textSize="@dimen/ui_base_text_size_big"
+            android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/ui_holder_view_group_interest_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ui_static_dp_5"
+            android:layout_weight="1"
+            android:text="@string/app_name_default" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_group_interest_select_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_icon_select_line"
+            android:textColor="@color/textColorHintLight"
+            android:textSize="@dimen/ui_base_text_size_big"
+            android:visibility="gone" />
+
+        <com.hlk.hlklib.lib.view.CorneredButton
+            android:id="@+id/ui_holder_view_group_interest_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center"
+            android:minWidth="@dimen/ui_static_dp_60"
+            android:paddingBottom="@dimen/ui_static_dp_5"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+            android:paddingTop="@dimen/ui_static_dp_5"
+            android:text="@string/ui_organization_interesting_concern"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ui_base_text_size_small"
+            app:active_color="@color/colorAccent"
+            app:background_type="fill"
+            app:corner_size="@dimen/ui_static_dp_15"
+            app:normal_color="@color/colorPrimary" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:background="@color/windowBackground" />
 </LinearLayout>

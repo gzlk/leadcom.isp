@@ -9,6 +9,7 @@ import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
@@ -129,9 +130,25 @@ public class Cache {
     public void resetRelatedGroups(ArrayList<RelateGroup> list) {
         groups.clear();
         groups.addAll(list);
-        String json = Json.gson().toJson(list, new TypeToken<ArrayList<RelateGroup>>() {
+        saveGroups();
+    }
+
+    private void saveGroups() {
+        String json = Json.gson().toJson(groups, new TypeToken<ArrayList<RelateGroup>>() {
         }.getType());
         PreferenceHelper.save(StringHelper.getString(get(R.string.pf_last_login_user_groups, R.string.pf_last_login_user_groups_beta), userId), json);
+    }
+
+    public void updateGroup(Organization group) {
+        for (RelateGroup grp : groups) {
+            if (grp.getGroupId().equals(group.getId())) {
+                grp.setGroupName(group.getName());
+                grp.setLogo(group.getLogo());
+                grp.setIntro(group.getIntro());
+                break;
+            }
+        }
+        saveGroups();
     }
 
     public ArrayList<RelateGroup> getGroups() {

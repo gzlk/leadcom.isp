@@ -9,6 +9,7 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.ActRequest;
+import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -288,6 +289,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
         setLoadingText(R.string.ui_text_home_archive_loading);
         displayLoading(true);
         displayNothing(false);
+        final long start = Utils.timestamp();
         RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
             @Override
             public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -315,8 +317,11 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 stopRefreshing();
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 2);
+                long end = Utils.timestamp();
+                long between = end - start;
+                log("Home featured fetching time: " + between + " ms");
             }
-        }).list(remotePageNumber);
+        }).listHomeFeatured(remotePageNumber);
     }
 
     private void removeArchives() {

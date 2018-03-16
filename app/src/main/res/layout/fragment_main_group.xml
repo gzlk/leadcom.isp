@@ -31,6 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/ui_static_dp_3"
+                android:animateLayoutChanges="true"
                 android:rotation="90"
                 android:text="@string/ui_icon_triangle"
                 android:textColor="@android:color/white"
@@ -39,6 +40,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/ui_main_group_create"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
@@ -56,17 +58,30 @@
         <include layout="@layout/tool_view_recycler_view_swipe_refreshable" />
 
         <RelativeLayout
+            android:id="@+id/ui_main_group_mine_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0"
-            android:background="@color/transparent_40">
+            android:animateLayoutChanges="true"
+            android:background="@color/transparent_40"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <LinearLayout
+            android:id="@+id/ui_main_group_mine_list_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:animateLayoutChanges="true"
+            android:background="@android:color/white"
+            android:paddingEnd="@dimen/ui_static_dp_20"
+            android:paddingStart="@dimen/ui_static_dp_20">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/ui_main_group_list"
+                android:id="@+id/ui_main_group_mine_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-        </RelativeLayout>
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </RelativeLayout>
 
 </RelativeLayout>

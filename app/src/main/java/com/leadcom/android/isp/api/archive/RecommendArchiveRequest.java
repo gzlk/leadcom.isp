@@ -164,6 +164,14 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
     }
 
     /**
+     * 首页 - 推荐的档案列表
+     */
+    public void listHomeFeatured(int pageNumber) {
+        String params = format("/group/groDocRcmd/list/front?pageNumber=%d", pageNumber);
+        httpRequest(getRequest(MultipleRecommend.class, params, "", HttpMethods.Get));
+    }
+
+    /**
      * 首页头条推荐内容
      */
     public void focusImage() {
