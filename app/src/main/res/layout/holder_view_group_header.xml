@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/img_group_header_bg" />
+
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_holder_view_group_header_logo"
+        android:layout_width="@dimen/ui_static_dp_60"
+        android:layout_height="@dimen/ui_static_dp_60"
+        android:layout_marginEnd="@dimen/ui_static_dp_10"
+        android:layout_marginStart="@dimen/ui_static_dp_20"
+        android:layout_marginTop="@dimen/ui_static_dp_20"
+        app:id_image_src="@drawable/img_default_activity_header"
+        app:id_image_type="oval" />
+
+    <com.leadcom.android.isp.lib.view.ExpandableTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ui_holder_view_group_header_logo"
+        android:layout_marginEnd="@dimen/ui_static_dp_20"
+        android:layout_marginTop="@dimen/ui_static_dp_8"
+        android:layout_toEndOf="@+id/ui_holder_view_group_header_logo"
+        android:text="@string/temp_long_text_value"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ui_base_text_size_small"
+        app:lessText="@string/ui_base_text_collapse"
+        app:maxLines="5"
+        app:moreText="@string/ui_base_text_expand" />
+</RelativeLayout>

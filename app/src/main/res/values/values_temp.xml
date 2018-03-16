@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="temp_number_value">1234</string>
+    <string name="temp_long_text_value">　　中国民主同盟，简称民盟，是中国共产党领导的爱国统一战线的组成部分，中华人民共和国现有的民主党派之一。中国共产党通力合作的参政党，主要由从事文化教育以及科学技术工作的高、中级知识分子组成的，具有政治联盟特点的，致力于建设中国特色社会主义事业的参政党。</string>
 </resources>
