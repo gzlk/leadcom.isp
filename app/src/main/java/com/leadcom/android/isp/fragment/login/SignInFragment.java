@@ -225,6 +225,8 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 if (success) {
                     // 这里尝试访问一下全局me以便及时更新已登录的用户的信息
                     cacheUser(user);
+                    // 保存用户关联的所有组织列表
+                    Cache.cache().resetRelatedGroups(userRelateGroupList);
                     // 登录成功之后检测网易云账号登录状态
                     checkNimStatus();
                 } else {

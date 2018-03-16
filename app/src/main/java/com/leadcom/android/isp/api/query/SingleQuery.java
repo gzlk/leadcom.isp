@@ -2,6 +2,7 @@ package com.leadcom.android.isp.api.query;
 
 import com.leadcom.android.isp.api.Api;
 import com.leadcom.android.isp.model.activity.topic.AppTopic;
+import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.user.SimpleMoment;
 
 import java.util.ArrayList;
@@ -23,10 +24,14 @@ public class SingleQuery<T> extends Api<T> {
     private ArrayList<SimpleMoment> userMmt;
     private int actInvtStatus;
     private int invtNum;
-    private ArrayList<AppTopic>actTopicList;
+    private ArrayList<AppTopic> actTopicList;
     // 个人消息
     private int userInfoNum;
     private String lastHeadPhoto;
+    /**
+     * 用户登录后返回的该用户有关联的组织列表
+     */
+    private ArrayList<RelateGroup> userRelateGroupList;
 
     public T getData() {
         return data;
@@ -82,5 +87,13 @@ public class SingleQuery<T> extends Api<T> {
 
     public void setLastHeadPhoto(String lastHeadPhoto) {
         this.lastHeadPhoto = lastHeadPhoto;
+    }
+
+    public ArrayList<RelateGroup> getUserRelateGroupList() {
+        return userRelateGroupList;
+    }
+
+    public void setUserRelateGroupList(ArrayList<RelateGroup> userRelateGroupList) {
+        this.userRelateGroupList = userRelateGroupList;
     }
 }

@@ -1,7 +1,7 @@
 package com.leadcom.android.isp.nim.model.extension;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>群聊中各种自定义消息<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/06/19 20:33 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />

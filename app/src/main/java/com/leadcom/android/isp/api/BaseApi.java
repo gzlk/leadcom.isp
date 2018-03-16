@@ -30,4 +30,8 @@ abstract class BaseApi implements Serializable {
      * 网络调用成功时的状态码
      */
     static final String SUCCEED = "000000";
+    /**
+     * 验证失败，需要重新登录
+     */
+    static final String RELOGIN = "100000";
 }

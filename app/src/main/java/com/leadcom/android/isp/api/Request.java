@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.api;
 
+import com.leadcom.android.isp.activity.LoginActivity;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.BoolQuery;
@@ -97,6 +98,7 @@ public abstract class Request<T> {
                 .setSocketTimeout(15000);
         accessToken = Cache.cache().accessToken;
         initializeDao();
+        relogin = false;
     }
 
     protected static String format(String fmt, Object... args) {
@@ -129,6 +131,7 @@ public abstract class Request<T> {
         http.executeAsync(request);
     }
 
+    private boolean relogin = false;
     protected Dao<T> dao;
     /**
      * 是否支持直接保存
@@ -148,7 +151,7 @@ public abstract class Request<T> {
             directlySave = true;
             return;
         }
-        if (null != t) {
+        if (!relogin && null != t) {
             initializeDao();
             dao.save(t);
         }
@@ -159,7 +162,7 @@ public abstract class Request<T> {
             directlySave = true;
             return;
         }
-        if (null != list && list.size() > 0) {
+        if (!relogin && null != list && list.size() > 0) {
             initializeDao();
             dao.save(list);
         }
@@ -207,6 +210,7 @@ public abstract class Request<T> {
                         save(singleQuery.getData());
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.query = singleQuery;
+                            onSingleRequestListener.userRelateGroupList = singleQuery.getUserRelateGroupList();
                             onSingleRequestListener.actInviteStatus = singleQuery.getActInvtStatus();
                             if (singleQuery.getData() instanceof FullTextQuery) {
                                 onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), response.getRawString());
@@ -223,6 +227,11 @@ public abstract class Request<T> {
                 } else {
                     ToastHelper.make().showMsg(null == data ? "content is null" : data.getMsg());
                     fireFailedListenerEvents(null == data ? "content is null" : data.getMsg());
+                    if (null != data && data.relogin()) {
+                        relogin = true;
+                        App.app().logout();
+                        LoginActivity.start(App.app());
+                    }
                 }
             }
 

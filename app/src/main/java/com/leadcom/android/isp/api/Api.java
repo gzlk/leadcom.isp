@@ -26,6 +26,13 @@ public class Api<T> extends BaseApi {
     }
 
     /**
+     * 是否验证失败需要重新登录
+     */
+    public boolean relogin() {
+        return RELOGIN.equals(code);
+    }
+
+    /**
      * 网络调用状态
      * <p>
      * 000000：表示成功<br/>

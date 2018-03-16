@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.cache;
 
+import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
@@ -7,6 +8,8 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 
@@ -98,6 +101,16 @@ public class Cache {
         userId = PreferenceHelper.get(get(R.string.pf_last_login_user_id, R.string.pf_last_login_user_id_beta));
         accessToken = PreferenceHelper.get(get(R.string.pf_last_login_user_token, R.string.pf_last_login_user_token_beta));
         nimToken = PreferenceHelper.get(get(R.string.pf_last_login_user_nim_token, R.string.pf_last_login_user_nim_token_beta));
+        restoreGroups();
+    }
+
+    public void restoreGroups() {
+        String json = PreferenceHelper.get(StringHelper.getString(get(R.string.pf_last_login_user_groups, R.string.pf_last_login_user_groups_beta), userId), "[]");
+        groups = Json.gson().fromJson(json, new TypeToken<ArrayList<RelateGroup>>() {
+        }.getType());
+        if (null == groups) {
+            groups = new ArrayList<>();
+        }
     }
 
     /**
@@ -113,10 +126,27 @@ public class Cache {
         return (now - then) >= Utils.DAY * 7;
     }
 
+    public void resetRelatedGroups(ArrayList<RelateGroup> list) {
+        groups.clear();
+        groups.addAll(list);
+        String json = Json.gson().toJson(list, new TypeToken<ArrayList<RelateGroup>>() {
+        }.getType());
+        PreferenceHelper.save(StringHelper.getString(get(R.string.pf_last_login_user_groups, R.string.pf_last_login_user_groups_beta), userId), json);
+    }
+
+    public ArrayList<RelateGroup> getGroups() {
+        if (null == groups || groups.size() <= 0) {
+            restoreGroups();
+        }
+        return groups;
+    }
+
     /**
      * 当前登录用户的id、姓名、网易云信登录的token、api服务器的accessToken
      */
     public String userId, nimToken, accessToken, userName, userPhone;
 
     public ArrayList<String> groupIds = new ArrayList<>();
+
+    private ArrayList<RelateGroup> groups = new ArrayList<>();
 }

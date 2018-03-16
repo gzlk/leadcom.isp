@@ -4,15 +4,14 @@ import android.graphics.Bitmap;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.crash.AppCrashHandler;
 import com.leadcom.android.isp.crash.storage.StorageUtil;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.user.User;
-import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
@@ -24,7 +23,6 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.tencent.smtt.sdk.QbSdk;
-import com.tencent.smtt.sdk.TbsListener;
 
 import java.io.File;
 
@@ -151,6 +149,7 @@ public class App extends NimApplication {
             Cache.cache().restoreCached();
         }
         if (!isEmpty(Cache.cache().userId)) {
+            Cache.cache().restoreGroups();
             // 初始化个性化数据库
             initializeLiteOrm(Cache.cache().userId);
             // 查询个性化数据库中的个人信息

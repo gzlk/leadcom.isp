@@ -1,6 +1,9 @@
 package com.leadcom.android.isp.api.listener;
 
 import com.leadcom.android.isp.api.query.SingleQuery;
+import com.leadcom.android.isp.model.organization.RelateGroup;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>网络请求成功的回调<br />
@@ -24,6 +27,11 @@ public abstract class OnSingleRequestListener<Data> {
      * 活动邀请状态
      */
     public int actInviteStatus;
+
+    /**
+     * 用户登录时返回的该用户关联的组织列表
+     */
+    public ArrayList<RelateGroup> userRelateGroupList;
 
     /**
      * 网络调用成功
