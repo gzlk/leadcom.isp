@@ -26,7 +26,7 @@
     <string name="ui_organization_interesting_cancel_concern">正在取消关注</string>
     <string name="ui_organization_interesting_concern_as_upper">上级组织</string>
     <string name="ui_organization_interesting_concern_as_friend">友好组织</string>
-    <string name="ui_organization_concerned_fragment_title">已关注的组织</string>
+    <string name="ui_organization_concerned_fragment_title">上级下级</string>
     <string-array name="ui_organization_concerned_type">
         <item>当前组织</item>
         <item>上级</item>
@@ -64,6 +64,8 @@
         <item>3|组织档案|%d篇|1|0xe670</item>
         <item>4|上级下级|%d个|1|0xe678</item>
     </string-array>
+    <string name="ui_group_archive_fragment_title">组织档案</string>
+    <string name="ui_group_member_fragment_title">组织成员</string>
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
 
     <string name="ui_organization_squad_add_title">名称：</string>

@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -21,20 +22,28 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
 import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
+import com.leadcom.android.isp.fragment.organization.ConcernedOrganizationFragment;
+import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.home.GroupHeaderViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.operation.GRPOperation;
+import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.Role;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -311,7 +320,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                         int index = item.getIndex();
                         switch (index) {
                             case 1:
-                                item.setSource(format(items[index - 1], quantity.getUserNum()));
+                                item.setSource(format(items[index - 1], quantity.getMemberNum()));
                                 break;
                             case 2:
                                 item.setSource(format(items[index - 1], quantity.getSquadNum()));
@@ -395,13 +404,56 @@ public class GroupFragment extends BaseOrganizationFragment {
                 case R.id.ui_holder_view_group_header_container:
                 case R.id.ui_holder_view_group_header_logo:
                     // 打开组织编辑
-                    CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                    Organization group = (Organization) dAdapter.get(0);
+                    Role role = Cache.cache().getGroupRole(group.getId());
+                    if (null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) {
+                        // 登录者有组织属性编辑权限时，打开组织属性编辑页面
+                        CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                    }
                     break;
             }
         }
     };
 
     private void handleItemClick(int index) {
+        Organization group = (Organization) dAdapter.get(0);
+        switch (index) {
+            case 1:
+                // 组织成员
+                ContactFragment.open(this, group.getId());
+                break;
+            case 2:
+                // 下属小组
+                break;
+            case 3:
+                // 组织档案
+                ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
+                break;
+            case 4:
+                // 上下级
+                ArrayList<Concern> concerns = group.getConGroup();
+                for (Concern concern : concerns) {
+                    concern.setConcernType(getConcerned(concern.getConGroup(), group.getId()));
+                }
+                String json = Json.gson().toJson(concerns, new TypeToken<ArrayList<Concern>>() {
+                }.getType());
+                ConcernedOrganizationFragment.open(this, group.getId(), StringHelper.replaceJson(json, false), REQUEST_CONCERNED);
+                break;
+        }
+    }
+
+    /**
+     * 检查组织是否互相关注
+     */
+    private int getConcerned(ArrayList<Concern> list, String hostGroupId) {
+        if (null == list || list.size() <= 0) return Concern.ConcernType.CONCERNED;
+        for (Concern concern : list) {
+            if (concern.getId().equals(hostGroupId)) {
+                return Concern.ConcernType.EACH;
+            }
+        }
+        // 对方的已关注列表里没有本组织，则说明是本组织已关注
+        return Concern.ConcernType.CONCERNED;
     }
 
     /**

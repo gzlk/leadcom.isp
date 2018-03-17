@@ -317,15 +317,23 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 新增
      */
-    public static final int REQUEST_CREATE = ACTIVITY_BASE_REQUEST + 100;
+    public static final int REQUEST_CREATE = ACTIVITY_BASE_REQUEST + 16;
     /**
      * 更改
      */
-    public static final int REQUEST_CHANGE = ACTIVITY_BASE_REQUEST + 101;
+    public static final int REQUEST_CHANGE = ACTIVITY_BASE_REQUEST + 17;
     /**
      * 删除
      */
-    public static final int REQUEST_DELETE = ACTIVITY_BASE_REQUEST + 102;
+    public static final int REQUEST_DELETE = ACTIVITY_BASE_REQUEST + 18;
+    /**
+     * 感兴趣
+     */
+    protected static final int REQUEST_INTEREST = ACTIVITY_BASE_REQUEST + 100;
+    /**
+     * 关注组织
+     */
+    protected static final int REQUEST_CONCERNED = ACTIVITY_BASE_REQUEST + 101;
 
     /**
      * 启动容器Activity(此时打开的新Activity不需要返回确认)

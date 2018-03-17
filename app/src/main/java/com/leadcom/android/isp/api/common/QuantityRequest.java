@@ -53,6 +53,7 @@ public class QuantityRequest extends Request<Quantity> {
      * 查询当前用户的统计信息
      */
     public void findUser() {
+        directlySave = false;
         httpRequest(getRequest(SingleRequest.class, "/user/userCount/find", "", HttpMethods.Get));
     }
 
@@ -60,6 +61,7 @@ public class QuantityRequest extends Request<Quantity> {
      * 查询指定组织的统计信息
      */
     public void findGroup(String groupId) {
+        directlySave = false;
         httpRequest(getRequest(SingleRequest.class, format("/group/groCount/find?groupId=%s", groupId), "", HttpMethods.Get));
     }
 }

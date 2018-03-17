@@ -167,7 +167,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                 displayLoading(false);
                 if (success) {
                     Concern concern = mAdapter.get(index);
-                    concern.setConcerned(false);
+                    concern.setConcernType(Concern.ConcernType.NONE);
                     concern.setType(0);
                     mAdapter.notifyItemChanged(index);
                 }
@@ -199,8 +199,8 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
             public View onInitializeView() {
                 if (null == dialogView) {
                     dialogView = View.inflate(Activity(), R.layout.popup_dialog_group_interest_concern, null);
-                    upperIcon = (CustomTextView) dialogView.findViewById(R.id.ui_dialog_group_interest_concern_as_upper_icon);
-                    friendIcon = (CustomTextView) dialogView.findViewById(R.id.ui_dialog_group_interest_concern_as_friend_icon);
+                    upperIcon = dialogView.findViewById(R.id.ui_dialog_group_interest_concern_as_upper_icon);
+                    friendIcon = dialogView.findViewById(R.id.ui_dialog_group_interest_concern_as_friend_icon);
                 }
                 isUpper = false;
                 clearDialogIcons();
@@ -258,7 +258,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                 if (success) {
                     // 关注成功之后设置关注属性并刷新列表
                     Concern concern = mAdapter.get(index);
-                    concern.setConcerned(true);
+                    concern.setConcernType(Concern.ConcernType.CONCERNED);
                     concern.setType(isUpper ? OrgRequest.CONCERN_UPPER : OrgRequest.CONCERN_FRIEND);
                     mAdapter.notifyItemChanged(index);
                 }

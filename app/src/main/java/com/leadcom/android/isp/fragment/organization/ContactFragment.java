@@ -15,6 +15,8 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.MemberRequest;
+import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
@@ -67,6 +69,8 @@ public class ContactFragment extends BaseOrganizationFragment {
      */
     public static final int TYPE_ORG = 2;
 
+    private static boolean isOpenable = false;
+
     /**
      * 新建一个实例
      * param: 0=type,1=groupId,2=squadId
@@ -83,6 +87,14 @@ public class ContactFragment extends BaseOrganizationFragment {
         bundle.putString(PARAM_SQUAD_ID, strings[2]);
         cf.setArguments(bundle);
         return cf;
+    }
+
+    /**
+     * 打开具有标题栏的组织成员列表页面
+     */
+    public static void open(BaseFragment fragment, String groupId) {
+        isOpenable = true;
+        fragment.openActivity(ContactFragment.class.getName(), format("%d,%s,", TYPE_ORG, groupId), true, false);
     }
 
     @Override
@@ -119,6 +131,30 @@ public class ContactFragment extends BaseOrganizationFragment {
      */
     private boolean isCreator = false;
     private int dialIndex = -1;
+
+    private Role myRole;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (isOpenable) {
+            myRole = Cache.cache().getGroupRole(mQueryId);
+            // 有权限添加成员时，显示手机通讯录入口
+            if (hasOperation(GRPOperation.MEMBER_ADD)) {
+                phoneContactView.setVisibility(View.VISIBLE);
+            } else {
+                phoneContactView.setVisibility(View.GONE);
+            }
+            setCustomTitle(R.string.ui_group_member_fragment_title);
+        }
+    }
+
+    /**
+     * 登录者是否具有某项组织权限
+     */
+    private boolean hasOperation(String operation) {
+        return null != myRole && myRole.hasOperation(operation);
+    }
 
     @Override
     public int getLayout() {
@@ -220,12 +256,18 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         // 小组才显示标题栏，组织通讯录不需要
-        return showType == TYPE_SQUAD;
+        return isOpenable || showType == TYPE_SQUAD;
     }
 
     @Override
     protected void destroyView() {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        isOpenable = false;
     }
 
     @Override
@@ -685,9 +727,9 @@ public class ContactFragment extends BaseOrganizationFragment {
 
         @Override
         public void onBindHolderOfView(ContactViewHolder holder, int position, @Nullable Member member) {
-            Member me = StructureFragment.my;
-            String memberUserId = (null != member) ? member.getUserId() : null;
-            boolean isMe = (null != me) && !isEmpty(memberUserId) && !isEmpty(me.getUserId()) && memberUserId.equals(me.getUserId());
+            //Member me = StructureFragment.my;
+            String memberUserId = (null != member) ? member.getUserId() : "";
+            boolean isMe = !isEmpty(memberUserId) && memberUserId.equals(Cache.cache().userId);
             // 转让群组或转让管理权
 //            if (showType == TYPE_ORG) {
             // 组织内转让管理权
@@ -717,7 +759,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 // 组织内可以显示设为档案管理员或取消档案管理员
                 // 对方不是管理员且不是档案管理员时，可以将其设为档案管理员
                 holder.button0d5Text((null != member && member.isArchiveManager()) ? R.string.ui_organization_contact_unset_archive_manager : R.string.ui_organization_contact_set_archive_manager);
-                holder.showButton0d5(!isMe && (null != me) && me.memberRoleEditable() && (null != member && !member.isGroupManager()));
+                holder.showButton0d5(!isMe && hasOperation(GRPOperation.MEMBER_ROLE) && (null != member && !member.isGroupManager()));
             } else {
                 holder.showButton0d5(false);
             }
@@ -726,14 +768,14 @@ public class ContactFragment extends BaseOrganizationFragment {
                 // 显示设为管理员或取消管理员
                 holder.button1Text((null != member && member.isGroupManager()) ? R.string.ui_squad_contact_unset_to_admin : R.string.ui_squad_contact_set_to_admin);
                 // 我是群主或管理员且有编辑成员角色属性时，可以设置
-                holder.showButton1(!isMe && (null != me) && me.memberRoleEditable());
+                holder.showButton1(!isMe && hasOperation(GRPOperation.MEMBER_ROLE));
             } else {
                 holder.showButton1(false);
             }
 
             if (showType == TYPE_ORG) {
                 // 我且具有删除成员权限，且对方是普通成员时显示删除按钮
-                holder.showButton2(!isMe && (null != me) && me.memberDeletable() && (null != member && !member.isGroupManager()));
+                holder.showButton2(!isMe && hasOperation(GRPOperation.MEMBER_DELETE) && (null != member && !member.isGroupManager()));
             } else {
                 // 小组成员删除权限
                 holder.showButton2(!isMe && (null != squadRole && squadRole.hasOperation(GRPOperation.SQUAD_MEMBER_DELETE)));

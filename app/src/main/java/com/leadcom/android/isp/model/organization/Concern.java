@@ -37,8 +37,27 @@ public class Concern extends Organization {
         int FRIEND = 3;
     }
 
+    /**
+     * 组织之间的关注类型
+     */
+    public interface ConcernType {
+        /**
+         * 未关注
+         */
+        int NONE = 0;
+        /**
+         * 已关注
+         */
+        int CONCERNED = 1;
+        /**
+         * 互相关注
+         */
+        int EACH = 2;
+    }
+
     // 关注类型:1.上级组织 2.下级组织 3.友好组织
     private int type;
+    private int concernType;
 
     public int getType() {
         return type;
@@ -53,5 +72,18 @@ public class Concern extends Organization {
      */
     public static String getTypeString(int type) {
         return StringHelper.getStringArray(R.array.ui_organization_concerned_type)[type];
+    }
+
+    public int getConcernType() {
+        return concernType;
+    }
+
+    @Override
+    public boolean isConcerned() {
+        return concernType >= ConcernType.CONCERNED;
+    }
+
+    public void setConcernType(int concernType) {
+        this.concernType = concernType;
     }
 }

@@ -11,6 +11,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
+import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 
@@ -161,6 +162,18 @@ public class Cache {
             groups.add(relate);
         }
         saveGroups();
+    }
+
+    /**
+     * 获取登录者在指定组织里的角色
+     */
+    public Role getGroupRole(String groupId) {
+        for (RelateGroup group : groups) {
+            if (group.getGroupId().equals(groupId)) {
+                return group.getGroRole();
+            }
+        }
+        return null;
     }
 
     public ArrayList<RelateGroup> getGroups() {
