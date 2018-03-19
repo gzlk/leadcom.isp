@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         imageWidth = fragment.getScreenWidth();
-        dotPadding = getDimension(R.dimen.ui_static_dp_5);
+        dotPadding = getDimension(R.dimen.ui_static_dp_2);
         calculateImageHeight();
         initialize();
         //initializeTitlePosition();
@@ -73,7 +74,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
      */
     private void calculateImageHeight() {
         float scale = (imageWidth * 1.0F / WIDTH);
-        imageHeight = (int) (imageWidth / 2);//(int) (HEIGHT * scale);
+        imageHeight = (int) (imageWidth / 1.75);//(int) (HEIGHT * scale);
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) container.getLayoutParams();
         params.height = imageHeight;
         container.setLayoutParams(params);
@@ -120,7 +121,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
                 dot.setVisibility(View.INVISIBLE);
                 //}
                 dot.setText(StringHelper.getString(R.string.ui_icon_radio_disabled));
-                dot.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_tiny));
+                dot.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_micro));
                 dot.setTextColor(getColor(R.color.textColorHintDark));
                 indicator.addView(dot);
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) dot.getLayoutParams();
@@ -153,6 +154,14 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     public void onPageSelected(int position) {
         currentPosition = position;
         titleView.setText(recommendArchives.get(currentPosition).getDoc().getTitle());
+        titleView.setEllipsize(TextUtils.TruncateAt.END);
+        titleView.setSelected(true);
+        Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                titleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            }
+        }, fragment().duration());
         //colorChange(position);
         changeDotsColor(position, getColor(R.color.textColorHintDark));
     }

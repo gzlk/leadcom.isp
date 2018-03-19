@@ -277,7 +277,12 @@ public class GroupFragment extends BaseOrganizationFragment {
             gAdapter = new GroupAdapter();
             groupList.setLayoutManager(new CustomLinearLayoutManager(groupList.getContext()));
             groupList.setAdapter(gAdapter);
-            fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
+            Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
+                }
+            });
         }
     }
 
@@ -425,7 +430,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 2:
                 // 下属小组
-                SquadsFragment.open(this,group.getId());
+                SquadsFragment.open(this, group.getId());
                 break;
             case 3:
                 // 组织档案

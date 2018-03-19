@@ -180,7 +180,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     private void performRefresh() {
         mAdapter.remove(nothingMore);
-        displayLoading(true);
+        //displayLoading(true);
         switch (function) {
             case TYPE_MOMENT:
                 // 刷新动态列表

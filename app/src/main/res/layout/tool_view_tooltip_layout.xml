@@ -56,6 +56,8 @@
         <include layout="@layout/tooltip_moment_comment_praisable" />
 
         <include layout="@layout/tooltip_moment_comment_praised" />
+
+        <include layout="@layout/tooltip_recent_contact" />
     </com.hlk.hlklib.lib.view.CorneredView>
 
     <ImageView

@@ -50,7 +50,10 @@ public class TooltipHelper {
             R.id.ui_tooltip_menu_moment_comment,
             // 说说评论菜单（已赞）
             R.id.ui_tooltip_menu_moment_praised,
-            R.id.ui_tooltip_menu_moment_comment1
+            R.id.ui_tooltip_menu_moment_comment1,
+            // 最近会话
+            R.id.ui_tooltip_menu_recent_contact_list,
+            R.id.ui_tooltip_menu_recent_contact_create
     };
 
     public static PopupWindow showTooltip(final View anchorView, int viewLayout, boolean belowAnchor, int arrowType, View.OnClickListener onClickListener) {

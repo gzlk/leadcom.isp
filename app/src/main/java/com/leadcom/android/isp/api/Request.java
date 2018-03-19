@@ -9,6 +9,7 @@ import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -173,14 +174,16 @@ public abstract class Request<T> {
      */
     protected JsonRequest<Api<T>> getRequest(Type resultType, String action, final String body, final HttpMethods methods) {
         final String url = format("%s%s", URL, action);
+        final long start = Utils.timestamp();
         OnHttpListener<Api<T>> listener = new OnHttpListener<Api<T>>() {
 
             @Override
             public void onSucceed(Api<T> data, Response<Api<T>> response) {
                 super.onSucceed(data, response);
-                log(format("url(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s)\n\nraw: %s", methods, url, accessToken,
+                long end = Utils.timestamp();
+                log(format("url(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s, time used: %dms)\n\nraw: %s", methods, url, accessToken,
                         (isEmpty(body) ? "" : format("body: %s\n", body)), (null == data ? "null" : data.success()),
-                        (null == data ? "null" : data.getCode()), (null == data ? "null" : data.getMsg()), response.getRawString()));
+                        (null == data ? "null" : data.getCode()), (null == data ? "null" : data.getMsg()), (end - start), response.getRawString()));
                 if (null != data && data.success()) {
                     if (data instanceof PaginationQuery) {
                         if (null != onMultipleRequestListener) {
@@ -238,8 +241,9 @@ public abstract class Request<T> {
             @Override
             public void onFailed() {
                 super.onFailed();
-                log(format("url(%s): %s\naccessToken: %s, terminalType: android%s\nsuccess: failed", methods, url, accessToken,
-                        (isEmpty(body) ? "" : format("\nbody: %s\n", body))));
+                long end = Utils.timestamp();
+                log(format("url(%s): %s\naccessToken: %s, terminalType: android%s\nsuccess: failed(time used: %dms)", methods, url, accessToken,
+                        (isEmpty(body) ? "" : format("\nbody: %s\n", body)), (end - start)));
                 fireFailedListenerEvents("");
             }
         };

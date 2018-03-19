@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -11,6 +12,7 @@ import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.holder.organization.SquadViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -18,6 +20,7 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Squad;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,18 +51,64 @@ public class SquadsFragment extends BaseOrganizationFragment {
         fragment.openActivity(SquadsFragment.class.getName(), groupId, REQUEST_CREATE, true, false);
     }
 
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private View searchInputableView;
+
     private SquadAdapter mAdapter;
+    private static String searchingText = "";
     private static int dialIndex = -1;
+    private InputableSearchViewHolder searchViewHolder;
+    private ArrayList<Squad> squads = new ArrayList<>();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         dialIndex = -1;
+        searchingText = "";
         enableSwipe(false);
         isLoadingComplete(true);
         setCustomTitle(R.string.ui_group_squad_fragment_title);
         setRightText(R.string.ui_base_text_add);
         setNothingText(R.string.ui_group_squad_nothing);
+        searchViewHolder = new InputableSearchViewHolder(searchInputableView, this);
+        searchViewHolder.setOnSearchingListener(onSearchingListener);
+    }
+
+    private InputableSearchViewHolder.OnSearchingListener onSearchingListener = new InputableSearchViewHolder.OnSearchingListener() {
+        @Override
+        public void onSearching(String text) {
+            searchingText = text;
+            if (!isEmpty(searchingText)) {
+                // 搜索小组成员名字
+                searchMemberName();
+            } else {
+                // 恢复已打开的小组和其成员列表
+                mAdapter.clear();
+                for (Squad squad : squads) {
+                    squad.setSelectable(false);
+                    mAdapter.add(squad);
+                    if (squad.isSelected()) {
+                        displaySquadMember(squad, mAdapter.indexOf(squad));
+                    }
+                }
+            }
+        }
+    };
+
+    private void searchMemberName() {
+        mAdapter.clear();
+        for (Squad squad : squads) {
+            // 轮询所有小组
+            for (Member member : squad.getGroSquMemberList()) {
+                if (member.getUserName().contains(searchingText)) {
+                    if (!mAdapter.exist(squad)) {
+                        squad.setSelectable(true);
+                        mAdapter.add(squad);
+                    }
+                    mAdapter.add(member);
+                }
+            }
+        }
     }
 
     @Override
@@ -80,6 +129,11 @@ public class SquadsFragment extends BaseOrganizationFragment {
     @Override
     protected void destroyView() {
 
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_group_squads;
     }
 
     @Override
@@ -106,7 +160,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
                 model.setSelected(!model.isSelected());
                 displaySquadMember((Squad) model, index);
             } else if (model instanceof Member) {
-                UserPropertyFragment.open(SquadsFragment.this, model.getId());
+                UserPropertyFragment.open(SquadsFragment.this, ((Member) model).getUserId());
             }
         }
     };
@@ -118,8 +172,15 @@ public class SquadsFragment extends BaseOrganizationFragment {
             // 显示小组成员
             if (null != squad.getGroSquMemberList()) {
                 for (Member member : squad.getGroSquMemberList()) {
-                    mIndex += 1;
-                    mAdapter.add(member, index + mIndex);
+                    boolean addable = true;
+                    if (!isEmpty(searchingText)) {
+                        // 如果是在搜索则只显示搜索匹配的记录
+                        addable = !isEmpty(member.getUserName()) && member.getUserName().contains(searchingText);
+                    }
+                    if (addable) {
+                        mIndex += 1;
+                        mAdapter.add(member, index + mIndex);
+                    }
                 }
             }
         } else {
@@ -185,10 +246,12 @@ public class SquadsFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onFetchingRemoteSquadsComplete(List<Squad> list) {
-        if (null != list && list.size() > 0) {
-            for (Squad squad : list) {
-                mAdapter.add(squad);
-            }
+        if (null != list) {
+            squads.clear();
+            squads.addAll(list);
+        }
+        for (Squad squad : squads) {
+            mAdapter.add(squad);
         }
         displayNothing(mAdapter.getItemCount() <= 0);
     }
@@ -225,7 +288,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof ContactViewHolder) {
-                ((ContactViewHolder) holder).showContent((Member) item, "");
+                ((ContactViewHolder) holder).showContent((Member) item, searchingText);
             } else if (holder instanceof SquadViewHolder) {
                 ((SquadViewHolder) holder).showContent((Squad) item);
             }

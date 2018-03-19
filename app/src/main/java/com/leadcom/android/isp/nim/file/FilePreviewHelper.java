@@ -69,6 +69,7 @@ public class FilePreviewHelper {
 
             if (ImageCompress.isImage(ext)) {
                 previewImage(activity, path);
+                return;
             } else if (!ext.equals("apk") && App.app().isX5Usable()) {
                 // 如果疼熏文件浏览内核可用，则直接用疼熏内核，否则用POI打开文件
                 boolean minutes = !StringHelper.isEmpty(fileName) && fileName.equals(StringHelper.getString(R.string.ui_nim_action_minutes));

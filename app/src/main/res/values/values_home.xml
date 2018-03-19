@@ -22,4 +22,7 @@
     <string name="ui_text_home_top_channel1">推荐</string>
     <string name="ui_text_home_top_channel2">关注</string>
     <string name="ui_text_home_top_channel3">动态</string>
+
+    <string name="ui_text_home_recent_contact_context_menu_1">群聊列表</string>
+    <string name="ui_text_home_recent_contact_context_menu_2">发起群聊</string>
 </resources>

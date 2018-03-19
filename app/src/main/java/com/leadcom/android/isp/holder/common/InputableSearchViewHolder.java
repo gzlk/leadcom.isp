@@ -117,6 +117,7 @@ public class InputableSearchViewHolder extends BaseViewHolder {
         switch (view.getId()) {
             case R.id.ui_holder_view_searchable_clear_icon:
                 searchInput.setText("");
+                clearFocus();
                 break;
         }
     }

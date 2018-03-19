@@ -9,7 +9,6 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.ActRequest;
-import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -200,7 +199,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
     private void fetchingFocusImages() {
         setLoadingText(R.string.ui_text_home_focus_image_loading);
-        displayLoading(true);
+        //displayLoading(true);
         displayNothing(false);
         RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
             @Override
@@ -287,9 +286,8 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
     private void fetchingRecommendedArchives() {
         setLoadingText(R.string.ui_text_home_archive_loading);
-        displayLoading(true);
+        //displayLoading(true);
         displayNothing(false);
-        final long start = Utils.timestamp();
         RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
             @Override
             public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -317,9 +315,6 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 stopRefreshing();
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 2);
-                long end = Utils.timestamp();
-                long between = end - start;
-                log("Home featured fetching time: " + between + " ms");
             }
         }).listHomeFeatured(remotePageNumber);
     }
@@ -373,12 +368,12 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_like_layout:
                     // 赞或取消赞
                     selectedIndex = index;
-                    like(doc);
+                    //like(doc);
                     break;
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏或取消收藏
                     selectedIndex = index;
-                    collect(doc);
+                    //collect(doc);
                     break;
             }
         }

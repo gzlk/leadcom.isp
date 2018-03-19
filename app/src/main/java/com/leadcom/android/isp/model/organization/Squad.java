@@ -124,6 +124,9 @@ public class Squad extends Model {
     }
 
     public ArrayList<Member> getGroSquMemberList() {
+        if (null == groSquMemberList) {
+            groSquMemberList = new ArrayList<>();
+        }
         return groSquMemberList;
     }
 
