@@ -18,6 +18,7 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Squad;
 
+import java.util.Iterator;
 import java.util.List;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -102,11 +103,41 @@ public class SquadsFragment extends BaseOrganizationFragment {
             Model model = mAdapter.get(index);
             if (model instanceof Squad) {
                 // 展开小组成员列表
+                model.setSelected(!model.isSelected());
+                displaySquadMember((Squad) model, index);
             } else if (model instanceof Member) {
                 UserPropertyFragment.open(SquadsFragment.this, model.getId());
             }
         }
     };
+
+    private void displaySquadMember(Squad squad, int index) {
+        Iterator<Model> iterator = mAdapter.iterator();
+        int mIndex = 0;
+        if (squad.isSelected()) {
+            // 显示小组成员
+            if (null != squad.getGroSquMemberList()) {
+                for (Member member : squad.getGroSquMemberList()) {
+                    mIndex += 1;
+                    mAdapter.add(member, index + mIndex);
+                }
+            }
+        } else {
+            // 隐藏小组成员
+            while (iterator.hasNext()) {
+                Model model = iterator.next();
+                if (model instanceof Member) {
+                    Member member = (Member) model;
+                    if (!isEmpty(member.getSquadId()) && member.getSquadId().equals(squad.getId())) {
+                        iterator.remove();
+                        mAdapter.notifyItemRemoved(mIndex);
+                    }
+                }
+                mIndex++;
+            }
+        }
+    }
+
     private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
         @Override
         public void onDial(int index) {
