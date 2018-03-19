@@ -170,7 +170,6 @@ public class ActivityViewHolder extends BaseViewHolder {
         headers.setVisibility(View.VISIBLE);
         iconText.setVisibility(View.GONE);
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
-        iconContainer.setBackground(getColor(R.color.textColorHintLight));
     }
 
     private String getRecentMsgType(RecentContact contact) {
@@ -194,6 +193,20 @@ public class ActivityViewHolder extends BaseViewHolder {
             }
         }
         return ret;
+    }
+
+    public void showContent(Team team) {
+        headers.setAdapter(adapter);
+        ArrayList<String> imgs = new ArrayList<>();
+        imgs.add(team.getIcon());
+        headers.setImagesData(imgs);
+        flagView.setVisibility(View.GONE);
+        iconText.setVisibility(View.GONE);
+        headers.setVisibility(View.VISIBLE);
+        iconContainer.setBackground(getColor(R.color.textColorHintLight));
+        titleView.setText(team.getName());
+        timeView.setText(format("%d人", team.getMemberCount()));
+        descView.setText(team.getIntroduce());
     }
 
     @Click({R.id.ui_holder_view_activity_item_container})

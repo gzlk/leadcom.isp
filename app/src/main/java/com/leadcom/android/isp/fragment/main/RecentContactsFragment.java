@@ -122,8 +122,9 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         showTooltip(view, R.id.ui_tooltip_recent_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()){
+                switch (v.getId()) {
                     case R.id.ui_tooltip_menu_recent_contact_list:
+                        TeamListFragment.open(RecentContactsFragment.this);
                         break;
                     case R.id.ui_tooltip_menu_recent_contact_create:
                         ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");

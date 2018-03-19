@@ -25,4 +25,6 @@
 
     <string name="ui_text_home_recent_contact_context_menu_1">群聊列表</string>
     <string name="ui_text_home_recent_contact_context_menu_2">发起群聊</string>
+    <string name="ui_text_home_team_empty">您没有加入任何群聊</string>
+    <string name="ui_text_home_team_fetching_failed" formatted="false">获取失败(%d)</string>
 </resources>
