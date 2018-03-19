@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/holder_view_searchable" />
+    <include layout="@layout/holder_view_searchable_inputable" />
 
     <include layout="@layout/tool_view_phone_contact" />
 

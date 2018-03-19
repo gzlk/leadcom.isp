@@ -14,7 +14,7 @@
 
     </LinearLayout>
 
-    <include layout="@layout/holder_view_searchable" />
+    <include layout="@layout/holder_view_searchable_inputable" />
 
     <LinearLayout
         android:layout_width="match_parent"

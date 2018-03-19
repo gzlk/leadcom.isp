@@ -30,7 +30,7 @@ import com.hlk.hlklib.lib.view.CustomTextView;
  * <b>修改备注：</b><br />
  */
 
-public class SearchableViewHolder extends BaseViewHolder {
+public class InputableSearchViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_searchable_container)
     private RelativeLayout root;
@@ -43,7 +43,7 @@ public class SearchableViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_searchable_clear_icon)
     private CustomTextView clearIcon;
 
-    public SearchableViewHolder(View itemView, BaseFragment fragment) {
+    public InputableSearchViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         searchInput.addTextChangedListener(new TextWatcher() {

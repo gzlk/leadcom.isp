@@ -13,7 +13,7 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.holder.common.SearchableViewHolder;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.activity.ActArchive;
 import com.leadcom.android.isp.model.archive.Archive;
@@ -91,7 +91,7 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
     private ArchiveAdapter mAdapter;
     private ArrayList<ActArchive> archives = new ArrayList<>();
 
-    private SearchableViewHolder searchableViewHolder;
+    private InputableSearchViewHolder inputableSearchViewHolder;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -309,14 +309,14 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter.setOnViewHolderClickListener(onViewHolderClickListener);
             mRecyclerView.setAdapter(mAdapter);
         }
-        if (null == searchableViewHolder) {
-            searchableViewHolder = new SearchableViewHolder(mRootView, this);
-            searchableViewHolder.setOnSearchingListener(onSearchingListener);
+        if (null == inputableSearchViewHolder) {
+            inputableSearchViewHolder = new InputableSearchViewHolder(mRootView, this);
+            inputableSearchViewHolder.setOnSearchingListener(onSearchingListener);
             fetchingUnArchived();
         }
     }
 
-    private SearchableViewHolder.OnSearchingListener onSearchingListener = new SearchableViewHolder.OnSearchingListener() {
+    private InputableSearchViewHolder.OnSearchingListener onSearchingListener = new InputableSearchViewHolder.OnSearchingListener() {
         @Override
         public void onSearching(String text) {
             if (StringHelper.isEmpty(text)) {

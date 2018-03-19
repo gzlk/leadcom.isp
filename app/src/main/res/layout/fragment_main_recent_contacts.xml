@@ -36,7 +36,7 @@
         android:layout_below="@+id/ui_main_tool_bar_container"
         android:orientation="vertical">
 
-        <include layout="@layout/holder_view_searchable" />
+        <include layout="@layout/holder_view_searchable_clickable" />
 
         <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
     </LinearLayout>

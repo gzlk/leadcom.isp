@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_holder_view_group_squad_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+    android:background="@drawable/ui_background_clickable"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ui_static_dp_5"
+        android:layout_marginEnd="@dimen/ui_static_dp_10"
+        android:layout_marginStart="@dimen/ui_static_dp_10"
+        android:layout_marginTop="@dimen/ui_static_dp_5"
+        android:text="@string/ui_icon_folder"
+        android:textColor="@color/color_faaa2d"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_group_squad_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/app_name_default" />
+
+    <TextView
+        android:id="@+id/ui_holder_view_group_squad_members"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_static_dp_10"
+        android:text="@string/app_name_default"
+        android:textColor="@color/textColorHint"
+        android:textSize="@dimen/ui_base_text_size_small" />
+</LinearLayout>

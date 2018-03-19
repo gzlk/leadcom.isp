@@ -23,7 +23,7 @@ import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.holder.common.SearchableViewHolder;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
@@ -120,7 +120,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     private View phoneContactView;
 
     // holder
-    private SearchableViewHolder searchableViewHolder;
+    private InputableSearchViewHolder inputableSearchViewHolder;
     private ArrayList<Member> members = new ArrayList<>();
     private ContactAdapter mAdapter;
 
@@ -299,9 +299,9 @@ public class ContactFragment extends BaseOrganizationFragment {
     }
 
     private void initializeHolders() {
-        if (null == searchableViewHolder) {
-            searchableViewHolder = new SearchableViewHolder(mRootView, this);
-            searchableViewHolder.setOnSearchingListener(searchingListener);
+        if (null == inputableSearchViewHolder) {
+            inputableSearchViewHolder = new InputableSearchViewHolder(mRootView, this);
+            inputableSearchViewHolder.setOnSearchingListener(searchingListener);
         }
         initializeAdapter();
     }
@@ -389,7 +389,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     }
 
     private String searchingText = "";
-    private SearchableViewHolder.OnSearchingListener searchingListener = new SearchableViewHolder.OnSearchingListener() {
+    private InputableSearchViewHolder.OnSearchingListener searchingListener = new InputableSearchViewHolder.OnSearchingListener() {
         @Override
         public void onSearching(String text) {
             if (!StringHelper.isEmpty(text)) {

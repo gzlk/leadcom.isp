@@ -1,9 +1,12 @@
 package com.leadcom.android.isp.model.organization;
 
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>群内小组<br />
@@ -37,9 +40,13 @@ public class Squad extends Model {
     private String creatorName;    //创建者姓名
 
     @Column(Organization.Field.MemberNumber)
-    private String memberNum;      //成员数
+    private int memberNum;      //成员数
     @Ignore
     private Role groRole;      // 当前登录者在组织里的角色
+    @Column(Activity.Field.NimId)
+    private String tid;
+    @Ignore
+    private ArrayList<Member> groSquMemberList;
 
     public String getGroupId() {
         return groupId;
@@ -92,11 +99,11 @@ public class Squad extends Model {
         this.creatorName = creatorName;
     }
 
-    public String getMemberNum() {
+    public int getMemberNum() {
         return memberNum;
     }
 
-    public void setMemberNum(String memberNum) {
+    public void setMemberNum(int memberNum) {
         this.memberNum = memberNum;
     }
 
@@ -106,5 +113,21 @@ public class Squad extends Model {
 
     public void setGroRole(Role groRole) {
         this.groRole = groRole;
+    }
+
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
+    }
+
+    public ArrayList<Member> getGroSquMemberList() {
+        return groSquMemberList;
+    }
+
+    public void setGroSquMemberList(ArrayList<Member> groSquMemberList) {
+        this.groSquMemberList = groSquMemberList;
     }
 }

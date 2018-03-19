@@ -76,6 +76,7 @@
     <string name="ui_icon_heart_hollow">&#xe650;</string>
     <string name="ui_icon_document">&#xe646;</string>
     <string name="ui_icon_moment_add">&#xe63d;</string>
+    <string name="ui_icon_folder">&#xe67d;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>

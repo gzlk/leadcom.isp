@@ -27,7 +27,7 @@ import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.holder.common.SearchableViewHolder;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.PhoneContactViewHolder;
 import com.leadcom.android.isp.lib.view.SlidView;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -79,7 +79,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     private TextView centerTextView;
 
     // holder
-    private SearchableViewHolder searchableViewHolder;
+    private InputableSearchViewHolder inputableSearchViewHolder;
     private ArrayList<Contact> contacts = new ArrayList<>();
     private ArrayList<Member> members = new ArrayList<>();
     private ContactAdapter mAdapter;
@@ -176,10 +176,10 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     }
 
     private void initializeAdapter() {
-        if (null == searchableViewHolder) {
-            searchableViewHolder = new SearchableViewHolder(mRootView, this);
-            searchableViewHolder.setOnSearchingListener(searchingListener);
-            searchableViewHolder.setMaxInputLength(11);
+        if (null == inputableSearchViewHolder) {
+            inputableSearchViewHolder = new InputableSearchViewHolder(mRootView, this);
+            inputableSearchViewHolder.setOnSearchingListener(searchingListener);
+            inputableSearchViewHolder.setMaxInputLength(11);
             slidView.setOnSlidChangedListener(onSlidChangedListener);
             slidView.clearIndex();
         }
@@ -218,7 +218,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     private String searchingText = "";
 
-    private SearchableViewHolder.OnSearchingListener searchingListener = new SearchableViewHolder.OnSearchingListener() {
+    private InputableSearchViewHolder.OnSearchingListener searchingListener = new InputableSearchViewHolder.OnSearchingListener() {
         @Override
         public void onSearching(String text) {
             if (!isEmpty(text) && Utils.isNumber(text)) {

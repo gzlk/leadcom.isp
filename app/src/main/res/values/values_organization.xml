@@ -66,6 +66,8 @@
     </string-array>
     <string name="ui_group_archive_fragment_title">组织档案</string>
     <string name="ui_group_member_fragment_title">组织成员</string>
+    <string name="ui_group_squad_fragment_title">下属小组</string>
+    <string name="ui_group_squad_nothing">组织还没有小组，您来添加第一个吧</string>
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
 
     <string name="ui_organization_squad_add_title">名称：</string>

@@ -18,7 +18,7 @@ import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragm
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.FullTextQueryViewHolder;
-import com.leadcom.android.isp.holder.common.SearchableViewHolder;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -63,7 +63,7 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
     private View searchableView;
 
     // holder
-    private SearchableViewHolder searchableViewHolder;
+    private InputableSearchViewHolder inputableSearchViewHolder;
 
     private SearchAdapter mAdapter;
     private String[] items;
@@ -228,14 +228,14 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_full_text_query_base_items);
         }
-        if (null == searchableViewHolder) {
-            searchableViewHolder = new SearchableViewHolder(searchableView, this);
-            searchableViewHolder.setOnSearchingListener(onSearchingListener);
-            searchableViewHolder.setBackground(getColor(R.color.colorPrimary));
+        if (null == inputableSearchViewHolder) {
+            inputableSearchViewHolder = new InputableSearchViewHolder(searchableView, this);
+            inputableSearchViewHolder.setOnSearchingListener(onSearchingListener);
+            inputableSearchViewHolder.setBackground(getColor(R.color.colorPrimary));
         }
     }
 
-    private SearchableViewHolder.OnSearchingListener onSearchingListener = new SearchableViewHolder.OnSearchingListener() {
+    private InputableSearchViewHolder.OnSearchingListener onSearchingListener = new InputableSearchViewHolder.OnSearchingListener() {
         @Override
         public void onSearching(String text) {
             if (!isEmpty(text)) {

@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.LoginActivity;
 import com.leadcom.android.isp.activity.WelcomeActivity;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.helper.LogHelper;
@@ -295,6 +296,9 @@ public class NimApplication extends BaseActivityManagedApplication {
                         // 被踢出、账号被禁用、密码错误等情况，自动登录失败，需要返回到登录界面进行重新登录操作
                         ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_kick_out);
                     }
+                    // 退出到登录页面
+                    App.app().logout();
+                    LoginActivity.start(App.app());
                 } else if (status.shouldReLogin()) {
                     if (StatusCode.typeOfValue(status.getValue()) == StatusCode.NET_BROKEN) {
                         ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_net_broken);

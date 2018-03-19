@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
-import com.leadcom.android.isp.holder.common.SearchableViewHolder;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
@@ -46,7 +46,7 @@ public class ActivityManagementFragment extends BaseViewPagerSupportFragment {
     @ViewId(R.id.ui_tool_view_activity_management_title_button4)
     private CorneredButton button4;
 
-    private SearchableViewHolder searchableViewHolder;
+    private InputableSearchViewHolder inputableSearchViewHolder;
 
     @Override
     public int getLayout() {
@@ -133,13 +133,13 @@ public class ActivityManagementFragment extends BaseViewPagerSupportFragment {
     }
 
     private void initializeHolder() {
-        if (null == searchableViewHolder) {
-            searchableViewHolder = new SearchableViewHolder(mRootView, this);
-            searchableViewHolder.setOnSearchingListener(onSearchingListener);
+        if (null == inputableSearchViewHolder) {
+            inputableSearchViewHolder = new InputableSearchViewHolder(mRootView, this);
+            inputableSearchViewHolder.setOnSearchingListener(onSearchingListener);
         }
     }
 
-    private SearchableViewHolder.OnSearchingListener onSearchingListener = new SearchableViewHolder.OnSearchingListener() {
+    private InputableSearchViewHolder.OnSearchingListener onSearchingListener = new InputableSearchViewHolder.OnSearchingListener() {
         @Override
         public void onSearching(String text) {
             ((MyActivitiesFragment) mFragments.get(getDisplayedPage())).onSearching(text);
