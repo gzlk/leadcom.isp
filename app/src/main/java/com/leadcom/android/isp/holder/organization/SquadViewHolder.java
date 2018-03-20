@@ -36,7 +36,7 @@ public class SquadViewHolder extends BaseViewHolder {
 
     public void showContent(Squad squad) {
         nameView.setText(squad.getName());
-        numberView.setText(format("%d人", squad.getMemberNum()));
+        numberView.setText(format("%d人", squad.isSelectable() ? Integer.valueOf(squad.getAccessToken()) : squad.getMemberNum()));
     }
 
     @Click({R.id.ui_holder_view_group_squad_container})

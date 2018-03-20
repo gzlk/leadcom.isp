@@ -1,8 +1,10 @@
 package com.leadcom.android.isp.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
@@ -20,6 +22,7 @@ import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragm
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.model.common.Message;
@@ -28,6 +31,10 @@ import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.support.permission.MPermission;
+import com.netease.nim.uikit.support.permission.annotation.OnMPermissionDenied;
+import com.netease.nim.uikit.support.permission.annotation.OnMPermissionGranted;
+import com.netease.nim.uikit.support.permission.annotation.OnMPermissionNeverAskAgain;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
@@ -80,7 +87,6 @@ public class MainActivity extends TitleActivity {
     }
 
     private MainFragment mainFragment;
-    private static String downloadingUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +94,7 @@ public class MainActivity extends TitleActivity {
         //supportTransparentStatusBar = true;
         isToolbarSupported = false;
         super.onCreate(savedInstanceState);
+        requestBasePermissions();
         if (savedInstanceState != null) {
             // 从堆栈恢复时，设置一个新的空白intent，不再重复解析之前的intent
             setIntent(new Intent());
@@ -105,6 +112,39 @@ public class MainActivity extends TitleActivity {
         setMainFrameLayout(mainFragment);
         parseIntent();
         //registerUpgradeListener();
+    }
+
+    private final String[] permissions = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE
+    };
+
+    private static final int REQ_BASE_PERMISSIONS = 100;
+
+    private void requestBasePermissions() {
+        MPermission.printMPermissionResult(true, this, permissions);
+        MPermission.with(this)
+                .setRequestCode(REQ_BASE_PERMISSIONS)
+                .permissions(permissions)
+                .request();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        MPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    @OnMPermissionGranted(REQ_BASE_PERMISSIONS)
+    public void onBasePermissionRequested() {
+        MPermission.printMPermissionResult(false, this, permissions);
+    }
+
+    @OnMPermissionDenied(REQ_BASE_PERMISSIONS)
+    @OnMPermissionNeverAskAgain(REQ_BASE_PERMISSIONS)
+    public void onBasePermissionRequestFailed() {
+        ToastHelper.make(this).showMsg(R.string.ui_text_permission_basic_denied);
+        MPermission.printMPermissionResult(false, this, permissions);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -140,7 +180,6 @@ public class MainActivity extends TitleActivity {
 
     @Override
     protected void onDestroy() {
-        downloadingUrl = "";
         innerOpen = false;
         NimApplication.removeNimMessageEvent(nimMessageEvent);
         //NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, false);
@@ -174,7 +213,6 @@ public class MainActivity extends TitleActivity {
     }
 
     private void warningUpdatable(final String url, final String version) {
-        downloadingUrl = url;
         String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default), version);
         SimpleDialogHelper.init(this).show(text, R.string.ui_base_text_ok, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
             @Override

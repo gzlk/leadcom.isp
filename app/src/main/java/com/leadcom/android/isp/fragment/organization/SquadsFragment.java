@@ -99,6 +99,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
         mAdapter.clear();
         for (Squad squad : squads) {
             // 轮询所有小组
+            int cnt = 0;
             for (Member member : squad.getGroSquMemberList()) {
                 if (member.getUserName().contains(searchingText)) {
                     if (!mAdapter.exist(squad)) {
@@ -106,8 +107,10 @@ public class SquadsFragment extends BaseOrganizationFragment {
                         mAdapter.add(squad);
                     }
                     mAdapter.add(member);
+                    cnt++;
                 }
             }
+            squad.setAccessToken(String.valueOf(cnt));
         }
     }
 
