@@ -171,6 +171,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     Observer<List<RecentContact>> messageObserver = new Observer<List<RecentContact>>() {
         @Override
         public void onEvent(List<RecentContact> recentContacts) {
+            log("message observer onEvent: " + (null == recentContacts ? "null" : recentContacts.size()));
             onRecentContactChanged(recentContacts);
         }
     };
@@ -198,7 +199,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
 
         cacheMessages.clear();
 
-        refreshMessages(true);
+        refreshMessages();
     }
 
     Observer<IMMessage> statusObserver = new Observer<IMMessage>() {
@@ -229,7 +230,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                 }
             } else {
                 mAdapter.clear();
-                refreshMessages(true);
+                refreshMessages();
             }
         }
     };
@@ -254,7 +255,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         });
     }
 
-    private void refreshMessages(boolean unreadChanged) {
+    private void refreshMessages() {
         mAdapter.sort();
         mAdapter.notifyDataSetChanged();
 
@@ -274,6 +275,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                         if (code != ResponseCode.RES_SUCCESS || result == null) {
                             return;
                         }
+                        log("getRecentMessage: " + result.size());
                         // 初次加载，更新离线的消息中是否有@我的消息
                         for (RecentContact loadedRecent : result) {
                             if (loadedRecent.getSessionType() == SessionTypeEnum.Team) {
