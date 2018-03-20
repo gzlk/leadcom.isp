@@ -12,7 +12,6 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.activity.ActivityViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
@@ -119,19 +118,20 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     @Click({R.id.ui_recent_contacts_add})
     private void viewClick(View view) {
         view.startAnimation(App.clickAnimation());
-        showTooltip(view, R.id.ui_tooltip_recent_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.ui_tooltip_menu_recent_contact_list:
-                        TeamListFragment.open(RecentContactsFragment.this);
-                        break;
-                    case R.id.ui_tooltip_menu_recent_contact_create:
-                        ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
-                        break;
-                }
-            }
-        });
+        ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
+//        showTooltip(view, R.id.ui_tooltip_recent_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                switch (v.getId()) {
+//                    case R.id.ui_tooltip_menu_recent_contact_list:
+//                        TeamListFragment.open(RecentContactsFragment.this);
+//                        break;
+//                    case R.id.ui_tooltip_menu_recent_contact_create:
+//                        ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
+//                        break;
+//                }
+//            }
+//        });
     }
 
     /**
