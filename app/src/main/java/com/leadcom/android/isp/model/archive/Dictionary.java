@@ -36,6 +36,13 @@ public class Dictionary extends Model {
     }
 
     /**
+     * 获取全部本地缓存的类别
+     */
+    public static List<Dictionary> getAll() {
+        return new Dao<>(Dictionary.class).query();
+    }
+
+    /**
      * 字典类型
      */
     public interface Type {

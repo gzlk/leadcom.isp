@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -14,6 +15,7 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.leadcom.android.isp.model.archive.Dictionary;
 
 /**
  * <b>功能：</b>单纯文字的viewholder<br />
@@ -27,9 +29,11 @@ public class TextViewHolder extends BaseViewHolder {
     private CardView container;
     @ViewId(R.id.ui_holder_view_text_item_text)
     private TextView text;
+    @ViewId(R.id.ui_holder_view_text_item_selector)
+    private CustomTextView icon;
 
     private String title;
-    private int index;
+    private int index = -1;
     private boolean showSelectedEffect = false;
 
     public TextViewHolder(View itemView, BaseFragment fragment) {
@@ -68,6 +72,13 @@ public class TextViewHolder extends BaseViewHolder {
         }
     }
 
+    public void showContent(Dictionary dictionary) {
+        icon.setVisibility(View.VISIBLE);
+        icon.setTextColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        text.setText(dictionary.getName());
+        text.setTextColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHint));
+    }
+
     /**
      * 设置文字的对齐方式
      */
@@ -85,7 +96,7 @@ public class TextViewHolder extends BaseViewHolder {
     @Click({R.id.ui_holder_view_text_item_container})
     private void click(View view) {
         if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(index);
+            mOnViewHolderClickListener.onClick(index <= 0 ? getAdapterPosition() : index);
         }
     }
 }

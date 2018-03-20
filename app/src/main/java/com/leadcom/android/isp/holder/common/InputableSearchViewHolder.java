@@ -110,6 +110,7 @@ public class InputableSearchViewHolder extends BaseViewHolder {
 
     public void clearFocus() {
         searchInput.clearFocus();
+        Utils.hidingInputBoard(searchInput);
     }
 
     @Click({R.id.ui_holder_view_searchable_clear_icon})

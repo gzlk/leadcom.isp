@@ -259,7 +259,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                     // 关注成功之后设置关注属性并刷新列表
                     Concern concern = mAdapter.get(index);
                     concern.setConcernType(Concern.ConcernType.CONCERNED);
-                    concern.setType(isUpper ? OrgRequest.CONCERN_UPPER : OrgRequest.CONCERN_FRIEND);
+                    concern.setType(isUpper ? Concern.Type.UPPER : Concern.Type.FRIEND);
                     mAdapter.notifyItemChanged(index);
                 }
             }

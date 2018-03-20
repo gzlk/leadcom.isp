@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.ActRequest;
@@ -19,6 +20,7 @@ import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.archive.ArchiveManagementViewHolder;
+import com.leadcom.android.isp.holder.common.ClickableSearchViewHolder;
 import com.leadcom.android.isp.holder.home.ActivityHomeViewHolder;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.leadcom.android.isp.holder.home.HomeImagesViewHolder;
@@ -133,6 +135,8 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
     private RecommendedAdapter mAdapter;
     private HomeImagesViewHolder homeImagesViewHolder;
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private View searchableView;
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -166,6 +170,18 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     @Override
     protected void destroyView() {
 
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ClickableSearchViewHolder searchViewHolder = new ClickableSearchViewHolder(searchableView, this);
+        searchViewHolder.addOnViewHolderClickListener(new OnViewHolderClickListener() {
+            @Override
+            public void onClick(int index) {
+                ArchiveSearchFragment.open(HomeFeaturedFragment.this);
+            }
+        });
     }
 
     @Override

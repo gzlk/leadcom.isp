@@ -18,4 +18,21 @@
         android:minHeight="@dimen/ui_base_dimen_button_height"
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/app_name" />
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_text_item_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="@dimen/ui_static_dp_10"
+        android:text="@string/ui_icon_select_line"
+        android:textColor="@color/textColorHintLight"
+        android:textSize="@dimen/ui_base_text_size_big"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_gravity="bottom"
+        android:background="@color/textColorHintLight" />
 </android.support.v7.widget.CardView>

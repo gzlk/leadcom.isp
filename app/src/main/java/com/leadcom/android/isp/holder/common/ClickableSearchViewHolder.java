@@ -28,8 +28,8 @@ public class ClickableSearchViewHolder extends BaseViewHolder {
 
     @Click({R.id.ui_holder_view_searchable_icon_container})
     private void viewClick(View view) {
-        if (null != mOnViewHolderElementClickListener) {
-            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+        if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(getAdapterPosition());
         }
     }
 }
