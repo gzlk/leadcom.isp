@@ -26,6 +26,7 @@ public class RelateGroup extends Model {
         int FOLLOWED = 2;
     }
 
+    private String conGroupId;  //
     private String userId;      //用户ID
     private String groupId;     //组织ID
     private String groupName;   //组织的名称
@@ -33,6 +34,14 @@ public class RelateGroup extends Model {
     private String intro;  // 组织的简介
     private int type;        //关联的类型:1.加入的组织,2.关注的组织
     private Role groRole;    //组织角色
+
+    public String getConGroupId() {
+        return conGroupId;
+    }
+
+    public void setConGroupId(String conGroupId) {
+        this.conGroupId = conGroupId;
+    }
 
     public String getUserId() {
         return userId;
