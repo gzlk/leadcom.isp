@@ -5,8 +5,10 @@ import android.view.View;
 import com.hlk.hlklib.lib.inject.Click;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.user.UserExtra;
 
 
 /**
@@ -21,8 +23,11 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
  */
 public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
 
+    private static String[] definedValues;
+
     public GroupDetailsViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
+        definedValues = StringHelper.getStringArray(R.array.ui_text_user_property_self_defined_shown_type);
     }
 
     @Override
@@ -33,11 +38,19 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
         valueIcon.setVisibility(View.VISIBLE);
     }
 
-    @Click({R.id.ui_holder_view_simple_clickable})
+    public void showContent(UserExtra extra) {
+        valueIcon.setText(R.string.ui_icon_favorite_oval);
+        titleTextView.setText(extra.getTitle());
+        String value = StringHelper.getString(R.string.ui_text_user_property_self_defined_value, extra.getContent(), format("(%s)", definedValues[extra.getShow()]));
+        valueTextView.setText(value);
+        showDelete(true);
+    }
+
+    @Click({R.id.ui_holder_view_simple_clickable, R.id.ui_tool_view_contact_button2})
     @Override
     public void click(View view) {
         if (null != mOnViewHolderElementClickListener) {
-            mOnViewHolderElementClickListener.onClick(view, index);
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
     }
 }

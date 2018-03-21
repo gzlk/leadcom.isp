@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_user_header_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ui_background_individual_header">
+
+    <LinearLayout
+        android:id="@+id/tool_view_individual_top_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <ImageView
+        android:id="@+id/ui_holder_view_user_header_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:id="@+id/ui_holder_view_user_header_layout"
+        android:layout_width="@dimen/ui_static_dp_60"
+        android:layout_height="@dimen/ui_static_dp_60"
+        android:layout_below="@+id/tool_view_individual_top_padding"
+        android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+        android:padding="@dimen/ui_static_dp_3"
+        app:cv_background="@android:color/white"
+        app:cv_background_active="@android:color/white"
+        app:cv_background_type="fill"
+        app:cv_border_size="@dimen/ui_static_dp_zero"
+        app:cv_corner_size="@dimen/ui_static_dp_30">
+
+        <com.leadcom.android.isp.lib.view.ImageDisplayer
+            android:id="@+id/ui_holder_view_user_header"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:id_image_src="@mipmap/img_default_user_header"
+            app:id_image_type="oval"
+            app:id_nullable_drawable="true"
+            app:id_show_header="true" />
+
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+    <LinearLayout
+        android:id="@+id/ui_holder_view_user_header_name_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ui_holder_view_user_header_layout"
+        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_toEndOf="@+id/ui_holder_view_user_header_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ui_tool_individual_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLength="10"
+            android:maxLines="1"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ui_base_text_size_big" />
+
+        <TextView
+            android:id="@+id/ui_tool_individual_additional"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:minHeight="@dimen/ui_static_dp_50"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ui_base_text_size_small" />
+    </LinearLayout>
+
+</RelativeLayout>

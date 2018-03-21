@@ -18,6 +18,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.listener.OnKeyboardChangeListener;
 
 /**
  * <b>功能描述：</b>提供可搜索的ViewHolder<br />
@@ -85,6 +86,27 @@ public class InputableSearchViewHolder extends BaseViewHolder {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 resetHintContainer(hasFocus);
+            }
+        });
+        searchInput.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (searchInput.getEditableText().length() <= 0) {
+                        searchInput.clearFocus();
+                    }
+                }
+                return false;
+            }
+        });
+        new OnKeyboardChangeListener(fragment.Activity()).setKeyboardListener(new OnKeyboardChangeListener.KeyboardListener() {
+            @Override
+            public void onKeyboardChange(boolean isShow, int keyboardHeight) {
+                if (!isShow) {
+                    if (searchInput.getEditableText().length() <= 0) {
+                        searchInput.clearFocus();
+                    }
+                }
             }
         });
     }

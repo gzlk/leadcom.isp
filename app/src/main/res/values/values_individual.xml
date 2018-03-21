@@ -180,7 +180,7 @@
         <item>8|手机号码|%s|1</item>
     </string-array>
     <string name="ui_text_user_information_name_empty">未设置名字</string>
-    <string name="ui_text_user_information_signature_empty">设置个性签名</string>
+    <string name="ui_text_user_information_signature_empty">未设置个性签名</string>
     <string name="ui_text_user_information_loading">正在加载用户信息，请稍候&#8230;</string>
     <string name="ui_text_user_information_loading_sync_mine">正在同步您的信息，请稍候&#8230;</string>
     <string name="ui_text_user_information_loading_updating">正在更改您的信息，请稍候&#8230;</string>
@@ -209,4 +209,15 @@
         <![CDATA[<b>确认手机号码</b><br/>我们将发送验证码短信到这个号码：<br/>+86%s]]>
     </string>
     <string name="ui_text_modify_phone_confirm_fragment_title">填写验证码</string>
+
+    <string-array name="ui_text_personality_items">
+        <item>1|通讯录|%d人|1|0xe67b</item>
+        <item>2|档案|%d个|1|0xe670</item>
+        <item>3|动态|%d篇|1|0xe63d</item>
+        <item>4|收藏|%d个|1|0xe626</item>
+        <item>-</item>
+        <item>5|单位|%s|1|0xe679</item>
+        <item>6|职务|%s|1|0xe66f</item>
+        <item>7|电话|%s|1|0xe67a</item>
+    </string-array>
 </resources>

@@ -34,5 +34,5 @@
 
     <!--未读消息标记尺寸大小-->
     <dimen name="ui_base_unread_flag_size_with_text">@dimen/ui_static_dp_15</dimen>
-    <dimen name="ui_base_unread_flag_size_none_text">@dimen/ui_static_dp_10</dimen>
+    <dimen name="ui_base_unread_flag_size_none_text">@dimen/ui_static_dp_8</dimen>
 </resources>

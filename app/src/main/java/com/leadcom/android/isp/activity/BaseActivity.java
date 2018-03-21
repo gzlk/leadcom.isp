@@ -85,6 +85,14 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void untransparentStatusBar() {
+        if (Build.VERSION.SDK_INT >= 19) {
+            Window window = getWindow();
+            // Translucent status bar
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
     /**
      * 设置View的padding高度
      */

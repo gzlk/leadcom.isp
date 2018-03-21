@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ui_user_information_self_define"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_base_border_size_normal"
+            android:background="@drawable/ui_background_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/ui_static_dp_5">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_add"
+                android:textColor="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_static_dp_5"
+                android:gravity="center_vertical"
+                android:minHeight="@dimen/ui_base_dimen_button_height"
+                android:text="@string/ui_text_user_property_self_defined_property"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ui_main_tool_bar_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ui_main_tool_bar_padding_layout"
+        android:layout_alignTop="@+id/ui_main_tool_bar_padding_layout"
+        android:alpha="0"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:id="@+id/ui_main_tool_bar_padding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ui_main_tool_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/ui_main_personality_title_left_icon_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:minWidth="@dimen/ui_base_dimen_button_height"
+                android:paddingEnd="@dimen/ui_static_dp_5"
+                android:paddingStart="@dimen/ui_static_dp_10">
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:id="@+id/ui_main_personality_title_left_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/ui_icon_chat"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/ui_base_text_size_large" />
+
+                <LinearLayout
+                    android:id="@+id/ui_main_personality_title_left_icon_flag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/ui_main_personality_title_left_icon"
+                    android:layout_marginEnd="-3dp"
+                    android:layout_marginTop="@dimen/ui_static_dp_16"
+                    android:background="@drawable/ui_background_oval_primary">
+
+                    <LinearLayout
+                        android:layout_width="@dimen/ui_base_unread_flag_size_none_text"
+                        android:layout_height="@dimen/ui_base_unread_flag_size_none_text"
+                        android:background="@drawable/ui_background_oval_caution" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/ui_main_personality_title_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:alpha="0"
+                android:gravity="center"
+                android:text="@string/ui_text_main_bottom_button_text_4"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/ui_base_text_size_big" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_main_personality_title_right_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                android:paddingStart="@dimen/ui_static_dp_5"
+                android:text="@string/ui_icon_setting"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/ui_base_text_size_large" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

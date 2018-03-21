@@ -63,6 +63,8 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 public class GroupFragment extends BaseOrganizationFragment {
 
     private static boolean isFirst = true;
+    @ViewId(R.id.ui_main_tool_bar_container)
+    private View toolBar;
     @ViewId(R.id.ui_main_group_title_text)
     private TextView titleTextView;
     @ViewId(R.id.ui_main_group_title_allow)
@@ -87,6 +89,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        tryPaddingContent(toolBar, false);
         isLoadingComplete(true);
     }
 

@@ -175,6 +175,7 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
      * 首页头条推荐内容
      */
     public void focusImage() {
+        directlySave = false;
         httpRequest(getRequest(ListRecommend.class, "/operate/focusImage/list/all", "", HttpMethods.Get));
     }
 }
