@@ -9,26 +9,35 @@ import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.user.UserRequest;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.individual.SettingFragment;
+import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.individual.UserHeaderBlurViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>主页 - 个人<br />
@@ -49,6 +58,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private LinearLayout paddingLayout;
     @ViewId(R.id.ui_main_personality_title_text)
     private TextView titleText;
+    @ViewId(R.id.ui_main_personality_title_left_icon)
+    private CustomTextView leftIcon;
+    @ViewId(R.id.ui_main_personality_title_right_icon)
+    private CustomTextView rightIcon;
     private PersonalityAdapter mAdapter;
     private String[] items;
 
@@ -56,6 +69,103 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         tryPaddingContent(paddingLayout, false);
+
+        // 头像选择是需要剪切的
+        isChooseImageForCrop = true;
+        // 头像是需要压缩的
+        isSupportCompress = true;
+        // 图片选择后的回调
+        addOnImageSelectedListener(albumImageSelectedListener);
+        // 文件上传完毕后的回调处理
+        setOnFileUploadingListener(mOnFileUploadingListener);
+    }
+
+    // 相册选择返回了
+    private OnImageSelectedListener albumImageSelectedListener = new OnImageSelectedListener() {
+        @Override
+        public void onImageSelected(ArrayList<String> selected) {
+            // 图片选择完毕之后立即压缩图片并且自动上传
+            compressImage();
+        }
+    };
+
+    private OnFileUploadingListener mOnFileUploadingListener = new OnFileUploadingListener() {
+        @Override
+        public void onUploading(int all, int current, String file, long size, long uploaded) {
+
+        }
+
+        @Override
+        public void onUploadingComplete(ArrayList<Attachment> uploaded) {
+            int size = uploaded.size();
+            tryEditUserInfo(UserRequest.UPDATE_PHOTO, uploaded.get(size - 1).getUrl());
+        }
+    };
+
+    private void tryEditUserInfo(final int type, final String value) {
+        setLoadingText(R.string.ui_text_user_information_loading_updating);
+        displayLoading(true);
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    // 同步我的基本信息
+                    //syncMineInformation();
+                    fetchingRemoteUserInfo();
+                    resetUserInformation(type, value);
+                }
+                displayLoading(false);
+            }
+        }).update(type, value);
+    }
+
+    private void fetchingRemoteUserInfo() {
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success && null != user) {
+                    // 随时更新我的信息
+                    Cache.cache().setCurrentUser(user);
+                    Cache.cache().saveCurrentUser();
+                }
+            }
+        }).find(Cache.cache().userId, true);
+    }
+
+    private void resetUserInformation(int type, String value) {
+        switch (type) {
+            case UserRequest.UPDATE_COMPANY:
+                mAdapter.get(6).setId(format(items[5], value));
+                mAdapter.notifyItemChanged(6);
+                break;
+            case UserRequest.UPDATE_DUTY:
+                mAdapter.get(7).setId(format(items[6], value));
+                mAdapter.notifyItemChanged(7);
+                break;
+            case UserRequest.UPDATE_NAME:
+                ((User) mAdapter.get(0)).setName(value);
+                mAdapter.notifyItemChanged(0);
+                break;
+            case UserRequest.UPDATE_PHONE:
+                mAdapter.get(8).setId(format(items[7], value));
+                mAdapter.notifyItemChanged(8);
+                break;
+            case UserRequest.UPDATE_PHOTO:
+                ((User) mAdapter.get(0)).setHeadPhoto(value);
+                mAdapter.notifyItemChanged(0);
+                break;
+            case UserRequest.UPDATE_SIGNATURE:
+                ((User) mAdapter.get(0)).setSignature(value);
+                mAdapter.notifyItemChanged(0);
+                break;
+        }
+    }
+
+    public void resetIconColor(int color) {
+        leftIcon.setTextColor(color);
+        rightIcon.setTextColor(color);
     }
 
     @Override
@@ -98,8 +208,18 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
-    @Click({})
+    @Click({R.id.ui_main_personality_title_left_icon_container, R.id.ui_main_personality_title_right_icon})
     private void viewClick(View view) {
+        switch (view.getId()) {
+            case R.id.ui_main_personality_title_left_icon_container:
+                // 打开消息列表
+                UserMessageFragment.open(PersonalityFragment.this);
+                break;
+            case R.id.ui_main_personality_title_right_icon:
+                view.startAnimation(App.clickAnimation());
+                SettingFragment.open(PersonalityFragment.this);
+                break;
+        }
     }
 
     private void initializeItems() {
@@ -190,7 +310,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case 2:
                 // 打开个人档案
-                IndividualFragment.open(this,IndividualFragment.TYPE_ARCHIVE_MINE);
+                IndividualFragment.open(this, IndividualFragment.TYPE_ARCHIVE_MINE);
                 break;
             case 3:
                 // 打开个人动态
@@ -198,7 +318,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case 4:
                 // 打开个人搜藏
-                IndividualFragment.open(this,IndividualFragment.TYPE_COLLECT);
+                IndividualFragment.open(this, IndividualFragment.TYPE_COLLECT);
                 break;
             case 5:
                 // 编辑单位信息
@@ -216,6 +336,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(View view, int index) {
             switch (view.getId()) {
+                case R.id.ui_holder_view_user_header_layout:
+                    openImageSelector(true);
+                    break;
                 case R.id.ui_holder_view_simple_clickable:
                     // 打开或编辑置顶的项目
                     performItemClick(index);

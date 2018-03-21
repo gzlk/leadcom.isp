@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
@@ -24,6 +25,10 @@ import com.hlk.hlklib.lib.inject.ViewId;
  */
 
 public class SettingFragment extends BaseTransparentSupportFragment {
+
+    public static void open(BaseFragment fragment) {
+        fragment.openActivity(SettingFragment.class.getName(), "", true, false);
+    }
 
     // UI
     @ViewId(R.id.ui_setting_to_password)
