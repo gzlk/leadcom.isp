@@ -13,8 +13,10 @@ import android.view.View;
 import com.daimajia.swipe.util.Attributes;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.MemberRequest;
+import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
@@ -35,10 +37,13 @@ import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.leadcom.android.isp.model.user.User;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 /**
  * <b>功能描述：</b>通讯录(包括小组通讯录和组织通讯录)<br />
@@ -68,6 +73,10 @@ public class ContactFragment extends BaseOrganizationFragment {
      * 打开的是组织的通讯录
      */
     public static final int TYPE_ORG = 2;
+    /**
+     * 打开的是我的联系人列表
+     */
+    public static final int TYPE_MINE = 3;
 
     private static boolean isOpenable = false;
 
@@ -95,6 +104,13 @@ public class ContactFragment extends BaseOrganizationFragment {
     public static void open(BaseFragment fragment, String groupId) {
         isOpenable = true;
         fragment.openActivity(ContactFragment.class.getName(), format("%d,%s,", TYPE_ORG, groupId), true, false);
+    }
+
+    /**
+     * 打开我的联系人列表
+     */
+    public static void open(BaseFragment fragment) {
+        fragment.openActivity(ContactFragment.class.getName(), format("%d,,", TYPE_MINE), true, false);
     }
 
     @Override
@@ -256,7 +272,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         // 小组才显示标题栏，组织通讯录不需要
-        return isOpenable || showType == TYPE_SQUAD;
+        return isOpenable || showType == TYPE_SQUAD || showType == TYPE_MINE;
     }
 
     @Override
@@ -340,6 +356,9 @@ public class ContactFragment extends BaseOrganizationFragment {
             case TYPE_SQUAD:
                 loadingSquad();
                 break;
+            case TYPE_MINE:
+                loadingMineContacts();
+                break;
         }
     }
 
@@ -354,6 +373,31 @@ public class ContactFragment extends BaseOrganizationFragment {
             }
             fetchingRemoteMembers(mOrganizationId, mSquadId);
         }
+    }
+
+    private void loadingMineContacts() {
+        // 我的联系人列表不需要再次拉取
+        enableSwipe(false);
+        isLoadingComplete(true);
+        setCustomTitle(R.string.ui_text_personality_contact_fragment_title);
+        setNothingText(R.string.ui_text_personality_contact_nothing);
+        OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+        MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
+            @Override
+            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list) {
+                    for (Member member : list) {
+                        member.setId(member.getUserId());
+                        mAdapter.update(member);
+                    }
+                }
+                mAdapter.sort();
+                displayNothing(mAdapter.getItemCount() <= 0);
+                //isLoadingComplete(true);
+                //stopRefreshing();
+            }
+        }).listAllGroup();
     }
 
     @Override

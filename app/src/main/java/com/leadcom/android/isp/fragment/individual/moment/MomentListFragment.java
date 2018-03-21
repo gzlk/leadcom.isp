@@ -11,14 +11,18 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.api.user.UserRequest;
+import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.individual.MomentViewHolder;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.user.Moment;
 import com.leadcom.android.isp.model.user.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -93,6 +97,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                 Moment moment = new Moment();
                 moment.setId(getResultedData(data));
                 mAdapter.remove(moment);
+                mAdapter.notifyDataSetChanged();
                 break;
         }
         super.onActivityResult(requestCode, data);
@@ -100,27 +105,18 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
 
     private void fetchingMoments() {
         setLoadingText(R.string.ui_individual_moment_list_loading);
-        displayLoading(true);
+        //displayLoading(true);
         displayNothing(false);
         MomentRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Moment>() {
             @Override
             public void onResponse(List<Moment> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list) {
-                        if (list.size() >= pageSize) {
-                            remotePageNumber++;
-                            isLoadingComplete(false);
-                        } else {
-                            isLoadingComplete(true);
-                        }
-                        mAdapter.update(list, false);
-                        mAdapter.sort();
-                    } else {
-                        isLoadingComplete(true);
-                    }
-                } else {
-                    isLoadingComplete(true);
+                int size = success ? (null == list ? 0 : list.size()) : 0;
+                isLoadingComplete(size < pageSize);
+                remotePageNumber += (size >= pageSize ? 1 : 0);
+                if (success && null != list) {
+                    mAdapter.update(list, false);
+                    mAdapter.sort();
                 }
                 displayLoading(false);
                 stopRefreshing();
@@ -148,9 +144,19 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            // 默认显示第一张图片
-            MomentImagesFragment.open(MomentListFragment.this, mAdapter.get(index).getId(), 0);
-            //openActivity(MomentImagesFragment.class.getName(), format("%s,0", mAdapter.get(index).getId()), true, false);
+            // 打开详情页了
+            Moment moment = mAdapter.get(index);
+            if (moment.getId().equals(today().getId())) {
+                openImageSelector(true);
+            } else {
+                if (moment.getImage().size() < 1) {
+                    // 没有图片，直接打开说说详情页
+                    MomentDetailsFragment.open(MomentListFragment.this, moment.getId());
+                } else {
+                    // 默认打开第一个图片
+                    MomentImagesFragment.open(MomentListFragment.this, moment.getId(), 0);
+                }
+            }
         }
     };
 
@@ -162,11 +168,42 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private Moment cameraMoment;
+
+    // 今天
+    private Moment today() {
+        if (null == cameraMoment) {
+            cameraMoment = new Moment();
+            cameraMoment.setId(getString(R.string.ui_text_moment_item_default_today));
+        }
+        // 设置时间为今天最后一秒，在排序时会一直排在最前面
+        cameraMoment.setCreateDate(Utils.formatDateOfNow("yyyy-MM-dd 23:59:59"));
+        return cameraMoment;
+    }
+
+    private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {
+        @Override
+        public void onImageSelected(ArrayList<String> selected) {
+            // 打开新建动态页面
+            MomentCreatorFragment.open(MomentListFragment.this, Json.gson().toJson(selected));
+            getWaitingForUploadFiles().clear();
+        }
+    };
+
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new MomentAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            fetchUser();
+            if (mQueryId.equals(Cache.cache().userId)) {
+                mAdapter.add(today());
+                setCustomTitle(R.string.ui_main_individual_functions_1);
+                // 这里不需要直接上传，只需要把选择的图片传递给新建动态页面即可，上传在那里实现
+                isSupportDirectlyUpload = false;
+                // 添加图片选择
+                addOnImageSelectedListener(imageSelectedListener);
+            } else {
+                fetchUser();
+            }
             fetchingMoments();
         }
     }

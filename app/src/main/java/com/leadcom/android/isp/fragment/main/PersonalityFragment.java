@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
@@ -16,6 +17,7 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
+import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
@@ -94,6 +96,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected String getLocalPageTag() {
         return null;
+    }
+
+    @Click({})
+    private void viewClick(View view) {
     }
 
     private void initializeItems() {
@@ -180,9 +186,11 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         switch (index) {
             case 1:
                 // 打开通讯录
+                ContactFragment.open(this);
                 break;
             case 2:
                 // 打开个人档案
+                IndividualFragment.open(this,IndividualFragment.TYPE_ARCHIVE_MINE);
                 break;
             case 3:
                 // 打开个人动态
@@ -190,6 +198,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case 4:
                 // 打开个人搜藏
+                IndividualFragment.open(this,IndividualFragment.TYPE_COLLECT);
                 break;
             case 5:
                 // 编辑单位信息

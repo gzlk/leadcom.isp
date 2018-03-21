@@ -56,9 +56,9 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         return ocp;
     }
 
-    public static void open(BaseFragment fragment, int req, String groupId, boolean lockExist, boolean singlePick, String existIds) {
+    public static void open(BaseFragment fragment, String groupId, boolean lockExist, boolean singlePick, String existIds) {
         String params = format("%s,%s,%s,%s", groupId, lockExist, singlePick, existIds);
-        fragment.openActivity(GroupContactPickFragment.class.getName(), params, req, true, false);
+        fragment.openActivity(GroupContactPickFragment.class.getName(), params, REQUEST_MEMBER, true, false);
     }
 
     @Override

@@ -164,19 +164,19 @@ public class MomentRequest extends Request<Moment> {
     private static final String QB_USER_ID = "userId";
     private static final String QB_MOMENT = "momentId";
 
-    private void getRequestBy(String baseUrl, String queryBy, Type resultType, String queryId, int pageNumber, String body, HttpMethods methods) {
+    private void getRequestBy(String baseUrl, String queryBy, Type resultType, String queryId, int pageNumber, HttpMethods methods) {
         String url = format("%s?%s=%s", baseUrl, queryBy, queryId);
         if (pageNumber >= 0) {
-            url += format("&pageNumber=%d", pageNumber);
+            url += format("&pageNumber=%d&pageSize=50", pageNumber);
         }
-        httpRequest(getRequest(resultType, url, body, methods));
+        httpRequest(getRequest(resultType, url, "", methods));
     }
 
     /**
      * 查询指定用户id的说说列表
      */
     public void list(String userId, int pageNumber) {
-        getRequestBy(url(LIST), QB_USER_ID, MultiMoment.class, userId, pageNumber, "", HttpMethods.Get);
+        getRequestBy(url(LIST), QB_USER_ID, MultiMoment.class, userId, pageNumber, HttpMethods.Get);
     }
 
     /**
@@ -191,14 +191,14 @@ public class MomentRequest extends Request<Moment> {
      * 查找指定的单个id的说说详情
      */
     public void find(@NonNull String momentId) {
-        getRequestBy(url(FIND), QB_MOMENT, SingleMoment.class, momentId, -1, "", HttpMethods.Get);
+        getRequestBy(url(FIND), QB_MOMENT, SingleMoment.class, momentId, -1, HttpMethods.Get);
     }
 
     /**
      * 删除一条说说，需要POST
      */
     public void delete(@NonNull String momentId) {
-        getRequestBy(url(DELETE), QB_MOMENT, SingleMoment.class, momentId, -1, "", HttpMethods.Get);
+        getRequestBy(url(DELETE), QB_MOMENT, SingleMoment.class, momentId, -1, HttpMethods.Get);
     }
 
     /**

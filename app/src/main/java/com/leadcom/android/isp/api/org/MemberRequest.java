@@ -274,4 +274,12 @@ public class MemberRequest extends Request<Member> {
 
         httpRequest(getRequest(SingleMember.class, url(Member.Type.SQUAD, ADD), object.toString(), HttpMethods.Post));
     }
+
+
+    /**
+     * 拉取我的联系人列表，全部已关注的组织成员
+     */
+    public void listAllGroup() {
+        httpRequest(getRequest(ListQueryMember.class, format("/user/user/list/allGroup", url(LIST)), "", HttpMethods.Get));
+    }
 }

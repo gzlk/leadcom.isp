@@ -18,6 +18,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.application.NimApplication;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
@@ -77,7 +78,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_SELECTED_MMT = "mmt_selected";
     private static final String PARAM_SELECTED_CMT = "ifmt_selected_cmt";
 
-    public static final int TYPE_ARCHIVE = 0, TYPE_MOMENT = 1, TYPE_COLLECT = 2;
+    public static final int TYPE_ARCHIVE_HOME = 0, TYPE_MOMENT = 1, TYPE_COLLECT = 2, TYPE_ARCHIVE_MINE = 3;
 
     public static IndividualFragment newInstance(String params) {
         IndividualFragment fragment = new IndividualFragment();
@@ -87,9 +88,13 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         return fragment;
     }
 
+    public static void open(BaseFragment fragment, int type) {
+        fragment.openActivity(IndividualFragment.class.getName(), String.valueOf(type), true, false);
+    }
+
     private boolean isTitleBarShown = false;
     private int selectedFunction = 0, selectedMoment = 0, selectedComment = 0;
-    private int function = TYPE_ARCHIVE;
+    private int function = TYPE_ARCHIVE_HOME;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -153,7 +158,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return function == TYPE_ARCHIVE_MINE;
     }
 
     @Override
@@ -186,13 +191,17 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 // 刷新动态列表
                 refreshingRemoteMoments();
                 break;
-            case TYPE_ARCHIVE:
+            case TYPE_ARCHIVE_HOME:
                 // 刷新档案列表
                 refreshingRemoteDocuments();
                 break;
             case TYPE_COLLECT:
                 // 刷新收藏列表
                 refreshingFavorites();
+                break;
+            case TYPE_ARCHIVE_MINE:
+                setCustomTitle(R.string.ui_main_individual_functions_2);
+                refreshingMineDocuments();
                 break;
         }
     }
@@ -257,7 +266,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     }
 
     /**
-     * 拉取我的档案列表
+     * 拉取首页关注的档案列表
      */
     private void refreshingRemoteDocuments() {
         //mAdapter.remove(noMore());
@@ -282,6 +291,30 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 }
             }
         }).listHomeFollowed(remotePageNumber);
+    }
+
+    /**
+     * 拉取我的档案列表
+     */
+    private void refreshingMineDocuments() {
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
+            @Override
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                int count = null == list ? 0 : list.size();
+                adjustRemotePages(count, pageSize, userInfoNum, lastHeadPhoto);
+                if (success) {
+                    if (null != list) {
+                        for (Archive archive : list) {
+                            mAdapter.update(archive);
+                        }
+                    }
+                }
+                if (count < pageSize) {
+                    mAdapter.add(nothingMore);
+                }
+            }
+        }).list(remotePageNumber, Cache.cache().userId);
     }
 
     private void refreshingFavorites() {

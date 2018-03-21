@@ -220,4 +220,6 @@
         <item>6|职务|%s|1|0xe66f</item>
         <item>7|电话|%s|1|0xe67a</item>
     </string-array>
+    <string name="ui_text_personality_contact_fragment_title">通讯录</string>
+    <string name="ui_text_personality_contact_nothing">没有更多的联系人了</string>
 </resources>

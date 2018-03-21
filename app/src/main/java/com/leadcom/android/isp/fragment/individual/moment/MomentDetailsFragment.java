@@ -139,6 +139,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             praiseViewHolder.setHasShown(false);
         }
         setSupportLoadingMore(true);
+        mAdapter.remove(noMore);
         loadingLike(mAdapter.get(mQueryId));
         loadingComments(mAdapter.get(mQueryId));
     }
@@ -273,11 +274,15 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     openKeyboard();
                     break;
                 case R.id.ui_tooltip_menu_moment_praise:
-                    praiseViewHolder.setHasShown(false);
+                    if (null != praiseViewHolder) {
+                        praiseViewHolder.setHasShown(false);
+                    }
                     like(mMoment);
                     break;
                 case R.id.ui_tooltip_menu_moment_praised:
-                    praiseViewHolder.setHasShown(false);
+                    if (null != praiseViewHolder) {
+                        praiseViewHolder.setHasShown(false);
+                    }
                     like(mMoment);
                     break;
             }
