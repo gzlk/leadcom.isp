@@ -324,7 +324,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         public void onClick(int index) {
             if (index == 1) {
                 // 打开动态页
-                openActivity(MomentListFragment.class.getName(), mQueryId, true, false);
+                MomentListFragment.open(UserPropertyFragment.this, mQueryId);
             } else {
                 if (mQueryId.equals(Cache.cache().userId)) {
                     if (index >= 0) {

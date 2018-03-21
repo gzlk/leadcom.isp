@@ -11,6 +11,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.api.user.UserRequest;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.individual.MomentViewHolder;
@@ -40,6 +41,10 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putString(PARAM_QUERY_ID, params);
         mlf.setArguments(bundle);
         return mlf;
+    }
+
+    public static void open(BaseFragment fragment, String userId) {
+        fragment.openActivity(MomentListFragment.class.getName(), userId, REQUEST_CHANGE, true, false);
     }
 
     private MomentAdapter mAdapter;

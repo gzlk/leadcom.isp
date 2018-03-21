@@ -15,6 +15,7 @@ import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
@@ -175,10 +176,45 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private void performItemClick(int index) {
+        switch (index) {
+            case 1:
+                // 打开通讯录
+                break;
+            case 2:
+                // 打开个人档案
+                break;
+            case 3:
+                // 打开个人动态
+                MomentListFragment.open(PersonalityFragment.this, Cache.cache().userId);
+                break;
+            case 4:
+                // 打开个人搜藏
+                break;
+            case 5:
+                // 编辑单位信息
+                break;
+            case 6:
+                // 编辑职务信息
+                break;
+            case 7:
+                // 修改电话
+                break;
+        }
+    }
+
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-
+            switch (view.getId()) {
+                case R.id.ui_holder_view_simple_clickable:
+                    // 打开或编辑置顶的项目
+                    performItemClick(index);
+                    break;
+                case R.id.ui_tool_view_contact_button2:
+                    // 删除自定义介绍项目
+                    break;
+            }
         }
     };
 
