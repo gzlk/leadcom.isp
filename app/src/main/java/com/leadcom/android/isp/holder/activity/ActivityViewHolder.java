@@ -147,9 +147,14 @@ public class ActivityViewHolder extends BaseViewHolder {
         headers.setAdapter(adapter);
         final List<String> img = new ArrayList<>();
         if (contact.getSessionType() == SessionTypeEnum.P2P) {
-            UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(contact.getContactId());
-            img.add(null == info ? "" : info.getAvatar());
-            titleView.setText(contact.getFromNick());
+            NimUIKit.getUserInfoProvider().getUserInfoAsync(contact.getContactId(), new SimpleCallback<UserInfo>() {
+                @Override
+                public void onResult(boolean success, UserInfo info, int code) {
+                    img.add(null == info ? "" : info.getAvatar());
+                    headers.setImagesData(img);
+                    titleView.setText(null == info ? "未知" : info.getName());
+                }
+            });
             descView.setText(getRecentMsgType(contact));
         } else if (contact.getSessionType() == SessionTypeEnum.Team) {
             final Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
@@ -159,7 +164,6 @@ public class ActivityViewHolder extends BaseViewHolder {
             titleView.setText(null == team ? "无活动名称" : team.getName());
             descView.setText(format("%s：%s", contact.getFromNick(), getRecentMsgType(contact)));
         }
-        headers.setImagesData(img);
         flagView.setVisibility(contact.getUnreadCount() > 0 ? View.VISIBLE : View.GONE);
         unreadNum.setText(fragment().formatUnread(contact.getUnreadCount()));
         timeView.setText(fragment().formatTimeAgo(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), contact.getTime())));

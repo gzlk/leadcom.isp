@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -36,6 +37,7 @@ import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
+import com.leadcom.android.isp.model.organization.SubMember;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -109,7 +111,7 @@ public class ContactFragment extends BaseOrganizationFragment {
      */
     public static void open(BaseFragment fragment, String groupId, String squadId) {
         isOpenable = true;
-        fragment.openActivity(ContactFragment.class.getName(), format("%d,%s,", TYPE_SQUAD, groupId, squadId), true, false);
+        fragment.openActivity(ContactFragment.class.getName(), format("%d,%s,%s", TYPE_SQUAD, groupId, squadId), true, false);
     }
 
     /**
@@ -180,12 +182,22 @@ public class ContactFragment extends BaseOrganizationFragment {
                     public void onClick() {
                         // + 号点击之后直接打开组织通讯录(2017/08/02 10:00)
                         // 打开组织通讯录并尝试将里面的用户邀请到小组
-                        openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
+                        String json = SubMember.toJson(getSubMembers());
+                        GroupContactPickFragment.open(ContactFragment.this, mOrganizationId, true, false, json);
+                        //openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
                     }
                 });
                 setCustomTitle(R.string.ui_group_squad_member_fragment_title);
             }
         }
+    }
+
+    private ArrayList<SubMember> getSubMembers() {
+        ArrayList<SubMember> sub = new ArrayList<>();
+        for (Member member : members) {
+            sub.add(new SubMember(member));
+        }
+        return sub;
     }
 
     /**
@@ -307,6 +319,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
+        remotePageNumber = 1;
         fetchingRemoteMembers(mOrganizationId, mSquadId);
     }
 
@@ -331,6 +344,52 @@ public class ContactFragment extends BaseOrganizationFragment {
             }
             //refreshContact();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_MEMBER:
+                // 添加了成员并且返回了
+                String json = getResultedData(data);
+                if (!isEmpty(json) && json.length() > 10) {
+                    ArrayList<SubMember> subs = SubMember.fromJson(json);
+                    checkSelectedMembers(subs);
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
+    private void checkSelectedMembers(ArrayList<SubMember> list) {
+        Iterator<SubMember> iterator = list.iterator();
+        // 清除已经存在队列里的重复成员
+        while (iterator.hasNext()) {
+            SubMember member = iterator.next();
+            if (exist(member.getUserId())) {
+                iterator.remove();
+            }
+        }
+        if (list.size() > 0) {
+            // 如果清除掉已经存在队列里的成员之后还有剩余，则需要将其加入小组
+            MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
+                @Override
+                public void onResponse(Member member, boolean success, String message) {
+                    super.onResponse(member, success, message);
+                    if (success) {
+                        // 加入成功，则重新刷新一遍小组成员
+                        fetchingRemoteMembers(mOrganizationId, mSquadId);
+                    }
+                }
+            }).addToSquadFromGroup(mSquadId, SubMember.getUserIds(list));
+        }
+    }
+
+    private boolean exist(String userId) {
+        for (Member member : members) {
+            if (member.getUserId().equals(userId)) return true;
+        }
+        return false;
     }
 
     private void initializeHolders() {
@@ -386,7 +445,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         if (null == squad) {
             fetchingRemoteSquad(mSquadId);
         } else {
-            setCustomTitle(squad.getName());
+            setCustomTitle(StringHelper.getString(R.string.ui_group_squad_member_fragment_title_string, squad.getName()));
             if (isEmpty(mOrganizationId)) {
                 mOrganizationId = squad.getGroupId();
             }
@@ -422,7 +481,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Override
     protected void onFetchingRemoteSquadComplete(Squad squad) {
         if (null != squad && !StringHelper.isEmpty(squad.getId())) {
-            setCustomTitle(squad.getName());
+            setCustomTitle(StringHelper.getString(R.string.ui_group_squad_member_fragment_title_string, squad.getName()));
             fetchingRemoteMembers(squad.getGroupId(), squad.getId());
         }
     }

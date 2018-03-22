@@ -62,6 +62,7 @@ import com.netease.nim.uikit.business.session.module.MsgForwardFilter;
 import com.netease.nim.uikit.business.session.module.MsgRevokeFilter;
 import com.netease.nim.uikit.business.team.model.TeamExtras;
 import com.netease.nim.uikit.business.team.model.TeamRequestCode;
+import com.netease.nim.uikit.impl.cache.NimUserInfoCache;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -78,6 +79,7 @@ import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -334,8 +336,27 @@ public class NimSessionHelper {
             };
 
             p2pCustomization.actions = getActions(SessionTypeEnum.P2P, false);
-            p2pCustomization.withSticker = true;
 
+            // 定制ActionBar右边的按钮，可以加多个
+            ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
+            // 用户信息入口
+            SessionCustomization.OptionsButton infoButton = new SessionCustomization.OptionsButton() {
+                @Override
+                public void onClick(Context context, View view, String sessionId) {
+                    NimUserInfo info = NimUserInfoCache.getInstance().getUserInfo(sessionId);
+                    if (null != info) {
+                        UserPropertyFragment.open(context, info.getAccount());
+                    } else {
+                        ToastHelper.make().showMsg("用户不存在");
+                    }
+                }
+            };
+            infoButton.iconId = R.drawable.ic_action_person;
+            buttons.add(infoButton);
+            p2pCustomization.buttons = buttons;
+
+            p2pCustomization.withSticker = true;
+            p2pCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector;
         }
 
         return p2pCustomization;
