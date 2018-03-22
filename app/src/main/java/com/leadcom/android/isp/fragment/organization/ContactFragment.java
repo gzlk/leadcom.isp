@@ -11,12 +11,13 @@ import android.text.TextPaint;
 import android.view.View;
 
 import com.daimajia.swipe.util.Attributes;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.MemberRequest;
-import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
@@ -35,9 +36,6 @@ import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.leadcom.android.isp.model.user.User;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -155,11 +153,17 @@ public class ContactFragment extends BaseOrganizationFragment {
         super.onActivityCreated(savedInstanceState);
         if (isOpenable) {
             myRole = Cache.cache().getGroupRole(mQueryId);
+            phoneContactView.setVisibility(View.GONE);
             // 有权限添加成员时，显示手机通讯录入口
             if (hasOperation(GRPOperation.MEMBER_ADD)) {
-                phoneContactView.setVisibility(View.VISIBLE);
-            } else {
-                phoneContactView.setVisibility(View.GONE);
+                setRightIcon(R.string.ui_icon_add);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        openActivity(PhoneContactFragment.class.getName(), format("%s,", mQueryId), true, false);
+                    }
+                });
+                //phoneContactView.setVisibility(View.VISIBLE);
             }
             setCustomTitle(R.string.ui_group_member_fragment_title);
         }
@@ -213,7 +217,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Override
     public void doingInResume() {
         searchView.setVisibility(showType == TYPE_SQUAD ? View.VISIBLE : View.GONE);
-        phoneContactView.setVisibility(showType == TYPE_ORG ? View.VISIBLE : View.GONE);
+        //phoneContactView.setVisibility(showType == TYPE_ORG ? View.VISIBLE : View.GONE);
         setNothingText(showType == TYPE_ORG ? R.string.ui_organization_contact_no_member : R.string.ui_organization_contact_squad_no_member);
         initializeTitleEvent();
         initializeHolders();

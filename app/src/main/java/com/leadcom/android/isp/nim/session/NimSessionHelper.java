@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.api.activity.ActRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -410,7 +409,7 @@ public class NimSessionHelper {
             SessionCustomization.OptionsButton chatButton = new SessionCustomization.OptionsButton() {
                 @Override
                 public void onClick(Context context, View view, String sessionId) {
-                    BaseActivity.openActivity(context, SystemMessageFragment.class.getName(), "", true, false);
+                    SystemMessageFragment.open(context);
                 }
             };
             chatButton.iconId = R.drawable.ic_action_chat;
@@ -474,7 +473,7 @@ public class NimSessionHelper {
             SessionCustomization.OptionsButton chatButton = new SessionCustomization.OptionsButton() {
                 @Override
                 public void onClick(Context context, View view, String sessionId) {
-                    BaseActivity.openActivity(context, SystemMessageFragment.class.getName(), "", true, false);
+                    SystemMessageFragment.open(context);
                 }
             };
             chatButton.iconId = R.drawable.ic_action_chat;

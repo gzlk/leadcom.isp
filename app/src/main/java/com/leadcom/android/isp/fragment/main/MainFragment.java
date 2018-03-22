@@ -299,7 +299,7 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 break;
             case R.id.ui_ui_custom_title_right_icon_2_container:
                 // 打开消息页面
-                openActivity(SystemMessageFragment.class.getName(), "", true, false);
+                SystemMessageFragment.open(MainFragment.this);
                 break;
             case R.id.ui_ui_custom_title_left_container:
                 // 搜索

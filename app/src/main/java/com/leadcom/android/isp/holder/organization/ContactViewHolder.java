@@ -63,6 +63,7 @@ public class ContactViewHolder extends BaseViewHolder {
 
     private boolean buttonInviteVisible = false;
     private boolean pickerVisible = false;
+    private boolean phoneVisible = true;
     private int imageSize;
 
     public ContactViewHolder(View itemView, BaseFragment fragment) {
@@ -77,6 +78,10 @@ public class ContactViewHolder extends BaseViewHolder {
                 }
             }
         });
+    }
+
+    public void setPhoneVisible(boolean visible) {
+        phoneVisible = visible;
     }
 
     /**
@@ -160,12 +165,14 @@ public class ContactViewHolder extends BaseViewHolder {
         text = getSearchingText(text, searchingText);
         nameView.setText(Html.fromHtml(text));
         dutyView.setText(member.getDuty());
-        text = member.getPhone();
-        if (StringHelper.isEmpty(text)) {
-            text = StringHelper.getString(R.string.ui_organization_member_no_phone);
+        if (phoneVisible) {
+            text = member.getPhone();
+            if (StringHelper.isEmpty(text)) {
+                text = StringHelper.getString(R.string.ui_organization_member_no_phone);
+            }
+            text = getSearchingText(text, searchingText);
+            phoneView.setText(Html.fromHtml(text));
         }
-        text = getSearchingText(text, searchingText);
-        phoneView.setText(Html.fromHtml(text));
         headerView.displayImage(member.getHeadPhoto(), imageSize, false, false);
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
@@ -260,6 +267,7 @@ public class ContactViewHolder extends BaseViewHolder {
                 }
                 break;
             case R.id.ui_holder_view_contact_phone:
+                if (!phoneVisible) return;
                 if (null != onPhoneDialListener) {
                     onPhoneDialListener.onDial(getAdapterPosition());
                 }

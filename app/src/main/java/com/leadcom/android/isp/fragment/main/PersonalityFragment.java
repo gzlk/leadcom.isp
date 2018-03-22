@@ -11,24 +11,23 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
-import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.individual.UserHeaderBlurViewHolder;
+import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -36,6 +35,7 @@ import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
+import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 import java.util.ArrayList;
 
@@ -60,10 +60,34 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private TextView titleText;
     @ViewId(R.id.ui_main_personality_title_left_icon)
     private CustomTextView leftIcon;
+    @ViewId(R.id.ui_main_personality_title_left_icon_flag)
+    private View leftFlag;
     @ViewId(R.id.ui_main_personality_title_right_icon)
     private CustomTextView rightIcon;
     private PersonalityAdapter mAdapter;
     private String[] items;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        NimApplication.addNotificationChangeCallback(callback);
+    }
+
+    private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
+        @Override
+        public void onChanged() {
+            int size = NimMessage.getUnRead();
+            if (null != leftFlag) {
+                leftFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
+            }
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        NimApplication.removeNotificationChangeCallback(callback);
+        super.onDestroy();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -78,6 +102,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         addOnImageSelectedListener(albumImageSelectedListener);
         // 文件上传完毕后的回调处理
         setOnFileUploadingListener(mOnFileUploadingListener);
+        // 查找未读的推送通知
+        NimApplication.dispatchCallbacks();
     }
 
     // 相册选择返回了
@@ -213,7 +239,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         switch (view.getId()) {
             case R.id.ui_main_personality_title_left_icon_container:
                 // 打开消息列表
-                UserMessageFragment.open(PersonalityFragment.this);
+                SystemMessageFragment.open(PersonalityFragment.this);
                 break;
             case R.id.ui_main_personality_title_right_icon:
                 view.startAnimation(App.clickAnimation());

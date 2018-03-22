@@ -1,10 +1,12 @@
 package com.leadcom.android.isp.fragment.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.leadcom.android.isp.api.common.PushMsgRequest;
@@ -12,6 +14,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
@@ -45,6 +48,14 @@ import java.util.List;
  */
 
 public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
+
+    public static void open(Context context) {
+        BaseActivity.openActivity(context, SystemMessageFragment.class.getName(), "", true, false);
+    }
+
+    public static void open(BaseFragment fragment) {
+        fragment.openActivity(SystemMessageFragment.class.getName(), "", true, false);
+    }
 
     private MessageAdapter mAdapter;
 

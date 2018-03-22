@@ -386,8 +386,8 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         // 自己需要在这里查看自己的个人档案吗？
         toArchive.setVisibility(View.VISIBLE);
         // 自己和自己不能聊天
-        //toChat.setVisibility(isMe() ? View.GONE : View.VISIBLE);
-        toChat.setVisibility(View.GONE);
+        toChat.setVisibility(isMe() ? View.GONE : View.VISIBLE);
+        //toChat.setVisibility(View.GONE);
         // 自定义介绍
         selfDefine.setVisibility(isMe() ? View.VISIBLE : View.GONE);
 
