@@ -27,6 +27,7 @@ import com.leadcom.android.isp.nim.model.extension.StickerAttachment;
 import com.leadcom.android.isp.nim.model.extension.TopicAttachment;
 import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.model.SimpleCallback;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
@@ -37,6 +38,7 @@ import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,22 +145,16 @@ public class ActivityViewHolder extends BaseViewHolder {
 
     public void showContent(RecentContact contact) {
         headers.setAdapter(adapter);
-        List<String> img = new ArrayList<>();
+        final List<String> img = new ArrayList<>();
         if (contact.getSessionType() == SessionTypeEnum.P2P) {
             UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(contact.getContactId());
             img.add(null == info ? "" : info.getAvatar());
             titleView.setText(contact.getFromNick());
             descView.setText(getRecentMsgType(contact));
         } else if (contact.getSessionType() == SessionTypeEnum.Team) {
-            Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
-            List<TeamMember> members = TeamDataCache.getInstance().getTeamMemberList(contact.getContactId());
-            if (null != members && members.size() > 0) {
-                for (TeamMember member : members) {
-                    UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
-                    img.add(null == info ? "" : info.getAvatar());
-                }
-            } else {
-                img.add((null == team || isEmpty(team.getIcon())) ? ("drawable://" + R.drawable.img_default_group) : team.getIcon());
+            final Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
+            if (null != team) {
+                fetchTeamMembers(team);
             }
             titleView.setText(null == team ? "无活动名称" : team.getName());
             descView.setText(format("%s：%s", contact.getFromNick(), getRecentMsgType(contact)));
@@ -195,11 +191,27 @@ public class ActivityViewHolder extends BaseViewHolder {
         return ret;
     }
 
+    private void fetchTeamMembers(final Team team) {
+        TeamDataCache.getInstance().fetchTeamMemberList(team.getId(), new SimpleCallback<List<TeamMember>>() {
+            @Override
+            public void onResult(boolean success, List<TeamMember> members, int code) {
+                ArrayList<String> img = new ArrayList<>();
+                if (null != members && members.size() > 0) {
+                    for (TeamMember member : members) {
+                        UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
+                        img.add(null == info ? "" : info.getAvatar());
+                    }
+                } else {
+                    img.add(isEmpty(team.getIcon()) ? ("drawable://" + R.drawable.img_default_group) : team.getIcon());
+                }
+                headers.setImagesData(img);
+            }
+        });
+    }
+
     public void showContent(Team team) {
         headers.setAdapter(adapter);
-        ArrayList<String> imgs = new ArrayList<>();
-        imgs.add(team.getIcon());
-        headers.setImagesData(imgs);
+        fetchTeamMembers(team);
         flagView.setVisibility(View.GONE);
         iconText.setVisibility(View.GONE);
         headers.setVisibility(View.VISIBLE);
