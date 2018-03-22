@@ -166,8 +166,8 @@ public class RecommendArchiveRequest extends Request<RecommendArchive> {
     /**
      * 首页 - 推荐的档案列表
      */
-    public void listHomeFeatured(int pageNumber) {
-        String params = format("/group/groDocRcmd/list/front?pageNumber=%d", pageNumber);
+    public void listHomeFeatured(int pageNumber, String info) {
+        String params = format("/group/groDocRcmd/list/front?pageNumber=%d&pageSize=20&info=%s", pageNumber, info);
         httpRequest(getRequest(MultipleRecommend.class, params, "", HttpMethods.Get));
     }
 

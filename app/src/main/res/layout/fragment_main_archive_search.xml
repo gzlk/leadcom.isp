@@ -26,7 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ui_main_tool_bar_container"
-        android:layout_marginBottom="@dimen/ui_base_border_size_normal"
         android:background="@android:color/white"
         android:baselineAligned="false"
         android:orientation="horizontal">
@@ -36,7 +35,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/ui_base_dimen_button_height">
 
             <TextView
                 android:id="@+id/ui_main_archive_search_functions_1_text"
@@ -64,7 +64,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:minHeight="@dimen/ui_base_dimen_button_height">
 
             <TextView
                 android:id="@+id/ui_main_archive_search_functions_2_text"
@@ -91,7 +92,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_vertical|end">
+            android:gravity="center_vertical|end"
+            android:minHeight="@dimen/ui_base_dimen_button_height">
 
             <TextView
                 android:id="@+id/ui_main_archive_search_functions_3_text"

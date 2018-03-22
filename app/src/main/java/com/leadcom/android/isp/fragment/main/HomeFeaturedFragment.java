@@ -179,7 +179,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
         searchViewHolder.addOnViewHolderClickListener(new OnViewHolderClickListener() {
             @Override
             public void onClick(int index) {
-                ArchiveSearchFragment.open(HomeFeaturedFragment.this);
+                ArchiveSearchFragment.open(HomeFeaturedFragment.this, "");
             }
         });
     }
@@ -308,31 +308,22 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             @Override
             public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (remotePageNumber <= 1) {
-                        removeArchives();
+                if (remotePageNumber <= 1) {
+                    removeArchives();
+                }
+                int count = null == list ? 0 : list.size();
+                remotePageNumber += count < pageSize ? 0 : 1;
+                isLoadingComplete(count < pageSize);
+                if (success && null != list) {
+                    for (RecommendArchive archive : list) {
+                        mAdapter.update(archive);
                     }
-                    if (null != list) {
-                        if (list.size() >= pageSize) {
-                            remotePageNumber++;
-                            isLoadingComplete(false);
-                        } else {
-                            isLoadingComplete(true);
-                        }
-                        for (RecommendArchive archive : list) {
-                            mAdapter.update(archive);
-                        }
-                    } else {
-                        isLoadingComplete(true);
-                    }
-                } else {
-                    isLoadingComplete(true);
                 }
                 stopRefreshing();
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 2);
             }
-        }).listHomeFeatured(remotePageNumber);
+        }).listHomeFeatured(remotePageNumber, "");
     }
 
     private void removeArchives() {
