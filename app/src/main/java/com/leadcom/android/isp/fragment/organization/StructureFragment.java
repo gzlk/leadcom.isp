@@ -361,7 +361,7 @@ public class StructureFragment extends BaseOrganizationFragment {
             } else if (model instanceof Squad) {
                 Squad squad = (Squad) model;
                 // 当前登录者的角色
-                ContactFragment.squadRole = squad.getGroRole();
+                //ContactFragment.squadRole = squad.getGroRole();
                 openSquadContact(squad.getGroupId(), squad.getId());
             } else if (model instanceof Concern) {
                 Concern concern = (Concern) model;

@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.lib.Json;
@@ -56,8 +57,8 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         return ocp;
     }
 
-    public static void open(BaseFragment fragment, String groupId, boolean lockExist, boolean singlePick, String existIds) {
-        String params = format("%s,%s,%s,%s", groupId, lockExist, singlePick, existIds);
+    public static void open(BaseFragment fragment, String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
+        String params = format("%s,%s,%s,%s", groupId, lockExist, singlePick, StringHelper.replaceJson(jsonExitMembers, false));
         fragment.openActivity(GroupContactPickFragment.class.getName(), params, REQUEST_MEMBER, true, false);
     }
 
@@ -68,7 +69,7 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         isLockable = bundle.getBoolean(PARAM_FORCE_LOCK, false);
         isSinglePick = bundle.getBoolean(PARAM_SINGLE_PICK, false);
         String json = bundle.getString(PARAM_USER_IDS, "[]");
-        existsUsers = Json.gson().fromJson(json, new TypeToken<ArrayList<SubMember>>() {
+        existsUsers = Json.gson().fromJson(StringHelper.replaceJson(json, true), new TypeToken<ArrayList<SubMember>>() {
         }.getType());
         if (null == existsUsers) {
             existsUsers = new ArrayList<>();

@@ -105,6 +105,14 @@ public class ContactFragment extends BaseOrganizationFragment {
     }
 
     /**
+     * 打开具有标题栏的小组成员列表页面
+     */
+    public static void open(BaseFragment fragment, String groupId, String squadId) {
+        isOpenable = true;
+        fragment.openActivity(ContactFragment.class.getName(), format("%d,%s,", TYPE_SQUAD, groupId, squadId), true, false);
+    }
+
+    /**
      * 打开我的联系人列表
      */
     public static void open(BaseFragment fragment) {
@@ -155,7 +163,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             myRole = Cache.cache().getGroupRole(mQueryId);
             phoneContactView.setVisibility(View.GONE);
             // 有权限添加成员时，显示手机通讯录入口
-            if (hasOperation(GRPOperation.MEMBER_ADD)) {
+            if (showType == TYPE_ORG && hasOperation(GRPOperation.MEMBER_ADD)) {
                 setRightIcon(R.string.ui_icon_add);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
@@ -164,8 +172,19 @@ public class ContactFragment extends BaseOrganizationFragment {
                     }
                 });
                 //phoneContactView.setVisibility(View.VISIBLE);
+                setCustomTitle(R.string.ui_group_member_fragment_title);
+            } else if (showType == TYPE_SQUAD && hasOperation(GRPOperation.SQUAD_MEMBER_INVITE)) {
+                setRightIcon(R.string.ui_icon_add);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        // + 号点击之后直接打开组织通讯录(2017/08/02 10:00)
+                        // 打开组织通讯录并尝试将里面的用户邀请到小组
+                        openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
+                    }
+                });
+                setCustomTitle(R.string.ui_group_squad_member_fragment_title);
             }
-            setCustomTitle(R.string.ui_group_member_fragment_title);
         }
     }
 
@@ -219,7 +238,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         searchView.setVisibility(showType == TYPE_SQUAD ? View.VISIBLE : View.GONE);
         phoneContactView.setVisibility(View.GONE);
         setNothingText(showType == TYPE_ORG ? R.string.ui_organization_contact_no_member : R.string.ui_organization_contact_squad_no_member);
-        initializeTitleEvent();
+        //initializeTitleEvent();
         initializeHolders();
     }
 
@@ -227,15 +246,11 @@ public class ContactFragment extends BaseOrganizationFragment {
     private void initializeTitleEvent() {
         if (showType == TYPE_SQUAD) {
             // 有邀请成员到小组的权限时才显示 + 号
-            if ((null != squadRole && squadRole.hasOperation(GRPOperation.SQUAD_MEMBER_INVITE)) ||
-                    (StructureFragment.my.squadMemberInvitable())) {
+            if (hasOperation(GRPOperation.SQUAD_MEMBER_INVITE)) {
                 setRightIcon(R.string.ui_icon_add);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
                     public void onClick() {
-                        // + 号点击之后直接打开组织通讯录(2017/08/02 10:00)
-                        // 打开组织通讯录并尝试将里面的用户邀请到小组
-                        openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
 //                    showTooltip(((TitleActivity) Activity()).getRightButton(), R.id.ui_tooltip_squad_contact_picker, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
 //                        @Override
 //                        public void onClick(View v) {
@@ -716,8 +731,6 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
     }
 
-    public static Role squadRole;
-
     private class ContactAdapter extends RecyclerViewSwipeAdapter<ContactViewHolder, Member> {
 
         private void delete(ContactViewHolder holder) {
@@ -765,6 +778,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             holder.setOnSetArchiveManagerListener(archiveManagerListener);
             // 点击拨号
             holder.setOnPhoneDialListener(onPhoneDialListener);
+            holder.setPhoneVisible(showType != TYPE_MINE);
             return holder;
         }
 
@@ -826,7 +840,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 holder.showButton2(!isMe && hasOperation(GRPOperation.MEMBER_DELETE) && (null != member && !member.isGroupManager()));
             } else {
                 // 小组成员删除权限
-                holder.showButton2(!isMe && (null != squadRole && squadRole.hasOperation(GRPOperation.SQUAD_MEMBER_DELETE)));
+                holder.showButton2(!isMe && hasOperation(GRPOperation.SQUAD_MEMBER_DELETE));
             }
 
             holder.showContent(member, searchingText);

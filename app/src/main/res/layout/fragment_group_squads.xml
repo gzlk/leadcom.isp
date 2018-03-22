@@ -6,11 +6,11 @@
 
     <include layout="@layout/holder_view_searchable_inputable" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
         <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
-    </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

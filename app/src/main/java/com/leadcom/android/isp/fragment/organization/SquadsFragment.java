@@ -8,6 +8,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
@@ -21,6 +22,7 @@ import com.leadcom.android.isp.holder.organization.SquadViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Squad;
 
@@ -72,13 +74,15 @@ public class SquadsFragment extends BaseOrganizationFragment {
         enableSwipe(false);
         isLoadingComplete(true);
         setCustomTitle(R.string.ui_group_squad_fragment_title);
-        setRightText(R.string.ui_base_text_add);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                openSquadAddDialog();
-            }
-        });
+        if (Cache.cache().getGroupRole(mQueryId).hasOperation(GRPOperation.SQUAD_ADD)) {
+            setRightText(R.string.ui_base_text_add);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    openSquadAddDialog();
+                }
+            });
+        }
         setNothingText(R.string.ui_group_squad_nothing);
         searchViewHolder = new InputableSearchViewHolder(searchInputableView, this);
         searchViewHolder.setOnSearchingListener(onSearchingListener);
@@ -202,7 +206,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
     @Override
     protected void onAddNewSquadToOrganizationComplete(Squad squad) {
         //if (null != squad && !isEmpty(squad.getId())) {
-            //mAdapter.add(squad);
+        //mAdapter.add(squad);
         //}
         titleView.setValue("");
         introView.setValue("");
@@ -215,8 +219,10 @@ public class SquadsFragment extends BaseOrganizationFragment {
             Model model = mAdapter.get(index);
             if (model instanceof Squad) {
                 // 展开小组成员列表
-                model.setSelected(!model.isSelected());
-                displaySquadMember((Squad) model, index);
+                //model.setSelected(!model.isSelected());
+                //displaySquadMember((Squad) model, index);
+                Squad squad = (Squad) model;
+                ContactFragment.open(SquadsFragment.this, squad.getGroupId(), squad.getId());
             } else if (model instanceof Member) {
                 UserPropertyFragment.open(SquadsFragment.this, ((Member) model).getUserId());
             }
@@ -309,7 +315,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
             squads.addAll(list);
         }
         for (Squad squad : squads) {
-            mAdapter.add(squad);
+            mAdapter.update(squad);
         }
         displayNothing(mAdapter.getItemCount() <= 0);
     }

@@ -1,12 +1,11 @@
 package com.leadcom.android.isp.api.org;
 
-import com.leadcom.android.isp.api.query.ListQuery;
-import com.leadcom.android.isp.api.query.SingleQuery;
-import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.model.Dao;
+import com.leadcom.android.isp.api.query.ListQuery;
+import com.leadcom.android.isp.api.query.PaginationQuery;
+import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Role;
 import com.litesuits.http.request.param.HttpMethods;
