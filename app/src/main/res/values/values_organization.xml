@@ -71,7 +71,7 @@
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
 
     <string name="ui_organization_squad_add_title">名称：</string>
-    <string name="ui_organization_squad_add_hint">小组名称</string>
+    <string name="ui_organization_squad_add_hint">小组名称(10个字以内)</string>
     <string name="ui_organization_squad_add_name_invalid">小组名称不符合要求</string>
     <string name="ui_organization_squad_add_introduction_hint">简介(50个字以内)</string>
     <string name="ui_organization_squad_add_introduction_invalid">小组简介不符合要求</string>

@@ -28,8 +28,8 @@ public class Api<T> extends BaseApi {
     /**
      * 是否验证失败需要重新登录
      */
-    public boolean relogin() {
-        return RELOGIN.equals(code);
+    boolean relogin() {
+        return RELOGIN.equals(code) && msg.contains("请重新登录");
     }
 
     /**

@@ -5,16 +5,20 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.holder.organization.SquadViewHolder;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.organization.Member;
@@ -69,6 +73,12 @@ public class SquadsFragment extends BaseOrganizationFragment {
         isLoadingComplete(true);
         setCustomTitle(R.string.ui_group_squad_fragment_title);
         setRightText(R.string.ui_base_text_add);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                openSquadAddDialog();
+            }
+        });
         setNothingText(R.string.ui_group_squad_nothing);
         searchViewHolder = new InputableSearchViewHolder(searchInputableView, this);
         searchViewHolder.setOnSearchingListener(onSearchingListener);
@@ -152,6 +162,51 @@ public class SquadsFragment extends BaseOrganizationFragment {
     @Override
     protected String getLocalPageTag() {
         return null;
+    }
+
+    private View dialogView;
+    private ClearEditText titleView, introView;
+
+    private void openSquadAddDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == dialogView) {
+                    dialogView = View.inflate(Activity(), R.layout.popup_dialog_squad_add, null);
+                    titleView = dialogView.findViewById(R.id.ui_popup_squad_add_input);
+                    introView = dialogView.findViewById(R.id.ui_popup_squad_add_introduction);
+                }
+                return dialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                String name = titleView.getValue();
+                if (isEmpty(name)) {
+                    ToastHelper.make().showMsg(R.string.ui_organization_squad_add_name_invalid);
+                    return false;
+                }
+                String intro = introView.getValue();
+                addNewSquadToOrganization(mQueryId, name, intro);
+                Utils.hidingInputBoard(titleView);
+                return true;
+            }
+        }).setConfirmText(R.string.ui_base_text_add).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    }
+
+    @Override
+    protected void onAddNewSquadToOrganizationComplete(Squad squad) {
+        //if (null != squad && !isEmpty(squad.getId())) {
+            //mAdapter.add(squad);
+        //}
+        titleView.setValue("");
+        introView.setValue("");
+        fetchingRemoteSquads(mQueryId);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

@@ -147,6 +147,9 @@ public class Cache {
                 grp.setGroupName(group.getName());
                 grp.setLogo(group.getLogo());
                 grp.setIntro(group.getIntro());
+                if (null != group.getGroMember()) {
+                    grp.setGroRole(group.getGroMember().getGroRole());
+                }
                 exists = true;
                 break;
             }
@@ -159,6 +162,9 @@ public class Cache {
             relate.setIntro(group.getIntro());
             relate.setType(RelateGroup.Type.JOINED);
             relate.setUserId(userId);
+            if (null != group.getGroMember()) {
+                relate.setGroRole(group.getGroMember().getGroRole());
+            }
             groups.add(relate);
         }
         saveGroups();
@@ -174,13 +180,6 @@ public class Cache {
             }
         }
         return null;
-    }
-
-    public ArrayList<RelateGroup> getGroups() {
-        if (null == groups || groups.size() <= 0) {
-            restoreGroups();
-        }
-        return groups;
     }
 
     /**

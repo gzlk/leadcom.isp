@@ -217,7 +217,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Override
     public void doingInResume() {
         searchView.setVisibility(showType == TYPE_SQUAD ? View.VISIBLE : View.GONE);
-        //phoneContactView.setVisibility(showType == TYPE_ORG ? View.VISIBLE : View.GONE);
+        phoneContactView.setVisibility(View.GONE);
         setNothingText(showType == TYPE_ORG ? R.string.ui_organization_contact_no_member : R.string.ui_organization_contact_squad_no_member);
         initializeTitleEvent();
         initializeHolders();

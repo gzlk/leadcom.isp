@@ -4,6 +4,7 @@
     android:id="@+id/ui_holder_view_group_header_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="@dimen/ui_static_dp_150"
     android:background="@drawable/img_group_header_bg">
 
     <com.leadcom.android.isp.lib.view.ImageDisplayer
