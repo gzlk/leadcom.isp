@@ -449,8 +449,8 @@ public class ArchiveRequest extends Request<Archive> {
      *
      * @param info 档案的标题
      */
-    public void search(String info) {
-        httpRequest(getRequest(MultipleArchive.class, format("%s?info=%s", url(SEARCH), info), "", HttpMethods.Get));
+    public void search(String userId, int pageNumber, String info) {
+        httpRequest(getRequest(MultipleArchive.class, format("%s?userId=%s&pageNumber=%d&info=%s", url(SEARCH), userId, pageNumber, info), "", HttpMethods.Get));
     }
 
     /**
@@ -461,7 +461,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void search(String organizationId, String info, int pageNumber) {
         //groupId,info
-        httpRequest(getRequest(MultipleArchive.class, format("%s?groupId=%s&info=%s&pageNumber=%d", group(SEARCH), organizationId, info, pageNumber), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleArchive.class, format("%s?groupId=%s&pageNumber=%d&info=%s", group(SEARCH), organizationId, pageNumber, info), "", HttpMethods.Get));
     }
 
     /**

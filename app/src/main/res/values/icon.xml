@@ -20,6 +20,8 @@
     <string name="ui_icon_share_wx_moment">&#xe61f;</string>
     <string name="ui_icon_share_weibo">&#xe667;</string>
     <string name="ui_icon_share_link">&#xe8d3;</string>
+    <string name="ui_icon_share_forward">&#xe67c;</string>
+    <string name="ui_icon_share_recommend">&#xe67f;</string>
     <string name="ui_icon_eye">&#xe609;</string>
     <string name="ui_icon_lock">&#xe63c;</string>
     <string name="ui_icon_like_hollow">&#xe6dc;</string>
@@ -142,6 +144,7 @@
     <string name="ui_icon_rich_editor_align_left">&#xe656;</string>
     <string name="ui_icon_rich_editor_align_center">&#xe653;</string>
     <string name="ui_icon_rich_editor_align_right">&#xe77e;</string>
+    <string name="ui_icon_rich_editor_delete">&#xe705;</string>
 
     <!--组织相关-->
     <string name="ui_icon_group_member">&#xe674;</string>

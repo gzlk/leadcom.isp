@@ -2,6 +2,7 @@ package com.leadcom.android.isp.fragment.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -12,10 +13,13 @@ import android.widget.TextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
+import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
+import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.organization.StructureFragment;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
@@ -120,6 +124,19 @@ public class MainFragment extends BaseViewPagerSupportFragment {
             }
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_SELECT) {
+            String result = getResultedData(data);
+            if (result.equals(ArchiveEditorFragment.MOMENT)) {
+                MomentCreatorFragment.open(this, "[]");
+            } else {
+                ArchiveEditorFragment.open(MainFragment.this, "", result);
+            }
+        }
+        super.onActivityResult(requestCode, data);
+    }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -285,7 +302,8 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 break;
             case R.id.ui_tool_main_bottom_clickable_center:
                 iconCenter.startAnimation(App.clickAnimation());
-                ShortcutFragment.open(MainFragment.this);
+                //ShortcutFragment.open(MainFragment.this);
+                ArchiveCreateSelectorFragment.open(MainFragment.this, "");
                 break;
             case R.id.ui_tool_main_bottom_clickable_3:
                 setDisplayPage(2);

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.Click;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
@@ -15,6 +16,7 @@ import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
+import com.leadcom.android.isp.fragment.main.ArchiveSearchFragment;
 import com.leadcom.android.isp.fragment.organization.archive.GroupArchiveManagementFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -107,6 +109,16 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
         setLoadingText(R.string.ui_organization_archive_loading);
         setNothingText(R.string.ui_organization_archive_nothing);
         initializeAdapter();
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_main_home_featured;
+    }
+
+    @Click({R.id.ui_holder_view_searchable_container})
+    private void viewClick(View view) {
+        ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_GROUP, mQueryId, "");
     }
 
     @Override

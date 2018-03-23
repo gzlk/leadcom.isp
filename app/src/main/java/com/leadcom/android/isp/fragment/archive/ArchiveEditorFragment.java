@@ -78,6 +78,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     public static final String MULTIMEDIA = "multimedia";
     public static final String ATTACHABLE = "attachable";
+    public static final String MOMENT = "moment";
     private static final String PARAM_UPLOAD_TYPE = "aecf_upload_type";
     private static final String PARAM_ARCHIVE = "aecf_archive_content";
     private static final String PARAM_EDITOR_TYPE = "aecf_archive_editor_type";

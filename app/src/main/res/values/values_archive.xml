@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="ui_archive_creator_selector_icon_size">@dimen/ui_static_dp_50</dimen>
+    <dimen name="ui_archive_creator_selector_icon_size">@dimen/ui_static_dp_60</dimen>
     <string name="ui_archive_creator_selector_text_title">任选一种新建档案，您说了算</string>
     <string name="ui_archive_creator_selector_text_normal">标准</string>
     <string name="ui_archive_creator_selector_text_image">图文</string>
     <string name="ui_archive_creator_selector_text_attachment">附件</string>
+    <string name="ui_archive_creator_selector_text_moment">动态</string>
 
     <string name="ui_text_archive_creator_editor_create_draft_1">
         <![CDATA[您还有未提交的档案草稿。<br/>要继续编辑吗？]]>
@@ -70,7 +71,10 @@
     <string name="ui_text_archive_creator_editor_title_empty"><![CDATA[<font color="#dbdcdc">请输入档案题名</font>]]></string>
     <string name="ui_text_archive_creator_editor_content_invalid">档案内容不能为空</string>
 
+    <string name="ui_text_archive_list_fragment_title">个人档案</string>
+
     <string name="ui_text_archive_details_fragment_title">档案详细内容</string>
+    <string name="ui_text_archive_details_title_empty">未提供标题</string>
     <string name="ui_text_archive_details_loading">正在加载档案请稍候&#8230;</string>
     <string name="ui_text_archive_details_comment_hint">写下你的评论</string>
     <string name="ui_text_archive_details_comment_hint_to" formatted="false">回复%s：</string>

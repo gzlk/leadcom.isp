@@ -179,7 +179,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
         searchViewHolder.addOnViewHolderClickListener(new OnViewHolderClickListener() {
             @Override
             public void onClick(int index) {
-                ArchiveSearchFragment.open(HomeFeaturedFragment.this, "");
+                ArchiveSearchFragment.open(HomeFeaturedFragment.this, ArchiveSearchFragment.SEARCH_HOME, "", "");
             }
         });
     }

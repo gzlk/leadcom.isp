@@ -56,7 +56,8 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
     @Click({R.id.ui_archive_creator_selector_cancel,
             R.id.ui_archive_creator_selector_normal,
             R.id.ui_archive_creator_selector_rich_text,
-            R.id.ui_archive_creator_selector_attachment})
+            R.id.ui_archive_creator_selector_attachment,
+            R.id.ui_archive_creator_selector_moment})
     private void elementClick(View view) {
         view.startAnimation(App.clickAnimation());
         switch (view.getId()) {
@@ -70,6 +71,9 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
                 break;
             case R.id.ui_archive_creator_selector_attachment:
                 resultData(ArchiveEditorFragment.ATTACHABLE);
+                break;
+            case R.id.ui_archive_creator_selector_moment:
+                resultData(ArchiveEditorFragment.MOMENT);
                 break;
         }
     }

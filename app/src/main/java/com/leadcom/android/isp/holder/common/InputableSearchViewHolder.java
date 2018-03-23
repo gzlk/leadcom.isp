@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -44,9 +45,12 @@ public class InputableSearchViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_searchable_clear_icon)
     private CustomTextView clearIcon;
 
+    private String inputHint;
+
     public InputableSearchViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        inputHint = StringHelper.getString(R.string.ui_base_text_search);
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -122,12 +126,21 @@ public class InputableSearchViewHolder extends BaseViewHolder {
         hintText.setVisibility(hasFocus ? View.GONE : (textLength > 0 ? View.GONE : View.VISIBLE));
         if (hasFocus) {
             // 有焦点时，如果text为空则显示hint
-            searchInput.setHint(R.string.ui_base_text_search);
+            searchInput.setHint(inputHint);
             Utils.showInputBoard(searchInput);
         } else {
             // 失去焦点时，不显示hint
             searchInput.setHint(null);
         }
+    }
+
+    public void setInputHint(int res) {
+        setInputHint(StringHelper.getString(res));
+    }
+
+    public void setInputHint(String hint) {
+        inputHint = hint;
+        hintText.setText(inputHint);
     }
 
     public void clearFocus() {

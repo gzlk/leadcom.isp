@@ -54,8 +54,8 @@
             android:layout_height="@dimen/ui_archive_creator_selector_icon_size"
             android:elevation="@dimen/ui_base_translationZ_small"
             android:gravity="center"
-            app:cv_background="@color/color_db7763"
-            app:cv_background_active="@color/color_db7763"
+            app:cv_background="@color/color_3eb135"
+            app:cv_background_active="@color/color_3eb135"
             app:cv_border_size="@dimen/ui_static_dp_zero"
             app:cv_corner_size="@dimen/ui_archive_creator_selector_icon_size">
 
@@ -80,6 +80,7 @@
         android:id="@+id/ui_archive_creator_selector_attachment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_static_dp_30"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -88,8 +89,8 @@
             android:layout_height="@dimen/ui_archive_creator_selector_icon_size"
             android:elevation="@dimen/ui_base_translationZ_small"
             android:gravity="center"
-            app:cv_background="@color/color_3cbaff"
-            app:cv_background_active="@color/color_3cbaff"
+            app:cv_background="@color/colorCaution"
+            app:cv_background_active="@color/colorCaution"
             app:cv_border_size="@dimen/ui_static_dp_zero"
             app:cv_corner_size="@dimen/ui_archive_creator_selector_icon_size">
 
@@ -108,5 +109,39 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ui_static_dp_5"
             android:text="@string/ui_archive_creator_selector_text_attachment" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ui_archive_creator_selector_moment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <com.hlk.hlklib.lib.view.CorneredView
+            android:layout_width="@dimen/ui_archive_creator_selector_icon_size"
+            android:layout_height="@dimen/ui_archive_creator_selector_icon_size"
+            android:elevation="@dimen/ui_base_translationZ_small"
+            android:gravity="center"
+            app:cv_background="@color/color_3cbaff"
+            app:cv_background_active="@color/color_3cbaff"
+            app:cv_border_size="@dimen/ui_static_dp_zero"
+            app:cv_corner_size="@dimen/ui_archive_creator_selector_icon_size">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/ui_icon_moment_add"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/ui_base_text_size_max" />
+
+        </com.hlk.hlklib.lib.view.CorneredView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_static_dp_5"
+            android:text="@string/ui_archive_creator_selector_text_moment" />
     </LinearLayout>
 </LinearLayout>

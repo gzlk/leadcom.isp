@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.leadcom.android.isp.R;
@@ -92,6 +94,9 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         fragment.openActivity(IndividualFragment.class.getName(), String.valueOf(type), true, false);
     }
 
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private View searchClickView;
+
     private boolean isTitleBarShown = false;
     private int selectedFunction = 0, selectedMoment = 0, selectedComment = 0;
     private int function = TYPE_ARCHIVE_HOME;
@@ -101,6 +106,20 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         super.onCreate(savedInstanceState);
         NimApplication.addNimMessageEvent(messageEvent);
         nothingMore = Model.getNoMore();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        searchClickView.setVisibility(function == TYPE_ARCHIVE_MINE ? View.VISIBLE : View.GONE);
+        if (function == TYPE_ARCHIVE_MINE) {
+            setCustomTitle(R.string.ui_text_archive_list_fragment_title);
+        }
+    }
+
+    @Click({R.id.ui_holder_view_searchable_container})
+    private void viewClick(View view) {
+        ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_USER, Cache.cache().userId, "");
     }
 
     @Override
@@ -167,6 +186,11 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     }
 
     @Override
+    public int getLayout() {
+        return R.layout.fragment_main_home_featured;
+    }
+
+    @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
         resetList();
@@ -200,7 +224,6 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 refreshingFavorites();
                 break;
             case TYPE_ARCHIVE_MINE:
-                setCustomTitle(R.string.ui_main_individual_functions_2);
                 refreshingMineDocuments();
                 break;
         }

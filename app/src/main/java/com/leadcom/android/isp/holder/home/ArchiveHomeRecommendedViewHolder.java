@@ -62,6 +62,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
 
     private int width, height, headerSize;
     private boolean showHeader;
+    private String searchingText = "";
 
     public ArchiveHomeRecommendedViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -110,6 +111,10 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         }
     }
 
+    public void setSearchingText(String text) {
+        searchingText = text;
+    }
+
     public void showContent(Archive archive) {
         //headerView.setVisibility(showHeader ? View.VISIBLE : View.GONE);
         if (showHeader) {
@@ -119,7 +124,13 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         }
         coverView.displayImage(archive.getCover(), width, height, false, false);
         coverView.setVisibility(isEmpty(archive.getCover()) ? View.GONE : View.VISIBLE);
-        titleView.setText(archive.getTitle());
+        String text = archive.getTitle();
+        if (!isEmpty(text)) {
+            text = getSearchingText(text, searchingText);
+        } else {
+            text = StringHelper.getString(R.string.ui_text_archive_details_title_empty);
+        }
+        titleView.setText(Html.fromHtml(text));
         // 去掉所有html标签
         contentView.setVisibility(isEmpty(archive.getContent()) ? View.GONE : View.VISIBLE);
         contentView.setText(isEmpty(archive.getContent()) ? "" : Html.fromHtml(Utils.clearHtml(archive.getContent())));

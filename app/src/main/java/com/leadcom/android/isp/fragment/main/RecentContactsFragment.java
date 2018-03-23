@@ -181,18 +181,11 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     private void onRecentContactChanged(List<RecentContact> recentContacts) {
         int index;
         for (RecentContact r : recentContacts) {
-            index = -1;
-            for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
-                if (r.getContactId().equals(mAdapter.get(i).getContactId()) && r.getSessionType() == (mAdapter.get(i).getSessionType())) {
-                    index = i;
-                    break;
-                }
-            }
-
+            index = mAdapter.indexOf(r);
             if (index >= 0) {
-                mAdapter.remove(index);
+                mAdapter.replace(r, index);
             }
-            mAdapter.add(r);
+            //mAdapter.add(r);
 
             if (r.getSessionType() == SessionTypeEnum.Team && cacheMessages.get(r.getContactId()) != null) {
                 TeamMemberAitHelper.setRecentContactAited(r, cacheMessages.get(r.getContactId()));
@@ -279,11 +272,17 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                         }
                         log("getRecentMessage: " + result.size());
                         // 初次加载，更新离线的消息中是否有@我的消息
+                        int index;
                         for (RecentContact loadedRecent : result) {
                             if (loadedRecent.getSessionType() == SessionTypeEnum.Team) {
                                 updateOfflineContactAited(loadedRecent);
                             }
-                            mAdapter.add(loadedRecent);
+                            index = mAdapter.indexOf(loadedRecent);
+                            if (index < 0) {
+                                mAdapter.add(loadedRecent);
+                            } else {
+                                mAdapter.replace(loadedRecent, index);
+                            }
                         }
                         displayNothing(mAdapter.getItemCount() <= 0);
                     }
@@ -380,6 +379,17 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onBindHolderOfView(ActivityViewHolder holder, int position, @Nullable RecentContact item) {
             holder.showContent(item);
+        }
+
+        @Override
+        public int indexOf(RecentContact item) {
+            for (int i = 0, len = getItemCount(); i < len; i++) {
+                RecentContact contact = get(i);
+                if (contact.getContactId().equals(item.getContactId()) && contact.getSessionType() == (item.getSessionType())) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         @Override

@@ -56,7 +56,7 @@
                         android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
                         android:text="@string/ui_icon_app"
                         android:textColor="@color/color_f7f7f7"
-                        android:textSize="@dimen/ui_base_share_dialog_icon_text_size" />
+                        android:textSize="30sp" />
 
                 </LinearLayout>
 
@@ -237,7 +237,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <com.hlk.hlklib.lib.view.CorneredView
                     android:layout_width="@dimen/ui_base_share_button_size"
@@ -273,7 +274,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <com.hlk.hlklib.lib.view.CorneredView
                     android:layout_width="@dimen/ui_base_share_button_size"
@@ -303,10 +305,154 @@
                     android:textSize="@dimen/ui_base_text_size_small" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ui_dialog_share_to_delete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.hlk.hlklib.lib.view.CorneredView
+                    android:layout_width="@dimen/ui_base_share_button_size"
+                    android:layout_height="@dimen/ui_base_share_button_size"
+                    android:elevation="@dimen/ui_base_translationZ"
+                    android:gravity="center"
+                    app:cv_background="@color/colorAccent"
+                    app:cv_background_active="@color/colorAccent"
+                    app:cv_border_size="@dimen/ui_static_dp_zero"
+                    app:cv_corner_size="@dimen/ui_static_dp_55">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
+                        android:text="@string/ui_icon_rich_editor_delete"
+                        android:textColor="@android:color/white"
+                        android:textSize="30sp" />
+
+                </com.hlk.hlklib.lib.view.CorneredView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ui_static_dp_3"
+                    android:text="@string/ui_base_share_dialog_to_delete"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ui_dialog_share_to_forward"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.hlk.hlklib.lib.view.CorneredView
+                    android:layout_width="@dimen/ui_base_share_button_size"
+                    android:layout_height="@dimen/ui_base_share_button_size"
+                    android:elevation="@dimen/ui_base_translationZ"
+                    android:gravity="center"
+                    app:cv_background="@color/colorWord"
+                    app:cv_background_active="@color/colorWord"
+                    app:cv_border_size="@dimen/ui_static_dp_zero"
+                    app:cv_corner_size="@dimen/ui_static_dp_55">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
+                        android:text="@string/ui_icon_share_forward"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/ui_base_share_dialog_icon_text_size" />
+
+                </com.hlk.hlklib.lib.view.CorneredView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ui_static_dp_3"
+                    android:text="@string/ui_base_share_dialog_to_forward"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ui_dialog_share_to_recommend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.hlk.hlklib.lib.view.CorneredView
+                    android:layout_width="@dimen/ui_base_share_button_size"
+                    android:layout_height="@dimen/ui_base_share_button_size"
+                    android:elevation="@dimen/ui_base_translationZ"
+                    android:gravity="center"
+                    app:cv_background="@color/color_7065fb"
+                    app:cv_background_active="@color/color_7065fb"
+                    app:cv_border_size="@dimen/ui_static_dp_zero"
+                    app:cv_corner_size="@dimen/ui_static_dp_55">
+
+                    <com.hlk.hlklib.lib.view.CustomTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
+                        android:text="@string/ui_icon_share_recommend"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/ui_base_share_dialog_icon_text_size" />
+
+                </com.hlk.hlklib.lib.view.CorneredView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ui_static_dp_3"
+                    android:text="@string/ui_base_share_dialog_to_recommend"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ui_dialog_share_to_recommended"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.hlk.hlklib.lib.view.CorneredView
+                    android:layout_width="@dimen/ui_base_share_button_size"
+                    android:layout_height="@dimen/ui_base_share_button_size"
+                    android:elevation="@dimen/ui_base_translationZ"
+                    android:gravity="center"
+                    app:cv_background="@color/colorCaution"
+                    app:cv_background_active="@color/colorCaution"
+                    app:cv_border_size="@dimen/ui_static_dp_zero"
+                    app:cv_corner_size="@dimen/ui_static_dp_55">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_base_text_cancel"
+                        android:textColor="@android:color/white" />
+
+                </com.hlk.hlklib.lib.view.CorneredView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ui_static_dp_3"
+                    android:text="@string/ui_base_share_dialog_to_recommended"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+            </LinearLayout>
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="@dimen/ui_static_dp_6"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:visibility="gone" />
         </LinearLayout>
 
         <View

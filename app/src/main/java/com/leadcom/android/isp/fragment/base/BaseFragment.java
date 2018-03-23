@@ -465,7 +465,11 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                         R.id.ui_dialog_share_to_wx_chat,
                         R.id.ui_dialog_share_to_wx_moment,
                         R.id.ui_dialog_share_to_weibo,
-                        R.id.ui_dialog_share_to_link
+                        R.id.ui_dialog_share_to_link,
+                        R.id.ui_dialog_share_to_delete,
+                        R.id.ui_dialog_share_to_forward,
+                        R.id.ui_dialog_share_to_recommend,
+                        R.id.ui_dialog_share_to_recommended
                 };
             }
 
@@ -494,6 +498,18 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                         break;
                     case R.id.ui_dialog_share_to_link:
                         shareToLink();
+                        break;
+                    case R.id.ui_dialog_share_to_delete:
+                        shareToDelete();
+                        break;
+                    case R.id.ui_dialog_share_to_forward:
+                        shareToForward();
+                        break;
+                    case R.id.ui_dialog_share_to_recommend:
+                        shareToRecommend();
+                        break;
+                    case R.id.ui_dialog_share_to_recommended:
+                        shareToRecommended();
                         break;
                 }
                 return true;
@@ -531,6 +547,30 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     protected void shareToLink() {
         ClipboardHelper.copyToClipboard(Activity(), mShareInfo.getTargetPath());
         ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_link_copied);
+    }
+
+    /**
+     * 删除档案
+     */
+    protected void shareToDelete() {
+    }
+
+    /**
+     * 转发档案到别的组织
+     */
+    protected void shareToForward() {
+    }
+
+    /**
+     * 推荐档案到首页
+     */
+    protected void shareToRecommend() {
+    }
+
+    /**
+     * 取消首页已推荐的档案
+     */
+    protected void shareToRecommended() {
     }
 
     /**

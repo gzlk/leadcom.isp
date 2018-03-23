@@ -12,6 +12,10 @@
     <string name="ui_base_share_dialog_to_wx_moment">朋友圈</string>
     <string name="ui_base_share_dialog_to_weibo">微博</string>
     <string name="ui_base_share_dialog_to_link">复制连接</string>
+    <string name="ui_base_share_dialog_to_delete">@string/ui_base_text_delete</string>
+    <string name="ui_base_share_dialog_to_forward">转发</string>
+    <string name="ui_base_share_dialog_to_recommend">推荐首页</string>
+    <string name="ui_base_share_dialog_to_recommended">已推荐</string>
 
     <dimen name="ui_base_share_dialog_button_corner_size">@dimen/ui_static_dp_8</dimen>
     <dimen name="ui_base_share_dialog_button_icon_margin">@dimen/ui_static_dp_10</dimen>
