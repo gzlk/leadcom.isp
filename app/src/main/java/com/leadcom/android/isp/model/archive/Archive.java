@@ -470,6 +470,13 @@ public class Archive extends Additional {
     @Column(Field.RecommendId)
     private String rcmdId;
 
+    /**
+     * 档案是否已经推荐到首页
+     */
+    public boolean isRecommend() {
+        return recommend == RecommendArchive.RecommendStatus.RECOMMENDED;
+    }
+
     @Override
     public void resetAdditional(Additional additional) {
         super.resetAdditional(additional);
@@ -631,7 +638,7 @@ public class Archive extends Additional {
     }
 
     /**
-     * 是否可以推荐
+     * 是否可以推荐(档案内容是否符合要求)
      */
     public boolean isRecommendable() {
         return getHtmlClearedLength() >= 70 ||

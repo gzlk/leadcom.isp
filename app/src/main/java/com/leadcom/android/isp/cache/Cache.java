@@ -174,6 +174,7 @@ public class Cache {
      * 获取登录者在指定组织里的角色
      */
     public Role getGroupRole(String groupId) {
+        if (StringHelper.isEmpty(groupId, true)) return null;
         for (RelateGroup group : groups) {
             if (group.getGroupId().equals(groupId)) {
                 return group.getGroRole();

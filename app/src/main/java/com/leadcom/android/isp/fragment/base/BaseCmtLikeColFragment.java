@@ -231,7 +231,7 @@ public abstract class BaseCmtLikeColFragment extends BaseChatInputSupportFragmen
             @Override
             public View onInitializeView() {
                 if (null == commentDeleteDialog) {
-                    commentDeleteDialog = View.inflate(Activity(), R.layout.popup_dialog_comment_delete, null);
+                    commentDeleteDialog = View.inflate(Activity(), R.layout.popup_dialog_common_delete, null);
                 }
                 return commentDeleteDialog;
             }

@@ -69,6 +69,36 @@
             android:background="@android:color/white" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ui_holder_view_archive_details_public_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/ui_base_dimen_margin_padding">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/ui_base_text_public" />
+
+
+        <com.hlk.hlklib.lib.view.ToggleButton
+            android:id="@+id/ui_holder_view_archive_details_public_toggle"
+            android:layout_width="@dimen/ui_static_dp_55"
+            android:layout_height="@dimen/ui_static_dp_30" />
+    </LinearLayout>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/ui_holder_view_archive_details_labels"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        app:flexWrap="wrap">
+
+    </com.google.android.flexbox.FlexboxLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/ui_base_dimen_margin_padding"

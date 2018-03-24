@@ -76,6 +76,7 @@
     <string name="ui_text_archive_details_fragment_title">档案详细内容</string>
     <string name="ui_text_archive_details_title_empty">未提供标题</string>
     <string name="ui_text_archive_details_loading">正在加载档案请稍候&#8230;</string>
+    <string name="ui_text_archive_details_delete">您确定要删除本档案吗？</string>
     <string name="ui_text_archive_details_comment_hint">写下你的评论</string>
     <string name="ui_text_archive_details_comment_hint_to" formatted="false">回复%s：</string>
     <string name="ui_text_archive_details_comment_title" formatted="false">评论 %s</string>

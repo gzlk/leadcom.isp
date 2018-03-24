@@ -146,6 +146,41 @@ public class Role extends Model {
     }
 
     /**
+     * 是否未档案管理员
+     */
+    public boolean isArchiveManager() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_DOC_MANAGER);
+    }
+
+    /**
+     * 是否组织管理员
+     */
+    public boolean isManager() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_MANAGER);
+    }
+
+    /**
+     * 是否小组管理员
+     */
+    public boolean isSquadManager() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
+    }
+
+    /**
+     * 是否是普通成员
+     */
+    public boolean isCommonMember() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.GROUP_ROLE_CODE_COMMON_MEMBER);
+    }
+
+    /**
+     * 是否活动管理员
+     */
+    public boolean isActivityManager() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.ACT_MANAGER_ROLE_CODE);
+    }
+
+    /**
      * 角色是否具有某项操作权限
      */
     public boolean hasOperation(String operation) {

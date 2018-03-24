@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
@@ -67,9 +68,15 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_tool_view_collection_content_archive_text)
     private TextView archiveText;
 
+    @ViewId(R.id.ui_holder_view_collection_labels)
+    private FlexboxLayout labelsLayout;
+
+    private int margin;
+
     public CollectionItemViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        margin = getDimension(R.dimen.ui_static_dp_5);
         creatorImage.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
             public void onImageClick(ImageDisplayer displayer, String url) {
@@ -86,6 +93,17 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         creatorImage.displayImage(collection.getCreatorHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         checkViews(collection.getType());
         showCollection(collection);
+        labelsLayout.removeAllViews();
+        for (String string : collection.getLabel()) {
+            TextView textView = (TextView) View.inflate(labelsLayout.getContext(), R.layout.holder_view_archive_label, null);
+            textView.setText(string);
+            labelsLayout.addView(textView);
+            int lines = labelsLayout.getFlexLines().size();
+            FlexboxLayout.LayoutParams params = (FlexboxLayout.LayoutParams) textView.getLayoutParams();
+            params.rightMargin = margin;
+            params.topMargin = lines > 0 ? margin : 0;
+            textView.setLayoutParams(params);
+        }
     }
 
     private void checkViews(int type) {

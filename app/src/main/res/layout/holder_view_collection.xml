@@ -16,26 +16,13 @@
 
     <include layout="@layout/tool_view_collection_content" />
 
-    <LinearLayout
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/ui_holder_view_collection_labels"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
         android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
         android:paddingStart="@dimen/ui_base_dimen_margin_padding">
 
-        <com.hlk.hlklib.lib.view.CorneredButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/ui_static_dp_5"
-            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-            android:paddingStart="@dimen/ui_base_dimen_margin_padding"
-            android:paddingTop="@dimen/ui_static_dp_5"
-            android:text="@string/ui_base_text_label"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/ui_base_text_size_little"
-            app:active_color="@color/textColorHintLight"
-            app:background_type="border"
-            app:corner_size="@dimen/ui_static_dp_10"
-            app:normal_color="@color/textColorHintLight" />
-    </LinearLayout>
+    </com.google.android.flexbox.FlexboxLayout>
 </com.hlk.hlklib.lib.view.CorneredView>

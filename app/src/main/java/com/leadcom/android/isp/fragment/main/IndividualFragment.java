@@ -114,6 +114,8 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         searchClickView.setVisibility(function == TYPE_ARCHIVE_MINE ? View.VISIBLE : View.GONE);
         if (function == TYPE_ARCHIVE_MINE) {
             setCustomTitle(R.string.ui_text_archive_list_fragment_title);
+        } else if (function == TYPE_COLLECT) {
+            setCustomTitle(R.string.ui_individual_collection_list_fragment_title);
         }
     }
 
@@ -177,7 +179,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return function == TYPE_ARCHIVE_MINE;
+        return function == TYPE_ARCHIVE_MINE || function == TYPE_COLLECT;
     }
 
     @Override
@@ -451,7 +453,8 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 // 上层返回的有更改的或删除的
                 String id = getResultedData(data);
                 Model result = getResultModel(data, RESULT_ARCHIVE);
-                if (null != result) {
+                if (null != result && function != TYPE_COLLECT) {
+                    // 我的收藏列表，不需要重置点赞等类容
                     mAdapter.update(result);
                 } else {
                     Model model = new Model();

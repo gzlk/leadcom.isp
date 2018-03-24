@@ -337,21 +337,21 @@ public class Member extends Leaguer {
      * 是否是群管理员
      */
     public boolean isGroupManager() {
-        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_ROLE_CODE_MANAGER);
+        return null != getGroRole() && getGroRole().isManager();
     }
 
     /**
      * 是否小组管理员
      */
     public boolean isSquadManager() {
-        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
+        return null != getGroRole() && getGroRole().isSquadManager();
     }
 
     /**
      * 是否是活动管理员
      */
     public boolean isActivityManager() {
-        return null != getActRole() && !isEmpty(getActRole().getRolCode()) && getActRole().getRolCode().equals(Code.ACT_MANAGER_ROLE_CODE);
+        return null != getActRole() && getActRole().isActivityManager();
     }
     /*
      * 是否是群主
@@ -364,14 +364,14 @@ public class Member extends Leaguer {
      * 是否普通成员
      */
     public boolean isGroupMember() {
-        return null == getGroRole() || getGroRole().getRolCode().equals(Code.GROUP_ROLE_CODE_COMMON_MEMBER);
+        return null == getGroRole() || getGroRole().isCommonMember();
     }
 
     /**
      * 是否档案管理员
      */
     public boolean isArchiveManager() {
-        return null != getGroRole() && getGroRole().getRolCode().equals(Code.GROUP_ROLE_CODE_DOC_MANAGER);
+        return null != getGroRole() && getGroRole().isArchiveManager();
     }
 
     /**

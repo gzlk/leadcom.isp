@@ -23,12 +23,14 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.crash.system.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.organization.StructureFragment;
+import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -53,8 +55,10 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.netease.nim.uikit.api.NimUIKit;
 
@@ -182,6 +186,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private DetailsAdapter mAdapter;
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
+    private Role myRole;
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -422,15 +427,35 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }).findShare(mQueryId, archiveType + 1);
     }
 
+    /**
+     * 当前角色是否具有某项权限
+     */
+    private boolean hasOperation(String operation) {
+        return null != myRole && myRole.hasOperation(operation);
+    }
+
     private void displayArchive(Archive archive) {
+        setCustomTitle(archive.getTitle());
+        myRole = Cache.cache().getGroupRole(archive.getGroupId());
         // 设置收藏的参数为档案
         Collectable.resetArchiveCollectionParams(archive);
         // 档案管理员/组织管理员/档案作者可以删除档案
-        if (archive.isAuthor()) {
+        if (isEmpty(archive.getGroupId())) {
             //resetRightIconEvent();
+            // 个人档案且当前用户是作者时，允许删除
+            enableShareDelete = archive.isAuthor();
+        } else {
+            // 组织档案
+            if (null != myRole && (myRole.isManager() || myRole.isArchiveManager())) {
+                // 是否可以删除档案
+                enableShareDelete = true;
+                enableShareForward = true;
+                enableShareRecommend = !archive.isRecommend();
+                enableShareRecommended = archive.isRecommend();
+            }
         }
         // 档案创建者可以删除评论
-        deletable = archive.isAuthor();
+        deletable = enableShareDelete;
         mAdapter.update(archive);
         for (Attachment attachment : archive.getImage()) {
             mAdapter.update(attachment);
@@ -671,39 +696,27 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             openShareDialog();
         }
     }
-//
-//    @Override
-//    protected void shareToApp() {
-//        // 打开群聊列表选择要分享到的群聊
-//        ActivityShareListFragment.open(this, share);
-//    }
-//
-//    @Override
-//    protected void shareToQQ() {
-//        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), null);
-//    }
-//
-//    @Override
-//    protected void shareToQZone() {
-//        ArrayList<String> img = new ArrayList<>();
-//        img.add(share.getImageUrl());
-//        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl(), img);
-//    }
-//
-//    @Override
-//    protected void shareToWeiXinSession() {
-//        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-//    }
-//
-//    @Override
-//    protected void shareToWeiXinTimeline() {
-//        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-//    }
-//
-//    @Override
-//    protected void shareToWeiBo() {
-//        ShareToWeiBo.init(Activity()).share(share.getTitle(), Utils.clearHtml(share.getDescription()), share.getTargetPath(), share.getImageUrl());
-//    }
+
+    @Override
+    protected void shareToDelete() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                deleteDocument();
+                return true;
+            }
+        }).setTitleText(R.string.ui_text_archive_details_delete).show();
+    }
+
+    @Override
+    protected void shareToRecommend() {
+
+    }
+
+    @Override
+    protected void shareToRecommended() {
+
+    }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
@@ -852,6 +865,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     if (null == detailsViewHolder) {
                         detailsViewHolder = new ArchiveDetailsViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
                         detailsViewHolder.setOnViewHolderElementClickListener(elementClickListener);
+                        detailsViewHolder.setIsManager(enableShareDelete);
                     }
                     return detailsViewHolder;
                 case VT_COMMENT:

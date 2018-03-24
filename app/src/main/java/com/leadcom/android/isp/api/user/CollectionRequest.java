@@ -183,14 +183,14 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     /**
-     * 更新收藏内容（只针对文本型收藏内容）
+     * 更新收藏的标签
      */
-    public void update(String collectionId, String content) {
+    public void update(String collectionId, ArrayList<String> labels) {
         // {_id,content,accessToken}
         JSONObject object = new JSONObject();
         try {
             object.put("_id", collectionId)
-                    .put("content", content);
+                    .put("label", new JSONArray(null == labels ? new ArrayList() : labels));
         } catch (JSONException e) {
             e.printStackTrace();
         }

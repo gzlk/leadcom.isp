@@ -5,6 +5,8 @@ import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexboxLayout;
+import com.hlk.hlklib.lib.view.ToggleButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -38,14 +40,30 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
     private ImageDisplayer coverView;
     @ViewId(R.id.ui_holder_view_archive_details_content)
     private WebView contentView;
+    @ViewId(R.id.ui_holder_view_archive_details_public_layout)
+    private View publicView;
+    @ViewId(R.id.ui_holder_view_archive_details_public_toggle)
+    private ToggleButton publicToggle;
+    @ViewId(R.id.ui_holder_view_archive_details_labels)
+    private FlexboxLayout labelsLayout;
 
-    private int width, height;
+    private int width, height, margin;
+    private boolean isManager = false;
 
     public ArchiveDetailsViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         contentView.getSettings().setDefaultTextEncodingName("UTF-8");
+        margin = getDimension(R.dimen.ui_static_dp_5);
         resetCoverSize();
+    }
+
+    /**
+     * 设置是否是管理员或者档案发布者
+     */
+    public void setIsManager(boolean isManager) {
+        this.isManager = isManager;
+        publicView.setVisibility(this.isManager ? View.VISIBLE : View.GONE);
     }
 
     public void onFragmentDestroy() {
@@ -77,5 +95,22 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         content = isEmpty(content) ? "" : Utils.clearStyleEqualsXXX(content);
         contentView.loadData(StringHelper.getString(R.string.ui_text_archive_details_content_html, content).replace("width: 100per", "width: 100%"), "text/html; charset=UTF-8", null);
         //bottomLine.setVisibility(archive.getCmtNum() > 0 ? View.VISIBLE : View.GONE);
+        if (archive.getAuthPublic() == 1) {
+            // 公开
+            publicToggle.setToggleOn(true);
+        } else {
+            publicToggle.setToggleOff(true);
+        }
+        labelsLayout.removeAllViews();
+        for (String string : archive.getLabel()) {
+            TextView textView = (TextView) View.inflate(labelsLayout.getContext(), R.layout.holder_view_archive_label, null);
+            textView.setText(string);
+            labelsLayout.addView(textView);
+            int lines = labelsLayout.getFlexLines().size();
+            FlexboxLayout.LayoutParams params = (FlexboxLayout.LayoutParams) textView.getLayoutParams();
+            params.rightMargin = margin;
+            params.topMargin = lines > 0 ? margin : 0;
+            textView.setLayoutParams(params);
+        }
     }
 }

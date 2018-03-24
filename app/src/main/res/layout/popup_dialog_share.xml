@@ -6,9 +6,12 @@
     android:orientation="vertical">
 
     <View
+        android:id="@+id/ui_dialog_share_to_background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true" />
 
     <com.hlk.hlklib.lib.view.CorneredView
         android:layout_width="match_parent"
@@ -83,7 +86,8 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/color_3eb135"
-                    app:cv_background_active="@color/color_3eb135"
+                    app:cv_background_active="@color/color_1f6b41"
+                    app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
 
@@ -120,7 +124,7 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/color_425f78"
-                    app:cv_background_active="@color/color_425f78"
+                    app:cv_background_active="@color/color_333333"
                     app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
@@ -158,6 +162,8 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/color_4dafea"
+                    app:cv_background_active="@color/color_7065fb"
+                    app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
 
@@ -208,7 +214,7 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/color_faaa2d"
-                    app:cv_background_active="@color/color_faaa2d"
+                    app:cv_background_active="@color/color_facd98"
                     app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
@@ -246,7 +252,8 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/color_df4d69"
-                    app:cv_background_active="@color/color_df4d69"
+                    app:cv_background_active="@color/color_dfc371"
+                    app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
 
@@ -284,6 +291,7 @@
                     android:gravity="center"
                     app:cv_background="@android:color/white"
                     app:cv_background_active="@color/colorPrimary"
+                    app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
 
@@ -319,7 +327,8 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/colorAccent"
-                    app:cv_background_active="@color/colorAccent"
+                    app:cv_background_active="@color/color_c44423"
+                    app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
 
@@ -341,6 +350,13 @@
                     android:textSize="@dimen/ui_base_text_size_small" />
             </LinearLayout>
 
+            <View
+                android:id="@+id/ui_dialog_share_to_delete_blank"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/ui_static_dp_6"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:id="@+id/ui_dialog_share_to_forward"
                 android:layout_width="0dp"
@@ -355,7 +371,8 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/colorWord"
-                    app:cv_background_active="@color/colorWord"
+                    app:cv_background_active="@color/color_148dfe"
+                    app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
 
@@ -377,6 +394,13 @@
                     android:textSize="@dimen/ui_base_text_size_small" />
             </LinearLayout>
 
+            <View
+                android:id="@+id/ui_dialog_share_to_forward_blank"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/ui_static_dp_6"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:id="@+id/ui_dialog_share_to_recommend"
                 android:layout_width="0dp"
@@ -391,7 +415,8 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/color_7065fb"
-                    app:cv_background_active="@color/color_7065fb"
+                    app:cv_background_active="@color/color_52a2fb"
+                    app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
 
@@ -413,6 +438,13 @@
                     android:textSize="@dimen/ui_base_text_size_small" />
             </LinearLayout>
 
+            <View
+                android:id="@+id/ui_dialog_share_to_recommend_blank"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/ui_static_dp_6"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:id="@+id/ui_dialog_share_to_recommended"
                 android:layout_width="0dp"
@@ -428,7 +460,8 @@
                     android:elevation="@dimen/ui_base_translationZ"
                     android:gravity="center"
                     app:cv_background="@color/colorCaution"
-                    app:cv_background_active="@color/colorCaution"
+                    app:cv_background_active="@color/colorAccent"
+                    app:cv_background_type="fill"
                     app:cv_border_size="@dimen/ui_static_dp_zero"
                     app:cv_corner_size="@dimen/ui_static_dp_55">
 
@@ -448,11 +481,6 @@
                     android:textSize="@dimen/ui_base_text_size_small" />
             </LinearLayout>
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="@dimen/ui_static_dp_6"
-                android:layout_weight="1"
-                android:visibility="gone" />
         </LinearLayout>
 
         <View

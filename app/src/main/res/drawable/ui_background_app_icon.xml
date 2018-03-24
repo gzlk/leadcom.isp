@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <gradient
-        android:angle="90"
-        android:endColor="@color/color_3cbaff"
-        android:startColor="@color/color_148dfe" />
+    <item android:drawable="@drawable/ui_background_app_icon_pressed" android:state_pressed="true" />
+    <item android:drawable="@drawable/ui_background_app_icon_normal" android:state_pressed="false" />
 
-</shape>
+</selector>

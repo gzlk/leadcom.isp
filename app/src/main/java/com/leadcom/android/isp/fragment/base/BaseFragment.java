@@ -437,84 +437,115 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     // 分享
     private View shareDialog;
     protected ShareInfo mShareInfo;
+    private DialogHelper shareDialogHelper;
+    /**
+     * 是否允许删除档案、转发档案、推荐档案到首页、取消首页档案的推荐
+     */
+    protected boolean enableShareDelete = false, enableShareForward = false, enableShareRecommend = false, enableShareRecommended = false;
 
     /**
      * 打开分享选择对话框
      */
     protected void openShareDialog() {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == shareDialog) {
-                    shareDialog = View.inflate(Activity(), R.layout.popup_dialog_share, null);
+        if (null == shareDialogHelper) {
+            shareDialogHelper = DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+                @Override
+                public View onInitializeView() {
+                    if (null == shareDialog) {
+                        shareDialog = View.inflate(Activity(), R.layout.popup_dialog_share, null);
+                    }
+                    return shareDialog;
                 }
-                return shareDialog;
-            }
 
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-                shareDialog.findViewById(R.id.ui_dialog_share_to_app).setVisibility(INTERNAL_SHAREABLE ? View.VISIBLE : View.GONE);
-            }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{
-                        R.id.ui_dialog_share_to_app,
-                        R.id.ui_dialog_share_to_qq,
-                        R.id.ui_dialog_share_to_qzone,
-                        R.id.ui_dialog_share_to_wx_chat,
-                        R.id.ui_dialog_share_to_wx_moment,
-                        R.id.ui_dialog_share_to_weibo,
-                        R.id.ui_dialog_share_to_link,
-                        R.id.ui_dialog_share_to_delete,
-                        R.id.ui_dialog_share_to_forward,
-                        R.id.ui_dialog_share_to_recommend,
-                        R.id.ui_dialog_share_to_recommended
-                };
-            }
+                @Override
+                public void onBindData(View dialogView, DialogHelper helper) {
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_app).setVisibility(INTERNAL_SHAREABLE ? View.VISIBLE : View.GONE);
 
-            @Override
-            public boolean onClick(View view) {
-                //view.startAnimation(App.clickAnimation());
-                switch (view.getId()) {
-                    case R.id.ui_dialog_share_to_app:
-                        // App内部分享
-                        shareToApp();
-                        break;
-                    case R.id.ui_dialog_share_to_qq:
-                        shareToQQ();
-                        break;
-                    case R.id.ui_dialog_share_to_qzone:
-                        shareToQZone();
-                        break;
-                    case R.id.ui_dialog_share_to_wx_chat:
-                        shareToWeiXinSession();
-                        break;
-                    case R.id.ui_dialog_share_to_wx_moment:
-                        shareToWeiXinTimeline();
-                        break;
-                    case R.id.ui_dialog_share_to_weibo:
-                        shareToWeiBo();
-                        break;
-                    case R.id.ui_dialog_share_to_link:
-                        shareToLink();
-                        break;
-                    case R.id.ui_dialog_share_to_delete:
-                        shareToDelete();
-                        break;
-                    case R.id.ui_dialog_share_to_forward:
-                        shareToForward();
-                        break;
-                    case R.id.ui_dialog_share_to_recommend:
-                        shareToRecommend();
-                        break;
-                    case R.id.ui_dialog_share_to_recommended:
-                        shareToRecommended();
-                        break;
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_delete).setVisibility(enableShareDelete ? View.VISIBLE : View.GONE);
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_delete_blank).setVisibility(enableShareDelete ? View.GONE : View.VISIBLE);
+
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_forward).setVisibility(enableShareForward ? View.VISIBLE : View.GONE);
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_forward_blank).setVisibility(enableShareForward ? View.GONE : View.VISIBLE);
+
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_recommend).setVisibility(enableShareRecommend ? View.VISIBLE : View.GONE);
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_recommend_blank).setVisibility(enableShareRecommend ? View.GONE : View.VISIBLE);
+
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_recommended).setVisibility(enableShareRecommended ? View.VISIBLE : View.GONE);
                 }
-                return true;
-            }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+            }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+                @Override
+                public int[] clickEventHandleIds() {
+                    return new int[]{
+                            R.id.ui_dialog_share_to_background,
+                            R.id.ui_dialog_share_to_app,
+                            R.id.ui_dialog_share_to_qq,
+                            R.id.ui_dialog_share_to_qzone,
+                            R.id.ui_dialog_share_to_wx_chat,
+                            R.id.ui_dialog_share_to_wx_moment,
+                            R.id.ui_dialog_share_to_weibo,
+                            R.id.ui_dialog_share_to_link,
+                            R.id.ui_dialog_share_to_delete,
+                            R.id.ui_dialog_share_to_forward,
+                            R.id.ui_dialog_share_to_recommend,
+                            R.id.ui_dialog_share_to_recommended
+                    };
+                }
+
+                @Override
+                public boolean onClick(View view) {
+                    //view.startAnimation(App.clickAnimation());
+                    switch (view.getId()) {
+                        case R.id.ui_dialog_share_to_background:
+                            break;
+                        case R.id.ui_dialog_share_to_app:
+                            // App内部分享
+                            shareToApp();
+                            break;
+                        case R.id.ui_dialog_share_to_qq:
+                            shareToQQ();
+                            break;
+                        case R.id.ui_dialog_share_to_qzone:
+                            shareToQZone();
+                            break;
+                        case R.id.ui_dialog_share_to_wx_chat:
+                            shareToWeiXinSession();
+                            break;
+                        case R.id.ui_dialog_share_to_wx_moment:
+                            shareToWeiXinTimeline();
+                            break;
+                        case R.id.ui_dialog_share_to_weibo:
+                            shareToWeiBo();
+                            break;
+                        case R.id.ui_dialog_share_to_link:
+                            shareToLink();
+                            break;
+                        case R.id.ui_dialog_share_to_delete:
+                            shareToDelete();
+                            break;
+                        case R.id.ui_dialog_share_to_forward:
+                            shareToForward();
+                            break;
+                        case R.id.ui_dialog_share_to_recommend:
+                            shareToRecommend();
+                            break;
+                        case R.id.ui_dialog_share_to_recommended:
+                            shareToRecommended();
+                            break;
+                    }
+                    return true;
+                }
+            }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM);
+        }
+        shareDialogHelper.show();
+    }
+
+    /**
+     * 关闭分享对话框
+     */
+    protected void dismissShareDialog() {
+        if (null != shareDialogHelper) {
+            shareDialogHelper.dismiss();
+        }
     }
 
     protected void shareToApp() {
