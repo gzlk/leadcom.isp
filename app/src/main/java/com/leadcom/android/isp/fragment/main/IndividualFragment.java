@@ -17,6 +17,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.application.NimApplication;
@@ -33,7 +34,9 @@ import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.EditableDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
@@ -564,7 +567,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     private OnViewHolderElementClickListener onViewHolderElementClickListener = new OnViewHolderElementClickListener() {
         @Override
-        public void onClick(View view, int index) {
+        public void onClick(View view, final int index) {
             switch (view.getId()) {
                 case R.id.ui_holder_view_moment_camera_icon:
                     // 选择照片
@@ -633,9 +636,49 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_holder_view_collection_content_cover:
                     collectionClick((Collection) mAdapter.get(index));
                     break;
+                case R.id.ui_holder_view_collection_label_add:
+                    // 给收藏添加标签
+                    selectedMoment = index;
+                    if (null == editableDialogHelper) {
+                        editableDialogHelper = EditableDialogHelper.helper().setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+                            @Override
+                            public boolean onConfirm() {
+                                String input = editableDialogHelper.getInputValue();
+                                if (isEmpty(input)) {
+                                    ToastHelper.make().showMsg(R.string.ui_individual_collection_item_add_label_invalid);
+                                    return false;
+                                } else {
+                                    tryEditCollectionLabel(input);
+                                    return true;
+                                }
+                            }
+                        }).init(IndividualFragment.this).setInputHint(R.string.ui_individual_collection_item_add_label_hint).setTitleText(R.string.ui_individual_collection_item_add_label);
+                    }
+                    editableDialogHelper.show();
+                    break;
             }
         }
     };
+
+    private EditableDialogHelper editableDialogHelper;
+
+    private void tryEditCollectionLabel(final String label) {
+        ArrayList<String> labels = new ArrayList<>();
+        labels.add(label);
+        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
+            @Override
+            public void onResponse(Collection collection, boolean success, String message) {
+                super.onResponse(collection, success, message);
+                if (success) {
+                    Collection col = (Collection) mAdapter.get(selectedMoment);
+                    if (!col.getLabel().contains(label)) {
+                        col.getLabel().add(label);
+                        mAdapter.update(col);
+                    }
+                }
+            }
+        }).update(mAdapter.get(selectedMoment).getId(), labels);
+    }
 
     @Override
     protected void onCommentDeleteDialogCanceled() {

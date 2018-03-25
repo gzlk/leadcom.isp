@@ -68,6 +68,9 @@
 
     <string name="ui_individual_collection_list_loading">正在加载收藏列表，请稍候&#8230;</string>
     <string name="ui_individual_collection_list_fragment_title">个人收藏</string>
+    <string name="ui_individual_collection_item_add_label">为您的收藏添加一个标签</string>
+    <string name="ui_individual_collection_item_add_label_hint">标签名称(不能为空)</string>
+    <string name="ui_individual_collection_item_add_label_invalid">标签名称不能为空</string>
 
     <string name="ui_individual_message_fragment_title">消息</string>
     <string name="ui_individual_message_list">消息列表</string>

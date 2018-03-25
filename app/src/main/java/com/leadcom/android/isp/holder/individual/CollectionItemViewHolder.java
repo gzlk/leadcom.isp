@@ -67,7 +67,8 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     private ImageDisplayer archiveCover;
     @ViewId(R.id.ui_tool_view_collection_content_archive_text)
     private TextView archiveText;
-
+    @ViewId(R.id.ui_holder_view_collection_label_add)
+    private TextView labelAdd;
     @ViewId(R.id.ui_holder_view_collection_labels)
     private FlexboxLayout labelsLayout;
 
@@ -93,6 +94,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         creatorImage.displayImage(collection.getCreatorHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         checkViews(collection.getType());
         showCollection(collection);
+        labelAdd.setVisibility(collection.getLabel().size() > 0 ? View.GONE : View.VISIBLE);
         labelsLayout.removeAllViews();
         for (String string : collection.getLabel()) {
             TextView textView = (TextView) View.inflate(labelsLayout.getContext(), R.layout.holder_view_archive_label, null);
@@ -177,7 +179,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         createTime.setVisibility(showLargeImage ? View.GONE : View.VISIBLE);
     }
 
-    @Click({R.id.ui_holder_view_collection_content_cover})
+    @Click({R.id.ui_holder_view_collection_content_cover, R.id.ui_holder_view_collection_label_add})
     private void click(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
