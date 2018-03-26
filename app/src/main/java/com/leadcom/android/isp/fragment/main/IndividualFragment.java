@@ -114,7 +114,9 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        searchClickView.setVisibility(function == TYPE_ARCHIVE_MINE ? View.VISIBLE : View.GONE);
+        if (null != searchClickView) {
+            searchClickView.setVisibility(function == TYPE_ARCHIVE_MINE ? View.VISIBLE : View.GONE);
+        }
         if (function == TYPE_ARCHIVE_MINE) {
             setCustomTitle(R.string.ui_text_archive_list_fragment_title);
         } else if (function == TYPE_COLLECT) {
@@ -192,7 +194,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_main_home_featured;
+        return super.getLayout();//R.layout.fragment_main_home_featured;
     }
 
     @Override

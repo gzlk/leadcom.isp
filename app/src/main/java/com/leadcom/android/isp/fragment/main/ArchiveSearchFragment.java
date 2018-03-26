@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
@@ -79,6 +81,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     private View searchableView;
     @ViewId(R.id.ui_main_archive_search_content_background)
     private RelativeLayout selectorBg;
+    @ViewId(R.id.ui_main_archive_search_functions)
+    private LinearLayout functionView;
     @ViewId(R.id.ui_main_archive_search_functions_1_text)
     private TextView function1;
     @ViewId(R.id.ui_main_archive_search_functions_2_text)
@@ -165,6 +169,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         });
         if (searchingFunction > SEARCH_HOME) {
             searchViewHolder.setInputHint(searchingFunction == SEARCH_GROUP ? R.string.ui_group_archive_fragment_title : R.string.ui_text_archive_list_fragment_title);
+        } else {
+            functionView.setVisibility(View.GONE);
         }
         initializeTimePickerView();
         initializePositions();
@@ -566,6 +572,9 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         mAdapter.add(last());
+        if (mAdapter.getItemCount() <= 1) {
+            ToastHelper.make().showMsg(R.string.ui_text_home_archive_search_empty);
+        }
     }
 
     private boolean isInMonth(Archive archive) {
@@ -606,6 +615,12 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     d.setSelected(false);
                     tAdapter.update(d);
                 }
+            }
+            if (isEmpty(searchingNature) && isEmpty(searchingType)) {
+                // 如果两个筛选条件都为空，则选中“不限”选项
+                Dictionary d = none();
+                d.setSelected(true);
+                tAdapter.update(d);
             }
             restoreSearchingResult();
         }
