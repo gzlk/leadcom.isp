@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +20,15 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.individual.ModifyPhoneFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
+import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
+import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.EditableDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
@@ -66,6 +72,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private CustomTextView rightIcon;
     private PersonalityAdapter mAdapter;
     private String[] items;
+
+    private static int selectedIndex = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -163,20 +171,17 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private void resetUserInformation(int type, String value) {
         switch (type) {
             case UserRequest.UPDATE_COMPANY:
-                mAdapter.get(6).setId(format(items[5], value));
-                mAdapter.notifyItemChanged(6);
+                mAdapter.update(new SimpleClickableItem(format(items[5], value)));
                 break;
             case UserRequest.UPDATE_DUTY:
-                mAdapter.get(7).setId(format(items[6], value));
-                mAdapter.notifyItemChanged(7);
+                mAdapter.update(new SimpleClickableItem(format(items[6], value)));
                 break;
             case UserRequest.UPDATE_NAME:
                 ((User) mAdapter.get(0)).setName(value);
                 mAdapter.notifyItemChanged(0);
                 break;
             case UserRequest.UPDATE_PHONE:
-                mAdapter.get(8).setId(format(items[7], value));
-                mAdapter.notifyItemChanged(8);
+                mAdapter.update(new SimpleClickableItem(format(items[7], value)));
                 break;
             case UserRequest.UPDATE_PHOTO:
                 ((User) mAdapter.get(0)).setHeadPhoto(value);
@@ -232,6 +237,24 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected String getLocalPageTag() {
         return null;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_PHONE:
+                String result = getResultedData(data);
+                if (!isEmpty(result)) {
+                    // 输入的手机号码不为空时
+                    openActivity(CodeVerifyFragment.class.getName(), format("%d,%s", CodeVerifyFragment.VT_MODIFY_PHONE, result), REQUEST_PHONE_CONFIRM, true, false);
+                }
+                break;
+            case REQUEST_PHONE_CONFIRM:
+                // 手机号码修改成功了
+                resetUserInformation(UserRequest.UPDATE_PHONE, getResultedData(data));
+                break;
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     @Click({R.id.ui_main_personality_title_left_icon_container, R.id.ui_main_personality_title_right_icon})
@@ -346,16 +369,52 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 // 打开个人搜藏
                 IndividualFragment.open(this, IndividualFragment.TYPE_COLLECT);
                 break;
-            case 5:
-                // 编辑单位信息
-                break;
             case 6:
-                // 编辑职务信息
+                // 编辑单位信息
+                selectedIndex = 6;
+                prepareEditInfo(R.string.ui_text_personality_item_edit_company, Cache.cache().me.getCompany(), R.string.ui_text_personality_item_edit_company_hint);
                 break;
             case 7:
+                // 编辑职务信息
+                selectedIndex = 7;
+                prepareEditInfo(R.string.ui_text_personality_item_edit_duty, Cache.cache().me.getPosition(), R.string.ui_text_personality_item_edit_duty_hint);
+                break;
+            case 8:
                 // 修改电话
+                openActivity(ModifyPhoneFragment.class.getName(), Cache.cache().userPhone, REQUEST_PHONE, true, false);
+                break;
+            default:
+                selectedIndex = index;
                 break;
         }
+    }
+
+    private EditableDialogHelper editableDialogHelper;
+
+    private void prepareEditInfo(int title, final String value, int hint) {
+        if (null == editableDialogHelper) {
+            editableDialogHelper = EditableDialogHelper.helper().init(this);
+        }
+        editableDialogHelper.setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                String input = editableDialogHelper.getInputValue();
+                if (isEmpty(input)) {
+                    ToastHelper.make().showMsg(R.string.ui_text_personality_item_input_empty);
+                    return false;
+                }
+                if (!input.equals(value)) {
+                    if (selectedIndex == 6) {
+                        // 修改单位信息
+                        tryEditUserInfo(UserRequest.UPDATE_COMPANY, input);
+                    } else if (selectedIndex == 7) {
+                        // 修改职务信息
+                        tryEditUserInfo(UserRequest.UPDATE_DUTY, input);
+                    }
+                }
+                return true;
+            }
+        }).setInputValue(value).setTitleText(title).setInputHint(hint).show();
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

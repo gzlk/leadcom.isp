@@ -516,8 +516,6 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         return isEmpty(user.getBirthday()) ? invalid : (text.length() < 10 ? text : text.substring(0, 10));
     }
 
-    private static final int REQUEST_PHONE = ACTIVITY_BASE_REQUEST + 10;
-    private static final int REQUEST_PHONE_CONFIRM = REQUEST_PHONE + 1;
     private static final int REQUEST_ID = REQUEST_PHONE + 2;
     private static final int REQUEST_COMPANY = REQUEST_PHONE + 3;
     private static final int REQUEST_DUTY = REQUEST_PHONE + 4;

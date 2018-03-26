@@ -153,7 +153,14 @@ public class SystemRequest extends Request<User> {
      * 重置手机号码
      */
     public void resetPhone(String phone, String captcha) {
-        String param = format("/system/resetPhone?phone=%s&captcha=%s", phone, captcha);
-        httpRequest(getRequest(Register.class, param, "", HttpMethods.Get));
+        JSONObject object = new JSONObject();
+        try {
+            object.put("phone", phone)
+                    .put("captcha", captcha);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(Register.class, "/system/resetPhone", object.toString(), HttpMethods.Post));
     }
 }

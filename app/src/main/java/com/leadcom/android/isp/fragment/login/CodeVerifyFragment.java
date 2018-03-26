@@ -213,14 +213,13 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
         }).verifyCaptcha(verifyPhone, super.verifyCode);
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void tryModifyMyPhoneNumber() {
         SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    resultSucceededActivity();
+                    resultData(verifyPhone);
                 }
                 ToastHelper.make().showMsg(message);
             }

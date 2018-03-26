@@ -334,6 +334,8 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 关注组织
      */
     protected static final int REQUEST_CONCERNED = ACTIVITY_BASE_REQUEST + 101;
+    protected static final int REQUEST_PHONE = ACTIVITY_BASE_REQUEST + 20;
+    protected static final int REQUEST_PHONE_CONFIRM = REQUEST_PHONE + 1;
 
     /**
      * 启动容器Activity(此时打开的新Activity不需要返回确认)

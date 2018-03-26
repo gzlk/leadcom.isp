@@ -227,4 +227,9 @@
     </string-array>
     <string name="ui_text_personality_contact_fragment_title">通讯录</string>
     <string name="ui_text_personality_contact_nothing">没有更多的联系人了</string>
+    <string name="ui_text_personality_item_input_empty">输入不能为空</string>
+    <string name="ui_text_personality_item_edit_company">修改单位</string>
+    <string name="ui_text_personality_item_edit_company_hint">单位名称</string>
+    <string name="ui_text_personality_item_edit_duty">修改职务</string>
+    <string name="ui_text_personality_item_edit_duty_hint">职务名称</string>
 </resources>
