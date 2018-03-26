@@ -21,6 +21,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
+import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
@@ -53,9 +54,9 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Additional;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Comment;
+import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
-import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
@@ -282,10 +283,12 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private void resetResultData() {
         Archive archive = (Archive) mAdapter.get(mQueryId);
-        Intent intent = new Intent();
-        intent.putExtra(RESULT_ARCHIVE, archive);
-        intent.putExtra(RESULT_STRING, archive.getId());
-        Activity().setResult(Activity.RESULT_OK, intent);
+        if (null != archive) {
+            Intent intent = new Intent();
+            intent.putExtra(RESULT_ARCHIVE, archive);
+            intent.putExtra(RESULT_STRING, archive.getId());
+            Activity().setResult(Activity.RESULT_OK, intent);
+        }
     }
 
     private OnKeyboardChangeListener.KeyboardListener keyboardListener = new OnKeyboardChangeListener.KeyboardListener() {
@@ -710,12 +713,93 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void shareToRecommend() {
-
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                tryRecommendArchive();
+                return true;
+            }
+        }).setTitleText(R.string.ui_text_archive_details_recommend).setConfirmText(R.string.ui_base_text_recommend).show();
     }
 
     @Override
     protected void shareToRecommended() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                tryRecommendArchive();
+                return true;
+            }
+        }).setTitleText(R.string.ui_text_archive_details_recommended).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
 
+    private void tryRecommendArchive() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        if (null != archive) {
+            // 没有推荐则推荐，有推荐则取消推荐
+            if (!archive.isRecommend()) {
+                if (!archive.isRecommendable()) {
+                    // 无图无视频
+                    ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_no_image_video);
+                } else {
+                    // 有图或者视频，可以推荐
+                    if (Utils.hasImage(archive.getContent()) || Utils.hasVideo(archive.getContent())) {
+                        recommendArchive(archive);
+                    } else {
+                        long len = archive.getHtmlClearedLength();
+                        if (len < 70) {
+                            ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_too_short);
+                        } else {
+                            // 推荐
+                            recommendArchive(archive);
+                        }
+                    }
+                }
+            } else {
+                if (isEmpty(archive.getId()) || archive.getId().equals("null")) {
+                    ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_id_null);
+                } else {
+                    unRecommendArchive(archive.getRcmdId());
+                }
+            }
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_null);
+        }
+    }
+
+
+    // 推荐档案
+    private void recommendArchive(Archive archive) {
+        final int index = mAdapter.indexOf(archive);
+        RecommendArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<RecommendArchive>() {
+            @Override
+            public void onResponse(RecommendArchive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    Archive doc = (Archive) mAdapter.get(index);
+                    doc.setRecommend(RecommendArchive.RecommendStatus.RECOMMENDED);
+                    mAdapter.notifyItemChanged(index);
+                    onSwipeRefreshing();
+                }
+            }
+        }).recommend(archive.getType(), archive.getGroupId(), mQueryId, archive.getUserId());
+    }
+
+    // 取消推荐档案
+    private void unRecommendArchive(String recommendId) {
+        RecommendArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<RecommendArchive>() {
+            @Override
+            public void onResponse(RecommendArchive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    Archive doc = (Archive) mAdapter.get(mQueryId);
+                    doc.setRecommend(RecommendArchive.RecommendStatus.UN_RECOMMEND);
+                    mAdapter.notifyItemChanged(0);
+                    onSwipeRefreshing();
+                }
+                displayLoading(false);
+            }
+        }).unRecommend(recommendId);
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

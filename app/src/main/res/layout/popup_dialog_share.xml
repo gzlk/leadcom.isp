@@ -481,6 +481,13 @@
                     android:textSize="@dimen/ui_base_text_size_small" />
             </LinearLayout>
 
+            <View
+                android:id="@+id/ui_dialog_share_to_recommended_blank"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/ui_static_dp_6"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
         </LinearLayout>
 
         <View

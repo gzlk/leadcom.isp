@@ -465,10 +465,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                     shareDialog.findViewById(R.id.ui_dialog_share_to_delete_blank).setVisibility(enableShareDelete ? View.GONE : View.VISIBLE);
 
                     shareDialog.findViewById(R.id.ui_dialog_share_to_forward).setVisibility(enableShareForward ? View.VISIBLE : View.GONE);
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_forward_blank).setVisibility(enableShareForward ? View.GONE : View.VISIBLE);
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_forward_blank).setVisibility(enableShareDelete && enableShareForward ? View.GONE : View.VISIBLE);
 
                     shareDialog.findViewById(R.id.ui_dialog_share_to_recommend).setVisibility(enableShareRecommend ? View.VISIBLE : View.GONE);
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_recommend_blank).setVisibility(enableShareRecommend ? View.GONE : View.VISIBLE);
+                    shareDialog.findViewById(R.id.ui_dialog_share_to_recommend_blank).setVisibility(enableShareRecommend || enableShareRecommended ? View.GONE : View.VISIBLE);
 
                     shareDialog.findViewById(R.id.ui_dialog_share_to_recommended).setVisibility(enableShareRecommended ? View.VISIBLE : View.GONE);
                 }

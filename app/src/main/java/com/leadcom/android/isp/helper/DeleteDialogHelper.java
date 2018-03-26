@@ -26,10 +26,12 @@ public class DeleteDialogHelper {
     private BaseFragment fragment;
     private DialogHelper.OnDialogConfirmListener confirmListener;
     private DialogHelper dialogHelper;
-    private String titleString;
+    private String titleString, confirmString;
 
     public DeleteDialogHelper init(BaseFragment fragment) {
         this.fragment = fragment;
+        // 默认是删除
+        confirmString = StringHelper.getString(R.string.ui_base_text_delete);
         return this;
     }
 
@@ -50,6 +52,16 @@ public class DeleteDialogHelper {
 
     public DeleteDialogHelper setTitleText(String titleText) {
         titleString = titleText;
+        return this;
+    }
+
+    public DeleteDialogHelper setConfirmText(int text) {
+        confirmString = StringHelper.getString(text);
+        return this;
+    }
+
+    public DeleteDialogHelper setConfirmText(String text) {
+        confirmString = text;
         return this;
     }
 
@@ -82,7 +94,7 @@ public class DeleteDialogHelper {
                 public boolean onClick(View view) {
                     return true;
                 }
-            }).addOnDialogConfirmListener(confirmListener).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true);
+            }).setConfirmText(confirmString).addOnDialogConfirmListener(confirmListener).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true);
         }
         dialogHelper.show();
     }
