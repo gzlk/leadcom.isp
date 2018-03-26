@@ -27,9 +27,11 @@ public class ArchiveDraft extends Model {
      * 查询指定组织下的草稿
      */
     public static List<ArchiveDraft> getDraft(String groupId) {
-        QueryBuilder<ArchiveDraft> builder = new QueryBuilder<>(ArchiveDraft.class)
-                .whereEquals(Organization.Field.GroupId, groupId)
-                .appendOrderDescBy(Field.CreateDate);
+        QueryBuilder<ArchiveDraft> builder = new QueryBuilder<>(ArchiveDraft.class);
+        if (!isEmpty(groupId)) {
+            builder = builder.whereEquals(Organization.Field.GroupId, groupId);
+        }
+        builder = builder.appendOrderDescBy(Field.CreateDate);
         return new Dao<>(ArchiveDraft.class).query(builder);
     }
 

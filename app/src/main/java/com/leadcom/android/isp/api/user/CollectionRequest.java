@@ -227,9 +227,7 @@ public class CollectionRequest extends Request<Collection> {
      * @param pageNumber 页码
      */
     public void list(int type, int ope, int pageNumber) {
-        // accessToken
-        httpRequest(getRequest(MultipleCollection.class,
-                format("%s?pageNumber=%d", url(LIST), pageNumber), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleCollection.class, format("%s?type=%d&ope=%d&pageNumber=%d", url(LIST), type, ope, pageNumber), "", HttpMethods.Get));
     }
 
     /**

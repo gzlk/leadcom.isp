@@ -71,6 +71,7 @@
     <string name="ui_individual_collection_item_add_label">为您的收藏添加一个标签</string>
     <string name="ui_individual_collection_item_add_label_hint">标签名称(不能为空)</string>
     <string name="ui_individual_collection_item_add_label_invalid">标签名称不能为空</string>
+    <string name="ui_individual_collection_item_edit_label">修改标签</string>
 
     <string name="ui_individual_message_fragment_title">消息</string>
     <string name="ui_individual_message_list">消息列表</string>

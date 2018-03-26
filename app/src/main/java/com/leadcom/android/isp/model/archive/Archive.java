@@ -53,6 +53,10 @@ public class Archive extends Additional {
          */
         String USER_MOMENT = "userMoment";
         /**
+         * 用户消息
+         */
+        String USER_MESSAGE = "userMsg";
+        /**
          * 评论
          */
         String COMMENT = "archiveComment";

@@ -90,7 +90,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
 
     public void showContent(Collection collection) {
         creatorName.setText(collection.getCreatorName());
-        createTime.setText(fragment().formatTimeAgo(collection.getCreateDate()));
+        createTime.setText(format("%s收藏", fragment().formatTimeAgo(collection.getCreateDate())));
         creatorImage.displayImage(collection.getCreatorHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         checkViews(collection.getType());
         showCollection(collection);
@@ -100,6 +100,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
             TextView textView = (TextView) View.inflate(labelsLayout.getContext(), R.layout.holder_view_archive_label, null);
             textView.setText(string);
             labelsLayout.addView(textView);
+            textView.setOnClickListener(labelClick);
             int lines = labelsLayout.getFlexLines().size();
             FlexboxLayout.LayoutParams params = (FlexboxLayout.LayoutParams) textView.getLayoutParams();
             params.rightMargin = margin;
@@ -107,6 +108,19 @@ public class CollectionItemViewHolder extends BaseViewHolder {
             textView.setLayoutParams(params);
         }
     }
+
+    private View.OnClickListener labelClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            v.startAnimation(App.clickAnimation());
+            TextView textView = (TextView) v;
+            int index = labelsLayout.indexOfChild(textView);
+            if (null != labelClickListener) {
+                // 可以修改标签
+                labelClickListener.onClick(getAdapterPosition(), index, textView.getText().toString());
+            }
+        }
+    };
 
     private void checkViews(int type) {
         textContent.setVisibility(type == Collection.Type.TEXT ? View.VISIBLE : View.GONE);
@@ -184,5 +198,15 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
+    }
+
+    private OnLabelClickListener labelClickListener;
+
+    public void setOnLabelClickListener(OnLabelClickListener l) {
+        labelClickListener = l;
+    }
+
+    public interface OnLabelClickListener {
+        void onClick(int index, int labelIndex, String oldValue);
     }
 }

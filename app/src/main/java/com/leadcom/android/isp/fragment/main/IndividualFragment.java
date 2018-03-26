@@ -641,22 +641,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_holder_view_collection_label_add:
                     // 给收藏添加标签
                     selectedMoment = index;
-                    if (null == editableDialogHelper) {
-                        editableDialogHelper = EditableDialogHelper.helper().setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-                            @Override
-                            public boolean onConfirm() {
-                                String input = editableDialogHelper.getInputValue();
-                                if (isEmpty(input)) {
-                                    ToastHelper.make().showMsg(R.string.ui_individual_collection_item_add_label_invalid);
-                                    return false;
-                                } else {
-                                    tryEditCollectionLabel(input);
-                                    return true;
-                                }
-                            }
-                        }).init(IndividualFragment.this).setInputHint(R.string.ui_individual_collection_item_add_label_hint).setTitleText(R.string.ui_individual_collection_item_add_label);
-                    }
-                    editableDialogHelper.show();
+                    prepareCollectionLabelAdd();
                     break;
             }
         }
@@ -664,22 +649,48 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     private EditableDialogHelper editableDialogHelper;
 
-    private void tryEditCollectionLabel(final String label) {
-        ArrayList<String> labels = new ArrayList<>();
-        labels.add(label);
+    /**
+     * 准备新增收藏标签
+     */
+    private void prepareCollectionLabelAdd() {
+        if (null == editableDialogHelper) {
+            editableDialogHelper = EditableDialogHelper.helper().init(this);
+        }
+        editableDialogHelper.setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                String input = editableDialogHelper.getInputValue();
+                if (isEmpty(input)) {
+                    ToastHelper.make().showMsg(R.string.ui_individual_collection_item_add_label_invalid);
+                    return false;
+                } else {
+                    tryEditCollectionLabel(input);
+                    return true;
+                }
+            }
+        }).setInputHint(R.string.ui_individual_collection_item_add_label_hint).setTitleText(R.string.ui_individual_collection_item_add_label).show();
+    }
+
+    private void tryEditCollectionLabel(ArrayList<String> labels) {
         CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
             @Override
             public void onResponse(Collection collection, boolean success, String message) {
                 super.onResponse(collection, success, message);
                 if (success) {
-                    Collection col = (Collection) mAdapter.get(selectedMoment);
-                    if (!col.getLabel().contains(label)) {
-                        col.getLabel().add(label);
-                        mAdapter.update(col);
-                    }
+                    mAdapter.notifyItemChanged(selectedMoment);
+//                    Collection col = (Collection) mAdapter.get(selectedMoment);
+//                    col.getLabel().clear();
+//                    col.getLabel().addAll(labels);
+//                    mAdapter.update(col);
                 }
             }
         }).update(mAdapter.get(selectedMoment).getId(), labels);
+    }
+
+    private void tryEditCollectionLabel(String label) {
+        Collection col = (Collection) mAdapter.get(selectedMoment);
+        col.getLabel().add(label);
+        tryEditCollectionLabel(col.getLabel());
     }
 
     @Override
@@ -879,6 +890,34 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         }
     }
 
+    private CollectionItemViewHolder.OnLabelClickListener labelClickListener = new CollectionItemViewHolder.OnLabelClickListener() {
+        @Override
+        public void onClick(final int index, final int labelIndex, String oldValue) {
+            selectedMoment = index;
+            if (null == editableDialogHelper) {
+                editableDialogHelper = EditableDialogHelper.helper().init(IndividualFragment.this);
+            }
+            editableDialogHelper.setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+                @Override
+                public boolean onConfirm() {
+                    String input = editableDialogHelper.getInputValue();
+                    if (isEmpty(input)) {
+                        ToastHelper.make().showMsg(R.string.ui_individual_collection_item_add_label_invalid);
+                        return false;
+                    } else {
+                        Collection col = (Collection) mAdapter.get(index);
+                        ArrayList<String> labels = col.getLabel();
+                        if (!labels.get(labelIndex).equals(input)) {
+                            labels.set(labelIndex, input);
+                            tryEditCollectionLabel(labels);
+                        }
+                        return true;
+                    }
+                }
+            }).setInputValue(oldValue).setInputHint(R.string.ui_individual_collection_item_add_label_hint).setTitleText(R.string.ui_individual_collection_item_edit_label).show();
+        }
+    };
+
     private class IndividualAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_MOMENT = 2,
@@ -910,6 +949,8 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case VT_COLLECTION:
                     CollectionItemViewHolder civh = new CollectionItemViewHolder(itemView, fragment);
                     civh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
+                    // 标签更改
+                    civh.setOnLabelClickListener(labelClickListener);
                     return civh;
                 case VT_NO_MORE:
                     return new NothingMoreViewHolder(itemView, fragment);

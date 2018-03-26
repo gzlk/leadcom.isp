@@ -2,6 +2,7 @@ package com.leadcom.android.isp.model.user;
 
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.litesuits.orm.db.annotation.Table;
 
 /**
  * <b>功能描述：</b>个人消息<br />
@@ -14,6 +15,7 @@ import com.leadcom.android.isp.model.archive.Archive;
  * <b>修改备注：</b><br />
  */
 
+@Table(Archive.Table.USER_MESSAGE)
 public class UserMessage extends Model {
 
     /**

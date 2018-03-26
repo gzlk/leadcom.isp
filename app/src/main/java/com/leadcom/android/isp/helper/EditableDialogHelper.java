@@ -55,12 +55,12 @@ public class EditableDialogHelper {
     }
 
     public EditableDialogHelper setInputHint(int resString) {
-        inputString = StringHelper.getString(resString);
+        inputHint = StringHelper.getString(resString);
         return this;
     }
 
     public EditableDialogHelper setInputHint(String value) {
-        inputString = value;
+        inputHint = value;
         return this;
     }
 
@@ -75,25 +75,27 @@ public class EditableDialogHelper {
 
     public void show() {
         if (null == dialogHelper) {
-            dialogHelper = DialogHelper.init(fragment.Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-                @Override
-                public View onInitializeView() {
-                    if (null == dialogView) {
-                        dialogView = View.inflate(fragment.Activity(), layout, null);
-                        textView = dialogView.findViewById(R.id.ui_custom_dialog_text);
-                        input = dialogView.findViewById(R.id.ui_custom_dialog_input);
-                    }
-                    return dialogView;
-                }
-
-                @Override
-                public void onBindData(View dialogView, DialogHelper helper) {
-                    textView.setText(titleString);
-                    input.setTextHint(inputHint);
-                    input.setValue(inputString);
-                }
-            }).addOnDialogConfirmListener(confirmListener).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true);
+            dialogHelper = DialogHelper.init(fragment.Activity()).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true);
         }
+        dialogHelper.addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == dialogView) {
+                    dialogView = View.inflate(fragment.Activity(), layout, null);
+                    textView = dialogView.findViewById(R.id.ui_custom_dialog_text);
+                    input = dialogView.findViewById(R.id.ui_custom_dialog_input);
+                }
+                return dialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+                textView.setText(titleString);
+                input.setTextHint(inputHint);
+                input.setValue(inputString);
+                input.focusEnd();
+            }
+        }).addOnDialogConfirmListener(confirmListener);
         dialogHelper.show();
     }
 

@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/ui_static_dp_15"
-    android:layout_marginRight="@dimen/ui_static_dp_15"
+    android:paddingStart="@dimen/ui_static_dp_20"
+    android:paddingEnd="@dimen/ui_static_dp_20"
     android:orientation="vertical">
 
     <View
