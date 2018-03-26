@@ -197,8 +197,8 @@
     <string name="ui_text_user_property_self_defined_property_name_hint">标题(限8字)</string>
     <string name="ui_text_user_property_self_defined_property_value_hint">内容(限20字)</string>
     <string name="ui_text_user_property_self_defined_shown" formatted="false">1|是否公开|%d|</string>
-    <string name="ui_text_user_property_self_defined_invalid">标题或内容不能为空</string>
-    <string name="ui_text_user_property_self_defined_delete">您确定要删除这个自定义内容吗？</string>
+    <string name="ui_text_user_property_self_defined_invalid">自定义属性标题或内容不能为空</string>
+    <string name="ui_text_user_property_self_defined_delete">确定删除这个自定义内容吗？</string>
     <string name="ui_text_user_property_self_defined_value" formatted="false">%s%s</string>
     <string-array name="ui_text_user_property_self_defined_shown_type">
         <item>隐藏</item>

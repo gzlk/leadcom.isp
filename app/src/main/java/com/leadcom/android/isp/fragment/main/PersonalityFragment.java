@@ -8,8 +8,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.daimajia.swipe.util.Attributes;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
@@ -25,12 +27,15 @@ import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
+import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.EditableDialogHelper;
+import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
+import com.leadcom.android.isp.holder.common.ToggleableViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.individual.UserHeaderBlurViewHolder;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
@@ -44,6 +49,7 @@ import com.leadcom.android.isp.model.user.UserExtra;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <b>功能描述：</b>主页 - 个人<br />
@@ -73,7 +79,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private PersonalityAdapter mAdapter;
     private String[] items;
 
-    private static int selectedIndex = -1;
+    private static int selectedIndex = 0, deleteIndex = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -160,9 +166,12 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success && null != user) {
-                    // 随时更新我的信息
-                    Cache.cache().setCurrentUser(user);
-                    Cache.cache().saveCurrentUser();
+                    if (isMe()) {
+                        // 随时更新我的信息
+                        Cache.cache().setCurrentUser(user);
+                        Cache.cache().saveCurrentUser();
+                        resetExtras();
+                    }
                 }
             }
         }).find(Cache.cache().userId, true);
@@ -257,7 +266,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         super.onActivityResult(requestCode, data);
     }
 
-    @Click({R.id.ui_main_personality_title_left_icon_container, R.id.ui_main_personality_title_right_icon})
+    @Click({R.id.ui_main_personality_title_left_icon_container, R.id.ui_main_personality_title_right_icon, R.id.ui_user_information_self_define})
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_main_personality_title_left_icon_container:
@@ -268,6 +277,39 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 view.startAnimation(App.clickAnimation());
                 SettingFragment.open(PersonalityFragment.this);
                 break;
+            case R.id.ui_user_information_self_define:
+                selectedIndex = 0;
+                openSelfDefineDialog();
+                break;
+        }
+    }
+
+    private boolean isMe() {
+        return isEmpty(mQueryId) || mQueryId.equals(Cache.cache().userId);
+    }
+
+    private void clearExtras() {
+        Iterator<Model> iterator = mAdapter.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof UserExtra) {
+                iterator.remove();
+                mAdapter.notifyItemRemoved(index);
+            }
+            index++;
+        }
+    }
+
+    private void resetExtras() {
+        clearExtras();
+        for (UserExtra extra : Cache.cache().me.getExtra()) {
+            if (null != extra) {
+                // 如果额外的属性是可显示状态或者不可显示但当前用户是登录用户时，也可以显示
+                if (extra.getShow() == UserExtra.ShownType.SHOWN || (extra.getShow() == UserExtra.ShownType.HIDE && isMe())) {
+                    mAdapter.update(extra);
+                }
+            }
         }
     }
 
@@ -324,6 +366,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     }
                 }
+                fetchingRemoteUserInfo();
             }
         }).findUser();
     }
@@ -332,6 +375,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         if (null == mAdapter) {
             mAdapter = new PersonalityAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            mAdapter.setMode(Attributes.Mode.Single);
             mRecyclerView.addOnScrollListener(scrollListener);
             mAdapter.add(Cache.cache().me);
             initializeItems();
@@ -385,6 +429,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             default:
                 selectedIndex = index;
+                if (mAdapter.get(selectedIndex) instanceof UserExtra) {
+                    openSelfDefineDialog();
+                }
                 break;
         }
     }
@@ -417,6 +464,100 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         }).setInputValue(value).setTitleText(title).setInputHint(hint).show();
     }
 
+    private View selfDefineDialog, selfShown;
+    private ClearEditText selfName, selfValue;
+    private ToggleableViewHolder toggleHolder;
+
+    // 打开自定义属性对话框
+    private void openSelfDefineDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == selfDefineDialog) {
+                    selfDefineDialog = View.inflate(Activity(), R.layout.popup_dialog_individual_self_defined_property, null);
+                }
+                return selfDefineDialog;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+                if (null == toggleHolder) {
+                    toggleHolder = new ToggleableViewHolder(selfDefineDialog, PersonalityFragment.this);
+                }
+                if (null == selfName) {
+                    selfName = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_name);
+                }
+                if (null == selfValue) {
+                    selfValue = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_value);
+                }
+                if (null == selfShown) {
+                    selfShown = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_shown);
+                }
+                Model model = mAdapter.get(selectedIndex);
+                selfShown.setVisibility((model instanceof UserExtra) ? View.VISIBLE : View.GONE);
+                if (model instanceof UserExtra) {
+                    UserExtra ue = (UserExtra) model;
+                    selfName.setValue(ue.getTitle());
+                    selfName.focusEnd();
+                    selfValue.setValue(ue.getContent());
+                    toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, ue.getShow()));
+                } else {
+                    toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, UserExtra.ShownType.HIDE));
+                    selfName.setValue("");
+                    selfValue.setValue("");
+                }
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                String title = selfName.getValue();
+                String value = selfValue.getValue();
+                if (isEmpty(title) || isEmpty(value)) {
+                    ToastHelper.make().showMsg(R.string.ui_text_user_property_self_defined_invalid);
+                    return false;
+                }
+                UserExtra extra;
+                if (selectedIndex > 0) {
+                    extra = (UserExtra) mAdapter.get(selectedIndex);
+                } else {
+                    extra = new UserExtra();
+                }
+                extra.setTitle(selfName.getValue());
+                extra.setContent(selfValue.getValue());
+                extra.setShow(selfShown.getVisibility() == View.GONE ? UserExtra.ShownType.HIDE : (toggleHolder.isToggled() ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE));
+                //extra.setShow((selfShown.getVisibility() == View.VISIBLE || toggleHolder.isToggled()) ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE);
+                int index = Cache.cache().me.getExtra().indexOf(extra);
+                if (index >= 0) {
+                    Cache.cache().me.getExtra().set(index, extra);
+                } else {
+                    Cache.cache().me.getExtra().add(extra);
+                }
+                updateMyExtra();
+                return true;
+            }
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    }
+
+    private void updateMyExtra() {
+        setLoadingText(R.string.ui_text_user_information_loading_updating_extra);
+        displayLoading(true);
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                displayLoading(false);
+                if (success) {
+                    // 如果是删除某个自定义选项，此时删除adapter里的条目
+                    if (deleteIndex > 0) {
+                        mAdapter.remove(deleteIndex);
+                        deleteIndex = 0;
+                    }
+                    fetchingRemoteUserInfo();
+                }
+            }
+        }).update(Cache.cache().me.getExtra());
+    }
+
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
@@ -430,10 +571,24 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case R.id.ui_tool_view_contact_button2:
                     // 删除自定义介绍项目
+                    deleteIndex = index;
+                    warningDeleteSelfDefinedProperty(deleteIndex);
                     break;
             }
         }
     };
+
+    private void warningDeleteSelfDefinedProperty(final int index) {
+        DeleteDialogHelper.helper().setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                UserExtra ue = (UserExtra) mAdapter.get(index);
+                Cache.cache().me.getExtra().remove(ue);
+                updateMyExtra();
+                return true;
+            }
+        }).init(this).setTitleText(R.string.ui_text_user_property_self_defined_delete).setConfirmText(R.string.ui_base_text_yes).show();
+    }
 
     private class PersonalityAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
 
@@ -487,7 +642,11 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof GroupDetailsViewHolder) {
-                ((GroupDetailsViewHolder) holder).showContent((SimpleClickableItem) item);
+                if (item instanceof UserExtra) {
+                    ((GroupDetailsViewHolder) holder).showContent((UserExtra) item);
+                } else {
+                    ((GroupDetailsViewHolder) holder).showContent((SimpleClickableItem) item);
+                }
             } else if (holder instanceof UserHeaderBlurViewHolder) {
                 ((UserHeaderBlurViewHolder) holder).showContent((User) item);
             }
