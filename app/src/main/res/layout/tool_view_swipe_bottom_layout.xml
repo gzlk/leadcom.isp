@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="@dimen/ui_base_dimen_button_height"
     android:orientation="horizontal">
@@ -13,7 +14,8 @@
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_organization_contact_transfer_owner"
         android:textColor="@color/ui_text_normal_white"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_itemType="menu" />
 
     <TextView
         android:id="@+id/ui_tool_view_contact_button0d5"
@@ -24,7 +26,8 @@
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_organization_contact_set_archive_manager"
         android:textColor="@color/ui_text_normal_white"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_itemType="menu" />
 
     <TextView
         android:id="@+id/ui_tool_view_contact_button1"
@@ -35,7 +38,8 @@
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_squad_contact_set_to_admin"
         android:textColor="@color/ui_text_normal_white"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_itemType="menu" />
 
     <TextView
         android:id="@+id/ui_tool_view_contact_button2"
@@ -46,5 +50,6 @@
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_base_text_remove"
         android:textColor="@color/ui_text_normal_white"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_itemType="menu" />
 </LinearLayout>

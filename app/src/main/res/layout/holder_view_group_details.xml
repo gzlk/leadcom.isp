@@ -1,56 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ui_holder_view_simple_clickable"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/ui_background_clickable">
+    app:layout_itemType="main">
 
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_holder_view_simple_clickable_value_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_margin="@dimen/ui_base_dimen_margin_padding"
-        android:text="@string/ui_icon_group_member"
-        android:textColor="@color/textColorHint"
-        android:textSize="@dimen/ui_base_text_size_large" />
-
-    <TextView
-        android:id="@+id/ui_holder_view_simple_clickable_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/ui_holder_view_simple_clickable_value_icon"
-        android:text="@string/app_name_default" />
-
-    <TextView
-        android:id="@+id/ui_holder_view_simple_clickable_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/ui_static_dp_30"
-        android:ellipsize="end"
-        android:gravity="end|center_vertical"
-        android:maxLines="1"
-        android:text="@string/app_name"
-        android:textColor="@color/textColorHint"
-        android:textSize="@dimen/ui_base_text_size_small" />
-
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_holder_view_simple_clickable_right_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-        android:text="@string/ui_icon_right"
-        android:textColor="@color/textColorHint" />
-
-    <View
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ui_holder_view_simple_clickable"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ui_base_border_size_normal"
-        android:layout_below="@+id/ui_holder_view_simple_clickable_value_icon"
-        android:layout_toEndOf="@+id/ui_holder_view_simple_clickable_value_icon"
-        android:background="@color/windowBackground" />
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_background_clickable">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_simple_clickable_value_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/ui_icon_group_member"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_large" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_simple_clickable_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/ui_holder_view_simple_clickable_value_icon"
+            android:text="@string/app_name_default" />
+
+        <TextView
+            android:id="@+id/ui_holder_view_simple_clickable_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/ui_static_dp_30"
+            android:ellipsize="end"
+            android:gravity="end|center_vertical"
+            android:maxLines="1"
+            android:text="@string/app_name"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_small" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_simple_clickable_right_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:text="@string/ui_icon_right"
+            android:textColor="@color/textColorHint" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_base_border_size_normal"
+            android:layout_below="@+id/ui_holder_view_simple_clickable_value_icon"
+            android:layout_toEndOf="@+id/ui_holder_view_simple_clickable_value_icon"
+            android:background="@color/windowBackground" />
+    </RelativeLayout>
+</LinearLayout>

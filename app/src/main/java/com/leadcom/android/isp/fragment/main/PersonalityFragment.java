@@ -659,7 +659,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int getSwipeLayoutResourceId(int position) {
-            return R.id.ui_holder_view_contact_swipe_layout;
+            return R.id.ui_holder_view_group_details_swipe_layout;
         }
     }
 }

@@ -8,7 +8,7 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
-import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -28,6 +28,7 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.team.TeamService;
@@ -123,6 +124,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new MessageAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             setRightIcon(R.string.ui_icon_delete);
             setRightText(R.string.ui_base_text_clear);
@@ -294,7 +296,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         }).delete(uuid);
     }
 
-    private class MessageAdapter extends RecyclerViewSwipeAdapter<SystemMessageViewHolder, NimMessage> {
+    private class MessageAdapter extends RecyclerViewAdapter<SystemMessageViewHolder, NimMessage> {
 
         @Override
         public SystemMessageViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -319,11 +321,6 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         protected int comparator(NimMessage item1, NimMessage item2) {
             return 0;
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int i) {
-            return R.id.ui_holder_view_swipe_layout;
         }
 
         public NimMessage query(String uuid) {
