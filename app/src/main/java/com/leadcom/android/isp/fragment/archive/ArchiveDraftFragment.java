@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.daimajia.swipe.util.Attributes;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.archive.ArchiveDraftViewHolder;
@@ -19,6 +18,7 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.ArchiveDraft;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.List;
 
@@ -122,7 +122,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new DraftAdapter();
-            mAdapter.setMode(Attributes.Mode.Single);
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             List<ArchiveDraft> drafts = ArchiveDraft.getDraft(mQueryId);
             if (null != drafts) {
@@ -157,7 +157,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
     };
 
     private void warningDraftDelete(final int index) {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_text_archive_creator_editor_create_draft_delete, new DialogHelper.OnDialogConfirmListener() {
+        DeleteDialogHelper.helper().init(this).setTitleText(R.string.ui_text_archive_creator_editor_create_draft_delete).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 ArchiveDraft.delete(mAdapter.get(index).getId());
@@ -165,10 +165,10 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.notifyItemRemoved(index);
                 return true;
             }
-        });
+        }).show();
     }
 
-    private class DraftAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
+    private class DraftAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_DRAFT = 0, VT_LAST = 1;
 
@@ -211,11 +211,6 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         protected int comparator(Model item1, Model item2) {
             return 0;
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int i) {
-            return R.id.ui_holder_view_contact_swipe_layout;
         }
     }
 }
