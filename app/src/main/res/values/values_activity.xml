@@ -114,7 +114,8 @@
 
     <string name="ui_activity_label_picker_fragment_title">活动类型</string>
     <string name="ui_activity_label_picker_picked_max">您最多只能同时选择2个标签</string>
-    <string name="ui_activity_label_picker_create_hint">请输入10个字以内的活动类型</string>
+    <string name="ui_activity_label_picker_create_title">自定义标签</string>
+    <string name="ui_activity_label_picker_create_hint">档案标签(10个字以内)</string>
 
     <string name="ui_activity_management_title_button_text_1">我参加</string>
     <string name="ui_activity_management_title_button_text_2">我发起</string>

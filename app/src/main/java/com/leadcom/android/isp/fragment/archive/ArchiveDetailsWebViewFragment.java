@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
@@ -45,6 +46,7 @@ import com.leadcom.android.isp.holder.archive.ArchiveDetailsViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
+import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnKeyboardChangeListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -59,7 +61,9 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.netease.nim.uikit.api.NimUIKit;
 
@@ -546,8 +550,50 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             // 需要跳转到会话页面并且关闭档案详情页
             String teamId = getResultedData(data);
             NimUIKit.startTeamSession(Activity(), teamId);
+        } else if (requestCode == REQUEST_GROUP) {
+            RelateGroup grp = RelateGroup.fromJson(getResultedData(data));
+            // 转发到指定的组织
+            if (null != grp && !isEmpty(grp.getGroupId())) {
+                openForwardDialog(grp.getGroupId(), grp.getGroupName(), grp.getLogo());
+            }
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    private View forwardDialog;
+    private TextView dialogTitle, shareTitle, shareSummary;
+    private ImageDisplayer shareImage;
+
+    private void openForwardDialog(String groupId, final String groupName, final String groupLogo) {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == forwardDialog) {
+                    forwardDialog = View.inflate(Activity(), R.layout.popup_dialog_share_in_app, null);
+
+                    dialogTitle = forwardDialog.findViewById(R.id.ui_dialog_share_in_app_title);
+                    shareTitle = forwardDialog.findViewById(R.id.ui_dialog_share_in_app_title_label);
+                    shareSummary = forwardDialog.findViewById(R.id.ui_dialog_share_in_app_summary_label);
+                    shareImage = forwardDialog.findViewById(R.id.ui_dialog_share_in_app_image);
+                }
+                return forwardDialog;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+                dialogTitle.setText(Html.fromHtml(getString(R.string.ui_base_share_to_forward_dialog_title, groupName)));
+                Archive archive = (Archive) mAdapter.get(mQueryId);
+                shareTitle.setText(archive.getTitle());
+                shareSummary.setText(Html.fromHtml(archive.getContent()));
+                shareImage.setVisibility(isEmpty(archive.getCover()) ? View.GONE : View.VISIBLE);
+                shareImage.displayImage(archive.getCover(), getDimension(R.dimen.ui_static_dp_50), false, false);
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                return true;
+            }
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     private View pushDialog;

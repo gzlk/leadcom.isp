@@ -17,6 +17,7 @@ import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.main.MainFragment;
+import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.helper.ClipboardHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
@@ -26,6 +27,7 @@ import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.ShareInfo;
+import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
@@ -327,6 +329,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_DELETE = ACTIVITY_BASE_REQUEST + 18;
     /**
+     * 组织选择
+     */
+    public static final int REQUEST_GROUP = ACTIVITY_BASE_REQUEST + 19;
+    /**
      * 感兴趣
      */
     protected static final int REQUEST_INTEREST = ACTIVITY_BASE_REQUEST + 100;
@@ -525,7 +531,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                             shareToDelete();
                             break;
                         case R.id.ui_dialog_share_to_forward:
-                            shareToForward();
+                            GroupPickerFragment.open(BaseFragment.this, "");
                             break;
                         case R.id.ui_dialog_share_to_recommend:
                             shareToRecommend();

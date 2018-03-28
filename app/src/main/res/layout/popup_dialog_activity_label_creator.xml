@@ -24,7 +24,7 @@
             android:layout_margin="@dimen/ui_base_dimen_margin_padding"
             android:gravity="center_horizontal"
             android:padding="@dimen/ui_base_dimen_margin_padding"
-            android:text="@string/ui_activity_label_picker_fragment_title" />
+            android:text="@string/ui_activity_label_picker_create_title" />
 
         <com.hlk.hlklib.lib.view.ClearEditText
             android:id="@+id/ui_dialog_activity_label_creator_name"
@@ -33,8 +33,10 @@
             android:layout_margin="@dimen/ui_base_dimen_margin_padding"
             app:cet_edit_active_border="@color/textColorHintLight"
             app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
+            app:cet_edit_count_input="true"
+            app:cet_edit_count_input_text_size="@dimen/ui_base_text_size_tiny"
             app:cet_edit_hint="@string/ui_activity_label_picker_create_hint"
-            app:cet_edit_normal_border="@android:color/white"
+            app:cet_edit_normal_border="@color/textColorHintLight"
             app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding"
             app:cet_edit_value_extract_regex="@string/regex_activity_label_name_input_filter"
             app:cet_edit_value_max_length="@integer/integer_activity_label_name_max_length"

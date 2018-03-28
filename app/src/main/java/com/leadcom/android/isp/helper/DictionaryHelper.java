@@ -72,6 +72,16 @@ public class DictionaryHelper {
                     titleLabel.setText(type.equals(Dictionary.Type.ARCHIVE_NATURE) ? R.string.ui_text_archive_details_editor_setting_property_title : R.string.ui_text_archive_details_editor_setting_category_title);
                     loadingDictionary(type, selected);
                 }
+            }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+                @Override
+                public int[] clickEventHandleIds() {
+                    return new int[]{R.id.ui_dialog_background_clicker};
+                }
+
+                @Override
+                public boolean onClick(View view) {
+                    return view.getId() == R.id.ui_dialog_background_clicker;
+                }
             }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true);
         }
         dialogHelper.show();

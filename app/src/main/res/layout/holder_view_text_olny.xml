@@ -31,6 +31,7 @@
         android:visibility="gone" />
 
     <View
+        android:id="@+id/ui_holder_view_text_item_bottom_line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ui_base_border_size_normal"
         android:layout_gravity="bottom"

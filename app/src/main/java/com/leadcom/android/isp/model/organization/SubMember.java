@@ -1,7 +1,10 @@
 package com.leadcom.android.isp.model.organization;
 
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.etc.Cryptography;
+import com.hlk.hlklib.etc.Utility;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
 
@@ -26,8 +29,18 @@ public class SubMember implements Serializable {
         }.getType());
     }
 
+    public static String toJson(SubMember member) {
+        return null == member ? "{}" : Json.gson().toJson(member, new TypeToken<SubMember>() {
+        }.getType());
+    }
+
     public static ArrayList<SubMember> fromJson(String json) {
         return Json.gson().fromJson((StringHelper.isEmptyJsonArray(json) ? "[]" : json), new TypeToken<ArrayList<SubMember>>() {
+        }.getType());
+    }
+
+    public static SubMember fromJsonOne(String json) {
+        return Json.gson().fromJson((StringHelper.isEmptyJsonArray(json) ? "{}" : json), new TypeToken<SubMember>() {
         }.getType());
     }
 
@@ -75,6 +88,9 @@ public class SubMember implements Serializable {
     }
 
     public String getUserId() {
+        if (StringHelper.isEmpty(userId, true)) {
+            userId = Cryptography.md5(userName);
+        }
         return userId;
     }
 

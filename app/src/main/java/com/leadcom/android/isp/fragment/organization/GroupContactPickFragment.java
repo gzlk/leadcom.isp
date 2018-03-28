@@ -198,13 +198,21 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         }
     }
 
+    private boolean isExist(SubMember member) {
+        for (SubMember sub : existsUsers) {
+            if (sub.getUserId().equals(member.getUserId()) || sub.getUserName().equals(member.getUserName()))
+                return true;
+        }
+        return false;
+    }
+
     @Override
     protected void onFetchingRemoteMembersComplete(List<Member> list) {
         if (null != list && list.size() > 0) {
             for (Member member : list) {
                 SubMember sub = new SubMember();
                 sub.setUserId(member.getUserId());
-                member.setSelected(existsUsers.contains(sub));
+                member.setSelected(isExist(sub));
                 if (member.isSelected() && isLockable) {
                     // 如果成员已经在之前的选定列表里，则做好防删除标记
                     member.setLocalDeleted(true);

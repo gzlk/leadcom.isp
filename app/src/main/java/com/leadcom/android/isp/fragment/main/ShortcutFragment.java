@@ -121,7 +121,7 @@ public class ShortcutFragment extends BaseOrganizationFragment {
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
             case REQUEST_SELECT:
-                ArchiveEditorFragment.open(ShortcutFragment.this, mQueryId, getResultedData(data));
+                ArchiveEditorFragment.open(ShortcutFragment.this, "", getResultedData(data));
                 break;
         }
         super.onActivityResult(requestCode, data);

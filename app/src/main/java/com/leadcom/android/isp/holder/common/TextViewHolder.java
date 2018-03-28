@@ -31,6 +31,8 @@ public class TextViewHolder extends BaseViewHolder {
     private TextView text;
     @ViewId(R.id.ui_holder_view_text_item_selector)
     private CustomTextView icon;
+    @ViewId(R.id.ui_holder_view_text_item_bottom_line)
+    private View bottomLine;
 
     private String title;
     private int index = -1;
@@ -39,6 +41,10 @@ public class TextViewHolder extends BaseViewHolder {
     public TextViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+    }
+
+    public void showBottomLine(boolean shown) {
+        bottomLine.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     /**

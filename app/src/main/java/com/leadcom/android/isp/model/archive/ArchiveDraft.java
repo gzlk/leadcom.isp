@@ -24,7 +24,7 @@ import java.util.List;
 public class ArchiveDraft extends Model {
 
     /**
-     * 查询指定组织下的草稿
+     * 查询指定组织下的草稿，groupId为空时，查询所有草稿
      */
     public static List<ArchiveDraft> getDraft(String groupId) {
         QueryBuilder<ArchiveDraft> builder = new QueryBuilder<>(ArchiveDraft.class);

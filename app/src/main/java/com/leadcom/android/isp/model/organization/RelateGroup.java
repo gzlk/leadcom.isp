@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.model.organization;
 
+import com.google.gson.reflect.TypeToken;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
 
 /**
@@ -15,6 +17,16 @@ import com.leadcom.android.isp.model.Model;
 
 public class RelateGroup extends Model {
 
+    public static RelateGroup fromJson(String json) {
+        return Json.gson().fromJson(isEmpty(json) ? "{}" : json, new TypeToken<RelateGroup>() {
+        }.getType());
+    }
+
+    public static String toJson(RelateGroup group) {
+        return null == group ? "{}" : Json.gson().toJson(group, new TypeToken<RelateGroup>() {
+        }.getType());
+    }
+
     public interface Type {
         /**
          * 加入的组织
@@ -24,6 +36,16 @@ public class RelateGroup extends Model {
          * 关注的组织
          */
         int FOLLOWED = 2;
+    }
+
+    public RelateGroup() {
+    }
+
+    public RelateGroup(Organization group) {
+        groupId = group.getId();
+        groupName = group.getName();
+        logo = group.getLogo();
+        intro = group.getIntro();
     }
 
     private String conGroupId;  //

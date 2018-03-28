@@ -197,7 +197,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 stopRefreshing();
             }
-        }).getTopLabels(100);
+        }).getTopLabels(30);
     }
 
     private void updateList(List<Label> list) {
@@ -279,7 +279,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 if (null == dialogView) {
                     dialogView = LayoutInflater.from(mRecyclerView.getContext())
                             .inflate(R.layout.popup_dialog_activity_label_creator, null, false);
-                    labelName = (ClearEditText) dialogView.findViewById(R.id.ui_dialog_activity_label_creator_name);
+                    labelName = dialogView.findViewById(R.id.ui_dialog_activity_label_creator_name);
                 }
                 labelName.setValue("");
                 return dialogView;
@@ -328,6 +328,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
             } else {
                 TextViewHolder holder = new TextViewHolder(itemView, LabelPickFragment.this);
                 holder.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+                holder.showBottomLine(false);
                 return holder;
             }
         }

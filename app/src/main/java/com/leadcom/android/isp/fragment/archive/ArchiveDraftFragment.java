@@ -44,8 +44,8 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         return adf;
     }
 
-    public static void open(BaseFragment fragment, String groupId) {
-        fragment.openActivity(ArchiveDraftFragment.class.getName(), groupId, REQUEST_DRAFT, true, false);
+    public static void open(BaseFragment fragment) {
+        fragment.openActivity(ArchiveDraftFragment.class.getName(), "", REQUEST_DRAFT, true, false);
     }
 
     private DraftAdapter mAdapter;
@@ -124,7 +124,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new DraftAdapter();
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
-            List<ArchiveDraft> drafts = ArchiveDraft.getDraft(mQueryId);
+            List<ArchiveDraft> drafts = ArchiveDraft.getDraft("");
             if (null != drafts) {
                 for (ArchiveDraft draft : drafts) {
                     mAdapter.add(draft);
@@ -139,14 +139,15 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(View view, int index) {
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_draft_layout:
+                    Model selected = mAdapter.get(index);
+                    selected.setSelected(!selected.isSelected());
+                    mAdapter.update(selected);
                     for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
                         Model model = mAdapter.get(i);
-                        if (i == index) {
-                            model.setSelected(!model.isSelected());
-                        } else {
+                        if (!model.getId().equals(selected.getId()) && model.isSelected()) {
                             model.setSelected(false);
+                            mAdapter.update(model);
                         }
-                        mAdapter.notifyItemChanged(i);
                     }
                     break;
                 case R.id.ui_tool_view_archive_draft_delete:

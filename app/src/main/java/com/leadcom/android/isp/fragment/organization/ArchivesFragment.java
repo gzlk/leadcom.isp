@@ -189,7 +189,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
                 onSwipeRefreshing();
                 break;
             case REQUEST_SELECT:
-                ArchiveEditorFragment.open(ArchivesFragment.this, mQueryId, getResultedData(data));
+                ArchiveEditorFragment.open(ArchivesFragment.this, "", getResultedData(data));
                 break;
         }
         super.onActivityResult(requestCode, data);
