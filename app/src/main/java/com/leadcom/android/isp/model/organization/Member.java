@@ -11,6 +11,7 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.common.Leaguer;
+import com.leadcom.android.isp.model.common.TalkTeam;
 import com.leadcom.android.isp.model.operation.ACTOperation;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.user.User;
@@ -20,6 +21,7 @@ import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.assit.WhereBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,6 +54,15 @@ public class Member extends Leaguer {
          * 活动成员角色code
          */
         String ACT_MEMBER_ROLE_CODE = "50d6aaf585e049fd836fc85817c29aac";
+
+        /**
+         * 群聊管理员角色code
+         */
+        String TEAM_MANAGER_ROLE_CODE = "380d01a50c0b4e2683d3f10035bd556e";
+        /**
+         * 群聊普通成员角色code
+         */
+        String TEAM_MEMBER_ROLE_CODE = "f93686b676b04a9aa4dced9a6efbe9d9";
     }
 
     /**
@@ -122,6 +133,10 @@ public class Member extends Leaguer {
         if (null != member.getGroRole()) {
             member.setGroRoleId(member.getGroRole().getId());
             Role.save(member.getGroRole());
+        }
+        if (null != member.getCommRole()) {
+            member.setCommRoleId(member.getCommRole().getId());
+            Role.save(member.getCommRole());
         }
         new Dao<>(Member.class).save(member);
     }
@@ -226,6 +241,18 @@ public class Member extends Leaguer {
     @Column(Organization.Field.GroupRoleId)
     private String groRoleId;
 
+    // 群聊沟通相关
+    @Column(Activity.Field.NimId)
+    private String tid;// 群聊云信id
+    @Column(TalkTeam.Field.TeamId)
+    private String commId;// 群聊id
+    @Ignore
+    private Role commRole;// 角色
+    @Column(TalkTeam.Field.RoleId)
+    private String commRoleId;
+    @Column(Activity.Field.UserIdList)
+    private ArrayList<String> userIdList;
+
     public String getGroupId() {
         return groupId;
     }
@@ -315,6 +342,58 @@ public class Member extends Leaguer {
         this.actRoleId = actRoleId;
     }
 
+    public static ExclusionStrategy getStrategy() {
+        return strategy;
+    }
+
+    public static void setStrategy(ExclusionStrategy strategy) {
+        Member.strategy = strategy;
+    }
+
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
+    }
+
+    public String getCommId() {
+        return commId;
+    }
+
+    public void setCommId(String commId) {
+        this.commId = commId;
+    }
+
+    public Role getCommRole() {
+        if (null == commRole) {
+            commRole = Role.getRoleById(getCommRoleId());
+        }
+        return commRole;
+    }
+
+    public void setCommRole(Role commRole) {
+        this.commRole = commRole;
+        commRoleId = commRole.getId();
+    }
+
+    public String getCommRoleId() {
+        return commRoleId;
+    }
+
+    public void setCommRoleId(String commRoleId) {
+        this.commRoleId = commRoleId;
+    }
+
+    public ArrayList<String> getUserIdList() {
+        return userIdList;
+    }
+
+    public void setUserIdList(ArrayList<String> userIdList) {
+        this.userIdList = userIdList;
+    }
+
     /**
      * 是否具有某个操作权限
      */
@@ -372,6 +451,20 @@ public class Member extends Leaguer {
      */
     public boolean isArchiveManager() {
         return null != getGroRole() && getGroRole().isArchiveManager();
+    }
+
+    /**
+     * 是否群聊的管理员
+     */
+    public boolean isCommunicationManager() {
+        return null != getCommRole() && getCommRole().isCommunicationManager();
+    }
+
+    /**
+     * 是否群聊普通成员
+     */
+    public boolean isCommunicationMember() {
+        return null != getCommRole() && getCommRole().isCommunicationMember();
     }
 
     /**

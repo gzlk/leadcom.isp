@@ -6,6 +6,7 @@ import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
+import com.leadcom.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -41,7 +42,7 @@ public class AppSignRecord extends Sign {
     // 查找本地缓存里我在某个签到应用里的签到记录
     public static AppSignRecord getMyRecord(String setupId) {
         QueryBuilder<AppSignRecord> builder = new QueryBuilder<>(AppSignRecord.class)
-                .whereEquals(Field.SigningId, setupId)
+                .whereEquals(Field.SetupId, setupId)
                 .whereAppendAnd()
                 .whereEquals(Model.Field.UserId, Cache.cache().userId);
         List<AppSignRecord> records = new Dao<>(AppSignRecord.class).query(builder);
@@ -57,7 +58,7 @@ public class AppSignRecord extends Sign {
     }
 
     //签到应用的id(活动-签到应用-签到  三者间是一对多，一对多的关系)
-    @Column(Field.SigningId)
+    @Column(Field.SetupId)
     private String setupId;
     //创建者的用户ID
     @Column(Model.Field.UserId)
@@ -65,6 +66,12 @@ public class AppSignRecord extends Sign {
     //创建者的用户名称
     @Column(Model.Field.UserName)
     private String userName;
+
+    // 群聊沟通相关属性
+    @Column(Field.SignInId)
+    private String signInId;
+    @Column(User.Field.HeadPhoto)
+    private String headPhoto;
 
     public String getSetupId() {
         return setupId;
@@ -88,5 +95,21 @@ public class AppSignRecord extends Sign {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getSignInId() {
+        return signInId;
+    }
+
+    public void setSignInId(String signInId) {
+        this.signInId = signInId;
+    }
+
+    public String getHeadPhoto() {
+        return headPhoto;
+    }
+
+    public void setHeadPhoto(String headPhoto) {
+        this.headPhoto = headPhoto;
     }
 }

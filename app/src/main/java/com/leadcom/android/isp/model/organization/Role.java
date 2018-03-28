@@ -181,6 +181,20 @@ public class Role extends Model {
     }
 
     /**
+     * 是否群聊管理员角色
+     */
+    public boolean isCommunicationManager() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.TEAM_MANAGER_ROLE_CODE);
+    }
+
+    /**
+     * 是否群聊普通成员角色
+     */
+    public boolean isCommunicationMember() {
+        return !isEmpty(rolCode) && rolCode.equals(Member.Code.TEAM_MEMBER_ROLE_CODE);
+    }
+
+    /**
      * 角色是否具有某项操作权限
      */
     public boolean hasOperation(String operation) {

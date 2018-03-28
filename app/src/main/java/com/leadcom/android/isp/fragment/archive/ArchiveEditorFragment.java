@@ -674,6 +674,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
 
+    /**
+     * 获取草稿档案的分享内容
+     */
     private void getDraftShareInfo() {
         if (null == mShareInfo) {
             ShareRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ShareInfo>() {

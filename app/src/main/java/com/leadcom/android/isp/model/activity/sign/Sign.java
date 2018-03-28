@@ -21,7 +21,8 @@ public class Sign extends Model {
         String Longitude = "longitude";
         String Latitude = "latitude";
         String Altitude = "altitude";
-        String SigningId = "signingId";
+        String SetupId = "signingId";
+        String SignInId = "signInId";
         /**
          * 签到人数
          */

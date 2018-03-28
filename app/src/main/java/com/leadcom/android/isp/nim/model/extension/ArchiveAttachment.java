@@ -31,7 +31,7 @@ public class ArchiveAttachment extends CustomAttachment {
      */
     private String image;
     /**
-     * 档案类型：1=个人档案；2=组织档案
+     * 档案类型：1=个人档案；2=组织档案；3=个人档案草稿；4=组织档案草稿
      */
     private int archiveType;
 

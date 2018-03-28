@@ -48,7 +48,7 @@ public class MsgViewHolderArchive extends MsgViewHolderBase {
     @Override
     protected void bindContentView() {
         archive = (ArchiveAttachment) message.getAttachment();
-        titleView.setText(archive.getTitle());
+        titleView.setText(StringHelper.format("%s%s", (archive.getArchiveType() >= 3 ? "[草稿]" : ""), archive.getTitle()));
         summaryView.setText(Html.fromHtml(archive.getSummary()));
         imageView.setVisibility(StringHelper.isEmpty(archive.getImage(), true) ? View.GONE : View.VISIBLE);
         imageView.displayImage(archive.getImage(), context.getResources().getDimensionPixelOffset(R.dimen.ui_static_dp_50), false, false);

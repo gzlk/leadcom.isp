@@ -8,6 +8,7 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.vote.AppVote;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.common.TalkTeam;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -61,6 +62,16 @@ public class AppSigning extends Sign {
     private ArrayList<AppSignRecord> actSignInList;
     @Ignore
     private int notifyBeginTime;
+
+    // 群聊沟通相关字段
+    @Column(TalkTeam.Field.TeamId)
+    private String commId;
+    @Column(Activity.Field.NimId)
+    private String tid;
+    @Column(AppVote.Field.CreatorHeadPhoto)
+    private String creatorHeadPhoto;
+    @Ignore
+    private ArrayList<AppSignRecord> recordList;
 
     /**
      * 是否可以签到
@@ -180,5 +191,40 @@ public class AppSigning extends Sign {
 
     public void setNotifyBeginTime(int notifyBeginTime) {
         this.notifyBeginTime = notifyBeginTime;
+    }
+
+    public String getCommId() {
+        return commId;
+    }
+
+    public void setCommId(String commId) {
+        this.commId = commId;
+    }
+
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
+    }
+
+    public String getCreatorHeadPhoto() {
+        return creatorHeadPhoto;
+    }
+
+    public void setCreatorHeadPhoto(String creatorHeadPhoto) {
+        this.creatorHeadPhoto = creatorHeadPhoto;
+    }
+
+    public ArrayList<AppSignRecord> getRecordList() {
+        if (null == recordList) {
+            recordList = new ArrayList<>();
+        }
+        return recordList;
+    }
+
+    public void setRecordList(ArrayList<AppSignRecord> recordList) {
+        this.recordList = recordList;
     }
 }

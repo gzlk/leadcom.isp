@@ -58,6 +58,7 @@ public class Activity extends Model {
         String IsLocalStorage = "isLocalStorage";
         String UsedTimes = "usedTimes";
         String UserHeaders = "userHeaders";
+        String UserIdList = "userIdList";
         String ActivityMemberId = "activityMemberId";
         String ActivityRoleId = "activityRoleId";
     }

@@ -432,6 +432,9 @@ public class ArchiveRequest extends Request<Archive> {
 
     /**
      * 查询分享出去的档案的详情
+     *
+     * @param archiveId   档案id/草稿id
+     * @param archiveType 档案类型(1.个人档案,2.组织档案,3.个人档案草稿,4.组织档案草稿)
      */
     public void findShare(String archiveId, int archiveType) {
         String params = format("/system/share/findDoc?docId=%s&docType=%d", archiveId, archiveType);
