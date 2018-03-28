@@ -632,6 +632,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             if (model instanceof User) {
                 return VT_USER;
             } else if (model instanceof UserExtra) {
+                UserExtra extra = (UserExtra) model;
+                if (extra.isStaticDiy()) {
+                    return VT_CLICK;
+                }
                 return VT_DELETABLE;
             } else if (model.getId().equals("-")) {
                 return VT_LINE;

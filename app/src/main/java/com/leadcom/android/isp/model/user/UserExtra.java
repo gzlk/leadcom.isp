@@ -53,9 +53,28 @@ public class UserExtra extends Model {
         int SHOWN = 1;
     }
 
+    /**
+     * 自定义介绍类型
+     */
+    public interface DiyType {
+        /**
+         * 初始介绍，可以编辑不可以删除
+         */
+        int STATIC = 0;
+        /**
+         * 自定义介绍，可以编辑可以删除
+         */
+        int DEFINE = 1;
+    }
+
     private String title;   //标题
     private String content; //内容
     private int show;    //是否隐藏(0.隐藏,1.显示)
+    private int diy;// 是否初始介绍0=是，1=自定义介绍
+
+    public boolean isStaticDiy() {
+        return diy == DiyType.STATIC;
+    }
 
     @Override
     public String getId() {
@@ -94,5 +113,13 @@ public class UserExtra extends Model {
 
     public void setShow(int show) {
         this.show = show;
+    }
+
+    public int getDiy() {
+        return diy;
+    }
+
+    public void setDiy(int diy) {
+        this.diy = diy;
     }
 }
