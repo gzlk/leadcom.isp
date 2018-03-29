@@ -14,6 +14,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 
 import com.leadcom.android.isp.R;
+import com.netease.nim.uikit.api.wrapper.NimToolBarOptions;
 import com.netease.nim.uikit.common.activity.ToolBarOptions;
 import com.netease.nim.uikit.common.activity.UI;
 import com.netease.nim.uikit.common.ui.listview.AutoRefreshListView;
@@ -79,7 +80,7 @@ public class SearchingHistoryActivity extends UI {
 
         setContentView(R.layout.nim_activity_search_history);
 
-        ToolBarOptions options = new ToolBarOptions();
+        ToolBarOptions options = new NimToolBarOptions();
         setToolBar(R.id.activity_toolbar, options);
 
         findViewById(R.id.global_search_root).setOnTouchListener(new View.OnTouchListener() {

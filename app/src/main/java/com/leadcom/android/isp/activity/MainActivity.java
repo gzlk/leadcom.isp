@@ -30,7 +30,6 @@ import com.leadcom.android.isp.model.common.SystemUpdate;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
-import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.support.permission.MPermission;
 import com.netease.nim.uikit.support.permission.annotation.OnMPermissionDenied;
 import com.netease.nim.uikit.support.permission.annotation.OnMPermissionGranted;
@@ -264,7 +263,7 @@ public class MainActivity extends TitleActivity {
                 switch (message.getSessionType()) {
                     case P2P:
                         // 点对点聊天
-                        NimUIKit.startP2PSession(this, message.getSessionId());
+                        NimSessionHelper.startP2PSession(this, message.getSessionId());
                         break;
                     case Team:
                         // 群聊
@@ -329,7 +328,7 @@ public class MainActivity extends TitleActivity {
                 if (msg.isRead()) {
                     if (msg.isHandled()) {
                         // 直接打开活动群聊页面
-                        NimUIKit.startTeamSession(activity, msg.getTid());
+                        NimSessionHelper.startTeamSession(activity, msg.getTid());
                     } else {
                         // 消息已处理过且属于暂不参加则打开加入活动页面
                         openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%s", msg.getTid(), msg.getId()), true, false);
@@ -358,7 +357,7 @@ public class MainActivity extends TitleActivity {
                 break;
             case NimMessage.Type.TOPIC_INVITE:
                 if (msg.isHandled()) {
-                    NimUIKit.startTeamSession(activity, msg.getTid());
+                    NimSessionHelper.startTeamSession(activity, msg.getTid());
                 } else {
                     yes = StringHelper.getString(R.string.ui_base_text_have_a_look);
                     no = StringHelper.getString(R.string.ui_base_text_i_known);
@@ -388,7 +387,7 @@ public class MainActivity extends TitleActivity {
                         case NimMessage.Type.ACTIVITY_INVITE:
                             if (msg.isHandled()) {
                                 // 如果消息已经处理过了，则直接打开群聊页面
-                                NimUIKit.startTeamSession(activity, msg.getTid());
+                                NimSessionHelper.startTeamSession(activity, msg.getTid());
                             } else {
                                 // 消息没有处理过则打开加入活动页面
                                 openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%s", msg.getTid(), msg.getId()), true, false);
@@ -406,7 +405,14 @@ public class MainActivity extends TitleActivity {
                         case NimMessage.Type.TOPIC_INVITE:
                         case NimMessage.Type.ACTIVITY_NOTIFY:
                             saveMessage(msg, true, true);
-                            NimUIKit.startTeamSession(activity, msg.getTid());
+                            NimSessionHelper.startTeamSession(activity, msg.getTid());
+                            break;
+                        //case NimMessage.Type.TALK_TEAM_DISMISS:
+                        case NimMessage.Type.TALK_TEAM_MEMBER_JOIN:
+                        case NimMessage.Type.TALK_TEAM_MEMBER_QUIT:
+                        //case NimMessage.Type.TALK_TEAM_MEMBER_REMOVE:
+                            saveMessage(msg,true,true);
+                            NimSessionHelper.startTeamSession(activity,msg.getTid());
                             break;
                         default:
                             saveMessage(msg, true, true);

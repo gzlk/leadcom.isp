@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.helper;
 
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -82,7 +83,7 @@ public class DeleteDialogHelper {
 
                 @Override
                 public void onBindData(View dialogView, DialogHelper helper) {
-                    textView.setText(titleString);
+                    textView.setText(Html.fromHtml(titleString));
                 }
             }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
                 @Override

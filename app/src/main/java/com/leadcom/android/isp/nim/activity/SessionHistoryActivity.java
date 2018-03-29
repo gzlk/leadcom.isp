@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.nim.searching.SearchingHistoryActivity;
-import com.hlk.hlklib.lib.view.CorneredEditText;
+import com.netease.nim.uikit.api.wrapper.NimToolBarOptions;
 import com.netease.nim.uikit.business.session.module.Container;
 import com.netease.nim.uikit.business.session.module.ModuleProxy;
 import com.netease.nim.uikit.business.session.module.list.MessageListPanelEx;
@@ -54,15 +54,14 @@ public class SessionHistoryActivity extends UI implements ModuleProxy {
         View rootView = LayoutInflater.from(this).inflate(R.layout.nim_activity_session_history, null);
         setContentView(rootView);
 
-        CorneredEditText editText = (CorneredEditText) rootView.findViewById(R.id.ui_holder_view_searchable_input);
-        editText.setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.ui_holder_view_searchable_icon_container).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SearchingHistoryActivity.start(SessionHistoryActivity.this, account, sessionType);
             }
         });
 
-        ToolBarOptions options = new ToolBarOptions();
+        ToolBarOptions options = new NimToolBarOptions();
         options.titleId = R.string.ui_activity_property_chat_history_title;
         setToolBar(R.id.activity_toolbar, options);
 

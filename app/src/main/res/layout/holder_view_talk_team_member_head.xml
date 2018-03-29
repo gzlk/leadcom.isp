@@ -14,6 +14,17 @@
         app:id_image_type="rounded"
         app:id_show_header="true" />
 
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_talk_team_member_manager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/ui_holder_view_talk_team_member_head"
+        android:layout_marginEnd="@dimen/ui_static_dp_3"
+        android:layout_marginTop="@dimen/ui_static_dp_3"
+        android:text="@string/ui_icon_group_manager"
+        android:textColor="@color/colorBorderActive"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/ui_holder_view_talk_team_member_name"
         android:layout_width="match_parent"
@@ -41,17 +52,18 @@
         android:gravity="center"
         android:visibility="gone"
         app:cv_active_border="@color/textColorHint"
-        app:cv_background="@color/transparent_70_white"
-        app:cv_background_active="@color/transparent_70_white"
-        app:cv_background_type="border"
-        app:cv_border_size="@dimen/ui_base_border_size_normal"
-        app:cv_corner_size="@dimen/ui_base_dimen_margin_padding"
-        app:cv_normal_border="@color/textColorHint">
+        app:cv_background="@color/transparent_80_white"
+        app:cv_background_active="@color/transparent_80_white"
+        app:cv_background_type="fill"
+        app:cv_border_size="@dimen/ui_static_dp_zero"
+        app:cv_left_top_corner="@dimen/ui_base_dimen_margin_padding"
+        app:cv_normal_border="@color/textColorHint"
+        app:cv_right_top_corner="@dimen/ui_base_dimen_margin_padding">
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ui_icon_delete"
+            android:text="@string/ui_icon_subtract_solid"
             android:textColor="@color/colorCaution"
             android:textSize="@dimen/ui_base_text_size_max" />
     </com.hlk.hlklib.lib.view.CorneredView>

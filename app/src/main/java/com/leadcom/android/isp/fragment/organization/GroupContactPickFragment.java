@@ -7,6 +7,8 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -150,13 +152,13 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
         displayLoading(true);
-        fetchingRemoteMembers(mOrganizationId, "");
+        fetchingMembers();
     }
 
     @Override
     protected void onLoadingMore() {
         displayLoading(true);
-        fetchingRemoteMembers(mOrganizationId, "");
+        fetchingMembers();
     }
 
     @Override
@@ -193,7 +195,16 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
             mAdapter = new ContactAdapter();
             mRecyclerView.setAdapter(mAdapter);
             displayLoading(true);
-            // 查找本地该组织名下所有成员
+            fetchingMembers();
+        }
+    }
+
+    private void fetchingMembers() {
+        // 查找本地该组织名下所有成员
+        if (isEmpty(mOrganizationId)) {
+            // 新版我的通讯录选择器
+            fetchingMyContacts();
+        } else {
             fetchingRemoteMembers(mOrganizationId, "");
         }
     }
@@ -204,6 +215,19 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
                 return true;
         }
         return false;
+    }
+
+    private void fetchingMyContacts() {
+        MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
+            @Override
+            public void onResponse(List<Member> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                int count = null == list ? 0 : list.size();
+                remotePageNumber += count < pageSize ? 0 : 1;
+                isLoadingComplete(count < pageSize);
+                onFetchingRemoteMembersComplete(list);
+            }
+        }).listAllGroup();
     }
 
     @Override

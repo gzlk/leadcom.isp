@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:minHeight="@dimen/ui_static_dp_50"
-    android:minWidth="@dimen/ui_static_dp_50"
-    app:cv_active_border="@color/colorCaution"
-    app:cv_border_size="@dimen/ui_base_border_size_normal"
-    app:cv_corner_size="@dimen/ui_base_dimen_margin_padding"
-    app:cv_normal_border="@color/textColorHint">
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
-    <com.hlk.hlklib.lib.view.CustomTextView
+    <LinearLayout
+        android:id="@+id/ui_holder_view_talk_team_member_add_icon_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ui_icon_add"
-        android:rotation="90"
-        android:textColor="@color/textColorHint"
-        android:textSize="@dimen/ui_base_text_size_max"
-        app:cv_normal_border="@color/textColorHintDark" />
-</com.hlk.hlklib.lib.view.CorneredView>
+        android:background="@drawable/ui_background_rectangle_corner_10"
+        android:gravity="center"
+        android:minHeight="@dimen/ui_static_dp_50"
+        android:minWidth="@dimen/ui_static_dp_50">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_talk_team_member_add_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="90"
+            android:text="@string/ui_icon_add"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_max"
+            app:cv_normal_border="@color/textColorHintDark" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ui_static_dp_5"
+        android:text="@string/ui_base_text_add"
+        android:textColor="@android:color/transparent"
+        android:textSize="@dimen/ui_base_text_size_small" />
+</LinearLayout>

@@ -19,10 +19,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ui_holder_view_talk_team_members"
-        android:background="@android:color/white"
+        android:background="@drawable/ui_background_clickable"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="@dimen/ui_base_dimen_margin_padding">
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"

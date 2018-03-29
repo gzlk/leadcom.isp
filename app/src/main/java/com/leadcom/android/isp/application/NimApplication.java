@@ -318,6 +318,7 @@ public class NimApplication extends BaseActivityManagedApplication {
             public void onEvent(CustomNotification message) {
                 LogHelper.log("NimApp", "notification: " + message.getContent() + " from :" + message.getSessionId() + "/" + message.getSessionType());
                 // 在这里处理自定义通知。
+                // {"id":"1"} from :5a706d2c2f5735b68495dd05/P2P  表示提醒对方正在输入
                 String json = message.getContent();
                 if (!StringHelper.isEmpty(json)) {
                     NimMessage msg = Json.gson().fromJson(json, NimMessage.class);
@@ -328,42 +329,43 @@ public class NimApplication extends BaseActivityManagedApplication {
                         if (0 == msg.getMsgType()) {
                             msg.setMsgType(msg.getType());
                         }
-                        switch (msg.getMsgType()) {
-                            case NimMessage.Type.ACTIVITY_END:
-                            case NimMessage.Type.ACTIVITY_EXIT:
-                            case NimMessage.Type.ACTIVITY_KICK_OUT:
-                                // 活动结束、退出活动、被踢出活动时，清理活动中的未读消息条数
-                                clearUnreadCount(msg.getTid());
-                                if (msg.getMsgType() == NimMessage.Type.ACTIVITY_END && null != msg.getSubTidList()) {
-                                    for (String tid : msg.getSubTidList()) {
-                                        clearUnreadCount(tid);
-                                    }
-                                }
-                                break;
-                            case NimMessage.Type.TOPIC_END:
-                            case NimMessage.Type.TOPIC_EXIT:
-                            case NimMessage.Type.TOPIC_KICK_OUT:
-                                // 议题结束、退出议题、被踢出议题时，清理议题中的未读消息条数
-                                if (!isEmpty(msg.getTid())) {
+                        if (msg.getMsgType() > 0) {
+                            switch (msg.getMsgType()) {
+                                case NimMessage.Type.ACTIVITY_END:
+                                case NimMessage.Type.ACTIVITY_EXIT:
+                                case NimMessage.Type.ACTIVITY_KICK_OUT:
+                                    // 活动结束、退出活动、被踢出活动时，清理活动中的未读消息条数
                                     clearUnreadCount(msg.getTid());
-                                    // 删除本地议题成员
-                                    AppTopic topic = AppTopic.queryByTid(msg.getTid());
-                                    if (null != topic) {
-                                        Member.removeMemberOfTopicId(topic.getId());
+                                    if (msg.getMsgType() == NimMessage.Type.ACTIVITY_END && null != msg.getSubTidList()) {
+                                        for (String tid : msg.getSubTidList()) {
+                                            clearUnreadCount(tid);
+                                        }
                                     }
-                                }
-                                break;
-                        }
-                        NimMessage.save(msg);
-                        if (msg.isSavable()) {
+                                    break;
+                                case NimMessage.Type.TOPIC_END:
+                                case NimMessage.Type.TOPIC_EXIT:
+                                case NimMessage.Type.TOPIC_KICK_OUT:
+                                    // 议题结束、退出议题、被踢出议题时，清理议题中的未读消息条数
+                                    if (!isEmpty(msg.getTid())) {
+                                        clearUnreadCount(msg.getTid());
+                                        // 删除本地议题成员
+                                        AppTopic topic = AppTopic.queryByTid(msg.getTid());
+                                        if (null != topic) {
+                                            Member.removeMemberOfTopicId(topic.getId());
+                                        }
+                                    }
+                                    break;
+                            }
+                            NimMessage.save(msg);
+                            if (msg.isSavable()) {
 //                            if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
 //                                // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
 //                                Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
 //                                NotificationHelper.helper(NimApplication.this).show(getString(R.string.ui_nim_action_notice), msg.getMsgContent(), extra);
 //                            }
-                            dispatchCallbacks();
-                        }
-                        dispatchEvents(msg);
+                                dispatchCallbacks();
+                            }
+                            dispatchEvents(msg);
 //                        if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
 //                            // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
 //                            Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);
@@ -375,6 +377,7 @@ public class NimApplication extends BaseActivityManagedApplication {
 //                            }
 //                        }
 //                        dispatchCallbacks();
+                        }
                     }
                 }
             }

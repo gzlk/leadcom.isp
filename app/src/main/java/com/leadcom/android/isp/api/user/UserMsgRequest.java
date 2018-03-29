@@ -55,11 +55,16 @@ public class UserMsgRequest extends Request<UserMessage> {
         return this;
     }
 
+    public static final int TYPE_NONE = 0;
+    public static final int TYPE_USER_ARCHIVE = 1;
+    public static final int TYPE_GROUP_ARCHIVE = 2;
+    public static final int TYPE_MOMENT = 3;
+
     /**
      * 拉取我的消息列表
      */
-    public void list(int pageNumber) {
-        String params = format("%s?pageNumber=%d", url(LIST), pageNumber);
+    public void list(int pageNumber, int sourceType) {
+        String params = format("%s?%spageNumber=%d", url(LIST), (sourceType > 0 ? format("sourceType=%d&", sourceType) : ""), pageNumber);
         httpRequest(getRequest(MultipleMsg.class, params, "", HttpMethods.Get));
     }
 

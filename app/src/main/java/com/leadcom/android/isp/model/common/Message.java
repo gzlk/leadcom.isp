@@ -196,6 +196,22 @@ public class Message extends Model {
          * 活动中发送的通知
          */
         int ACTIVITY_NOTIFY = 37;
+        /**
+         * 群聊解散
+         */
+        int TALK_TEAM_DISMISS = 40;
+        /**
+         * 群聊成员加入
+         */
+        int TALK_TEAM_MEMBER_JOIN = 41;
+        /**
+         * 群聊成员退出
+         */
+        int TALK_TEAM_MEMBER_QUIT = 42;
+        /**
+         * 群聊成员踢出
+         */
+        int TALK_TEAM_MEMBER_REMOVE = 43;
     }
 
     /**
@@ -233,6 +249,14 @@ public class Message extends Model {
                 return "结束议题";
             case Type.ACTIVITY_NOTIFY:
                 return "活动通知";
+            case Type.TALK_TEAM_DISMISS:
+                return "群聊解散";
+            case Type.TALK_TEAM_MEMBER_JOIN:
+                return "加入群聊";
+            case Type.TALK_TEAM_MEMBER_QUIT:
+                return "退出群聊";
+            case Type.TALK_TEAM_MEMBER_REMOVE:
+                return "被移出群聊";
             default:
                 return StringHelper.format("不晓得是什么通知(%d)", type);
         }

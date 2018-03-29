@@ -147,7 +147,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                     mAdapter.update(noMore);
                 }
             }
-        }).list(remotePageNumber);
+        }).list(remotePageNumber, UserMsgRequest.TYPE_NONE);
     }
 
     private void initializeAdapter() {

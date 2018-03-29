@@ -87,7 +87,7 @@
     <string name="ui_icon_system_notification">&#xe636;</string>
     <string name="ui_icon_notification_solid">&#xe64c;</string>
     <string name="ui_icon_system_secretary">&#xe90a;</string>
-    
+
     <!--组织通讯录页面新增两个icon-->
     <string name="ui_icon_group_manager">&#xe995;</string>
     <string name="ui_icon_archive_manager">&#xe996;</string>
@@ -120,7 +120,9 @@
 
     <!--富文本编辑器控制按钮-->
     <string name="ui_icon_rich_editor_undo">&#xe657;</string>
+    <string name="ui_icon_rich_editor_undo_solid">&#xe682;</string>
     <string name="ui_icon_rich_editor_redo">&#xe657;</string>
+    <string name="ui_icon_rich_editor_redo_solid">&#xe69c;</string>
     <string name="ui_icon_rich_editor_font">&#xe692;</string>
     <string name="ui_icon_rich_editor_image">&#xe65b;</string>
     <string name="ui_icon_rich_editor_link">&#xe62a;</string>

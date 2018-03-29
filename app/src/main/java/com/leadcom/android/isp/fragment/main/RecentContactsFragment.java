@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -9,14 +10,22 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.team.TeamRequest;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.activity.ActivityViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.model.common.TalkTeam;
+import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.business.recent.TeamMemberAitHelper;
+import com.netease.nim.uikit.business.team.model.TeamExtras;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
@@ -120,20 +129,56 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     @Click({R.id.ui_recent_contacts_add})
     private void viewClick(View view) {
         view.startAnimation(App.clickAnimation());
+        ArrayList<SubMember> members = new ArrayList<>();
+        SubMember me = new SubMember();
+        me.setUserId(Cache.cache().userId);
+        me.setUserName(Cache.cache().userName);
+        members.add(me);
+        GroupContactPickFragment.open(this, "", true, false, SubMember.toJson(members));
         //ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
-        showTooltip(view, R.id.ui_tooltip_recent_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
+//        showTooltip(view, R.id.ui_tooltip_recent_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                switch (v.getId()) {
+//                    case R.id.ui_tooltip_menu_recent_contact_list:
+//                        TeamListFragment.open(RecentContactsFragment.this);
+//                        break;
+//                    case R.id.ui_tooltip_menu_recent_contact_create:
+//                        ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
+//                        break;
+//                }
+//            }
+//        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_MEMBER) {
+            String json = getResultedData(data);
+            if (!isEmpty(json) && json.length() > 10) {
+                ArrayList<SubMember> members = SubMember.fromJson(json);
+                prepareCreateTeam(members);
+            }
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
+    private void prepareCreateTeam(ArrayList<SubMember> members) {
+        TalkTeam team = new TalkTeam();
+        team.setTitle(StringHelper.getString(R.string.ui_team_talk_team_new_title, members.size()));
+        team.setUserIdList(SubMember.getUserIds(members));
+        TeamRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<TalkTeam>() {
             @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.ui_tooltip_menu_recent_contact_list:
-                        TeamListFragment.open(RecentContactsFragment.this);
-                        break;
-                    case R.id.ui_tooltip_menu_recent_contact_create:
-                        ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
-                        break;
+            public void onResponse(TalkTeam talkTeam, boolean success, String message) {
+                super.onResponse(talkTeam, success, message);
+                if (success) {
+                    if (null != talkTeam) {
+                        // 打开新群并可以直接聊天
+                        NimSessionHelper.startTeamSession(Activity(), talkTeam.getTid());
+                    }
                 }
             }
-        });
+        }).add(team);
     }
 
     /**
@@ -174,7 +219,9 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onEvent(List<RecentContact> recentContacts) {
             log("message observer onEvent: " + (null == recentContacts ? "null" : recentContacts.size()));
-            onRecentContactChanged(recentContacts);
+            if (null != recentContacts) {
+                onRecentContactChanged(recentContacts);
+            }
         }
     };
 
