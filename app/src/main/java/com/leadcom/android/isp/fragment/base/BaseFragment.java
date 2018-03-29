@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
 import com.google.gson.reflect.TypeToken;
@@ -110,6 +111,18 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static boolean isEmpty(String string) {
         return StringHelper.isEmpty(string);
+    }
+
+    /**
+     * 清空指定View的父级容器
+     */
+    public void clearDirectParent(View view) {
+        if (null != view) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (null != parent) {
+                parent.removeView(view);
+            }
+        }
     }
 
     /**

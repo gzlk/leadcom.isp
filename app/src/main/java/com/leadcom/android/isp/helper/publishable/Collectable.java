@@ -46,25 +46,25 @@ public class Collectable {
     }
 
     public static void resetSessionCollectionParams(IMMessage message) {
-        Model model = NimSessionHelper.getObject(message.getSessionId());
-        if (null != model) {
+//        Model model = NimSessionHelper.getObject(message.getSessionId());
+//        if (null != model) {
             UserInfo user = NimUIKit.getUserInfoProvider().getUserInfo(message.getFromAccount());
             if (null != user) {
                 creatorId = user.getAccount();
                 creatorName = user.getName();
                 creatorHeader = user.getAvatar();
             }
-            if (model instanceof Activity) {
-                Activity act = (Activity) model;
-                sourceId = act.getId();
-                sourceTitle = act.getTitle();
-                sourceType = Collection.SourceType.ACTIVITY;
-            } else if (model instanceof AppTopic) {
-                AppTopic topic = (AppTopic) model;
-                sourceId = topic.getId();
-                sourceTitle = topic.getTitle();
-                sourceType = Collection.SourceType.TOPIC;
-            }
-        }
+//            if (model instanceof Activity) {
+//                Activity act = (Activity) model;
+//                sourceId = act.getId();
+//                sourceTitle = act.getTitle();
+//                sourceType = Collection.SourceType.ACTIVITY;
+//            } else if (model instanceof AppTopic) {
+//                AppTopic topic = (AppTopic) model;
+//                sourceId = topic.getId();
+//                sourceTitle = topic.getTitle();
+//                sourceType = Collection.SourceType.TOPIC;
+//            }
+//        }
     }
 }

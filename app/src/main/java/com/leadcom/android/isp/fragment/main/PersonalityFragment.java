@@ -30,7 +30,6 @@ import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.EditableDialogHelper;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;

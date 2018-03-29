@@ -3,27 +3,20 @@ package com.leadcom.android.isp.nim.session;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.MainActivity;
-import com.leadcom.android.isp.api.activity.ActRequest;
-import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.fragment.activity.ActivityPropertiesFragment;
-import com.leadcom.android.isp.fragment.activity.topic.TopicPropertyFragment;
-import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.main.SystemMessageFragment;
+import com.leadcom.android.isp.fragment.talk.TalkTeamPropertyFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
-import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.nim.action.CameraAction;
 import com.leadcom.android.isp.nim.action.FileAction;
 import com.leadcom.android.isp.nim.action.ImageAction;
@@ -31,8 +24,6 @@ import com.leadcom.android.isp.nim.action.IssueAction;
 import com.leadcom.android.isp.nim.action.LocationAction;
 import com.leadcom.android.isp.nim.action.NoticeAction;
 import com.leadcom.android.isp.nim.action.SignAction;
-import com.leadcom.android.isp.nim.action.VideoCaptureAction;
-import com.leadcom.android.isp.nim.action.VideoChooseAction;
 import com.leadcom.android.isp.nim.action.VoteAction;
 import com.leadcom.android.isp.nim.activity.VideoPlayerActivity;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
@@ -62,7 +53,6 @@ import com.netease.nim.uikit.business.session.module.MsgForwardFilter;
 import com.netease.nim.uikit.business.session.module.MsgRevokeFilter;
 import com.netease.nim.uikit.business.team.model.TeamExtras;
 import com.netease.nim.uikit.business.team.model.TeamRequestCode;
-import com.netease.nim.uikit.impl.cache.NimUserInfoCache;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -79,7 +69,6 @@ import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.model.Team;
-import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -244,7 +233,7 @@ public class NimSessionHelper {
             NimUIKit.startP2PSession(context, account, anchor);
         } else {
             // 和我的电脑聊天
-            NimUIKit.startChatting(context, account, SessionTypeEnum.P2P, getMyP2pCustomization(), anchor);
+            //NimUIKit.startChatting(context, account, SessionTypeEnum.P2P, getMyP2pCustomization(), anchor);
         }
     }
 
@@ -261,22 +250,18 @@ public class NimSessionHelper {
 
     // 打开群聊界面(用于 UIKIT 中部分界面跳转回到指定的页面)
     public static void startTeamSession(Context context, String tid, Class<? extends Activity> backToClass, IMMessage anchor) {
-        Model model = getObject(tid);
-        if (null != model && model instanceof AppTopic) {
-            NimUIKit.startChatting(context, tid, SessionTypeEnum.Team, getTopicCustomization(), backToClass, anchor);
-        } else {
-            NimUIKit.startChatting(context, tid, SessionTypeEnum.Team, getTeamCustomization(), backToClass, anchor);
-        }
+        //Model model = getObject(tid);
+        //if (null != model && model instanceof AppTopic) {
+        //    NimUIKit.startChatting(context, tid, SessionTypeEnum.Team, getTopicCustomization(), backToClass, anchor);
+        //} else {
+        NimUIKit.startChatting(context, tid, SessionTypeEnum.Team, getTeamCustomization(), backToClass, anchor);
+        //}
     }
 
     // 单聊界面定制
     private static SessionCustomization p2pCustomization;
     // 群聊界面定制
     private static SessionCustomization teamCustomization;
-    // 议题界面定制
-    private static SessionCustomization topicCustomization;
-    // 我的电脑聊天界面
-    private static SessionCustomization myP2pCustomization;
 
     private static ArrayList<BaseAction> getActions(SessionTypeEnum type, boolean topic) {
         // 定制加号点开后可以包含的操作， 默认已经有图片，视频等消息了
@@ -292,9 +277,9 @@ public class NimSessionHelper {
         actions.add(new CameraAction());
         if (!Cache.isReleasable()) {
             // 相机录制视频
-            actions.add(new VideoCaptureAction());
+            //actions.add(new VideoCaptureAction());
             // 相册选择视频
-            actions.add(new VideoChooseAction());
+            //actions.add(new VideoChooseAction());
         }
         // 跟电脑对话时不需要发送位置
         if (type != SessionTypeEnum.System) {
@@ -343,12 +328,14 @@ public class NimSessionHelper {
             SessionCustomization.OptionsButton infoButton = new SessionCustomization.OptionsButton() {
                 @Override
                 public void onClick(Context context, View view, String sessionId) {
-                    NimUserInfo info = NimUserInfoCache.getInstance().getUserInfo(sessionId);
-                    if (null != info) {
-                        UserPropertyFragment.open(context, info.getAccount());
-                    } else {
-                        ToastHelper.make().showMsg("用户不存在");
-                    }
+                    // 打开用户点对点单聊属性页面
+                    TalkTeamPropertyFragment.open(context, sessionId, true);
+//                    NimUserInfo info = NimUserInfoCache.getInstance().getUserInfo(sessionId);
+//                    if (null != info) {
+//                        UserPropertyFragment.open(context, info.getAccount());
+//                    } else {
+//                        ToastHelper.make().showMsg("用户不存在");
+//                    }
                 }
             };
             infoButton.iconId = R.drawable.ic_action_person;
@@ -360,108 +347,6 @@ public class NimSessionHelper {
         }
 
         return p2pCustomization;
-    }
-
-    /**
-     * 我的电脑聊天界面
-     */
-    private static SessionCustomization getMyP2pCustomization() {
-        if (myP2pCustomization == null) {
-            myP2pCustomization = new SessionCustomization() {
-                // 由于需要Activity Result， 所以重载该函数。
-                @Override
-                public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-                    if (requestCode == TeamRequestCode.REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                        String result = data.getStringExtra(TeamExtras.RESULT_EXTRA_REASON);
-                        if (result == null) {
-                            return;
-                        }
-                        if (result.equals(TeamExtras.RESULT_EXTRA_REASON_CREATE)) {
-                            String tid = data.getStringExtra(TeamExtras.RESULT_EXTRA_DATA);
-                            if (TextUtils.isEmpty(tid)) {
-                                return;
-                            }
-
-                            startTeamSession(activity, tid);
-                            activity.finish();
-                        }
-                    }
-                }
-
-                @Override
-                public MsgAttachment createStickerAttachment(String category, String item) {
-                    return new StickerAttachment(category, item);
-                }
-            };
-
-            myP2pCustomization.actions = getActions(SessionTypeEnum.System, false);
-            myP2pCustomization.withSticker = false;
-        }
-        return myP2pCustomization;
-    }
-
-    private static SessionCustomization getTopicCustomization() {
-        if (topicCustomization == null) {
-            topicCustomization = new SessionCustomization() {
-                @Override
-                public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-                    if (requestCode == TeamRequestCode.REQUEST_CODE) {
-                        if (resultCode == Activity.RESULT_OK) {
-                            String reason = data.getStringExtra(TeamExtras.RESULT_EXTRA_REASON);
-                            boolean finish = reason != null && (reason.equals(TeamExtras
-                                    .RESULT_EXTRA_REASON_DISMISS) || reason.equals(TeamExtras.RESULT_EXTRA_REASON_QUIT));
-                            if (finish) {
-                                activity.finish(); // 退出or解散群直接退出多人会话
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public MsgAttachment createStickerAttachment(String category, String item) {
-                    return new StickerAttachment(category, item);
-                }
-            };
-
-            topicCustomization.actions = getActions(SessionTypeEnum.Team, true);
-
-            // 定制ActionBar右边的按钮，可以加多个
-            ArrayList<SessionCustomization.OptionsButton> buttons = new ArrayList<>();
-            SessionCustomization.OptionsButton chatButton = new SessionCustomization.OptionsButton() {
-                @Override
-                public void onClick(Context context, View view, String sessionId) {
-                    SystemMessageFragment.open(context);
-                }
-            };
-            chatButton.iconId = R.drawable.ic_action_chat;
-
-            SessionCustomization.OptionsButton infoButton = new SessionCustomization.OptionsButton() {
-                @Override
-                public void onClick(Context context, View view, String sessionId) {
-                    Team team = TeamDataCache.getInstance().getTeamById(sessionId);
-                    if (team != null && team.isMyTeam()) {
-                        // 议题属性页
-                        TopicPropertyFragment.open(context, sessionId, BaseFragment.REQUEST_CHANGE);
-                        // 打开群组属性页
-                        //openGroupPropertyInfo(context, sessionId);
-                        //NimUIKit.startTeamInfo(context, sessionId);
-                    } else {
-                        Toast.makeText(context, R.string.team_invalid_tip, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            };
-            infoButton.iconId = R.drawable.ic_action_group;
-
-            buttons.add(infoButton);
-            //buttons.add(chatButton);
-            topicCustomization.buttons = buttons;
-
-            topicCustomization.withSticker = true;
-
-            topicCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector;
-        }
-
-        return topicCustomization;
     }
 
     private static SessionCustomization getTeamCustomization() {
@@ -505,8 +390,7 @@ public class NimSessionHelper {
                     Team team = TeamDataCache.getInstance().getTeamById(sessionId);
                     if (team != null && team.isMyTeam()) {
                         // 打开群组属性页
-                        openGroupPropertyInfo(context, sessionId);
-                        //NimUIKit.startTeamInfo(context, sessionId);
+                        TalkTeamPropertyFragment.open(context, team.getId(), false);
                     } else {
                         Toast.makeText(context, R.string.team_invalid_tip, Toast.LENGTH_SHORT).show();
                     }
@@ -515,7 +399,7 @@ public class NimSessionHelper {
             infoButton.iconId = R.drawable.ic_action_group;
 
             buttons.add(infoButton);
-            buttons.add(chatButton);
+            //buttons.add(chatButton);
             teamCustomization.buttons = buttons;
 
             teamCustomization.withSticker = true;
@@ -524,51 +408,6 @@ public class NimSessionHelper {
         }
 
         return teamCustomization;
-    }
-
-    public static Model getObject(String sessionId) {
-        AppTopic topic = AppTopic.queryByTid(sessionId);
-        if (null != topic) {
-            return topic;
-        } else {
-            com.leadcom.android.isp.model.activity.Activity act = com.leadcom.android.isp.model.activity.Activity.getByTid(sessionId);
-            if (null != act) {
-                return act;
-            }
-        }
-        return null;
-    }
-
-    private static void openGroupPropertyInfo(final Context context, final String sessionId) {
-        Model model = getObject(sessionId);
-        if (null != model) {
-            openProperty(context, model, sessionId);
-        } else {
-            // 本地找不到记录则拉取
-            ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<com.leadcom.android.isp.model.activity.Activity>() {
-                @Override
-                public void onResponse(com.leadcom.android.isp.model.activity.Activity activity, boolean success, String message) {
-                    super.onResponse(activity, success, message);
-                    if (success && null != activity) {
-                        openProperty(context, activity, sessionId);
-                    } else {
-                        // 本地找不到活动记录则按照网易自己的方式打开群属性页
-                        NimUIKit.startTeamInfo(context, sessionId);
-                    }
-                }
-            }).findTid(sessionId);
-        }
-    }
-
-    private static void openProperty(Context context, Model model, String sessionId) {
-        if (null != model) {
-            if (model instanceof AppTopic) {
-                // 议题属性页
-                TopicPropertyFragment.open(context, sessionId, BaseFragment.REQUEST_CHANGE);
-            } else if (model instanceof com.leadcom.android.isp.model.activity.Activity) {
-                ActivityPropertiesFragment.open(context, model.getId(), sessionId);
-            }
-        }
     }
 
     private static OnSessionMessageViewHolderClick onSessionMessageViewHolderClick = new OnSessionMessageViewHolderClick() {

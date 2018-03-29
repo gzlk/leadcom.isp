@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_team_talk_quit_team">退出群聊</string>
+    <string name="ui_team_talk_quit_team_successfully">您已退出群聊</string>
+    <string name="ui_team_talk_quit_team_owner">解散群聊</string>
+    <string name="ui_team_talk_team_dismissed">本群已解散，您已退出群聊</string>
+    <string name="ui_team_talk_team_member_more">查看全部成员</string>
+    <string name="ui_team_talk_team_member_removed">成员已被移出群聊</string>
+    <string name="ui_team_talk_team_member_remove_fail" formatted="false">踢出成员失败(%d)</string>
+    <string-array name="ui_team_talk_property">
+        <item>-</item>
+        <item>1|名称|%s|1</item>
+        <item>2|群管理权转让||1</item>
+        <item>3|置顶|%d|</item>
+        <item>4|消息免打扰|%d|</item>
+        <item>5|查看聊天内容||1</item>
+        <item>6|删除聊天记录||1</item>
+    </string-array>
+</resources>

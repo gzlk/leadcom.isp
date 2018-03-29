@@ -239,18 +239,6 @@ public abstract class BaseLayoutSupportFragment extends BaseTitleSupportFragment
     }
 
     /**
-     * 清空指定View的父级容器
-     */
-    public void clearDirectParent(View view) {
-        if (null != view) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (null != parent) {
-                parent.removeView(view);
-            }
-        }
-    }
-
-    /**
      * 为指定的View开始背景景深变化的动画
      */
     protected void startTranslationAnimation(View view) {
