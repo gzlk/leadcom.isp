@@ -39,6 +39,8 @@ public class TalkTeamMemberViewHolder extends BaseViewHolder {
     private View managerIcon;
     @ViewId(R.id.ui_holder_view_talk_team_member_mask)
     private View maskView;
+    @ViewId(R.id.ui_holder_view_talk_team_member_mask_icon)
+    private CustomTextView maskIcon;
 
     private int margin, size;
 
@@ -56,10 +58,11 @@ public class TalkTeamMemberViewHolder extends BaseViewHolder {
         size = (width - margin * 6) / 5;
     }
 
-    public void showContent(SimpleUser user, String searchingText) {
+    public void showContent(SimpleUser user, String searchingText, boolean selectable) {
         headView.displayImage(user.getHeadPhoto(), size, false, false);
         String name = user.getUserName();
-        if (user.getUserId().equals(Cache.cache().userId)) {
+        boolean isSelf = user.getUserId().equals(Cache.cache().userId);
+        if (isSelf) {
             name = StringHelper.getString(R.string.ui_base_text_myself);
         }
         if (!isEmpty(name)) {
@@ -67,7 +70,13 @@ public class TalkTeamMemberViewHolder extends BaseViewHolder {
         }
         nameView.setText(Html.fromHtml(name));
         managerIcon.setVisibility(user.isRead() ? View.VISIBLE : View.GONE);
-        maskView.setVisibility(user.isSelectable() && !(user.getUserId().equals(Cache.cache().userId)) ? View.VISIBLE : View.GONE);
+        if (selectable) {
+            maskView.setVisibility(user.isSelected() && !isSelf ? View.VISIBLE : View.GONE);
+            maskIcon.setText(R.string.ui_icon_select_solid);
+            maskIcon.setTextColor(getColor(R.color.colorPrimary));
+        } else {
+            maskView.setVisibility(user.isSelectable() && !isSelf ? View.VISIBLE : View.GONE);
+        }
     }
 
     public void showMargin(boolean left, boolean right) {

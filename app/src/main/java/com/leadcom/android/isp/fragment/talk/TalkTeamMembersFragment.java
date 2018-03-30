@@ -46,6 +46,7 @@ import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -69,11 +70,17 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         return ttmf;
     }
 
-    public static void open(BaseFragment fragment, String tid) {
-        fragment.openActivity(TalkTeamMembersFragment.class.getName(), tid, REQUEST_CHANGE, true, false);
+    public static void open(BaseFragment fragment, String tid, boolean selectable) {
+        TalkTeamMembersFragment.selectable = selectable;
+        fragment.openActivity(TalkTeamMembersFragment.class.getName(), tid, selectable ? REQUEST_SELECT : REQUEST_CHANGE, true, false);
     }
 
     private static String searchingText = "";
+    /**
+     * 是否为可选状态（转让管理权的时候需要单选某一个人）
+     */
+    private static boolean selectable = false;
+    private static int selectedIndex = -1;
     private boolean isSelfOwner = false;
     private MemberAdapter mAdapter;
     private Model addModel;
@@ -84,6 +91,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        selectedIndex = -1;
         searchingText = "";
         addModel = new Model();
         addModel.setId("+");
@@ -298,28 +306,48 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
                 } else {
                     ToastHelper.make().showMsg(StatusCode.getStatus(code));
                 }
-                mAdapter.update(addModel);
+                if (!selectable) {
+                    // 非选择状态下才有+号和编辑按钮
+                    mAdapter.update(addModel);
+                }
                 resetTitleEvent();
             }
         });
     }
 
     private void resetTitleEvent() {
-        setCustomTitle(StringHelper.getString(R.string.ui_team_talk_team_members_fragment_title, users.size()));
-        setRightText(isSelfOwner ? R.string.ui_base_text_edit : 0);
-        setRightTitleClickListener(isSelfOwner ? new OnTitleButtonClickListener() {
+        if (selectable) {
+            setCustomTitle(R.string.ui_team_talk_team_members_fragment_title_selectable);
+        } else {
+            setCustomTitle(StringHelper.getString(R.string.ui_team_talk_team_members_fragment_title, users.size()));
+        }
+        // 选择状态下，右上角为确定按钮。
+        // 普通状态下当前用户是组群拥有者时，可以编辑删除用户
+        setRightText(selectable ? R.string.ui_base_text_confirm : (isSelfOwner ? R.string.ui_base_text_edit : 0));
+        setRightTitleClickListener(selectable || isSelfOwner ? new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                boolean isEditable = false;
-                for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
-                    Model model = mAdapter.get(i);
-                    model.setSelectable(!model.isSelectable());
-                    if (!isEditable) {
-                        isEditable = model.isSelectable();
+                if (selectable) {
+                    // 返回已选中的用户
+                    if (selectedIndex >= 0) {
+                        SimpleUser user = (SimpleUser) mAdapter.get(selectedIndex);
+                        SubMember member = new SubMember(user);
+                        resultData(SubMember.toJson(member));
+                    } else {
+                        finish();
                     }
-                    mAdapter.update(model);
+                } else {
+                    boolean isEditable = false;
+                    for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
+                        Model model = mAdapter.get(i);
+                        model.setSelectable(!model.isSelectable());
+                        if (!isEditable) {
+                            isEditable = model.isSelectable();
+                        }
+                        mAdapter.update(model);
+                    }
+                    setRightText(isEditable ? R.string.ui_base_text_cancel : R.string.ui_base_text_edit);
                 }
-                setRightText(isEditable ? R.string.ui_base_text_cancel : R.string.ui_base_text_edit);
             }
         } : null);
     }
@@ -339,8 +367,6 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
             Model model = mAdapter.get(index);
             if (model.getId().equals("+")) {
                 GroupContactPickFragment.open(TalkTeamMembersFragment.this, "", true, false, SubMember.toJson(SubMember.getMember(users)));
-            } else if (model.getId().equals("-")) {
-
             }
         }
     };
@@ -350,11 +376,44 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(View view, int index) {
             switch (view.getId()) {
                 case R.id.ui_holder_view_talk_team_member_head_layout:
-                    // 到用户属性页
+                    if (selectable) {
+                        // 选中或取消选中index的用户
+                        Model model = mAdapter.get(index);
+                        if (model.getId().equals(Cache.cache().userId)) {
+                            ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_pick_no_select_self);
+                        } else {
+                            model.setSelected(!model.isSelected());
+                            mAdapter.update(model);
+                            if (model.isSelected()) {
+                                selectedIndex = index;
+                            } else {
+                                selectedIndex = -1;
+                            }
+                            Iterator<Model> iterator = mAdapter.iterator();
+                            while (iterator.hasNext()) {
+                                Model m = iterator.next();
+                                if (!m.getId().equals(model.getId())) {
+                                    if (m.isSelected()) {
+                                        m.setSelected(false);
+                                        mAdapter.update(m);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // 到用户属性页
+                    }
                     break;
                 case R.id.ui_holder_view_talk_team_member_mask:
-                    // 删除用户
-                    prepareRemoveMember(mAdapter.get(index).getId(), index);
+                    if (selectable) {
+                        Model model = mAdapter.get(index);
+                        model.setSelected(false);
+                        mAdapter.update(model);
+                        selectedIndex = -1;
+                    } else {
+                        // 删除用户
+                        prepareRemoveMember(mAdapter.get(index).getId(), index);
+                    }
                     break;
             }
         }
@@ -430,7 +489,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof TalkTeamMemberViewHolder) {
                 ((TalkTeamMemberViewHolder) holder).showMargin(position % 5 == 0, position % 5 == 4);
-                ((TalkTeamMemberViewHolder) holder).showContent((SimpleUser) item, searchingText);
+                ((TalkTeamMemberViewHolder) holder).showContent((SimpleUser) item, searchingText, selectable);
             } else if (holder instanceof TalkTeamMemberAddViewHolder) {
                 ((TalkTeamMemberAddViewHolder) holder).showContent(item);
                 ((TalkTeamMemberAddViewHolder) holder).showMargin(position % 5 == 0, position % 5 == 4);

@@ -17,6 +17,7 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.activity.ActivityViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.common.TalkTeam;
@@ -133,26 +134,24 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     @Click({R.id.ui_recent_contacts_add})
     private void viewClick(View view) {
         view.startAnimation(App.clickAnimation());
-        ArrayList<SubMember> members = new ArrayList<>();
-        SubMember me = new SubMember();
-        me.setUserId(Cache.cache().userId);
-        me.setUserName(Cache.cache().userName);
-        members.add(me);
-        GroupContactPickFragment.open(this, "", true, false, SubMember.toJson(members));
-        //ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
-//        showTooltip(view, R.id.ui_tooltip_recent_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                switch (v.getId()) {
-//                    case R.id.ui_tooltip_menu_recent_contact_list:
-//                        TeamListFragment.open(RecentContactsFragment.this);
-//                        break;
-//                    case R.id.ui_tooltip_menu_recent_contact_create:
-//                        ActivityCreatorFragment.open(RecentContactsFragment.this, "", "");
-//                        break;
-//                }
-//            }
-//        });
+        showTooltip(view, R.id.ui_tooltip_recent_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.ui_tooltip_menu_recent_contact_list:
+                        TeamListFragment.open(RecentContactsFragment.this);
+                        break;
+                    case R.id.ui_tooltip_menu_recent_contact_create:
+                        ArrayList<SubMember> members = new ArrayList<>();
+                        SubMember me = new SubMember();
+                        me.setUserId(Cache.cache().userId);
+                        me.setUserName(Cache.cache().userName);
+                        members.add(me);
+                        GroupContactPickFragment.open(RecentContactsFragment.this, "", true, false, SubMember.toJson(members));
+                        break;
+                }
+            }
+        });
     }
 
     @Override

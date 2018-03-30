@@ -19,7 +19,6 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.main.RecentContactsFragment;
-import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.EditableDialogHelper;
@@ -100,7 +99,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 是否打开用户属性页；是否为添加用户
      */
-    private static boolean isUser = false, isAddUser = true;
+    private static boolean isUser = false;
     private boolean isSelfOwner = false;
     private String[] items;
     private TeamAdapter mAdapter;
@@ -112,8 +111,6 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // 默认是添加用户
-        isAddUser = true;
         enableSwipe(false);
         isLoadingComplete(true);
         // 点对点单聊不需要退出按钮
@@ -490,7 +487,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             if (index == 0) {
                 // 打开群的所有成员列表
-                TalkTeamMembersFragment.open(TalkTeamPropertyFragment.this, mQueryId);
+                TalkTeamMembersFragment.open(TalkTeamPropertyFragment.this, mQueryId, false);
             } else {
                 SimpleClickableItem item = (SimpleClickableItem) mAdapter.get(index);
                 switch (item.getIndex()) {
@@ -560,8 +557,9 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onConfirm() {
                 // 非添加用户，说明是要转让管理权
-                isAddUser = false;
-                GroupContactPickFragment.open(TalkTeamPropertyFragment.this, "", false, true, "[]");
+                TalkTeamMembersFragment.open(TalkTeamPropertyFragment.this, mQueryId, true);
+                //isAddUser = false;
+                //GroupContactPickFragment.open(TalkTeamPropertyFragment.this, "", false, true, "[]");
                 //transferAdmin();
                 return true;
             }
@@ -570,28 +568,35 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQUEST_MEMBER) {
-            // 选择了成员并返回了
-            String json = getResultedData(data);
-            if (!isEmpty(json) && json.length() > 10) {
-                ArrayList<SubMember> members = SubMember.fromJson(json);
-                if (isAddUser) {
+        switch (requestCode) {
+            case REQUEST_SELECT:
+                // 转让管理权的用户选择返回了
+                String result = getResultedData(data);
+                if (!isEmpty(result)) {
+                    SubMember member = SubMember.fromJsonOne(result);
+                    if (null != member && !isEmpty(member.getUserId())) {
+                        // 转让管理权给选中的成员
+                        warningTransferAdminConfirm(member.getUserId(), member.getUserName());
+                    }
+                }
+                break;
+            case REQUEST_CHANGE:
+                // 从成员列表里返回，可能有增删用户，所以需要重新刷新一下成员列表
+                mAdapter.notifyItemChanged(0);
+                break;
+            case REQUEST_MEMBER:
+                // 选择了成员并返回了
+                String json = getResultedData(data);
+                if (!isEmpty(json) && json.length() > 10) {
+                    ArrayList<SubMember> members = SubMember.fromJson(json);
                     if (isUser) {
                         // 单用户时，需要创建一个新的群聊
                         prepareCreateTeam(members);
                     } else {
                         prepareAddUser(members);
                     }
-                } else {
-                    // 转让管理权
-                    SubMember member = members.get(0);
-                    warningTransferAdminConfirm(member.getUserId(), member.getUserName());
                 }
-                // 恢复默认的添加用户方式
-                isAddUser = true;
-            }
-        } else if (requestCode == REQUEST_CHANGE) {
-            // 从成员列表页面返回了
+                break;
         }
         super.onActivityResult(requestCode, data);
     }

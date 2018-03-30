@@ -24,6 +24,8 @@
     <string name="ui_team_talk_team_member_removed">成员已被移出群聊</string>
     <string name="ui_team_talk_team_member_remove_fail" formatted="false">踢出成员失败(%d)</string>
     <string name="ui_team_talk_team_members_fragment_title" formatted="false">全部成员(%d人)</string>
+    <string name="ui_team_talk_team_members_fragment_title_selectable">选择转让对象</string>
+    <string name="ui_team_talk_team_member_pick_no_select_self">不能再选择自己</string>
 
     <string name="ui_team_talk_team_new_title" formatted="false">群聊(%d人)</string>
 
