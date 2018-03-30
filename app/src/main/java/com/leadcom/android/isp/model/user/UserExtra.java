@@ -70,6 +70,8 @@ public class UserExtra extends Model {
     private String title;   //标题
     private String content; //内容
     private int show;    //是否隐藏(0.隐藏,1.显示)
+    private int deletable;//是否可以删除(0.不可以,1.可以)
+    private int editable;//是否可以编辑(0.不可以,1.可以)
     private int diy;// 是否初始介绍0=是，1=自定义介绍
 
     public boolean isStaticDiy() {

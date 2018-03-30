@@ -2,6 +2,8 @@ package com.leadcom.android.isp.model.organization;
 
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.activity.Activity;
+import com.leadcom.android.isp.model.activity.vote.AppVote;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -58,6 +60,7 @@ public class Organization extends Model {
         String GroupLogo = "groupLogo";
         String ModifyDate = "modifyDate";
         String Concerned = "concerned";
+        String ShortName = "shortName";
         String GroupRoleId = "groupRoleId";
     }
 
@@ -65,6 +68,10 @@ public class Organization extends Model {
         return new Dao<>(Organization.class).query(id);
     }
 
+    @Column(Activity.Field.ActivityId)
+    private String actId;          //初始活动ID
+    @Column(Activity.Field.NimId)
+    private String tid;            //初始群聊的云信高级群ID
     @Column(Model.Field.Name)
     private String name;           //组织名
     @Column(Field.UpperId)
@@ -85,17 +92,23 @@ public class Organization extends Model {
     private String creatorId;      //创建者ID
     @Column(Model.Field.CreatorName)
     private String creatorName;    //创建者名称
+    @Column(AppVote.Field.CreatorHeadPhoto)
+    private String creatorHeadPhoto;//创建者的用户头像
     @Column(Field.MemberNumber)
-    private int memberNum;      //成员数
+    private int memberNum;          // 成员数
     @Column(Field.Verified)
     private boolean verified;      //是否组织认证
     @Ignore
     private Member groMember;      // 当前登录者在组织里的角色
     @Column(Field.Concerned)
     private boolean concerned;     // 是否是我关注的组织
+    @Column(Field.ShortName)
+    private String shortName;                  //组织简称
 
     @Ignore
     private ArrayList<Concern> conGroup; // 关注的组织列表
+    @Ignore
+    private ArrayList<Member> groMemberList;//组织成员列表
 
     public String getName() {
         return name;
@@ -218,5 +231,45 @@ public class Organization extends Model {
 
     public void setConGroup(ArrayList<Concern> conGroup) {
         this.conGroup = conGroup;
+    }
+
+    public String getActId() {
+        return actId;
+    }
+
+    public void setActId(String actId) {
+        this.actId = actId;
+    }
+
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
+    }
+
+    public String getCreatorHeadPhoto() {
+        return creatorHeadPhoto;
+    }
+
+    public void setCreatorHeadPhoto(String creatorHeadPhoto) {
+        this.creatorHeadPhoto = creatorHeadPhoto;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public ArrayList<Member> getGroMemberList() {
+        return groMemberList;
+    }
+
+    public void setGroMemberList(ArrayList<Member> groMemberList) {
+        this.groMemberList = groMemberList;
     }
 }
