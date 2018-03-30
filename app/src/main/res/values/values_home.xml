@@ -24,8 +24,9 @@
     <string name="ui_text_home_top_channel2">关注</string>
     <string name="ui_text_home_top_channel3">动态</string>
 
-    <string name="ui_text_home_recent_contact_context_menu_1">群聊列表</string>
-    <string name="ui_text_home_recent_contact_context_menu_2">发起群聊</string>
+    <string name="ui_text_home_recent_contact_context_menu_1">我的群</string>
+    <string name="ui_text_home_recent_contact_context_menu_2">发起会话</string>
+    <string name="ui_text_home_recent_contact_chat_with_self">不能选择跟自己对话</string>
     <string name="ui_text_home_team_empty">您没有加入任何群聊</string>
     <string name="ui_text_home_team_fetching_failed" formatted="false">获取失败(%d)</string>
 </resources>

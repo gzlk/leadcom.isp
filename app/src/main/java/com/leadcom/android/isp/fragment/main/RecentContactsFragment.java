@@ -17,6 +17,7 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.activity.ActivityViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -156,10 +157,10 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                         break;
                     case R.id.ui_tooltip_menu_recent_contact_create:
                         ArrayList<SubMember> members = new ArrayList<>();
-                        SubMember me = new SubMember();
-                        me.setUserId(Cache.cache().userId);
-                        me.setUserName(Cache.cache().userName);
-                        members.add(me);
+//                        SubMember me = new SubMember();
+//                        me.setUserId(Cache.cache().userId);
+//                        me.setUserName(Cache.cache().userName);
+//                        members.add(me);
                         GroupContactPickFragment.open(RecentContactsFragment.this, "", true, false, SubMember.toJson(members));
                         break;
                 }
@@ -173,7 +174,20 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
             String json = getResultedData(data);
             if (!isEmpty(json) && json.length() > 10) {
                 ArrayList<SubMember> members = SubMember.fromJson(json);
-                prepareCreateTeam(members);
+                if (null != members && members.size() > 0) {
+                    if (members.size() <= 1) {
+                        SubMember member = members.get(0);
+                        if (!member.getUserId().equals(Cache.cache().userId)) {
+                            // 选中的不是我自己时，发起点对点对话
+                            NimSessionHelper.startP2PSession(Activity(), member.getUserId());
+                        } else {
+                            ToastHelper.make().showMsg(R.string.ui_text_home_recent_contact_chat_with_self);
+                        }
+                    } else {
+                        // 多余1个人时，发起群聊
+                        prepareCreateTeam(members);
+                    }
+                }
             }
         }
         super.onActivityResult(requestCode, data);
