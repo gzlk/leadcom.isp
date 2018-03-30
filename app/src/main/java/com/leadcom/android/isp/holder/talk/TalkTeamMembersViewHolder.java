@@ -26,6 +26,7 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.organization.SubMember;
+import com.leadcom.android.isp.nim.constant.StatusCode;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.SimpleCallback;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
@@ -151,6 +152,7 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
 
     public void showContent(Model model) {
         sessionId = model.getId();
+        isAdmin = model.isSelectable();
         if (isUser) {
             displayUser(NIMClient.getService(UserService.class).getUserInfo(sessionId));
             addView(add);
@@ -294,7 +296,7 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
 
             @Override
             public void onFailed(int code) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_team_member_remove_fail, code));
+                ToastHelper.make().showMsg(StatusCode.getStatus(code));
             }
 
             @Override

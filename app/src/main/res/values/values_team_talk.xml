@@ -13,6 +13,7 @@
     <string name="ui_team_talk_team_name_change_dialog_title">更改会话名称</string>
     <string name="ui_team_talk_team_name_change_dialog_input_empty">会话名称不能为空</string>
     <string name="ui_team_talk_team_transfer_admin_dialog_title">管理权转让后您将变成普通成员</string>
+    <string name="ui_team_talk_team_transfer_admin_fail" formatted="false">转让管理权转失败(%s)</string>
     <string name="ui_team_talk_team_transfer_admin_confirm_dialog_title" formatted="false">
         <![CDATA[确定转让管理权给 <font color="#3cbaff">%s</font>]]>
     </string>
@@ -27,7 +28,7 @@
     <string name="ui_team_talk_team_new_title" formatted="false">群聊(%d人)</string>
 
     <string name="ui_team_talk_user_info_fetch_fail" formatted="false">获取用户信息失败(%d)</string>
-    <string name="ui_team_talk_user_mute_fail" formatted="false">用户消息通知方式设置失败(%d)</string>
+    <string name="ui_team_talk_user_mute_fail" formatted="false">用户消息通知方式设置失败(%s)</string>
 
     <string name="ui_team_talk_clean_chat_history_dialog_title">您确定要删除本会话中的聊天记录吗？</string>
     <string-array name="ui_team_talk_property">

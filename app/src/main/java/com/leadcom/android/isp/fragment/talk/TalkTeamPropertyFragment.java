@@ -36,6 +36,7 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.common.TalkTeam;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.nim.activity.SessionHistoryActivity;
+import com.leadcom.android.isp.nim.constant.StatusCode;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.api.model.SimpleCallback;
 import com.netease.nim.uikit.business.session.helper.MessageListPanelHelper;
@@ -353,9 +354,11 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void initializeTeam(Team team) {
+        isSelfOwner = false;
         setCustomTitle(team.getName());
         Model m = new Model();
         m.setId(team.getId());
+        m.setSelectable(isSelfOwner);
         if (mAdapter.exist(m)) {
             mAdapter.update(m);
         } else {
@@ -376,9 +379,18 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
                     // 如果当前用户是群拥有者
                     if (member.getType() == TeamMemberType.Owner) {
                         isSelfOwner = true;
+                        m.setSelectable(isSelfOwner);
+                        mAdapter.update(m);
                         bottomButton.setText(R.string.ui_team_talk_quit_team_owner);
                     }
-                    mAdapter.update(transfer);
+                    int index = mAdapter.indexOf(transfer);
+                    if (index >= 0) {
+                        mAdapter.update(transfer);
+                    } else {
+                        SimpleClickableItem name = new SimpleClickableItem(items[1]);
+                        // 加到名称后面
+                        mAdapter.add(transfer, mAdapter.indexOf(name) + 1);
+                    }
                 } else {
                     mAdapter.remove(transfer);
                 }
@@ -650,7 +662,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onFailed(int code) {
-
+                ToastHelper.make().showMsg(StatusCode.getStatus(code));
             }
 
             @Override
@@ -684,7 +696,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onFailed(int code) {
-
+                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_team_transfer_admin_fail, StatusCode.getStatus(code)));
             }
 
             @Override
@@ -735,7 +747,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onFailed(int code) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_user_mute_fail, code));
+                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_user_mute_fail, StatusCode.getStatus(code)));
             }
 
             @Override
@@ -754,7 +766,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onFailed(int code) {
-
+                ToastHelper.make().showMsg(StatusCode.getStatus(code));
             }
 
             @Override
@@ -784,7 +796,6 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
                 case VT_MEMBERS:
                     TalkTeamMembersViewHolder ttmvh = new TalkTeamMembersViewHolder(itemView, TalkTeamPropertyFragment.this);
                     ttmvh.addOnViewHolderClickListener(clickListener);
-                    ttmvh.setAdmin(isSelfOwner);
                     ttmvh.setUser(isUser);
                     return ttmvh;
             }

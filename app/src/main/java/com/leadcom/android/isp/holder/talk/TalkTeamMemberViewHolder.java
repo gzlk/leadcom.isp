@@ -36,7 +36,7 @@ public class TalkTeamMemberViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_talk_team_member_name)
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_talk_team_member_manager)
-    private CustomTextView managerIcon;
+    private View managerIcon;
     @ViewId(R.id.ui_holder_view_talk_team_member_mask)
     private View maskView;
 

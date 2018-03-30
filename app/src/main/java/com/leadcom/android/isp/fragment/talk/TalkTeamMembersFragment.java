@@ -32,6 +32,7 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.TalkTeam;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.model.user.SimpleUser;
+import com.leadcom.android.isp.nim.constant.StatusCode;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.SimpleCallback;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
@@ -224,7 +225,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onFailed(int code) {
-
+                ToastHelper.make().showMsg(StatusCode.getStatus(code));
             }
 
             @Override
@@ -278,20 +279,24 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         TeamDataCache.getInstance().fetchTeamMemberList(mQueryId, new SimpleCallback<List<TeamMember>>() {
             @Override
             public void onResult(boolean success, List<TeamMember> members, int code) {
-                if (success && null != members) {
-                    for (TeamMember member : members) {
-                        SimpleUser user = getUser(member);
-                        if (mAdapter.exist(user)) {
-                            mAdapter.update(user);
-                        } else {
-                            int index = mAdapter.indexOf(addModel);
-                            if (index >= 0) {
-                                mAdapter.add(user, index);
+                if (success) {
+                    if (null != members) {
+                        for (TeamMember member : members) {
+                            SimpleUser user = getUser(member);
+                            if (mAdapter.exist(user)) {
+                                mAdapter.update(user);
                             } else {
-                                mAdapter.add(user);
+                                int index = mAdapter.indexOf(addModel);
+                                if (index >= 0) {
+                                    mAdapter.add(user, index);
+                                } else {
+                                    mAdapter.add(user);
+                                }
                             }
                         }
                     }
+                } else {
+                    ToastHelper.make().showMsg(StatusCode.getStatus(code));
                 }
                 mAdapter.update(addModel);
                 resetTitleEvent();
@@ -376,7 +381,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onFailed(int code) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_team_member_remove_fail, code));
+                ToastHelper.make().showMsg(StatusCode.getStatus(code));
             }
 
             @Override
