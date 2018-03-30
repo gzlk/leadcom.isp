@@ -68,6 +68,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     // 置顶功能可直接使用，也可作为思路，供开发者充分利用RecentContact的tag字段
     public static final long RECENT_TAG_STICKY = 1; // 联系人置顶tag
 
+    private static boolean loaded = false;
     @ViewId(R.id.ui_main_tool_bar_container)
     private View toolBar;
     public MainFragment mainFragment;
@@ -76,6 +77,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        loaded = false;
         enableSwipe(false);
         isLoadingComplete(true);
         tryPaddingContent(toolBar, false);
@@ -89,6 +91,17 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     public void onDestroy() {
         super.onDestroy();
         registerObservers(false);
+    }
+
+    @Override
+    protected void onViewPagerDisplayedChanged(boolean visible) {
+        super.onViewPagerDisplayedChanged(visible);
+        if (visible) {
+            if (null != mAdapter && !loaded) {
+                loaded = true;
+                mAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override

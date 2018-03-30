@@ -157,7 +157,7 @@ public class ActivityViewHolder extends BaseViewHolder {
             });
             descView.setText(getRecentMsgType(contact));
         } else if (contact.getSessionType() == SessionTypeEnum.Team) {
-            final Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
+            Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
             if (null != team) {
                 fetchTeamMembers(team);
             }
