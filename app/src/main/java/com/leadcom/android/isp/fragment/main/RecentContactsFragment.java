@@ -191,13 +191,13 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     private void registerObservers(boolean register) {
         MsgServiceObserve service = NIMClient.getService(MsgServiceObserve.class);
         service.observeReceiveMessage(messageReceiverObserver, register);
-        service.observeRecentContact(messageObserver, register);
-        service.observeMsgStatus(statusObserver, register);
-        service.observeRecentContactDeleted(deleteObserver, register);
+        service.observeRecentContact(recentContactChangeObserver, register);
+        service.observeMsgStatus(msgStatusObserver, register);
+        service.observeRecentContactDeleted(recentContactDeleteObserver, register);
 
-        registerTeamObservers(register);
-        NimUIKit.getContactChangedObservable().registerObserver(friendDataChangedObserver, register);
-        registerUserInfoObservers(register);
+        //registerTeamObservers(register);
+        //NimUIKit.getContactChangedObservable().registerObserver(friendDataChangedObserver, register);
+        //registerUserInfoObservers(register);
     }
 
     private void registerTeamObservers(boolean register) {
@@ -232,7 +232,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    Observer<List<RecentContact>> messageObserver = new Observer<List<RecentContact>>() {
+    Observer<List<RecentContact>> recentContactChangeObserver = new Observer<List<RecentContact>>() {
         @Override
         public void onEvent(List<RecentContact> recentContacts) {
             log("message observer onEvent: " + (null == recentContacts ? "null" : recentContacts.size()));
@@ -262,7 +262,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         refreshMessages();
     }
 
-    Observer<IMMessage> statusObserver = new Observer<IMMessage>() {
+    Observer<IMMessage> msgStatusObserver = new Observer<IMMessage>() {
         @Override
         public void onEvent(IMMessage message) {
             int index = getItemIndex(message.getUuid());
@@ -274,7 +274,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    Observer<RecentContact> deleteObserver = new Observer<RecentContact>() {
+    Observer<RecentContact> recentContactDeleteObserver = new Observer<RecentContact>() {
         @Override
         public void onEvent(RecentContact recentContact) {
             if (recentContact != null) {
@@ -328,17 +328,17 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public void onDeletedFriends(List<String> accounts) {
-            refreshMessages();
+            //refreshMessages();
         }
 
         @Override
         public void onAddUserToBlackList(List<String> account) {
-            refreshMessages();
+            //refreshMessages();
         }
 
         @Override
         public void onRemoveUserFromBlackList(List<String> account) {
-            refreshMessages();
+            //refreshMessages();
         }
     };
 

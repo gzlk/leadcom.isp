@@ -174,6 +174,12 @@ public class NimSessionHelper {
             public void onAvatarLongClicked(Context context, IMMessage message) {
                 // 一般用于群组@功能，或者弹出菜单，做拉黑，加好友等功能
             }
+
+            @Override
+            public void onAckMsgClicked(Context context, IMMessage message) {
+                // 已读回执事件处理，用于群组的已读回执事件的响应，弹出消息已读详情
+                //AckMsgInfoActivity.start(context, message);
+            }
         };
 
         NimUIKit.setSessionListener(listener);

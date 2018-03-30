@@ -30,7 +30,6 @@ import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.mixpush.MixPushConfig;
-import com.netease.nimlib.sdk.mixpush.NIMPushClient;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
@@ -195,6 +194,9 @@ public class NimApplication extends BaseActivityManagedApplication {
 
         // 是否检查manifest 配置，调试阶段打开，调试通过之后请关掉
         options.checkManifestConfig = !Cache.isReleasable();
+
+        // 是否启用群消息已读功能，默认关闭
+        options.enableTeamMsgAck = true;
 
         // 配置第三方推送
         options.mixPushConfig = buildMixPushConfig();

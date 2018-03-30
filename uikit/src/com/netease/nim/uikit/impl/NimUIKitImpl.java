@@ -206,8 +206,8 @@ public final class NimUIKitImpl {
     }
 
     /*
-    * ****************************** 登录登出 ******************************
-    */
+     * ****************************** 登录登出 ******************************
+     */
     public static AbortableFuture<LoginInfo> login(LoginInfo loginInfo, final RequestCallback<LoginInfo> callback) {
 
         AbortableFuture<LoginInfo> loginRequest = NIMClient.getService(AuthService.class).login(loginInfo);
@@ -306,6 +306,10 @@ public final class NimUIKitImpl {
 
     public static void startTeamSession(Context context, String tid, IMMessage anchor) {
         NimUIKitImpl.startChatting(context, tid, SessionTypeEnum.Team, commonTeamSessionCustomization, anchor);
+    }
+
+    public static void startTeamSession(Context context, String tid, SessionCustomization sessionCustomization, IMMessage anchor) {
+        NimUIKitImpl.startChatting(context, tid, SessionTypeEnum.Team, sessionCustomization, anchor);
     }
 
     public static void startChatting(Context context, String id, SessionTypeEnum sessionType, SessionCustomization
@@ -474,8 +478,8 @@ public final class NimUIKitImpl {
     }
 
     /*
-    * ****************************** 在线状态 ******************************
-    */
+     * ****************************** 在线状态 ******************************
+     */
 
     public static void setOnlineStateContentProvider(OnlineStateContentProvider onlineStateContentProvider) {
         NimUIKitImpl.onlineStateContentProvider = onlineStateContentProvider;
@@ -507,8 +511,8 @@ public final class NimUIKitImpl {
     }
 
     /*
-    * ****************************** basic ******************************
-    */
+     * ****************************** basic ******************************
+     */
     public static Context getContext() {
         return context;
     }
