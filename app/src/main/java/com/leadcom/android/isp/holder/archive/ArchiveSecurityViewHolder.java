@@ -101,7 +101,7 @@ public class ArchiveSecurityViewHolder extends BaseViewHolder {
         icon.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
         String text = member.getUserName();
         if (isEmpty(text)) {
-            text = StringHelper.getString(R.string.ui_organization_member_no_name);
+            text = StringHelper.getString(R.string.ui_base_text_no_name);
         }
         textView.setText(text);
         textView.setTextColor(getColor(R.color.textColor));

@@ -1,10 +1,51 @@
 package com.leadcom.android.isp.fragment.talk;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.View;
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.team.TeamRequest;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
+import com.leadcom.android.isp.helper.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
+import com.leadcom.android.isp.holder.talk.TalkTeamMemberAddViewHolder;
+import com.leadcom.android.isp.holder.talk.TalkTeamMemberViewHolder;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
+import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.common.TalkTeam;
+import com.leadcom.android.isp.model.organization.SubMember;
+import com.leadcom.android.isp.model.user.SimpleUser;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.model.SimpleCallback;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.team.TeamService;
+import com.netease.nimlib.sdk.team.TeamServiceObserver;
+import com.netease.nimlib.sdk.team.constant.TeamMemberType;
+import com.netease.nimlib.sdk.team.model.TeamMember;
+import com.netease.nimlib.sdk.uinfo.model.UserInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>群成员列表<br />
@@ -28,14 +69,169 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     public static void open(BaseFragment fragment, String tid) {
-        fragment.openActivity(TalkTeamMembersFragment.class.getName(), tid, REQUEST_MEMBER, true, false);
+        fragment.openActivity(TalkTeamMembersFragment.class.getName(), tid, REQUEST_CHANGE, true, false);
     }
+
+    private static String searchingText = "";
+    private boolean isSelfOwner = false;
+    private MemberAdapter mAdapter;
+    private Model addModel;
+    private ArrayList<SimpleUser> users = new ArrayList<>();
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private View searchView;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        searchingText = "";
+        addModel = new Model();
+        addModel.setId("+");
+        addModel.setAccessToken(StringHelper.getString(R.string.ui_icon_add));
         enableSwipe(false);
         isLoadingComplete(true);
+        mRecyclerView.setLayoutManager(new FlexboxLayoutManager(mRecyclerView.getContext(), FlexDirection.ROW, FlexWrap.WRAP));
+        registerObservers(true);
+        InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchView, this);
+        searchViewHolder.setOnSearchingListener(onSearchingListener);
+    }
+
+    private InputableSearchViewHolder.OnSearchingListener onSearchingListener = new InputableSearchViewHolder.OnSearchingListener() {
+        @Override
+        public void onSearching(String text) {
+            searchingText = text;
+            mAdapter.clear();
+            searchMemberName();
+            if (isEmpty(searchingText)) {
+                mAdapter.add(addModel);
+            }
+        }
+    };
+
+    private void searchMemberName() {
+        for (SimpleUser user : users) {
+            if (!isEmpty(searchingText)) {
+                if (user.getUserName().contains(searchingText)) {
+                    mAdapter.add(user);
+                }
+            } else {
+                mAdapter.add(user);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        registerObservers(false);
+    }
+
+    private void registerObservers(boolean register) {
+        NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(memberUpdateObserver, register);
+        NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(memberRemoveObserver, register);
+    }
+
+    /**
+     * 群组成员信息更改观察者
+     */
+    private Observer<List<TeamMember>> memberUpdateObserver = new com.netease.nimlib.sdk.Observer<List<TeamMember>>() {
+        @Override
+        public void onEvent(List<TeamMember> members) {
+            if (null != members) {
+                for (TeamMember member : members) {
+                    if (member.getTid().equals(mQueryId)) {
+                        SimpleUser user = getUser(member);
+                        if (mAdapter.exist(user)) {
+                            mAdapter.update(user);
+                        } else {
+                            mAdapter.add(user, mAdapter.indexOf(addModel));
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    private SimpleUser getUser(TeamMember member) {
+        SimpleUser user = new SimpleUser();
+        user.setId(member.getAccount());
+        user.setUserId(member.getAccount());
+        user.setUserName(member.getTeamNick());
+        UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
+        user.setHeadPhoto(null == info ? "" : info.getAvatar());
+        if (isEmpty(member.getTeamNick())) {
+            user.setUserName(null == info ? "" : info.getName());
+        }
+        // 是否管理者
+        user.setRead(member.getType() == TeamMemberType.Owner);
+        int index = users.indexOf(user);
+        if (index >= 0) {
+            users.set(index, user);
+        } else {
+            users.add(user);
+        }
+        if (!isSelfOwner) {
+            isSelfOwner = member.getAccount().equals(Cache.cache().userId) && member.getType() == TeamMemberType.Owner;
+        }
+        return user;
+    }
+
+    /**
+     * 群组成员删除事件
+     */
+    private Observer<List<TeamMember>> memberRemoveObserver = new Observer<List<TeamMember>>() {
+
+        @Override
+        public void onEvent(List<TeamMember> members) {
+            if (null != members) {
+                for (TeamMember member : members) {
+                    if (member.getTid().equals(mQueryId)) {
+                        mAdapter.remove(getUser(member));
+                    }
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_MEMBER) {
+            // 选择了成员并返回了
+            String json = getResultedData(data);
+            if (!isEmpty(json) && json.length() > 10) {
+                ArrayList<SubMember> members = SubMember.fromJson(json);
+                addUserToTeam(SubMember.getUserIds(members));
+            }
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
+    private void addUser(ArrayList<String> accounts) {
+        TeamRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<TalkTeam>() {
+            @Override
+            public void onResponse(TalkTeam talkTeam, boolean success, String message) {
+                super.onResponse(talkTeam, success, message);
+            }
+        }).update(mQueryId, "", accounts);
+    }
+
+    private void addUserToTeam(ArrayList<String> accounts) {
+        addUser(accounts);
+        NIMClient.getService(TeamService.class).addMembers(mQueryId, accounts).setCallback(new RequestCallback<List<String>>() {
+            @Override
+            public void onSuccess(List<String> param) {
+                fetchingTeamMember();
+            }
+
+            @Override
+            public void onFailed(int code) {
+
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+
+            }
+        });
     }
 
     @Override
@@ -46,6 +242,11 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void onLoadingMore() {
 
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_group_squads;
     }
 
     @Override
@@ -60,16 +261,180 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-
+        initializeAdapter();
     }
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override
     protected void destroyView() {
 
+    }
+
+    private void fetchingTeamMember() {
+        TeamDataCache.getInstance().fetchTeamMemberList(mQueryId, new SimpleCallback<List<TeamMember>>() {
+            @Override
+            public void onResult(boolean success, List<TeamMember> members, int code) {
+                if (success && null != members) {
+                    for (TeamMember member : members) {
+                        SimpleUser user = getUser(member);
+                        if (mAdapter.exist(user)) {
+                            mAdapter.update(user);
+                        } else {
+                            int index = mAdapter.indexOf(addModel);
+                            if (index >= 0) {
+                                mAdapter.add(user, index);
+                            } else {
+                                mAdapter.add(user);
+                            }
+                        }
+                    }
+                }
+                mAdapter.update(addModel);
+                resetTitleEvent();
+            }
+        });
+    }
+
+    private void resetTitleEvent() {
+        setCustomTitle(StringHelper.getString(R.string.ui_team_talk_team_members_fragment_title, users.size()));
+        setRightText(isSelfOwner ? R.string.ui_base_text_edit : 0);
+        setRightTitleClickListener(isSelfOwner ? new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                boolean isEditable = false;
+                for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
+                    Model model = mAdapter.get(i);
+                    model.setSelectable(!model.isSelectable());
+                    if (!isEditable) {
+                        isEditable = model.isSelectable();
+                    }
+                    mAdapter.update(model);
+                }
+                setRightText(isEditable ? R.string.ui_base_text_cancel : R.string.ui_base_text_edit);
+            }
+        } : null);
+    }
+
+    private void initializeAdapter() {
+        if (null == mAdapter) {
+            setCustomTitle(R.string.ui_team_talk_team_member_more);
+            mAdapter = new MemberAdapter();
+            mRecyclerView.setAdapter(mAdapter);
+            fetchingTeamMember();
+        }
+    }
+
+    private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Model model = mAdapter.get(index);
+            if (model.getId().equals("+")) {
+                GroupContactPickFragment.open(TalkTeamMembersFragment.this, "", true, false, SubMember.toJson(SubMember.getMember(users)));
+            } else if (model.getId().equals("-")) {
+
+            }
+        }
+    };
+
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_holder_view_talk_team_member_head_layout:
+                    // 到用户属性页
+                    break;
+                case R.id.ui_holder_view_talk_team_member_mask:
+                    // 删除用户
+                    prepareRemoveMember(mAdapter.get(index).getId(), index);
+                    break;
+            }
+        }
+    };
+
+    private void prepareRemoveMember(final String account, final int index) {
+        // 删除成员
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                removeMember(account, index);
+                return true;
+            }
+        }).setTitleText(R.string.ui_team_talk_team_member_remove_dialog_title).setConfirmText(R.string.ui_base_text_remove).show();
+    }
+
+    private void removeMember(String account, final int index) {
+        NIMClient.getService(TeamService.class).removeMember(mQueryId, account).setCallback(new RequestCallback<Void>() {
+            @Override
+            public void onSuccess(Void param) {
+                mAdapter.remove(index);
+                ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_removed);
+            }
+
+            @Override
+            public void onFailed(int code) {
+                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_team_member_remove_fail, code));
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+
+            }
+        });
+    }
+
+
+    private class MemberAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+
+        private static final int VT_MEMBER = 0, VT_CLICK = 1;
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            switch (viewType) {
+                case VT_MEMBER:
+                    TalkTeamMemberViewHolder holder = new TalkTeamMemberViewHolder(itemView, TalkTeamMembersFragment.this);
+                    holder.setOnViewHolderElementClickListener(elementClickListener);
+                    return holder;
+                default:
+                    TalkTeamMemberAddViewHolder add = new TalkTeamMemberAddViewHolder(itemView, TalkTeamMembersFragment.this);
+                    add.addOnViewHolderClickListener(holderClickListener);
+                    return add;
+            }
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            switch (viewType) {
+                case VT_MEMBER:
+                    return R.layout.holder_view_talk_team_member_head;
+                default:
+                    return R.layout.holder_view_talk_team_member_add;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (get(position) instanceof SimpleUser) return VT_MEMBER;
+            return VT_CLICK;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof TalkTeamMemberViewHolder) {
+                ((TalkTeamMemberViewHolder) holder).showMargin(position % 5 == 0, position % 5 == 4);
+                ((TalkTeamMemberViewHolder) holder).showContent((SimpleUser) item, searchingText);
+            } else if (holder instanceof TalkTeamMemberAddViewHolder) {
+                ((TalkTeamMemberAddViewHolder) holder).showContent(item);
+                ((TalkTeamMemberAddViewHolder) holder).showMargin(position % 5 == 0, position % 5 == 4);
+            }
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return 0;
+        }
     }
 }

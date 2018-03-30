@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.leadcom.android.isp.R;
 import com.netease.nim.uikit.business.session.module.Container;
@@ -58,7 +57,7 @@ public class DisplayMessageActivity extends UI implements ModuleProxy {
         View rootView = LayoutInflater.from(this).inflate(R.layout.nim_activity_session_history, null);
         setContentView(rootView);
 
-        RelativeLayout searchBox = (RelativeLayout) rootView.findViewById(R.id.ui_holder_view_searchable_container);
+        View searchBox = rootView.findViewById(R.id.ui_holder_view_searchable_container);
         if (null != searchBox) {
             searchBox.setVisibility(View.GONE);
         }

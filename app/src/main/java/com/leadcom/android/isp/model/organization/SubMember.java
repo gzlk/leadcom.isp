@@ -7,6 +7,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.model.user.SimpleUser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -76,6 +77,16 @@ public class SubMember implements Serializable {
         return ids;
     }
 
+    public static ArrayList<SubMember> getMember(ArrayList<SimpleUser> users) {
+        ArrayList<SubMember> members = new ArrayList<>();
+        if (null != users && users.size() > 0) {
+            for (SimpleUser user : users) {
+                members.add(new SubMember(user));
+            }
+        }
+        return members;
+    }
+
     private String userId;
     private String userName;
 
@@ -85,6 +96,11 @@ public class SubMember implements Serializable {
     public SubMember(Member member) {
         userId = member.getUserId();
         userName = member.getUserName();
+    }
+
+    public SubMember(SimpleUser user) {
+        userId = user.getUserId();
+        userName = user.getUserName();
     }
 
     public String getUserId() {

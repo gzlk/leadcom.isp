@@ -14,18 +14,20 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.team.TeamRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.fragment.activity.ActivityCreatorFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.activity.ActivityViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.common.TalkTeam;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.model.contact.ContactChangedObserver;
+import com.netease.nim.uikit.api.model.team.TeamDataChangedObserver;
+import com.netease.nim.uikit.api.model.team.TeamMemberDataChangedObserver;
+import com.netease.nim.uikit.api.model.user.UserInfoObserver;
 import com.netease.nim.uikit.business.recent.TeamMemberAitHelper;
-import com.netease.nim.uikit.business.team.model.TeamExtras;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallbackWrapper;
@@ -36,6 +38,8 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.msg.model.QueryDirectionEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,6 +194,19 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         service.observeRecentContact(messageObserver, register);
         service.observeMsgStatus(statusObserver, register);
         service.observeRecentContactDeleted(deleteObserver, register);
+
+        registerTeamObservers(register);
+        NimUIKit.getContactChangedObservable().registerObserver(friendDataChangedObserver, register);
+        registerUserInfoObservers(register);
+    }
+
+    private void registerTeamObservers(boolean register) {
+        NimUIKit.getTeamChangedObservable().registerTeamDataChangedObserver(teamDataChangedObserver, register);
+        NimUIKit.getTeamChangedObservable().registerTeamMemberDataChangedObserver(teamMemberDataChangedObserver, register);
+    }
+
+    private void registerUserInfoObservers(boolean register) {
+        NimUIKit.getUserInfoObservable().registerObserver(userInfoObserver, register);
     }
 
     // 暂存消息，当RecentContact 监听回来时使用，结束后清掉
@@ -231,8 +248,9 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
             index = mAdapter.indexOf(r);
             if (index >= 0) {
                 mAdapter.replace(r, index);
+            } else {
+                mAdapter.add(r);
             }
-            //mAdapter.add(r);
 
             if (r.getSessionType() == SessionTypeEnum.Team && cacheMessages.get(r.getContactId()) != null) {
                 TeamMemberAitHelper.setRecentContactAited(r, cacheMessages.get(r.getContactId()));
@@ -274,6 +292,60 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.clear();
                 refreshMessages();
             }
+        }
+    };
+
+    TeamDataChangedObserver teamDataChangedObserver = new TeamDataChangedObserver() {
+
+        @Override
+        public void onUpdateTeams(List<Team> teams) {
+            mAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onRemoveTeam(Team team) {
+
+        }
+    };
+
+    TeamMemberDataChangedObserver teamMemberDataChangedObserver = new TeamMemberDataChangedObserver() {
+        @Override
+        public void onUpdateTeamMember(List<TeamMember> members) {
+            mAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onRemoveTeamMember(List<TeamMember> member) {
+
+        }
+    };
+
+    ContactChangedObserver friendDataChangedObserver = new ContactChangedObserver() {
+        @Override
+        public void onAddedOrUpdatedFriends(List<String> accounts) {
+            refreshMessages();
+        }
+
+        @Override
+        public void onDeletedFriends(List<String> accounts) {
+            refreshMessages();
+        }
+
+        @Override
+        public void onAddUserToBlackList(List<String> account) {
+            refreshMessages();
+        }
+
+        @Override
+        public void onRemoveUserFromBlackList(List<String> account) {
+            refreshMessages();
+        }
+    };
+
+    UserInfoObserver userInfoObserver = new UserInfoObserver() {
+        @Override
+        public void onUserInfoChanged(List<String> accounts) {
+            refreshMessages();
         }
     };
 

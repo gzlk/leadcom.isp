@@ -160,7 +160,7 @@ public class ContactViewHolder extends BaseViewHolder {
     public void showContent(Member member, String searchingText) {
         String text = member.getUserName();
         if (StringHelper.isEmpty(text)) {
-            text = StringHelper.getString(R.string.ui_organization_member_no_name);
+            text = StringHelper.getString(R.string.ui_base_text_no_name);
         }
         text = getSearchingText(text, searchingText);
         nameView.setText(Html.fromHtml(text));

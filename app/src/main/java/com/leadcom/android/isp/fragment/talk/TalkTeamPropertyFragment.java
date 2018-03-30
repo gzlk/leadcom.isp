@@ -478,6 +478,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             if (index == 0) {
                 // 打开群的所有成员列表
+                TalkTeamMembersFragment.open(TalkTeamPropertyFragment.this, mQueryId);
             } else {
                 SimpleClickableItem item = (SimpleClickableItem) mAdapter.get(index);
                 switch (item.getIndex()) {
@@ -577,6 +578,8 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
                 // 恢复默认的添加用户方式
                 isAddUser = true;
             }
+        } else if (requestCode == REQUEST_CHANGE) {
+            // 从成员列表页面返回了
         }
         super.onActivityResult(requestCode, data);
     }
@@ -635,6 +638,26 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).update(mQueryId, "", userIds);
+        addNewUserToTeam(userIds);
+    }
+
+    private void addNewUserToTeam(ArrayList<String> accounts) {
+        NIMClient.getService(TeamService.class).addMembers(mQueryId, accounts).setCallback(new RequestCallback<List<String>>() {
+            @Override
+            public void onSuccess(List<String> param) {
+
+            }
+
+            @Override
+            public void onFailed(int code) {
+
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+
+            }
+        });
     }
 
     /**

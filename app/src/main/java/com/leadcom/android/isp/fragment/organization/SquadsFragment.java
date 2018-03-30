@@ -63,7 +63,6 @@ public class SquadsFragment extends BaseOrganizationFragment {
     private SquadAdapter mAdapter;
     private static String searchingText = "";
     private static int dialIndex = -1;
-    private InputableSearchViewHolder searchViewHolder;
     private ArrayList<Squad> squads = new ArrayList<>();
 
     @Override
@@ -84,7 +83,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
             });
         }
         setNothingText(R.string.ui_group_squad_nothing);
-        searchViewHolder = new InputableSearchViewHolder(searchInputableView, this);
+        InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchInputableView, this);
         searchViewHolder.setOnSearchingListener(onSearchingListener);
     }
 
@@ -92,12 +91,12 @@ public class SquadsFragment extends BaseOrganizationFragment {
         @Override
         public void onSearching(String text) {
             searchingText = text;
+            mAdapter.clear();
             if (!isEmpty(searchingText)) {
                 // 搜索小组成员名字
                 searchMemberName();
             } else {
                 // 恢复已打开的小组和其成员列表
-                mAdapter.clear();
                 for (Squad squad : squads) {
                     squad.setSelectable(false);
                     mAdapter.add(squad);
@@ -110,7 +109,6 @@ public class SquadsFragment extends BaseOrganizationFragment {
     };
 
     private void searchMemberName() {
-        mAdapter.clear();
         for (Squad squad : squads) {
             // 轮询所有小组
             int cnt = 0;

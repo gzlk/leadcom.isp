@@ -245,7 +245,7 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
         });
         String header = null == info ? "" : info.getAvatar();
         head.displayImage(header, size, false, false);
-        name.setText(member.getAccount().equals(Cache.cache().userId) ? "我" : (null == info ? "无名氏" : info.getName()));
+        name.setText(member.getAccount().equals(Cache.cache().userId) ? StringHelper.getString(R.string.ui_base_text_myself) : (null == info ? StringHelper.getString(R.string.ui_base_text_no_name) : info.getName()));
     }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {

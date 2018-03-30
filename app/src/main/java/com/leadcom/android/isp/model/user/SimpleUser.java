@@ -1,6 +1,10 @@
 package com.leadcom.android.isp.model.user;
 
+import com.google.gson.reflect.TypeToken;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b><br />
@@ -14,6 +18,16 @@ import com.leadcom.android.isp.model.Model;
  */
 
 public class SimpleUser extends Model {
+
+    public static String toJson(ArrayList<SimpleUser> list) {
+        return null == list ? "[]" : Json.gson().toJson(list, new TypeToken<ArrayList<SimpleUser>>() {
+        }.getType());
+    }
+
+    public static ArrayList<SimpleUser> fromJson(String json) {
+        return Json.gson().fromJson((isEmpty(json) ? "[]" : json), new TypeToken<ArrayList<SimpleUser>>() {
+        }.getType());
+    }
 
     private String userName;
     private String userId;

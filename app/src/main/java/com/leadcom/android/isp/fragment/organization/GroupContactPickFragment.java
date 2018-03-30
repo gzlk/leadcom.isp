@@ -23,6 +23,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -174,19 +175,17 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
     }
 
     private void resetSelectAll() {
-        int size = mAdapter.getItemCount();
-        if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                Member member = mAdapter.get(i);
-                // 如果是非全选，则需要判断已存在的记录，不要让其也一起取消选择
-                if (!isSelectAll && member.isLocalDeleted() && isLockable) {
-                    member.setSelected(true);
-                } else {
-                    member.setSelected(isSelectAll);
-                }
-                mAdapter.update(member);
+        Iterator<Member> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            Member member = iterator.next();
+            // 如果是非全选，则需要判断已存在的记录，不要让其也一起取消选择
+            if (!isSelectAll && member.isLocalDeleted() && isLockable) {
+                member.setSelected(true);
+            } else {
+                member.setSelected(isSelectAll);
             }
         }
+        mAdapter.notifyDataSetChanged();
     }
 
     private void initializeAdapter() {

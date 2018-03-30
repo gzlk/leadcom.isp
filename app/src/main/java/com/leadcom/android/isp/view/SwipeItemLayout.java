@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -382,7 +381,7 @@ public class SwipeItemLayout extends ViewGroup {
 
         void startScroll(int startX, int endX) {
             if (startX != endX) {
-                Log.e("scroll - startX - endX", "" + startX + " " + endX);
+                //Log.e("scroll - startX - endX", "" + startX + " " + endX);
                 setTouchMode(Mode.FLING);
                 mAbort = false;
                 mScrollToLeft = endX < startX;
@@ -392,7 +391,7 @@ public class SwipeItemLayout extends ViewGroup {
         }
 
         void startFling(int startX, int xVel) {
-            Log.e("fling - startX", "" + startX);
+            //Log.e("fling - startX", "" + startX);
 
             if (xVel > mMinVelocity && startX != 0) {
                 startScroll(startX, 0);
@@ -424,11 +423,11 @@ public class SwipeItemLayout extends ViewGroup {
 
         @Override
         public void run() {
-            Log.e("abort", Boolean.toString(mAbort));
+            //Log.e("abort", Boolean.toString(mAbort));
             if (!mAbort) {
                 boolean more = mScroller.computeScrollOffset();
                 int curX = mScroller.getCurrX();
-                Log.e("curX", "" + curX);
+                //Log.e("curX", "" + curX);
 
                 boolean atEdge = trackMotionScroll(curX - mScrollOffset);
                 if (more && !atEdge) {

@@ -130,7 +130,6 @@
     </string>
     <string name="ui_organization_contact_picker_resulted" formatted="false">选中%d人，去重复后保留%d人</string>
 
-    <string name="ui_organization_member_no_name">无名氏</string>
     <string name="ui_organization_member_no_phone">未提供手机号码</string>
 
     <string name="ui_phone_contact_no_permission">无法读取联系人</string>
