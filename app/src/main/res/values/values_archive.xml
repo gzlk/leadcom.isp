@@ -116,7 +116,7 @@
 
     <string name="ui_text_archive_details_editor_setting_time_title">发生时间</string>
     <string name="ui_text_archive_details_editor_setting_site_title">发生地点</string>
-    <string name="ui_text_archive_details_editor_setting_group_title">选择组织</string>
+    <string name="ui_text_archive_details_editor_setting_group_title">所属组织</string>
     <string name="ui_text_archive_details_editor_setting_group_desc">新档案所属的组织</string>
     <string name="ui_text_archive_details_editor_setting_group_empty">请选择档案所属的组织</string>
     <string name="ui_text_archive_details_editor_setting_property_title">档案性质</string>

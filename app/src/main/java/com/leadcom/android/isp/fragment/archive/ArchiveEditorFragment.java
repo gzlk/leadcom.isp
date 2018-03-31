@@ -26,6 +26,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
@@ -532,7 +533,29 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 } else {
                     happenDate.setText(mArchive.getHappenDate().substring(0, 10));
                 }
+                if (isEmpty(mArchive.getGroupId())) {
+                    groupNameText.setText(R.string.ui_text_archive_details_editor_setting_group_desc);
+                } else {
+                    Organization group = Organization.get(mArchive.getGroupId());
+                    if (null != group) {
+                        groupNameText.setText(group.getName());
+                    } else {
+                        fetchingGroup(mArchive.getGroupId());
+                    }
+                }
                 resetGroupArchiveOrUser();
+            }
+
+            private void fetchingGroup(String groupId) {
+                OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
+                    @Override
+                    public void onResponse(Organization organization, boolean success, String message) {
+                        super.onResponse(organization, success, message);
+                        if (success && null != organization) {
+                            groupNameText.setText(organization.getName());
+                        }
+                    }
+                }).find(groupId);
             }
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override

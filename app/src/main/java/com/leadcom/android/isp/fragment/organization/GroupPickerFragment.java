@@ -81,7 +81,7 @@ public class GroupPickerFragment extends BaseOrganizationFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override

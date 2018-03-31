@@ -604,10 +604,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case R.id.ui_holder_view_simple_clickable:
                     // 打开或编辑置顶的项目
-                    Model model = mAdapter.get(index);
-                    if (model instanceof UserExtra) {
-                        performItemClick(index);
-                    }
+                    performItemClick(index);
                     break;
                 case R.id.ui_tool_view_contact_button2:
                     // 删除自定义介绍项目

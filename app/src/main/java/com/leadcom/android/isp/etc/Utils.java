@@ -3,6 +3,9 @@ package com.leadcom.android.isp.etc;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
+import android.support.v4.graphics.ColorUtils;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -499,12 +502,31 @@ public class Utils {
         }
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '曾') {
+            if (i == 0 && text.charAt(i) == '曾') {
                 buffer.append("ZENG");
             } else {
                 buffer.append(Pinyin.toPinyin(text.charAt(i)));
             }
         }
         return buffer.toString();
+    }
+
+    /**
+     * 判断颜色是否为暗色
+     */
+    public static boolean isColorDark(int color) {
+        double luminance;
+        if (Build.VERSION.SDK_INT >= 24) {
+            luminance = Color.luminance(color);
+        } else {
+            luminance = ColorUtils.calculateLuminance(color);
+        }
+        return luminance < 0.5;
+//        double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
+//        if (darkness < 0.5) {
+//            return false; // It's a light color
+//        } else {
+//            return true; // It's a dark color
+//        }
     }
 }
