@@ -62,7 +62,7 @@
     </string>
     <string name="ui_individual_moment_list_message_numbers" formatted="false">%d条消息</string>
 
-    <string name="ui_individual_archive_list_fragment_title" formatted="false">%s的公开档案</string>
+    <string name="ui_individual_archive_list_fragment_title" formatted="false">%s的档案</string>
     <string name="ui_individual_archive_list_loading">正在加载个人档案列表，请稍候&#78230;</string>
     <string name="ui_individual_archive_list_nothing">暂时没有更多公开的个人档案</string>
 

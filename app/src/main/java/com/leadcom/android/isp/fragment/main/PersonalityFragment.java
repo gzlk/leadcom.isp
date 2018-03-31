@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
@@ -48,6 +49,7 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
+import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
@@ -95,6 +97,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private View leftFlag;
     @ViewId(R.id.ui_main_personality_title_right_icon)
     private CustomTextView rightIcon;
+    @ViewId(R.id.ui_user_information_chat_to_user)
+    private CorneredButton chatToUser;
     @ViewId(R.id.ui_user_information_self_define)
     private View selfDefineView;
     private PersonalityAdapter mAdapter;
@@ -147,6 +151,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             // 查找未读的推送通知
             NimApplication.dispatchCallbacks();
         } else {
+            chatToUser.setVisibility(View.VISIBLE);
             toolbarBackground.setVisibility(View.GONE);
             paddingLayout.setVisibility(View.GONE);
             selfDefineView.setVisibility(View.GONE);
@@ -299,7 +304,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         super.onActivityResult(requestCode, data);
     }
 
-    @Click({R.id.ui_main_personality_title_left_icon_container, R.id.ui_main_personality_title_right_icon, R.id.ui_user_information_self_define})
+    @Click({R.id.ui_main_personality_title_left_icon_container,
+            R.id.ui_main_personality_title_right_icon,
+            R.id.ui_user_information_chat_to_user,
+            R.id.ui_user_information_self_define})
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_main_personality_title_left_icon_container:
@@ -310,6 +318,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             case R.id.ui_main_personality_title_right_icon:
                 view.startAnimation(App.clickAnimation());
                 SettingFragment.open(PersonalityFragment.this);
+                break;
+            case R.id.ui_user_information_chat_to_user:
+                NimSessionHelper.startP2PSession(Activity(), mQueryId);
                 break;
             case R.id.ui_user_information_self_define:
                 selectedIndex = 0;
@@ -423,6 +434,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.addOnScrollListener(scrollListener);
+            if (isSelf) {
+                mAdapter.add(Cache.cache().me);
+            }
             initializeItems();
         }
     }
@@ -450,11 +464,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case 2:
                 // 打开个人档案
-                if (isSelf) {
-                    IndividualFragment.open(this, IndividualFragment.TYPE_ARCHIVE_MINE);
-                } else {
-                    IndividualArchivesFragment.open(this, mQueryId, ACTIVITY_BASE_REQUEST);
-                }
+                IndividualFragment.UserId = isSelf ? "" : mQueryId;
+                IndividualFragment.open(this, isSelf ? IndividualFragment.TYPE_ARCHIVE_MINE : IndividualFragment.TYPE_ARCHIVE_OTHER);
                 break;
             case 3:
                 // 打开个人动态

@@ -13,7 +13,7 @@
     <string name="ui_base_text_nothing_more_id">no_more_any_things</string>
     <string name="ui_base_text_input_hint">请输入内容</string>
     <string name="ui_base_text_still_editing">
-        <![CDATA[您正在编辑的内容尚未保存。<br/>确定就此放弃了吗？]]>
+        <![CDATA[内容尚未保存，确定放弃吗？]]>
     </string>
     <string name="ui_base_text_loading_web_page">正在加载内容，请稍候&#8230;</string>
     <string name="ui_base_text_press_again_to_exit">再按一次退出</string>

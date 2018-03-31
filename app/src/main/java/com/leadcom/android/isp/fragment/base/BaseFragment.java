@@ -20,6 +20,7 @@ import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.main.MainFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.helper.ClipboardHelper;
+import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -680,19 +681,17 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         return false;
     }
 
-    protected int stillEditingWarning = R.string.ui_base_text_still_editing;
-
     /**
      * 询问用户是否放弃编辑
      */
     protected void warningStillInEditing() {
-        SimpleDialogHelper.init(Activity()).show(stillEditingWarning, R.string.ui_base_text_yes, R.string.ui_base_text_think_again, new DialogHelper.OnDialogConfirmListener() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 finish();
                 return true;
             }
-        }, null);
+        }).setTitleText(R.string.ui_base_text_still_editing).setConfirmText(R.string.ui_base_text_yes).show();
     }
 
     protected boolean onBackKeyPressed() {

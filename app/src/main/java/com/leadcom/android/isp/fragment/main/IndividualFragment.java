@@ -83,7 +83,9 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_SELECTED_MMT = "mmt_selected";
     private static final String PARAM_SELECTED_CMT = "ifmt_selected_cmt";
 
-    public static final int TYPE_ARCHIVE_HOME = 0, TYPE_MOMENT = 1, TYPE_COLLECT = 2, TYPE_ARCHIVE_MINE = 3;
+    public static final int TYPE_ARCHIVE_HOME = 0, TYPE_MOMENT = 1, TYPE_COLLECT = 2, TYPE_ARCHIVE_MINE = 3, TYPE_ARCHIVE_OTHER = 4;
+
+    public static String UserId = "";
 
     public static IndividualFragment newInstance(String params) {
         IndividualFragment fragment = new IndividualFragment();
@@ -115,9 +117,9 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (null != searchClickView) {
-            searchClickView.setVisibility(function == TYPE_ARCHIVE_MINE ? View.VISIBLE : View.GONE);
+            searchClickView.setVisibility(function >= TYPE_ARCHIVE_MINE ? View.VISIBLE : View.GONE);
         }
-        if (function == TYPE_ARCHIVE_MINE) {
+        if (function >= TYPE_ARCHIVE_MINE) {
             setCustomTitle(R.string.ui_text_archive_list_fragment_title);
         } else if (function == TYPE_COLLECT) {
             setCustomTitle(R.string.ui_individual_collection_list_fragment_title);
@@ -132,6 +134,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     @Override
     public void onDestroy() {
         NimApplication.removeNimMessageEvent(messageEvent);
+        UserId = "";
         super.onDestroy();
     }
 
@@ -184,7 +187,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return function == TYPE_ARCHIVE_MINE || function == TYPE_COLLECT;
+        return function >= TYPE_ARCHIVE_MINE || function == TYPE_COLLECT;
     }
 
     @Override
@@ -231,7 +234,8 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 refreshingFavorites();
                 break;
             case TYPE_ARCHIVE_MINE:
-                refreshingMineDocuments();
+            case TYPE_ARCHIVE_OTHER:
+                refreshingUserDocuments();
                 break;
         }
     }
@@ -323,10 +327,12 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         }).listHomeFollowed(remotePageNumber);
     }
 
+    private boolean hasSetUserTitle = false;
+
     /**
-     * 拉取我的档案列表
+     * 拉取用户的公开档案列表
      */
-    private void refreshingMineDocuments() {
+    private void refreshingUserDocuments() {
         ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -336,6 +342,10 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 if (success) {
                     if (null != list) {
                         for (Archive archive : list) {
+                            if (!hasSetUserTitle && function >= TYPE_ARCHIVE_MINE) {
+                                hasSetUserTitle = true;
+                                setCustomTitle(StringHelper.getString(R.string.ui_individual_archive_list_fragment_title, function == TYPE_ARCHIVE_MINE ? StringHelper.getString(R.string.ui_base_text_myself) : archive.getUserName()));
+                            }
                             mAdapter.update(archive);
                         }
                     }
@@ -344,7 +354,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     mAdapter.add(nothingMore);
                 }
             }
-        }).list(remotePageNumber, Cache.cache().userId);
+        }).list(remotePageNumber, function == TYPE_ARCHIVE_MINE ? Cache.cache().userId : UserId);
     }
 
     private void refreshingFavorites() {
