@@ -194,6 +194,7 @@
     <string name="ui_text_user_information_blank_or_error_id">无效的用户id</string>
     <string name="ui_text_user_property_self_defined_property">自定义介绍</string>
     <string name="ui_text_user_property_self_defined_dialog_title">增加个人名片介绍栏目</string>
+    <string name="ui_text_user_property_self_defined_dialog_title_edit">修改自定义介绍栏目</string>
     <string name="ui_text_user_property_self_defined_property_name_hint">标题(限8字)</string>
     <string name="ui_text_user_property_self_defined_property_value_hint">内容(限20字)</string>
     <string name="ui_text_user_property_self_defined_shown" formatted="false">1|是否公开|%d|</string>
@@ -221,9 +222,6 @@
         <item>3|动态|%d篇|1|0xe63d</item>
         <item>4|收藏|%d个|1|0xe626</item>
         <item>-</item>
-        <item>5|单位|%s|1|0xe679</item>
-        <item>6|职务|%s|1|0xe66f</item>
-        <item>7|电话|%s|1|0xe67a</item>
     </string-array>
     <string name="ui_text_personality_contact_fragment_title">通讯录</string>
     <string name="ui_text_personality_contact_nothing">没有更多的联系人了</string>

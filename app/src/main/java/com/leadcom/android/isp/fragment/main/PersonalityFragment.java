@@ -8,13 +8,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.daimajia.swipe.util.Attributes;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserRequest;
@@ -22,7 +21,6 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.fragment.individual.ModifyPhoneFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
@@ -46,6 +44,7 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -303,8 +302,21 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
     private void resetExtras() {
         clearExtras();
-        for (UserExtra extra : Cache.cache().me.getExtra()) {
+        User me = Cache.cache().me;
+        for (UserExtra extra : me.getExtra()) {
             if (null != extra) {
+                if (extra.getTitle().equals("单位")) {
+                    extra.setContent(me.getCompany());
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_building));
+                }
+                if (extra.getTitle().equals("职务")) {
+                    extra.setContent(me.getPosition());
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_business_card));
+                }
+                if (extra.getTitle().equals("电话")) {
+                    extra.setContent(me.getPhone());
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_telephone));
+                }
                 // 如果额外的属性是可显示状态或者不可显示但当前用户是登录用户时，也可以显示
                 if (extra.getShow() == UserExtra.ShownType.SHOWN || (extra.getShow() == UserExtra.ShownType.HIDE && isMe())) {
                     mAdapter.update(extra);
@@ -374,8 +386,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new PersonalityAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
-            mAdapter.setMode(Attributes.Mode.Single);
             mRecyclerView.addOnScrollListener(scrollListener);
             mAdapter.add(Cache.cache().me);
             initializeItems();
@@ -413,24 +425,28 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 // 打开个人搜藏
                 IndividualFragment.open(this, IndividualFragment.TYPE_COLLECT);
                 break;
-            case 6:
-                // 编辑单位信息
-                selectedIndex = 6;
-                prepareEditInfo(R.string.ui_text_personality_item_edit_company, Cache.cache().me.getCompany(), R.string.ui_text_personality_item_edit_company_hint);
-                break;
-            case 7:
-                // 编辑职务信息
-                selectedIndex = 7;
-                prepareEditInfo(R.string.ui_text_personality_item_edit_duty, Cache.cache().me.getPosition(), R.string.ui_text_personality_item_edit_duty_hint);
-                break;
-            case 8:
-                // 修改电话
-                openActivity(ModifyPhoneFragment.class.getName(), Cache.cache().userPhone, REQUEST_PHONE, true, false);
-                break;
+            //case 6:
+            // 编辑单位信息
+            //selectedIndex = 6;
+            //prepareEditInfo(R.string.ui_text_personality_item_edit_company, Cache.cache().me.getCompany(), R.string.ui_text_personality_item_edit_company_hint);
+            //break;
+            //case 7:
+            // 编辑职务信息
+            //selectedIndex = 7;
+            //prepareEditInfo(R.string.ui_text_personality_item_edit_duty, Cache.cache().me.getPosition(), R.string.ui_text_personality_item_edit_duty_hint);
+            //break;
+            //case 8:
+            // 修改电话
+            //openActivity(ModifyPhoneFragment.class.getName(), Cache.cache().userPhone, REQUEST_PHONE, true, false);
+            //break;
             default:
                 selectedIndex = index;
-                if (mAdapter.get(selectedIndex) instanceof UserExtra) {
-                    openSelfDefineDialog();
+                Model model = mAdapter.get(selectedIndex);
+                if (model instanceof UserExtra) {
+                    UserExtra extra = (UserExtra) model;
+                    if (extra.isEditable()) {
+                        openSelfDefineDialog();
+                    }
                 }
                 break;
         }
@@ -465,6 +481,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private View selfDefineDialog, selfShown;
+    private TextView selfTitle;
     private ClearEditText selfName, selfValue;
     private ToggleableViewHolder toggleHolder;
 
@@ -481,6 +498,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
+                if (null == selfTitle) {
+                    selfTitle = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_title);
+                }
                 if (null == toggleHolder) {
                     toggleHolder = new ToggleableViewHolder(selfDefineDialog, PersonalityFragment.this);
                 }
@@ -496,16 +516,28 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 Model model = mAdapter.get(selectedIndex);
                 selfShown.setVisibility((model instanceof UserExtra) ? View.VISIBLE : View.GONE);
                 if (model instanceof UserExtra) {
+                    selfTitle.setText(R.string.ui_text_user_property_self_defined_dialog_title_edit);
                     UserExtra ue = (UserExtra) model;
                     selfName.setValue(ue.getTitle());
                     selfName.focusEnd();
                     selfValue.setValue(ue.getContent());
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, ue.getShow()));
                 } else {
+                    selfTitle.setText(R.string.ui_text_user_property_self_defined_dialog_title);
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, UserExtra.ShownType.HIDE));
                     selfName.setValue("");
                     selfValue.setValue("");
                 }
+            }
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_popup_individual_self_defined_property_closer};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                return true;
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
@@ -534,6 +566,11 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 updateMyExtra();
                 return true;
+            }
+        }).addOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                // 删除
             }
         }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
@@ -567,7 +604,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     break;
                 case R.id.ui_holder_view_simple_clickable:
                     // 打开或编辑置顶的项目
-                    performItemClick(index);
+                    Model model = mAdapter.get(index);
+                    if (model instanceof UserExtra) {
+                        performItemClick(index);
+                    }
                     break;
                 case R.id.ui_tool_view_contact_button2:
                     // 删除自定义介绍项目
@@ -590,7 +630,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         }).init(this).setTitleText(R.string.ui_text_user_property_self_defined_delete).setConfirmText(R.string.ui_base_text_yes).show();
     }
 
-    private class PersonalityAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
+    private class PersonalityAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_USER = 0, VT_CLICK = 1, VT_DELETABLE = 2, VT_LINE = 3;
 
@@ -633,10 +673,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 return VT_USER;
             } else if (model instanceof UserExtra) {
                 UserExtra extra = (UserExtra) model;
-                if (extra.isStaticDiy()) {
-                    return VT_CLICK;
-                }
-                return VT_DELETABLE;
+                return extra.isDeletable() ? VT_DELETABLE : VT_CLICK;
             } else if (model.getId().equals("-")) {
                 return VT_LINE;
             }
@@ -659,11 +696,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         protected int comparator(Model item1, Model item2) {
             return 0;
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int position) {
-            return R.id.ui_holder_view_group_details_swipe_layout;
         }
     }
 }

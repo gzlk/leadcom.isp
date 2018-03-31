@@ -21,13 +21,30 @@
         app:cv_left_top_corner="@dimen/ui_base_dimen_margin_padding"
         app:cv_right_top_corner="@dimen/ui_base_dimen_margin_padding">
 
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/ui_static_dp_20"
-            android:layout_marginTop="@dimen/ui_static_dp_10"
-            android:gravity="center"
-            android:text="@string/ui_text_user_property_self_defined_dialog_title" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/ui_popup_individual_self_defined_property_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ui_static_dp_20"
+                android:layout_marginTop="@dimen/ui_static_dp_10"
+                android:gravity="center"
+                android:text="@string/ui_text_user_property_self_defined_dialog_title" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_popup_individual_self_defined_property_closer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/ui_static_dp_5"
+                android:rotation="45"
+                android:text="@string/ui_icon_add"
+                android:textColor="@color/colorCaution"
+                android:textSize="@dimen/ui_base_text_size_max" />
+        </RelativeLayout>
 
         <com.hlk.hlklib.lib.view.ClearEditText
             android:id="@+id/ui_popup_individual_self_defined_property_name"
@@ -40,9 +57,7 @@
             app:cet_edit_normal_border="@color/textColorHintLightLight"
             app:cet_edit_padding="@dimen/ui_static_dp_8"
             app:cet_edit_text_size="@dimen/ui_base_text_size_small"
-            app:cet_edit_value_extract_regex="@string/regex_normal_input_filter_chs_only"
-            app:cet_edit_value_max_length="@integer/integer_user_property_self_defined_name_length"
-            app:cet_edit_value_verify_regex="@string/regex_group_squad_name_input_verify" />
+            app:cet_edit_value_max_length="@integer/integer_user_property_self_defined_name_length" />
 
         <com.hlk.hlklib.lib.view.ClearEditText
             android:id="@+id/ui_popup_individual_self_defined_property_value"
@@ -60,7 +75,6 @@
             app:cet_edit_normal_border="@color/textColorHintLightLight"
             app:cet_edit_padding="@dimen/ui_static_dp_8"
             app:cet_edit_text_size="@dimen/ui_base_text_size_small"
-            app:cet_edit_value_extract_regex="@string/regex_normal_input_filter_chs_only"
             app:cet_edit_value_max_length="@integer/integer_user_property_self_defined_value_length" />
 
         <include

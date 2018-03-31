@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.holder.home;
 
+import android.service.voice.VoiceInteractionService;
 import android.view.View;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -39,11 +40,15 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
     }
 
     public void showContent(UserExtra extra) {
-        valueIcon.setText(R.string.ui_icon_favorite_oval);
+        if (isEmpty(extra.getAccessToken())) {
+            valueIcon.setText(R.string.ui_icon_favorite_oval);
+        } else {
+            valueIcon.setText(extra.getAccessToken());
+        }
         titleTextView.setText(extra.getTitle());
         String value = StringHelper.getString(R.string.ui_text_user_property_self_defined_value, extra.getContent(), format("(%s)", definedValues[extra.getShow()]));
         valueTextView.setText(value);
-        showDelete(true);
+        //showDelete(extra.isDeletable());
     }
 
     @Click({R.id.ui_holder_view_simple_clickable, R.id.ui_tool_view_contact_button2})

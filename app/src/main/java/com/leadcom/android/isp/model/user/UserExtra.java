@@ -28,7 +28,8 @@ public class UserExtra extends Model {
             public boolean shouldSkipField(FieldAttributes f) {
                 return f.getName().equals("id") ||
                         f.getName().startsWith("is") ||
-                        f.getName().startsWith("local");
+                        f.getName().startsWith("local")||
+                        f.getName().contains("accessToken");
             }
 
             @Override
@@ -37,6 +38,12 @@ public class UserExtra extends Model {
             }
         }).toJson(list, new TypeToken<ArrayList<UserExtra>>() {
         }.getType());
+    }
+
+    public UserExtra() {
+        show = ShownType.SHOWN;
+        editable = EditType.EDITABLE;
+        deletable = DeleteType.DELETABLE;
     }
 
     /**
@@ -54,17 +61,31 @@ public class UserExtra extends Model {
     }
 
     /**
-     * 自定义介绍类型
+     * 编辑定义
      */
-    public interface DiyType {
+    public interface EditType {
         /**
-         * 初始介绍，可以编辑不可以删除
+         * 可以编辑
          */
-        int STATIC = 0;
+        int EDITABLE = 1;
         /**
-         * 自定义介绍，可以编辑可以删除
+         * 不可以编辑
          */
-        int DEFINE = 1;
+        int DENIED = 0;
+    }
+
+    /**
+     * 删除定义
+     */
+    public interface DeleteType {
+        /**
+         * 可以删除
+         */
+        int DELETABLE = 1;
+        /**
+         * 不可以删除
+         */
+        int DENIED = 0;
     }
 
     private String title;   //标题
@@ -72,10 +93,19 @@ public class UserExtra extends Model {
     private int show;    //是否隐藏(0.隐藏,1.显示)
     private int deletable;//是否可以删除(0.不可以,1.可以)
     private int editable;//是否可以编辑(0.不可以,1.可以)
-    private int diy;// 是否初始介绍0=是，1=自定义介绍
 
-    public boolean isStaticDiy() {
-        return diy == DiyType.STATIC;
+    /**
+     * 是否可删除
+     */
+    public boolean isDeletable() {
+        return deletable == DeleteType.DELETABLE;
+    }
+
+    /**
+     * 是否可删除
+     */
+    public boolean isEditable() {
+        return editable == EditType.EDITABLE;
     }
 
     @Override
@@ -117,11 +147,19 @@ public class UserExtra extends Model {
         this.show = show;
     }
 
-    public int getDiy() {
-        return diy;
+    public int getDeletable() {
+        return deletable;
     }
 
-    public void setDiy(int diy) {
-        this.diy = diy;
+    public void setDeletable(int deletable) {
+        this.deletable = deletable;
+    }
+
+    public int getEditable() {
+        return editable;
+    }
+
+    public void setEditable(int editable) {
+        this.editable = editable;
     }
 }
