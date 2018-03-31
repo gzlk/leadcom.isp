@@ -60,7 +60,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     private TextView channel4;
 
     private String selectedOrganizationId;
-    public MainFragment mainFragment;
+    //public MainFragment mainFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             mFragments.add(ContactFragment.newInstance(format("%d,,", ContactFragment.TYPE_ORG)));
             mFragments.add(new ArchivesFragment());
             //mFragments.add(new LivenessFragment());
-            ((StructureFragment) mFragments.get(0)).mainFragment = mainFragment;
+            //((StructureFragment) mFragments.get(0)).mainFragment = mainFragment;
             ((StructureFragment) mFragments.get(0)).setOnOrganizationChangedListener(organizationChangedListener);
             // 拉取到组织的
             ((StructureFragment) mFragments.get(0)).organizationFragment = this;
@@ -128,7 +128,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             selectedOrganizationId = item.getId();
             if (getUserVisibleHint()) {
                 // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
-                mainFragment.setTitleText(item.getName());
+                //mainFragment.setTitleText(item.getName());
             }
             ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
             String creatorId = item.getCreatorId();
@@ -181,7 +181,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
         // 新增：只有当前登录用户在这个组织内可以添加成员时才显示 + 号
         shown = (position == 1 && canAddMember()) || (position == 2);
         //}
-        mainFragment.showRightIcon(shown);
+        //mainFragment.showRightIcon(shown);
     }
 
     private boolean canAddMember() {

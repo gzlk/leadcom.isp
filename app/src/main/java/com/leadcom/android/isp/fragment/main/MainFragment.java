@@ -1,31 +1,26 @@
 package com.leadcom.android.isp.fragment.main;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
-import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
-import com.leadcom.android.isp.fragment.organization.StructureFragment;
-import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CustomTextView;
 
 /**
  * <b>功能描述：</b>首页<br />
@@ -38,37 +33,20 @@ import com.hlk.hlklib.lib.view.CustomTextView;
  * <b>修改备注：</b><br />
  */
 
-public class MainFragment extends BaseViewPagerSupportFragment {
+public class MainFragment extends BaseTransparentSupportFragment {
     /**
      * 新建MainFragment的时候传入的参数，以此当作初始化显示的页面（也即ViewPager当前显示的页面的index），int型
      */
     public static final String PARAM_SELECTED = "mf_param1";
-    private static final String PARAM_OLD_TITLE = "mf_old_title";
+    private static final String TAG_HOME = "main_home";
+    private static final String TAG_RECENT = "main_recent";
+    private static final String TAG_GROUP = "main_group";
+    private static final String TAG_MINE = "main_mine";
 
-    @ViewId(R.id.ui_main_tool_bar_container)
-    private RelativeLayout toolBar;
-    @ViewId(R.id.ui_ui_custom_title_left_icon)
-    private CustomTextView leftIcon;
-    @ViewId(R.id.ui_ui_custom_title_left_text)
-    private TextView leftText;
-    @ViewId(R.id.ui_main_tool_bar_background)
-    private View toolBarBackground;
-    @ViewId(R.id.ui_ui_custom_title_text)
-    private TextView toolBarTitleText;
-    // 个人的设置按钮
-    @ViewId(R.id.ui_ui_custom_title_right_icon_1)
-    private CustomTextView rightSettingIcon;
-    @ViewId(R.id.ui_ui_custom_title_right_icon_2_container)
-    private RelativeLayout rightChatIconContainer;
-    @ViewId(R.id.ui_ui_custom_title_right_icon_2_flag)
-    private LinearLayout rightChatIconFlag;
-    /**
-     * 最右侧菜单栏的 + 按钮，平时隐藏
-     */
-    @ViewId(R.id.ui_ui_custom_title_right_container)
-    private View rightIconContainer;
-    @ViewId(R.id.ui_ui_custom_title_right_icon)
-    private CustomTextView rightIcon;
+    private static final int SHOW_HOME = 0, SHOW_RECENT = 1, SHOW_GROUP = 2, SHOW_MINE = 3;
+
+    @ViewId(R.id.ui_fragment_main_frame_layout)
+    private FrameLayout frameLayout;
 
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
     private CustomTextView iconView1;
@@ -95,35 +73,23 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     @ViewId(R.id.ui_tool_main_bottom_text_4)
     private TextView textView4;
 
-    private String oldTitleText = "";
+    // 首页4个fragment
+    private HomeFragment homeFragment;
+    private RecentContactsFragment recentFragment;
+    private GroupFragment groupFragment;
+    private PersonalityFragment mineFragment;
+    private int showType = SHOW_HOME;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NimApplication.addNotificationChangeCallback(callback);
+        setDisplayPage();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        NimApplication.dispatchCallbacks();
     }
-
-    @Override
-    public void onDestroy() {
-        NimApplication.removeNotificationChangeCallback(callback);
-        super.onDestroy();
-    }
-
-    private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
-        @Override
-        public void onChanged() {
-            int size = NimMessage.getUnRead();
-            if (null != rightChatIconFlag) {
-                rightChatIconFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
-            }
-        }
-    };
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
@@ -141,13 +107,13 @@ public class MainFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        oldTitleText = bundle.getString(PARAM_OLD_TITLE, "");
+        showType = bundle.getInt(PARAM_SELECTED, SHOW_HOME);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putString(PARAM_OLD_TITLE, oldTitleText);
+        bundle.putInt(PARAM_SELECTED, showType);
     }
 
     @Override
@@ -157,37 +123,11 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
     @Override
     public void doingInResume() {
-        //Activity().setRootViewPadding(toolBar, true);
-        super.doingInResume();
-        //leftIcon.setText(R.string.ui_icon_query);
-        //leftText.setText(null);
-        //rightIconContainer.setVisibility(View.GONE);
-        //((HomeFeaturedFragment) mFragments.get(0)).setToolBar(toolBarBackground).setToolBarTextView(toolBarTitleText);
-        //((IndividualFragment) mFragments.get(3)).setToolBar(toolBarBackground);
-    }
-
-    @Override
-    protected boolean onBackKeyPressed() {
-        return getDisplayedPage() == 3 && mFragments.get(3).onBackKeyEvent();
     }
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
         return false;
-    }
-
-    @Override
-    protected void initializeFragments() {
-        if (mFragments.size() <= 0) {
-            // 档案推荐
-            mFragments.add(new HomeFragment());
-            //mFragments.add(new ActivityFragment());
-            mFragments.add(new RecentContactsFragment());
-            mFragments.add(new GroupFragment());
-            mFragments.add(new PersonalityFragment());
-            ((RecentContactsFragment) mFragments.get(1)).mainFragment = this;
-            //((OrganizationFragment) mFragments.get(2)).mainFragment = this;
-        }
     }
 
     /**
@@ -200,86 +140,6 @@ public class MainFragment extends BaseViewPagerSupportFragment {
         }
     }
 
-    public void setStructureFragment(StructureFragment fragment) {
-        //((ActivityFragment) mFragments.get(1)).structureFragment = fragment;
-    }
-
-    public void setTitleText(String text) {
-//        if (StringHelper.isEmpty(oldTitleText)) {
-//            oldTitleText = toolBarTitleText.getText().toString();
-//        }
-//        toolBarTitleText.setText(text);
-    }
-
-    @Override
-    protected void viewPagerSelectionChanged(int position) {
-        int color1 = getColor(R.color.textColorHintDark);
-        int color2 = getColor(R.color.colorPrimary);
-
-        iconView1.setTextColor(position == 0 ? color2 : color1);
-        textView1.setTextColor(position == 0 ? color2 : color1);
-
-        iconView2.setTextColor(position == 1 ? color2 : color1);
-        textView2.setTextColor(position == 1 ? color2 : color1);
-
-        textView2d5.setTextColor(color1);
-
-        iconView3.setTextColor(position == 2 ? color2 : color1);
-        textView3.setTextColor(position == 2 ? color2 : color1);
-
-        iconView4.setTextColor(position == 3 ? color2 : color1);
-        textView4.setTextColor(position == 3 ? color2 : color1);
-//        switch (position) {
-//            case 0:
-//                // 首页
-//                toolBarTitleText.setText(R.string.app_name_default);
-//                showRightIcon(false);
-//                break;
-//            case 1:
-//                // 活动
-//                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_2);
-//                break;
-//            case 2:
-//                // 组织
-//                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_3);
-//                break;
-//            case 3:
-//                // 个人
-//                toolBarTitleText.setText(R.string.ui_text_main_bottom_button_text_4);
-//                showRightIcon(false);
-//                break;
-//        }
-
-//        if (position != 2) {
-//            restoreTitleText();
-//            // 活动页面也需要显示右上角的 + 用来显示活动管理菜单
-//            //showRightIcon(position == 1);
-//        } else {
-//            ((OrganizationFragment) mFragments.get(2)).needChangeTitle();
-//        }
-
-        boolean needHandleTitleBar = true;
-        for (int i = 0, len = mFragments.size(); i < len; i++) {
-            BaseTransparentSupportFragment fragment = mFragments.get(i);
-//            if (i == 2 || fragment instanceof IndividualFragment) {
-//                // 个人界面已经显示了，此时不再需要改变标题栏背景
-//                needHandleTitleBar = !((IndividualFragment) mFragments.get(3)).isTitleBarShown();
-//            } else if (i == 1 || fragment instanceof HomeFeaturedFragment) {
-//                needHandleTitleBar = !((HomeFeaturedFragment) mFragments.get(0)).isTitleBarShown();
-//            }
-            fragment.setViewPagerDisplayedCurrent(position == i);
-        }
-//        if (needHandleTitleBar) {
-//            handleTitleBar(position);
-//        }
-//        if (position >= 1 && position < 3) {
-//            transparentTitleText(false);
-//        }
-//        if (position == 0) {
-//            displaySettingIcon(false);
-//        }
-    }
-
     @Override
     protected void destroyView() {
 
@@ -287,18 +147,21 @@ public class MainFragment extends BaseViewPagerSupportFragment {
 
     @Click({R.id.ui_tool_main_bottom_clickable_1, R.id.ui_tool_main_bottom_clickable_2,
             R.id.ui_tool_main_bottom_clickable_center,
-            R.id.ui_tool_main_bottom_clickable_3, R.id.ui_tool_main_bottom_clickable_4,
-            R.id.ui_ui_custom_title_right_icon_1, R.id.ui_ui_custom_title_right_icon_2_container,
-            R.id.ui_ui_custom_title_left_container, R.id.ui_ui_custom_title_right_container,
-            R.id.ui_ui_custom_title_right_icon})
+            R.id.ui_tool_main_bottom_clickable_3, R.id.ui_tool_main_bottom_clickable_4})
     private void elementClick(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.ui_tool_main_bottom_clickable_1:
-                setDisplayPage(0);
+                if (showType != SHOW_HOME) {
+                    showType = SHOW_HOME;
+                    setDisplayPage();
+                }
                 break;
             case R.id.ui_tool_main_bottom_clickable_2:
-                setDisplayPage(1);
+                if (showType != SHOW_RECENT) {
+                    showType = SHOW_RECENT;
+                    setDisplayPage();
+                }
                 break;
             case R.id.ui_tool_main_bottom_clickable_center:
                 iconCenter.startAnimation(App.clickAnimation());
@@ -306,10 +169,16 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 ArchiveCreateSelectorFragment.open(MainFragment.this, "");
                 break;
             case R.id.ui_tool_main_bottom_clickable_3:
-                setDisplayPage(2);
+                if (showType != SHOW_GROUP) {
+                    showType = SHOW_GROUP;
+                    setDisplayPage();
+                }
                 break;
             case R.id.ui_tool_main_bottom_clickable_4:
-                setDisplayPage(3);
+                if (showType != SHOW_MINE) {
+                    showType = SHOW_MINE;
+                    setDisplayPage();
+                }
                 break;
             case R.id.ui_ui_custom_title_right_icon_1:
                 // 打开个人设置
@@ -323,116 +192,127 @@ public class MainFragment extends BaseViewPagerSupportFragment {
                 // 搜索
                 FullTextQueryFragment.open(MainFragment.this);
                 break;
-            case R.id.ui_ui_custom_title_right_container:
-            case R.id.ui_ui_custom_title_right_icon:
-                // + 号的点击
-                BaseFragment fragment = mFragments.get(getDisplayedPage());
-                if (fragment instanceof ActivityFragment) {
-                    ((ActivityFragment) fragment).rightIconClick(rightIcon);
-                } else if (fragment instanceof OrganizationFragment) {
-                    ((OrganizationFragment) fragment).rightIconClick(rightIcon);
-                }
-                break;
         }
     }
 
-    private boolean isTitleBarShown() {
-        return getDisplayedPage() != 3 || ((IndividualFragment) mFragments.get(3)).isTitleBarShown();
+    private Fragment findFragment(String tag) {
+        FragmentManager manager = Activity().getSupportFragmentManager();
+        return manager.findFragmentByTag(tag);
     }
 
-    private void handleTitleBar(int position) {
-        switch (position) {
-            case 0:
-            case 3:
-                if (!isTitleBarShown()) {
-                    transparentTitleBar(true);
-                }
-                displaySettingIcon(position == 3);
-                break;
-            default:
-                transparentTitleBar(false);
-                displaySettingIcon(false);
-                break;
+    private void initializeHome() {
+        Fragment fragment = findFragment(TAG_HOME);
+        if (null != fragment) {
+            if (null == homeFragment) {
+                homeFragment = (HomeFragment) fragment;
+            }
+        } else {
+            homeFragment = new HomeFragment();
         }
     }
 
-    public void showRightIcon(final boolean shown) {
-        if (null == rightChatIconContainer) return;
-        if (shown && rightIconContainer.getVisibility() == View.VISIBLE) return;
-        if (!shown && rightIconContainer.getVisibility() == View.GONE) return;
-        //rightIconContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
-        rightIconContainer.animate().setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (!shown) {
-                    rightIconContainer.setVisibility(View.GONE);
-                }
+    private void initializeRecent() {
+        Fragment fragment = findFragment(TAG_RECENT);
+        if (null != fragment) {
+            if (null == recentFragment) {
+                recentFragment = (RecentContactsFragment) fragment;
             }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                if (shown) {
-                    rightIconContainer.setVisibility(View.VISIBLE);
-                }
-            }
-        }).alpha(shown ? 1 : 0)
-                .translationX(shown ? 0 : rightIconContainer.getWidth())
-                .setDuration(duration())
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .start();
-        translationChatIcon(shown);
+        } else {
+            recentFragment = new RecentContactsFragment();
+        }
     }
 
-    private void translationChatIcon(final boolean shown) {
-        final int width = rightChatIconContainer.getWidth();
-        rightChatIconContainer.animate().setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                rightChatIconContainer.setTranslationX(0);
+    private void initializeGroup() {
+        Fragment fragment = findFragment(TAG_GROUP);
+        if (null != fragment) {
+            if (null == groupFragment) {
+                groupFragment = (GroupFragment) fragment;
             }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-            }
-        }).setDuration(duration())
-                .translationXBy(shown ? 0 : width)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .start();
+        } else {
+            groupFragment = new GroupFragment();
+        }
     }
 
-    private void transparentTitleBar(boolean transparent) {
-        toolBarBackground.animate()
-                .alpha(transparent ? 0 : 1)
-                .setDuration(duration())
-                .setInterpolator(new AccelerateDecelerateInterpolator()).start();
-        //transparentTitleText(transparent);
-        //displaySettingIcon(transparent);
+    private void initializeMine() {
+        Fragment fragment = findFragment(TAG_MINE);
+        if (null != fragment) {
+            if (null == mineFragment) {
+                mineFragment = (PersonalityFragment) fragment;
+            }
+        } else {
+            mineFragment = new PersonalityFragment();
+        }
     }
 
-    private void displaySettingIcon(final boolean show) {
-        rightSettingIcon.animate().alpha(show ? 1 : 0)
-                .setDuration(duration())
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        if (!show) {
-                            rightSettingIcon.setVisibility(View.GONE);
-                        }
-                    }
+    private void hideFragments() {
+        FragmentTransaction transaction = Activity().getSupportFragmentManager().beginTransaction();
+        if (null != homeFragment && showType != SHOW_HOME) {
+            transaction.hide(homeFragment);
+        }
+        if (null != recentFragment && showType != SHOW_RECENT) {
+            transaction.hide(recentFragment);
+        }
+        if (null != groupFragment && showType != SHOW_GROUP) {
+            transaction.hide(groupFragment);
+        }
+        if (null != mineFragment && showType != SHOW_MINE) {
+            transaction.hide(mineFragment);
+        }
+        transaction.commit();
+    }
 
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
-                        if (show) {
-                            rightSettingIcon.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }).start();
+    private void showFragment(BaseFragment fragment, String tag) {
+        FragmentTransaction transaction = Activity().getSupportFragmentManager().beginTransaction();
+        if (!fragment.isAdded()) {
+            transaction.add(R.id.ui_fragment_main_frame_layout, fragment, tag);
+        } else {
+            transaction.show(fragment);
+        }
+        transaction.commit();
+    }
+
+    private void setDisplayPage() {
+        hideFragments();
+        switch (showType) {
+            case SHOW_HOME:
+                initializeHome();
+                showFragment(homeFragment, TAG_HOME);
+                break;
+            case SHOW_RECENT:
+                initializeRecent();
+                showFragment(recentFragment, TAG_RECENT);
+                break;
+            case SHOW_GROUP:
+                initializeGroup();
+                showFragment(groupFragment, TAG_GROUP);
+                break;
+            case SHOW_MINE:
+                initializeMine();
+                showFragment(mineFragment, TAG_MINE);
+                break;
+        }
+        bottomSelectionChanged();
+    }
+
+    protected void bottomSelectionChanged() {
+        if (null == iconView1) {
+            return;
+        }
+        int color1 = getColor(R.color.textColorHintDark);
+        int color2 = getColor(R.color.colorPrimary);
+
+        iconView1.setTextColor(showType == SHOW_HOME ? color2 : color1);
+        textView1.setTextColor(showType == SHOW_HOME ? color2 : color1);
+
+        iconView2.setTextColor(showType == SHOW_RECENT ? color2 : color1);
+        textView2.setTextColor(showType == SHOW_RECENT ? color2 : color1);
+
+        textView2d5.setTextColor(color1);
+
+        iconView3.setTextColor(showType == SHOW_GROUP ? color2 : color1);
+        textView3.setTextColor(showType == SHOW_GROUP ? color2 : color1);
+
+        iconView4.setTextColor(showType == SHOW_MINE ? color2 : color1);
+        textView4.setTextColor(showType == SHOW_MINE ? color2 : color1);
     }
 }

@@ -83,7 +83,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private ActivityAdapter mAdapter;
     private OrgStructureViewHolder concernedViewHolder;
 
-    public MainFragment mainFragment;
+    //public MainFragment mainFragment;
     public StructureFragment structureFragment;
 
     @Override
@@ -110,9 +110,9 @@ public class ActivityFragment extends BaseOrganizationFragment {
         //  注册/注销观察者
         NIMClient.getService(MsgServiceObserve.class).observeRecentContact(messageObserver, true);
         tryPaddingContent(true);
-        if (null != mainFragment) {
-            mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
-        }
+//        if (null != mainFragment) {
+//            mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
+//        }
     }
 
     @Override
@@ -134,7 +134,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
 
     private void showUnreadNum(int num) {
         // 未读消息总数大于0时，显示有未读消息
-        mainFragment.showUnreadFlag(num);
+        //mainFragment.showUnreadFlag(num);
     }
 
     // 查询最近联系人列表，并同步更新未读消息
@@ -574,16 +574,16 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private void changeSelectedActivity() {
         if (isEmpty(StructureFragment.selectedGroupId)) {
             // 组织切换时，如果当前组织不是在组织里显示的那个，则不要显示+号
-            mainFragment.showRightIcon(false);
+            //mainFragment.showRightIcon(false);
         }
         if (selectedIndex < 0) {
-            mainFragment.showRightIcon(false);
+            //mainFragment.showRightIcon(false);
             return;
         }
         // 加载本地该组织的活动列表
         Organization org = concernedViewHolder.get(selectedIndex);
         if (null == org) {
-            mainFragment.showRightIcon(false);
+            //mainFragment.showRightIcon(false);
             return;
         }
         if (isEmpty(mQueryId) || !mQueryId.equals(org.getId())) {
@@ -595,7 +595,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
             // 更改标题栏上的文字和icon
             if (getUserVisibleHint()) {
                 // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
-                mainFragment.setTitleText(org.getName());
+                //mainFragment.setTitleText(org.getName());
             }
             clearActivities();
             refreshingItems();
@@ -603,7 +603,7 @@ public class ActivityFragment extends BaseOrganizationFragment {
         if (getUserVisibleHint()) {
             // 查看当前选择的组织是否是我关注的组织
             //mainFragment.showRightIcon(null != structureFragment && structureFragment.isConcerned(mOrganizationId));
-            mainFragment.showRightIcon(true);
+            //mainFragment.showRightIcon(true);
         }
     }
 

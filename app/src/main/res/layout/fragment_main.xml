@@ -9,7 +9,10 @@
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/ui_base_dimen_simple_item_height">
 
-        <include layout="@layout/tool_view_view_pager" />
+        <FrameLayout
+            android:id="@+id/ui_fragment_main_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </RelativeLayout>
 

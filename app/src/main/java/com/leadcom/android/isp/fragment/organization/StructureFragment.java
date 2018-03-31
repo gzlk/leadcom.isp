@@ -85,7 +85,7 @@ public class StructureFragment extends BaseOrganizationFragment {
     // 是否第一次初始化，此时需要隐藏添加小组的输入框
     private boolean initialized = false;
 
-    public MainFragment mainFragment;
+    //public MainFragment mainFragment;
     public OrganizationFragment organizationFragment;
 
     private OnOrganizationChangedListener organizationChangedListener;
@@ -158,7 +158,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         setSupportLoadingMore(false);
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_organization_structure_items);
-            mainFragment.setStructureFragment(this);
+            //mainFragment.setStructureFragment(this);
         }
         initializeAdapter();
     }
