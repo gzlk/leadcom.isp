@@ -96,7 +96,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                     headerBackground.setLayoutParams(params);
                     String blur = getBlurImage(header);
                     if (!isEmpty(blur)) {
-                        //changeColor(header);
+                        changeColor(header);
                         headerBackground.displayImage("file://" + blur, bWidth, bHeight, false, false);
                     } else {
                         blurHeader(header);
@@ -115,7 +115,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                 userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
                 String blur = getBlurImage(header);
                 if (!isEmpty(blur)) {
-                    //changeColor(header);
+                    changeColor(header);
                     headerBackground.displayImage("file://" + blur, bWidth, bHeight, false, false);
                 } else {
                     log("no blur image, 3s to try again.");
@@ -187,8 +187,8 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                 }
                 if (null != vibrant) {
                     int color = (vibrant.getRgb());
-                    nameTextView.setTextColor(color);
-                    additionalTextView.setTextColor(color);
+                    //nameTextView.setTextColor(color);
+                    //additionalTextView.setTextColor(color);
                     ((PersonalityFragment) fragment()).resetIconColor(color);
                 }
             }

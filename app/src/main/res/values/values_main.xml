@@ -14,9 +14,9 @@
     <string name="ui_system_message_fragment_title_right_text">清空消息</string>
     <string name="ui_system_message_unread">(未读)</string>
     <string name="ui_system_message_nothing">目前没有更多的系统消息</string>
-    <string name="ui_system_message_delete_warning">系统消息删除之后不能恢复。\n您确定要继续吗？</string>
+    <string name="ui_system_message_delete_warning">消息删除后不能恢复，确定继续吗？</string>
     <string name="ui_system_message_clear_warning">
-        <![CDATA[<b>清空系统消息</b><br/>系统消息<font color="#fe4848">清空之后不能恢复</font>！<br/>如您的系统消息中包含重要的内容，请<font color="#65656a">逐条删除</font>您不再需要保留的消息。<br/>您确定要继续吗？]]>
+        <![CDATA[系统消息清空之后<font color="#148dfe">不能恢复</font>！<br/>请<font color="#148dfe">逐条删除</font>以保留重要内容。]]>
     </string>
 
     <string name="ui_system_updatable" formatted="false">

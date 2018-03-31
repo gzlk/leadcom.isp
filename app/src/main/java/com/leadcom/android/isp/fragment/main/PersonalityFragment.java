@@ -270,6 +270,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         switch (view.getId()) {
             case R.id.ui_main_personality_title_left_icon_container:
                 // 打开消息列表
+                view.startAnimation(App.clickAnimation());
                 SystemMessageFragment.open(PersonalityFragment.this);
                 break;
             case R.id.ui_main_personality_title_right_icon:

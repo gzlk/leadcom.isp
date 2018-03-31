@@ -16,8 +16,8 @@ import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.SystemMessageViewHolder;
@@ -139,29 +139,27 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void warningClear() {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_system_message_clear_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 clearPushMessage();
                 return true;
             }
-        }, null);
+        }).setConfirmText(R.string.ui_base_text_clear).setTitleText(R.string.ui_system_message_clear_warning).show();
     }
 
     private void clearPushMessage() {
-        displayLoading(true);
         displayNothing(false);
         PushMsgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<NimMessage>() {
             @Override
             public void onResponse(NimMessage nimMessage, boolean success, String message) {
                 super.onResponse(nimMessage, success, message);
-                displayLoading(false);
                 if (success) {
                     NimMessage.clear();
                     NimApplication.dispatchCallbacks();
                     mAdapter.clear();
-                    displayNothing(mAdapter.getItemCount() < 1);
                 }
+                displayNothing(mAdapter.getItemCount() < 1);
             }
         }).clearByUser();
     }
@@ -264,22 +262,20 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public NimMessage onHandlerBoundData(BaseViewHolder holder) {
             // 删除通知
-            warningDelete((SystemMessageViewHolder) holder);
+            warningDelete(holder.getAdapterPosition());
             return null;
         }
     };
 
-    private void warningDelete(final SystemMessageViewHolder holder) {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_system_message_delete_warning, R.string.ui_base_text_yes, R.string.cancel, new DialogHelper.OnDialogConfirmListener() {
+    private void warningDelete(final int index) {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                NimMessage msg = mAdapter.get(holder.getAdapterPosition());
-                mAdapter.remove(msg);
-                removeCache(msg.getUuid());
-                removePushMessage(msg.getUuid());
+                NimMessage msg = mAdapter.get(index);
+                removePushMessage(msg.getUuid(), index);
                 return true;
             }
-        }, null);
+        }).setTitleText(R.string.ui_system_message_delete_warning).setConfirmText(R.string.ui_base_text_delete).show();
     }
 
     private void removeCache(String uuid) {
@@ -287,11 +283,16 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         NimApplication.dispatchCallbacks();
     }
 
-    private void removePushMessage(String uuid) {
+    private void removePushMessage(String uuid, final int index) {
         PushMsgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<NimMessage>() {
             @Override
             public void onResponse(NimMessage nimMessage, boolean success, String message) {
                 super.onResponse(nimMessage, success, message);
+                if (success) {
+                    NimMessage msg = mAdapter.get(index);
+                    mAdapter.remove(msg);
+                    removeCache(msg.getUuid());
+                }
             }
         }).delete(uuid);
     }
