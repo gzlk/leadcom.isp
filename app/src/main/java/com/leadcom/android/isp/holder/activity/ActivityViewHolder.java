@@ -3,6 +3,7 @@ package com.leadcom.android.isp.holder.activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -13,6 +14,7 @@ import com.hlk.hlklib.lib.view.NineRectangleGridImageView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.main.RecentContactsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.activity.Activity;
@@ -55,8 +57,6 @@ import java.util.List;
 
 public class ActivityViewHolder extends BaseViewHolder {
 
-    @ViewId(R.id.ui_holder_view_activity_item_container)
-    private CorneredView rootContainer;
     @ViewId(R.id.ui_holder_view_activity_item_icon_container)
     private CorneredView iconContainer;
     @ViewId(R.id.ui_holder_view_activity_item_headers)
@@ -73,6 +73,14 @@ public class ActivityViewHolder extends BaseViewHolder {
     private TextView timeView;
     @ViewId(R.id.ui_holder_view_activity_item_description)
     private TextView descView;
+    @ViewId(R.id.ui_holder_view_activity_item_stick)
+    private View stickView;
+    @ViewId(R.id.ui_holder_view_activity_item_stick_cancel)
+    private View stickCancel;
+    @ViewId(R.id.ui_holder_view_activity_item_delete)
+    private View deleteView;
+    @ViewId(R.id.ui_holder_view_activity_item_sticker)
+    private View stickIcon;
 
     public ActivityViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -143,6 +151,14 @@ public class ActivityViewHolder extends BaseViewHolder {
         descView.setText(topic.getAccessToken());
     }
 
+    private void resetDeletableHeight(View view) {
+        if (null != view) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+            params.height = itemView.getMeasuredHeight();
+            view.setLayoutParams(params);
+        }
+    }
+
     public void showContent(RecentContact contact) {
         headers.setAdapter(adapter);
         final List<String> img = new ArrayList<>();
@@ -170,6 +186,17 @@ public class ActivityViewHolder extends BaseViewHolder {
         headers.setVisibility(View.VISIBLE);
         iconText.setVisibility(View.GONE);
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
+        stickIcon.setVisibility(isStick(contact) ? View.VISIBLE : View.GONE);
+        stickCancel.setVisibility(isStick(contact) ? View.VISIBLE : View.GONE);
+        stickView.setVisibility(isStick(contact) ? View.GONE : View.VISIBLE);
+        // 重设置顶、删除UI的高度
+        resetDeletableHeight(stickView);
+        resetDeletableHeight(deleteView);
+        resetDeletableHeight(stickCancel);
+    }
+
+    private boolean isStick(RecentContact contact) {
+        return (contact.getTag() & RecentContactsFragment.RECENT_TAG_STICKY) == RecentContactsFragment.RECENT_TAG_STICKY;
     }
 
     private String getRecentMsgType(RecentContact contact) {
@@ -225,10 +252,19 @@ public class ActivityViewHolder extends BaseViewHolder {
         descView.setText(team.getIntroduce());
     }
 
-    @Click({R.id.ui_holder_view_activity_item_container})
+    @Click({R.id.ui_holder_view_activity_item_container,
+            R.id.ui_holder_view_activity_item_stick,
+            R.id.ui_holder_view_activity_item_stick_cancel,
+            R.id.ui_holder_view_activity_item_delete})
     private void click(View view) {
-        if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        if (view.getId() == R.id.ui_holder_view_activity_item_container) {
+            if (null != mOnViewHolderClickListener) {
+                mOnViewHolderClickListener.onClick(getAdapterPosition());
+            }
+        } else {
+            if (null != mOnViewHolderElementClickListener) {
+                mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+            }
         }
     }
 

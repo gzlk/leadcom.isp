@@ -16,14 +16,20 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
+import com.leadcom.android.isp.fragment.talk.TalkTeamPropertyFragment;
+import com.leadcom.android.isp.helper.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.activity.ActivityViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.common.TalkTeam;
 import com.leadcom.android.isp.model.organization.SubMember;
+import com.leadcom.android.isp.nim.callback.StickChangeCallback;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.contact.ContactChangedObserver;
 import com.netease.nim.uikit.api.model.team.TeamDataChangedObserver;
@@ -69,7 +75,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     // 置顶功能可直接使用，也可作为思路，供开发者充分利用RecentContact的tag字段
     public static final long RECENT_TAG_STICKY = 1; // 联系人置顶tag
 
-    private static boolean loaded = false;
+    private static boolean loaded = false, needRefresh = false;
     @ViewId(R.id.ui_main_tool_bar_container)
     private View toolBar;
     public MainFragment mainFragment;
@@ -79,6 +85,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loaded = false;
+        needRefresh = false;
         enableSwipe(false);
         isLoadingComplete(true);
         tryPaddingContent(toolBar, false);
@@ -91,17 +98,25 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        needRefresh = false;
         registerObservers(false);
     }
 
-    @Override
-    protected void onViewPagerDisplayedChanged(boolean visible) {
-        super.onViewPagerDisplayedChanged(visible);
-        if (visible) {
-            if (null != mAdapter && !loaded) {
-                loaded = true;
-                mAdapter.notifyDataSetChanged();
-            }
+    private void initializeStickChangeCallback() {
+        if (null == TalkTeamPropertyFragment.stickChangeCallback) {
+            TalkTeamPropertyFragment.stickChangeCallback = new StickChangeCallback() {
+                @Override
+                public void onChange(RecentContact contact) {
+                    if (null != mAdapter) {
+                        ArrayList<RecentContact> list = new ArrayList<>();
+                        list.add(contact);
+                        recentContactChangeObserver.onEvent(list);
+
+                        // 需要再次刷新列表
+                        //needRefresh = true;
+                    }
+                }
+            };
         }
     }
 
@@ -113,6 +128,12 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void doingInResume() {
         initializeAdapter();
+        //initializeStickChangeCallback();
+        if (needRefresh && null != mAdapter) {
+            refreshMessages();
+            // 刷新完毕之后恢复不可刷新状态
+            needRefresh = false;
+        }
     }
 
     @Override
@@ -397,7 +418,6 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
 
     private void refreshMessages() {
         mAdapter.sort();
-        mAdapter.notifyDataSetChanged();
 
         int unreadNum = NIMClient.getService(MsgService.class).getTotalUnreadCount();
         if (null != mainFragment) {
@@ -430,6 +450,17 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                             }
                         }
                         displayNothing(mAdapter.getItemCount() <= 0);
+
+                        if (null != mAdapter && !loaded) {
+                            loaded = true;
+                            Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            }, duration());
+                        }
+                        refreshMessages();
                     }
                 });
             }
@@ -486,6 +517,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new ContactAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             // ios style
             OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
@@ -507,18 +539,70 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_holder_view_activity_item_delete:
+                    // 删除
+                    warningDelete(index);
+                    break;
+                case R.id.ui_holder_view_activity_item_stick:
+                case R.id.ui_holder_view_activity_item_stick_cancel:
+                    // 置顶或取消置顶
+                    RecentContact recent = mAdapter.get(index);
+                    if (isTagSet(recent)) {
+                        removeTag(recent);
+                    } else {
+                        addTag(recent);
+                    }
+                    NIMClient.getService(MsgService.class).updateRecent(recent);
+
+                    refreshMessages();
+                    break;
+            }
+        }
+
+        private void addTag(RecentContact recent) {
+            long tag = recent.getTag() | RECENT_TAG_STICKY;
+            recent.setTag(tag);
+        }
+
+        private void removeTag(RecentContact recent) {
+            long tag = recent.getTag() & ~RECENT_TAG_STICKY;
+            recent.setTag(tag);
+        }
+
+        private boolean isTagSet(RecentContact recent) {
+            return (recent.getTag() & RECENT_TAG_STICKY) == RECENT_TAG_STICKY;
+        }
+
+        private void warningDelete(final int index) {
+            DeleteDialogHelper.helper().init(RecentContactsFragment.this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+                @Override
+                public boolean onConfirm() {
+                    RecentContact contact = mAdapter.get(index);
+                    NIMClient.getService(MsgService.class).deleteRecentContact(contact);
+                    mAdapter.remove(index);
+                    return true;
+                }
+            }).setTitleText(R.string.ui_team_talk_team_delete_dialog_title).setConfirmText(R.string.ui_base_text_delete).show();
+        }
+    };
+
     private class ContactAdapter extends RecyclerViewAdapter<ActivityViewHolder, RecentContact> {
 
         @Override
         public ActivityViewHolder onCreateViewHolder(View itemView, int viewType) {
             ActivityViewHolder holder = new ActivityViewHolder(itemView, RecentContactsFragment.this);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
+            holder.setOnViewHolderElementClickListener(elementClickListener);
             return holder;
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_activity_home_item;
+            return R.layout.holder_view_activity_home_item_deletable;
         }
 
         @Override

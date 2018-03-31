@@ -138,6 +138,8 @@
     <string name="ui_base_text_push">推送</string>
     <string name="ui_base_text_recommend">推荐</string>
     <string name="ui_base_text_dismiss">解散</string>
+    <string name="ui_base_text_stick">置顶</string>
+    <string name="ui_base_text_stick_cancel">取消置顶</string>
 
     <string name="ui_base_text_not_read">未读</string>
     <string name="ui_base_text_has_read">已读</string>

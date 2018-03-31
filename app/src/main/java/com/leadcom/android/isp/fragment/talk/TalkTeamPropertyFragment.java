@@ -35,6 +35,7 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.common.TalkTeam;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.nim.activity.SessionHistoryActivity;
+import com.leadcom.android.isp.nim.callback.StickChangeCallback;
 import com.leadcom.android.isp.nim.constant.StatusCode;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.api.model.SimpleCallback;
@@ -96,6 +97,10 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
         fragment.openActivity(TalkTeamPropertyFragment.class.getName(), tid, REQUEST_CHANGE, true, false);
     }
 
+    /**
+     * 最近联系人置顶项目更改回调
+     */
+    public static StickChangeCallback stickChangeCallback;
     /**
      * 是否打开用户属性页；是否为添加用户
      */
@@ -725,6 +730,9 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
                         removeTag(contact);
                     }
                     NIMClient.getService(MsgService.class).updateRecent(contact);
+                    if (null != stickChangeCallback) {
+                        stickChangeCallback.onChange(contact);
+                    }
                 }
             } else if (item.getIndex() == 4) {
                 // 静音

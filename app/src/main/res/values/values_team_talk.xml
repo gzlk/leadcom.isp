@@ -27,6 +27,8 @@
     <string name="ui_team_talk_team_members_fragment_title_selectable">选择转让对象</string>
     <string name="ui_team_talk_team_member_pick_no_select_self">不能再选择自己</string>
 
+    <string name="ui_team_talk_team_delete_dialog_title">删除后会清空该会话的消息记录</string>
+
     <string name="ui_team_talk_team_new_title" formatted="false">群聊(%d人)</string>
 
     <string name="ui_team_talk_user_info_fetch_fail" formatted="false">获取用户信息失败(%d)</string>

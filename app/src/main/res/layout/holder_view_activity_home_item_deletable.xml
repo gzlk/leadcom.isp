@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.leadcom.android.isp.view.SwipeItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include layout="@layout/holder_view_activity_home_item" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ui_holder_view_activity_item_stick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorBorderActive"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/ui_base_dimen_margin_padding"
+            app:layout_itemType="menu">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:text="@string/ui_icon_stick"
+                android:textColor="@color/ui_text_normal_white"
+                app:ctv_active_color="@color/colorPrimary"
+                app:ctv_normal_color="@android:color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:text="@string/ui_base_text_stick"
+                android:textColor="@color/ui_text_normal_white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ui_holder_view_activity_item_stick_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorBorderActive"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/ui_base_dimen_margin_padding"
+            app:layout_itemType="menu">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:text="@string/ui_icon_stick"
+                android:rotation="180"
+                android:textColor="@color/ui_text_normal_white"
+                app:ctv_active_color="@color/colorPrimary"
+                app:ctv_normal_color="@android:color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:text="@string/ui_base_text_stick_cancel"
+                android:textColor="@color/ui_text_normal_white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ui_holder_view_activity_item_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPpt"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/ui_base_dimen_margin_padding"
+            app:layout_itemType="menu">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:text="@string/ui_icon_delete"
+                android:textColor="@color/ui_text_normal_white"
+                app:ctv_active_color="@color/colorPrimary"
+                app:ctv_normal_color="@android:color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:text="@string/ui_base_text_delete"
+                android:textColor="@color/ui_text_normal_white" />
+        </LinearLayout>
+    </LinearLayout>
+</com.leadcom.android.isp.view.SwipeItemLayout>
