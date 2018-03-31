@@ -13,6 +13,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.team.TeamRequest;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -402,6 +403,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     } else {
                         // 到用户属性页
+                        App.openUserInfo(TalkTeamMembersFragment.this, mAdapter.get(index).getId());
                     }
                     break;
                 case R.id.ui_holder_view_talk_team_member_mask:

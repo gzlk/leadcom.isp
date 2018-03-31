@@ -9,6 +9,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -168,7 +169,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
         public UserMessage onHandlerBoundData(BaseViewHolder holder) {
             int index = holder.getAdapterPosition();
             UserMessage msg = (UserMessage) mAdapter.get(index);
-            UserPropertyFragment.open(UserMessageFragment.this, msg.getUserId());
+            App.openUserInfo(UserMessageFragment.this, msg.getUserId());
             return null;
         }
     };

@@ -85,6 +85,10 @@ public class Member extends Leaguer {
          * 议题成员
          */
         int TOPIC = 4;
+        /**
+         * 群聊成员
+         */
+        int TEAM = 5;
     }
 
     private static ExclusionStrategy strategy = new ExclusionStrategy() {

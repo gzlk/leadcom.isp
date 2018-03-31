@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.graphics.Palette;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,9 +24,7 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.Blur;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.user.User;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.share.Shareable;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,10 +59,10 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
     @ViewId(R.id.tool_view_individual_top_padding)
     private LinearLayout topPadding;
 
-    public UserHeaderBlurViewHolder(View itemView, BaseFragment fragment) {
+    public UserHeaderBlurViewHolder(View itemView, BaseFragment fragment, boolean isSelf) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
-        paddingContent();
+        paddingContent(isSelf);
         userHeader.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
             public void onImageClick(ImageDisplayer displayer, String url) {
@@ -74,10 +71,10 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
         });
     }
 
-    private void paddingContent() {
+    private void paddingContent(boolean isSelf) {
         int status = BaseActivity.getStatusHeight(fragment().Activity());
         int actionSize = fragment().Activity().getActionBarSize();
-        topPadding.setPadding(0, status + actionSize, 0, 0);
+        topPadding.setPadding(0, status + (isSelf ? actionSize : 0), 0, 0);
     }
 
     public void showContent(User user) {

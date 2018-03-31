@@ -19,9 +19,9 @@ import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.MemberRequest;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -700,8 +700,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 点击打开用户属性页
-            Member member = mAdapter.get(index);
-            UserPropertyFragment.open(ContactFragment.this, member.getUserId());
+            App.openUserInfo(ContactFragment.this, mAdapter.get(index).getUserId());
         }
     };
 

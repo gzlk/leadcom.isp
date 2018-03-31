@@ -6,14 +6,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.FullTextQueryRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -30,8 +32,6 @@ import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.query.FullTextQuery;
 import com.leadcom.android.isp.model.user.SimpleUser;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -250,7 +250,7 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             Model model = mAdapter.get(index);
             if (model instanceof SimpleUser) {
-                UserPropertyFragment.open(FullTextQueryFragment.this, ((SimpleUser) model).getUserId());
+                App.openUserInfo(FullTextQueryFragment.this, ((SimpleUser) model).getUserId());
             } else if (model instanceof Organization) {
                 openActivity(OrganizationPropertiesFragment.class.getName(), model.getId(), false, false, true);
             } else if (model instanceof Archive) {

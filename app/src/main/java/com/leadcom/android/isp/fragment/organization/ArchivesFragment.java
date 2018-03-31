@@ -10,12 +10,12 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.main.ArchiveSearchFragment;
 import com.leadcom.android.isp.fragment.organization.archive.GroupArchiveManagementFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -290,7 +290,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
             switch (view.getId()) {
                 case R.id.ui_tool_view_document_user_header_image:
                     // 点击头像，打开个人属性页
-                    UserPropertyFragment.open(ArchivesFragment.this, mAdapter.get(index).getUserId());
+                    App.openUserInfo(ArchivesFragment.this, mAdapter.get(index).getUserId());
                     break;
                 case R.id.ui_tool_view_archive_additional_comment_layout:
                     // 个人档案评论

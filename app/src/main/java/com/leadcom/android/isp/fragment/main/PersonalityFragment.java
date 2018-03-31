@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -20,7 +22,9 @@ import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.individual.IndividualArchivesFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
@@ -62,6 +66,23 @@ import java.util.Iterator;
 
 public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
+    public static PersonalityFragment newInstance(String params) {
+        PersonalityFragment pf = new PersonalityFragment();
+        Bundle bundle = new Bundle();
+        // 传过来的用户id
+        bundle.putString(PARAM_QUERY_ID, params);
+        pf.setArguments(bundle);
+        return pf;
+    }
+
+    public static void open(Context context, String userId) {
+        BaseActivity.openActivity(context, PersonalityFragment.class.getName(), userId, false, false, true);
+    }
+
+    public static void open(BaseFragment fragment, String userId) {
+        fragment.openActivity(PersonalityFragment.class.getName(), userId, false, false, true);
+    }
+
     @ViewId(R.id.ui_main_tool_bar_background)
     private LinearLayout toolbarBackground;
     @ViewId(R.id.ui_main_tool_bar_padding_layout)
@@ -74,15 +95,21 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private View leftFlag;
     @ViewId(R.id.ui_main_personality_title_right_icon)
     private CustomTextView rightIcon;
+    @ViewId(R.id.ui_user_information_self_define)
+    private View selfDefineView;
     private PersonalityAdapter mAdapter;
     private String[] items;
 
     private static int selectedIndex = 0, deleteIndex = 0;
+    private boolean isSelf;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NimApplication.addNotificationChangeCallback(callback);
+        isSelf = isEmpty(mQueryId) || mQueryId.equals(Cache.cache().userId);
+        if (isSelf) {
+            NimApplication.addNotificationChangeCallback(callback);
+        }
     }
 
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
@@ -97,25 +124,33 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onDestroy() {
-        NimApplication.removeNotificationChangeCallback(callback);
+        if (isSelf) {
+            NimApplication.removeNotificationChangeCallback(callback);
+        }
         super.onDestroy();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        tryPaddingContent(paddingLayout, false);
+        if (isSelf) {
+            tryPaddingContent(paddingLayout, false);
 
-        // 头像选择是需要剪切的
-        isChooseImageForCrop = true;
-        // 头像是需要压缩的
-        isSupportCompress = true;
-        // 图片选择后的回调
-        addOnImageSelectedListener(albumImageSelectedListener);
-        // 文件上传完毕后的回调处理
-        setOnFileUploadingListener(mOnFileUploadingListener);
-        // 查找未读的推送通知
-        NimApplication.dispatchCallbacks();
+            // 头像选择是需要剪切的
+            isChooseImageForCrop = true;
+            // 头像是需要压缩的
+            isSupportCompress = true;
+            // 图片选择后的回调
+            addOnImageSelectedListener(albumImageSelectedListener);
+            // 文件上传完毕后的回调处理
+            setOnFileUploadingListener(mOnFileUploadingListener);
+            // 查找未读的推送通知
+            NimApplication.dispatchCallbacks();
+        } else {
+            toolbarBackground.setVisibility(View.GONE);
+            paddingLayout.setVisibility(View.GONE);
+            selfDefineView.setVisibility(View.GONE);
+        }
     }
 
     // 相册选择返回了
@@ -164,15 +199,15 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success && null != user) {
-                    if (isMe()) {
+                    if (isSelf) {
                         // 随时更新我的信息
                         Cache.cache().setCurrentUser(user);
                         Cache.cache().saveCurrentUser();
-                        resetExtras();
                     }
+                    resetExtras(user);
                 }
             }
-        }).find(Cache.cache().userId, true);
+        }).find(isSelf ? Cache.cache().userId : mQueryId, true);
     }
 
     private void resetUserInformation(int type, String value) {
@@ -283,10 +318,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private boolean isMe() {
-        return isEmpty(mQueryId) || mQueryId.equals(Cache.cache().userId);
-    }
-
     private void clearExtras() {
         Iterator<Model> iterator = mAdapter.iterator();
         int index = 0;
@@ -300,25 +331,28 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private void resetExtras() {
+    private void resetExtras(User user) {
+        Model model = mAdapter.get(0);
+        if (!(model instanceof User)) {
+            mAdapter.add(user, 0);
+        }
         clearExtras();
-        User me = Cache.cache().me;
-        for (UserExtra extra : me.getExtra()) {
+        for (UserExtra extra : user.getExtra()) {
             if (null != extra) {
                 if (extra.getTitle().equals("单位")) {
-                    extra.setContent(me.getCompany());
+                    extra.setContent(user.getCompany());
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_building));
                 }
                 if (extra.getTitle().equals("职务")) {
-                    extra.setContent(me.getPosition());
+                    extra.setContent(user.getPosition());
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_business_card));
                 }
                 if (extra.getTitle().equals("电话")) {
-                    extra.setContent(me.getPhone());
+                    extra.setContent(user.getPhone());
                     extra.setAccessToken(StringHelper.getString(R.string.ui_icon_telephone));
                 }
                 // 如果额外的属性是可显示状态或者不可显示但当前用户是登录用户时，也可以显示
-                if (extra.getShow() == UserExtra.ShownType.SHOWN || (extra.getShow() == UserExtra.ShownType.HIDE && isMe())) {
+                if (extra.isShowing() || isSelf) {
                     mAdapter.update(extra);
                 }
             }
@@ -336,14 +370,14 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.add(model);
             } else {
                 SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
-                if (item.getIndex() == 5) {
-                    item.setSource(format(string, Cache.cache().me.getCompany()));
-                } else if (item.getIndex() == 6) {
-                    item.setSource(format(string, Cache.cache().me.getPosition()));
-                } else if (item.getIndex() == 7) {
-                    item.setSource(format(string, Cache.cache().userPhone));
-                }
-                item.reset();
+//                if (item.getIndex() == 5) {
+//                    item.setSource(format(string, Cache.cache().me.getCompany()));
+//                } else if (item.getIndex() == 6) {
+//                    item.setSource(format(string, Cache.cache().me.getPosition()));
+//                } else if (item.getIndex() == 7) {
+//                    item.setSource(format(string, Cache.cache().userPhone));
+//                }
+//                item.reset();
                 mAdapter.add(item);
             }
         }
@@ -380,7 +414,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 fetchingRemoteUserInfo();
             }
-        }).findUser();
+        }).findUser(isSelf ? Cache.cache().userId : mQueryId);
     }
 
     private void initializeAdapter() {
@@ -389,7 +423,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.addOnScrollListener(scrollListener);
-            mAdapter.add(Cache.cache().me);
             initializeItems();
         }
     }
@@ -411,19 +444,27 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         switch (index) {
             case 1:
                 // 打开通讯录
-                ContactFragment.open(this);
+                if (isSelf) {
+                    ContactFragment.open(this);
+                }
                 break;
             case 2:
                 // 打开个人档案
-                IndividualFragment.open(this, IndividualFragment.TYPE_ARCHIVE_MINE);
+                if (isSelf) {
+                    IndividualFragment.open(this, IndividualFragment.TYPE_ARCHIVE_MINE);
+                } else {
+                    IndividualArchivesFragment.open(this, mQueryId, ACTIVITY_BASE_REQUEST);
+                }
                 break;
             case 3:
                 // 打开个人动态
-                MomentListFragment.open(PersonalityFragment.this, Cache.cache().userId);
+                MomentListFragment.open(PersonalityFragment.this, isSelf ? Cache.cache().userId : mQueryId);
                 break;
             case 4:
                 // 打开个人搜藏
-                IndividualFragment.open(this, IndividualFragment.TYPE_COLLECT);
+                if (isSelf) {
+                    IndividualFragment.open(this, IndividualFragment.TYPE_COLLECT);
+                }
                 break;
             //case 6:
             // 编辑单位信息
@@ -440,12 +481,14 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             //openActivity(ModifyPhoneFragment.class.getName(), Cache.cache().userPhone, REQUEST_PHONE, true, false);
             //break;
             default:
-                selectedIndex = index;
-                Model model = mAdapter.get(selectedIndex);
-                if (model instanceof UserExtra) {
-                    UserExtra extra = (UserExtra) model;
-                    if (extra.isEditable()) {
-                        openSelfDefineDialog();
+                if (isSelf) {
+                    selectedIndex = index;
+                    Model model = mAdapter.get(selectedIndex);
+                    if (model instanceof UserExtra) {
+                        UserExtra extra = (UserExtra) model;
+                        if (extra.isEditable()) {
+                            openSelfDefineDialog();
+                        }
                     }
                 }
                 break;
@@ -529,16 +572,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     selfValue.setValue("");
                 }
             }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_popup_individual_self_defined_property_closer};
-            }
-
-            @Override
-            public boolean onClick(View view) {
-                return true;
-            }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
@@ -566,11 +599,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 updateMyExtra();
                 return true;
-            }
-        }).addOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
-            @Override
-            public void onCancel() {
-                // 删除
             }
         }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
@@ -600,7 +628,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(View view, int index) {
             switch (view.getId()) {
                 case R.id.ui_holder_view_user_header_layout:
-                    openImageSelector(true);
+                    if (isSelf) {
+                        openImageSelector(true);
+                    }
                     break;
                 case R.id.ui_holder_view_simple_clickable:
                     // 打开或编辑置顶的项目
@@ -642,7 +672,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     gdv.setOnViewHolderElementClickListener(elementClickListener);
                     return gdv;
                 case VT_USER:
-                    UserHeaderBlurViewHolder uhbvh = new UserHeaderBlurViewHolder(itemView, PersonalityFragment.this);
+                    UserHeaderBlurViewHolder uhbvh = new UserHeaderBlurViewHolder(itemView, PersonalityFragment.this, isSelf);
                     uhbvh.setOnViewHolderElementClickListener(elementClickListener);
                     return uhbvh;
             }
@@ -670,7 +700,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 return VT_USER;
             } else if (model instanceof UserExtra) {
                 UserExtra extra = (UserExtra) model;
-                return extra.isDeletable() ? VT_DELETABLE : VT_CLICK;
+                return (extra.isDeletable() && isSelf) ? VT_DELETABLE : VT_CLICK;
             } else if (model.getId().equals("-")) {
                 return VT_LINE;
             }
@@ -681,7 +711,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof GroupDetailsViewHolder) {
                 if (item instanceof UserExtra) {
-                    ((GroupDetailsViewHolder) holder).showContent((UserExtra) item);
+                    ((GroupDetailsViewHolder) holder).showContent((UserExtra) item, isSelf);
                 } else {
                     ((GroupDetailsViewHolder) holder).showContent((SimpleClickableItem) item);
                 }

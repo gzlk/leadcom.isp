@@ -3,15 +3,15 @@ package com.leadcom.android.isp.holder.individual;
 import android.view.View;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.archive.ArchiveLike;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
 
 import java.util.List;
 
@@ -81,7 +81,7 @@ public class MomentPraiseViewHolder extends BaseViewHolder {
         public void onImageClick(ImageDisplayer displayer, String url) {
             String clicked = (String) displayer.getTag(R.id.hlklib_ids_custom_view_click_tag);
             if (!isEmpty(url)) {
-                UserPropertyFragment.open(fragment(), clicked);
+                App.openUserInfo(fragment(), clicked);
             } else {
                 ToastHelper.make().showMsg(R.string.ui_text_user_information_blank_or_error_id);
             }

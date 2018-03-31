@@ -20,6 +20,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.api.user.MomentRequest;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
@@ -29,7 +30,6 @@ import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.CollectionDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
@@ -582,7 +582,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     break;
                 case R.id.ui_holder_view_moment_details_header:
                     Moment m = (Moment) mAdapter.get(index);
-                    UserPropertyFragment.open(IndividualFragment.this, m.getUserId());
+                    App.openUserInfo(IndividualFragment.this, m.getUserId());
                     break;
                 case R.id.ui_holder_view_moment_details_container:
                     // 打开详情页了
@@ -629,11 +629,11 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     break;
                 case R.id.ui_tool_view_document_user_header_image:
                     Archive archive = (Archive) mAdapter.get(index);
-                    UserPropertyFragment.open(IndividualFragment.this, archive.getUserId());
+                    App.openUserInfo(IndividualFragment.this, archive.getUserId());
                     break;
                 case R.id.ui_holder_view_collection_header:
                     Collection collection = (Collection) mAdapter.get(index);
-                    UserPropertyFragment.open(IndividualFragment.this, collection.getCreatorId());
+                    App.openUserInfo(IndividualFragment.this, collection.getUserId());
                     break;
                 case R.id.ui_holder_view_collection_content_cover:
                     collectionClick((Collection) mAdapter.get(index));

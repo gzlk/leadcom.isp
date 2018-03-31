@@ -8,10 +8,10 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -222,7 +222,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
                 Squad squad = (Squad) model;
                 ContactFragment.open(SquadsFragment.this, squad.getGroupId(), squad.getId());
             } else if (model instanceof Member) {
-                UserPropertyFragment.open(SquadsFragment.this, ((Member) model).getUserId());
+                App.openUserInfo(SquadsFragment.this, ((Member) model).getUserId());
             }
         }
     };

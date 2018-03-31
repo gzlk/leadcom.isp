@@ -52,9 +52,9 @@ public class QuantityRequest extends Request<Quantity> {
     /**
      * 查询当前用户的统计信息
      */
-    public void findUser() {
+    public void findUser(String userId) {
         directlySave = false;
-        httpRequest(getRequest(SingleRequest.class, "/user/userCount/find", "", HttpMethods.Get));
+        httpRequest(getRequest(SingleRequest.class, "/user/userCount/find?userId=" + userId, "", HttpMethods.Get));
     }
 
     /**

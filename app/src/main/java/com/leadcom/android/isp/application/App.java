@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.application;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -9,6 +10,8 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.crash.AppCrashHandler;
 import com.leadcom.android.isp.crash.storage.StorageUtil;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.user.User;
@@ -63,6 +66,18 @@ public class App extends NimApplication {
      */
     public static Animation clickAnimation() {
         return AnimationUtils.loadAnimation(app(), R.anim.item_click);
+    }
+
+    public static void openUserInfo(Context context, String userId) {
+        if (!Cache.cache().userId.equals(userId)) {
+            PersonalityFragment.open(context, userId);
+        }
+    }
+
+    public static void openUserInfo(BaseFragment fragment, String userId) {
+        if (!Cache.cache().userId.equals(userId)) {
+            PersonalityFragment.open(fragment, userId);
+        }
     }
 
     @Override

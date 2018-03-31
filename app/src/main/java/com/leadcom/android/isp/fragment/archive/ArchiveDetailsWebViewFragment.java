@@ -25,12 +25,12 @@ import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.crash.system.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.organization.StructureFragment;
 import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
@@ -63,7 +63,6 @@ import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
-import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.netease.nim.uikit.api.NimUIKit;
 
@@ -854,7 +853,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             switch (view.getId()) {
                 case R.id.ui_holder_view_archive_details_comment_header:
                     // 点击了评论里的头像
-                    UserPropertyFragment.open(ArchiveDetailsWebViewFragment.this, ((Comment) mAdapter.get(index)).getUserId());
+                    App.openUserInfo(ArchiveDetailsWebViewFragment.this, ((Comment) mAdapter.get(index)).getUserId());
                     break;
                 case R.id.ui_holder_view_archive_details_comment_layout:
                     // 回复评论或自己

@@ -8,7 +8,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.MemberRequest;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -161,7 +161,7 @@ public class OrganizationContactFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 打开用户名片
-            UserPropertyFragment.open(OrganizationContactFragment.this, mAdapter.get(index).getUserId());
+            App.openUserInfo(OrganizationContactFragment.this, mAdapter.get(index).getUserId());
         }
     };
 

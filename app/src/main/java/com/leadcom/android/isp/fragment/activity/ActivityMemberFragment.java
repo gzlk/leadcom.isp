@@ -19,10 +19,10 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.api.org.MemberRequest;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.main.ActivityFragment;
 import com.leadcom.android.isp.fragment.organization.GroupsContactPickerFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
@@ -221,7 +221,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
                 }
             } else {
                 // 打开个人属性页
-                UserPropertyFragment.open(ActivityMemberFragment.this, mAdapter.get(index).getUserId());
+                App.openUserInfo(ActivityMemberFragment.this, mAdapter.get(index).getUserId());
             }
         }
     };

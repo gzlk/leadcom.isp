@@ -9,9 +9,9 @@ import android.widget.Toast;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.MainActivity;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.main.SystemMessageFragment;
 import com.leadcom.android.isp.fragment.talk.TalkTeamPropertyFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -166,8 +166,7 @@ public class NimSessionHelper {
             @Override
             public void onAvatarClicked(Context context, IMMessage message) {
                 // 一般用于打开用户资料页面
-                UserPropertyFragment.open(context, message.getFromAccount());
-                //BaseActivity.openActivity(context, UserPropertyFragment.class.getName(), message.getFromAccount(), false, false, true);
+                App.openUserInfo(context, message.getFromAccount());
             }
 
             @Override

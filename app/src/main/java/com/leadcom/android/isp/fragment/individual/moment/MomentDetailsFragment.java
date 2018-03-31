@@ -7,10 +7,10 @@ import android.view.View;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.BaseMomentFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
@@ -338,7 +338,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         public void onClick(int index) {
             Model model = mAdapter.get(index);
             if (model instanceof Comment) {
-                UserPropertyFragment.open(MomentDetailsFragment.this, ((Comment) model).getUserId());
+                App.openUserInfo(MomentDetailsFragment.this, ((Comment) model).getUserId());
             }
         }
     };

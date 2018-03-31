@@ -12,18 +12,21 @@ import android.widget.TextView;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.AppTopicMemberRequest;
 import com.leadcom.android.isp.api.activity.AppTopicRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.activity.ActivityMemberFragment;
 import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BasePopupInputSupportFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.helper.DialogHelper;
 import com.leadcom.android.isp.helper.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -41,9 +44,6 @@ import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.nim.activity.SessionHistoryActivity;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CorneredButton;
 import com.netease.nim.uikit.api.model.SimpleCallback;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
@@ -339,7 +339,7 @@ public class TopicPropertyFragment extends BaseDownloadingUploadingSupportFragme
                 if (!model.isSelectable()) {
                     // 不处于删除状态时，打开用户详情页
                     Member member = (Member) model;
-                    UserPropertyFragment.open(TopicPropertyFragment.this, member.getUserId());
+                    App.openUserInfo(TopicPropertyFragment.this, member.getUserId());
                 }
             } else {
                 if (model.getId().equals("+")) {

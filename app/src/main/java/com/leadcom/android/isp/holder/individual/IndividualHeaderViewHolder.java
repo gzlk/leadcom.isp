@@ -4,19 +4,19 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.main.IndividualFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.user.User;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
 
 /**
  * <b>功能描述：</b>个人头像<br />
@@ -48,13 +48,9 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
 
             @Override
             public void onImageClick(ImageDisplayer displayer, String url) {
-                openUserProperty(Cache.cache().userId);
+                App.openUserInfo(fragment(), Cache.cache().userId);
             }
         });
-    }
-
-    private void openUserProperty(String userId) {
-        UserPropertyFragment.open(fragment(), userId);
     }
 
     private void resetTopPadding() {
@@ -71,10 +67,10 @@ public class IndividualHeaderViewHolder extends BaseViewHolder {
         switch (id) {
             case R.id.ui_tool_individual_header_to_2d_code:
                 //openActivity(QRCodeFragment.class.getName(), "", false, false, true);
-                ((IndividualFragment)fragment()).openUserMessageList();
+                ((IndividualFragment) fragment()).openUserMessageList();
                 break;
             case R.id.ui_holder_view_user_name:
-                openUserProperty(Cache.cache().userId);
+                App.openUserInfo(fragment(), Cache.cache().userId);
                 break;
         }
     }

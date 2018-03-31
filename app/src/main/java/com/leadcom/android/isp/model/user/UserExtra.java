@@ -28,7 +28,7 @@ public class UserExtra extends Model {
             public boolean shouldSkipField(FieldAttributes f) {
                 return f.getName().equals("id") ||
                         f.getName().startsWith("is") ||
-                        f.getName().startsWith("local")||
+                        f.getName().startsWith("local") ||
                         f.getName().contains("accessToken");
             }
 
@@ -106,6 +106,13 @@ public class UserExtra extends Model {
      */
     public boolean isEditable() {
         return editable == EditType.EDITABLE;
+    }
+
+    /**
+     * 是否可显示
+     */
+    public boolean isShowing() {
+        return show == ShownType.SHOWN;
     }
 
     @Override

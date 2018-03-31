@@ -690,6 +690,16 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onConfirm() {
                 transferAdmin(userId);
+//                TeamRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<TalkTeam>() {
+//                    @Override
+//                    public void onResponse(TalkTeam talkTeam, boolean success, String message) {
+//                        super.onResponse(talkTeam, success, message);
+//                        if(success){
+//                            mAdapter.clear();
+//                            fetchingTeam();
+//                        }
+//                    }
+//                }).updateManager(userId);
                 return true;
             }
         }).setTitleText(getString(R.string.ui_team_talk_team_transfer_admin_confirm_dialog_title, userName)).setConfirmText(R.string.ui_base_text_confirm).show();

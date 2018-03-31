@@ -16,7 +16,6 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.individual.UserPropertyFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.helper.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.DialogHelper;
@@ -346,7 +345,7 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
 
     private void openUserProperty(String account) {
         if (!account.equals(Cache.cache().userId)) {
-            UserPropertyFragment.open(fragment(), account);
+            App.openUserInfo(fragment(), account);
         }
     }
 }
