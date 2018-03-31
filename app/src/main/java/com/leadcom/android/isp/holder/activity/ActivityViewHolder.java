@@ -190,9 +190,9 @@ public class ActivityViewHolder extends BaseViewHolder {
         stickCancel.setVisibility(isStick(contact) ? View.VISIBLE : View.GONE);
         stickView.setVisibility(isStick(contact) ? View.GONE : View.VISIBLE);
         // 重设置顶、删除UI的高度
-        resetDeletableHeight(stickView);
-        resetDeletableHeight(deleteView);
-        resetDeletableHeight(stickCancel);
+        //resetDeletableHeight(stickView);
+        //resetDeletableHeight(deleteView);
+        //resetDeletableHeight(stickCancel);
     }
 
     private boolean isStick(RecentContact contact) {
