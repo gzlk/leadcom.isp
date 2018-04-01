@@ -26,6 +26,8 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
+import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
+import com.leadcom.android.isp.fragment.individual.UserNameEditFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
@@ -299,8 +301,36 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 // 手机号码修改成功了
                 resetUserInformation(UserRequest.UPDATE_PHONE, getResultedData(data));
                 break;
+            case REQUEST_CHANGE:
+                // 修改个人姓名和简介
+                if (null != data) {
+                    String name = data.getStringExtra(UserNameEditFragment.PARAM_NAME);
+                    String intro = data.getStringExtra(UserNameEditFragment.PARAM_INTRO);
+                    User user = (User) mAdapter.get(0);
+                    // 更改了名字时
+                    if (!isEmpty(name) && !name.equals(user.getName())) {
+                        tryEditUserNameAndIntro(name, intro);
+                    } else {
+                        tryEditUserInfo(UserRequest.UPDATE_SIGNATURE, intro);
+                    }
+                }
+                break;
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    private void tryEditUserNameAndIntro(final String name, final String intro) {
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success) {
+                    fetchingRemoteUserInfo();
+                    resetUserInformation(UserRequest.UPDATE_SIGNATURE, intro);
+                    resetUserInformation(UserRequest.UPDATE_NAME, name);
+                }
+            }
+        }).update(name, intro);
     }
 
     @Click({R.id.ui_main_personality_title_left_icon_container,
@@ -345,6 +375,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         Model model = mAdapter.get(0);
         if (!(model instanceof User)) {
             mAdapter.add(user, 0);
+        } else {
+            //mAdapter.replace(user, 0);
         }
         clearExtras();
         for (UserExtra extra : user.getExtra()) {
@@ -640,6 +672,14 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 case R.id.ui_holder_view_user_header_layout:
                     if (isSelf) {
                         openImageSelector(true);
+                    }
+                    break;
+                case R.id.ui_holder_view_user_header_name_layout:
+                    User user = (User) mAdapter.get(0);
+                    if (isSelf) {
+                        UserNameEditFragment.open(PersonalityFragment.this, user.getName(), user.getSignature());
+                    } else {
+                        UserIntroductionFragment.open(PersonalityFragment.this, user.getName(), user.getHeadPhoto(), user.getCreateDate(), user.getSignature());
                     }
                     break;
                 case R.id.ui_holder_view_simple_clickable:

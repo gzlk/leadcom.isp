@@ -45,6 +45,10 @@ public class BaseActivity extends AppCompatActivity {
      */
     public static final String REQUEST_PARAMS = "_request_params_";
     /**
+     * 请求的参数列表
+     */
+    public static final String REQUEST_BUNDLE = "_request_bundle";
+    /**
      * 是否支持toolbar显示
      */
     public static final String REQUEST_TOOL_BAR = "_request_tool_bar_";

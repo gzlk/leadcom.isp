@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.graphics.Palette;
+import android.text.Html;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.application.App;
@@ -48,6 +50,8 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
     private RelativeLayout root;
     @ViewId(R.id.ui_tool_individual_name)
     private TextView nameTextView;
+    @ViewId(R.id.ui_tool_individual_edit_icon)
+    private CustomTextView editIconView;
     @ViewId(R.id.ui_tool_individual_additional)
     private TextView additionalTextView;
     @ViewId(R.id.ui_holder_view_user_header_layout)
@@ -79,10 +83,11 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
 
     public void showContent(User user) {
         nameTextView.setText(isEmpty(user.getName()) ? StringHelper.getString(R.string.ui_text_user_information_name_empty) : user.getName());
+        editIconView.setVisibility(user.isMySelf() ? View.VISIBLE : View.GONE);
         final String header = user.getHeadPhoto();
         userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
         userHeader.setTag(R.id.hlklib_ids_custom_view_click_tag, header);
-        additionalTextView.setText(isEmpty(user.getSignature()) ? StringHelper.getString(R.string.ui_text_user_information_signature_empty) : user.getSignature());
+        additionalTextView.setText(isEmpty(user.getSignature()) ? StringHelper.getString(R.string.ui_text_user_information_signature_empty) : Html.fromHtml(user.getSignature()));
         if (!isEmpty(header)) {
             fragment().Handler().post(new Runnable() {
                 @Override
@@ -230,7 +235,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
         return Color.argb(alpha, red, green, blue);
     }
 
-    @Click({R.id.ui_holder_view_user_header_layout})
+    @Click({R.id.ui_holder_view_user_header_layout, R.id.ui_holder_view_user_header_name_layout})
     private void viewClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

@@ -2,6 +2,7 @@ package com.leadcom.android.isp.model.user;
 
 import android.text.TextUtils;
 
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
@@ -65,6 +66,10 @@ public class User extends Model {
         public static final String Signature = "signature";
         public static final String JoinedActs = "joinedActs";
         public static final String CreatedActs = "createdActs";
+    }
+
+    public boolean isMySelf() {
+        return getId().equals(Cache.cache().userId);
     }
 
     //用户id(同时也是网易云的accid)

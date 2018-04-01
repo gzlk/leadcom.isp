@@ -237,7 +237,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 handlePopupClick(view.getId());
                 return true;
             }
-        }).showPrivacy(mMoment.isMine()).showFavorite(true).showShare(true).showSave(mMoment.getImage().size() > 0)
+        }).showPrivacy(mMoment.isMine()).showFavorite(!mMoment.isMine()).showShare(true).showSave(mMoment.getImage().size() > 0)
                 .showDelete(mMoment.isMine())
                 .setPrivacyText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public)
                 .setCollectText(mMoment.isCollected() ? R.string.ui_text_moment_details_button_favorited : R.string.ui_text_moment_details_button_favorite)

@@ -134,6 +134,7 @@
     <string name="ui_base_text_praise">赞</string>
     <string name="ui_base_text_praised">已赞</string>
     <string name="ui_base_text_comment">评论</string>
+    <string name="ui_base_text_complete">完成</string>
     <string name="ui_base_text_share">分享</string>
     <string name="ui_base_text_draft">草稿</string>
     <string name="ui_base_text_push">推送</string>

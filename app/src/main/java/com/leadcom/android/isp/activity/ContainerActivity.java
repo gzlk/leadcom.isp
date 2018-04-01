@@ -30,6 +30,7 @@ public class ContainerActivity extends TitleActivity {
 
     private BaseFragment mFragment = null;
     private String mClass = "", mParams = "";
+    private Bundle mBundle;
     /**
      * 是否需要处理BackKey事件
      */
@@ -38,6 +39,7 @@ public class ContainerActivity extends TitleActivity {
     private void initParams(Bundle bundle) {
         mClass = bundle.getString(REQUEST_CLASS);
         mParams = bundle.getString(REQUEST_PARAMS);
+        mBundle = bundle.getBundle(REQUEST_BUNDLE);
         isToolbarSupported = bundle.getBoolean(REQUEST_TOOL_BAR, true);
         // 默认不需要处理backkey
         isBackKeySupported = bundle.getBoolean(REQUEST_BACK_KEY, false);
@@ -119,6 +121,13 @@ public class ContainerActivity extends TitleActivity {
         try {
             Class clazz = Class.forName(mClass);
             Method method = null;
+            try {
+                method = clazz.getMethod(STATIC_METHOD_NAME, Bundle.class);
+            } catch (Exception ignore) {
+            }
+            if (null != method) {
+                return (BaseFragment) method.invoke(null, mBundle);
+            }
             try {
                 method = clazz.getMethod(STATIC_METHOD_NAME, String.class);
             } catch (Exception ignore) {

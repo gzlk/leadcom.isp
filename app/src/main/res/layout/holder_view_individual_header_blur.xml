@@ -54,16 +54,31 @@
         android:layout_toEndOf="@+id/ui_holder_view_user_header_layout"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/ui_tool_individual_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLength="10"
-            android:maxLines="1"
-            android:text="@string/app_name"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/ui_base_text_size_big" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ui_tool_individual_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLength="10"
+                android:maxLines="1"
+                android:text="@string/app_name"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/ui_base_text_size_big" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_tool_individual_edit_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_icon_edit"
+                android:textColor="@android:color/white"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/ui_tool_individual_additional"

@@ -243,8 +243,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 handlePopupClick(view.getId());
                 return true;
             }
-        }).showPrivacy(mMoment.isMine()).showFavorite(true).showShare(true).showSave(false)
-                .showDelete(mMoment.isMine())
+        }).showPrivacy(mMoment.isMine()).showShare(true).showSave(false)
+                .showDelete(mMoment.isMine()).showFavorite(!mMoment.isMine())
                 .setPrivacyText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public)
                 .setCollectText(mMoment.isCollected() ? R.string.ui_text_moment_details_button_favorited : R.string.ui_text_moment_details_button_favorite)
                 .show();

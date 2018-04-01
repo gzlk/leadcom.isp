@@ -144,6 +144,21 @@ public class UserRequest extends Request<User> {
         httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    /**
+     * 同时更改名字和签名介绍
+     */
+    public void update(String name, String intro) {
+        directlySave = false;
+        JSONObject object = new JSONObject();
+        try {
+            object.put("name", name)
+                    .put("signature", intro);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
+    }
+
     public void update(ArrayList<UserExtra> extras) {
         directlySave = false;
         JSONObject object = new JSONObject();

@@ -231,4 +231,9 @@
     <string name="ui_text_personality_item_edit_company_hint">单位名称</string>
     <string name="ui_text_personality_item_edit_duty">修改职务</string>
     <string name="ui_text_personality_item_edit_duty_hint">职务名称</string>
+
+    <string name="ui_text_personality_introduction_fragment_title">个人简介</string>
+    <string name="ui_text_personality_name_edit_fragment_title">编辑简介</string>
+    <string name="ui_text_personality_name_edit_name_hint">输入名字</string>
+    <string name="ui_text_personality_name_edit_intro_hint">输入您的自我介绍</string>
 </resources>
