@@ -61,7 +61,7 @@ public class ShareToWeiXin extends Shareable {
      *
      * @param type 类型，支持分享到微信会话、朋友圈、微信收藏三种
      */
-    public static void shareToWeiXin(Context activityContext, @ShareType int type, String text, ArrayList<String> images) {
+    public static void shareToWeiXin(Context activityContext, @ShareType int type, String title, String text, ArrayList<String> images) {
         if (isEmpty(text) && (null == images || images.size() < 1)) {
             ToastHelper.make().showMsg(R.string.ui_base_share_text_share_blank);
             return;
@@ -69,10 +69,10 @@ public class ShareToWeiXin extends Shareable {
         if (regToWX(activityContext)) {
             switch (type) {
                 case TO_WX_SESSION:
-                    shareToWeiXinSession(text, images);
+                    shareToWeiXinSession(title, text, images);
                     break;
                 case TO_WX_TIMELINE:
-                    shareToWeiXinTimeline(activityContext, text, images);
+                    shareToWeiXinTimeline(activityContext, title, text, images);
                     break;
                 case TO_WX_FAVORITE:
                     break;
@@ -121,39 +121,31 @@ public class ShareToWeiXin extends Shareable {
     /**
      * 分享到会话
      */
-    private static void shareToWeiXinSession(String text, ArrayList<String> images) {
-        for (String url : images) {
+    private static void shareToWeiXinSession(String title, String text, ArrayList<String> images) {
+        if (images.size() > 0) {
             // 发送单个图片到聊天对象
-            if (!isEmpty(url) && !("null".equals(url))) {
-                sendMessage(getSingleImageObject(url), SendMessageToWX.Req.WXSceneSession);
-            }
-        }
-        if (!isEmpty(text)) {
+            sendMessage(getSingleImageObject(title, text, images.get(0)), SendMessageToWX.Req.WXSceneSession);
+        } else if (!isEmpty(text)) {
             // 文字不为空时发送文字到聊天对象
-            sendMessage(getTextObject(text), SendMessageToWX.Req.WXSceneSession);
+            sendMessage(getTextObject(title, text), SendMessageToWX.Req.WXSceneSession);
         }
     }
 
     /**
      * 分享到朋友圈
      */
-    private static void shareToWeiXinTimeline(Context context, String text, ArrayList<String> images) {
-        if (isEmpty(text)) {
-            if (images.size() < 2) {
-                // 发送单个图片到朋友圈
-                sendMessage(getSingleImageObject(images.get(0)), SendMessageToWX.Req.WXSceneTimeline);
-            } else {
+    private static void shareToWeiXinTimeline(Context context, String title, String text, ArrayList<String> images) {
+        if (images.size() > 0) {
+            if (images.size() > 1) {
                 // 发送多张图片到朋友圈
                 shareMultimediaMessageToWeiXinTimeLine(context, text, images);
-            }
-        } else {
-            if (images.size() < 2) {
-                // 只发送文字到朋友圈
-                sendMessage(getSingleImageObject(images.get(0)), SendMessageToWX.Req.WXSceneTimeline);
             } else {
-                // 发送图文消息到朋友圈
-                shareMultimediaMessageToWeiXinTimeLine(context, text, images);
+                // 发送单个图片到朋友圈
+                sendMessage(getSingleImageObject(title, text, images.get(0)), SendMessageToWX.Req.WXSceneTimeline);
             }
+        } else if (!isEmpty(text)) {
+            // 文字不为空时发送文字到聊天对象
+            sendMessage(getTextObject(title, text), SendMessageToWX.Req.WXSceneTimeline);
         }
     }
 
@@ -170,10 +162,14 @@ public class ShareToWeiXin extends Shareable {
         ArrayList<Uri> imageUris = new ArrayList<>();
         for (String url : images) {
             String local = getLocalPath(url);
-            Uri uri = FilePreviewHelper.getUriFromFile(local);
-            imageUris.add(uri);
+            if (!StringHelper.isEmpty(local)) {
+                Uri uri = FilePreviewHelper.getUriFromFile(local);
+                if (null != uri) {
+                    imageUris.add(uri);
+                }
+            }
         }
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+        intent.putExtra(Intent.EXTRA_STREAM, imageUris);
         context.startActivity(intent);
     }
 
@@ -198,30 +194,26 @@ public class ShareToWeiXin extends Shareable {
         }
     }
 
-    /**
-     * 分享到微信收藏
-     */
-    private static void shareToWeiXinFavorite() {
-    }
-
-    private static WXMediaMessage getTextObject(String text) {
+    private static WXMediaMessage getTextObject(String title, String text) {
         WXTextObject object = new WXTextObject();
         object.text = text;
 
         WXMediaMessage message = new WXMediaMessage();
         message.mediaObject = object;
         message.description = text;
+        message.title = title;
 
         return message;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private static WXMediaMessage getSingleImageObject(String url) {
+    private static WXMediaMessage getSingleImageObject(String title, String description, String url) {
         String localPath = getLocalPath(url);
         Bitmap bitmap = BitmapFactory.decodeFile(localPath);
         WXImageObject object = new WXImageObject(bitmap);
 
         WXMediaMessage message = new WXMediaMessage();
+        message.title = title;
+        message.description = description;
         message.mediaObject = object;
         message.thumbData = getThumb(url);
         log("WX compressed thumb size = " + Utils.formatSize(message.thumbData.length));

@@ -152,22 +152,22 @@ public abstract class BaseMomentFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void shareToQQ() {
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "分享动态", mMoment.getContent(), "", "", null);
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), getString(R.string.ui_nim_app_recent_contact_type_moment), mMoment.getContent(), "", "", null);
     }
 
     @Override
     protected void shareToQZone() {
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title), mMoment.getContent(), "http://www.baidu.com", "", mMoment.getImage());
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title, getString(R.string.ui_nim_app_recent_contact_type_moment)), mMoment.getContent(), "http://www.baidu.com", "", mMoment.getImage());
     }
 
     @Override
     protected void shareToWeiXinSession() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, mMoment.getContent(), mMoment.getImage());
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, getString(R.string.ui_nim_app_recent_contact_type_moment), mMoment.getContent(), mMoment.getImage());
     }
 
     @Override
     protected void shareToWeiXinTimeline() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, mMoment.getContent(), mMoment.getImage());
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, getString(R.string.ui_nim_app_recent_contact_type_moment), mMoment.getContent(), mMoment.getImage());
     }
 
     @Override

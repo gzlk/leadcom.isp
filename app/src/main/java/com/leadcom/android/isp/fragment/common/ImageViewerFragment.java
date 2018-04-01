@@ -211,21 +211,21 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
     protected void shareToQZone() {
         ArrayList<String> img = new ArrayList<>();
         img.add(images.get(selectedIndex));
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title, "分享图片"), "分享图片", "http://www.baidu.com", "", img);
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title, "分享图片"), "分享图片c", "http://www.baidu.com", "", img);
     }
 
     @Override
     protected void shareToWeiXinSession() {
         ArrayList<String> img = new ArrayList<>();
         img.add(images.get(selectedIndex));
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, "", img);
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, "分享图片t", "分享图片c", img);
     }
 
     @Override
     protected void shareToWeiXinTimeline() {
         ArrayList<String> img = new ArrayList<>();
         img.add(images.get(selectedIndex));
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, "分享图片", img);
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, "分享图片t", "分享图片c", img);
     }
 
     @Override
