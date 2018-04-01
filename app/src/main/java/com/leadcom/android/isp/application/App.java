@@ -93,6 +93,10 @@ public class App extends NimApplication {
         }
     }
 
+    public synchronized int getOkHttpFailedTimes() {
+        return okHttpFailedTimes;
+    }
+
     public synchronized void increaseOkHttpFailedTimes() {
         okHttpFailedTimes++;
     }

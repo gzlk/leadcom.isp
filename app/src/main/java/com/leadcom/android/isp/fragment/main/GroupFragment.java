@@ -37,6 +37,7 @@ import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
@@ -91,7 +92,53 @@ public class GroupFragment extends BaseOrganizationFragment {
         super.onActivityCreated(savedInstanceState);
         tryPaddingContent(toolBar, false);
         isLoadingComplete(true);
+
+        // 头像选择是需要剪切的
+        isChooseImageForCrop = true;
+        // 头像是需要压缩的
+        isSupportCompress = true;
+        // 图片选择后的回调
+        addOnImageSelectedListener(albumImageSelectedListener);
+        // 文件上传完毕后的回调处理
+        setOnFileUploadingListener(mOnFileUploadingListener);
     }
+
+    // 相册选择返回了
+    private OnImageSelectedListener albumImageSelectedListener = new OnImageSelectedListener() {
+        @Override
+        public void onImageSelected(ArrayList<String> selected) {
+            // 图片选择完毕之后立即压缩图片并且自动上传
+            compressImage();
+        }
+    };
+
+    private OnFileUploadingListener mOnFileUploadingListener = new OnFileUploadingListener() {
+        @Override
+        public void onUploading(int all, int current, String file, long size, long uploaded) {
+
+        }
+
+        @Override
+        public void onUploadingComplete(ArrayList<Attachment> uploaded) {
+            Organization group = (Organization) dAdapter.get(0);
+            Role role = Cache.cache().getGroupRole(group.getId());
+            final String groupId = group.getId(), url = uploaded.get(0).getUrl();
+            if (null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) {
+                // 重新检查一遍更改权限之后更改组织的logo
+                OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
+                    @Override
+                    public void onResponse(Organization organization, boolean success, String message) {
+                        super.onResponse(organization, success, message);
+                        if (success) {
+                            Organization org = (Organization) dAdapter.get(0);
+                            org.setLogo(url);
+                            dAdapter.update(org);
+                        }
+                    }
+                }).update(groupId, "", url, "");
+            }
+        }
+    };
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -416,8 +463,13 @@ public class GroupFragment extends BaseOrganizationFragment {
                     Organization group = (Organization) dAdapter.get(0);
                     Role role = Cache.cache().getGroupRole(group.getId());
                     if (null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) {
-                        // 登录者有组织属性编辑权限时，打开组织属性编辑页面
-                        CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                        if (view.getId() == R.id.ui_holder_view_group_header_logo) {
+                            // 选择图片上传更改组织的logo
+                            openImageSelector(true);
+                        } else {
+                            // 登录者有组织属性编辑权限时，打开组织属性编辑页面
+                            CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                        }
                     }
                     break;
             }

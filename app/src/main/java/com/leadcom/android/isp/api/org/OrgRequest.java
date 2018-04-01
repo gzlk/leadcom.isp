@@ -147,9 +147,13 @@ public class OrgRequest extends Request<Organization> {
         //{_id,name,logo,intro,accessToken}
         JSONObject object = new JSONObject();
         try {
-            object.put("_id", groupId)
-                    .put("logo", checkNull(groupLogo))
-                    .put("intro", checkNull(introduction));
+            object.put("_id", groupId);
+            if (!isEmpty(groupLogo)) {
+                object.put("logo", checkNull(groupLogo));
+            }
+            if (!isEmpty(introduction)) {
+                object.put("intro", checkNull(introduction));
+            }
             if (!isEmpty(groupName)) {
                 // 更改组织名称
                 object.put("name", checkNull(groupName));

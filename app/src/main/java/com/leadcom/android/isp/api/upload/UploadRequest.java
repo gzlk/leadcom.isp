@@ -1,7 +1,5 @@
 package com.leadcom.android.isp.api.upload;
 
-import android.os.Environment;
-
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -145,6 +143,7 @@ public class UploadRequest extends Request<Upload> {
                 .setHttpBody(body, HttpMethods.Post);
         if (App.app().needSetConnectionCloseHeader()) {
             request.addHeader("Connection", "close");
+            log("Add \"Connection: close\" header.");
         }
         return request;
     }
