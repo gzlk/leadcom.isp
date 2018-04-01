@@ -6,6 +6,7 @@ import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.listener.OnUploadingListener;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnHttpListener;
@@ -137,11 +138,15 @@ public class UploadRequest extends Request<Upload> {
 //                }
             }
         };
-        return new JsonRequest<Upload>(path, Upload.class)
+        JsonRequest<Upload> request = new JsonRequest<Upload>(path, Upload.class)
                 .setHttpListener(listener)
                 .addHeader("accessToken", accessToken)
                 .addHeader("terminalType", "android")
                 .setHttpBody(body, HttpMethods.Post);
+        if (App.app().needSetConnectionCloseHeader()) {
+            request.addHeader("Connection", "close");
+        }
+        return request;
     }
 
     /**

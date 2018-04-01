@@ -335,6 +335,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                         break;
                     }
                 }
+                displayNothing(mAdapter.getItemCount() <= 0);
             } else {
                 mAdapter.clear();
                 refreshMessages();
@@ -419,6 +420,8 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     private void refreshMessages() {
         mAdapter.sort();
 
+        displayNothing(mAdapter.getItemCount() <= 0);
+
         int unreadNum = NIMClient.getService(MsgService.class).getTotalUnreadCount();
         if (null != mainFragment) {
             mainFragment.showUnreadFlag(unreadNum);
@@ -449,7 +452,6 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                                 mAdapter.replace(loadedRecent, index);
                             }
                         }
-                        displayNothing(mAdapter.getItemCount() <= 0);
 
                         if (null != mAdapter && !loaded) {
                             loaded = true;

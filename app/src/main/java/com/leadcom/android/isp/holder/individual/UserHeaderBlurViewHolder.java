@@ -83,7 +83,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
 
     public void showContent(User user) {
         nameTextView.setText(isEmpty(user.getName()) ? StringHelper.getString(R.string.ui_text_user_information_name_empty) : user.getName());
-        editIconView.setVisibility(user.isMySelf() ? View.VISIBLE : View.GONE);
+        editIconView.setVisibility(user.isMySelf() ? View.VISIBLE : View.INVISIBLE);
         final String header = user.getHeadPhoto();
         userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
         userHeader.setTag(R.id.hlklib_ids_custom_view_click_tag, header);

@@ -44,7 +44,7 @@
 
     </com.hlk.hlklib.lib.view.CorneredView>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ui_holder_view_user_header_name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,41 +54,38 @@
         android:layout_toEndOf="@+id/ui_holder_view_user_header_layout"
         android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/ui_tool_individual_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_toStartOf="@+id/ui_tool_individual_edit_icon"
+            android:ellipsize="end"
+            android:maxLength="10"
+            android:maxLines="1"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ui_base_text_size_big" />
 
-            <TextView
-                android:id="@+id/ui_tool_individual_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLength="10"
-                android:maxLines="1"
-                android:text="@string/app_name"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/ui_base_text_size_big" />
-
-            <com.hlk.hlklib.lib.view.CustomTextView
-                android:id="@+id/ui_tool_individual_edit_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ui_icon_edit"
-                android:textColor="@android:color/white"
-                android:visibility="gone" />
-        </LinearLayout>
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_tool_individual_edit_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/ui_icon_edit"
+            android:textColor="@android:color/white"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/ui_tool_individual_additional"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/ui_tool_individual_name"
+            android:layout_toStartOf="@+id/ui_tool_individual_edit_icon"
             android:ellipsize="end"
             android:maxLines="4"
             android:minHeight="@dimen/ui_static_dp_50"
             android:textColor="@android:color/white"
             android:textSize="@dimen/ui_base_text_size_small" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.listener;
 
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.litesuits.http.data.HttpStatus;
@@ -36,6 +37,7 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     public void onSuccess(T data, Response<T> response) {
         super.onSuccess(data, response);
         onSucceed(data, response);
+        App.app().clearOkHttpFailedTimes();
     }
 
     /**
@@ -56,6 +58,9 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
         HttpStatus status = response.getHttpStatus();
         ToastHelper.make(null).showMsg(StringHelper.format("网咯不给力(%d)，请重试", (null == status ? -1 : status.getCode()), e.getMessage()));
         onFailed();
+        if (e.getMessage().contains("java.io.EOFException: \\n not found: size=0")) {
+            App.app().increaseOkHttpFailedTimes();
+        }
     }
 
     @Override

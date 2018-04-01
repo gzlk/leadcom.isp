@@ -80,6 +80,30 @@ public class App extends NimApplication {
         }
     }
 
+    private static final int MAX_FAILED_TIME = 10;
+    private int okHttpFailedTimes = 0;
+
+    public synchronized void clearOkHttpFailedTimes() {
+        if (okHttpFailedTimes > 5) {
+            okHttpFailedTimes = 5;
+        }
+        okHttpFailedTimes--;
+        if (okHttpFailedTimes <= 0) {
+            okHttpFailedTimes = 0;
+        }
+    }
+
+    public synchronized void increaseOkHttpFailedTimes() {
+        okHttpFailedTimes++;
+    }
+
+    /**
+     * 是否需要设置 http 连接的 close 表头
+     */
+    public boolean needSetConnectionCloseHeader() {
+        return okHttpFailedTimes >= MAX_FAILED_TIME;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

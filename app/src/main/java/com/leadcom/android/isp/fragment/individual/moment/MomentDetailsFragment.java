@@ -26,6 +26,7 @@ import com.leadcom.android.isp.listener.OnKeyboardChangeListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
+import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.ArchiveLike;
 import com.leadcom.android.isp.model.archive.Comment;
@@ -61,7 +62,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     }
 
     public static void open(BaseFragment fragment, String momentId) {
-        fragment.openActivity(MomentDetailsFragment.class.getName(), momentId, true, false);
+        fragment.openActivity(MomentDetailsFragment.class.getName(), momentId, REQUEST_DELETE, true, false);
     }
 
     private static boolean deletable = false;
@@ -270,6 +271,19 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             case R.id.ui_dialog_moment_details_button_delete:
                 deleteMoment();
                 break;
+        }
+    }
+
+    @Override
+    protected void onDeleteMomentComplete(Moment moment, boolean success, String message) {
+        if (success) {
+            // 本地已删除
+            Dao<Moment> dao = new Dao<>(Moment.class);
+            Moment deleted = dao.query(mQueryId);
+            if (deleted != null) {
+                dao.delete(deleted);
+            }
+            resultData(mQueryId);
         }
     }
 

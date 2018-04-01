@@ -18,6 +18,7 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.query.FullTextQuery;
 import com.litesuits.http.LiteHttp;
+import com.litesuits.http.exception.HttpException;
 import com.litesuits.http.log.HttpLog;
 import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.JsonBody;
@@ -247,11 +248,16 @@ public abstract class Request<T> {
                 fireFailedListenerEvents("");
             }
         };
-        return new JsonRequest<Api<T>>(url, resultType)
+        JsonRequest<Api<T>> request = new JsonRequest<Api<T>>(url, resultType)
                 .setHttpListener(listener)
                 .addHeader("accessToken", accessToken)
                 .addHeader("terminalType", "android")
                 .setHttpBody(new JsonBody(body), methods);
+        if (App.app().needSetConnectionCloseHeader()) {
+            // 如果Ok Http size=0错误超过了10次，则为http头添加close参数
+            request.addHeader("Connection", "close");
+        }
+        return request;
     }
 
     /**

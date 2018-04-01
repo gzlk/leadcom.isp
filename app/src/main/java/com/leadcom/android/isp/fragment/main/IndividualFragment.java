@@ -455,6 +455,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         setSupportLoadingMore(true);
     }
 
+    @Override
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
             case REQUEST_SELECT:
