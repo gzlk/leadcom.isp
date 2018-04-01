@@ -11,8 +11,10 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.BaseMomentFragment;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
+import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
@@ -21,11 +23,13 @@ import com.leadcom.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentPraiseViewHolder;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnKeyboardChangeListener;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.ArchiveLike;
 import com.leadcom.android.isp.model.archive.Comment;
+import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.user.Moment;
 
 import java.util.ArrayList;
@@ -206,6 +210,13 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             Collectable.resetMomentCollectionParams(moment);
             // 我发布的动态可以删除全部评论
             deletable = mMoment.isMine();
+            setRightIcon(R.string.ui_icon_more);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    showMoreButtons();
+                }
+            });
             // 拉取回来之后立即显示
             if (!mAdapter.exist(moment)) {
                 mAdapter.add(moment, 0);
@@ -213,6 +224,52 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 mAdapter.update(moment);
             }
             onSwipeRefreshing();
+        }
+    }
+
+    private void showMoreButtons() {
+        MomentMoreHelper.helper().init(this).setOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_moment_details_button_privacy,
+                        R.id.ui_dialog_moment_details_button_favorite,
+                        R.id.ui_dialog_moment_details_button_share,
+                        R.id.ui_dialog_moment_details_button_save,
+                        R.id.ui_dialog_moment_details_button_delete};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                handlePopupClick(view.getId());
+                return true;
+            }
+        }).showPrivacy(mMoment.isMine()).showFavorite(true).showShare(true).showSave(false)
+                .showDelete(mMoment.isMine())
+                .setPrivacyText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public)
+                .setCollectText(mMoment.isCollected() ? R.string.ui_text_moment_details_button_favorited : R.string.ui_text_moment_details_button_favorite)
+                .show();
+    }
+
+    private void handlePopupClick(int id) {
+        switch (id) {
+            case R.id.ui_dialog_moment_details_button_privacy:
+                // 设为公开或私密
+                handleMomentAuthPublic();
+                break;
+            case R.id.ui_dialog_moment_details_button_favorite:
+                // 收藏单张图片
+                tryCollection();
+                break;
+            case R.id.ui_dialog_moment_details_button_share:
+                openShareDialog();
+                break;
+            case R.id.ui_dialog_moment_details_button_save:
+                // 保存所有图片到本地？
+                // save();
+                break;
+            case R.id.ui_dialog_moment_details_button_delete:
+                deleteMoment();
+                break;
         }
     }
 

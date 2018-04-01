@@ -3,7 +3,7 @@ package com.leadcom.android.isp.fragment.base;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.publishable.CollectHelper;
 import com.leadcom.android.isp.helper.publishable.CommentHelper;
 import com.leadcom.android.isp.helper.publishable.LikeHelper;

@@ -17,6 +17,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.model.user.Collection;
 
 
 /**
@@ -141,7 +142,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         likeIcon.setText(liked ? R.string.ui_icon_like_solid : R.string.ui_icon_like_hollow);
         likeIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
 
-        liked = archive.getCollection() == Archive.CollectionType.COLLECTED;
+        liked = archive.getCollection() == Collection.CollectionType.COLLECTED;
         collectsView.setText(String.valueOf(archive.getColNum()));
         collectIcon.setText(liked ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
         collectIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));

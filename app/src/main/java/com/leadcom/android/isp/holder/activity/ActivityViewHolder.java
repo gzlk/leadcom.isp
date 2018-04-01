@@ -23,6 +23,7 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
 import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
+import com.leadcom.android.isp.nim.model.extension.MomentAttachment;
 import com.leadcom.android.isp.nim.model.extension.NoticeAttachment;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
 import com.leadcom.android.isp.nim.model.extension.StickerAttachment;
@@ -215,6 +216,8 @@ public class ActivityViewHolder extends BaseViewHolder {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_minutes);
             } else if (attachment instanceof ArchiveAttachment) {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_archive);
+            } else if (attachment instanceof MomentAttachment) {
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_moment);
             } else if (attachment instanceof StickerAttachment) {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_sticker);
             }

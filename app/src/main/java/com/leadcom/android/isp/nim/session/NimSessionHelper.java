@@ -29,6 +29,7 @@ import com.leadcom.android.isp.nim.activity.VideoPlayerActivity;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
 import com.leadcom.android.isp.nim.model.extension.BaseAttachmentParser;
 import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
+import com.leadcom.android.isp.nim.model.extension.MomentAttachment;
 import com.leadcom.android.isp.nim.model.extension.NoticeAttachment;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
 import com.leadcom.android.isp.nim.model.extension.StickerAttachment;
@@ -37,6 +38,7 @@ import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderArchive;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderFile;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderMinutes;
+import com.leadcom.android.isp.nim.viewholder.MsgViewHolderMoment;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderNotice;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderSignNotify;
 import com.leadcom.android.isp.nim.viewholder.MsgViewHolderSticker;
@@ -152,6 +154,8 @@ public class NimSessionHelper {
         NimUIKit.registerMsgItemViewHolder(MinutesAttachment.class, MsgViewHolderMinutes.class);
         // 分享的文档
         NimUIKit.registerMsgItemViewHolder(ArchiveAttachment.class, MsgViewHolderArchive.class);
+        // 分享的动态
+        NimUIKit.registerMsgItemViewHolder(MomentAttachment.class, MsgViewHolderMoment.class);
         // 贴图消息
         NimUIKit.registerMsgItemViewHolder(StickerAttachment.class, MsgViewHolderSticker.class);
         // 提示类消息

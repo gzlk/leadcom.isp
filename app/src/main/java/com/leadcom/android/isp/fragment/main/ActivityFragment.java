@@ -20,7 +20,7 @@ import com.leadcom.android.isp.fragment.activity.topic.TopicListFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.StructureFragment;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
@@ -37,6 +37,7 @@ import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
 import com.leadcom.android.isp.nim.model.extension.MinutesAttachment;
+import com.leadcom.android.isp.nim.model.extension.MomentAttachment;
 import com.leadcom.android.isp.nim.model.extension.NoticeAttachment;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
 import com.leadcom.android.isp.nim.model.extension.TopicAttachment;
@@ -262,6 +263,8 @@ public class ActivityFragment extends BaseOrganizationFragment {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_minutes);
             } else if (attachment instanceof ArchiveAttachment) {
                 ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_archive);
+            } else if (attachment instanceof MomentAttachment) {
+                ret = StringHelper.getString(R.string.ui_nim_app_recent_contact_type_moment);
             }
         }
         return ret;

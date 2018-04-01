@@ -358,8 +358,8 @@ public class NimApplication extends BaseActivityManagedApplication {
                                     }
                                     break;
                             }
-                            NimMessage.save(msg);
                             if (msg.isSavable()) {
+                                NimMessage.save(msg);
 //                            if (isAppStayInBackground || !SysInfoUtil.isAppOnForeground(NimApplication.this)) {
 //                                // 如果app已经隐藏到后台，则需要打开通过系统通知来提醒用户
 //                                Intent extra = new Intent().putExtra(MainActivity.EXTRA_NOTIFICATION, msg);

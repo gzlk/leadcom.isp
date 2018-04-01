@@ -12,9 +12,9 @@ import android.support.v4.content.ContextCompat;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.LogHelper;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 
 /**

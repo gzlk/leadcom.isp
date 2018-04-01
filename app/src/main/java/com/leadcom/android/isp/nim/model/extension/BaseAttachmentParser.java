@@ -48,6 +48,9 @@ public class BaseAttachmentParser implements MsgAttachmentParser {
                 case AttachmentType.ARCHIVE:
                     attachment = new ArchiveAttachment();
                     break;
+                case AttachmentType.MOMENT:
+                    attachment = new MomentAttachment();
+                    break;
                 case AttachmentType.STICKER:
                     attachment = new StickerAttachment();
                     break;

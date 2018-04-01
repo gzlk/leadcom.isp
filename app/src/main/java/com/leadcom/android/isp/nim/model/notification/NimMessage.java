@@ -105,7 +105,7 @@ public class NimMessage extends Message implements MsgAttachment {
     public static int getUnRead() {
         QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
                 .whereLessThan(Activity.Field.Status, Status.READ).whereAppendAnd()
-                .whereLessThan(Archive.Field.Type, Type.USER_ARCHIVE_LIKE);
+                .whereNoEquals(Archive.Field.Type, 0);
         List<NimMessage> list = new Dao<>(NimMessage.class).query(builder);
         return null == list ? 0 : list.size();
     }

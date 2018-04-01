@@ -2,15 +2,12 @@ package com.leadcom.android.isp.nim.viewholder;
 
 import android.text.Html;
 import android.view.View;
-import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
-import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 
 /**
@@ -23,27 +20,13 @@ import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLo
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class MsgViewHolderArchive extends MsgViewHolderBase {
+public class MsgViewHolderArchive extends MsgViewHolderMoment {
 
     public MsgViewHolderArchive(BaseMultiItemFetchLoadAdapter adapter) {
         super(adapter);
     }
 
-    private TextView titleView, summaryView;
-    private ImageDisplayer imageView;
     private ArchiveAttachment archive;
-
-    @Override
-    protected int getContentResId() {
-        return R.layout.nim_msg_view_holder_archive;
-    }
-
-    @Override
-    protected void inflateContentView() {
-        titleView = findViewById(R.id.message_item_archive_title_label);
-        summaryView = findViewById(R.id.message_item_archive_summary_label);
-        imageView = findViewById(R.id.message_item_archive_image_control);
-    }
 
     @Override
     protected void bindContentView() {

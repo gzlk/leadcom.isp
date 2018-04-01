@@ -300,7 +300,7 @@ public class Message extends Model {
      * 查看本条消息是否可以保存
      */
     public boolean isSavable() {
-        return msgType < Type.USER_ARCHIVE_LIKE || getMsgType() > Type.MOMENT_COMMENT;
+        return msgType > 0 && (msgType < Type.USER_ARCHIVE_LIKE || getMsgType() > Type.MOMENT_COMMENT);
     }
 
     public void setType(int type) {

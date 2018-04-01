@@ -14,6 +14,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.model.user.Collection;
 
 /**
  * <b>功能描述：</b>档案详情页中的档案附加信息<br />
@@ -54,7 +55,7 @@ public class ArchiveDetailsAdditionalViewHolder extends BaseViewHolder {
         likeIcon.setText(liked ? R.string.ui_icon_like_solid : R.string.ui_icon_like_hollow);
         likeIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
         likeNumber.setText(String.valueOf(additional.getLikeNum()));
-        liked = additional.getCollection() == Archive.CollectionType.COLLECTED;
+        liked = additional.getCollection() == Collection.CollectionType.COLLECTED;
         collectIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
         collectIcon.setText(liked ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
         collectNumber.setText(String.valueOf(additional.getColNum()));

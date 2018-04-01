@@ -31,16 +31,45 @@ import com.litesuits.orm.db.annotation.Table;
 @Table("shareInfo")
 public class ShareInfo extends Model {
 
+    /**
+     * 分享类型
+     */
+    public interface ContentType {
+        /**
+         * 档案
+         */
+        int ARCHIVE = 1;
+        /**
+         * 档案草稿
+         */
+        int DRAFT = 2;
+        /**
+         * 动态
+         */
+        int MOMENT = 10;
+    }
+
+    //标题
     @Column(Archive.Field.Title)
     private String title;
+
+    //分享类型:1.档案,2.档案草稿（10.动态，这个是自定义的）
     @Column("ContentType")
     private int contentType;
+
+    //档案类型:1.个人档案,2.组织档案,3.个人档案草稿,4.组织档案草稿
     @Column("ArchiveType")
     private int docType;
+
+    //图片
     @Column("ImageUrl")
     private String imageUrl;
+
+    //描述
     @Column(Archive.Field.Description)
     private String description;
+
+    //目标地址
     @Column("TargetPath")
     private String targetPath;
 

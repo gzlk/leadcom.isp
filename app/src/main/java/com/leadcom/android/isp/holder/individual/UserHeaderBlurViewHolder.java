@@ -81,6 +81,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
         nameTextView.setText(isEmpty(user.getName()) ? StringHelper.getString(R.string.ui_text_user_information_name_empty) : user.getName());
         final String header = user.getHeadPhoto();
         userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
+        userHeader.setTag(R.id.hlklib_ids_custom_view_click_tag, header);
         additionalTextView.setText(isEmpty(user.getSignature()) ? StringHelper.getString(R.string.ui_text_user_information_signature_empty) : user.getSignature());
         if (!isEmpty(header)) {
             fragment().Handler().post(new Runnable() {
@@ -93,10 +94,11 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                     headerBackground.setLayoutParams(params);
                     String blur = getBlurImage(header);
                     if (!isEmpty(blur)) {
+                        clearHandler();
                         changeColor(header);
                         headerBackground.displayImage("file://" + blur, bWidth, bHeight, false, false);
                     } else {
-                        blurHeader(header);
+                        blurHeader();
                     }
                 }
             });
@@ -105,21 +107,36 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
 
     private int bWidth, bHeight;
 
-    private void blurHeader(final String header) {
-        fragment().Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
-                String blur = getBlurImage(header);
-                if (!isEmpty(blur)) {
-                    changeColor(header);
-                    headerBackground.displayImage("file://" + blur, bWidth, bHeight, false, false);
-                } else {
-                    log("no blur image, 3s to try again.");
-                    blurHeader(header);
-                }
+    private void blurHeader() {
+        fragment().Handler().postDelayed(runnable, 3000);
+    }
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            Object object = userHeader.getTag(R.id.hlklib_ids_custom_view_click_tag);
+            String header = null == object ? "" : (String) object;
+            userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
+            String blur = getBlurImage(header);
+            if (!isEmpty(blur)) {
+                clearHandler();
+                changeColor(header);
+                headerBackground.displayImage("file://" + blur, bWidth, bHeight, false, false);
+            } else {
+                log("no blur image, 3s to try again.");
+                blurHeader();
             }
-        }, 3000);
+        }
+    };
+
+    private void clearHandler() {
+        fragment().Handler().removeCallbacks(runnable);
+    }
+
+    @Override
+    public void detachedFromWindow() {
+        clearHandler();
+        super.detachedFromWindow();
     }
 
     private String getBlurImage(String httpUrl) {

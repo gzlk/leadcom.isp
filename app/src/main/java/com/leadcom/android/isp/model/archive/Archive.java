@@ -180,20 +180,6 @@ public class Archive extends Additional {
     }
 
     /**
-     * 档案的收藏状态
-     */
-    public interface CollectionType {
-        /**
-         * 未收藏
-         */
-        int UN_COLLECT = 0;
-        /**
-         * 已收藏
-         */
-        int COLLECTED = 1;
-    }
-
-    /**
      * 点赞状态
      */
     public interface LikeType {

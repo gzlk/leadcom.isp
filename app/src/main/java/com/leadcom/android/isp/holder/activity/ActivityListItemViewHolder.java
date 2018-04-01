@@ -8,9 +8,18 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.nim.session.NimSessionHelper;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.model.SimpleCallback;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
+import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 
 
 /**
@@ -38,6 +47,27 @@ public class ActivityListItemViewHolder extends BaseViewHolder {
     public void showContent(Team team) {
         iconView.displayImage(team.getIcon(), getDimension(R.dimen.ui_base_dimen_button_height), false, false);
         nameView.setText(team.getName());
+    }
+
+    public void showContent(RecentContact contact) {
+        if (contact.getSessionType() == SessionTypeEnum.P2P) {
+            // 点对点单聊
+            NimUIKit.getUserInfoProvider().getUserInfoAsync(contact.getContactId(), new SimpleCallback<UserInfo>() {
+
+                @Override
+                public void onResult(boolean success, UserInfo info, int code) {
+                    String img = null == info ? ("drawable://" + R.mipmap.img_default_user_header) : info.getAvatar();
+                    iconView.displayImage(img, getDimension(R.dimen.ui_base_dimen_button_height), false, false);
+                    nameView.setText(null == info ? StringHelper.getString(R.string.ui_base_text_no_name) : info.getName());
+                }
+            });
+        } else if (contact.getSessionType() == SessionTypeEnum.Team) {
+            // 群聊
+            Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
+            String img = (null == team || isEmpty(team.getIcon())) ? ("drawable://" + R.drawable.img_default_group) : team.getIcon();
+            iconView.displayImage(img, getDimension(R.dimen.ui_base_dimen_button_height), false, false);
+            nameView.setText((null == team || isEmpty(team.getName())) ? StringHelper.getString(R.string.ui_base_text_no_name_team) : team.getName());
+        }
     }
 
     @Click({R.id.ui_nim_activity_list_item})

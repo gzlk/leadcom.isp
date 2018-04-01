@@ -6,7 +6,7 @@ import android.view.View;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseImageSelectableSupportFragment;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;

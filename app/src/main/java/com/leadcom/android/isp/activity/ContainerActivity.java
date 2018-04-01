@@ -6,7 +6,7 @@ import android.view.KeyEvent;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 
 import java.lang.reflect.Method;
 

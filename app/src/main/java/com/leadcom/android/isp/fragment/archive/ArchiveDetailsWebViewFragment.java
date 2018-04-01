@@ -32,9 +32,9 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.organization.StructureFragment;
-import com.leadcom.android.isp.helper.DeleteDialogHelper;
-import com.leadcom.android.isp.helper.DialogHelper;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
@@ -63,6 +63,7 @@ import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.netease.nim.uikit.api.NimUIKit;
 
@@ -507,7 +508,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         likeIcon.setText(liked ? R.string.ui_icon_like_solid : R.string.ui_icon_like_hollow);
         likeIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
 
-        liked = archive.getCollection() == Archive.CollectionType.COLLECTED;
+        liked = archive.getCollection() == Collection.CollectionType.COLLECTED;
         collectIcon.setText(liked ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
         collectIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
     }

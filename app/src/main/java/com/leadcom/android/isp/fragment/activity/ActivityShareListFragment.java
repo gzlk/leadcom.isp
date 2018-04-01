@@ -10,21 +10,27 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.activity.ActivityListItemViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
+import com.leadcom.android.isp.nim.model.extension.MomentAttachment;
+import com.leadcom.android.isp.nim.session.NimSessionHelper;
+import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.team.TeamService;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.netease.nimlib.sdk.team.model.Team;
+import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 
 import java.util.List;
 
@@ -44,6 +50,7 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
     public static ActivityShareListFragment newInstance(String params) {
         ActivityShareListFragment asf = new ActivityShareListFragment();
         Bundle bundle = new Bundle();
+        // 传过来的shareInfo
         bundle.putString(PARAM_QUERY_ID, params);
         asf.setArguments(bundle);
         return asf;
@@ -54,8 +61,15 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
         fragment.openActivity(ActivityShareListFragment.class.getName(), StringHelper.replaceJson(json, false), REQUEST_SELECT, true, false);
     }
 
+    private static int selected = -1;
     private ShareInfo share;
     private ActivityAdapter mAdapter;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        selected = -1;
+    }
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -100,20 +114,16 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
         if (null == mAdapter) {
             mAdapter = new ActivityAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            queryActivity();
+            queryRecentContact();
         }
     }
 
-    private void queryActivity() {
-        NIMClient.getService(TeamService.class).queryTeamList().setCallback(new RequestCallback<List<Team>>() {
+    private void queryRecentContact() {
+        NIMClient.getService(MsgService.class).queryRecentContacts().setCallback(new RequestCallback<List<RecentContact>>() {
             @Override
-            public void onSuccess(List<Team> teams) {
-                if (null != teams) {
-                    for (Team team : teams) {
-                        if (team.isMyTeam()) {
-                            mAdapter.add(team);
-                        }
-                    }
+            public void onSuccess(List<RecentContact> list) {
+                if (null != list) {
+                    mAdapter.update(list);
                 }
             }
 
@@ -133,7 +143,7 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
     private TextView dialogTitle, shareTitle, shareSummary;
     private ImageDisplayer shareImage;
 
-    private void showShareDialog(final Team team) {
+    private void showShareDialog() {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override
             public View onInitializeView() {
@@ -147,9 +157,21 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
                 return shareView;
             }
 
+            private String getContactName(RecentContact contact) {
+                if (contact.getSessionType() == SessionTypeEnum.Team) {
+                    Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
+                    return team.getName();
+                } else if (contact.getSessionType() == SessionTypeEnum.P2P) {
+                    UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(contact.getContactId());
+                    return info.getName();
+                }
+                return "";
+            }
+
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
-                dialogTitle.setText(getString(R.string.ui_base_share_to_app_dialog_title, team.getName()));
+                RecentContact contact = mAdapter.get(selected);
+                dialogTitle.setText(getString(R.string.ui_base_share_to_app_dialog_title, getContactName(contact)));
                 shareTitle.setText(share.getTitle());
                 shareSummary.setText(Html.fromHtml(share.getDescription()));
                 shareImage.setVisibility(isEmpty(share.getImageUrl()) ? View.GONE : View.VISIBLE);
@@ -158,25 +180,42 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                shareTo(team);
+                shareToContact();
                 return true;
             }
         }).setConfirmText(R.string.ui_base_text_share).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
-    private void shareTo(final Team team) {
+    private ArchiveAttachment getArchiveAttachment() {
         ArchiveAttachment attachment = new ArchiveAttachment();
         attachment.setCustomId(share.getId());
         attachment.setArchiveType(share.getDocType());
         attachment.setImage(share.getImageUrl());
         attachment.setTitle(share.getTitle());
         attachment.setSummary(share.getDescription());
-        IMMessage message = MessageBuilder.createCustomMessage(team.getId(), SessionTypeEnum.Team, attachment);
+        return attachment;
+    }
+
+    private MomentAttachment getMomentAttachment() {
+        MomentAttachment attachment = new MomentAttachment();
+        attachment.setCustomId(share.getId());
+        attachment.setImage(share.getImageUrl());
+        attachment.setTitle(share.getTitle());
+        attachment.setSummary(share.getDescription());
+        return attachment;
+    }
+
+    private void shareToContact() {
+        RecentContact contact = mAdapter.get(selected);
+        final String contactId = contact.getContactId();
+        final SessionTypeEnum sessionTypeEnum = contact.getSessionType();
+        MsgAttachment attachment = share.getContentType() == ShareInfo.ContentType.MOMENT ? getMomentAttachment() : getArchiveAttachment();
+        IMMessage message = MessageBuilder.createCustomMessage(contactId, sessionTypeEnum, attachment);
         NIMClient.getService(MsgService.class).sendMessage(message, true);
         delayed(new Runnable() {
             @Override
             public void run() {
-                shareInAppSuccess(team.getId());
+                shareInAppSuccess(contactId, sessionTypeEnum == SessionTypeEnum.Team);
             }
         });
     }
@@ -185,7 +224,7 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
         Handler().postDelayed(runnable, 100);
     }
 
-    private void shareInAppSuccess(final String teamId) {
+    private void shareInAppSuccess(final String contactId, final boolean team) {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override
             public View onInitializeView() {
@@ -202,8 +241,13 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
                 delayed(new Runnable() {
                     @Override
                     public void run() {
-                        // 返回到群聊页面
-                        resultData(teamId);
+                        if (team) {
+                            // 返回到群聊页面
+                            NimSessionHelper.startTeamSession(Activity(), contactId);
+                        } else {
+                            // 返回到点对点单聊页面
+                            NimSessionHelper.startP2PSession(Activity(), contactId);
+                        }
                     }
                 });
                 return true;
@@ -225,12 +269,12 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-            showShareDialog(mAdapter.get(index));
+            selected = index;
+            showShareDialog();
         }
     };
 
-    private class ActivityAdapter extends RecyclerViewAdapter<ActivityListItemViewHolder, Team> {
-        private static final int VT_ITEM = 0, VT_LAST = 1;
+    private class ActivityAdapter extends RecyclerViewAdapter<ActivityListItemViewHolder, RecentContact> {
 
         @Override
         public ActivityListItemViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -245,12 +289,12 @@ public class ActivityShareListFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onBindHolderOfView(ActivityListItemViewHolder holder, int position, @Nullable Team item) {
+        public void onBindHolderOfView(ActivityListItemViewHolder holder, int position, @Nullable RecentContact item) {
             holder.showContent(item);
         }
 
         @Override
-        protected int comparator(Team item1, Team item2) {
+        protected int comparator(RecentContact item1, RecentContact item2) {
             return 0;
         }
     }

@@ -1,4 +1,4 @@
-package com.leadcom.android.isp.helper;
+package com.leadcom.android.isp.helper.popup;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;

@@ -1,9 +1,22 @@
 package com.leadcom.android.isp.fragment.individual;
 
+import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
+import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.publishable.CollectHelper;
+import com.leadcom.android.isp.helper.publishable.listener.OnCollectedListener;
+import com.leadcom.android.isp.helper.publishable.listener.OnUncollectedListener;
+import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.common.Seclusion;
+import com.leadcom.android.isp.model.common.ShareInfo;
+import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.model.user.Moment;
+import com.leadcom.android.isp.share.ShareToQQ;
+import com.leadcom.android.isp.share.ShareToWeiBo;
+import com.leadcom.android.isp.share.ShareToWeiXin;
 
 /**
  * <b>功能描述：</b>单个说说<br />
@@ -75,6 +88,91 @@ public abstract class BaseMomentFragment extends BaseCmtLikeColFragment {
     }
 
     protected void onDeleteMomentComplete(Moment moment, boolean success, String message) {
+    }
+
+    protected void handleMomentAuthPublic() {
+        final int state = mMoment.getAuthPublic();
+        setLoadingText(state == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public);
+        displayLoading(true);
+        MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
+            @Override
+            public void onResponse(Moment moment, boolean success, String message) {
+                super.onResponse(moment, success, message);
+                displayLoading(false);
+                if (success) {
+                    mMoment.setAuthPublic(state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
+                }
+            }
+        }).update(mQueryId, state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
+    }
+
+    protected void tryCollection() {
+        CollectHelper collectHelper = CollectHelper.helper().setModel(mMoment);
+        if (mMoment.isCollected()) {
+            // 取消收藏
+            collectHelper.setUncollectedListener(new OnUncollectedListener() {
+                @Override
+                public void onUncollected(boolean success, Model model) {
+                    if (success) {
+                        ToastHelper.make().showMsg(R.string.ui_base_share_to_favorite_canceled);
+                    }
+                }
+            }).uncollect(mMoment.getColId());
+        } else {
+            // 收藏
+            collectHelper.setCollectedListener(new OnCollectedListener() {
+                @Override
+                public void onCollected(boolean success, Model model) {
+                    if (success) {
+                        ToastHelper.make().showMsg(R.string.ui_base_share_to_favorite_success);
+                    }
+                }
+            }).collect(Collection.get(mMoment));
+        }
+    }
+
+    private void buildMomentShareInfo() {
+        if (null == mShareInfo) {
+            mShareInfo = new ShareInfo();
+        }
+        mShareInfo.setId(mMoment.getId());
+        mShareInfo.setTitle(getString(R.string.ui_nim_app_recent_contact_type_moment));
+        mShareInfo.setDescription(mMoment.getContent());
+        mShareInfo.setContentType(ShareInfo.ContentType.MOMENT);
+        mShareInfo.setDocType(0);
+        mShareInfo.setImageUrl(mMoment.getImage().size() > 0 ? mMoment.getImage().get(0) : "");
+        mShareInfo.setTargetPath("");
+    }
+
+    @Override
+    protected void shareToApp() {
+        buildMomentShareInfo();
+        super.shareToApp();
+    }
+
+    @Override
+    protected void shareToQQ() {
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "分享动态", mMoment.getContent(), "", "", null);
+    }
+
+    @Override
+    protected void shareToQZone() {
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title), mMoment.getContent(), "http://www.baidu.com", "", mMoment.getImage());
+    }
+
+    @Override
+    protected void shareToWeiXinSession() {
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, mMoment.getContent(), mMoment.getImage());
+    }
+
+    @Override
+    protected void shareToWeiXinTimeline() {
+        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, mMoment.getContent(), mMoment.getImage());
+    }
+
+    @Override
+    protected void shareToWeiBo() {
+        ShareToWeiBo.init(Activity()).share(mMoment.getContent(), mMoment.getImage());
     }
 
 }

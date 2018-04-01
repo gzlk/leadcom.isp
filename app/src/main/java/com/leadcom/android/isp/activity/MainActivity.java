@@ -19,8 +19,8 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.leadcom.android.isp.fragment.main.MainFragment;
 import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragment;
-import com.leadcom.android.isp.helper.DialogHelper;
-import com.leadcom.android.isp.helper.SimpleDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
@@ -101,7 +101,7 @@ public class MainActivity extends TitleActivity {
         // 接收消息
         //NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(incomingMessageObserver, true);
         // 接收自定义通知
-        NimApplication.addNimMessageEvent(nimMessageEvent);
+        //NimApplication.addNimMessageEvent(nimMessageEvent);
         //NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(customNotificationObserver, true);
 
         if (null == mainFragment) {

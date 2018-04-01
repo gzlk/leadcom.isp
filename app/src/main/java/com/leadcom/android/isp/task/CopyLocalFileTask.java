@@ -10,6 +10,7 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.listener.OnTaskCompleteListener;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.netease.nim.uikit.common.util.C;
@@ -103,5 +104,15 @@ public class CopyLocalFileTask extends AsyncedTask<String, Integer, Boolean> {
         } else {
             ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_downloading_fail, error));
         }
+        if (null != completeListener) {
+            completeListener.onComplete();
+        }
+    }
+
+    private OnTaskCompleteListener completeListener;
+
+    public CopyLocalFileTask setOnTaskCompleteListener(OnTaskCompleteListener listener) {
+        completeListener = listener;
+        return this;
     }
 }

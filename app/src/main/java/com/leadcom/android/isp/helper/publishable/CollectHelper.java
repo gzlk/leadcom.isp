@@ -70,9 +70,16 @@ public class CollectHelper extends Publishable {
                         if (success) {
                             mArchive.setColNum(mArchive.getColNum() + 1);
                             mArchive.setColId(collection.getId());
-                            mArchive.setCollection(Archive.CollectionType.COLLECTED);
+                            mArchive.setCollection(Collection.CollectionType.COLLECTED);
                         }
                         collectedListener.onCollected(success, mArchive);
+                    } else if (null != mMoment) {
+                        if (success) {
+                            mMoment.setColNum(mMoment.getColNum() + 1);
+                            mMoment.setColId(collection.getId());
+                            mMoment.setCollection(Collection.CollectionType.COLLECTED);
+                        }
+                        collectedListener.onCollected(success, mMoment);
                     }
                 }
             }
@@ -89,10 +96,18 @@ public class CollectHelper extends Publishable {
                         if (success) {
                             int num = mArchive.getColNum() - 1;
                             mArchive.setColNum(num >= 0 ? num : 0);
-                            mArchive.setCollection(Archive.CollectionType.UN_COLLECT);
+                            mArchive.setCollection(Collection.CollectionType.UN_COLLECT);
                             mArchive.setColId("");
                         }
                         uncollectedListener.onUncollected(success, mArchive);
+                    } else if (null != mMoment) {
+                        if (success) {
+                            int num = mMoment.getColNum() - 1;
+                            mMoment.setColNum(num >= 0 ? num : 0);
+                            mMoment.setCollection(Collection.CollectionType.UN_COLLECT);
+                            mMoment.setColId("");
+                        }
+                        uncollectedListener.onUncollected(success, mMoment);
                     }
                 }
             }

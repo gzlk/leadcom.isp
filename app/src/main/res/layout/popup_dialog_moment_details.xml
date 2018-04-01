@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <View
+        android:id="@+id/ui_dialog_button_confirm"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
@@ -15,7 +16,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        app:cv_background="@color/textColorHintLight"
+        app:cv_background="@color/textColorHintLightLight"
         app:cv_border_size="0dp">
 
         <com.hlk.hlklib.lib.view.CorneredButton

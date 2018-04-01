@@ -13,32 +13,23 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.BaseMomentFragment;
-import com.leadcom.android.isp.helper.DialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
-import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.helper.publishable.CollectHelper;
-import com.leadcom.android.isp.helper.publishable.listener.OnCollectedListener;
+import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
+import com.leadcom.android.isp.listener.OnTaskCompleteListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Seclusion;
-import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.model.user.Moment;
 import com.leadcom.android.isp.share.ShareToQQ;
-import com.leadcom.android.isp.share.ShareToWeiBo;
-import com.leadcom.android.isp.share.ShareToWeiXin;
 import com.leadcom.android.isp.task.CopyLocalFileTask;
 import com.leadcom.android.isp.view.ZoomableImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -230,30 +221,8 @@ public class MomentImagesFragment extends BaseMomentFragment {
         super.onActivityResult(requestCode, data);
     }
 
-    private View dialogView;
-    private CorneredButton toPrivacy, toDelete;
-
     private void showMoreButtons() {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == dialogView) {
-                    dialogView = View.inflate(Activity(), R.layout.popup_dialog_moment_details, null);
-                    toPrivacy = dialogView.findViewById(R.id.ui_dialog_moment_details_button_privacy);
-                    toDelete = dialogView.findViewById(R.id.ui_dialog_moment_details_button_delete);
-
-                    // 不是我自己时，不显示设为私密和删除按钮
-                    toPrivacy.setVisibility(momentUser.equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
-                    toDelete.setVisibility(momentUser.equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
-                }
-                return dialogView;
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-                toPrivacy.setText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public);
-            }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+        MomentMoreHelper.helper().init(this).setOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
             public int[] clickEventHandleIds() {
                 return new int[]{R.id.ui_dialog_moment_details_button_privacy,
@@ -268,7 +237,11 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 handlePopupClick(view.getId());
                 return true;
             }
-        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
+        }).showPrivacy(mMoment.isMine()).showFavorite(true).showShare(true).showSave(mMoment.getImage().size() > 0)
+                .showDelete(mMoment.isMine())
+                .setPrivacyText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public)
+                .setCollectText(mMoment.isCollected() ? R.string.ui_text_moment_details_button_favorited : R.string.ui_text_moment_details_button_favorite)
+                .show();
     }
 
     private void handlePopupClick(int id) {
@@ -294,58 +267,9 @@ public class MomentImagesFragment extends BaseMomentFragment {
         }
     }
 
-    private void handleMomentAuthPublic() {
-        final int state = mMoment.getAuthPublic();
-        setLoadingText(state == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public);
-        displayLoading(true);
-        MomentRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Moment>() {
-            @Override
-            public void onResponse(Moment moment, boolean success, String message) {
-                super.onResponse(moment, success, message);
-                displayLoading(false);
-                if (success) {
-                    mMoment.setAuthPublic(state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
-                }
-            }
-        }).update(mQueryId, state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
-    }
-
     @Override
     protected void shareToQQ() {
         ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "", "", "", images.get(selected), null);
-    }
-
-    @Override
-    protected void shareToQZone() {
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title), mMoment.getContent(), "http://www.baidu.com", "", mMoment.getImage());
-    }
-
-    @Override
-    protected void shareToWeiXinSession() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, mMoment.getContent(), mMoment.getImage());
-    }
-
-    @Override
-    protected void shareToWeiXinTimeline() {
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, mMoment.getContent(), mMoment.getImage());
-    }
-
-    @Override
-    protected void shareToWeiBo() {
-        ShareToWeiBo.init(Activity()).share(mMoment.getContent(), mMoment.getImage());
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void tryCollection() {
-        // 收藏当前显示的图片
-        CollectHelper.helper().setModel(mMoment).setCollectedListener(new OnCollectedListener() {
-            @Override
-            public void onCollected(boolean success, Model model) {
-                if (success) {
-                    ToastHelper.make().showMsg("收藏成功");
-                }
-            }
-        }).collect(Collection.get(mMoment));
     }
 
     private void save() {
@@ -353,7 +277,12 @@ public class MomentImagesFragment extends BaseMomentFragment {
         String local = HttpHelper.helper().getLocalFilePath(url, App.IMAGE_DIR);
         File file = new File(local);
         if (file.exists()) {
-            new CopyLocalFileTask().exec(url, local);
+            new CopyLocalFileTask().setOnTaskCompleteListener(new OnTaskCompleteListener() {
+                @Override
+                public void onComplete() {
+
+                }
+            }).exec(url, local);
         } else {
             // 文件不存在则重新下载
             downloadFile(url);

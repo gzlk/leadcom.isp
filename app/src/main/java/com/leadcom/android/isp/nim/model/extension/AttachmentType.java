@@ -37,6 +37,10 @@ interface AttachmentType {
      */
     int ARCHIVE = 6;
     /**
+     * 分享的动态
+     */
+    int MOMENT = 7;
+    /**
      * 贴图
      */
     int STICKER = 9;

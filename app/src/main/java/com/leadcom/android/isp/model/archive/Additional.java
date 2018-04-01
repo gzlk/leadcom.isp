@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.model.archive;
 
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.user.Collection;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 
@@ -110,7 +111,7 @@ public class Additional extends Model {
     }
 
     public boolean isCollected() {
-        return collection == Archive.CollectionType.COLLECTED;
+        return collection == Collection.CollectionType.COLLECTED;
     }
 
     /**

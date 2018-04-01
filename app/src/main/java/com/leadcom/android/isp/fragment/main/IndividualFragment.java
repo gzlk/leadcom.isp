@@ -33,8 +33,8 @@ import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
-import com.leadcom.android.isp.helper.DialogHelper;
-import com.leadcom.android.isp.helper.EditableDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.EditableDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
@@ -379,7 +379,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     mAdapter.add(nothingMore);
                 }
             }
-        }).list(Collection.Type.ALL_ARCHIVE, CollectionRequest.OPE_MONTH, remotePageNumber);
+        }).list(Collection.Type.NONE, CollectionRequest.OPE_MONTH, remotePageNumber);
     }
 
     private void adjustRemotePages(int fetchedCount, int pageSize, int userInfoNum, String lastHeader) {
