@@ -159,7 +159,7 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
     }
 
     private void createOrganization() {
-        intro = descView.getValue();
+        intro = StringHelper.escapeToHtml(descView.getValue());
         String name = nameHolder.getValue();
         if (getUploadedFiles().size() > 0) {
             logo = getUploadedFiles().get(0).getUrl();
@@ -247,7 +247,7 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
         if (null == nameHolder) {
             nameHolder = new SimpleInputableViewHolder(nameView, this);
             nameHolder.showContent(format(items[1], name));
-            descView.setValue(intro);
+            descView.setValue(StringHelper.escapeFromHtml(intro));
         }
     }
 
