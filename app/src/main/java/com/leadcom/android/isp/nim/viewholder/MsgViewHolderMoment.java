@@ -60,7 +60,7 @@ public class MsgViewHolderMoment extends MsgViewHolderBase {
     protected void onItemClick() {
         boolean noImage = StringHelper.isEmpty(moment.getImage());
         String clazz = noImage ? MomentDetailsFragment.class.getName() : MomentImagesFragment.class.getName();
-        String params = StringHelper.format((noImage ? "%s,0" : "%s"), moment.getCustomId());
+        String params = StringHelper.format((!noImage ? "%s,0" : "%s"), moment.getCustomId());
         BaseActivity.openActivity(context, clazz, params, true, false);
     }
 }
