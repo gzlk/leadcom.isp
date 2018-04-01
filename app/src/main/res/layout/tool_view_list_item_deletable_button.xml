@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_tool_view_contact_button2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/color_ff4141"
+    android:orientation="horizontal"
+    app:layout_itemType="menu">
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:gravity="center"
+        android:text="@string/ui_icon_delete"
+        app:ctv_active_color="@color/colorPrimary"
+        app:ctv_normal_color="@android:color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:gravity="center"
+        android:padding="@dimen/ui_base_dimen_margin_padding"
+        android:text="@string/ui_base_text_remove"
+        android:textColor="@color/ui_text_normal_white" />
+</LinearLayout>

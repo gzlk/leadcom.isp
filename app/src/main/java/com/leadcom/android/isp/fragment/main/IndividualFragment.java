@@ -20,6 +20,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.api.user.MomentRequest;
+import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
@@ -165,13 +166,6 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         bundle.putInt(PARAM_SELECTED_MMT, selectedMoment);
         bundle.putInt(PARAM_SELECTED_CMT, selectedComment);
         super.saveParamsToBundle(bundle);
-    }
-
-    /**
-     * 标题栏是否已经显示了
-     */
-    public boolean isTitleBarShown() {
-        return isTitleBarShown;
     }
 
     @Override
@@ -501,7 +495,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                UserMessageFragment.open(IndividualFragment.this);
+                UserMessageFragment.open(IndividualFragment.this, (function == TYPE_MOMENT ? UserMsgRequest.TYPE_MOMENT : UserMsgRequest.TYPE_NONE));
                 return true;
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
@@ -588,7 +582,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     break;
                 case R.id.ui_holder_view_moment_camera_message_layer:
                     // 打开消息列表
-                    UserMessageFragment.open(IndividualFragment.this);
+                    UserMessageFragment.open(IndividualFragment.this, (function == TYPE_MOMENT ? UserMsgRequest.TYPE_MOMENT : UserMsgRequest.TYPE_NONE));
                     mAdapter.remove(today());
                     break;
                 case R.id.ui_holder_view_moment_details_header:

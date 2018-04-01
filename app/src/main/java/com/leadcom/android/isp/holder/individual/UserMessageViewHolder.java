@@ -42,6 +42,8 @@ public class UserMessageViewHolder extends BaseViewHolder {
     private ImageDisplayer imageView;
     @ViewId(R.id.ui_holder_view_individual_user_message_text)
     private TextView textView;
+    @ViewId(R.id.ui_tool_view_contact_button2)
+    private View deleteButton;
 
     private int imageSize;
 

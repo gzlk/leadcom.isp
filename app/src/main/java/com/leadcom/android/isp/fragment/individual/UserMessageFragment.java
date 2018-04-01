@@ -1,11 +1,11 @@
 package com.leadcom.android.isp.fragment.individual;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.daimajia.swipe.util.Attributes;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
@@ -14,9 +14,9 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.individual.UserMessageViewHolder;
@@ -26,6 +26,7 @@ import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.user.UserMessage;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.List;
 
@@ -42,15 +43,25 @@ import java.util.List;
 
 public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static UserMessageFragment newInstance(String params) {
-        return new UserMessageFragment();
+    public static UserMessageFragment newInstance(Bundle bundle) {
+        UserMessageFragment umf = new UserMessageFragment();
+        umf.setArguments(bundle);
+        return umf;
     }
 
-    public static void open(BaseFragment fragment) {
-        fragment.openActivity(UserMessageFragment.class.getName(), "", true, false);
+    public static void open(BaseFragment fragment, int type) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(PARAM_QUERY_ID, type);
+        fragment.openActivity(UserMessageFragment.class.getName(), bundle, true, false);
     }
 
     private MsgAdapter mAdapter;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        mQueryId = String.valueOf(bundle.getInt(PARAM_QUERY_ID, 0));
+    }
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -121,7 +132,6 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
 
     private Model noMore;
 
-
     private void fetchingUserMessages() {
         setLoadingText(R.string.ui_individual_message_fetching);
         displayLoading(true);
@@ -148,7 +158,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                     mAdapter.update(noMore);
                 }
             }
-        }).list(remotePageNumber, UserMsgRequest.TYPE_NONE);
+        }).list(remotePageNumber, Integer.valueOf(mQueryId));
     }
 
     private void initializeAdapter() {
@@ -157,7 +167,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
             noMore.setId(StringHelper.getString(R.string.ui_base_text_nothing_more_id));
             noMore.setAccessToken(StringHelper.getString(R.string.ui_base_text_nothing_more));
             mAdapter = new MsgAdapter();
-            mAdapter.setMode(Attributes.Mode.Single);
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             fetchingUserMessages();
         }
@@ -215,7 +225,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
         }).delete(msgId);
     }
 
-    private class MsgAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
+    private class MsgAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_MSG = 0, VT_NO_MORE = 1;
 
@@ -234,7 +244,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public int itemLayout(int viewType) {
             if (viewType == VT_MSG)
-                return R.layout.holder_view_individual_user_message;
+                return R.layout.holder_view_inidvidual_user_message_deletable;
             return R.layout.holder_view_nothing_more;
         }
 
@@ -257,11 +267,6 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         protected int comparator(Model item1, Model item2) {
             return 0;
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int i) {
-            return R.id.ui_holder_view_individual_user_message_swipe_layout;
         }
     }
 }
