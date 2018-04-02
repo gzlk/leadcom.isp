@@ -9,6 +9,10 @@ import com.litesuits.http.exception.HttpException;
 import com.litesuits.http.listener.HttpListener;
 import com.litesuits.http.response.Response;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+
 /**
  * <b>功能描述：</b>网络活动监听<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -60,10 +64,30 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
         ToastHelper.make().showMsg(StringHelper.format("网咯不给力(%d)，请重试", (null == status ? -1 : status.getCode())));
         onFailed();
         LogHelper.log("OnHttpListener", e.getMessage());
-        if (e.getMessage().contains("java.io.EOFException: \\n not found: size=0")) {
+        if (caughtThrowableCause(e).contains("java.io.EOFException: \\n not found: size=0")) {
             App.app().increaseOkHttpFailedTimes();
             LogHelper.log("OnHttpListener", "increased failure times to: " + App.app().getOkHttpFailedTimes());
         }
+    }
+
+    /**
+     * 获取异常的详细内容
+     */
+    private String caughtThrowableCause(Throwable ex) {
+        if (null == ex) return "null throwable object.";
+
+        Writer info = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(info);
+        ex.printStackTrace(printWriter);
+
+        Throwable cause = ex.getCause();
+        while (cause != null) {
+            cause.printStackTrace(printWriter);
+            cause = cause.getCause();
+        }
+        String result = info.toString();
+        printWriter.close();
+        return result;
     }
 
     @Override
