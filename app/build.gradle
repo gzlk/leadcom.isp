@@ -207,11 +207,11 @@ dependencies {
     // 分析依赖项
     // gradlew -q app:dependencies
     // https://mvnrepository.com/artifact/org.apache.poi/poi
-    implementation group: 'org.apache.poi', name: 'poi', version: '3.17'
+    //implementation group: 'org.apache.poi', name: 'poi', version: '3.17'
     // https://mvnrepository.com/artifact/org.apache.poi/poi-scratchpad
-    implementation group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17'
+    //implementation group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17'
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
+    //implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 
     // 高德地图
     // 2D地图
