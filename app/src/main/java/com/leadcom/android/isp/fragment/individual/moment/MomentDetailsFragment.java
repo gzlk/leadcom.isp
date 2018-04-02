@@ -199,7 +199,6 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     mAdapter.update(comment);
                 }
                 mAdapter.update(noMore);
-                smoothScrollToBottom(mAdapter.getItemCount() - 1);
             }
         }
     }
