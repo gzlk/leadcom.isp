@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.listener;
 
+import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -61,7 +62,7 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     public void onFailure(HttpException e, Response<T> response) {
         super.onFailure(e, response);
         HttpStatus status = response.getHttpStatus();
-        ToastHelper.make().showMsg(StringHelper.format("网咯不给力(%d)，请重试", (null == status ? -1 : status.getCode())));
+        ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_network_failed, (null == status ? -1 : status.getCode())));
         onFailed();
         LogHelper.log("OnHttpListener", e.getMessage());
         if (caughtThrowableCause(e).contains("java.io.EOFException: \\n not found: size=0")) {
@@ -94,7 +95,7 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     public void onCancel(T t, Response<T> response) {
         super.onCancel(t, response);
         HttpStatus status = response.getHttpStatus();
-        ToastHelper.make(null).showMsg(StringHelper.format("网咯操作已取消: (%d)", (null == status ? -1 : status.getCode())));
+        ToastHelper.make(null).showMsg(StringHelper.getString(R.string.ui_base_text_network_canceled, (null == status ? -1 : status.getCode())));
         onFailed();
     }
 }
