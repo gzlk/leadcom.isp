@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.ToggleableViewHolder;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 
 /**
  * <b>功能描述：</b>消息管理设置<br />
@@ -25,17 +27,22 @@ import com.hlk.hlklib.lib.inject.ViewId;
 public class SettingMessagingFragment extends BaseTransparentSupportFragment {
 
     // UI
+    @ViewId(R.id.ui_setting_messaging_title)
+    private View titleView;
     @ViewId(R.id.ui_setting_messaging_sound)
     private View soundView;
     @ViewId(R.id.ui_setting_messaging_vibration)
     private View vibrationView;
+    @ViewId(R.id.ui_setting_messaging_all)
+    private View allView;
 
     // Holder
     private SimpleClickableViewHolder titleHolder;
+    private SimpleClickableViewHolder allHolder;
     private ToggleableViewHolder soundHolder;
     private ToggleableViewHolder vibrationHolder;
 
-    String[] strings;
+    private String[] strings;
 
     @Override
     public int getLayout() {
@@ -73,7 +80,7 @@ public class SettingMessagingFragment extends BaseTransparentSupportFragment {
             strings = StringHelper.getStringArray(R.array.ui_individual_setting_messaging);
         }
         if (null == titleHolder) {
-            titleHolder = new SimpleClickableViewHolder(mRootView, SettingMessagingFragment.this);
+            titleHolder = new SimpleClickableViewHolder(titleView, SettingMessagingFragment.this);
             titleHolder.showContent(format(strings[0], StringHelper.getString(R.string.ui_base_text_messaging_closed)));
         }
         if (null == soundHolder) {
@@ -86,6 +93,11 @@ public class SettingMessagingFragment extends BaseTransparentSupportFragment {
             vibrationHolder.addOnViewHolderToggleChangedListener(toggleChangedListener);
             vibrationHolder.showContent(format(strings[2], App.nimVibrate ? 1 : 0));
         }
+        if (null == allHolder) {
+            allHolder = new SimpleClickableViewHolder(allView, this);
+            allHolder.showContent(strings[3]);
+            allHolder.addOnViewHolderClickListener(clickListener);
+        }
         resetTitle();
     }
 
@@ -95,6 +107,13 @@ public class SettingMessagingFragment extends BaseTransparentSupportFragment {
         titleHolder.showContent(format(strings[0], (sound || vibration ? StringHelper.getString(R.string.ui_base_text_messaging_opened) : getString(R.string.ui_base_text_messaging_closed))));
         App.resetNimMessageNotify(sound, vibration);
     }
+
+    private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            UserMessageFragment.open(SettingMessagingFragment.this, UserMsgRequest.TYPE_NONE);
+        }
+    };
 
     private ToggleableViewHolder.OnViewHolderToggleChangedListener toggleChangedListener = new ToggleableViewHolder.OnViewHolderToggleChangedListener() {
         @Override

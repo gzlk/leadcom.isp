@@ -37,11 +37,23 @@ interface AttachmentType {
      */
     int ARCHIVE = 6;
     /**
-     * 分享的动态
+     * 剪刀石头布游戏
      */
-    int MOMENT = 7;
+    int ROLL_POINT = 7; // 不必要的定义和功能
+    /**
+     * 阅后即焚快照
+     */
+    int SNAP_CHAT = 8;  // 不必要的定义和功能
     /**
      * 贴图
      */
     int STICKER = 9;
+    /**
+     * 白板会话
+     */
+    int WHITEBOARD = 10;// 不必要的定义和功能
+    /**
+     * 分享到群聊里的动态
+     */
+    int MOMENT = 11;
 }

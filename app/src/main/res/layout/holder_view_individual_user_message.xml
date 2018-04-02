@@ -6,108 +6,63 @@
     android:layout_marginBottom="@dimen/ui_base_border_size_normal"
     android:background="@android:color/white"
     android:gravity="center_vertical"
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    app:layout_itemType="main">
 
-    <com.daimajia.swipe.SwipeLayout
-        android:id="@+id/ui_holder_view_individual_user_message_swipe_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_holder_view_individual_user_message_header"
+        android:layout_width="@dimen/ui_base_user_header_image_size_big"
+        android:layout_height="@dimen/ui_base_user_header_image_size_big"
+        android:layout_marginStart="@dimen/ui_static_dp_5"
+        app:id_image_scale_type="centerCrop"
+        app:id_image_src="@mipmap/img_default_user_header"
+        app:id_image_type="rounded" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+    <LinearLayout
+        android:id="@+id/ui_holder_view_individual_user_message_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ui_static_dp_5"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/ui_static_dp_5"
+        android:paddingTop="@dimen/ui_static_dp_5">
 
-            <TextView
-                android:id="@+id/ui_holder_view_individual_user_message_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@color/color_ff4141"
-                android:gravity="center"
-                android:padding="@dimen/ui_base_dimen_margin_padding"
-                android:text="@string/ui_base_text_delete"
-                android:textColor="@color/ui_text_normal_white" />
-        </LinearLayout>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/ui_holder_view_individual_user_message_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHint" />
 
-            <com.leadcom.android.isp.lib.view.ImageDisplayer
-                android:id="@+id/ui_holder_view_individual_user_message_header"
-                android:layout_width="@dimen/ui_base_user_header_image_size_big"
-                android:layout_height="@dimen/ui_base_user_header_image_size_big"
-                android:layout_marginStart="@dimen/ui_static_dp_5"
-                app:id_image_scale_type="centerCrop"
-                app:id_image_src="@mipmap/img_default_user_header"
-                app:id_image_type="rounded" />
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_individual_user_message_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ui_static_dp_3"
+            android:layout_marginTop="@dimen/ui_static_dp_3"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/ui_icon_heart_hollow" />
 
-            <LinearLayout
-                android:id="@+id/ui_holder_view_individual_user_message_info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ui_static_dp_5"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/ui_static_dp_5"
-                android:paddingTop="@dimen/ui_static_dp_5">
+        <TextView
+            android:id="@+id/ui_holder_view_individual_user_message_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name_default"
+            android:textColor="@color/textColorHint"
+            android:textSize="@dimen/ui_base_text_size_little" />
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/ui_holder_view_individual_user_message_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="@string/app_name_default"
-                    android:textColor="@color/textColorHint" />
-
-                <com.hlk.hlklib.lib.view.CustomTextView
-                    android:id="@+id/ui_holder_view_individual_user_message_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/ui_static_dp_3"
-                    android:layout_marginTop="@dimen/ui_static_dp_3"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="@string/ui_icon_heart_hollow" />
-
-                <TextView
-                    android:id="@+id/ui_holder_view_individual_user_message_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/app_name_default"
-                    android:textColor="@color/textColorHint"
-                    android:textSize="@dimen/ui_base_text_size_little" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/ui_holder_view_individual_user_message_text"
-                android:layout_width="@dimen/ui_static_dp_60"
-                android:layout_height="@dimen/ui_base_user_header_image_size_big"
-                android:layout_marginEnd="@dimen/ui_static_dp_5"
-                android:layout_marginStart="@dimen/ui_static_dp_5"
-                android:background="@color/textColorHintLightLight"
-                android:gravity="center_vertical"
-                android:maxLines="3"
-                android:padding="@dimen/ui_static_dp_5"
-                android:text="@string/ui_text_feedback_content_hint"
-                android:textColor="@color/textColorHint"
-                android:textSize="@dimen/ui_base_text_size_little"
-                android:visibility="gone" />
-
-            <com.leadcom.android.isp.lib.view.ImageDisplayer
-                android:id="@+id/ui_holder_view_individual_user_message_image"
-                android:layout_width="@dimen/ui_base_user_header_image_size_big"
-                android:layout_height="@dimen/ui_base_user_header_image_size_big"
-                android:layout_marginEnd="@dimen/ui_static_dp_5"
-                android:layout_marginStart="@dimen/ui_static_dp_5"
-                app:id_image_scale_type="centerCrop"
-                app:id_image_src="@drawable/img_default_archive" />
-
-        </LinearLayout>
-
-    </com.daimajia.swipe.SwipeLayout>
+    <com.leadcom.android.isp.lib.view.ImageDisplayer
+        android:id="@+id/ui_holder_view_individual_user_message_image"
+        android:layout_width="@dimen/ui_base_user_header_image_size_big"
+        android:layout_height="@dimen/ui_base_user_header_image_size_big"
+        android:layout_marginEnd="@dimen/ui_static_dp_5"
+        android:layout_marginStart="@dimen/ui_static_dp_5"
+        app:id_image_scale_type="centerCrop"
+        app:id_image_src="@drawable/img_default_archive" />
 
 </LinearLayout>

@@ -41,7 +41,6 @@ import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,14 +149,6 @@ public class ActivityViewHolder extends BaseViewHolder {
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
         titleView.setText(topic.getTitle());
         descView.setText(topic.getAccessToken());
-    }
-
-    private void resetDeletableHeight(View view) {
-        if (null != view) {
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
-            params.height = itemView.getMeasuredHeight();
-            view.setLayoutParams(params);
-        }
     }
 
     public void showContent(RecentContact contact) {

@@ -100,7 +100,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                     String blur = getBlurImage(header);
                     if (!isEmpty(blur)) {
                         clearHandler();
-                        changeColor(header);
+                        //changeColor(header);
                         headerBackground.displayImage("file://" + blur, bWidth, bHeight, false, false);
                     } else {
                         blurHeader();
@@ -125,7 +125,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
             String blur = getBlurImage(header);
             if (!isEmpty(blur)) {
                 clearHandler();
-                changeColor(header);
+                //changeColor(header);
                 headerBackground.displayImage("file://" + blur, bWidth, bHeight, false, false);
             } else {
                 log("no blur image, 3s to try again.");

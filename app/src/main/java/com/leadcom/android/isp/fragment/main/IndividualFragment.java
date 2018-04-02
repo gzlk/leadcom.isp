@@ -34,6 +34,7 @@ import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.EditableDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -49,6 +50,7 @@ import com.leadcom.android.isp.holder.individual.MomentHomeCameraViewHolder;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -122,6 +124,15 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         }
         if (function >= TYPE_ARCHIVE_MINE) {
             setCustomTitle(R.string.ui_text_archive_list_fragment_title);
+            if (function == TYPE_ARCHIVE_MINE) {
+                setRightIcon(R.string.ui_icon_more);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        openUserMessageList();
+                    }
+                });
+            }
         } else if (function == TYPE_COLLECT) {
             setCustomTitle(R.string.ui_individual_collection_list_fragment_title);
         }
@@ -476,29 +487,15 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         super.onActivityResult(requestCode, data);
     }
 
-    private View openUserMsgDialogView;
-
     public void openUserMessageList() {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == openUserMsgDialogView) {
-                    openUserMsgDialogView = View.inflate(Activity(), R.layout.popup_dialog_individual_user_message, null);
-                }
-                return openUserMsgDialogView;
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-
-            }
-        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                UserMessageFragment.open(IndividualFragment.this, (function == TYPE_MOMENT ? UserMsgRequest.TYPE_MOMENT : UserMsgRequest.TYPE_NONE));
+                // 用户个人档案相关的消息
+                UserMessageFragment.open(IndividualFragment.this, UserMsgRequest.TYPE_USER_ARCHIVE);
                 return true;
             }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+        }).setTitleText(R.string.ui_individual_message_list_title).setConfirmText(R.string.ui_individual_message_list).show();
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

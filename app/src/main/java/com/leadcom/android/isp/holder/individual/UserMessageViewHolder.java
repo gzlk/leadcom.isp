@@ -3,7 +3,6 @@ package com.leadcom.android.isp.holder.individual;
 import android.view.View;
 import android.widget.TextView;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -28,8 +27,6 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 
 public class UserMessageViewHolder extends BaseViewHolder {
 
-    @ViewId(R.id.ui_holder_view_individual_user_message_swipe_layout)
-    private SwipeLayout swipeLayout;
     @ViewId(R.id.ui_holder_view_individual_user_message_header)
     private ImageDisplayer headerView;
     @ViewId(R.id.ui_holder_view_individual_user_message_name)
@@ -40,10 +37,8 @@ public class UserMessageViewHolder extends BaseViewHolder {
     private TextView timeView;
     @ViewId(R.id.ui_holder_view_individual_user_message_image)
     private ImageDisplayer imageView;
-    @ViewId(R.id.ui_holder_view_individual_user_message_text)
-    private TextView textView;
-    @ViewId(R.id.ui_tool_view_contact_button2)
-    private View deleteButton;
+    @ViewId(R.id.ui_holder_view_individual_user_message_info)
+    private View infoView;
 
     private int imageSize;
 
@@ -55,16 +50,14 @@ public class UserMessageViewHolder extends BaseViewHolder {
             @Override
             public void onImageClick(ImageDisplayer displayer, String url) {
                 // 打开用户名片页
-                if (null != mOnHandlerBoundDataListener) {
-                    mOnHandlerBoundDataListener.onHandlerBoundData(UserMessageViewHolder.this);
-                }
+                headerView.performClick();
             }
         });
         imageView.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
             public void onImageClick(ImageDisplayer displayer, String url) {
                 // 打开详情页
-                textView.performClick();
+                infoView.performClick();
             }
         });
     }
@@ -86,20 +79,21 @@ public class UserMessageViewHolder extends BaseViewHolder {
         timeView.setText(fragment().formatTimeAgo(msg.getCreateDate()));
         if (msg.getSourceType() == UserMessage.SourceType.MOMENT) {
             Moment moment = msg.getUserMmt();
-            textView.setVisibility(moment.getImage().size() > 0 ? View.GONE : View.VISIBLE);
+            //infoView.setVisibility(moment.getImage().size() > 0 ? View.GONE : View.VISIBLE);
             imageView.setVisibility(moment.getImage().size() > 0 ? View.VISIBLE : View.GONE);
             imageView.displayImage(moment.getImage().size() > 0 ? moment.getImage().get(0) : "", imageSize, false, false);
         } else {
             //Archive archive = null == msg.getGroDocRcmd() ? msg.getUserDoc() : msg.getGroDocRcmd();
-            textView.setVisibility(View.GONE);
+            //infoView.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
             imageView.displayImage("drawable://" + R.drawable.img_default_archive, imageSize, false, false);
         }
+        //resetSwipeButtonHeight(deleteButton);
     }
 
     @Click({R.id.ui_holder_view_individual_user_message_info,
-            R.id.ui_holder_view_individual_user_message_text,
-            R.id.ui_holder_view_individual_user_message_delete})
+            R.id.ui_holder_view_individual_user_message_header,
+            R.id.ui_tool_view_contact_button2})
     private void elementClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

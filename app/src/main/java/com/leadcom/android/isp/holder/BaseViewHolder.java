@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -195,5 +196,17 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
      */
     public void setOnViewHolderElementClickListener(OnViewHolderElementClickListener l) {
         mOnViewHolderElementClickListener = l;
+    }
+
+    /**
+     * 重置滑动删除按钮的高度为 itemView 的高度
+     */
+    protected void resetSwipeButtonHeight(View view) {
+        if (null == view) return;
+        if (itemView.getMeasuredHeight() > 0 && view.getMeasuredHeight() < itemView.getMeasuredHeight()) {
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            params.height = itemView.getMeasuredHeight();
+            view.setLayoutParams(params);
+        }
     }
 }

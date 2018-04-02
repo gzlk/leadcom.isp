@@ -3,7 +3,7 @@ package com.leadcom.android.isp.nim.model.extension;
 import org.json.JSONObject;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>转发到会话中的动态<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2018/04/01 09:25 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -23,15 +23,15 @@ public class MomentAttachment extends CustomAttachment {
     }
 
     /**
-     * 标题
+     * 标题，默认为“[分享动态]”
      */
     private String title;
     /**
-     * 摘要
+     * 摘要，即动态的文本内容，如果有的话
      */
     private String summary;
     /**
-     * 图片地址
+     * 图片地址，即动态的第一张图片地址，如果该动态包含图片的话
      */
     private String image;
 

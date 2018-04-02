@@ -10,14 +10,20 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.MomentRequest;
+import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.individual.MomentViewHolder;
 import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.user.Moment;
 import com.leadcom.android.isp.model.user.User;
@@ -132,7 +138,7 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(user, success, message);
                 if (success) {
                     if (null != user) {
-                        setCustomTitle(user.getName() + "的动态");
+                        setCustomTitle(StringHelper.getString(R.string.ui_individual_moment_list_fragment_title, user.getName()));
                     } else {
                         ToastHelper.make().showMsg(R.string.ui_individual_moment_list_user_not_exists);
                     }
@@ -190,17 +196,35 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
+    private void openUserMessageList() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                // 用户动态相关的消息
+                UserMessageFragment.open(MomentListFragment.this, UserMsgRequest.TYPE_MOMENT);
+                return true;
+            }
+        }).setTitleText(R.string.ui_individual_moment_msg_list_title).setConfirmText(R.string.ui_individual_message_list).show();
+    }
+
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new MomentAdapter();
             mRecyclerView.setAdapter(mAdapter);
             if (mQueryId.equals(Cache.cache().userId)) {
                 mAdapter.add(today());
-                setCustomTitle(R.string.ui_main_individual_functions_1);
+                setCustomTitle(StringHelper.getString(R.string.ui_individual_moment_list_fragment_title, StringHelper.getString(R.string.ui_base_text_myself)));
                 // 这里不需要直接上传，只需要把选择的图片传递给新建动态页面即可，上传在那里实现
                 isSupportDirectlyUpload = false;
                 // 添加图片选择
                 addOnImageSelectedListener(imageSelectedListener);
+                setRightIcon(R.string.ui_icon_more);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        openUserMessageList();
+                    }
+                });
             } else {
                 fetchUser();
             }

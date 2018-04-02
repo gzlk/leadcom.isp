@@ -15,12 +15,11 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.individual.UserMessageViewHolder;
-import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -82,13 +81,13 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void warningClear() {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_individual_message_clear_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 clearMessages();
                 return true;
             }
-        }, null);
+        }).setConfirmText(R.string.ui_base_text_clear).setTitleText(R.string.ui_individual_message_clear_warning).show();
     }
 
     private void clearMessages() {
@@ -173,24 +172,16 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    // 打开个人信息
-    private OnHandleBoundDataListener<UserMessage> boundDataListener = new OnHandleBoundDataListener<UserMessage>() {
-        @Override
-        public UserMessage onHandlerBoundData(BaseViewHolder holder) {
-            int index = holder.getAdapterPosition();
-            UserMessage msg = (UserMessage) mAdapter.get(index);
-            App.openUserInfo(UserMessageFragment.this, msg.getUserId());
-            return null;
-        }
-    };
-
-    private OnViewHolderElementClickListener onViewHolderClickListener = new OnViewHolderElementClickListener() {
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
             UserMessage msg = (UserMessage) mAdapter.get(index);
             switch (view.getId()) {
+                case R.id.ui_holder_view_individual_user_message_header:
+                    // 头像点击
+                    App.openUserInfo(UserMessageFragment.this, msg.getUserId());
+                    break;
                 case R.id.ui_holder_view_individual_user_message_info:
-                case R.id.ui_holder_view_individual_user_message_text:
                     // 打开详情
                     switch (msg.getSourceType()) {
                         case UserMessage.SourceType.MOMENT:
@@ -202,7 +193,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                             break;
                     }
                     break;
-                case R.id.ui_holder_view_individual_user_message_delete:
+                case R.id.ui_tool_view_contact_button2:
                     // 删除这条消息
                     deleteMessage(index, msg.getId());
                     break;
@@ -233,8 +224,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             if (viewType == VT_MSG) {
                 UserMessageViewHolder holder = new UserMessageViewHolder(itemView, UserMessageFragment.this);
-                holder.addOnHandlerBoundDataListener(boundDataListener);
-                holder.setOnViewHolderElementClickListener(onViewHolderClickListener);
+                holder.setOnViewHolderElementClickListener(elementClickListener);
                 return holder;
             } else {
                 return new NothingMoreViewHolder(itemView, UserMessageFragment.this);

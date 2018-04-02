@@ -5,7 +5,9 @@
     android:orientation="vertical"
     android:paddingTop="@dimen/ui_base_dimen_margin_padding">
 
-    <include layout="@layout/holder_view_simple_clickable" />
+    <include
+        android:id="@+id/ui_setting_messaging_title"
+        layout="@layout/holder_view_simple_clickable" />
 
     <include layout="@layout/tool_view_divider_big" />
 
@@ -16,4 +18,11 @@
     <include
         android:id="@+id/ui_setting_messaging_vibration"
         layout="@layout/holder_view_toggle" />
+
+    <include layout="@layout/tool_view_divider_big" />
+
+    <include
+        android:id="@+id/ui_setting_messaging_all"
+        layout="@layout/holder_view_simple_clickable" />
+
 </LinearLayout>

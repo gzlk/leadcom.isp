@@ -42,7 +42,9 @@
         <item>0|谁可以看|%s</item>
     </string-array>
 
+    <string name="ui_individual_moment_list_fragment_title" formatted="false">%s的动态</string>
     <string name="ui_individual_moment_list_user_not_exists">该用户不存在</string>
+    <string name="ui_individual_moment_msg_list_title">查看动态相关的消息列表</string>
     <string name="ui_individual_moment_list_nothing">他目前还没有发布过任何内容</string>
     <string name="ui_individual_moment_list_loading">正在加载列表，请稍候&#8230;</string>
     <string name="ui_individual_moment_list_commenting">发布评论请稍候&#8230;</string>
@@ -76,10 +78,11 @@
 
     <string name="ui_individual_message_fragment_title">消息</string>
     <string name="ui_individual_message_list">消息列表</string>
+    <string name="ui_individual_message_list_title">查看档案相关的消息列表</string>
     <string name="ui_individual_message_fetching">正在加载消息列表，请稍候&#8230;</string>
     <string name="ui_individual_message_deleting">正在删除消息，请稍候&#8230;</string>
     <string name="ui_individual_message_clear_warning">
-        <![CDATA[<b>清空消息</b><br/>消息<font color="#fe4848">清空之后不能恢复</font>！<br/>如您的消息中包含重要的内容，请<font color="#65656a">逐条删除</font>您不再需要保留的消息。<br/>您确定要继续吗？]]>
+        <![CDATA[消息清空之后<font color="#148dfe">不能恢复</font>！确定要清空吗？]]>
     </string>
 
     <!--个人设置功能列表-->
@@ -104,6 +107,7 @@
         <item>0|新消息通知|%s|0</item>
         <item>1|声音提示|%d</item>
         <item>2|震动提示|%d</item>
+        <item>3|我的消息|查看所有消息|1</item>
     </string-array>
     <string name="ui_text_setting_messaging_fragment_title">消息通知</string>
 

@@ -54,6 +54,12 @@ public class BaseAttachmentParser implements MsgAttachmentParser {
                 case AttachmentType.STICKER:
                     attachment = new StickerAttachment();
                     break;
+                case AttachmentType.ROLL_POINT:
+                    if (data.has("title") && data.has("summary")) {
+                        // 兼容之前的错误定义
+                        attachment = new MomentAttachment();
+                    }
+                    break;
             }
             if (null != attachment) {
                 attachment.fromJson(data);
