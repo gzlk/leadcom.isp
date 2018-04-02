@@ -26,7 +26,7 @@
             android:minWidth="@dimen/ui_static_dp_60"
             android:padding="@dimen/ui_static_dp_5"
             android:text="@string/ui_archive_management_title_button_1"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:textSize="@dimen/ui_base_text_size_small"
             app:active_color="@color/colorPrimary"
             app:background_type="fill"

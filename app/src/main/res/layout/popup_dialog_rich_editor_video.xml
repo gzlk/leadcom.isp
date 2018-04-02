@@ -46,7 +46,7 @@
                     android:padding="@dimen/ui_static_dp_5"
                     android:rotation="45"
                     android:text="@string/ui_icon_add"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@color/textColorLight" />
             </LinearLayout>
         </LinearLayout>
 

@@ -57,7 +57,7 @@
         android:gravity="center"
         android:minHeight="@dimen/ui_base_dimen_button_height"
         android:text="@string/ui_base_text_next_step"
-        android:textColor="@android:color/white"
+        android:textColor="@color/textColorLight"
         android:textSize="@dimen/ui_base_text_size_big"
         app:active_color="@color/buttonActivityColor"
         app:corner_size="@dimen/ui_base_dimen_button_corner_size"

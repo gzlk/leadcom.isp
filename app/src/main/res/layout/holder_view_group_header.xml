@@ -27,7 +27,7 @@
         android:layout_toEndOf="@+id/ui_holder_view_group_header_logo"
         android:ellipsize="end"
         android:minLines="4"
-        android:textColor="@android:color/white"
+        android:textColor="@color/textColorLight"
         android:textSize="@dimen/ui_base_text_size_small"
         app:lessText="@string/ui_base_text_collapse"
         app:maxLines="7"

@@ -7,13 +7,12 @@
     <RelativeLayout
         android:id="@+id/ui_main_tool_bar_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/ui_main_tool_bar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="@dimen/ui_base_dimen_simple_item_height"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:orientation="horizontal">
@@ -33,7 +32,6 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="@string/ui_text_home_top_channel1"
-                    android:textColor="@android:color/white"
                     android:textSize="@dimen/ui_base_text_size_big" />
 
                 <View
@@ -43,12 +41,14 @@
                     android:layout_alignEnd="@+id/ui_main_home_top_channel_1"
                     android:layout_alignStart="@+id/ui_main_home_top_channel_1"
                     android:layout_below="@+id/ui_main_home_top_channel_1"
-                    android:background="@android:color/white" />
+                    android:background="@color/colorPrimary" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_static_dp_10"
+                android:layout_marginStart="@dimen/ui_static_dp_10">
 
                 <TextView
                     android:id="@+id/ui_main_home_top_channel_2"
@@ -57,7 +57,7 @@
                     android:layout_marginEnd="@dimen/ui_static_dp_15"
                     android:layout_marginStart="@dimen/ui_static_dp_15"
                     android:text="@string/ui_text_home_top_channel2"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/textColorHint"
                     android:textSize="@dimen/ui_base_text_size_big" />
 
                 <View
@@ -67,7 +67,7 @@
                     android:layout_alignEnd="@+id/ui_main_home_top_channel_2"
                     android:layout_alignStart="@+id/ui_main_home_top_channel_2"
                     android:layout_below="@+id/ui_main_home_top_channel_2"
-                    android:background="@android:color/white"
+                    android:background="@color/colorPrimary"
                     android:visibility="invisible" />
             </RelativeLayout>
 
@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ui_text_home_top_channel3"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/textColorHint"
                     android:textSize="@dimen/ui_base_text_size_big" />
 
                 <View
@@ -90,7 +90,7 @@
                     android:layout_alignEnd="@+id/ui_main_home_top_channel_3"
                     android:layout_alignStart="@+id/ui_main_home_top_channel_3"
                     android:layout_below="@+id/ui_main_home_top_channel_3"
-                    android:background="@android:color/white"
+                    android:background="@color/colorPrimary"
                     android:visibility="invisible" />
             </RelativeLayout>
 
@@ -108,6 +108,11 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/ui_main_tool_bar_container"
         android:orientation="vertical">
+
+        <include
+            android:id="@+id/ui_main_tool_bar_line"
+            layout="@layout/tool_view_divider_big"
+            android:visibility="gone" />
 
         <include layout="@layout/tool_view_view_pager_embedded" />
     </LinearLayout>

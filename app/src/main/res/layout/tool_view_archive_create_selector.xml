@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/ui_icon_system_announcement"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_max" />
 
         </com.hlk.hlklib.lib.view.CorneredView>
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/ui_icon_rich_editor_image"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_max" />
 
         </com.hlk.hlklib.lib.view.CorneredView>
@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/ui_icon_attachment"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_max" />
 
         </com.hlk.hlklib.lib.view.CorneredView>
@@ -133,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/ui_icon_moment_add"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_max" />
 
         </com.hlk.hlklib.lib.view.CorneredView>

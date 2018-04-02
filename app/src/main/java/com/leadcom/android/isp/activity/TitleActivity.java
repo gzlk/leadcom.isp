@@ -37,6 +37,8 @@ public class TitleActivity extends BaseActivity {
     public AppBarLayout appBarLayout;
     @ViewId(R.id.activity_toolbar)
     public Toolbar mToolbar;
+    @ViewId(R.id.activity_app_bar_layout_line)
+    public View toolbarLine;
 
     @ViewId(R.id.ui_ui_custom_title_left_container)
     public LinearLayout mLeftContainer;

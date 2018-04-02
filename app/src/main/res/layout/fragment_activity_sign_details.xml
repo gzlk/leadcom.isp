@@ -183,7 +183,7 @@
                 android:gravity="center"
                 android:minHeight="@dimen/ui_base_dimen_button_height"
                 android:padding="@dimen/ui_base_dimen_margin_padding"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 app:active_color="@color/buttonActivityColor"
                 app:corner_size="@dimen/ui_static_dp_zero"
                 app:normal_color="@color/buttonNormalColor" />
@@ -208,7 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ui_icon_material_timer"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/textColorLight"
                     app:ctv_source="material_icon" />
 
                 <TextView
@@ -216,7 +216,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ui_static_dp_5"
                     android:text="@string/ui_base_text_notification"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/textColorLight"
                     android:textSize="@dimen/ui_base_text_size_small" />
             </com.hlk.hlklib.lib.view.CorneredView>
 

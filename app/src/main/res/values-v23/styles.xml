@@ -2,7 +2,13 @@
 <resources>
 
     <style name="AppTheme" parent="BaseTheme">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 
+    <style name="AppTheme.Container" parent="AppTheme">
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorPrimaryDark">@android:color/white</item>
     </style>
 
 </resources>

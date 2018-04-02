@@ -34,11 +34,11 @@
         android:background="@drawable/ui_background_login_item"
         android:orientation="vertical">
 
+        <include layout="@layout/tool_view_half_line_horizontal" />
+
         <include
             android:id="@+id/ui_about_to_evaluate"
             layout="@layout/holder_view_simple_clickable" />
-
-        <include layout="@layout/tool_view_half_line_horizontal" />
 
         <include
             android:id="@+id/ui_about_to_help"

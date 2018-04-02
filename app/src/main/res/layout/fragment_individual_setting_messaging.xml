@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+    android:background="@color/windowBackground"
+    android:orientation="vertical">
+
+    <include layout="@layout/tool_view_divider_big" />
 
     <include
         android:id="@+id/ui_setting_messaging_title"

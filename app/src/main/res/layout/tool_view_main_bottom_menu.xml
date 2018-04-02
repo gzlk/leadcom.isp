@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/ui_icon_add"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:textSize="20sp" />
     </RelativeLayout>
 </RelativeLayout>

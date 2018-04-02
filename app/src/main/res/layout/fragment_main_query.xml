@@ -8,7 +8,6 @@
         android:id="@+id/ui_main_query_input_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -29,7 +28,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/ui_base_text_cancel"
-            android:textColor="@android:color/white"
             android:textSize="@dimen/ui_base_text_size_big" />
     </LinearLayout>
 

@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ui_holder_view_archive_home_recommend_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
     android:background="@android:color/white"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-    android:paddingStart="@dimen/ui_base_dimen_margin_padding"
     android:paddingTop="@dimen/ui_base_dimen_margin_padding"
     app:cv_active_border="@color/colorPrimary"
     app:cv_background="@android:color/white"
@@ -21,17 +18,26 @@
         android:id="@+id/ui_holder_view_archive_home_recommend_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/app_name_default"
         android:textColor="@color/textColorHint" />
 
-    <include layout="@layout/tool_view_document_user_header" />
+    <include
+        layout="@layout/tool_view_document_user_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding" />
 
     <com.leadcom.android.isp.lib.view.ImageDisplayer
         android:id="@+id/ui_holder_view_archive_home_recommend_cover"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ui_static_dp_120"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginTop="@dimen/ui_static_dp_5"
         app:id_image_scale_type="centerCrop"
         app:id_image_src="@mipmap/img_image_default" />
@@ -41,6 +47,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/ui_static_dp_5"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginTop="@dimen/ui_static_dp_5"
         android:ellipsize="end"
         android:maxLines="2"
@@ -52,12 +60,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/ui_static_dp_5"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:ellipsize="end"
         android:maxLines="3"
         android:text="@string/app_name_default"
         android:textColor="@color/textColorHint" />
 
-    <include layout="@layout/tool_view_half_line_horizontal" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:background="@color/windowBackground" />
 
-    <include layout="@layout/tool_view_archive_additional" />
-</com.hlk.hlklib.lib.view.CorneredView>
+    <include
+        layout="@layout/tool_view_archive_additional"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding" />
+
+    <include layout="@layout/tool_view_divider_big" />
+</LinearLayout>

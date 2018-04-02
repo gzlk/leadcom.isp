@@ -14,13 +14,13 @@
         android:gravity="center"
         android:padding="@dimen/ui_static_dp_5"
         android:text="@string/ui_base_text_copy"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/textColorLight" />
 
     <com.hlk.hlklib.lib.view.CustomTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ui_icon_vertical_bar"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/textColorLight" />
 
     <TextView
         android:id="@+id/ui_tooltip_menu_document_comment_delete"
@@ -29,6 +29,6 @@
         android:gravity="center"
         android:padding="@dimen/ui_static_dp_5"
         android:text="@string/ui_base_text_delete"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/textColorLight" />
 
 </LinearLayout>

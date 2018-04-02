@@ -1,87 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:layout_itemType="main"
-    android:id="@+id/ui_holder_view_system_message_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
-    android:background="@android:color/white"
-    android:baselineAligned="false"
-    android:gravity="center_vertical"
-    android:minHeight="@dimen/ui_static_dp_68"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/ui_static_dp_5"
-    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-    android:paddingStart="@dimen/ui_base_dimen_margin_padding"
-    android:paddingTop="@dimen/ui_static_dp_5">
+    android:orientation="vertical"
+    app:layout_itemType="main">
 
     <LinearLayout
-        android:id="@+id/ui_holder_view_system_message_icon_container"
-        android:layout_width="@dimen/ui_static_dp_45"
-        android:layout_height="@dimen/ui_static_dp_45"
-        android:background="@drawable/ui_background_oval_primary">
-
-        <com.hlk.hlklib.lib.view.CustomTextView
-            android:id="@+id/ui_holder_view_system_message_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/ui_icon_system_msg"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/ui_base_text_size_large" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
+        android:id="@+id/ui_holder_view_system_message_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_marginBottom="@dimen/ui_base_border_size_normal"
+        android:background="@android:color/white"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/ui_static_dp_68"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/ui_static_dp_5"
+        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+        android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+        android:paddingTop="@dimen/ui_static_dp_5"
+        app:layout_itemType="main">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/ui_holder_view_system_message_icon_container"
+            android:layout_width="@dimen/ui_static_dp_45"
+            android:layout_height="@dimen/ui_static_dp_45"
+            android:background="@drawable/ui_background_oval_primary">
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_holder_view_system_message_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/ui_icon_system_msg"
+                android:textColor="@color/textColorLight"
+                android:textSize="@dimen/ui_base_text_size_large" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ui_holder_view_system_message_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/app_name_default" />
+
+                <TextView
+                    android:id="@+id/ui_holder_view_system_message_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/app_name_default"
+                    android:textColor="@color/textColorHint"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+                <TextView
+                    android:id="@+id/ui_holder_view_system_message_unread"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/ui_system_message_unread"
+                    android:textColor="@color/colorCaution"
+                    android:textSize="@dimen/ui_base_text_size_small"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/ui_holder_view_system_message_title"
-                android:layout_width="0dp"
+                android:id="@+id/ui_holder_view_system_message_description"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:ellipsize="end"
-                android:singleLine="true"
-                android:text="@string/app_name_default" />
-
-            <TextView
-                android:id="@+id/ui_holder_view_system_message_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
+                android:maxLines="2"
                 android:text="@string/app_name_default"
                 android:textColor="@color/textColorHint"
                 android:textSize="@dimen/ui_base_text_size_small" />
-
-            <TextView
-                android:id="@+id/ui_holder_view_system_message_unread"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="@string/ui_system_message_unread"
-                android:textColor="@color/colorCaution"
-                android:textSize="@dimen/ui_base_text_size_small"
-                android:visibility="gone" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/ui_holder_view_system_message_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="@string/app_name_default"
-            android:textColor="@color/textColorHint"
-            android:textSize="@dimen/ui_base_text_size_small" />
     </LinearLayout>
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
 </LinearLayout>

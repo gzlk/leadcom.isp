@@ -337,7 +337,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
                         android:text="@string/ui_icon_rich_editor_delete"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColorLight"
                         android:textSize="30sp" />
 
                 </com.hlk.hlklib.lib.view.CorneredView>
@@ -381,7 +381,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
                         android:text="@string/ui_icon_share_forward"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColorLight"
                         android:textSize="@dimen/ui_base_share_dialog_icon_text_size" />
 
                 </com.hlk.hlklib.lib.view.CorneredView>
@@ -425,7 +425,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
                         android:text="@string/ui_icon_share_recommend"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColorLight"
                         android:textSize="@dimen/ui_base_share_dialog_icon_text_size" />
 
                 </com.hlk.hlklib.lib.view.CorneredView>
@@ -469,7 +469,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/ui_base_text_cancel"
-                        android:textColor="@android:color/white" />
+                        android:textColor="@color/textColorLight" />
 
                 </com.hlk.hlklib.lib.view.CorneredView>
 

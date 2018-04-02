@@ -10,7 +10,7 @@
         android:layout_marginTop="@dimen/ui_static_dp_60"
         android:gravity="center"
         android:text="@string/ui_base_text_nothing"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"
         android:textSize="@dimen/ui_static_sp_20" />
 
 </LinearLayout>

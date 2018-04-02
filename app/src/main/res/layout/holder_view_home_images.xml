@@ -23,7 +23,7 @@
         android:paddingStart="@dimen/ui_static_dp_5"
         android:paddingTop="@dimen/ui_static_dp_5"
         android:singleLine="true"
-        android:textColor="@android:color/white"
+        android:textColor="@color/textColorLight"
         android:textSize="@dimen/ui_base_text_size_big" />
 
     <LinearLayout

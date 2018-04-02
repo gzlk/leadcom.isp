@@ -25,7 +25,7 @@
             android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
             android:paddingStart="@dimen/ui_static_dp_zero"
             android:text="@string/ui_icon_setting"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:textSize="@dimen/ui_base_text_size_big" />
 
         <RelativeLayout
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="@string/ui_icon_add"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_big" />
 
         </RelativeLayout>
@@ -62,7 +62,7 @@
                 android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
                 android:gravity="center"
                 android:text="@string/ui_icon_chat"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_big" />
 
             <LinearLayout

@@ -9,7 +9,7 @@
         android:bottom="@dimen/ui_base_border_size_normal"
         android:top="@dimen/ui_base_border_size_normal">
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/white" />
+            <solid android:color="@color/textColorLight" />
         </shape>
     </item>
 </layer-list>

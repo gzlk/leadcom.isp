@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,12 +14,17 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
+import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
+import com.leadcom.android.isp.nim.model.notification.NimMessage;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.msg.MsgService;
 
 /**
  * <b>功能描述：</b>首页<br />
@@ -44,9 +48,6 @@ public class MainFragment extends BaseTransparentSupportFragment {
     private static final String TAG_MINE = "main_mine";
 
     private static final int SHOW_HOME = 0, SHOW_RECENT = 1, SHOW_GROUP = 2, SHOW_MINE = 3;
-
-    @ViewId(R.id.ui_fragment_main_frame_layout)
-    private FrameLayout frameLayout;
 
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
     private CustomTextView iconView1;
@@ -83,13 +84,29 @@ public class MainFragment extends BaseTransparentSupportFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        NimApplication.addNotificationChangeCallback(callback);
         setDisplayPage();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        NimApplication.dispatchCallbacks();
     }
+
+    @Override
+    public void onDestroy() {
+        NimApplication.removeNotificationChangeCallback(callback);
+        super.onDestroy();
+    }
+
+    private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
+        @Override
+        public void onChanged() {
+            int size = NimMessage.getUnRead();
+            showUnreadFlag(size + NIMClient.getService(MsgService.class).getTotalUnreadCount());
+        }
+    };
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {

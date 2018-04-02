@@ -63,7 +63,7 @@
             android:maxLength="10"
             android:maxLines="1"
             android:text="@string/app_name"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:textSize="@dimen/ui_base_text_size_big" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="@string/ui_icon_edit"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:visibility="invisible" />
 
         <TextView
@@ -84,7 +84,7 @@
             android:ellipsize="end"
             android:maxLines="4"
             android:minHeight="@dimen/ui_static_dp_50"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:textSize="@dimen/ui_base_text_size_small" />
     </RelativeLayout>
 

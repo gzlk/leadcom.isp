@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/ui_icon_camera"
-        android:textColor="@android:color/white"
+        android:textColor="@color/textColorLight"
         android:textSize="@dimen/ui_static_sp_45" />
 
 </com.hlk.hlklib.lib.view.CorneredView>

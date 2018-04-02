@@ -90,7 +90,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        tryPaddingContent(toolBar, false);
+        //tryPaddingContent(toolBar, false);
         isLoadingComplete(true);
 
         // 头像选择是需要剪切的

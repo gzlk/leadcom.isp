@@ -12,7 +12,7 @@
         android:maxLength="10"
         android:maxLines="1"
         android:text="@string/app_name"
-        android:textColor="@android:color/white"
+        android:textColor="@color/textColorLight"
         android:textSize="@dimen/ui_base_text_size_big" />
 
     <TextView
@@ -23,6 +23,6 @@
         android:maxLength="15"
         android:maxLines="1"
         android:text="@string/app_name"
-        android:textColor="@android:color/white"
+        android:textColor="@color/textColorLight"
         android:textSize="@dimen/ui_base_text_size_small" />
 </LinearLayout>

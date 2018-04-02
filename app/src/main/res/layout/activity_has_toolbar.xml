@@ -8,13 +8,15 @@
         android:id="@+id/activity_app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="?attr/colorPrimary"
         android:fitsSystemWindows="true"
-        android:translationZ="@dimen/ui_base_translationZ_small"
         app:elevation="0dp">
 
         <include layout="@layout/tool_view_activity_normal_toolbar" />
 
+        <include
+            android:id="@+id/activity_app_bar_layout_line"
+            layout="@layout/tool_view_half_line_horizontal" />
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/activity_frame_content" />

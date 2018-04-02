@@ -56,14 +56,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/ui_static_dp_5"
                 android:text="@string/ui_icon_qr_code"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:visibility="gone" />
 
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ui_icon_more"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/textColorLight" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

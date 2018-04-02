@@ -15,6 +15,7 @@ import android.view.WindowManager;
 
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.helper.LogHelper;
+import com.leadcom.android.isp.statusbar.StatusBarConfig;
 
 import static com.leadcom.android.isp.fragment.base.BaseFragment.ACTIVITY_BASE_REQUEST;
 
@@ -65,10 +66,55 @@ public class BaseActivity extends AppCompatActivity {
      */
     public static final String REQUEST_TRANSPARENT_STATUS_BAR = "_request_transparent_status_bar";
 
+    private View statusBarView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         app().addActivity(this);
+        //延时加载数据.
+//        Looper.myQueue().addIdleHandler(new MessageQueue.IdleHandler() {
+//            @Override
+//            public boolean queueIdle() {
+//                if (isStatusBarLight()) {
+//                    StatusBarUtils.setStatusBarLightMode(getWindow());
+//                }
+//                if (isStatusBar()) {
+//                    initStatusBar();
+//                    getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//                        @Override
+//                        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//                            initStatusBar();
+//                        }
+//                    });
+//                }
+//                //mPresenter.initData();
+//                return false;
+//            }
+//        });
+    }
+
+    private void initStatusBar() {
+        if (statusBarView == null) {
+            int identifier = getResources().getIdentifier("statusBarBackground", "id", "android");
+            statusBarView = getWindow().findViewById(identifier);
+        }
+        if (statusBarView != null) {
+            if (isStatusBarLight()) {
+                statusBarView.setBackgroundDrawable(null);
+            }
+            statusBarView.setBackgroundResource(StatusBarConfig.statusDrawable);
+        }
+    }
+
+    //子类通过复写该方法,控制是否改变statusbar
+    protected boolean isStatusBar() {
+        return StatusBarConfig.isStatusBar();
+    }
+
+    //子类通过复写该方法,控制是否需要改变statusbar字体颜色
+    protected boolean isStatusBarLight() {
+        return StatusBarConfig.isStatusBarLight;
     }
 
     @Override

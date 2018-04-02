@@ -25,7 +25,7 @@
             android:minWidth="@dimen/ui_static_dp_60"
             android:padding="@dimen/ui_static_dp_5"
             android:text="@string/ui_activity_management_title_button_text_1"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             app:active_color="@color/colorPrimary"
             app:background_type="fill"
             app:corner_size="@dimen/ui_static_dp_zero"

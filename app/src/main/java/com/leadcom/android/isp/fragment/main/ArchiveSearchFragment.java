@@ -155,7 +155,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         enableSwipe(false);
         isLoadingComplete(true);
         InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchableView, this);
-        searchViewHolder.setBackground(getColor(R.color.colorPrimary));
+        //searchViewHolder.setBackground(getColor(R.color.colorPrimary));
         searchViewHolder.setOnSearchingListener(new InputableSearchViewHolder.OnSearchingListener() {
             @Override
             public void onSearching(String text) {

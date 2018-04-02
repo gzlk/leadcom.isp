@@ -2,6 +2,7 @@ package com.leadcom.android.isp.fragment.main;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -29,11 +30,19 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
     private View topLine2;
     @ViewId(R.id.ui_main_home_top_channel_3_line)
     private View topLine3;
+    @ViewId(R.id.ui_main_home_top_channel_1)
+    private TextView channel1;
+    @ViewId(R.id.ui_main_home_top_channel_2)
+    private TextView channel2;
+    @ViewId(R.id.ui_main_home_top_channel_3)
+    private TextView channel3;
+    @ViewId(R.id.ui_main_tool_bar_line)
+    private View toolbarLine;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        tryPaddingContent(toolBar, false);
+        //tryPaddingContent(toolBar, false);
     }
 
     @Override
@@ -60,9 +69,16 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
 
     @Override
     protected void viewPagerSelectionChanged(int position) {
+        toolbarLine.setVisibility(position > 0 ? View.VISIBLE : View.GONE);
+        int color1 = getColor(R.color.textColor), color2 = getColor(R.color.textColorHint);
         topLine1.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
+        channel1.setTextColor(position == 0 ? color1 : color2);
+
         topLine2.setVisibility(position == 1 ? View.VISIBLE : View.INVISIBLE);
+        channel2.setTextColor(position == 1 ? color1 : color2);
+
         topLine3.setVisibility(position == 2 ? View.VISIBLE : View.INVISIBLE);
+        channel3.setTextColor(position == 2 ? color1 : color2);
     }
 
     @Click({R.id.ui_main_home_top_channel_1, R.id.ui_main_home_top_channel_2, R.id.ui_main_home_top_channel_3})

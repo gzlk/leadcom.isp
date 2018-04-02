@@ -87,6 +87,7 @@
             android:name=".activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Container"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -99,6 +100,7 @@
             android:name=".activity.ContainerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Container"
             android:windowSoftInputMode="stateHidden" />
 
         <!--横批视频播放器-->

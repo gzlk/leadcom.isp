@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ui_holder_view_searchable_container"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_searchable_container"
     android:layout_width="match_parent"
     android:layout_height="@dimen/ui_base_dimen_button_height"
-    android:background="@color/windowBackground"
     android:gravity="center"
     android:orientation="horizontal">
 
@@ -17,11 +16,11 @@
         android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginTop="@dimen/ui_static_dp_2"
         android:gravity="center"
-        app:cv_background="@android:color/white"
-        app:cv_background_active="@android:color/white"
+        app:cv_background="@color/windowBackground"
+        app:cv_background_active="@color/textColorHintLight"
         app:cv_background_type="fill"
         app:cv_border_size="@dimen/ui_static_dp_zero"
-        app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size">
+        app:cv_corner_size="@dimen/ui_static_dp_15">
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:layout_width="wrap_content"

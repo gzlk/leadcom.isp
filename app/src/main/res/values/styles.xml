@@ -2,12 +2,12 @@
 
     <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textSize">@dimen/ui_base_text_size</item>
         <item name="android:textColor">@color/textColor</item>
         <item name="android:textColorHint">@color/textColorHint</item>
-        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:windowBackground">@android:color/white</item>
         <item name="android:textColorPrimary">@color/textColor</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
@@ -21,7 +21,7 @@
 
     <style name="AppTheme.Container" parent="AppTheme">
         <item name="colorPrimary">@android:color/white</item>
-        <item name="colorPrimaryDark">@color/color_b9b9c8</item>
+        <item name="colorPrimaryDark">@android:color/white</item>
     </style>
 
     <style name="AppTheme.Transparent" parent="AppTheme">

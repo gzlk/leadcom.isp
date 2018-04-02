@@ -75,6 +75,6 @@
         android:paddingStart="@dimen/ui_static_dp_15"
         android:paddingTop="@dimen/ui_static_dp_5"
         android:text="@string/ui_activity_vote_details_status_ended"
-        android:textColor="@android:color/white"
+        android:textColor="@color/textColorLight"
         android:textSize="@dimen/ui_base_text_size_small" />
 </RelativeLayout>

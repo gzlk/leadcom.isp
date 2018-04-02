@@ -13,13 +13,11 @@
         android:id="@+id/ui_ui_custom_title_right_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
         android:textSize="@dimen/ui_base_text_size_big" />
 
     <TextView
         android:id="@+id/ui_ui_custom_title_right_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

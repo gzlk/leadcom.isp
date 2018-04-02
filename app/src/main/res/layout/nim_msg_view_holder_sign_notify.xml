@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/ui_icon_material_location"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:textSize="@dimen/ui_nim_app_icon_text_size"
             app:ctv_source="material_icon" />
     </com.hlk.hlklib.lib.view.CorneredView>

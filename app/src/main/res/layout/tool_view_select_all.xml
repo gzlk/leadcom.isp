@@ -3,6 +3,7 @@
     android:id="@+id/ui_tool_view_select_all_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/windowBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 

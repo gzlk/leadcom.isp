@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ui_holder_view_group_squad_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,6 +9,7 @@
     android:orientation="horizontal">
 
     <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_group_squad_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/ui_static_dp_5"
@@ -21,17 +22,27 @@
 
     <TextView
         android:id="@+id/ui_holder_view_group_squad_name"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/ui_holder_view_group_squad_logo"
+        android:layout_toStartOf="@+id/ui_holder_view_group_squad_members"
         android:text="@string/app_name_default" />
 
     <TextView
         android:id="@+id/ui_holder_view_group_squad_members"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/ui_static_dp_10"
         android:text="@string/app_name_default"
         android:textColor="@color/textColorHint"
         android:textSize="@dimen/ui_base_text_size_small" />
-</LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_below="@+id/ui_holder_view_group_squad_logo"
+        android:background="@color/windowBackground" />
+</RelativeLayout>

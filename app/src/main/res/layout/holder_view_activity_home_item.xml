@@ -7,8 +7,6 @@
     android:layout_marginBottom="@dimen/ui_base_border_size_normal"
     android:background="@drawable/ui_background_clickable"
     android:baselineAligned="false"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
     app:layout_itemType="main">
 
     <RelativeLayout
@@ -40,7 +38,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/ui_activity_base_not_join_in"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/textColorLight" />
         </com.hlk.hlklib.lib.view.CorneredView>
 
         <com.hlk.hlklib.lib.view.CorneredView
@@ -64,11 +62,17 @@
                 android:id="@+id/ui_holder_view_activity_item_unread"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_tiny" />
 
         </com.hlk.hlklib.lib.view.CorneredView>
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_below="@+id/ui_holder_view_activity_item_icon_layout"
+        android:background="@color/windowBackground" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
 
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
@@ -90,9 +91,13 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         supportPressAgainToExit = true;
-        supportTransparentStatusBar = true;
-        isToolbarSupported = false;
+        //supportTransparentStatusBar = true;
+        //isToolbarSupported = false;
         super.onCreate(savedInstanceState);
+        showToolbar(false);
+        if (null != toolbarLine) {
+            toolbarLine.setVisibility(View.GONE);
+        }
         requestBasePermissions();
         if (savedInstanceState != null) {
             // 从堆栈恢复时，设置一个新的空白intent，不再重复解析之前的intent
@@ -410,9 +415,9 @@ public class MainActivity extends TitleActivity {
                         //case NimMessage.Type.TALK_TEAM_DISMISS:
                         case NimMessage.Type.TALK_TEAM_MEMBER_JOIN:
                         case NimMessage.Type.TALK_TEAM_MEMBER_QUIT:
-                        //case NimMessage.Type.TALK_TEAM_MEMBER_REMOVE:
-                            saveMessage(msg,true,true);
-                            NimSessionHelper.startTeamSession(activity,msg.getTid());
+                            //case NimMessage.Type.TALK_TEAM_MEMBER_REMOVE:
+                            saveMessage(msg, true, true);
+                            NimSessionHelper.startTeamSession(activity, msg.getTid());
                             break;
                         default:
                             saveMessage(msg, true, true);

@@ -59,7 +59,7 @@ public class TextViewHolder extends BaseViewHolder {
         container.setLayoutParams(params);
         if (showSelectedEffect) {
             //container.setBackgroundResource(selected ? R.drawable.ui_background_bottom_border : R.drawable.ui_normal_bg);
-            text.setTextColor(getColor(selected ? R.color.colorPrimaryDark : R.color.textColor));
+            text.setTextColor(getColor(selected ? R.color.colorPrimary : R.color.textColor));
         } else {
             //container.setBackgroundResource(R.drawable.ui_normal_bg);
             text.setTextColor(getColor(R.color.textColor));

@@ -4,7 +4,6 @@
     android:id="@+id/ui_holder_view_searchable_container"
     android:layout_width="match_parent"
     android:layout_height="@dimen/ui_base_dimen_button_height"
-    android:background="@color/color_f5f7f9"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center_vertical"
@@ -25,8 +24,9 @@
         android:paddingStart="@dimen/ui_static_dp_30"
         android:singleLine="true"
         android:textColorHint="@color/textColorHint"
+        app:cet_background="@color/windowBackground"
         app:cet_border_size="0dp"
-        app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
+        app:cet_corner_size="@dimen/ui_static_dp_15"
         app:cet_max_length="10" />
 
     <com.hlk.hlklib.lib.view.CustomTextView
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ui_icon_search"
-            android:textColor="@color/textColorHintDark" />
+            android:textColor="@color/textColorHint" />
 
         <TextView
             android:id="@+id/ui_holder_view_searchable_hint_text"

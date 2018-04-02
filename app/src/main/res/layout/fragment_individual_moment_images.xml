@@ -24,7 +24,7 @@
             android:padding="@dimen/ui_base_dimen_margin_padding"
             android:scrollbars="vertical"
             android:singleLine="false"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:textSize="@dimen/ui_base_text_size_small"
             app:lessText="@string/ui_base_text_collapse"
             app:maxLines="3"
@@ -66,7 +66,7 @@
                 android:layout_marginEnd="@dimen/ui_static_dp_5"
                 android:layout_marginStart="@dimen/ui_static_dp_10"
                 android:text="@string/ui_icon_heart_hollow"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_big" />
 
             <TextView
@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ui_base_text_praise"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_small" />
         </com.hlk.hlklib.lib.view.CorneredView>
 
@@ -100,14 +100,14 @@
                 android:layout_marginEnd="@dimen/ui_static_dp_5"
                 android:layout_marginStart="@dimen/ui_static_dp_zero"
                 android:text="@string/ui_icon_comment"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_big" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ui_base_text_comment"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_small" />
         </com.hlk.hlklib.lib.view.CorneredView>
 
@@ -139,14 +139,14 @@
                 android:layout_marginEnd="@dimen/ui_static_dp_5"
                 android:layout_marginStart="@dimen/ui_static_dp_10"
                 android:text="@string/ui_icon_heart_hollow"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_big" />
 
             <TextView
                 android:id="@+id/ui_moment_detail_praise_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_small" />
 
             <com.hlk.hlklib.lib.view.CustomTextView
@@ -155,14 +155,14 @@
                 android:layout_marginEnd="@dimen/ui_static_dp_5"
                 android:layout_marginStart="@dimen/ui_static_dp_5"
                 android:text="@string/ui_icon_comment"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_big" />
 
             <TextView
                 android:id="@+id/ui_moment_detail_comment_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_small" />
         </com.hlk.hlklib.lib.view.CorneredView>
     </LinearLayout>

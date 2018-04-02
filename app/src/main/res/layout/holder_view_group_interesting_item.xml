@@ -61,7 +61,7 @@
             android:paddingStart="@dimen/ui_base_dimen_margin_padding"
             android:paddingTop="@dimen/ui_static_dp_5"
             android:text="@string/ui_organization_interesting_concern"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorLight"
             android:textSize="@dimen/ui_base_text_size_small"
             app:active_color="@color/colorAccent"
             app:background_type="fill"

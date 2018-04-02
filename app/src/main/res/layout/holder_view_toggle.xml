@@ -1,26 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
     android:background="@android:color/white"
     android:gravity="center_vertical"
-    android:minHeight="@dimen/ui_base_dimen_simple_item_height"
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/ui_holder_view_toggle_title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-        android:layout_weight="1"
+        android:layout_toStartOf="@+id/ui_holder_view_toggle_button"
         android:ellipsize="end"
+        android:gravity="center_vertical"
         android:maxLines="1"
+        android:minHeight="@dimen/ui_base_dimen_simple_item_height"
         android:text="@string/app_name" />
 
     <com.hlk.hlklib.lib.view.ToggleButton
         android:id="@+id/ui_holder_view_toggle_button"
         android:layout_width="@dimen/ui_static_dp_55"
         android:layout_height="@dimen/ui_static_dp_30"
-        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding" />
-</LinearLayout>
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_below="@+id/ui_holder_view_toggle_title"
+        android:background="@color/windowBackground" />
+</RelativeLayout>

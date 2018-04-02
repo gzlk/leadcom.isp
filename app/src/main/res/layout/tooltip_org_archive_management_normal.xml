@@ -13,6 +13,6 @@
         android:gravity="center"
         android:padding="@dimen/ui_static_dp_5"
         android:text="@string/ui_organization_document_new"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/textColorLight" />
 
 </LinearLayout>

@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/ui_static_dp_5"
                 android:text="@string/ui_icon_single_head"
-                android:textColor="@android:color/white"
+                android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_small"
                 app:ctv_oval_background_color="?attr/colorAccent" />
         </com.hlk.hlklib.lib.view.CorneredView>

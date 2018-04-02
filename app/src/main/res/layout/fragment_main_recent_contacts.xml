@@ -7,17 +7,15 @@
         android:id="@+id/ui_main_tool_bar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
         android:gravity="center_horizontal">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="@dimen/ui_base_dimen_simple_item_height"
             android:layout_marginStart="@dimen/ui_static_dp_30"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/ui_text_main_bottom_button_text_2"
-            android:textColor="@android:color/white"
             android:textSize="@dimen/ui_base_text_size_big" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
@@ -26,7 +24,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/ui_static_dp_10"
             android:text="@string/ui_icon_add"
-            android:textColor="@android:color/white"
             android:textSize="@dimen/ui_base_text_size_big" />
     </LinearLayout>
 
@@ -35,6 +32,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/ui_main_tool_bar_container"
         android:orientation="vertical">
+
+        <include layout="@layout/tool_view_half_line_horizontal" />
 
         <include
             layout="@layout/holder_view_searchable_clickable"
