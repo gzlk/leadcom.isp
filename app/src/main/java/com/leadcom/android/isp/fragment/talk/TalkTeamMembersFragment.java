@@ -16,7 +16,6 @@ import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -58,9 +57,10 @@ import java.util.List;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
+public class TalkTeamMembersFragment extends BaseTalkTeamFragment {
 
     private static final String PARAM_SELECTED_INDEX = "ttmf_selected_index";
+    private static final String PARAM_SELECTED_ID = "ttmf_selected_id";
     private static final String PARAM_SELECTABLE = "ttmf_selectable";
     private static final String PARAM_EDITABLE = "ttmf_editable";
 
@@ -87,6 +87,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         selectable = bundle.getBoolean(PARAM_SELECTABLE, false);
         editable = bundle.getBoolean(PARAM_EDITABLE, false);
         selectedIndex = bundle.getInt(PARAM_SELECTED_INDEX, -1);
+        selectedId = bundle.getString(PARAM_SELECTED_ID, "");
     }
 
     @Override
@@ -95,6 +96,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putBoolean(PARAM_SELECTABLE, selectable);
         bundle.putBoolean(PARAM_EDITABLE, editable);
         bundle.putInt(PARAM_SELECTED_INDEX, selectedIndex);
+        bundle.putString(PARAM_SELECTED_ID, selectedId);
     }
 
     private static String searchingText = "";
@@ -102,6 +104,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
      * 是否为可选状态（转让管理权的时候需要单选某一个人）
      */
     private boolean selectable, editable;
+    private String selectedId;
     private int selectedIndex;
     private boolean isSelfOwner = false;
     private MemberAdapter mAdapter;
@@ -217,7 +220,9 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
             if (null != members) {
                 for (TeamMember member : members) {
                     if (member.getTid().equals(mQueryId)) {
-                        mAdapter.remove(getUser(member));
+                        SimpleUser user = getUser(member);
+                        mAdapter.remove(user);
+                        users.remove(user);
                     }
                 }
             }
@@ -231,28 +236,14 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
             String json = getResultedData(data);
             if (!isEmpty(json) && json.length() > 10) {
                 ArrayList<SubMember> members = SubMember.fromJson(json);
-                addUserToTeam(SubMember.getUserIds(members));
+                prepareAddUserToTeam(members);
             }
         }
         super.onActivityResult(requestCode, data);
     }
 
-    private void addUserToTeam(ArrayList<String> accounts) {
-        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
-            @Override
-            public void onResponse(Member member, boolean success, String message) {
-                super.onResponse(member, success, message);
-            }
-        }).addTeamMember(mQueryId, accounts);
-    }
-
     @Override
-    protected void onSwipeRefreshing() {
-
-    }
-
-    @Override
-    protected void onLoadingMore() {
+    protected void onAddNewUserComplete(boolean success) {
 
     }
 
@@ -262,28 +253,8 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    protected String getLocalPageTag() {
-        return null;
-    }
-
-    @Override
-    protected void onDelayRefreshComplete(int type) {
-
-    }
-
-    @Override
     public void doingInResume() {
         initializeAdapter();
-    }
-
-    @Override
-    protected boolean shouldSetDefaultTitleEvents() {
-        return true;
-    }
-
-    @Override
-    protected void destroyView() {
-
     }
 
     private void fetchingTeamMember() {
@@ -368,7 +339,8 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             Model model = mAdapter.get(index);
             if (model.getId().equals("+")) {
-                GroupContactPickFragment.open(TalkTeamMembersFragment.this, "", true, false, SubMember.toJson(SubMember.getMember(users)));
+                String json = SubMember.toJson(SubMember.getMember(users));
+                GroupContactPickFragment.open(TalkTeamMembersFragment.this, "", true, false, json);
             }
         }
     };
@@ -414,7 +386,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
                         mAdapter.update(model);
                         selectedIndex = -1;
                     } else {
-                        selectedIndex = index;
+                        selectedId = mAdapter.get(index).getId();
                         // 删除用户
                         prepareRemoveMember();
                     }
@@ -441,13 +413,11 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(member, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_removed);
-                    mAdapter.clear();
-                    fetchingTeamMember();
+                    //mAdapter.remove(selectedId);
                 }
             }
-        }).removeTeamMember(mQueryId, mAdapter.get(selectedIndex).getId());
+        }).removeTeamMember(mQueryId, selectedId);
     }
-
 
     private class MemberAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
@@ -474,6 +444,20 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
                     return R.layout.holder_view_talk_team_member_head;
                 default:
                     return R.layout.holder_view_talk_team_member_add;
+            }
+        }
+
+        private void remove(String id) {
+            Iterator<Model> iterator = iterator();
+            while (iterator.hasNext()) {
+                Model model = iterator.next();
+                if (model.getId().equals(id)) {
+                    users.remove(model);
+                    int index = mAdapter.indexOf(model);
+                    iterator.remove();
+                    mAdapter.notifyItemRemoved(index);
+                    break;
+                }
             }
         }
 

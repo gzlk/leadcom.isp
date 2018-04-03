@@ -8,10 +8,14 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -21,10 +25,13 @@ import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.holder.organization.SquadViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Member;
+import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -65,6 +72,11 @@ public class SquadsFragment extends BaseOrganizationFragment {
     private static int dialIndex = -1;
     private ArrayList<Squad> squads = new ArrayList<>();
 
+    private boolean hasOperation(String operation) {
+        Role role = Cache.cache().getGroupRole(mQueryId);
+        return null != role && role.hasOperation(operation);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -73,7 +85,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
         enableSwipe(false);
         isLoadingComplete(true);
         setCustomTitle(R.string.ui_group_squad_fragment_title);
-        if (Cache.cache().getGroupRole(mQueryId).hasOperation(GRPOperation.SQUAD_ADD)) {
+        if (hasOperation(GRPOperation.SQUAD_ADD)) {
             setRightText(R.string.ui_base_text_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
@@ -111,18 +123,21 @@ public class SquadsFragment extends BaseOrganizationFragment {
     private void searchMemberName() {
         for (Squad squad : squads) {
             // 轮询所有小组
-            int cnt = 0;
-            for (Member member : squad.getGroSquMemberList()) {
-                if (member.getUserName().contains(searchingText)) {
-                    if (!mAdapter.exist(squad)) {
-                        squad.setSelectable(true);
-                        mAdapter.add(squad);
-                    }
-                    mAdapter.add(member);
-                    cnt++;
-                }
+            if (squad.getName().contains(searchingText)) {
+                mAdapter.add(squad);
             }
-            squad.setAccessToken(String.valueOf(cnt));
+//            int cnt = 0;
+//            for (Member member : squad.getGroSquMemberList()) {
+//                if (member.getUserName().contains(searchingText)) {
+//                    if (!mAdapter.exist(squad)) {
+//                        squad.setSelectable(true);
+//                        mAdapter.add(squad);
+//                    }
+//                    mAdapter.add(member);
+//                    cnt++;
+//                }
+//            }
+//            squad.setAccessToken(String.valueOf(cnt));
         }
     }
 
@@ -227,6 +242,47 @@ public class SquadsFragment extends BaseOrganizationFragment {
         }
     };
 
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            Squad squad = (Squad) mAdapter.get(index);
+            switch (view.getId()) {
+                case R.id.ui_holder_view_group_squad_container:
+                    // 小组成员列表
+                    ContactFragment.open(SquadsFragment.this, squad.getGroupId(), squad.getId());
+                    break;
+                case R.id.ui_tool_view_contact_button2:
+                    // 删除小组
+                    dialIndex = index;
+                    warningDeleteSquad(squad.getId(), squad.getName());
+                    break;
+            }
+        }
+    };
+
+    private void warningDeleteSquad(final String squadId, String squadName) {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                deleteSquad();
+                return true;
+            }
+        }).setTitleText(StringHelper.getString(R.string.ui_organization_squad_delete_warning, squadName)).setConfirmText(R.string.ui_base_text_delete).show();
+    }
+
+    private void deleteSquad() {
+        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
+            @Override
+            public void onResponse(Squad squad, boolean success, String message) {
+                super.onResponse(squad, success, message);
+                if (success) {
+                    mAdapter.remove(dialIndex);
+                }
+                dialIndex = -1;
+            }
+        }).delete(mAdapter.get(dialIndex).getId());
+    }
+
     private void displaySquadMember(Squad squad, int index) {
         Iterator<Model> iterator = mAdapter.iterator();
         int mIndex = 0;
@@ -300,6 +356,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new SquadAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
             fetchingRemoteSquads(mQueryId);
@@ -326,7 +383,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
             switch (viewType) {
                 case VT_SQUAD:
                     SquadViewHolder svh = new SquadViewHolder(itemView, SquadsFragment.this);
-                    svh.addOnViewHolderClickListener(onViewHolderClickListener);
+                    svh.setOnViewHolderElementClickListener(elementClickListener);
                     return svh;
                 case VT_MEMBER:
                     ContactViewHolder cvh = new ContactViewHolder(itemView, SquadsFragment.this);
@@ -339,7 +396,8 @@ public class SquadsFragment extends BaseOrganizationFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == VT_MEMBER ? R.layout.tool_view_organization_contact : R.layout.holder_view_group_squad;
+            return viewType == VT_MEMBER ? R.layout.tool_view_organization_contact :
+                    (hasOperation(GRPOperation.SQUAD_DELETE) ? R.layout.holder_view_group_squad_deletable : R.layout.holder_view_group_squad);
         }
 
         @Override
@@ -352,7 +410,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
             if (holder instanceof ContactViewHolder) {
                 ((ContactViewHolder) holder).showContent((Member) item, searchingText);
             } else if (holder instanceof SquadViewHolder) {
-                ((SquadViewHolder) holder).showContent((Squad) item);
+                ((SquadViewHolder) holder).showContent((Squad) item, searchingText);
             }
         }
 

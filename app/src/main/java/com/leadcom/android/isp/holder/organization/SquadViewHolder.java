@@ -1,13 +1,16 @@
 package com.leadcom.android.isp.holder.organization;
 
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.organization.Squad;
 
@@ -34,15 +37,21 @@ public class SquadViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
-    public void showContent(Squad squad) {
-        nameView.setText(squad.getName());
+    public void showContent(Squad squad, String searchingText) {
+        String name = squad.getName();
+        if (!isEmpty(name)) {
+            name = getSearchingText(name, searchingText);
+        } else {
+            name = StringHelper.getString(R.string.ui_base_text_no_name_squad);
+        }
+        nameView.setText(Html.fromHtml(name));
         numberView.setText(format("%d人", squad.isSelectable() ? Integer.valueOf(squad.getAccessToken()) : squad.getMemberNum()));
     }
 
-    @Click({R.id.ui_holder_view_group_squad_container})
+    @Click({R.id.ui_holder_view_group_squad_container, R.id.ui_tool_view_contact_button2})
     private void viewClick(View view) {
-        if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
     }
 }

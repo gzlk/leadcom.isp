@@ -90,10 +90,14 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         isLoadingComplete(true);
         //tryPaddingContent(toolBar, false);
         setNothingText(R.string.ui_recent_contacts_nothing);
+        showUnreadMsg();
+        initializeStickChangeCallback();
+    }
+
+    private void showUnreadMsg() {
         if (null != mainFragment) {
             mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
         }
-        initializeStickChangeCallback();
     }
 
     @Override
@@ -273,6 +277,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                     cacheMessageSet.add(imMessage);
                 }
             }
+            showUnreadMsg();
         }
     };
 
@@ -315,6 +320,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                 item.setMsgStatus(message.getStatus());
                 refreshViewHolderByIndex(index);
             }
+            showUnreadMsg();
         }
     };
 
@@ -337,6 +343,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.clear();
                 refreshMessages();
             }
+            showUnreadMsg();
         }
     };
 
@@ -419,10 +426,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
 
         displayNothing(mAdapter.getItemCount() <= 0);
 
-        int unreadNum = NIMClient.getService(MsgService.class).getTotalUnreadCount();
-        if (null != mainFragment) {
-            mainFragment.showUnreadFlag(unreadNum);
-        }
+        showUnreadMsg();
     }
 
     private void getRecentMessages() {
@@ -530,6 +534,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             RecentContact recent = mAdapter.get(index);
+            NIMClient.getService(MsgService.class).clearUnreadCount(recent.getContactId(), recent.getSessionType());
             if (recent.getSessionType() == SessionTypeEnum.Team) {
                 NimSessionHelper.startTeamSession(Activity(), recent.getContactId());
             } else if (recent.getSessionType() == SessionTypeEnum.P2P) {

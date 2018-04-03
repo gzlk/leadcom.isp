@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ui_holder_view_group_squad_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/ui_base_border_size_normal"
     android:background="@drawable/ui_background_clickable"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    app:layout_itemType="main">
 
     <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_holder_view_group_squad_logo"

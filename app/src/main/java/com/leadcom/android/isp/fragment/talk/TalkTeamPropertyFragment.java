@@ -18,13 +18,12 @@ import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.api.team.TeamRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.main.RecentContactsFragment;
+import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.EditableDialogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
@@ -79,7 +78,7 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
+public class TalkTeamPropertyFragment extends BaseTalkTeamFragment {
 
     public static TalkTeamPropertyFragment newInstance(String params) {
         TalkTeamPropertyFragment ttpf = new TalkTeamPropertyFragment();
@@ -280,26 +279,6 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    protected void onSwipeRefreshing() {
-
-    }
-
-    @Override
-    protected void onLoadingMore() {
-
-    }
-
-    @Override
-    protected String getLocalPageTag() {
-        return null;
-    }
-
-    @Override
-    protected void onDelayRefreshComplete(int type) {
-
-    }
-
-    @Override
     public int getLayout() {
         return R.layout.fragment_talk_property;
     }
@@ -307,16 +286,6 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void doingInResume() {
         initializeAdapter();
-    }
-
-    @Override
-    protected boolean shouldSetDefaultTitleEvents() {
-        return true;
-    }
-
-    @Override
-    protected void destroyView() {
-
     }
 
     @Override
@@ -615,12 +584,21 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
                         // 单用户时，需要创建一个新的群聊
                         prepareCreateTeam(members);
                     } else {
-                        prepareAddUser(members);
+                        prepareAddUserToTeam(members);
                     }
                 }
                 break;
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    @Override
+    protected void onAddNewUserComplete(boolean success) {
+        if (success) {
+            ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_add_complete);
+            // 重新刷新成员列表
+            mAdapter.notifyItemChanged(0);
+        }
     }
 
     private void prepareCreateTeam(ArrayList<SubMember> members) {
@@ -639,58 +617,6 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).add(team);
-    }
-
-    private void prepareAddUser(ArrayList<SubMember> members) {
-        ArrayList<String> ids = new ArrayList<>();
-        String name = "";
-        int count = 0;
-        if (null != members && members.size() > 0) {
-            for (SubMember member : members) {
-                TeamMember tm = TeamDataCache.getInstance().getTeamMember(mQueryId, member.getUserId());
-                if (null == tm || !tm.isInTeam()) {
-                    // 成员中不存在用户时才添加
-                    ids.add(member.getUserId());
-                    if (count < 3) {
-                        name += (isEmpty(name) ? "" : "、") + member.getUserName();
-                    }
-                    count++;
-                }
-            }
-            name = "[" + name + "]";
-            if (ids.size() > 1) {
-                name += "等";
-            }
-        }
-        if (ids.size() > 0) {
-            warningAddNewUser(ids, name);
-        } else {
-            ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_add_no_new_member);
-        }
-    }
-
-    private void warningAddNewUser(final ArrayList<String> userIds, String names) {
-        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                addNewUser(userIds);
-                return true;
-            }
-        }).setTitleText(getString(R.string.ui_team_talk_team_member_add_dialog_title, names, userIds.size())).setConfirmText(R.string.ui_base_text_confirm).show();
-    }
-
-    private void addNewUser(ArrayList<String> userIds) {
-        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
-            @Override
-            public void onResponse(Member member, boolean success, String message) {
-                super.onResponse(member, success, message);
-                if (success) {
-                    ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_add_complete);
-                    // 重新刷新成员列表
-                    mAdapter.notifyItemChanged(0);
-                }
-            }
-        }).addTeamMember(mQueryId, userIds);
     }
 
     /**

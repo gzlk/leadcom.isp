@@ -86,9 +86,18 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
 
     private void registerObserver(boolean register) {
         NIMClient.getService(TeamServiceObserver.class).observeMemberUpdate(memberUpdateObserver, register);
+        NIMClient.getService(TeamServiceObserver.class).observeMemberRemove(memberRemoveObserver, register);
     }
 
     private Observer<List<TeamMember>> memberUpdateObserver = new com.netease.nimlib.sdk.Observer<List<TeamMember>>() {
+        @Override
+        public void onEvent(List<TeamMember> members) {
+            // 重新查询成员列表并显示
+            fetchingMembers(sessionId);
+        }
+    };
+
+    private Observer<List<TeamMember>> memberRemoveObserver = new Observer<List<TeamMember>>() {
         @Override
         public void onEvent(List<TeamMember> members) {
             // 重新查询成员列表并显示
