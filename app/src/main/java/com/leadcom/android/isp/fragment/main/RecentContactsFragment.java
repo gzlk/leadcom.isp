@@ -93,6 +93,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         if (null != mainFragment) {
             mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
         }
+        initializeStickChangeCallback();
     }
 
     @Override
@@ -108,12 +109,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                 @Override
                 public void onChange(RecentContact contact) {
                     if (null != mAdapter) {
-                        ArrayList<RecentContact> list = new ArrayList<>();
-                        list.add(contact);
-                        recentContactChangeObserver.onEvent(list);
-
-                        // 需要再次刷新列表
-                        //needRefresh = true;
+                        needRefresh = true;
                     }
                 }
             };
@@ -127,13 +123,14 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        initializeAdapter();
-        //initializeStickChangeCallback();
         if (needRefresh && null != mAdapter) {
-            refreshMessages();
+            // 上层更改了群聊的置顶项目，这里需要重新刷新群聊列表以更新置顶顺序
+            mAdapter.clear();
+            getRecentMessages();
             // 刷新完毕之后恢复不可刷新状态
             needRefresh = false;
         }
+        initializeAdapter();
     }
 
     @Override

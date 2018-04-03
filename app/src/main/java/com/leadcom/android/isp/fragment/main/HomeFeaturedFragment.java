@@ -365,21 +365,20 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
         public void onClick(View view, int index) {
             RecommendArchive archive = (RecommendArchive) mAdapter.get(index);
             boolean isGroup = archive.getType() == RecommendArchive.RecommendType.GROUP;
-            Archive doc = isGroup ? archive.getGroDoc() : archive.getUserDoc();
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_additional_comment_layout:
                     // 打开档案详情页评论
                     selectedIndex = index;
-                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, doc.getId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
-                    break;
+                    //break;
                 case R.id.ui_tool_view_archive_additional_like_layout:
                     // 赞或取消赞
                     selectedIndex = index;
                     //like(doc);
-                    break;
+                    //break;
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏或取消收藏
                     selectedIndex = index;
+                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getDocId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
                     //collect(doc);
                     break;
             }

@@ -14,6 +14,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.api.team.TeamRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -33,6 +34,7 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.common.TalkTeam;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.nim.activity.SessionHistoryActivity;
 import com.leadcom.android.isp.nim.callback.StickChangeCallback;
@@ -49,6 +51,7 @@ import com.netease.nimlib.sdk.RequestCallbackWrapper;
 import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.friend.FriendService;
 import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
 import com.netease.nimlib.sdk.team.TeamService;
@@ -138,6 +141,8 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
         } else {
             NIMClient.getService(TeamServiceObserver.class).observeTeamUpdate(teamUpdateObserver, register);
             NIMClient.getService(TeamServiceObserver.class).observeTeamRemove(teamRemoveObserver, register);
+            // 注册最近联系人列表更改观察者
+            NIMClient.getService(MsgServiceObserve.class).observeRecentContact(recentContactChangeObserver, register);
         }
     }
 
@@ -200,6 +205,34 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
     };
+
+    Observer<List<RecentContact>> recentContactChangeObserver = new Observer<List<RecentContact>>() {
+        @Override
+        public void onEvent(List<RecentContact> recentContacts) {
+            log("message observer onEvent: " + (null == recentContacts ? "null" : recentContacts.size()));
+            if (null != recentContacts) {
+                for (RecentContact contact : recentContacts) {
+                    int index = indexOfContact(contact);
+                    if (index >= 0) {
+                        contacts.set(index, contact);
+                    } else {
+                        contacts.add(contact);
+                    }
+                }
+                // 最近联系人列表有变动时，如果当前群聊在里面，则更新群聊状态
+            }
+        }
+    };
+
+    private int indexOfContact(RecentContact contact) {
+        for (int i = 0, len = contacts.size(); i < len; i++) {
+            RecentContact recent = contacts.get(i);
+            if (recent.getContactId().equals(contact.getContactId()) && recent.getSessionType() == contact.getSessionType()) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     private void fetchingRecentContacts() {
         NIMClient.getService(MsgService.class).queryRecentContacts().setCallback(new RequestCallbackWrapper<List<RecentContact>>() {
@@ -316,47 +349,34 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void quitTeam() {
-        NIMClient.getService(TeamService.class).quitTeam(mQueryId).setCallback(new RequestCallback<Void>() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onSuccess(Void param) {
-                ToastHelper.make().showMsg(R.string.ui_team_talk_quit_team_successfully);
-                resultData(TeamExtras.RESULT_EXTRA_REASON_QUIT);
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(R.string.ui_team_talk_quit_team_successfully);
+                    resultData(TeamExtras.RESULT_EXTRA_REASON_QUIT);
+                }
             }
-
-            @Override
-            public void onFailed(int code) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_team_quit_fail, code));
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
+        }).exitTeam(mQueryId);
     }
 
     private void dismissTeam() {
-        NIMClient.getService(TeamService.class).dismissTeam(mQueryId).setCallback(new RequestCallback<Void>() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onSuccess(Void param) {
-                ToastHelper.make().showMsg(R.string.ui_team_talk_team_dismissed);
-                resultData(TeamExtras.RESULT_EXTRA_REASON_DISMISS);
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(R.string.ui_team_talk_team_dismissed);
+                    resultData(TeamExtras.RESULT_EXTRA_REASON_DISMISS);
+                }
             }
-
-            @Override
-            public void onFailed(int code) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_team_dismiss_fail, code));
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
+        }).exitTeam(mQueryId);
     }
 
     private void initializeTeam(Team team) {
-        isSelfOwner = false;
+        TeamMember self = TeamDataCache.getInstance().getTeamMember(mQueryId, Cache.cache().userId);
+        isSelfOwner = null != self && self.getType() == TeamMemberType.Owner;
         setCustomTitle(team.getName());
         Model m = new Model();
         m.setId(team.getId());
@@ -492,7 +512,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(int index) {
             if (index == 0) {
                 // 打开群的所有成员列表
-                TalkTeamMembersFragment.open(TalkTeamPropertyFragment.this, mQueryId, false);
+                TalkTeamMembersFragment.open(TalkTeamPropertyFragment.this, mQueryId, false, false);
             } else {
                 SimpleClickableItem item = (SimpleClickableItem) mAdapter.get(index);
                 switch (item.getIndex()) {
@@ -562,10 +582,7 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onConfirm() {
                 // 非添加用户，说明是要转让管理权
-                TalkTeamMembersFragment.open(TalkTeamPropertyFragment.this, mQueryId, true);
-                //isAddUser = false;
-                //GroupContactPickFragment.open(TalkTeamPropertyFragment.this, "", false, true, "[]");
-                //transferAdmin();
+                TalkTeamMembersFragment.open(TalkTeamPropertyFragment.this, mQueryId, true, false);
                 return true;
             }
         }).setTitleText(R.string.ui_team_talk_team_transfer_admin_dialog_title).setConfirmText(R.string.ui_base_text_confirm).show();
@@ -626,60 +643,54 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
 
     private void prepareAddUser(ArrayList<SubMember> members) {
         ArrayList<String> ids = new ArrayList<>();
+        String name = "";
+        int count = 0;
         if (null != members && members.size() > 0) {
             for (SubMember member : members) {
-                //TeamMember tm = TeamDataCache.getInstance().getTeamMember(mQueryId, member.getUserId());
-                //if (null == tm) {
-                // 成员中不存在用户时才添加
-                ids.add(member.getUserId());
-                //}
+                TeamMember tm = TeamDataCache.getInstance().getTeamMember(mQueryId, member.getUserId());
+                if (null == tm || !tm.isInTeam()) {
+                    // 成员中不存在用户时才添加
+                    ids.add(member.getUserId());
+                    if (count < 3) {
+                        name += (isEmpty(name) ? "" : "、") + member.getUserName();
+                    }
+                    count++;
+                }
+            }
+            name = "[" + name + "]";
+            if (ids.size() > 1) {
+                name += "等";
             }
         }
         if (ids.size() > 0) {
-            //warningAddNewUser(ids);
-            addNewUser(ids);
+            warningAddNewUser(ids, name);
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_add_no_new_member);
         }
     }
 
-    private void warningAddNewUser(ArrayList<String> userIds, String names) {
+    private void warningAddNewUser(final ArrayList<String> userIds, String names) {
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
+                addNewUser(userIds);
                 return true;
             }
         }).setTitleText(getString(R.string.ui_team_talk_team_member_add_dialog_title, names, userIds.size())).setConfirmText(R.string.ui_base_text_confirm).show();
     }
 
     private void addNewUser(ArrayList<String> userIds) {
-        TeamRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<TalkTeam>() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onResponse(TalkTeam talkTeam, boolean success, String message) {
-                super.onResponse(talkTeam, success, message);
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_add_complete);
+                    // 重新刷新成员列表
+                    mAdapter.notifyItemChanged(0);
                 }
             }
-        }).update(mQueryId, "", userIds);
-        addNewUserToTeam(userIds);
-    }
-
-    private void addNewUserToTeam(ArrayList<String> accounts) {
-        NIMClient.getService(TeamService.class).addMembers(mQueryId, accounts).setCallback(new RequestCallback<List<String>>() {
-            @Override
-            public void onSuccess(List<String> param) {
-
-            }
-
-            @Override
-            public void onFailed(int code) {
-                ToastHelper.make().showMsg(StatusCode.getStatus(code));
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
+        }).addTeamMember(mQueryId, userIds);
     }
 
     /**
@@ -689,41 +700,20 @@ public class TalkTeamPropertyFragment extends BaseSwipeRefreshSupportFragment {
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                transferAdmin(userId);
-//                TeamRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<TalkTeam>() {
-//                    @Override
-//                    public void onResponse(TalkTeam talkTeam, boolean success, String message) {
-//                        super.onResponse(talkTeam, success, message);
-//                        if(success){
-//                            mAdapter.clear();
-//                            fetchingTeam();
-//                        }
-//                    }
-//                }).updateManager(userId);
+                MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
+                    @Override
+                    public void onResponse(Member member, boolean success, String message) {
+                        super.onResponse(member, success, message);
+                        if (success) {
+                            // 重新拉取组群信息
+                            mAdapter.clear();
+                            fetchingTeam();
+                        }
+                    }
+                }).grantManager(mQueryId, userId);
                 return true;
             }
         }).setTitleText(getString(R.string.ui_team_talk_team_transfer_admin_confirm_dialog_title, userName)).setConfirmText(R.string.ui_base_text_confirm).show();
-    }
-
-    private void transferAdmin(String account) {
-        NIMClient.getService(TeamService.class).transferTeam(mQueryId, account, false).setCallback(new RequestCallback<List<TeamMember>>() {
-            @Override
-            public void onSuccess(List<TeamMember> param) {
-                // 重新拉取组群信息
-                mAdapter.clear();
-                fetchingTeam();
-            }
-
-            @Override
-            public void onFailed(int code) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_team_talk_team_transfer_admin_fail, StatusCode.getStatus(code)));
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
     }
 
     private ToggleableViewHolder.OnViewHolderToggleChangedListener toggleChangedListener = new ToggleableViewHolder.OnViewHolderToggleChangedListener() {

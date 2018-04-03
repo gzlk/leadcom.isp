@@ -94,11 +94,4 @@ public class TeamRequest extends Request<TalkTeam> {
         }
         httpRequest(getRequest(SingleTeam.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
-
-    /**
-     * 转让管理权
-     */
-    public void updateManager(String memberId) {
-        httpRequest(getRequest(SingleTeam.class, format("%s/manager?commMemberId=%s", url(UPDATE), memberId), "", HttpMethods.Get));
-    }
 }

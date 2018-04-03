@@ -13,26 +13,27 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
-import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.fragment.talk.TalkTeamMembersFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.SubMember;
-import com.leadcom.android.isp.nim.constant.StatusCode;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.SimpleCallback;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.TeamServiceObserver;
 import com.netease.nimlib.sdk.team.constant.TeamMemberType;
 import com.netease.nimlib.sdk.team.model.TeamMember;
@@ -59,6 +60,8 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
     private FlexboxLayout headers;
     @ViewId(R.id.ui_holder_view_talk_team_members_more)
     private LinearLayout morView;
+    @ViewId(R.id.ui_holder_view_talk_team_members_more_text)
+    private TextView moreTextView;
     private View add, delete;
 
     private int margin, size;
@@ -88,10 +91,19 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
     private Observer<List<TeamMember>> memberUpdateObserver = new com.netease.nimlib.sdk.Observer<List<TeamMember>>() {
         @Override
         public void onEvent(List<TeamMember> members) {
-            //displayMembers(members);
+            // 重新查询成员列表并显示
             fetchingMembers(sessionId);
         }
     };
+
+    private void fetchingMembers(String tid) {
+        TeamDataCache.getInstance().fetchTeamMemberList(tid, new SimpleCallback<List<TeamMember>>() {
+            @Override
+            public void onResult(boolean success, List<TeamMember> result, int code) {
+                displayMembers(result);
+            }
+        });
+    }
 
     private void initializeViews() {
         if (null == add) {
@@ -108,10 +120,6 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
         }
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
-    }
-
     /**
      * 设置是否是显示单用户方式
      */
@@ -120,7 +128,7 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
         morView.setVisibility(isUser ? View.GONE : View.VISIBLE);
     }
 
-    @Click({R.id.ui_holder_view_talk_team_members_more})
+    @Click({R.id.ui_holder_view_talk_team_members_more, R.id.ui_holder_view_talk_team_members_add, R.id.ui_holder_view_talk_team_members_remove})
     private void viewClick(View view) {
         if (null != mOnViewHolderClickListener) {
             mOnViewHolderClickListener.onClick(getAdapterPosition());
@@ -166,40 +174,32 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
     }
 
     private void displayMembers(List<TeamMember> members) {
-        headers.setVisibility((null == members || members.size() < 1) ? View.GONE : View.VISIBLE);
+        int count = 0, size = (null == members ? 0 : members.size());
+        headers.setVisibility(size < 1 ? View.GONE : View.VISIBLE);
         headers.removeAllViews();
+        moreTextView.setText(StringHelper.getString(R.string.ui_team_talk_team_member_more, size));
         if (null != members) {
             for (TeamMember member : members) {
-                if (member.getTid().equals(sessionId)) {
-                    UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
-                    displayUser(member, info);
+                UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
+                displayUser(member, info);
+                count++;
+                if (isAdmin && count >= 18) {
+                    // 管理员至多显示18个
+                    // 超过18个且已经显示了18个时，跳出，后续添加 + 、 - 凑满20个
+                    break;
+                } else if (!isAdmin && count >= 19) {
+                    // 普通成员显示19个时不再显示，后续添加 + 号占位
+                    break;
                 }
             }
         }
         addView(add);
         if (isAdmin) {
+            morView.setVisibility(size > 18 ? View.VISIBLE : View.GONE);
             addView(delete);
+        } else {
+            morView.setVisibility(size > 19 ? View.VISIBLE : View.GONE);
         }
-    }
-
-    private void fetchingMembers(String tid) {
-        TeamDataCache.getInstance().fetchTeamMemberList(tid, new SimpleCallback<List<TeamMember>>() {
-            @Override
-            public void onResult(boolean success, List<TeamMember> result, int code) {
-                headers.setVisibility((null == result || result.size() < 1) ? View.GONE : View.VISIBLE);
-                headers.removeAllViews();
-                if (success && null != result) {
-                    for (TeamMember member : result) {
-                        UserInfo info = NimUIKit.getUserInfoProvider().getUserInfo(member.getAccount());
-                        displayUser(member, info);
-                    }
-                }
-                addView(add);
-                if (isAdmin) {
-                    addView(delete);
-                }
-            }
-        });
     }
 
     private void displayUser(NimUserInfo info) {
@@ -265,8 +265,15 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
                 GroupContactPickFragment.open(fragment(), "", true, false, SubMember.toJson(members));
             } else if (v == delete) {
                 v.startAnimation(App.clickAnimation());
-                deletable = !deletable;
-                prepareDelete(deletable);
+                List<TeamMember> list = TeamDataCache.getInstance().getTeamMemberList(sessionId);
+                int size = null == list ? 0 : list.size();
+                if (size > 18) {
+                    // 管理员在大于18个成员时，点击这里进入的是立即编辑成员模式
+                    TalkTeamMembersFragment.open(fragment(), sessionId, false, true);
+                } else {
+                    deletable = !deletable;
+                    prepareDelete(deletable);
+                }
             } else {
                 final TeamMember mb = (TeamMember) v.getTag(R.id.hlklib_ids_custom_view_click_tag);
                 if (v instanceof CorneredView) {
@@ -286,23 +293,16 @@ public class TalkTeamMembersViewHolder extends BaseViewHolder {
     };
 
     private void removeMember(TeamMember member, final View view) {
-        NIMClient.getService(TeamService.class).removeMember(member.getTid(), member.getAccount()).setCallback(new RequestCallback<Void>() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onSuccess(Void param) {
-                headers.removeView((View) view.getParent());
-                ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_removed);
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
+                if (success) {
+                    headers.removeView((View) view.getParent());
+                    ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_removed);
+                }
             }
-
-            @Override
-            public void onFailed(int code) {
-                ToastHelper.make().showMsg(StatusCode.getStatus(code));
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
+        }).removeTeamMember(member.getTid(), member.getAccount());
     }
 
     private ArrayList<SubMember> getExistsMembers() {

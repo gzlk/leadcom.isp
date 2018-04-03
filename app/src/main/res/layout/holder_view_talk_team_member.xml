@@ -4,6 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <View
+        android:id="@+id/ui_holder_view_talk_team_members_add"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_static_dp_5"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/ui_holder_view_talk_team_members_remove"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_static_dp_5"
+        android:visibility="gone" />
+
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/ui_holder_view_talk_team_members"
         android:layout_width="match_parent"
@@ -26,6 +38,7 @@
         android:visibility="gone">
 
         <TextView
+            android:id="@+id/ui_holder_view_talk_team_members_more_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ui_team_talk_team_member_more"

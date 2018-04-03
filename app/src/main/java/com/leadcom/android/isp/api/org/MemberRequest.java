@@ -48,6 +48,7 @@ public class MemberRequest extends Request<Member> {
     private static final String SQUAD_MEMBER = "/group/groSquMember";
     private static final String ACTIVITY_MEMBER = "/activity/actMember";
     private static final String TOPIC_MEMBER = "/activity/actTopicMember";
+    private static final String TEAM_MEMBER = "/communication/commMember";
 
     @Override
     protected String url(String action) {
@@ -65,6 +66,9 @@ public class MemberRequest extends Request<Member> {
                 break;
             case Member.Type.TOPIC:
                 api = TOPIC_MEMBER;
+                break;
+            case Member.Type.TEAM:
+                api = TEAM_MEMBER;
                 break;
             case Member.Type.GROUP:
             default:
@@ -280,5 +284,45 @@ public class MemberRequest extends Request<Member> {
      */
     public void listAllGroup() {
         httpRequest(getRequest(ListQueryMember.class, format("/user/user/list/allGroup", url(LIST)), "", HttpMethods.Get));
+    }
+
+    /**
+     * 为群聊增加成员
+     */
+    public void addTeamMember(String teamId, ArrayList<String> memberIds) {
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("tid", teamId);
+            object.put("userIdList", new JSONArray(memberIds));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleMember.class, url(Member.Type.TEAM, ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 管理员移除成员
+     */
+    public void removeTeamMember(String tid, String userId) {
+        String param = format("%s?tid=%s&userId=%s", url(Member.Type.TEAM, DELETE), tid, userId);
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 成员退出群聊
+     */
+    public void exitTeam(String tid) {
+        String param = format("%s?tid=%s", url(Member.Type.TEAM, EXIT), tid);
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 转让群聊管理权
+     */
+    public void grantManager(String tid, String userId) {
+        String param = format("%s/manager?tid=%s&userId=%s", url(Member.Type.TEAM, UPDATE), tid, userId);
+        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 }

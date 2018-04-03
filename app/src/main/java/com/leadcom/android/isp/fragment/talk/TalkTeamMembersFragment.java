@@ -12,16 +12,16 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.team.TeamRequest;
+import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
-import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.talk.TalkTeamMemberAddViewHolder;
@@ -30,7 +30,7 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.common.TalkTeam;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.model.user.SimpleUser;
 import com.leadcom.android.isp.nim.constant.StatusCode;
@@ -39,8 +39,6 @@ import com.netease.nim.uikit.api.model.SimpleCallback;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.team.TeamService;
 import com.netease.nimlib.sdk.team.TeamServiceObserver;
 import com.netease.nimlib.sdk.team.constant.TeamMemberType;
 import com.netease.nimlib.sdk.team.model.TeamMember;
@@ -62,26 +60,49 @@ import java.util.List;
  */
 public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static TalkTeamMembersFragment newInstance(String params) {
+    private static final String PARAM_SELECTED_INDEX = "ttmf_selected_index";
+    private static final String PARAM_SELECTABLE = "ttmf_selectable";
+    private static final String PARAM_EDITABLE = "ttmf_editable";
+
+    public static TalkTeamMembersFragment newInstance(Bundle bundle) {
         TalkTeamMembersFragment ttmf = new TalkTeamMembersFragment();
-        Bundle bundle = new Bundle();
-        // 组织的tid
-        bundle.putString(PARAM_QUERY_ID, params);
         ttmf.setArguments(bundle);
         return ttmf;
     }
 
-    public static void open(BaseFragment fragment, String tid, boolean selectable) {
-        TalkTeamMembersFragment.selectable = selectable;
-        fragment.openActivity(TalkTeamMembersFragment.class.getName(), tid, selectable ? REQUEST_SELECT : REQUEST_CHANGE, true, false);
+    public static void open(BaseFragment fragment, String tid, boolean selectable, boolean editable) {
+        Bundle bundle = new Bundle();
+        // 群聊的id
+        bundle.putString(PARAM_QUERY_ID, tid);
+        // 是否是选择成员方式
+        bundle.putBoolean(PARAM_SELECTABLE, selectable);
+        // 是否立即进入编辑状态
+        bundle.putBoolean(PARAM_EDITABLE, editable);
+        fragment.openActivity(TalkTeamMembersFragment.class.getName(), bundle, selectable ? REQUEST_SELECT : REQUEST_CHANGE, true, false);
+    }
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        selectable = bundle.getBoolean(PARAM_SELECTABLE, false);
+        editable = bundle.getBoolean(PARAM_EDITABLE, false);
+        selectedIndex = bundle.getInt(PARAM_SELECTED_INDEX, -1);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_SELECTABLE, selectable);
+        bundle.putBoolean(PARAM_EDITABLE, editable);
+        bundle.putInt(PARAM_SELECTED_INDEX, selectedIndex);
     }
 
     private static String searchingText = "";
     /**
      * 是否为可选状态（转让管理权的时候需要单选某一个人）
      */
-    private static boolean selectable = false;
-    private static int selectedIndex = -1;
+    private boolean selectable, editable;
+    private int selectedIndex;
     private boolean isSelfOwner = false;
     private MemberAdapter mAdapter;
     private Model addModel;
@@ -173,6 +194,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         }
         // 是否管理者
         user.setRead(member.getType() == TeamMemberType.Owner);
+        user.setSelectable(editable);
         int index = users.indexOf(user);
         if (index >= 0) {
             users.set(index, user);
@@ -215,33 +237,13 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         super.onActivityResult(requestCode, data);
     }
 
-    private void addUser(ArrayList<String> accounts) {
-        TeamRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<TalkTeam>() {
-            @Override
-            public void onResponse(TalkTeam talkTeam, boolean success, String message) {
-                super.onResponse(talkTeam, success, message);
-            }
-        }).update(mQueryId, "", accounts);
-    }
-
     private void addUserToTeam(ArrayList<String> accounts) {
-        addUser(accounts);
-        NIMClient.getService(TeamService.class).addMembers(mQueryId, accounts).setCallback(new RequestCallback<List<String>>() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onSuccess(List<String> param) {
-                fetchingTeamMember();
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
             }
-
-            @Override
-            public void onFailed(int code) {
-                ToastHelper.make().showMsg(StatusCode.getStatus(code));
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
+        }).addTeamMember(mQueryId, accounts);
     }
 
     @Override
@@ -291,15 +293,17 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     if (null != members) {
                         for (TeamMember member : members) {
-                            SimpleUser user = getUser(member);
-                            if (mAdapter.exist(user)) {
-                                mAdapter.update(user);
-                            } else {
-                                int index = mAdapter.indexOf(addModel);
-                                if (index >= 0) {
-                                    mAdapter.add(user, index);
+                            if (member.isInTeam()) {
+                                SimpleUser user = getUser(member);
+                                if (mAdapter.exist(user)) {
+                                    mAdapter.update(user);
                                 } else {
-                                    mAdapter.add(user);
+                                    int index = mAdapter.indexOf(addModel);
+                                    if (index >= 0) {
+                                        mAdapter.add(user, index);
+                                    } else {
+                                        mAdapter.add(user);
+                                    }
                                 }
                             }
                         }
@@ -324,7 +328,7 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
         }
         // 选择状态下，右上角为确定按钮。
         // 普通状态下当前用户是组群拥有者时，可以编辑删除用户
-        setRightText(selectable ? R.string.ui_base_text_confirm : (isSelfOwner ? R.string.ui_base_text_edit : 0));
+        setRightText(selectable ? R.string.ui_base_text_confirm : (isSelfOwner ? (editable ? R.string.ui_base_text_cancel : R.string.ui_base_text_edit) : 0));
         setRightTitleClickListener(selectable || isSelfOwner ? new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
@@ -338,16 +342,13 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
                         finish();
                     }
                 } else {
-                    boolean isEditable = false;
+                    editable = !editable;
                     for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
                         Model model = mAdapter.get(i);
-                        model.setSelectable(!model.isSelectable());
-                        if (!isEditable) {
-                            isEditable = model.isSelectable();
-                        }
+                        model.setSelectable(editable);
                         mAdapter.update(model);
                     }
-                    setRightText(isEditable ? R.string.ui_base_text_cancel : R.string.ui_base_text_edit);
+                    setRightText(editable ? R.string.ui_base_text_cancel : R.string.ui_base_text_edit);
                 }
             }
         } : null);
@@ -413,43 +414,38 @@ public class TalkTeamMembersFragment extends BaseSwipeRefreshSupportFragment {
                         mAdapter.update(model);
                         selectedIndex = -1;
                     } else {
+                        selectedIndex = index;
                         // 删除用户
-                        prepareRemoveMember(mAdapter.get(index).getId(), index);
+                        prepareRemoveMember();
                     }
                     break;
             }
         }
     };
 
-    private void prepareRemoveMember(final String account, final int index) {
+    private void prepareRemoveMember() {
         // 删除成员
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                removeMember(account, index);
+                removeMember();
                 return true;
             }
         }).setTitleText(R.string.ui_team_talk_team_member_remove_dialog_title).setConfirmText(R.string.ui_base_text_remove).show();
     }
 
-    private void removeMember(String account, final int index) {
-        NIMClient.getService(TeamService.class).removeMember(mQueryId, account).setCallback(new RequestCallback<Void>() {
+    private void removeMember() {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
-            public void onSuccess(Void param) {
-                mAdapter.remove(index);
-                ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_removed);
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(R.string.ui_team_talk_team_member_removed);
+                    mAdapter.clear();
+                    fetchingTeamMember();
+                }
             }
-
-            @Override
-            public void onFailed(int code) {
-                ToastHelper.make().showMsg(StatusCode.getStatus(code));
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
+        }).removeTeamMember(mQueryId, mAdapter.get(selectedIndex).getId());
     }
 
 
