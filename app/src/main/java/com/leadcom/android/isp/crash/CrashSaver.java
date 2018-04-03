@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.leadcom.android.isp.crash.storage.StorageType;
 import com.leadcom.android.isp.crash.storage.StorageUtil;
 import com.hlk.hlklib.etc.Cryptography;
+import com.leadcom.android.isp.etc.Utils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -64,7 +65,8 @@ class CrashSaver {
         String timestamp = sdf.format(date);
         BufferedWriter mBufferedWriter = null;
         try {
-            File mFile = new File(StorageUtil.getWritePath(filename + ".crashlog.txt", StorageType.TYPE_LOG));
+            String tm = Utils.formatDateOfNow("yyyyMMddHHmm");
+            File mFile = new File(StorageUtil.getWritePath(tm + "." + filename + ".crashlog.txt", StorageType.TYPE_LOG));
             File pFile = mFile.getParentFile();
             if (!pFile.exists()) {// 如果文件夹不存在，则先创建文件夹
                 pFile.mkdirs();

@@ -21,7 +21,7 @@ import com.litesuits.orm.db.annotation.Table;
 public class AppNotice extends Model {
 
     public static AppNotice get(String noticeId) {
-        return new Dao<>(AppNotice.class).query(noticeId);
+        return isEmpty(noticeId) ? null : new Dao<>(AppNotice.class).query(noticeId);
     }
 
     public static void save(AppNotice notice) {

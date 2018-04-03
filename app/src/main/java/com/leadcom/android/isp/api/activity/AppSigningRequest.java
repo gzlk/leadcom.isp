@@ -63,6 +63,7 @@ public class AppSigningRequest extends Request<AppSigning> {
 
     @Override
     protected void save(AppSigning appSigning) {
+        if (null == appSigning) return;
         AppSignRecord.save(appSigning.getActSignInList());
         super.save(appSigning);
     }
@@ -71,7 +72,9 @@ public class AppSigningRequest extends Request<AppSigning> {
     protected void save(List<AppSigning> list) {
         if (null != list) {
             for (AppSigning signing : list) {
-                AppSignRecord.save(signing.getActSignInList());
+                if (null != signing) {
+                    AppSignRecord.save(signing.getActSignInList());
+                }
             }
         }
         super.save(list);

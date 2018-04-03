@@ -81,6 +81,9 @@
     <string name="ui_individual_message_list_title">查看档案相关的消息列表</string>
     <string name="ui_individual_message_fetching">正在加载消息列表，请稍候&#8230;</string>
     <string name="ui_individual_message_deleting">正在删除消息，请稍候&#8230;</string>
+    <string name="ui_individual_message_moment_deleted">动态已被原作者删除了</string>
+    <string name="ui_individual_message_user_archive_deleted">用户档案已不存在了</string>
+    <string name="ui_individual_message_group_archive_deleted">组织档案已不存在了</string>
     <string name="ui_individual_message_clear_warning">
         <![CDATA[消息清空之后<font color="#148dfe">不能恢复</font>！确定要清空吗？]]>
     </string>

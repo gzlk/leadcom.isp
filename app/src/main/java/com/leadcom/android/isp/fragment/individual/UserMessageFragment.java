@@ -15,6 +15,7 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -185,10 +186,21 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                     // 打开详情
                     switch (msg.getSourceType()) {
                         case UserMessage.SourceType.MOMENT:
-                            MomentDetailsFragment.open(UserMessageFragment.this, msg.getSourceId());
+                            if (null == msg.getUserMmt()) {
+                                ToastHelper.make().showMsg(R.string.ui_individual_message_moment_deleted);
+                            } else {
+                                MomentDetailsFragment.open(UserMessageFragment.this, msg.getSourceId());
+                            }
                             break;
                         default:
                             int type = msg.getSourceType() == UserMessage.SourceType.USER_ARCHIVE ? Archive.Type.USER : Archive.Type.GROUP;
+                            if (type == Archive.Type.USER && null == msg.getUserDoc()) {
+                                ToastHelper.make().showMsg(R.string.ui_individual_message_user_archive_deleted);
+                                return;
+                            } else if (type == Archive.Type.GROUP && null == msg.getGroDoc()) {
+                                ToastHelper.make().showMsg(R.string.ui_individual_message_group_archive_deleted);
+                                return;
+                            }
                             ArchiveDetailsWebViewFragment.open(UserMessageFragment.this, msg.getSourceId(), type);
                             break;
                     }

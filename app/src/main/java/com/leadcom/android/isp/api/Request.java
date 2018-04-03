@@ -181,7 +181,7 @@ public abstract class Request<T> {
             public void onSucceed(Api<T> data, Response<Api<T>> response) {
                 super.onSucceed(data, response);
                 long end = Utils.timestamp();
-                log(format("url(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s, time used: %dms)\n\nraw: %s", methods, url, accessToken,
+                log(format("\nurl(%s): %s\naccessToken: %s, terminalType: android\n%ssuccess: %s(%s,%s, time used: %dms)\nraw: %s", methods, url, accessToken,
                         (isEmpty(body) ? "" : format("body: %s\n", body)), (null == data ? "null" : data.success()),
                         (null == data ? "null" : data.getCode()), (null == data ? "null" : data.getMsg()), (end - start), response.getRawString()));
                 if (null != data && data.success()) {

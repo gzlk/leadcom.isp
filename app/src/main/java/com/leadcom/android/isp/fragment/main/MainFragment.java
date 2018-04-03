@@ -279,13 +279,15 @@ public class MainFragment extends BaseTransparentSupportFragment {
     }
 
     private void showFragment(BaseFragment fragment, String tag) {
-        FragmentTransaction transaction = Activity().getSupportFragmentManager().beginTransaction();
+        FragmentManager manager = Activity().getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
         if (!fragment.isAdded()) {
             transaction.add(R.id.ui_fragment_main_frame_layout, fragment, tag);
         } else {
             transaction.show(fragment);
         }
         transaction.commit();
+        manager.executePendingTransactions();
     }
 
     private void setDisplayPage() {

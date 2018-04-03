@@ -60,17 +60,21 @@ public class AppNoticeRequest extends Request<AppNotice> {
 
     @Override
     protected void save(AppNotice notice) {
-        AppNotice old = AppNotice.get(notice.getId());
-        notice.setRead(null != old && old.isRead());
-        super.save(notice);
+        if (null != notice) {
+            AppNotice old = AppNotice.get(notice.getId());
+            notice.setRead(null != old && old.isRead());
+            super.save(notice);
+        }
     }
 
     @Override
     protected void save(List<AppNotice> list) {
         if (null != list) {
             for (AppNotice notice : list) {
-                AppNotice old = AppNotice.get(notice.getId());
-                notice.setRead(null != old && old.isRead());
+                if (null != notice) {
+                    AppNotice old = AppNotice.get(notice.getId());
+                    notice.setRead(null != old && old.isRead());
+                }
             }
         }
         super.save(list);

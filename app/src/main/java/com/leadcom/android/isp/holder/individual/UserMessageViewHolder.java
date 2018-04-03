@@ -80,8 +80,8 @@ public class UserMessageViewHolder extends BaseViewHolder {
         if (msg.getSourceType() == UserMessage.SourceType.MOMENT) {
             Moment moment = msg.getUserMmt();
             //infoView.setVisibility(moment.getImage().size() > 0 ? View.GONE : View.VISIBLE);
-            imageView.setVisibility(moment.getImage().size() > 0 ? View.VISIBLE : View.GONE);
-            imageView.displayImage(moment.getImage().size() > 0 ? moment.getImage().get(0) : "", imageSize, false, false);
+            imageView.setVisibility(null != moment && moment.getImage().size() > 0 ? View.VISIBLE : View.GONE);
+            imageView.displayImage(null != moment && moment.getImage().size() > 0 ? moment.getImage().get(0) : "", imageSize, false, false);
         } else {
             //Archive archive = null == msg.getGroDocRcmd() ? msg.getUserDoc() : msg.getGroDocRcmd();
             //infoView.setVisibility(View.GONE);

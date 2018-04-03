@@ -178,6 +178,7 @@ public abstract class BaseCmtLikeColFragment extends BaseChatInputSupportFragmen
      * 拉取评论列表
      */
     protected void loadingComments(Model model) {
+        if (null == model) return;
         setLoadingText(R.string.ui_text_document_details_loading_comments);
         displayLoading(true);
         CommentHelper.helper().setModel(model).setCommentListListener(new OnCommentListListener() {
