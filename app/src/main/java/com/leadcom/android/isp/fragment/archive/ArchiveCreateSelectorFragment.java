@@ -31,7 +31,7 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
     }
 
     public static void open(BaseFragment fragment, String groupId) {
-        fragment.openActivity(ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, false, false, true);
+        fragment.openActivity(ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, false, false);
     }
 
     @Override

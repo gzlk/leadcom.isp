@@ -87,7 +87,7 @@
         <LinearLayout
             android:id="@+id/ui_main_tool_bar_container"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="@dimen/ui_base_dimen_simple_item_height"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
             android:orientation="horizontal">

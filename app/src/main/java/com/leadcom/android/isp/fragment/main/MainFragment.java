@@ -24,7 +24,12 @@ import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.model.RecentContact;
+
+import java.util.List;
 
 /**
  * <b>功能描述：</b>首页<br />
@@ -85,8 +90,21 @@ public class MainFragment extends BaseTransparentSupportFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NimApplication.addNotificationChangeCallback(callback);
+        registerObservers(true);
         setDisplayPage();
     }
+
+    private void registerObservers(boolean register) {
+        NIMClient.getService(MsgServiceObserve.class).observeRecentContact(recentContactChangeObserver, register);
+    }
+
+    Observer<List<RecentContact>> recentContactChangeObserver = new Observer<List<RecentContact>>() {
+        @Override
+        public void onEvent(List<RecentContact> recentContacts) {
+            log("message observer onEvent: " + (null == recentContacts ? "null" : recentContacts.size()));
+            showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
+        }
+    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -96,6 +114,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
 
     @Override
     public void onDestroy() {
+        registerObservers(false);
         NimApplication.removeNotificationChangeCallback(callback);
         super.onDestroy();
     }
@@ -233,9 +252,11 @@ public class MainFragment extends BaseTransparentSupportFragment {
         if (null != fragment) {
             if (null == recentFragment) {
                 recentFragment = (RecentContactsFragment) fragment;
+                recentFragment.mainFragment = this;
             }
         } else {
             recentFragment = new RecentContactsFragment();
+            recentFragment.mainFragment = this;
         }
     }
 
@@ -287,7 +308,6 @@ public class MainFragment extends BaseTransparentSupportFragment {
             transaction.show(fragment);
         }
         transaction.commit();
-        manager.executePendingTransactions();
     }
 
     private void setDisplayPage() {
