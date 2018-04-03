@@ -25,6 +25,7 @@ import com.leadcom.android.isp.lib.view.ImageDisplayer;
 public class UserIntroductionFragment extends BaseLayoutSupportFragment {
 
     private static final String PARAM_NAME = "uif_name";
+    private static final String PARAM_GROUP = "uif_group";
     private static final String PARAM_HEAD = "uif_header";
     private static final String PARAM_DATE = "uif_date";
     private static final String PARAM_INTRO = "uif_intro";
@@ -35,9 +36,10 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         return uif;
     }
 
-    public static void open(BaseFragment fragment, String name, String header, String date, String intro) {
+    public static void open(BaseFragment fragment, String groupId, String name, String header, String date, String intro) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_NAME, name);
+        bundle.putString(PARAM_GROUP, groupId);
         bundle.putString(PARAM_HEAD, header);
         bundle.putString(PARAM_DATE, date);
         bundle.putString(PARAM_INTRO, intro);
@@ -55,12 +57,12 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     @ViewId(R.id.ui_main_personality_introduction_text)
     private TextView introView;
 
-    private String name, header, date, intro;
+    private String name, groupId, header, date, intro;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setCustomTitle(R.string.ui_text_personality_introduction_fragment_title);
+        setCustomTitle(isEmpty(groupId) ? R.string.ui_text_personality_introduction_fragment_title : R.string.ui_organization_introduction_fragment_title);
         headerLayout.setVisibility(View.VISIBLE);
         headerView.displayImage(header, getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         nameView.setText(name);
@@ -76,6 +78,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         name = bundle.getString(PARAM_NAME, "");
+        groupId = bundle.getString(PARAM_GROUP, "");
         header = bundle.getString(PARAM_HEAD, "");
         date = bundle.getString(PARAM_DATE, "");
         intro = bundle.getString(PARAM_INTRO, "");
@@ -94,6 +97,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         bundle.putString(PARAM_NAME, name);
+        bundle.putString(PARAM_GROUP, groupId);
         bundle.putString(PARAM_HEAD, header);
         bundle.putString(PARAM_DATE, date);
         bundle.putString(PARAM_INTRO, intro);

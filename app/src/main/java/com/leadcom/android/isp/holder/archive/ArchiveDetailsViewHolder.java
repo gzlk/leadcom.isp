@@ -102,6 +102,15 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
             publicToggle.setToggleOff(true);
         }
         labelsLayout.removeAllViews();
+        if (!isEmpty(archive.getGroupId())) {
+            archive.getLabel().clear();
+            if (!isEmpty(archive.getProperty())) {
+                archive.getLabel().add(archive.getProperty());
+            }
+            if (!isEmpty(archive.getCategory())) {
+                archive.getLabel().add(archive.getCategory());
+            }
+        }
         for (String string : archive.getLabel()) {
             TextView textView = (TextView) View.inflate(labelsLayout.getContext(), R.layout.holder_view_archive_label, null);
             textView.setText(string);

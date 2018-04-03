@@ -679,7 +679,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     if (isSelf) {
                         UserNameEditFragment.open(PersonalityFragment.this, user.getName(), user.getSignature());
                     } else {
-                        UserIntroductionFragment.open(PersonalityFragment.this, user.getName(), user.getHeadPhoto(), user.getCreateDate(), user.getSignature());
+                        UserIntroductionFragment.open(PersonalityFragment.this, "", user.getName(), user.getHeadPhoto(), user.getCreateDate(), user.getSignature());
                     }
                     break;
                 case R.id.ui_holder_view_simple_clickable:

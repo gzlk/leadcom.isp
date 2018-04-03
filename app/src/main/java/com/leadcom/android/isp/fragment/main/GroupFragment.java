@@ -22,6 +22,7 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
 import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.ConcernedOrganizationFragment;
@@ -470,6 +471,9 @@ public class GroupFragment extends BaseOrganizationFragment {
                             // 登录者有组织属性编辑权限时，打开组织属性编辑页面
                             CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
                         }
+                    } else {
+                        // 查看组织简介
+                        UserIntroductionFragment.open(GroupFragment.this, group.getId(), group.getName(), group.getLogo(), group.getCreateDate(), group.getIntro());
                     }
                     break;
             }

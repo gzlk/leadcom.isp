@@ -16,6 +16,8 @@
     <string name="ui_organization_structure_no_group_exist">您没有加入任何组织</string>
     <string name="ui_organization_structure_no_permission_concern">您没有权限关联其他组织</string>
 
+    <string name="ui_organization_introduction_fragment_title">组织简介</string>
+
     <string name="ui_organization_interesting_fragment_title">感兴趣的组织</string>
     <string name="ui_organization_interesting_loading">正在加载感兴趣的组织&#8230;</string>
     <string name="ui_organization_interesting_nothing">暂时没有更多组织</string>

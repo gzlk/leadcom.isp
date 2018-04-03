@@ -2,17 +2,22 @@ package com.leadcom.android.isp.holder.home;
 
 import android.text.Html;
 import android.view.View;
+import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.Role;
 
 
 /**
@@ -30,7 +35,9 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_group_header_logo)
     private ImageDisplayer logoView;
     @ViewId(R.id.ui_holder_view_group_header_intro)
-    private ExpandableTextView introView;
+    private TextView introView;
+    @ViewId(R.id.ui_holder_view_group_header_edit_icon)
+    private CustomTextView editIcon;
 
     public GroupHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -52,8 +59,8 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
         logo = organization.getIntro();
         introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo));
-        introView.makeExpandable();
-        //introView.setMovementMethod(ScrollingMovementMethod.getInstance());
+        Role role = Cache.cache().getGroupRole(organization.getId());
+        editIcon.setVisibility((null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Click({R.id.ui_holder_view_group_header_logo, R.id.ui_holder_view_group_header_container})
