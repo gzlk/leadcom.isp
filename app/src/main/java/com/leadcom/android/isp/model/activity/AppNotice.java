@@ -1,8 +1,12 @@
 package com.leadcom.android.isp.model.activity;
 
+import com.google.gson.reflect.TypeToken;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.activity.vote.AppVote;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.common.TalkTeam;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
@@ -28,9 +32,23 @@ public class AppNotice extends Model {
         new Dao<>(AppNotice.class).save(notice);
     }
 
+    public static String toJson(AppNotice notice) {
+        return null == notice ? "{}" : Json.gson().toJson(notice, new TypeToken<AppNotice>() {
+        }.getType());
+    }
+
+    public static AppNotice fromJson(String json) {
+        return Json.gson().fromJson(isEmpty(json) ? "{}" : json, new TypeToken<AppNotice>() {
+        }.getType());
+    }
+
     //活动Id
     @Column(Activity.Field.ActivityId)
     private String actId;
+    @Column(TalkTeam.Field.TeamId)
+    private String commId;      //活动ID
+    @Column(Activity.Field.NimId)
+    private String tid;         //云信高级群ID
     //标题
     @Column(Archive.Field.Title)
     private String title;
@@ -43,6 +61,8 @@ public class AppNotice extends Model {
     //创建者名称
     @Column(Archive.Field.CreatorName)
     private String creatorName;
+    @Column(AppVote.Field.CreatorHeadPhoto)
+    private String creatorHeadPhoto;//创建者的用户头像
     //创建时间
     @Column(Field.CreateDate)
     private String createDate;
@@ -56,6 +76,22 @@ public class AppNotice extends Model {
 
     public void setActId(String actId) {
         this.actId = actId;
+    }
+
+    public String getCommId() {
+        return commId;
+    }
+
+    public void setCommId(String commId) {
+        this.commId = commId;
+    }
+
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
     }
 
     public String getTitle() {
@@ -88,6 +124,14 @@ public class AppNotice extends Model {
 
     public void setCreatorName(String creatorName) {
         this.creatorName = creatorName;
+    }
+
+    public String getCreatorHeadPhoto() {
+        return creatorHeadPhoto;
+    }
+
+    public void setCreatorHeadPhoto(String creatorHeadPhoto) {
+        this.creatorHeadPhoto = creatorHeadPhoto;
     }
 
     public String getCreateDate() {

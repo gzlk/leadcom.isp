@@ -1,11 +1,14 @@
 package com.leadcom.android.isp.fragment.activity.notice;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.api.activity.AppNoticeRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
@@ -29,34 +32,38 @@ import com.hlk.hlklib.lib.view.ClearEditText;
 
 public class NoticeCreatorFragment extends BaseTransparentSupportFragment {
 
-    public static NoticeCreatorFragment newInstance(String params) {
+    public static NoticeCreatorFragment newInstance(Bundle bundle) {
         NoticeCreatorFragment ncf = new NoticeCreatorFragment();
-        Bundle bundle = new Bundle();
-        // 传过来的tid
-        bundle.putString(PARAM_QUERY_ID, params);
         ncf.setArguments(bundle);
         return ncf;
     }
 
-    private static final String PARAM_TITLE = "ncf_param_title";
-    private static final String PARAM_ACTID = "ncf_param_act_id";
+    public static void open(Context context, String tid, int request) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, tid);
+        BaseActivity.openActivity(context, NoticeCreatorFragment.class.getName(), bundle, request, true, true);
+    }
 
-    private String mTitle = "";
-    private String activityId = "";
+    public static void open(BaseFragment fragment, String tid, int request) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, tid);
+        fragment.openActivity(NoticeCreatorFragment.class.getName(), bundle, request, true, true);
+    }
+
+    private AppNotice mNotice;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        mTitle = bundle.getString(PARAM_TITLE, "");
-        activityId = bundle.getString(PARAM_ACTID, "");
+        mNotice = AppNotice.fromJson(mJsonString);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
+        mNotice.setTitle(titleHolder.getValue());
+        mNotice.setContent(contentView.getValue());
+        mJsonString = AppNotice.toJson(mNotice);
         super.saveParamsToBundle(bundle);
-        mTitle = titleHolder.getValue();
-        bundle.putString(PARAM_TITLE, mTitle);
-        bundle.putString(PARAM_ACTID, activityId);
     }
 
     @ViewId(R.id.ui_activity_notice_creator_content)
@@ -79,6 +86,10 @@ public class NoticeCreatorFragment extends BaseTransparentSupportFragment {
                 tryPublishNotice();
             }
         });
+        if (null == mNotice || isEmpty(mNotice.getId())) {
+            mNotice = new AppNotice();
+            mNotice.setTid(mQueryId);
+        }
         initializeHolder();
     }
 
@@ -102,35 +113,26 @@ public class NoticeCreatorFragment extends BaseTransparentSupportFragment {
         if (null == titleHolder) {
             titleHolder = new SimpleInputableViewHolder(mRootView, this);
         }
-        titleHolder.showContent(format(getString(R.string.ui_activity_notice_creator_title), mTitle));
-
-        if (isEmpty(activityId)) {
-            Activity act = Activity.getByTid(mQueryId);
-            if (null != act) {
-                activityId = act.getId();
-            }
-        }
+        titleHolder.showContent(format(getString(R.string.ui_activity_notice_creator_title), mNotice.getTitle()));
     }
 
     private void tryPublishNotice() {
-        if (isEmpty(activityId)) {
-            ToastHelper.make().showMsg(R.string.ui_activity_details_invalid_parameter);
-            return;
-        }
-        mTitle = titleHolder.getValue();
-        if (isEmpty(mTitle)) {
+        String value = titleHolder.getValue();
+        if (isEmpty(value)) {
             ToastHelper.make().showMsg(R.string.ui_activity_notice_creator_title_invalid);
             return;
         }
+        mNotice.setTitle(value);
         String content = contentView.getValue();
         if (isEmpty(content)) {
             ToastHelper.make().showMsg(R.string.ui_activity_notice_creator_content_invalid);
             return;
         }
-        publishNotice(content);
+        mNotice.setContent(content);
+        publishNotice();
     }
 
-    private void publishNotice(String content) {
+    private void publishNotice() {
         setLoadingText(R.string.ui_activity_notice_creator_creating);
         displayLoading(true);
         AppNoticeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppNotice>() {
@@ -140,13 +142,12 @@ public class NoticeCreatorFragment extends BaseTransparentSupportFragment {
                 displayLoading(false);
                 if (success) {
                     if (null != appNotice) {
-                        resultData(Json.gson().toJson(appNotice, new TypeToken<AppNotice>() {
-                        }.getType()));
+                        resultData(AppNotice.toJson(appNotice));
                     }
                 } else {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).add(activityId, mTitle, content);
+        }).addTeamNotice(mNotice);
     }
 }

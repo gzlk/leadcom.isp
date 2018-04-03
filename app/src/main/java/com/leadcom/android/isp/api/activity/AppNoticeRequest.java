@@ -132,4 +132,41 @@ public class AppNoticeRequest extends Request<AppNotice> {
         // actId,pageSize,pageNumber
         httpRequest(getRequest(MultipleNotice.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
     }
+
+    /**
+     * 群聊的通知
+     */
+    public void addTeamNotice(AppNotice notice) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("tid", notice.getTid())
+                    .put("title", notice.getTitle())
+                    .put("content", notice.getContent());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s", ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 列取群聊的通知列表
+     */
+    public void listTeamNotice(String tid, int pageNumber) {
+        httpRequest(getRequest(MultipleNotice.class, format("/communication/commNotice%s?tid=%s&pageNumber=%d", LIST, tid, pageNumber), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查找指定通知的详细内容
+     */
+    public void findTeamNotice(String noticeId) {
+        httpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s?commNoticeId=%s", FIND, noticeId), "", HttpMethods.Get));
+    }
+
+    /**
+     * 删除指定通知
+     */
+    public void deleteTeamNotice(String noticeId) {
+        httpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s?commNoticeId=%s", DELETE, noticeId), "", HttpMethods.Get));
+    }
 }

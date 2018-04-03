@@ -52,7 +52,7 @@ public class NoticeAction extends BaseAction {
                 case RequestCode.REQ_NOTICE_LIST:
                     // 要创建新的通知
                     int code = makeRequestCode(RequestCode.REQ_NOTICE_NEW);
-                    BaseActivity.openActivity(getActivity(), NoticeCreatorFragment.class.getName(), getAccount(), code, true, true);
+                    NoticeCreatorFragment.open(getActivity(), getAccount(), code);
                     break;
                 case RequestCode.REQ_NOTICE_NEW:
                     // 群发通知

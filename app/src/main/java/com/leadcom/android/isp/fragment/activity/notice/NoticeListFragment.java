@@ -10,18 +10,12 @@ import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.AppNoticeRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.holder.activity.NoticeViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.AppNotice;
-import com.netease.nim.uikit.api.model.SimpleCallback;
-import com.netease.nim.uikit.impl.cache.TeamDataCache;
-import com.netease.nimlib.sdk.team.constant.TeamMemberType;
-import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.List;
 
@@ -38,40 +32,53 @@ import java.util.List;
 
 public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
 
-    private static boolean mCreatable = false;
+    private static final String PARAM_CREATABLE = "nlf_creatable";
 
-    public static NoticeListFragment newInstance(String params) {
+    public static NoticeListFragment newInstance(Bundle bundle) {
         NoticeListFragment nlf = new NoticeListFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
+        //String[] strings = splitParameters(params);
+        //Bundle bundle = new Bundle();
         // 传过来的tid
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
+        //bundle.putString(PARAM_QUERY_ID, strings[0]);
         // 是否允许新建通知
-        mCreatable = Boolean.valueOf(strings[1]);
+        //mCreatable = Boolean.valueOf(strings[1]);
         nlf.setArguments(bundle);
         return nlf;
     }
 
+    private static Bundle getBundle(String tid, boolean creatable) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, tid);
+        bundle.putBoolean(PARAM_CREATABLE, creatable);
+        return bundle;
+    }
+
     public static void open(BaseFragment fragment, String tid, boolean creatable) {
-        fragment.openActivity(NoticeListFragment.class.getName(), format("%s,%s", tid, creatable), true, false);
+        fragment.openActivity(NoticeListFragment.class.getName(), getBundle(tid, creatable), true, false);
     }
 
     public static void open(Context context, int requestCode, String tid, boolean creatable) {
-        BaseActivity.openActivity(context, NoticeListFragment.class.getName(), format("%s,%s", tid, creatable), requestCode, true, false);
+        BaseActivity.openActivity(context, NoticeListFragment.class.getName(), getBundle(tid, creatable), requestCode, true, false);
     }
 
-    private String mActivityId;
     private NoticeAdapter mAdapter;
+    private boolean mCreatable;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        mCreatable = bundle.getBoolean(PARAM_CREATABLE, false);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_CREATABLE, mCreatable);
+    }
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
 
-    }
-
-    @Override
-    public void onDestroy() {
-        mCreatable = false;
-        super.onDestroy();
     }
 
     @Override
@@ -115,42 +122,17 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
-    private void tryResetRightEvent() {
-        TeamDataCache.getInstance().fetchTeamMember(mQueryId, Cache.cache().userId, new SimpleCallback<TeamMember>() {
-            @Override
-            public void onResult(boolean success, TeamMember result, int code) {
-                if (success && null != result) {
-                    if (result.getType() == TeamMemberType.Manager || result.getType() == TeamMemberType.Owner) {
-                        // 活动管理者或创建者可以新建通知
-                        resetRightEvent();
-                    }
-                }
-            }
-        });
-    }
-
     private void resetRightEvent() {
         setRightText(R.string.ui_base_text_new);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
                 resultSucceededActivity();
-                //openActivity(NoticeCreatorFragment.class.getName(), mQueryId, true, true);
             }
         });
     }
 
-    private void fetchingActivity() {
-        if (isEmpty(mActivityId)) {
-            Activity act = Activity.getByTid(mQueryId);
-            if (null != act) {
-                mActivityId = act.getId();
-            }
-        }
-    }
-
     private void loadingNotices() {
-        fetchingActivity();
         setLoadingText(R.string.ui_activity_notice_list_loading_notices);
         displayLoading(true);
         displayNothing(false);
@@ -158,29 +140,22 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onResponse(List<AppNotice> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (remotePageNumber <= 1) {
+                    mAdapter.clear();
+                }
+                int size = null == list ? 0 : list.size();
+                remotePageNumber += size < pageSize ? 0 : 1;
+                isLoadingComplete(size < pageSize);
                 if (success) {
-                    if (remotePageNumber <= 1) {
-                        mAdapter.clear();
-                    }
                     if (null != list) {
-                        if (list.size() >= pageSize) {
-                            remotePageNumber++;
-                            isLoadingComplete(false);
-                        } else {
-                            isLoadingComplete(true);
-                        }
                         mAdapter.update(list, false);
-                    } else {
-                        isLoadingComplete(true);
                     }
-                } else {
-                    isLoadingComplete(true);
                 }
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
                 stopRefreshing();
             }
-        }).list(mActivityId, remotePageNumber);
+        }).listTeamNotice(mQueryId, remotePageNumber);
     }
 
     private void initializeAdapter() {

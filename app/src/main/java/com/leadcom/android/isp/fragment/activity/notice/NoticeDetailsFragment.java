@@ -11,6 +11,7 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -33,17 +34,20 @@ import com.hlk.hlklib.lib.inject.ViewId;
 
 public class NoticeDetailsFragment extends BaseTransparentSupportFragment {
 
-    public static NoticeDetailsFragment newInstance(String params) {
+    public static NoticeDetailsFragment newInstance(Bundle bundle) {
         NoticeDetailsFragment ndf = new NoticeDetailsFragment();
-        Bundle bundle = new Bundle();
+        //Bundle bundle = new Bundle();
         // 通知的id
-        bundle.putString(PARAM_QUERY_ID, params);
+        //bundle.putString(PARAM_QUERY_ID, params);
         ndf.setArguments(bundle);
         return ndf;
     }
 
     public static void open(BaseFragment fragment, String noticeId) {
-        fragment.openActivity(NoticeDetailsFragment.class.getName(), noticeId, true, false);
+        Bundle bundle = new Bundle();
+        // 通知的id
+        bundle.putString(PARAM_QUERY_ID, noticeId);
+        fragment.openActivity(NoticeDetailsFragment.class.getName(), bundle, true, false);
     }
 
     public static void open(Context context, int requestCode, String noticeId) {
@@ -126,13 +130,13 @@ public class NoticeDetailsFragment extends BaseTransparentSupportFragment {
     }
 
     private void warningDelete() {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_sing_details_delete_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 delete();
                 return true;
             }
-        }, null);
+        }).setTitleText(R.string.ui_activity_notice_details_delete).show();
     }
 
     private void delete() {
@@ -144,7 +148,7 @@ public class NoticeDetailsFragment extends BaseTransparentSupportFragment {
                     finish();
                 }
             }
-        }).delete(mQueryId);
+        }).deleteTeamNotice(mQueryId);
     }
 
     private void loadingNotice() {
@@ -165,6 +169,6 @@ public class NoticeDetailsFragment extends BaseTransparentSupportFragment {
                 }
                 displayLoading(false);
             }
-        }).find(mQueryId);
+        }).findTeamNotice(mQueryId);
     }
 }

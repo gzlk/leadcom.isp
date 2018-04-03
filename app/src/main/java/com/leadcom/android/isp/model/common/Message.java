@@ -212,6 +212,10 @@ public class Message extends Model {
          * 群聊成员踢出
          */
         int TALK_TEAM_MEMBER_REMOVE = 43;
+        /**
+         * 群聊通知
+         */
+        int TALK_TEAM_NOTICE = 44;
     }
 
     /**
@@ -257,6 +261,8 @@ public class Message extends Model {
                 return "退出群聊";
             case Type.TALK_TEAM_MEMBER_REMOVE:
                 return "被移出群聊";
+            case Type.TALK_TEAM_NOTICE:
+                return "群通知";
             default:
                 return StringHelper.format("不晓得是什么通知(%d)", type);
         }

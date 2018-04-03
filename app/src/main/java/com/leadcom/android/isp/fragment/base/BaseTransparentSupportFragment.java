@@ -20,6 +20,7 @@ public abstract class BaseTransparentSupportFragment extends BaseLocationSupport
 
     private static final String PARAM_INITIALIZED = "bmf_initialized";
     protected static final String PARAM_QUERY_ID = "btsf_param_query";
+    protected static final String PARAM_JSON = "btsf_param_json";
     /**
      * fragment是否已经初始化了，为false时，需要设置顶部的padding
      */
@@ -28,17 +29,23 @@ public abstract class BaseTransparentSupportFragment extends BaseLocationSupport
      * 基本queryId
      */
     protected String mQueryId;
+    /**
+     * 临时保存的json字符串[]
+     */
+    protected String mJsonString;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         isInitialized = bundle.getBoolean(PARAM_INITIALIZED, false);
         mQueryId = bundle.getString(PARAM_QUERY_ID, "");
+        mJsonString = bundle.getString(PARAM_JSON, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         bundle.putBoolean(PARAM_INITIALIZED, isInitialized);
         bundle.putString(PARAM_QUERY_ID, mQueryId);
+        bundle.putString(PARAM_JSON, mJsonString);
     }
 
     /**

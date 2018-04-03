@@ -21,6 +21,8 @@ public class NoticeAttachment extends CustomAttachment {
 
     // 所属活动的id
     private String actId;
+    // 群聊的id？不是tid吗？
+    private String commId;
     // 通知标题
     private String title;
     // 通知内容
@@ -32,6 +34,14 @@ public class NoticeAttachment extends CustomAttachment {
 
     public void setActId(String actId) {
         this.actId = actId;
+    }
+
+    public String getCommId() {
+        return commId;
+    }
+
+    public void setCommId(String commId) {
+        this.commId = commId;
     }
 
     public String getTitle() {
@@ -57,6 +67,7 @@ public class NoticeAttachment extends CustomAttachment {
             if (data.has("actId")) {
                 actId = data.getString("actId");
             }
+            commId = data.optString("commId", "");
             if (data.has("title")) {
                 title = data.getString("title");
             }
@@ -73,6 +84,7 @@ public class NoticeAttachment extends CustomAttachment {
         JSONObject object = super.packData();
         try {
             object.put("actId", actId)
+                    .put("commId", commId)
                     .put("title", title)
                     .put("content", content);
         } catch (Exception e) {

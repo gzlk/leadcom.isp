@@ -179,6 +179,7 @@
     <string name="ui_activity_notice_nim_view_holder_title" formatted="false">【通知】%s</string>
     <string name="ui_activity_notice_details_loading">正在加载通知内容，请稍候&#8230;</string>
     <string name="ui_activity_notice_details_not_exists">通知不存在或已经被删除</string>
+    <string name="ui_activity_notice_details_delete">确定要删除这个群通知吗？</string>
     <string-array name="ui_activity_notice_details_items">
         <item>0|标题：|%s|0</item>
         <item>1|来源：|%s|0</item>
