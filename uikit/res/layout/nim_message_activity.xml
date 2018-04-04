@@ -17,9 +17,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/white"
+            app:subtitleTextAppearance="@style/Toolbar.SubTitleText"
+            app:subtitleTextColor="#65656a"
             app:titleTextAppearance="@style/Toolbar.TitleText"
-            app:subtitleTextAppearance="@style/Toolbar.SubTitleText"/>
+            app:titleTextColor="#65656a" />
     </android.support.design.widget.AppBarLayout>
 
 </LinearLayout>

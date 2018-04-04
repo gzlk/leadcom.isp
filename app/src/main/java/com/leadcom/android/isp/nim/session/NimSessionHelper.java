@@ -347,12 +347,12 @@ public class NimSessionHelper {
 //                    }
                 }
             };
-            infoButton.iconId = R.drawable.ic_action_person;
+            infoButton.iconId = R.drawable.ic_action_person_light;
             buttons.add(infoButton);
             p2pCustomization.buttons = buttons;
 
             p2pCustomization.withSticker = true;
-            p2pCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector;
+            p2pCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector_light;
         }
 
         return p2pCustomization;
@@ -405,7 +405,7 @@ public class NimSessionHelper {
                     }
                 }
             };
-            infoButton.iconId = R.drawable.ic_action_group;
+            infoButton.iconId = R.drawable.ic_action_group_light;
 
             buttons.add(infoButton);
             //buttons.add(chatButton);
@@ -413,7 +413,7 @@ public class NimSessionHelper {
 
             teamCustomization.withSticker = true;
 
-            teamCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector;
+            teamCustomization.buttonSelectorResources = R.drawable.nim_action_bar_button_selector_light;
         }
 
         return teamCustomization;
