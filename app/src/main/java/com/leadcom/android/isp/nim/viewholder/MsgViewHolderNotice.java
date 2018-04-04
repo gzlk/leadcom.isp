@@ -39,8 +39,8 @@ public class MsgViewHolderNotice extends MsgViewHolderBase {
 
     @Override
     protected void inflateContentView() {
-        titleTextView = (TextView) view.findViewById(R.id.message_item_notice_title_label);
-        contentTextView = (TextView) view.findViewById(R.id.message_item_notice_content_label);
+        titleTextView = view.findViewById(R.id.message_item_notice_title_label);
+        contentTextView = view.findViewById(R.id.message_item_notice_content_label);
     }
 
     @Override
@@ -53,6 +53,6 @@ public class MsgViewHolderNotice extends MsgViewHolderBase {
     @Override
     protected void onItemClick() {
         // 打开通知详情页
-        BaseActivity.openActivity(context, NoticeDetailsFragment.class.getName(), notice.getId(), true, false);
+        NoticeDetailsFragment.open(context, 0, notice.getId());
     }
 }

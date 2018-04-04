@@ -527,10 +527,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     selectedIndex = index;
                     Model model = mAdapter.get(selectedIndex);
                     if (model instanceof UserExtra) {
-                        UserExtra extra = (UserExtra) model;
-                        if (extra.isEditable()) {
-                            openSelfDefineDialog();
-                        }
+                        //UserExtra extra = (UserExtra) model;
+                        //if (extra.isEditable()) {
+                        openSelfDefineDialog();
+                        //}
                     }
                 }
                 break;
@@ -566,8 +566,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private View selfDefineDialog, selfShown;
-    private TextView selfTitle;
-    private ClearEditText selfName, selfValue;
+    private TextView selfDialogTitle;
+    private ClearEditText selfPropertyName, selfPropertyValue;
     private ToggleableViewHolder toggleHolder;
 
     // 打开自定义属性对话框
@@ -583,17 +583,17 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
-                if (null == selfTitle) {
-                    selfTitle = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_title);
+                if (null == selfDialogTitle) {
+                    selfDialogTitle = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_title);
                 }
                 if (null == toggleHolder) {
                     toggleHolder = new ToggleableViewHolder(selfDefineDialog, PersonalityFragment.this);
                 }
-                if (null == selfName) {
-                    selfName = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_name);
+                if (null == selfPropertyName) {
+                    selfPropertyName = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_name);
                 }
-                if (null == selfValue) {
-                    selfValue = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_value);
+                if (null == selfPropertyValue) {
+                    selfPropertyValue = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_value);
                 }
                 if (null == selfShown) {
                     selfShown = selfDefineDialog.findViewById(R.id.ui_popup_individual_self_defined_property_shown);
@@ -601,24 +601,29 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 Model model = mAdapter.get(selectedIndex);
                 selfShown.setVisibility((model instanceof UserExtra) ? View.VISIBLE : View.GONE);
                 if (model instanceof UserExtra) {
-                    selfTitle.setText(R.string.ui_text_user_property_self_defined_dialog_title_edit);
+                    selfDialogTitle.setText(R.string.ui_text_user_property_self_defined_dialog_title_edit);
                     UserExtra ue = (UserExtra) model;
-                    selfName.setValue(ue.getTitle());
-                    selfName.focusEnd();
-                    selfValue.setValue(ue.getContent());
+                    selfPropertyName.setValue(ue.getTitle());
+                    selfPropertyName.setEnabled(ue.isEditable());
+                    selfPropertyValue.setValue(ue.getContent());
+                    if (ue.isEditable()) {
+                        selfPropertyName.focusEnd();
+                    } else {
+                        selfPropertyValue.focusEnd();
+                    }
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, ue.getShow()));
                 } else {
-                    selfTitle.setText(R.string.ui_text_user_property_self_defined_dialog_title);
+                    selfDialogTitle.setText(R.string.ui_text_user_property_self_defined_dialog_title);
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, UserExtra.ShownType.HIDE));
-                    selfName.setValue("");
-                    selfValue.setValue("");
+                    selfPropertyName.setValue("");
+                    selfPropertyValue.setValue("");
                 }
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                String title = selfName.getValue();
-                String value = selfValue.getValue();
+                String title = selfPropertyName.getValue();
+                String value = selfPropertyValue.getValue();
                 if (isEmpty(title) || isEmpty(value)) {
                     ToastHelper.make().showMsg(R.string.ui_text_user_property_self_defined_invalid);
                     return false;
@@ -629,8 +634,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 } else {
                     extra = new UserExtra();
                 }
-                extra.setTitle(selfName.getValue());
-                extra.setContent(selfValue.getValue());
+                extra.setTitle(selfPropertyName.getValue());
+                extra.setContent(selfPropertyValue.getValue());
                 extra.setShow(selfShown.getVisibility() == View.GONE ? UserExtra.ShownType.HIDE : (toggleHolder.isToggled() ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE));
                 //extra.setShow((selfShown.getVisibility() == View.VISIBLE || toggleHolder.isToggled()) ? UserExtra.ShownType.SHOWN : UserExtra.ShownType.HIDE);
                 int index = Cache.cache().me.getExtra().indexOf(extra);
