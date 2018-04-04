@@ -139,7 +139,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (isSelf) {
-            tryPaddingContent(paddingLayout, false);
+            //tryPaddingContent(paddingLayout, false);
 
             // 头像选择是需要剪切的
             isChooseImageForCrop = true;
@@ -617,6 +617,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, UserExtra.ShownType.HIDE));
                     selfPropertyName.setValue("");
                     selfPropertyValue.setValue("");
+                    selfShown.setVisibility(View.VISIBLE);
                 }
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {

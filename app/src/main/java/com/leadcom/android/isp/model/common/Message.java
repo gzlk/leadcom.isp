@@ -309,6 +309,17 @@ public class Message extends Model {
         return msgType > 0 && (msgType < Type.USER_ARCHIVE_LIKE || getMsgType() > Type.MOMENT_COMMENT);
     }
 
+    /**
+     * 是否是群聊相关的通知消息
+     */
+    public boolean isTeamMsg() {
+        return msgType >= Type.TALK_TEAM_DISMISS && msgType <= Type.TALK_TEAM_MEMBER_REMOVE;
+    }
+
+    public boolean isGroupMsg() {
+        return msgType >= Type.GROUP_JOIN && msgType <= Type.GROUP_KICK_OUT;
+    }
+
     public void setType(int type) {
         this.type = type;
     }

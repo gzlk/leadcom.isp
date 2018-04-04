@@ -16,6 +16,7 @@ import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>全局缓存<br />
@@ -128,10 +129,12 @@ public class Cache {
         return (now - then) >= Utils.DAY * 7;
     }
 
-    public void resetRelatedGroups(ArrayList<RelateGroup> list) {
-        groups.clear();
-        groups.addAll(list);
-        saveGroups();
+    public void resetRelatedGroups(List<RelateGroup> list) {
+        if (null != list) {
+            groups.clear();
+            groups.addAll(list);
+            saveGroups();
+        }
     }
 
     private void saveGroups() {

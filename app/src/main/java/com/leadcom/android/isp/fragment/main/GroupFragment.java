@@ -35,6 +35,7 @@ import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.home.GroupHeaderViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -45,6 +46,7 @@ import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +88,24 @@ public class GroupFragment extends BaseOrganizationFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isFirst = true;
+        App.addNimMessageEvent(nimMessageEvent);
     }
+
+    @Override
+    public void onDestroy() {
+        App.removeNimMessageEvent(nimMessageEvent);
+        super.onDestroy();
+    }
+
+    private OnNimMessageEvent nimMessageEvent = new OnNimMessageEvent() {
+        @Override
+        public void onMessageEvent(NimMessage message) {
+            // 如果是组织相关的推送，则重新拉取组织列表
+            if (null != message && message.isGroupMsg()) {
+                fetchingJoinedRemoteOrganizations(0);
+            }
+        }
+    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -183,16 +202,14 @@ public class GroupFragment extends BaseOrganizationFragment {
         return null;
     }
 
-    private String changedId = "";
-
     @Override
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CREATE:
             case REQUEST_CHANGE:
-                changedId = getResultedData(data);
+                mQueryId = getResultedData(data);
                 // 组织创建成功，需要重新刷新组织列表
-                fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
+                onSwipeRefreshing();
                 break;
         }
         super.onActivityResult(requestCode, data);
@@ -308,18 +325,20 @@ public class GroupFragment extends BaseOrganizationFragment {
                 initializeGroupsPosition();
                 // 初始化第一个组织
                 if (gAdapter.getItemCount() > 0) {
-                    if (isEmpty(changedId)) {
+                    if (isEmpty(mQueryId)) {
                         onGroupChange(gAdapter.get(0));
                     }
                 }
-            } else if (!isEmpty(changedId)) {
-                onGroupChange(gAdapter.get(changedId));
+            } else if (!isEmpty(mQueryId)) {
+                onGroupChange(gAdapter.get(mQueryId));
             }
         }
         displayNothing(gAdapter.getItemCount() <= 0);
         if (gAdapter.getItemCount() <= 0) {
             titleTextView.setText(null);
         }
+        // 重新拉取我的权限列表
+        App.app().fetchPermissions();
     }
 
     private void initializeGroupsAdapter() {
@@ -331,7 +350,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
+                    onSwipeRefreshing();
                 }
             });
         }
@@ -359,8 +378,8 @@ public class GroupFragment extends BaseOrganizationFragment {
                 gAdapter.update(org);
             }
         }
-        if (isEmpty(dAdapter.get(0).getId()) || !isEmpty(changedId) || !dAdapter.get(0).getId().equals(group.getId())) {
-            changedId = "";
+        if (isEmpty(dAdapter.get(0).getId()) || !isEmpty(mQueryId) || !dAdapter.get(0).getId().equals(group.getId())) {
+            mQueryId = "";
             dAdapter.replace(group, 0);
             fetchingQuantity(group.getId());
         }

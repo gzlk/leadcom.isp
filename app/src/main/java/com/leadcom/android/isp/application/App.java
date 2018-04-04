@@ -7,6 +7,8 @@ import android.view.animation.AnimationUtils;
 
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.user.PermissionRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.crash.AppCrashHandler;
 import com.leadcom.android.isp.crash.storage.StorageUtil;
@@ -14,6 +16,7 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
+import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.user.User;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -28,6 +31,8 @@ import com.sina.weibo.sdk.auth.AuthInfo;
 import com.tencent.smtt.sdk.QbSdk;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>Application类<br />
@@ -227,5 +232,20 @@ public class App extends NimApplication {
         // 同时退出网易云
         NIMClient.getService(AuthService.class).logout();
         super.logout();
+    }
+
+    /**
+     * 拉取我的权限列表并缓存下来
+     */
+    public void fetchPermissions() {
+        PermissionRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RelateGroup>() {
+            @Override
+            public void onResponse(List<RelateGroup> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    Cache.cache().resetRelatedGroups(list);
+                }
+            }
+        }).list();
     }
 }
