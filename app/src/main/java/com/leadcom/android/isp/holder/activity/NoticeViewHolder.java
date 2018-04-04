@@ -44,10 +44,10 @@ public class NoticeViewHolder extends BaseViewHolder {
         readView.setTextColor(getColor(notice.isRead() ? R.color.textColorHint : R.color.colorCaution));
     }
 
-    @Click({R.id.ui_holder_view_activity_notice_item})
+    @Click({R.id.ui_holder_view_activity_notice_item, R.id.ui_tool_view_contact_button2})
     private void click(View view) {
-        if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
     }
 }

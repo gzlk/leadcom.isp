@@ -43,15 +43,19 @@ public class NoticeDetailsFragment extends BaseTransparentSupportFragment {
         return ndf;
     }
 
-    public static void open(BaseFragment fragment, String noticeId) {
+    private static Bundle getBundle(String noticeId) {
         Bundle bundle = new Bundle();
         // 通知的id
         bundle.putString(PARAM_QUERY_ID, noticeId);
-        fragment.openActivity(NoticeDetailsFragment.class.getName(), bundle, true, false);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String noticeId) {
+        fragment.openActivity(NoticeDetailsFragment.class.getName(), getBundle(noticeId), true, false);
     }
 
     public static void open(Context context, int requestCode, String noticeId) {
-        BaseActivity.openActivity(context, NoticeDetailsFragment.class.getName(), noticeId, requestCode, true, false);
+        BaseActivity.openActivity(context, NoticeDetailsFragment.class.getName(), getBundle(noticeId), requestCode, true, false);
     }
 
     private String[] items;

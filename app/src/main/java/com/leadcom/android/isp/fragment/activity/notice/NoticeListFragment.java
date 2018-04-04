@@ -10,12 +10,19 @@ import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.AppNoticeRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.holder.activity.NoticeViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.activity.AppNotice;
+import com.leadcom.android.isp.view.SwipeItemLayout;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
+import com.netease.nimlib.sdk.team.constant.TeamMemberType;
+import com.netease.nimlib.sdk.team.model.TeamMember;
 
 import java.util.List;
 
@@ -33,6 +40,7 @@ import java.util.List;
 public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_CREATABLE = "nlf_creatable";
+    private static final String PARAM_OWNER = "nlf_owner";
 
     public static NoticeListFragment newInstance(Bundle bundle) {
         NoticeListFragment nlf = new NoticeListFragment();
@@ -62,18 +70,20 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private NoticeAdapter mAdapter;
-    private boolean mCreatable;
+    private boolean mCreatable, isOwner;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mCreatable = bundle.getBoolean(PARAM_CREATABLE, false);
+        isOwner = bundle.getBoolean(PARAM_OWNER, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_CREATABLE, mCreatable);
+        bundle.putBoolean(PARAM_OWNER, isOwner);
     }
 
     @Override
@@ -160,20 +170,39 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
+            mRootView.setBackgroundColor(getColor(R.color.windowBackground));
             mAdapter = new NoticeAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
+            TeamMember member = TeamDataCache.getInstance().getTeamMember(mQueryId, Cache.cache().userId);
+            isOwner = member.getType() == TeamMemberType.Owner;
             loadingNotices();
         }
     }
 
-    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
-        public void onClick(int index) {
+        public void onClick(View view, final int index) {
             AppNotice notice = mAdapter.get(index);
-            notice.setRead(true);
-            AppNotice.save(notice);
-            mAdapter.notifyItemChanged(index);
-            NoticeDetailsFragment.open(NoticeListFragment.this, notice.getId());
+            switch (view.getId()) {
+                case R.id.ui_tool_view_contact_button2:
+                    AppNoticeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppNotice>() {
+                        @Override
+                        public void onResponse(AppNotice notice, boolean success, String message) {
+                            super.onResponse(notice, success, message);
+                            if (success) {
+                                mAdapter.remove(index);
+                            }
+                        }
+                    }).deleteTeamNotice(notice.getId());
+                    break;
+                default:
+                    notice.setRead(true);
+                    AppNotice.save(notice);
+                    mAdapter.notifyItemChanged(index);
+                    NoticeDetailsFragment.open(NoticeListFragment.this, notice.getId());
+                    break;
+            }
         }
     };
 
@@ -182,13 +211,13 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public NoticeViewHolder onCreateViewHolder(View itemView, int viewType) {
             NoticeViewHolder holder = new NoticeViewHolder(itemView, NoticeListFragment.this);
-            holder.addOnViewHolderClickListener(onViewHolderClickListener);
+            holder.setOnViewHolderElementClickListener(elementClickListener);
             return holder;
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_activity_notice_item;
+            return isOwner ? R.layout.holder_view_activity_notice_item_deletable : R.layout.holder_view_activity_notice_item;
         }
 
         @Override
