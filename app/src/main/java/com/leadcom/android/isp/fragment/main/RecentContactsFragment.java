@@ -113,7 +113,14 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
                 @Override
                 public void onChange(RecentContact contact) {
                     if (null != mAdapter) {
-                        needRefresh = true;
+                        int index = mAdapter.indexOf(contact);
+                        if (index >= 0) {
+                            mAdapter.replace(contact, index);
+                        } else {
+                            mAdapter.add(contact);
+                        }
+                        mAdapter.sort();
+                        //needRefresh = true;
                     }
                 }
             };

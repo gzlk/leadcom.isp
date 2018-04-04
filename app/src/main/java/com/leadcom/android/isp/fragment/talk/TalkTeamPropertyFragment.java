@@ -651,9 +651,9 @@ public class TalkTeamPropertyFragment extends BaseTalkTeamFragment {
                 RecentContact contact = getRecentContact();
                 if (null != contact) {
                     if (isTagSet(contact)) {
-                        addTag(contact);
-                    } else {
                         removeTag(contact);
+                    } else {
+                        addTag(contact);
                     }
                     NIMClient.getService(MsgService.class).updateRecent(contact);
                     if (null != stickChangeCallback) {
