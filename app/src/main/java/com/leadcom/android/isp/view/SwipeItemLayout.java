@@ -15,7 +15,6 @@ import android.view.ViewParent;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
-
 /**
  * <b>功能描述：</b>用于RecyclerView的滑动删除类<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -364,7 +363,7 @@ public class SwipeItemLayout extends ViewGroup {
     };
 
     class ScrollRunnable implements Runnable {
-        private static final int FLING_DURATION = 200;
+        private static final int FLING_DURATION = 400;
         private Scroller mScroller;
         private boolean mAbort;
         private int mMinVelocity;
@@ -385,7 +384,7 @@ public class SwipeItemLayout extends ViewGroup {
                 setTouchMode(Mode.FLING);
                 mAbort = false;
                 mScrollToLeft = endX < startX;
-                mScroller.startScroll(startX, 0, endX - startX, 0, 400);
+                mScroller.startScroll(startX, 0, endX - startX, 0, FLING_DURATION);
                 ViewCompat.postOnAnimation(SwipeItemLayout.this, this);
             }
         }

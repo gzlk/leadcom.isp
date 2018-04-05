@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxLayoutManager;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
@@ -115,6 +112,7 @@ public class TalkTeamMembersFragment extends BaseTalkTeamFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        layoutType = TYPE_FLEX;
         super.onActivityCreated(savedInstanceState);
         selectedIndex = -1;
         searchingText = "";
@@ -123,7 +121,6 @@ public class TalkTeamMembersFragment extends BaseTalkTeamFragment {
         addModel.setAccessToken(StringHelper.getString(R.string.ui_icon_add));
         enableSwipe(false);
         isLoadingComplete(true);
-        mRecyclerView.setLayoutManager(new FlexboxLayoutManager(mRecyclerView.getContext(), FlexDirection.ROW, FlexWrap.WRAP));
         registerObservers(true);
         InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchView, this);
         searchViewHolder.setOnSearchingListener(onSearchingListener);
@@ -447,19 +444,19 @@ public class TalkTeamMembersFragment extends BaseTalkTeamFragment {
             }
         }
 
-        private void remove(String id) {
-            Iterator<Model> iterator = iterator();
-            while (iterator.hasNext()) {
-                Model model = iterator.next();
-                if (model.getId().equals(id)) {
-                    users.remove(model);
-                    int index = mAdapter.indexOf(model);
-                    iterator.remove();
-                    mAdapter.notifyItemRemoved(index);
-                    break;
-                }
-            }
-        }
+//        private void remove(String id) {
+//            Iterator<Model> iterator = iterator();
+//            while (iterator.hasNext()) {
+//                Model model = iterator.next();
+//                if (model.getId().equals(id)) {
+//                    users.remove(model);
+//                    int index = mAdapter.indexOf(model);
+//                    iterator.remove();
+//                    mAdapter.notifyItemRemoved(index);
+//                    break;
+//                }
+//            }
+//        }
 
         @Override
         public int getItemViewType(int position) {

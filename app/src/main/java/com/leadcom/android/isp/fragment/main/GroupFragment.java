@@ -440,15 +440,6 @@ public class GroupFragment extends BaseOrganizationFragment {
             return 0;
         }
 
-        Organization get(String groupId) {
-            for (int i = 0, len = getItemCount(); i < len; i++) {
-                Organization group = get(i);
-                if (group.getId().equals(groupId)) {
-                    return group;
-                }
-            }
-            return null;
-        }
     }
 
     private void initializeDetailsAdapter() {

@@ -14,6 +14,8 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.activity.NoticeViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -37,26 +39,22 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
+public class NoticeListFragment extends BaseNoticeFragment {
 
     private static final String PARAM_CREATABLE = "nlf_creatable";
     private static final String PARAM_OWNER = "nlf_owner";
 
     public static NoticeListFragment newInstance(Bundle bundle) {
         NoticeListFragment nlf = new NoticeListFragment();
-        //String[] strings = splitParameters(params);
-        //Bundle bundle = new Bundle();
-        // 传过来的tid
-        //bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 是否允许新建通知
-        //mCreatable = Boolean.valueOf(strings[1]);
         nlf.setArguments(bundle);
         return nlf;
     }
 
     private static Bundle getBundle(String tid, boolean creatable) {
         Bundle bundle = new Bundle();
+        // 传过来的tid
         bundle.putString(PARAM_QUERY_ID, tid);
+        // 是否允许新建通知
         bundle.putBoolean(PARAM_CREATABLE, creatable);
         return bundle;
     }
@@ -107,16 +105,6 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    protected boolean shouldSetDefaultTitleEvents() {
-        return true;
-    }
-
-    @Override
-    protected void destroyView() {
-
-    }
-
-    @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
         loadingNotices();
@@ -125,11 +113,6 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void onLoadingMore() {
         loadingNotices();
-    }
-
-    @Override
-    protected String getLocalPageTag() {
-        return null;
     }
 
     private void resetRightEvent() {
@@ -180,21 +163,20 @@ public class NoticeListFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    @Override
+    protected void onDeleteNoticeComplete(boolean success, String noticeId) {
+        if (success) {
+            mAdapter.remove(noticeId);
+        }
+    }
+
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, final int index) {
             AppNotice notice = mAdapter.get(index);
             switch (view.getId()) {
                 case R.id.ui_tool_view_contact_button2:
-                    AppNoticeRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppNotice>() {
-                        @Override
-                        public void onResponse(AppNotice notice, boolean success, String message) {
-                            super.onResponse(notice, success, message);
-                            if (success) {
-                                mAdapter.remove(index);
-                            }
-                        }
-                    }).deleteTeamNotice(notice.getId());
+                    warningDelete(notice.getId());
                     break;
                 default:
                     notice.setRead(true);
