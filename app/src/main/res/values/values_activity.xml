@@ -207,9 +207,9 @@
     <string name="ui_activity_sign_creator_notify_times_not_need">不需要提醒</string>
     <string name="ui_activity_sign_creator_notify_times" formatted="false">%d分钟</string>
     <string-array name="ui_activity_sign_creator_items">
-        <item>|%s|主题|[a-zA-Z0-9\u4e00-\u9fa5]+||30</item>
+        <item>|%s|主题|||30</item>
         <item>添加内容</item>
-        <item>0|获取地址|%s|1</item>
+        <item>0|签到地址|%s|1</item>
         <item>1|开始时间|%s|1</item>
         <item>2|截止时间|%s|1</item>
         <item>3|提醒|%s|1</item>
@@ -225,7 +225,7 @@
     <string name="ui_activity_sign_creator_published">已发布新的签到，您可以在签到开始之前提醒大家</string>
 
     <string name="ui_activity_sign_list_loading">正在加载签到列表</string>
-    <string name="ui_activity_sign_list_nothing">暂时没有可以签到的记录</string>
+    <string name="ui_activity_sign_list_nothing">暂时没有什么可签到的</string>
     <string name="ui_activity_sign_list_item_desc" formatted="false">请大家在%s之前签到</string>
 
     <string name="ui_activity_sign_end_time" formatted="false">签到截止时间：%s</string>
@@ -258,7 +258,7 @@
     <string name="ui_activity_sign_details_notify_hint">输入在群聊内显示的提醒内容</string>
     <string name="ui_activity_sign_details_no_sign_records">没有签到记录</string>
     <string name="ui_activity_sign_details_loading_sign_records">正在加载签到结果列表&#8230;</string>
-    <string name="ui_activity_sing_details_delete_warning">您将要删除本签到应用以及其下所有的签到记录，确定要继续吗？</string>
+    <string name="ui_activity_sing_details_delete_warning">确定删除签到和其下所有签到记录吗？</string>
 
     <string name="ui_activity_vote_list_loading_vote">正在加载投票列表&#8230;</string>
     <string name="ui_activity_vote_list_no_vote">活动中暂时没有更多投票应用</string>

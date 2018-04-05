@@ -1,42 +1,33 @@
 package com.leadcom.android.isp.fragment.activity.sign;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.amap.api.maps2d.model.LatLng;
-import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
-import com.leadcom.android.isp.api.activity.AppSignRecordRequest;
-import com.leadcom.android.isp.api.activity.AppSigningRequest;
+import com.leadcom.android.isp.api.activity.AppSigningRecordRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
-import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.map.AddressMapPickerFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.GaodeHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.activity.SingingViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
-import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
-import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.activity.sign.AppSignRecord;
 import com.leadcom.android.isp.model.activity.sign.AppSigning;
 import com.leadcom.android.isp.model.common.Address;
 import com.leadcom.android.isp.nim.constant.SigningNotifyType;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
-import com.hlk.hlklib.lib.view.CustomTextView;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
@@ -56,24 +47,29 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
+public class SignDetailsFragment extends BaseSignFragment {
 
-    public static SignDetailsFragment newInstance(String params) {
+    public static SignDetailsFragment newInstance(Bundle bundle) {
         SignDetailsFragment sdf = new SignDetailsFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 签到应用的群聊tid
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 签到应用的pojo对象
-        bundle.putString(PARAM_POJO, strings[1]);
         sdf.setArguments(bundle);
         return sdf;
     }
 
+    private static Bundle getBundle(String tid, String voteJson) {
+        Bundle bundle = new Bundle();
+        // 签到应用的群聊tid
+        bundle.putString(PARAM_QUERY_ID, tid);
+        // 签到应用的pojo对象
+        bundle.putString(PARAM_POJO, voteJson);
+        return bundle;
+    }
+
+    public static void open(Context context, int req, String tid, String voteJson) {
+        BaseActivity.openActivity(context, SignDetailsFragment.class.getName(), getBundle(tid, voteJson), req, true, false);
+    }
+
     public static void open(BaseFragment fragment, int req, String tid, String voteJson) {
-        fragment.openActivity(SignDetailsFragment.class.getName(),
-                format("%s,%s", tid, StringHelper.replaceJson(voteJson, false)),
-                req, true, false);
+        fragment.openActivity(SignDetailsFragment.class.getName(), getBundle(tid, voteJson), req, true, false);
     }
 
     private static final String PARAM_POJO = "sdf_param_pojo";
@@ -135,26 +131,11 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    protected String getLocalPageTag() {
-        return null;
-    }
-
-    @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_activity_sign_right_button_text);
         setNothingText(R.string.ui_activity_sign_details_no_sign_records);
         initializeHolder();
         initializeAdapter();
-    }
-
-    @Override
-    protected boolean shouldSetDefaultTitleEvents() {
-        return true;
-    }
-
-    @Override
-    protected void destroyView() {
-
     }
 
     @Click({R.id.ui_activity_sign_details_notify_button,
@@ -218,6 +199,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         notify.setAddress(signing.getSite());
         notify.setNotifyType(notifyType);
         notify.setSetupId(signing.getId());
+        notify.setCustomId(signing.getId());
         notify.setTid(mQueryId);
         notify.setBeginTime(signing.getBeginDate());
         notify.setEndTime(signing.getEndDate());
@@ -226,33 +208,19 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         NIMClient.getService(MsgService.class).sendMessage(message, false);
     }
 
-    @Override
-    protected void onDelayRefreshComplete(@DelayType int type) {
-
-    }
-
     private void fetchingSignRecords() {
         setLoadingText(R.string.ui_activity_sign_details_loading_sign_records);
         displayLoading(true);
         displayNothing(false);
-        AppSignRecordRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<AppSignRecord>() {
+        AppSigningRecordRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<AppSignRecord>() {
             @Override
             public void onResponse(List<AppSignRecord> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (null != list) {
-                        if (list.size() >= pageSize) {
-                            remotePageNumber++;
-                            isLoadingComplete(false);
-                        } else {
-                            isLoadingComplete(true);
-                        }
-                        mAdapter.update(list, false);
-                    } else {
-                        isLoadingComplete(true);
-                    }
-                } else {
-                    isLoadingComplete(true);
+                int size = null == list ? 0 : list.size();
+                isLoadingComplete(size < pageSize);
+                remotePageNumber += size < pageSize ? 0 : 1;
+                if (success && null != list) {
+                    mAdapter.update(list, false);
                 }
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
@@ -260,7 +228,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
                 countView.setText(format("%s(%d)", getString(R.string.ui_activity_sign_signed), mAdapter.getItemCount()));
                 //setCustomTitle(format("%s(%d人次)", getString(R.string.ui_activity_sign_creator_fragment_title), mAdapter.getItemCount()));
             }
-        }).list(signing.getId());
+        }).listTeamSignRecord(signing.getId());
     }
 
     private void setRightIconEvent() {
@@ -268,38 +236,21 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                warningDelete();
+                warningDelete(signing.getId());
             }
         });
     }
 
-    private void warningDelete() {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_sing_details_delete_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                delete();
-                return true;
-            }
-        }, null);
-    }
-
-    private void delete() {
-        final String id = signing.getId();
-        AppSigningRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppSigning>() {
-            @Override
-            public void onResponse(AppSigning signing, boolean success, String message) {
-                super.onResponse(signing, success, message);
-                if (success) {
-                    resultData(id);
-                }
-            }
-        }).delete(id);
+    @Override
+    protected void onDeleteSigningComplete(boolean success, String signingId) {
+        if (success) {
+            resultData(signingId);
+        }
     }
 
     private void initializeHolder() {
         if (null == signing) {
-            signing = Json.gson().fromJson(StringHelper.replaceJson(pojo, true), new TypeToken<AppSigning>() {
-            }.getType());
+            signing = AppSigning.fromJson(pojo);
             setCustomTitle(signing.getTitle());
             resetNotifyContent();
         }
@@ -339,9 +290,9 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
-        public void onClick(int index) {
+        public void onClick(View view, int index) {
             // 个人签到详情
             AppSignRecord record = mAdapter.get(index);
             Address addr = new Address();
@@ -350,9 +301,8 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
             addr.setLatitude(stringToDouble(record.getLat(), 39.963175));
             addr.setAltitude(stringToDouble(record.getAlt(), 0.0));
             addr.setAddress(record.getSite());
-            String params = StringHelper.format("true,%s", StringHelper.replaceJson(Address.toJson(addr), false));
             // 重现用户的签到地址
-            openActivity(AddressMapPickerFragment.class.getName(), params, true, false);
+            AddressMapPickerFragment.open(SignDetailsFragment.this, true, Address.toJson(addr));
         }
     };
 
@@ -361,7 +311,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public SingingViewHolder onCreateViewHolder(View itemView, int viewType) {
             SingingViewHolder holder = new SingingViewHolder(itemView, SignDetailsFragment.this);
-            holder.addOnViewHolderClickListener(onViewHolderClickListener);
+            holder.setOnViewHolderElementClickListener(elementClickListener);
             return holder;
         }
 
@@ -372,17 +322,7 @@ public class SignDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public void onBindHolderOfView(SingingViewHolder holder, int position, AppSignRecord item) {
-//            if (isEmpty(item.getDistance())) {
-//                item.setDistance(calculateDistance(item.getLat(), item.getLon()));
-//            }
-            holder.showContent(item);
-        }
-
-        private String calculateDistance(String latitude, String longitude) {
-            double lat1 = Double.valueOf(latitude), lon1 = Double.valueOf(longitude);
-            double lat0 = Double.valueOf(signing.getLat()), lon0 = Double.valueOf(signing.getLon());
-            double distance = GaodeHelper.getDistance(new LatLng(lat1, lon1), new LatLng(lat0, lon0));
-            return Utils.formatDistance(distance);
+            holder.showContent(item, item.getDistance(signing.getLat(), signing.getLon()));
         }
 
         @Override

@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.activity.sign;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,26 +8,22 @@ import android.view.View;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.bigkoo.pickerview.TimePickerView;
-import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.api.activity.ActRequest;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.api.activity.AppSigningRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.fragment.map.AddressMapPickerFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
-import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.sign.AppSigning;
 import com.leadcom.android.isp.model.common.Address;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,29 +41,27 @@ import java.util.Date;
  * <b>修改备注：</b><br />
  */
 
-public class SignCreatorFragment extends BaseTransparentSupportFragment {
+public class SignCreatorFragment extends BaseSignFragment {
 
-    private static final String PARAM1 = "scf_param_sign_content";
-
-    public static SignCreatorFragment newInstance(String params) {
+    public static SignCreatorFragment newInstance(Bundle bundle) {
         SignCreatorFragment scf = new SignCreatorFragment();
-        Bundle bundle = new Bundle();
-        // 网易云传过来的活动的tid
-        bundle.putString(PARAM_QUERY_ID, params);
         scf.setArguments(bundle);
         return scf;
+    }
+
+    public static void open(Context context, String tid, int requestCode) {
+        BaseActivity.openActivity(context, SignCreatorFragment.class.getName(), getBundle(tid), requestCode, true, true);
     }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        String json = bundle.getString(PARAM1, "");
-        if (!isEmpty(json)) {
-            signing = Json.gson().fromJson(json, new TypeToken<AppSigning>() {
-            }.getType());
+        if (!isEmpty(mJsonString)) {
+            signing = AppSigning.fromJson(mJsonString);
         }
         if (null == signing) {
             signing = new AppSigning();
+            signing.setTid(mQueryId);
         }
     }
 
@@ -80,8 +75,7 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         saveSigning();
-        bundle.putString(PARAM1, Json.gson().toJson(signing, new TypeToken<AppSigning>() {
-        }.getType()));
+        bundle.putString(PARAM_JSON, AppSigning.toJson(signing));
     }
 
     private void saveSigning() {
@@ -138,7 +132,7 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
     }
 
     private void tryPublishSign() {
-        if (isEmpty(signing.getActId())) {
+        if (isEmpty(signing.getTid())) {
             ToastHelper.make().showMsg(R.string.ui_activity_details_invalid_parameter);
             return;
         }
@@ -179,35 +173,20 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_activity_sign_creator_published);
                     if (null != signing) {
-                        resultData(Json.gson().toJson(signing, new TypeToken<AppSigning>() {
-                        }.getType()));
+                        resultData(AppSigning.toJson(signing));
                     }
                 } else {
                     ToastHelper.make().showMsg(message);
                 }
                 displayLoading(false);
             }
-        }).add(signing);
-    }
-
-    private void fetchingActivity() {
-        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
-            @Override
-            public void onResponse(Activity activity, boolean success, String message) {
-                super.onResponse(activity, success, message);
-                if (success && null != activity) {
-                    signing.setActId(activity.getId());
-                } else {
-                    ToastHelper.make().showMsg(R.string.ui_activity_details_invalid_parameter);
-                }
-            }
-        }).findByTid(mQueryId);
+        }).addTeamSigning(signing);
     }
 
     private void initializeHolders() {
         if (null == items) {
             items = StringHelper.getStringArray(R.array.ui_activity_sign_creator_items);
-            fetchingActivity();
+            //fetchingActivity();
         }
         if (null == titleHolder) {
             titleHolder = new SimpleInputableViewHolder(titleView, this);
@@ -255,15 +234,13 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
         }
     }
 
-    private static final int REQ_ADDRESS = ACTIVITY_BASE_REQUEST + 10;
-
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
             switch (index) {
                 case 0:
                     // 选择签到地址
-                    openActivity(AddressMapPickerFragment.class.getName(), "false,", REQ_ADDRESS, true, false);
+                    AddressMapPickerFragment.open(SignCreatorFragment.this, false, "");
                     break;
                 case 1:
                     // 选择签到开始时间
@@ -283,7 +260,7 @@ public class SignCreatorFragment extends BaseTransparentSupportFragment {
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == REQ_ADDRESS) {
+        if (requestCode == REQUEST_ADDRESS) {
             Address address = Address.fromJson(getResultedData(data));
             signing.setSite(address.getAddress());
             signing.setLat(String.valueOf(address.getLatitude()));

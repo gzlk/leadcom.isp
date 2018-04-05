@@ -39,6 +39,8 @@ public class Model extends BaseModel {
 
     public static final String DFT_DATE = StringHelper.getString(R.string.ui_base_text_date_default);
     public static final String NO_MORE_ID = StringHelper.getString(R.string.ui_base_text_nothing_more_id);
+    public static final String EMPTY_JSON = "{}";
+    public static final String EMPTY_ARRAY = "[]";
     protected static final String NO_NAME = StringHelper.getString(R.string.ui_base_text_no_name);
 
     protected static boolean isEmpty(String string) {

@@ -3,22 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/ui_base_border_size_normal"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:layout_itemType="main">
 
-    <com.hlk.hlklib.lib.view.CorneredView
+    <LinearLayout
         android:id="@+id/ui_holder_view_activity_signing_item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/ui_background_clickable"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="@dimen/ui_static_dp_5"
-        app:cv_active_border="@color/colorPrimary"
-        app:cv_background="@android:color/white"
-        app:cv_background_active="@android:color/white"
-        app:cv_background_type="border"
-        app:cv_border_size="@dimen/ui_base_border_size_normal"
-        app:cv_normal_border="@android:color/white">
+        android:padding="@dimen/ui_static_dp_5">
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_holder_view_activity_signing_item_icon"
@@ -75,5 +70,7 @@
             android:text="@string/ui_icon_right"
             android:textColor="@color/textColorHint" />
 
-    </com.hlk.hlklib.lib.view.CorneredView>
+    </LinearLayout>
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
 </LinearLayout>

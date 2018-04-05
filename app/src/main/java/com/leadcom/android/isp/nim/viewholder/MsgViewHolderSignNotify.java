@@ -5,8 +5,13 @@ import android.widget.TextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.fragment.activity.sign.SignDetailsFragment;
 import com.leadcom.android.isp.fragment.activity.sign.SignFragment;
+import com.leadcom.android.isp.fragment.activity.sign.SignListFragment;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.model.activity.sign.AppSignRecord;
+import com.leadcom.android.isp.model.activity.sign.AppSigning;
 import com.leadcom.android.isp.nim.callback.SignCallback;
 import com.leadcom.android.isp.nim.constant.SigningNotifyType;
 import com.leadcom.android.isp.nim.model.extension.SigningNotifyAttachment;
@@ -107,7 +112,6 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
     @Override
     protected void onItemClick() {
         // 打开签到页面
-        String params = StringHelper.format("%s,%s,", notify.getTid(), notify.getSetupId());
         SignFragment.callback = new SignCallback() {
             @Override
             public void onSuccess() {
@@ -132,6 +136,14 @@ public class MsgViewHolderSignNotify extends MsgViewHolderBase {
                 NIMClient.getService(MsgService.class).saveMessageToLocalEx(msg, false, msg.getTime());
             }
         };
-        BaseActivity.openActivity(context, SignFragment.class.getName(), params, true, false);
+        AppSigning signing = AppSigning.get(notify.getCustomId());
+        AppSignRecord record = AppSignRecord.getMineRecord(notify.getCustomId());
+        if (null == record) {
+            // 没有签到，打开签到页面
+            SignFragment.open(context, notify.getTid(), notify.getCustomId(), "");
+        } else {
+            // 已签到，打开签到记录列表页面
+            SignDetailsFragment.open(context, BaseFragment.REQUEST_DELETE, notify.getTid(), AppSigning.toJson(signing));
+        }
     }
 }

@@ -17,6 +17,8 @@ public class Api<T> extends BaseApi {
     private String code;
     // 成功或失败的消息描述
     private String msg;
+    // 时间戳
+    private long timestamp;
 
     /**
      * 网络调用状态（true=成功，false=失败）
@@ -60,5 +62,13 @@ public class Api<T> extends BaseApi {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

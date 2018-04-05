@@ -1,9 +1,12 @@
 package com.leadcom.android.isp.fragment.map;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -25,14 +28,25 @@ import com.netease.nim.uikit.api.model.location.LocationProvider;
 
 public class AddressMapPickerFragment extends MapHandleableFragment {
 
-    public static AddressMapPickerFragment newInstance(String params) {
+    public static AddressMapPickerFragment newInstance(Bundle bundle) {
         AddressMapPickerFragment ampf = new AddressMapPickerFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(PARAM_REDUCE, Boolean.valueOf(strings[0]));
-        bundle.putString(PARAM_ADDRESS, StringHelper.replaceJson(strings[1], true));
         ampf.setArguments(bundle);
         return ampf;
+    }
+
+    private static Bundle getBundle(boolean reduce, String addressJson) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(PARAM_REDUCE, reduce);
+        bundle.putString(PARAM_ADDRESS, addressJson);
+        return bundle;
+    }
+
+    public static void open(Context context, boolean reduce, String addressJson) {
+        BaseActivity.openActivity(context, AddressMapPickerFragment.class.getName(), getBundle(reduce, addressJson), true, false);
+    }
+
+    public static void open(BaseFragment fragment, boolean reduce, String addressJson) {
+        fragment.openActivity(AddressMapPickerFragment.class.getName(), getBundle(reduce, addressJson), REQUEST_ADDRESS, true, false);
     }
 
     public static LocationProvider.Callback callback;

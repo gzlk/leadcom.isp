@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.activity.sign;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -7,28 +8,27 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.api.activity.AppSignRecordRequest;
+import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.api.activity.AppSigningRecordRequest;
 import com.leadcom.android.isp.api.activity.AppSigningRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.map.MapHandleableFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.GaodeHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.activity.sign.AppSignRecord;
 import com.leadcom.android.isp.model.activity.sign.AppSigning;
 import com.leadcom.android.isp.nim.callback.SignCallback;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CorneredButton;
 
 /**
  * <b>功能描述：</b>签到页面<br />
@@ -43,23 +43,29 @@ import com.hlk.hlklib.lib.view.CorneredButton;
 
 public class SignFragment extends MapHandleableFragment {
 
-    public static SignFragment newInstance(String params) {
+    public static SignFragment newInstance(Bundle bundle) {
         SignFragment sf = new SignFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 群聊的tid
-        bundle.putString(PARAM_TID, strings[0]);
-        // 签到应用app的id
-        bundle.putString(PARAM_SIGN_ID, strings[1]);
-        // 签到内容
-        bundle.putString(PARAM_RECORD, strings[2]);
         sf.setArguments(bundle);
         return sf;
     }
 
+    private static Bundle getBundle(String tid, String signId, String recordJson) {
+        Bundle bundle = new Bundle();
+        // 群聊的tid
+        bundle.putString(PARAM_TID, tid);
+        // 签到应用app的id
+        bundle.putString(PARAM_SIGN_ID, signId);
+        // 签到内容
+        bundle.putString(PARAM_RECORD, recordJson);
+        return bundle;
+    }
+
+    public static void open(Context context, String tid, String signId, String recordJson) {
+        BaseActivity.openActivity(context, SignFragment.class.getName(), getBundle(tid, signId, recordJson), true, false);
+    }
+
     public static void open(BaseFragment fragment, String tid, String signId, String recordJson) {
-        String params = format("%s,%s,%s", tid, signId, recordJson);
-        fragment.openActivity(SignFragment.class.getName(), params, true, false);
+        fragment.openActivity(SignFragment.class.getName(), getBundle(tid, signId, recordJson), true, false);
     }
 
     public static SignCallback callback;
@@ -94,6 +100,7 @@ public class SignFragment extends MapHandleableFragment {
             record = new AppSignRecord();
             record.setUserName(Cache.cache().userName);
             record.setSetupId(mSignId);
+            record.setSignInId(mSignId);
         }
     }
 
@@ -159,9 +166,7 @@ public class SignFragment extends MapHandleableFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                String json = Json.gson().toJson(signing, new TypeToken<AppSigning>() {
-                }.getType());
-                SignDetailsFragment.open(SignFragment.this, REQUEST_DELETE, mTID, json);
+                SignDetailsFragment.open(SignFragment.this, REQUEST_DELETE, mTID, AppSigning.toJson(signing));
             }
         });
 
@@ -177,7 +182,7 @@ public class SignFragment extends MapHandleableFragment {
                     initializeSigningInfo();
                 }
             }
-        }).find(mSignId, AppSigningRequest.FIND_RECORD);
+        }).findTeamSinging(mSignId, AppSigningRequest.FIND_RECORD);
     }
 
     private void initializeSigningInfo() {
@@ -279,20 +284,20 @@ public class SignFragment extends MapHandleableFragment {
     }
 
     private void warningSignPosition() {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_activity_sign_warning, R.string.ui_base_text_yes, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 sign();
                 return true;
             }
-        }, null);
+        }).setTitleText(R.string.ui_activity_sign_warning).setConfirmText(R.string.ui_base_text_yes).show();
     }
 
     private void sign() {
         mStarted = false;
         setLoadingText(R.string.ui_activity_sign_signing);
         displayLoading(true);
-        AppSignRecordRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppSignRecord>() {
+        AppSigningRecordRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<AppSignRecord>() {
             @Override
             public void onResponse(AppSignRecord record, boolean success, String message) {
                 super.onResponse(record, success, message);
@@ -304,7 +309,7 @@ public class SignFragment extends MapHandleableFragment {
                     finish();
                 }
             }
-        }).add(record);
+        }).addTeamSignRecord(record);
     }
 
     @Override

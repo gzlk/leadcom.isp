@@ -66,16 +66,16 @@ public class SingingViewHolder extends BaseViewHolder {
         return R.color.colorPrimary;
     }
 
-    public void showContent(AppSignRecord record) {
+    public void showContent(AppSignRecord record, String distance) {
         titleView.setText(record.getUserName());
-        timeView.setText(fragment().formatTimeAgo(record.getCreateDate()));
+        timeView.setText(format("%s(距离签到点%s)", fragment().formatTimeAgo(record.getCreateDate()), distance));
         descView.setText(record.getSite());
     }
 
-    @Click({R.id.ui_holder_view_activity_signing_item_container})
+    @Click({R.id.ui_holder_view_activity_signing_item_container, R.id.ui_tool_view_contact_button2})
     private void elementClick(View view) {
-        if (null != mOnViewHolderClickListener) {
-            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
     }
 }

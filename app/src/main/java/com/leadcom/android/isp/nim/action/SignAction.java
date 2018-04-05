@@ -44,7 +44,7 @@ public class SignAction extends BaseAction {
     public void onClick() {
         // 打开发布签到页面
         int requestCode = makeRequestCode(RequestCode.REQ_SIGN_LIST);
-        BaseActivity.openActivity(getActivity(), SignListFragment.class.getName(), getAccount(), requestCode, true, true);
+        SignListFragment.open(getActivity(), getAccount(), requestCode);
     }
 
     @Override
@@ -53,14 +53,13 @@ public class SignAction extends BaseAction {
             switch (requestCode) {
                 case RequestCode.REQ_SIGN_LIST:
                     int code = makeRequestCode(RequestCode.REQ_SIGN_NEW);
-                    BaseActivity.openActivity(getActivity(), SignCreatorFragment.class.getName(), getAccount(), code, true, true);
+                    SignCreatorFragment.open(getActivity(), getAccount(), code);
                     break;
                 case RequestCode.REQ_SIGN_NEW:
                     // 群发通知
                     String result = BaseFragment.getResultedData(data);
                     LogHelper.log("SignAction", result);
-                    AppSigning signing = Json.gson().fromJson(result, new TypeToken<AppSigning>() {
-                    }.getType());
+                    AppSigning signing = AppSigning.fromJson(result);
                     IMMessage message;
                     SigningNotifyAttachment attachment = new SigningNotifyAttachment();
                     attachment.setNotifyType(SigningNotifyType.NEW);

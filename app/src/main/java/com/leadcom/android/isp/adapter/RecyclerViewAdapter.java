@@ -164,7 +164,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
      */
     private boolean isModelComparable() {
         ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
-        Class clazz = (Class) pt.getActualTypeArguments()[0];
+        Class clazz = (Class) pt.getActualTypeArguments()[1];
         return (ReflectionUtil.hasMethod(clazz.getName(), "setId", new Class[]{String.class}));
     }
 
@@ -221,7 +221,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         if (isModelComparable()) {
             // 如果参数类含有 setId(String val) 方法的话，说明是可以比较的
             for (T item : innerList) {
-                String id = (String) ReflectionUtil.getFieldValue(item, "getId");
+                String id = (String) ReflectionUtil.getFieldValue(item, "id");
                 if (!StringHelper.isEmpty(id) && id.equals(itemId)) {
                     return item;
                 }
@@ -271,16 +271,15 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     public void update(List<T> list, boolean replaceable) {
         if (replaceable) {
             Iterator<T> iterator = innerList.iterator();
-            int index = 0;
             while (iterator.hasNext()) {
                 // 移除旧列表里不在list中的记录
                 T t = iterator.next();
                 if (list.indexOf(t) < 0) {
                     iterator.remove();
-                    notifyItemRemoved(index);
+                    //notifyItemRemoved(index);
                 }
-                index++;
             }
+            notifyDataSetChanged();
         }
         for (T t : list) {
             update(t);

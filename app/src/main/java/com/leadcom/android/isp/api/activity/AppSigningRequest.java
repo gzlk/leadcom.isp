@@ -39,6 +39,8 @@ public class AppSigningRequest extends Request<AppSigning> {
     private static class MultipleSigning extends PaginationQuery<AppSigning> {
     }
 
+    private static final String TEAM = "/communication/commSignIn";
+
     @Override
     protected String url(String action) {
         return format("/activity/actSignInSetup%s", action);
@@ -96,39 +98,6 @@ public class AppSigningRequest extends Request<AppSigning> {
                     .put("site", signing.getSite())
                     .put("beginDate", signing.getBeginDate())
                     .put("endDate", signing.getEndDate());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        httpRequest(getRequest(SingleSigning.class, url(ADD), object.toString(), HttpMethods.Post));
-    }
-
-    /**
-     * 增加活动签到条目
-     *
-     * @param activityId  活动id
-     * @param title       签到应用的标题
-     * @param description 描述
-     * @param longitude   目的地经度
-     * @param latitude    目的地纬度
-     * @param altitude    目的地海拔高度
-     * @param beginTime   签到开始时间
-     * @param endTime     签到结束时间
-     */
-    @Deprecated
-    public void add(@NonNull String activityId, String title, String description,
-                    double longitude, double latitude, double altitude, String beginTime, String endTime) {
-        // {actId:"",title:"",desc:"",lon:"",lat:"",alt:"",beginTime:"",endTime:"",accessToken：""}
-
-        JSONObject object = new JSONObject();
-        try {
-            object.put("actId", activityId)
-                    .put("title", title)
-                    .put("desc", description)
-                    .put("lon", longitude)
-                    .put("lat", latitude)
-                    .put("alt", altitude)
-                    .put("beginTime", beginTime)
-                    .put("endTime", endTime);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -207,5 +176,58 @@ public class AppSigningRequest extends Request<AppSigning> {
     public void list(@NonNull String activityId, int pageNumber) {
         // actId,pageSize,pageNumber
         httpRequest(getRequest(MultipleSigning.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
+    }
+
+
+    // ************************************** 群相关的签到内容
+
+    /**
+     * 增加群聊签到条目
+     */
+    public void addTeamSigning(AppSigning signing) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("tid", signing.getTid())
+                    .put("title", signing.getTitle())
+                    .put("content", signing.getContent())
+                    .put("lon", signing.getLon())
+                    .put("lat", signing.getLat())
+                    //.put("alt", signing.getAlt())
+                    .put("site", signing.getSite())
+                    .put("beginDate", signing.getBeginDate())
+                    .put("endDate", signing.getEndDate());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleSigning.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 列取群聊签到条目
+     */
+    public void listTeamSinging(String tid, int pageNumber) {
+        httpRequest(getRequest(MultipleSigning.class, format("%s%s?tid=%s&pageNumber=%d", TEAM, LIST, tid, pageNumber), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查找单个签到应用的详情
+     *
+     * @param signId 签到应用的id
+     */
+    public void findTeamSinging(@NonNull String signId, int option) {
+        if (option <= FIND_SIGN) {
+            option = FIND_SIGN;
+        }
+        if (option >= FIND_RECORD) {
+            option = FIND_RECORD;
+        }
+        httpRequest(getRequest(SingleSigning.class, format("%s%s?commSignInId=%s&ope=%d", TEAM, FIND, signId, option), "", HttpMethods.Get));
+    }
+
+    /**
+     * 删除群聊签到条目
+     */
+    public void deleteTeamSigning(String signingId) {
+        httpRequest(getRequest(SingleSigning.class, format("%s%s?commSignInId=%s", TEAM, DELETE, signingId), "", HttpMethods.Get));
     }
 }

@@ -8,12 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.fragment.map.AddressMapPickerFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.model.common.Address;
 import com.netease.nim.uikit.api.model.location.LocationProvider;
 import com.netease.nim.uikit.common.util.log.LogUtil;
@@ -44,7 +43,7 @@ public class HLKLocationProvider implements LocationProvider {
             return;
         }
         AddressMapPickerFragment.callback = callback;
-        BaseActivity.openActivity(context, AddressMapPickerFragment.class.getName(), "false,", true, false);
+        AddressMapPickerFragment.open(context, false, "");
     }
 
     @Override
@@ -58,8 +57,7 @@ public class HLKLocationProvider implements LocationProvider {
         addr.setAddress(address);
         addr.setLatitude(latitude);
         addr.setLongitude(longitude);
-        String params = StringHelper.format("true,%s", StringHelper.replaceJson(Address.toJson(addr), false));
-        BaseActivity.openActivity(context, AddressMapPickerFragment.class.getName(), params, true, false);
+        AddressMapPickerFragment.open(context, true, Address.toJson(addr));
     }
 
     // 打开位置服务设置页面

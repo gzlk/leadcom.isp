@@ -1,9 +1,12 @@
 package com.leadcom.android.isp.model.activity.sign;
 
+import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.vote.AppVote;
@@ -27,6 +30,20 @@ import java.util.ArrayList;
  */
 @Table(Activity.Table.SIGN)
 public class AppSigning extends Sign {
+
+    public static String toJson(AppSigning signing) {
+        return null == signing ? EMPTY_JSON : Json.gson().toJson(signing, new TypeToken<AppSigning>() {
+        }.getType());
+    }
+
+    public static AppSigning fromJson(String json) {
+        return Json.gson().fromJson(isEmpty(json) ? EMPTY_JSON : json, new TypeToken<AppSigning>() {
+        }.getType());
+    }
+
+    public static AppSigning get(String signingId) {
+        return new Dao<>(AppSigning.class).query(signingId);
+    }
 
     //活动Id
     @Column(Activity.Field.ActivityId)

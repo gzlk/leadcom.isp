@@ -1,7 +1,10 @@
 package com.leadcom.android.isp.model.activity.sign;
 
+import com.amap.api.maps2d.model.LatLng;
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.helper.GaodeHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
@@ -49,6 +52,18 @@ public class AppSignRecord extends Sign {
         return (null == records || records.size() < 1) ? null : records.get(0);
     }
 
+    /**
+     * 查询本地缓存我在某个签到应用里的签到记录
+     */
+    public static AppSignRecord getMineRecord(String singingId) {
+        QueryBuilder<AppSignRecord> builder = new QueryBuilder<>(AppSignRecord.class)
+                .whereEquals(Field.SignInId, singingId)
+                .whereAppendAnd()
+                .whereEquals(Model.Field.UserId, Cache.cache().userId);
+        List<AppSignRecord> records = new Dao<>(AppSignRecord.class).query(builder);
+        return (null == records || records.size() < 1) ? null : records.get(0);
+    }
+
     public static void save(ArrayList<AppSignRecord> records) {
         new Dao<>(AppSignRecord.class).save(records);
     }
@@ -72,6 +87,16 @@ public class AppSignRecord extends Sign {
     private String signInId;
     @Column(User.Field.HeadPhoto)
     private String headPhoto;
+
+    /**
+     * 计算本点跟指定的点之间的距离
+     */
+    public String getDistance(String latitude, String longitude) {
+        double lat1 = Double.valueOf(getLat()), lon1 = Double.valueOf(getLon());
+        double lat0 = Double.valueOf(latitude), lon0 = Double.valueOf(longitude);
+        double distance = GaodeHelper.getDistance(new LatLng(lat1, lon1), new LatLng(lat0, lon0));
+        return Utils.formatDistance(distance);
+    }
 
     public String getSetupId() {
         return setupId;
