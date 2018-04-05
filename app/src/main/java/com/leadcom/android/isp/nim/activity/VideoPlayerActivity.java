@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.nim.activity;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -47,6 +48,8 @@ public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallba
 
     @ViewId(R.id.ui_nim_video_player)
     private EasyVideoPlayer player;
+    @ViewId(R.id.ui_viewer_image_title_container)
+    private View titleLayout;
     @ViewId(R.id.ui_ui_custom_title_text)
     private TextView titleView;
     @ViewId(R.id.ui_ui_custom_title_right_text)
@@ -80,8 +83,23 @@ public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallba
         // Once it's prepared, the progress indicator goes away and the controls become enabled for the user to begin playback.
     }
 
-    @Click({R.id.ui_ui_custom_title_right_container})
+    @Click({R.id.ui_ui_custom_title_left_container,
+            R.id.ui_ui_custom_title_right_container})
     private void elementClick(View view) {
+        switch (view.getId()) {
+            case R.id.ui_ui_custom_title_left_container:
+                if (player.isPrepared() || player.isPlaying()) {
+                    player.stop();
+                }
+                finish();
+                break;
+            case R.id.ui_ui_custom_title_right_container:
+                collectVideo();
+                break;
+        }
+    }
+
+    private void collectVideo() {
         CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
             @Override
             public void onResponse(Collection collection, boolean success, String message) {
@@ -93,21 +111,52 @@ public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallba
         }).add(videoUrl);
     }
 
+    private void toggleTitleView(final boolean shown) {
+        //final boolean shown = titleLayout.getAlpha() >= 1;
+        int height = getActionBarSize();
+        titleLayout.animate().translationY(shown ? 0 : -height).alpha(shown ? 1 : -1).setDuration(300).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (shown) {
+                    titleLayout.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!shown) {
+                    titleLayout.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        }).start();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         // Make sure the player stops playing if the user presses the home button.
         player.pause();
+        toggleTitleView(true);
     }
 
     @Override
     public void onStarted(EasyVideoPlayer easyVideoPlayer) {
-
+        toggleTitleView(false);
     }
 
     @Override
     public void onPaused(EasyVideoPlayer easyVideoPlayer) {
-
+        toggleTitleView(true);
     }
 
     @Override
@@ -127,12 +176,12 @@ public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallba
 
     @Override
     public void onError(EasyVideoPlayer easyVideoPlayer, Exception e) {
-
+        toggleTitleView(true);
     }
 
     @Override
     public void onCompletion(EasyVideoPlayer easyVideoPlayer) {
-
+        toggleTitleView(true);
     }
 
     @Override

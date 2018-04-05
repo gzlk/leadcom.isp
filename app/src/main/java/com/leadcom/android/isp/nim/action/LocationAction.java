@@ -1,8 +1,6 @@
 package com.leadcom.android.isp.nim.action;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
 
 import com.leadcom.android.isp.R;
 import com.netease.nim.uikit.api.NimUIKit;
@@ -34,10 +32,10 @@ public class LocationAction extends BaseAction {
     @Override
     public void onClick() {
         // 是否有定位权限
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             requestLocation();
         } else {
-            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+            requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION});
         }
     }
 

@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.nim.action;
 
+import android.Manifest;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>网易云信视频相关Action<br />
@@ -26,7 +28,7 @@ import java.io.File;
 public abstract class ChooseVideoAction extends BaseAction {
 
     // 是否是选择视频
-    private boolean isChoose = false;
+    private boolean isChoose;
     // 视频
     private transient VideoMessageHelper videoMessageHelper;
 
@@ -40,13 +42,31 @@ public abstract class ChooseVideoAction extends BaseAction {
 
     @Override
     public void onClick() {
-        videoHelper().showVideoSource(makeRequestCode(RequestCode.GET_LOCAL_VIDEO), makeRequestCode(RequestCode.CAPTURE_VIDEO));
+        //videoHelper().showVideoSource(makeRequestCode(RequestCode.GET_LOCAL_VIDEO), makeRequestCode(RequestCode.CAPTURE_VIDEO));
         if (isChoose) {
             // 从相册中选取视频文件
-            videoHelper().chooseVideoFromLocal();
+            if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // 已有外置SD卡访问权限
+                videoHelper().chooseVideoFromLocal(makeRequestCode(RequestCode.GET_LOCAL_VIDEO));
+            } else {
+                // 没有权限时申请运行时权限
+                requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
+            }
         } else {
             // 直接拍摄视频
-            videoHelper().chooseVideoFromCamera();
+            ArrayList<String> permissions = new ArrayList<>();
+            if (!hasPermission(Manifest.permission.CAMERA)) {
+                permissions.add(Manifest.permission.CAMERA);
+            }
+            if (!hasPermission(Manifest.permission.RECORD_AUDIO)) {
+                permissions.add(Manifest.permission.RECORD_AUDIO);
+            }
+            if (permissions.size() < 1) {
+                // 已有相机和录音权限
+                videoHelper().chooseVideoFromCamera(makeRequestCode(RequestCode.CAPTURE_VIDEO));
+            } else {
+                requestPermission(permissions.toArray(new String[permissions.size()]));
+            }
         }
     }
 

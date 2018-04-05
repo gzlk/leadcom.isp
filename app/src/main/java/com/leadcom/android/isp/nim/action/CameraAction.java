@@ -1,8 +1,6 @@
 package com.leadcom.android.isp.nim.action;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
 
 import com.leadcom.android.isp.R;
 import com.netease.nim.uikit.business.session.actions.PickImageAction;
@@ -35,10 +33,10 @@ public class CameraAction extends PickImageAction {
 
     @Override
     public void onClick() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (hasPermission(Manifest.permission.CAMERA)) {
             openCamera();
         } else {
-            requestPermission(Manifest.permission.CAMERA);
+            requestPermission(new String[]{Manifest.permission.CAMERA});
         }
     }
 

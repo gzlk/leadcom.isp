@@ -1,7 +1,10 @@
 package com.netease.nim.uikit.business.session.actions;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
 
 import com.netease.nim.uikit.business.session.module.Container;
 import com.netease.nim.uikit.support.permission.MPermission;
@@ -87,10 +90,14 @@ public abstract class BaseAction implements Serializable {
     /**
      * 申请权限
      */
-    protected void requestPermission(String permission) {
+    protected void requestPermission(String[] permissions) {
         MPermission
                 .with(getActivity())
-                .permissions(permission)
+                .permissions(permissions)
                 .setRequestCode(100).request();
+    }
+
+    protected boolean hasPermission(String permission) {
+        return ContextCompat.checkSelfPermission(getActivity(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 }

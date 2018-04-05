@@ -55,13 +55,13 @@ public class VideoMessageHelper {
         dialog.addItem("拍摄视频", new CustomAlertDialog.onSeparateItemClickListener() {
             @Override
             public void onClick() {
-                chooseVideoFromCamera();
+                chooseVideoFromCamera(captureRequestCode);
             }
         });
         dialog.addItem("从相册中选择视频", new CustomAlertDialog.onSeparateItemClickListener() {
             @Override
             public void onClick() {
-                chooseVideoFromLocal();
+                chooseVideoFromLocal(localRequestCode);
             }
         });
         dialog.show();
@@ -72,7 +72,8 @@ public class VideoMessageHelper {
     /**
      * 拍摄视频
      */
-    public void chooseVideoFromCamera() {
+    public void chooseVideoFromCamera(int captureCode) {
+        captureRequestCode = captureCode;
         if (!StorageUtil.hasEnoughSpaceForWrite(activity,
                 StorageType.TYPE_VIDEO, true)) {
             return;
@@ -89,7 +90,8 @@ public class VideoMessageHelper {
     /**
      * 从本地相册中选择视频
      */
-    public void chooseVideoFromLocal() {
+    public void chooseVideoFromLocal(int requestCode) {
+        localRequestCode = requestCode;
         if (Build.VERSION.SDK_INT >= 19) {
             chooseVideoFromLocalKitKat();
         } else {

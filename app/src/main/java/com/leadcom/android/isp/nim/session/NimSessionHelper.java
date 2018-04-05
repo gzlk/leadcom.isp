@@ -24,6 +24,8 @@ import com.leadcom.android.isp.nim.action.IssueAction;
 import com.leadcom.android.isp.nim.action.LocationAction;
 import com.leadcom.android.isp.nim.action.NoticeAction;
 import com.leadcom.android.isp.nim.action.SignAction;
+import com.leadcom.android.isp.nim.action.VideoCaptureAction;
+import com.leadcom.android.isp.nim.action.VideoChooseAction;
 import com.leadcom.android.isp.nim.action.VoteAction;
 import com.leadcom.android.isp.nim.activity.VideoPlayerActivity;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
@@ -286,9 +288,9 @@ public class NimSessionHelper {
         actions.add(new CameraAction());
         if (!Cache.isReleasable()) {
             // 相机录制视频
-            //actions.add(new VideoCaptureAction());
+            actions.add(new VideoCaptureAction());
             // 相册选择视频
-            //actions.add(new VideoChooseAction());
+            actions.add(new VideoChooseAction());
         }
         // 跟电脑对话时不需要发送位置
         if (type != SessionTypeEnum.System) {
@@ -302,7 +304,7 @@ public class NimSessionHelper {
             //actions.add(new BlankAction());
             //actions.add(new SurveyAction());
             //actions.add(new MinutesAction());
-            if (!topic) {
+            if (topic) {
                 actions.add(new IssueAction());
             }
         }
