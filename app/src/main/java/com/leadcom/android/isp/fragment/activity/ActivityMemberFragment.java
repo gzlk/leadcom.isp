@@ -11,10 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
 import android.view.View;
 
-import com.daimajia.swipe.util.Attributes;
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.InvitationRequest;
@@ -25,9 +24,9 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.main.ActivityFragment;
 import com.leadcom.android.isp.fragment.organization.GroupsContactPickerFragment;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
@@ -35,6 +34,7 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.SubMember;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -321,7 +321,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new MembersAdapter();
-            mAdapter.setMode(Attributes.Mode.Single);
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.addItemDecoration(new StickDecoration());
             mRecyclerView.setAdapter(mAdapter);
             // 加载活动的成员列表
@@ -350,7 +350,7 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(Member member, boolean success, String message) {
                 super.onResponse(member, success, message);
                 if (success) {
-                    mAdapter.delete(holder);
+                    mAdapter.remove(memberId);
                     Member.remove(memberId);
                 }
             }
@@ -393,18 +393,11 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    private class MembersAdapter extends RecyclerViewSwipeAdapter<ContactViewHolder, Member> {
+    private class MembersAdapter extends RecyclerViewAdapter<ContactViewHolder, Member> {
 
         @Override
         protected int comparator(Member item1, Member item2) {
             return item1.getSpell().compareTo(item2.getSpell());
-        }
-
-        private void delete(ContactViewHolder holder) {
-            mItemManger.removeShownLayouts(holder.getSwipeLayout());
-            int pos = holder.getAdapterPosition();
-            remove(pos);
-            mItemManger.closeAllItems();
         }
 
         @Override
@@ -437,12 +430,6 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
                 holder.showButton2(!isMe && isMemberDeletable);
             }
             holder.showContent(member, "");
-            mItemManger.bindView(holder.itemView, position);
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int i) {
-            return R.id.ui_holder_view_contact_swipe_layout;
         }
 
         private int getFirstCharCount(char chr) {

@@ -11,21 +11,20 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
 import android.view.View;
 
-import com.daimajia.swipe.util.Attributes;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.ContactViewHolder;
@@ -38,6 +37,7 @@ import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.organization.SubMember;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -403,7 +403,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new ContactAdapter();
-            mAdapter.setMode(Attributes.Mode.Single);
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             if (showType != TYPE_ORG) {
                 mRecyclerView.addItemDecoration(new StickDecoration());
             }
@@ -789,14 +789,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
     }
 
-    private class ContactAdapter extends RecyclerViewSwipeAdapter<ContactViewHolder, Member> {
-
-        private void delete(ContactViewHolder holder) {
-            mItemManger.removeShownLayouts(holder.getSwipeLayout());
-            int pos = holder.getAdapterPosition();
-            remove(pos);
-            mItemManger.closeAllItems();
-        }
+    private class ContactAdapter extends RecyclerViewAdapter<ContactViewHolder, Member> {
 
         @Override
         protected int comparator(Member item1, Member item2) {
@@ -902,12 +895,6 @@ public class ContactFragment extends BaseOrganizationFragment {
             }
 
             holder.showContent(member, searchingText);
-            mItemManger.bindView(holder.itemView, position);
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int i) {
-            return R.id.ui_holder_view_contact_swipe_layout;
         }
     }
 

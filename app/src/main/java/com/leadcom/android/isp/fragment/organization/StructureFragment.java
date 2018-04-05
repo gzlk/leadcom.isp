@@ -7,8 +7,12 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CorneredView;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
@@ -19,10 +23,10 @@ import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.OrganizationFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
@@ -40,10 +44,7 @@ import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.organization.Squad;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
-import com.hlk.hlklib.lib.view.CorneredView;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -194,6 +195,7 @@ public class StructureFragment extends BaseOrganizationFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new StructureAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             initializeItems();
         }
@@ -582,7 +584,7 @@ public class StructureFragment extends BaseOrganizationFragment {
         }
     };
 
-    private class StructureAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
+    private class StructureAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_HEAD = 0, VT_DIVIDER = 1, VT_CLICK = 2, VT_SQUAD = 3, VT_FOOTER = 4;
 
@@ -661,11 +663,6 @@ public class StructureFragment extends BaseOrganizationFragment {
 
         @Override
         protected int comparator(Model item1, Model item2) {
-            return 0;
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int i) {
             return 0;
         }
     }

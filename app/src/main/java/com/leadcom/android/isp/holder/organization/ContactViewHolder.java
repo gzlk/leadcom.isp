@@ -4,7 +4,11 @@ import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
-import com.daimajia.swipe.SwipeLayout;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredButton;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -13,11 +17,6 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.user.User;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CorneredButton;
-import com.hlk.hlklib.lib.view.CustomTextView;
 
 /**
  * <b>功能描述：</b>联系人<br />
@@ -32,8 +31,6 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 
 public class ContactViewHolder extends BaseViewHolder {
 
-    @ViewId(R.id.ui_holder_view_contact_swipe_layout)
-    private SwipeLayout swipeLayout;
     @ViewId(R.id.ui_tool_view_contact_button0)
     private TextView buttonTransferManager;
     @ViewId(R.id.ui_tool_view_contact_button0d5)
@@ -142,10 +139,6 @@ public class ContactViewHolder extends BaseViewHolder {
 
     public void button2Text(String text) {
         buttonKickOut.setText(text);
-    }
-
-    public SwipeLayout getSwipeLayout() {
-        return swipeLayout;
     }
 
     public void showContent(User user, String searching) {

@@ -8,9 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.listener.RecycleAdapter;
+import com.leadcom.android.isp.model.Model;
+import com.netease.nim.uikit.common.util.sys.ReflectionUtil;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -148,6 +152,23 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     @Override
+    public void remove(String itemId) {
+        T item = get(itemId);
+        if (null != item) {
+            remove(item);
+        }
+    }
+
+    /**
+     * 是否可以通过字符串的 id 方式比较
+     */
+    private boolean isModelComparable() {
+        ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
+        Class clazz = (Class) pt.getActualTypeArguments()[0];
+        return (ReflectionUtil.hasMethod(clazz.getName(), "setId", new Class[]{String.class}));
+    }
+
+    @Override
     public void add(T item) {
         if (!exist(item)) {
             innerList.add(item);
@@ -193,6 +214,20 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     @Override
     public T get(int position) {
         return innerList.get(position);
+    }
+
+    @Override
+    public T get(String itemId) {
+        if (isModelComparable()) {
+            // 如果参数类含有 setId(String val) 方法的话，说明是可以比较的
+            for (T item : innerList) {
+                String id = (String) ReflectionUtil.getFieldValue(item, "getId");
+                if (!StringHelper.isEmpty(id) && id.equals(itemId)) {
+                    return item;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

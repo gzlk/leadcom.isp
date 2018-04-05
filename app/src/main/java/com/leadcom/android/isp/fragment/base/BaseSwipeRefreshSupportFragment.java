@@ -12,15 +12,18 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
-import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.helper.PreferenceHelper;
-import com.leadcom.android.isp.helper.StringHelper;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.hlk.hlklib.etc.Cryptography;
 import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomStaggeredGridLayoutManager;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.helper.PreferenceHelper;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 /**
@@ -79,9 +82,14 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
     public static final int TYPE_SGRID = 2;
 
     /**
+     * 自动换行
+     */
+    public static final int TYPE_FLEX = 3;
+
+    /**
      * RecyclerView的列表方式
      */
-    @IntDef({TYPE_LINEAR, TYPE_GRID, TYPE_SGRID})
+    @IntDef({TYPE_LINEAR, TYPE_GRID, TYPE_SGRID, TYPE_FLEX})
     public @interface LayoutType {
     }
 
@@ -122,6 +130,8 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
                 return new CustomGridLayoutManager(mRecyclerView.getContext(), gridSpanCount);
             case TYPE_SGRID:
                 return new CustomStaggeredGridLayoutManager(gridSpanCount, gridOrientation);
+            case TYPE_FLEX:
+                return new FlexboxLayoutManager(mRecyclerView.getContext(), FlexDirection.ROW, FlexWrap.WRAP);
             default:
                 return new CustomLinearLayoutManager(mRecyclerView.getContext());
         }

@@ -27,7 +27,7 @@ import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.listener.RecycleAdapter;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.HLKLocation;
 import com.leadcom.android.isp.model.common.Seclusion;
@@ -77,7 +77,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        layoutType = TYPE_GRID;
+        layoutType = TYPE_FLEX;
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -259,14 +259,26 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private void resetImages(ArrayList<String> images) {
         mAdapter.clear();
         for (String string : images) {
-            mAdapter.add(string);
+            Model model = new Model();
+            model.setId(string);
+            mAdapter.add(model);
         }
         appendAttacher();
     }
 
+    private Model appender;
+
+    private Model appender() {
+        if (null == appender) {
+            appender = new Model();
+            appender.setId("+");
+        }
+        return appender;
+    }
+
     private void appendAttacher() {
         if (mAdapter.getItemCount() < getMaxSelectable()) {
-            mAdapter.add("");
+            mAdapter.add(appender());
         }
     }
 
@@ -320,9 +332,9 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    private OnHandleBoundDataListener<String> handlerBoundDataListener = new OnHandleBoundDataListener<String>() {
+    private OnHandleBoundDataListener<Model> handlerBoundDataListener = new OnHandleBoundDataListener<Model>() {
         @Override
-        public String onHandlerBoundData(BaseViewHolder holder) {
+        public Model onHandlerBoundData(BaseViewHolder holder) {
             return mAdapter.get(holder.getAdapterPosition());
         }
     };
@@ -356,7 +368,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     private ImageAdapter mAdapter;
 
-    private class ImageAdapter extends RecyclerViewAdapter<BaseViewHolder, String> implements RecycleAdapter<String> {
+    private class ImageAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
         private static final int VT_IMAGE = 0, VT_ATTACH = 1;
 
         private int width, height;
@@ -377,7 +389,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onBindHolderOfView(BaseViewHolder holder, int position, String item) {
+        public void onBindHolderOfView(BaseViewHolder holder, int position, Model item) {
             if (holder instanceof ImageViewHolder) {
                 gotSize();
                 ImageViewHolder ivh = (ImageViewHolder) holder;
@@ -386,13 +398,13 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 // 这里是要尝试删除选择的文件
                 ivh.addOnHandlerBoundDataListener(handlerBoundDataListener);
                 ivh.setImageSize(width, height);
-                ivh.showContent(item);
+                ivh.showContent(item.getId());
             }
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (StringHelper.isEmpty(get(position))) {
+            if (get(position).getId().equals("+")) {
                 return VT_ATTACH;
             } else {
                 return VT_IMAGE;
@@ -408,8 +420,8 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        protected int comparator(String item1, String item2) {
-            return item1.compareTo(item2);
+        protected int comparator(Model item1, Model item2) {
+            return item1.getId().compareTo(item2.getId());
         }
     }
 }

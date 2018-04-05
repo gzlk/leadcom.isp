@@ -10,10 +10,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
-import com.daimajia.swipe.util.Attributes;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CorneredView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.adapter.RecyclerViewSwipeAdapter;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.cache.Cache;
@@ -23,10 +26,10 @@ import com.leadcom.android.isp.fragment.base.BasePopupInputSupportFragment;
 import com.leadcom.android.isp.fragment.common.BaseTransparentPropertyFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.common.ToggleableViewHolder;
@@ -41,10 +44,7 @@ import com.leadcom.android.isp.model.user.SimpleMoment;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
-import com.hlk.hlklib.lib.view.CorneredView;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -313,7 +313,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }
         if (null == mAdapter) {
             mAdapter = new MyPropertyAdapter();
-            mAdapter.setMode(Attributes.Mode.Single);
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             fetchingRemoteUserInfo();
         }
@@ -764,7 +764,7 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         }, null);
     }
 
-    private class MyPropertyAdapter extends RecyclerViewSwipeAdapter<BaseViewHolder, Model> {
+    private class MyPropertyAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
         private static final int VT_HEADER = 0, VT_MOMENT = 1, VT_CLICK = 2, VT_DELETABLE = 3;
 
@@ -836,11 +836,6 @@ public class UserPropertyFragment extends BaseTransparentPropertyFragment {
         @Override
         protected int comparator(Model item1, Model item2) {
             return 0;
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int i) {
-            return R.id.ui_holder_view_contact_swipe_layout;
         }
     }
 }

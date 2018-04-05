@@ -6,7 +6,8 @@
     android:layout_height="@dimen/ui_base_dimen_button_height"
     android:background="@android:color/white"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    app:layout_itemType="main">
 
     <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_holder_view_contact_picker"

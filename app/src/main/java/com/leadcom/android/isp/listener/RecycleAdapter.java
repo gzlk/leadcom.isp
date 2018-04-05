@@ -32,6 +32,11 @@ public interface RecycleAdapter<T> {
     void remove(T item);
 
     /**
+     * 删除指定 id 的item
+     */
+    void remove(String itemId);
+
+    /**
      * 在列表末尾添加一个item
      */
     void add(T item);
@@ -50,6 +55,11 @@ public interface RecycleAdapter<T> {
      * 获取指定位置的item
      */
     T get(int position);
+
+    /**
+     * 通过指定的 itemId 获取某个节点
+     */
+    T get(String itemId);
 
     /**
      * 当前列表中是否存在指定值的item(value可以指定为任意字段的值)
