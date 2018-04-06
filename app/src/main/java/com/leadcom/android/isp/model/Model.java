@@ -84,7 +84,21 @@ public class Model extends BaseModel {
     @Ignore
     private boolean isSelected;
 
+    @Ignore
+    private String _id;
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
     public String getId() {
+        if (isEmpty(id)) {
+            id = _id;
+        }
         return id;
     }
 

@@ -9,13 +9,15 @@ import android.view.View;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.bigkoo.pickerview.TimePickerView;
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.AppVoteRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -25,12 +27,8 @@ import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.vote.AppVote;
 import com.leadcom.android.isp.model.activity.vote.AppVoteItem;
-import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,26 +46,22 @@ import java.util.Date;
  * <b>修改备注：</b><br />
  */
 
-public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment {
+public class VoteCreatorFragment extends BaseVoteFragment {
 
-    private static final String PARAM_POJO = "vcf_param_pojo";
     private static final String PARAM_TYPE = "vcf_param_type";
 
-    public static VoteCreatorFragment newInstance(String params) {
+    public static VoteCreatorFragment newInstance(Bundle bundle) {
         VoteCreatorFragment vcf = new VoteCreatorFragment();
-        Bundle bundle = new Bundle();
-        // tid
-        bundle.putString(PARAM_QUERY_ID, params);
         vcf.setArguments(bundle);
         return vcf;
     }
 
     public static void open(BaseFragment fragment, String tid) {
-        fragment.openActivity(VoteListFragment.class.getName(), tid, true, false);
+        fragment.openActivity(VoteListFragment.class.getName(), getBundle(tid), true, false);
     }
 
     public static void open(Context context, int requestCode, String tid) {
-        BaseActivity.openActivity(context, VoteCreatorFragment.class.getName(), tid, requestCode, true, false);
+        BaseActivity.openActivity(context, VoteCreatorFragment.class.getName(), getBundle(tid), requestCode, true, false);
     }
 
     /**
@@ -79,9 +73,8 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         lstType = bundle.getInt(PARAM_TYPE, AppVote.Type.SINGLE);
-        String json = bundle.getString(PARAM_POJO, "");
-        if (!isEmpty(json)) {
-            mAppVote = AppVote.fromJson(json);
+        if (!isEmpty(mJsonString)) {
+            mAppVote = AppVote.fromJson(mJsonString);
         }
     }
 
@@ -91,7 +84,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         bundle.putInt(PARAM_TYPE, lstType);
         //mAppVote.setTitle(titleHolder.getValue());
         mAppVote.setTitle(contentView.getValue());
-        bundle.putString(PARAM_POJO, AppVote.toJson(mAppVote));
+        bundle.putString(PARAM_JSON, AppVote.toJson(mAppVote));
     }
 
     //    @ViewId(R.id.ui_activity_vote_creator_title)
@@ -135,28 +128,8 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         initializeAdapter();
     }
 
-    @Override
-    protected boolean shouldSetDefaultTitleEvents() {
-        return true;
-    }
-
-    @Override
-    protected void destroyView() {
-
-    }
-
-    private void fetchingActivity() {
-        if (isEmpty(mAppVote.getActId())) {
-            Activity act = Activity.getByTid(mQueryId);
-            if (null != act) {
-                mAppVote.setActId(act.getId());
-            }
-        }
-    }
-
     private void tryPublishVote() {
-        fetchingActivity();
-        if (isEmpty(mAppVote.getActId())) {
+        if (isEmpty(mAppVote.getTid())) {
             ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_invalid_activity);
             return;
         }
@@ -208,7 +181,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
                     resultData(AppVote.toJson(mAppVote));
                 }
             }
-        }).add(mAppVote);
+        }).addTeamVote(mAppVote);
     }
 
     private void initializeHolders() {
@@ -222,6 +195,7 @@ public class VoteCreatorFragment extends BaseDownloadingUploadingSupportFragment
         }
         if (null == mAppVote) {
             mAppVote = new AppVote();
+            mAppVote.setTid(mQueryId);
             mAppVote.setItemContentList(new ArrayList<String>());
             // 默认最大选择项目为1，也即单选投票
             mAppVote.setMaxSelectable(1);

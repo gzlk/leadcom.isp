@@ -6,6 +6,7 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.activity.vote.AppVoteRecord;
 import com.litesuits.http.request.param.HttpMethods;
+import com.netease.nim.uikit.business.contact.core.item.ItemTypes;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +35,7 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
     }
 
     private static final String RECORD = "/activity/actVote";
+    private static final String TEAM = "/communication/commVoteRecord";
 
     @Override
     protected String url(String action) {
@@ -85,4 +87,35 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
         }
         httpRequest(getRequest(SingleVoteRecord.class, url(ADD), object.toString(), HttpMethods.Post));
     }
+
+
+    /**
+     * 投票
+     */
+    public void addTeamVoteRecord(AppVoteRecord record) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("itemIdList", new JSONArray(record.getItemIdList()))
+                    .put("voteId", record.getVoteId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleVoteRecord.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 投票
+     */
+    public void addTeamVoteRecord(String voteId, ArrayList<String> itemIdList) {
+        // {setupId,itemId}
+        JSONObject object = new JSONObject();
+        try {
+            object.put("itemIdList", new JSONArray(itemIdList))
+                    .put("voteId", voteId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleVoteRecord.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+    }
+
 }

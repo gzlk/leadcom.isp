@@ -218,6 +218,10 @@ public class DialogHelper {
             }
             _buttonConfirm.setOnClickListener(_clickListener);
         }
+        View _buttonCloser = root.findViewById(R.id.ui_dialog_button_closer);
+        if (null != _buttonCloser) {
+            _buttonCloser.setOnClickListener(_clickListener);
+        }
     }
 
     public void dismiss() {
@@ -247,8 +251,8 @@ public class DialogHelper {
                 } else {
                     dismiss();
                 }
-            } else if (id == R.id.ui_dialog_button_cancel) {
-                // 取消按钮时
+            } else if (id == R.id.ui_dialog_button_cancel || id == R.id.ui_dialog_button_closer) {
+                // 取消或关闭按钮时
                 if (null != cancelListener) {
                     cancelListener.onCancel();
                 }

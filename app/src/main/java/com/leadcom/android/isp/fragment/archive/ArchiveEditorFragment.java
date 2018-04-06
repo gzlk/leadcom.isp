@@ -759,7 +759,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
             public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_button_closer, R.id.ui_popup_rich_editor_image_navigate};
+                return new int[]{R.id.ui_popup_rich_editor_image_navigate};
             }
 
             @Override
@@ -919,7 +919,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
             public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_button_closer, R.id.ui_popup_rich_editor_music_navigate};
+                return new int[]{R.id.ui_popup_rich_editor_music_navigate};
             }
 
             @Override
@@ -986,7 +986,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
             public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_button_closer, R.id.ui_popup_rich_editor_video_navigate};
+                return new int[]{R.id.ui_popup_rich_editor_video_navigate};
             }
 
             @Override
@@ -1192,16 +1192,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public void onBindData(View dialogView, DialogHelper helper) {
 
             }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_button_closer};
-            }
-
-            @Override
-            public boolean onClick(View view) {
-                return true;
-            }
         }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
             @Override
             public void onDismiss() {
@@ -1255,7 +1245,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override
             public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_button_closer, R.id.ui_popup_rich_editor_attachment_navigate};
+                return new int[]{R.id.ui_popup_rich_editor_attachment_navigate};
             }
 
             @Override

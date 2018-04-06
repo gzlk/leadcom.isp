@@ -4,12 +4,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.fragment.activity.vote.VoteDetailsFragment;
-import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.fragment.activity.vote.VoteDetailsFragment;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 
@@ -87,7 +86,6 @@ public class MsgViewHolderVote extends MsgViewHolderBase {
 
     @Override
     protected void onItemClick() {
-        String params = StringHelper.format("%s,%s", vote.getVoteId(), message.getSessionId());
-        BaseActivity.openActivity(context, VoteDetailsFragment.class.getName(), params, true, false);
+        VoteDetailsFragment.open(context, BaseFragment.ACTIVITY_BASE_REQUEST, message.getSessionId(), vote.getId());
     }
 }

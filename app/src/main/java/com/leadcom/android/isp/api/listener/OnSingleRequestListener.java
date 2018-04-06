@@ -1,6 +1,8 @@
 package com.leadcom.android.isp.api.listener;
 
 import com.leadcom.android.isp.api.query.SingleQuery;
+import com.leadcom.android.isp.model.activity.vote.AppVoteItem;
+import com.leadcom.android.isp.model.activity.vote.AppVoteRecord;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 
 import java.util.ArrayList;
@@ -32,6 +34,9 @@ public abstract class OnSingleRequestListener<Data> {
      * 用户登录时返回的该用户关联的组织列表
      */
     public ArrayList<RelateGroup> userRelateGroupList;
+
+    public ArrayList<AppVoteRecord> commVoteRecordList;
+    public ArrayList<AppVoteItem> commVoteItemList;
 
     /**
      * 网络调用成功

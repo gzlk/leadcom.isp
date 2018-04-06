@@ -304,9 +304,10 @@
     <string name="ui_activity_vote_details_see_item_details">查看结果</string>
     <string name="ui_activity_vote_details_publish_details">发布结果</string>
     <string name="ui_activity_vote_details_publish_details_warning">正在发布投票结果</string>
+    <string name="ui_activity_vote_details_publish_details_success">投票结果已发布到会话</string>
     <string name="ui_activity_vote_details_publish_content_title">投票结果：%s</string>
     <string name="ui_activity_vote_details_publish_content_no_option">没有投票选项</string>
-    <string name="ui_activity_vote_details_publish_content" formatted="false">%d、%s %d票</string>
+    <string name="ui_activity_vote_details_publish_content" formatted="false">%d、%s(%d票)</string>
     <string name="ui_activity_vote_details_status_voting">进行中</string>
     <string name="ui_activity_vote_details_status_ended">已结束</string>
     <string name="ui_activity_vote_details_button_reject">弃权</string>
@@ -320,9 +321,7 @@
     <string name="ui_activity_vote_details_nothing_selected">没有选择任何投票项，您这是要投弃权吗？</string>
     <string name="ui_activity_vote_details_voting">正在处理您投票选项&#8230;</string>
     <string name="ui_activity_vote_details_voting_failed">投票失败</string>
-    <string name="ui_activity_vote_details_delete">
-        <![CDATA[删除投票应用将会删除其下所有投票选项以及已有的投票记录。<br/>您确定要继续吗？]]>
-    </string>
+    <string name="ui_activity_vote_details_delete">确定删除这些投票选项以及已有的投票记录吗？</string>
     <string name="ui_activity_vote_details_deleting">正在删除此投票应用&#8230;</string>
     <string name="ui_activity_vote_details_max_selected" formatted="false">您至多只能选择%d个选项</string>
 

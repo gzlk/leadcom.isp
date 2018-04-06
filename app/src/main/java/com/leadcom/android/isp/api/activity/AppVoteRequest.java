@@ -38,6 +38,7 @@ public class AppVoteRequest extends Request<AppVote> {
     }
 
     private static final String VOTE = "/activity/actVoteSetup";
+    private static final String TEAM = "/communication/commVote";
 
     @Override
     protected String url(String action) {
@@ -166,4 +167,67 @@ public class AppVoteRequest extends Request<AppVote> {
         // actId,ope,pageSize,pageNumber
         httpRequest(getRequest(MultipleVote.class, format("%s?actId=%s&ope=%d&pageNumber=%d", url(LIST), activityId, ope, pageNumber), "", HttpMethods.Get));
     }
+
+
+    // *************************************群聊相关
+
+    /**
+     * 添加一个投票应用
+     */
+    public void addTeamVote(AppVote appVote) {
+        // {actId,title,endDate,maxSelectable,anonymity,authPublic,[itemContentList]}
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("tid", appVote.getTid())         // 活动ID
+                    .put("title", appVote.getTitle())       // 投票标题
+                    //.put("content", appVote.getContent())   // 投票描述
+                    //.put("type", appVote.getType())         // 类型(1.单选,2.多选)
+                    .put("maxSelectable", appVote.getMaxSelectable())   // 投票选项的最大可选数(单选默认为1)
+                    .put("anonymity", appVote.getAnonymity())           // 投票是否记名(0.不记名,1.记名)
+                    .put("authPublic", appVote.getAuthPublic())         // 投票是否公开结果(0.不公开,1.公开)
+                    .put("endDate", appVote.getEndDate())
+                    .put("itemContentList", new JSONArray(appVote.getItemContentList()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleVote.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 查询单个投票设置(包括其所有投票选项和选项得票数)
+     *
+     * @param voteId     投票应用id
+     * @param ope        <ul>
+     *                   <li>1.表示只查询投票设置对象</li>
+     *                   <li>2.表示同时查询投票设置对象和投票选项</li>
+     *                   <li>3.表示查询投票设置对象、投票选项和所有投票人的投票记录</li>
+     *                   <li>4.投票设置信息,投票选项列表和当前用户投票记录</li>
+     *                   </ul>
+     * @param pageNumber pageNum:第几页;仅当ope为3时，分页入参有效
+     */
+    public void findTeamVote(String voteId, int ope, int pageNumber) {
+        // id="",ope="",pageSize="",pageNum=""
+        httpRequest(getRequest(SingleVote.class, format("%s%s?commVoteId=%s&ope=%d&pageNumber=%d", TEAM, FIND, voteId, ope, pageNumber), "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询某个活动中的投票（标题、名称）列表
+     *
+     * @param tid        活动ID
+     * @param ope        操作类型(1.所有活动投票设置,2.进行中的活动投票设置,3.已结束的活动投票设置)
+     * @param pageNumber 页码
+     */
+    public void listTeamVotes(String tid, int ope, int pageNumber) {
+        httpRequest(getRequest(MultipleVote.class, format("%s%s?tid=%s&ope=%d&pageNumber=%d", TEAM, LIST, tid, ope, pageNumber), "", HttpMethods.Get));
+    }
+
+    /**
+     * 删除一个投票应用
+     */
+    public void deleteTeamVote(String voteId) {
+        // id=""
+        httpRequest(getRequest(SingleVote.class, format("%s%s?commVoteId=%s", TEAM, DELETE, voteId), "", HttpMethods.Get));
+    }
+
 }

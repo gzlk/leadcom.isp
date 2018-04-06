@@ -66,14 +66,10 @@ public class VoteViewHolder extends BaseViewHolder {
         timeView.setText(StringHelper.getStringArray(R.array.ui_activity_vote_types)[appVote.getType()]);
     }
 
-    @Click({R.id.ui_holder_view_activity_vote_item})
+    @Click({R.id.ui_holder_view_activity_vote_item, R.id.ui_tool_view_contact_button2})
     private void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.ui_holder_view_activity_vote_item:
-                if (null != mOnViewHolderClickListener) {
-                    mOnViewHolderClickListener.onClick(getAdapterPosition());
-                }
-                break;
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
     }
 }

@@ -6,6 +6,7 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.common.TalkTeam;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -31,6 +32,7 @@ public class AppVote extends Model {
         String CreatorHeadPhoto = "creatorHeadPhoto";
         String End = "end";
         String VoteId = "voteId";
+        String VoteSetupId = "voteSetupId";
         String MaxSelectable = "maxSelectable";
         String Num = "num";
         String Archived = "archived";
@@ -99,6 +101,14 @@ public class AppVote extends Model {
         }.getType());
     }
 
+    // 群聊相关属性
+    //沟通ID
+    @Column(TalkTeam.Field.TeamId)
+    private String commId;
+    //云信高级群ID
+    @Column(Activity.Field.NimId)
+    private String tid;
+
     //活动Id
     @Column(Activity.Field.ActivityId)
     private String actId;
@@ -154,6 +164,10 @@ public class AppVote extends Model {
     private ArrayList<AppVoteItem> actVoteItemList;
     @Ignore
     private ArrayList<AppVoteRecord> actVoteList;
+    @Ignore
+    private ArrayList<AppVoteItem> commVoteItemList;
+    @Ignore
+    private ArrayList<AppVoteRecord> commVoteRecordList;
 
     public void saveVoteItems() {
         if (null != actVoteItemList) {
@@ -214,6 +228,22 @@ public class AppVote extends Model {
                 maxSelectable = 0;
                 break;
         }
+    }
+
+    public String getCommId() {
+        return commId;
+    }
+
+    public void setCommId(String commId) {
+        this.commId = commId;
+    }
+
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
     }
 
     public String getActId() {
@@ -352,7 +382,7 @@ public class AppVote extends Model {
 
     public ArrayList<AppVoteItem> getActVoteItemList() {
         if (null == actVoteItemList) {
-            actVoteItemList = new ArrayList<>();
+            actVoteItemList = getCommVoteItemList();
         }
         return actVoteItemList;
     }
@@ -362,6 +392,9 @@ public class AppVote extends Model {
     }
 
     public ArrayList<AppVoteRecord> getActVoteList() {
+        if (null == actVoteList) {
+            actVoteList = commVoteRecordList;
+        }
         return actVoteList;
     }
 
@@ -383,5 +416,27 @@ public class AppVote extends Model {
 
     public void setActVote(AppVoteRecord actVote) {
         this.actVote = actVote;
+    }
+
+    public ArrayList<AppVoteItem> getCommVoteItemList() {
+        if (null == commVoteItemList) {
+            commVoteItemList = new ArrayList<>();
+        }
+        return commVoteItemList;
+    }
+
+    public void setCommVoteItemList(ArrayList<AppVoteItem> commVoteItemList) {
+        this.commVoteItemList = commVoteItemList;
+    }
+
+    public ArrayList<AppVoteRecord> getCommVoteRecordList() {
+        if (null == commVoteRecordList) {
+            commVoteRecordList = new ArrayList<>();
+        }
+        return commVoteRecordList;
+    }
+
+    public void setCommVoteRecordList(ArrayList<AppVoteRecord> commVoteRecordList) {
+        this.commVoteRecordList = commVoteRecordList;
     }
 }

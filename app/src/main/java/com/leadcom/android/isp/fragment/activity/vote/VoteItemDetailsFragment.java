@@ -9,6 +9,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.activity.AppVoteRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -33,20 +34,19 @@ public class VoteItemDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_ITEM_ID = "vdf_item_id";
 
-    public static VoteItemDetailsFragment newInstance(String params) {
+    public static VoteItemDetailsFragment newInstance(Bundle bundle) {
         VoteItemDetailsFragment vdf = new VoteItemDetailsFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 投票的id
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 投票选项的id
-        bundle.putString(PARAM_ITEM_ID, strings[1]);
         vdf.setArguments(bundle);
         return vdf;
     }
 
     public static void open(BaseFragment fragment, String voteId, String voteItemId) {
-        fragment.openActivity(VoteItemDetailsFragment.class.getName(), format("%s,%s", voteId, voteItemId), true, false);
+        Bundle bundle = new Bundle();
+        // 投票的id
+        bundle.putString(PARAM_QUERY_ID, voteId);
+        // 投票选项的id
+        bundle.putString(PARAM_ITEM_ID, voteItemId);
+        fragment.openActivity(VoteItemDetailsFragment.class.getName(), bundle, true, false);
     }
 
     @ViewId(R.id.ui_activity_vote_item_title)
@@ -125,6 +125,14 @@ public class VoteItemDetailsFragment extends BaseSwipeRefreshSupportFragment {
                 hideImageHandlingDialog();
                 if (success) {
                     mAppVote = appVote;
+                    mAppVote.setCommVoteItemList(commVoteItemList);
+                    mAppVote.setCommVoteRecordList(commVoteRecordList);
+                    for (AppVoteRecord record : mAppVote.getCommVoteRecordList()) {
+                        if (record.getUserId().equals(Cache.cache().userId)) {
+                            mAppVote.setActVote(record);
+                            break;
+                        }
+                    }
                     if (voteItemId.equals(AppVoteItem.REFUSED_ID)) {
                         mAppVoteItem = AppVoteItem.getRefuseItem();
                     } else {
@@ -141,7 +149,7 @@ public class VoteItemDetailsFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).find(mQueryId, AppVoteRequest.FIND_MY, remotePageNumber);
+        }).findTeamVote(mQueryId, AppVoteRequest.FIND_ALL, remotePageNumber);
     }
 
     private void showDetails() {

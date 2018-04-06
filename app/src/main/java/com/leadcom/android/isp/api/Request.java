@@ -215,6 +215,8 @@ public abstract class Request<T> {
                             onSingleRequestListener.query = singleQuery;
                             onSingleRequestListener.userRelateGroupList = singleQuery.getUserRelateGroupList();
                             onSingleRequestListener.actInviteStatus = singleQuery.getActInvtStatus();
+                            onSingleRequestListener.commVoteItemList = singleQuery.getCommVoteItemList();
+                            onSingleRequestListener.commVoteRecordList = singleQuery.getCommVoteRecordList();
                             if (singleQuery.getData() instanceof FullTextQuery) {
                                 onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), response.getRawString());
                             } else {

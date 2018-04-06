@@ -165,13 +165,10 @@ public class VoteOptionViewHolder extends BaseViewHolder {
     private void click(View view) {
         switch (view.getId()) {
             case R.id.ui_holder_view_vote_option:
-                if (null != mOnViewHolderClickListener) {
-                    mOnViewHolderClickListener.onClick(getAdapterPosition());
-                }
-                break;
             case R.id.ui_holder_view_vote_option_users:
-                // 打开当前选项的投票详情
-                handleToVoteItemDetails();
+                if (null != mOnViewHolderElementClickListener) {
+                    mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+                }
                 break;
             case R.id.ui_holder_view_vote_option_chart_to_details:
                 int num = (int) chartCount.getTag(R.id.hlklib_ids_custom_view_click_tag);
@@ -185,13 +182,7 @@ public class VoteOptionViewHolder extends BaseViewHolder {
     private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
         public void onImageClick(ImageDisplayer displayer, String url) {
-            handleToVoteItemDetails();
+            headersLayout.performClick();
         }
     };
-
-    private void handleToVoteItemDetails() {
-        if (null != mOnHandlerBoundDataListener) {
-            mOnHandlerBoundDataListener.onHandlerBoundData(this);
-        }
-    }
 }

@@ -36,8 +36,11 @@ public class AppVoteRecord extends Model {
     }
 
     //投票设置的id(用于把签到记录和签到设置关联起来)
-    @Column(AppVote.Field.VoteId)
+    @Column(AppVote.Field.VoteSetupId)
     private String setupId;
+    //投票设置的ID
+    @Column(AppVote.Field.VoteId)
+    private String voteId;
     //投票选择项的id
     @Column(AppVote.Field.VoteItemId)
     private ArrayList<String> itemIdList;
@@ -56,6 +59,14 @@ public class AppVoteRecord extends Model {
     //创建时间
     @Column(Field.CreateDate)
     protected String createDate;
+
+    public String getVoteId() {
+        return voteId;
+    }
+
+    public void setVoteId(String voteId) {
+        this.voteId = voteId;
+    }
 
     public boolean haventVote() {
         return status == AppVote.Status.NOT_VOTE;

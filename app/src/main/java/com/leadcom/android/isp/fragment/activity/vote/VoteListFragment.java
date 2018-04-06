@@ -11,12 +11,11 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.AppVoteRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.holder.activity.VoteViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
-import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.model.activity.Activity;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.activity.vote.AppVote;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.List;
 
@@ -31,31 +30,28 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class VoteListFragment extends BaseSwipeRefreshSupportFragment {
+public class VoteListFragment extends BaseVoteFragment {
 
-    public static VoteListFragment newInstance(String params) {
+    public static VoteListFragment newInstance(Bundle bundle) {
         VoteListFragment vlf = new VoteListFragment();
-        Bundle bundle = new Bundle();
-        // tid
-        bundle.putString(PARAM_QUERY_ID, params);
         vlf.setArguments(bundle);
         return vlf;
     }
 
     public static void open(BaseFragment fragment, String tid) {
-        fragment.openActivity(VoteListFragment.class.getName(), tid, true, false);
+        fragment.openActivity(VoteListFragment.class.getName(), getBundle(tid), true, false);
     }
 
     public static void open(Context context, int requestCode, String tid) {
-        BaseActivity.openActivity(context, VoteListFragment.class.getName(), tid, requestCode, true, false);
+        BaseActivity.openActivity(context, VoteListFragment.class.getName(), getBundle(tid), requestCode, true, false);
     }
 
-    private String activityId = "";
     private VoteAdapter mAdapter;
 
     @Override
-    protected void onDelayRefreshComplete(@DelayType int type) {
-
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mRootView.setBackgroundColor(getColor(R.color.windowBackground));
     }
 
     @Override
@@ -77,16 +73,6 @@ public class VoteListFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    protected boolean shouldSetDefaultTitleEvents() {
-        return true;
-    }
-
-    @Override
-    protected void destroyView() {
-
-    }
-
-    @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
         loadingVote();
@@ -97,20 +83,6 @@ public class VoteListFragment extends BaseSwipeRefreshSupportFragment {
         loadingVote();
     }
 
-    @Override
-    protected String getLocalPageTag() {
-        return null;
-    }
-
-    private void fetchingActivity() {
-        if (isEmpty(activityId)) {
-            Activity act = Activity.getByTid(mQueryId);
-            if (null != act) {
-                activityId = act.getId();
-            }
-        }
-    }
-
     private void loadingVote() {
         displayLoading(true);
         displayNothing(false);
@@ -118,46 +90,44 @@ public class VoteListFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onResponse(List<AppVote> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                if (success) {
-                    if (remotePageNumber <= 1) {
-                        mAdapter.clear();
-                    }
-                    if (null != list) {
-                        if (list.size() >= pageSize) {
-                            remotePageNumber++;
-                            isLoadingComplete(false);
-                        } else {
-                            isLoadingComplete(true);
-                        }
-                        mAdapter.update(list, false);
-                    } else {
-                        isLoadingComplete(true);
-                    }
-                } else {
-                    isLoadingComplete(true);
+                if (remotePageNumber <= 1) {
+                    mAdapter.clear();
+                }
+                int size = null == list ? 0 : list.size();
+                isLoadingComplete(size < pageSize);
+                remotePageNumber += size < pageSize ? 0 : 1;
+                if (success && null != list) {
+                    mAdapter.update(list, false);
                 }
                 stopRefreshing();
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
             }
-        }).list(activityId, AppVoteRequest.LIST_ALL, remotePageNumber);
+        }).listTeamVotes(mQueryId, AppVoteRequest.LIST_ALL, remotePageNumber);
     }
 
     private void initializeAdapter() {
-        fetchingActivity();
         if (null == mAdapter) {
             setLoadingText(R.string.ui_activity_vote_list_loading_vote);
             setNothingText(R.string.ui_activity_vote_list_no_vote);
             mAdapter = new VoteAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             loadingVote();
         }
     }
 
-    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
-        public void onClick(int index) {
-            VoteDetailsFragment.open(VoteListFragment.this, mQueryId, mAdapter.get(index).getId());
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_holder_view_activity_vote_item:
+                    VoteDetailsFragment.open(VoteListFragment.this, mQueryId, mAdapter.get(index).getId());
+                    break;
+                case R.id.ui_tool_view_contact_button2:
+                    warningDelete(mAdapter.get(index).getId());
+                    break;
+            }
         }
     };
 
@@ -166,13 +136,13 @@ public class VoteListFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public VoteViewHolder onCreateViewHolder(View itemView, int viewType) {
             VoteViewHolder holder = new VoteViewHolder(itemView, VoteListFragment.this);
-            holder.addOnViewHolderClickListener(onViewHolderClickListener);
+            holder.setOnViewHolderElementClickListener(elementClickListener);
             return holder;
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return R.layout.holder_view_activity_vote_item;
+            return isSelfOwner ? R.layout.holder_view_activity_vote_item_deletable : R.layout.holder_view_activity_vote_item;
         }
 
         @Override

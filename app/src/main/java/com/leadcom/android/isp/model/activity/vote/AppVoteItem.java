@@ -31,8 +31,10 @@ public class AppVoteItem extends Model {
     }
 
     //投票设置对象的id
-    @Column(AppVote.Field.VoteId)
+    @Column(AppVote.Field.VoteSetupId)
     private String setupId;
+    @Column(AppVote.Field.VoteId)
+    private String voteId;  //投票ID
     //投票选项的描述
     @Column(Archive.Field.Content)
     private String content;
@@ -45,6 +47,14 @@ public class AppVoteItem extends Model {
     //该投票项的创建时间
     @Column(Field.CreateDate)
     private String createDate;
+
+    public String getVoteId() {
+        return voteId;
+    }
+
+    public void setVoteId(String voteId) {
+        this.voteId = voteId;
+    }
 
     public String getSetupId() {
         return setupId;
