@@ -607,8 +607,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     selfPropertyName.setEnabled(ue.isEditable());
                     selfPropertyValue.setValue(ue.getContent());
                     if (ue.isEditable()) {
+                        selfPropertyName.requestFocus();
                         selfPropertyName.focusEnd();
                     } else {
+                        selfPropertyValue.requestFocus();
                         selfPropertyValue.focusEnd();
                     }
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, ue.getShow()));

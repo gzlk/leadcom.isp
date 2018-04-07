@@ -234,7 +234,7 @@ public class ActivityArchivingFragment extends BaseSwipeRefreshSupportFragment {
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).archive(mArchiveId, Archive.ArchiveStatus.APPROVED);
+        }).archive(mArchiveId, Archive.ArchiveApproveStatus.APPROVED);
     }
 
     // 重置全选或全不选状态

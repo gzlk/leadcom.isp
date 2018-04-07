@@ -166,17 +166,17 @@ public class ArchiveHandlerFragment extends BaseSwipeRefreshSupportFragment {
 
     private void reject() {
         if (mType == TYPE_APPROVE) {
-            passedApprove(Archive.ArchiveStatus.FAILURE);
+            passedApprove(Archive.ArchiveApproveStatus.FAILURE);
         } else {
-            passedArchive(Archive.ArchiveStatus.FAILURE);
+            passedArchive(Archive.ArchiveApproveStatus.FAILURE);
         }
     }
 
     private void passed() {
         if (mType == TYPE_APPROVE) {
-            passedApprove(Archive.ArchiveStatus.APPROVED);
+            passedApprove(Archive.ArchiveApproveStatus.APPROVED);
         } else {
-            passedArchive(Archive.ArchiveStatus.APPROVED);
+            passedArchive(Archive.ArchiveApproveStatus.APPROVED);
         }
     }
 

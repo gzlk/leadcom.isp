@@ -529,7 +529,7 @@ public class ArchiveRequest extends Request<Archive> {
      * 存档组织档案(活动结束后生成的档案)
      *
      * @param archiveId 档案id
-     * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveStatus}
+     * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveApproveStatus}
      */
     public void archive(String archiveId, int status) {
         // groDocArchiveId,status,accessToken
@@ -567,7 +567,7 @@ public class ArchiveRequest extends Request<Archive> {
      * 审核组织档案
      *
      * @param archiveId 档案id
-     * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveStatus}
+     * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveApproveStatus}
      */
     public void approve(String archiveId, int status) {
         // groDocApproveId,status,accessToken
@@ -622,4 +622,91 @@ public class ArchiveRequest extends Request<Archive> {
             httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
         }
     }
+
+
+    /**
+     * 添加组织档案草稿
+     */
+    public void addDraft(Archive archive) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("title", archive.getTitle())// 必要字段
+                    .put("cover", checkNull(archive.getCover()))
+                    .put("type", archive.getType())// 必要字段
+                    .put("authPublic", archive.getAuthPublic())// 必要字段
+                    .put("content", archive.getContent())
+                    .put("markdown", archive.getMarkdown())
+                    .put("label", new JSONArray(archive.getLabel()))
+                    .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
+                    .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
+                    .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
+                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
+                    .put("source", archive.getSource())
+                    .put("fileIds", checkNull(archive.getFileIds()))
+                    .put("groupId", checkNull(archive.getGroupId()))
+                    // 组织档案需要增加以下参数
+                    .put("site", checkNull(archive.getSite()))
+                    .put("property", checkNull(archive.getProperty()))
+                    .put("category", checkNull(archive.getCategory()))
+                    .put("participant", checkNull(archive.getParticipant()))
+                    .put("happenDate", archive.getHappenDate());
+            if (archive.getAuthPublic() == Seclusion.Type.Group) {
+                object.put("authGro", new JSONArray(archive.getAuthGro()));
+            } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
+                object.put("authUser", new JSONArray(archive.getAuthUser()));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleArchive.class, format("%s/draft", group(ADD)), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 添加正式档案
+     */
+    public void addFormal(Archive archive) {
+        boolean isIndividual = isEmpty(archive.getGroupId(), true);
+        JSONObject object = new JSONObject();
+        try {
+            object.put("title", archive.getTitle())// 必要字段
+                    .put("cover", checkNull(archive.getCover()))
+                    .put("type", archive.getType())// 必要字段
+                    .put("authPublic", archive.getAuthPublic())// 必要字段
+                    .put("content", archive.getContent())
+                    .put("markdown", archive.getMarkdown())
+                    .put("label", new JSONArray(archive.getLabel()))
+                    .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
+                    .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
+                    .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
+                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
+                    .put("source", archive.getSource())
+                    .put("fileIds", checkNull(archive.getFileIds()));
+            if (archive.getAuthPublic() == Seclusion.Type.Group) {
+                object.put("authGro", new JSONArray(archive.getAuthGro()));
+            } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
+                object.put("authUser", new JSONArray(archive.getAuthUser()));
+            }
+            if (!isIndividual) {
+                object.put("groupId", archive.getGroupId())// 必要字段
+                        // 组织档案需要增加以下参数
+                        .put("site", checkNull(archive.getSite()))
+                        .put("property", checkNull(archive.getProperty()))
+                        .put("category", checkNull(archive.getCategory()))
+                        .put("participant", checkNull(archive.getParticipant()))
+                        .put("happenDate", archive.getHappenDate());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleArchive.class, format("%s/formal", group(ADD)), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 查询组织档案列表，此列表不保存到本地缓存
+     */
+    public void listDraft(String groupId, int pageNumber) {
+        String params = format("%s/draft?groupId=%s&pageNumber=%d", group(LIST), groupId, pageNumber);
+        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
+    }
+
 }

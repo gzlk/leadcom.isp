@@ -218,7 +218,7 @@ public class Archive extends Additional {
     /**
      * 档案审核状态
      */
-    public interface ArchiveStatus {
+    public interface ArchiveApproveStatus {
         /**
          * 未审核
          */
@@ -240,11 +240,11 @@ public class Archive extends Additional {
         /**
          * 正常档案
          */
-        int NORMAL = 0;
+        int NORMAL = 1;
         /**
          * 草稿档案
          */
-        int DRAFT = 1;
+        int DRAFT = 2;
     }
 
     /**
@@ -268,17 +268,20 @@ public class Archive extends Additional {
         }.getType());
     }
 
-    public String getArchiveStatus() {
+    /**
+     * 获取档案的审核状态
+     */
+    public String getArchiveApproveStatus() {
         switch (status) {
-            case ArchiveStatus.APPROVING:
+            case ArchiveApproveStatus.APPROVING:
                 // 不是活动档案时为未审核，活动档案为未存档
                 return type == ArchiveType.ACTIVITY ? "待存档" : "待审核";
             //return "待审核";
-            case ArchiveStatus.APPROVED:
+            case ArchiveApproveStatus.APPROVED:
                 // 不是活动档案时为已审核，活动档案为已存档
                 return type == ArchiveType.ACTIVITY ? "已存档" : "已审核";
             //return "已审核";
-            case ArchiveStatus.FAILURE:
+            case ArchiveApproveStatus.FAILURE:
                 return type == ArchiveType.ACTIVITY ? "存档失败" : "审核失败";
             //return "未通过审核";
             default:
@@ -341,6 +344,17 @@ public class Archive extends Additional {
 
     @Column(Organization.Field.GroupId)
     private String groupId;            //群ID
+
+    //状态:1.正式,2.草稿
+    @Column(Activity.Field.Status)
+    private int status;
+
+    /**
+     * 档案是否是草稿
+     */
+    public boolean isDraft() {
+        return status == DraftType.DRAFT;
+    }
 
     /**
      * 档案类型
@@ -428,8 +442,6 @@ public class Archive extends Additional {
     // 审核相关
     //存档状态(1.未存档,2.存档成功,3.存档失败)
     //1.未审核,2.审核成功,3.审核失败
-    @Column(Activity.Field.Status)
-    private int status;
     //档案审核人用户ID
     @Column(Field.ApproverId)
     private String approverId;
