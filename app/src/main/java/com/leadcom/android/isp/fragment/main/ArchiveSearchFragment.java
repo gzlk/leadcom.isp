@@ -160,6 +160,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             public void onSearching(String text) {
                 if (!isEmpty(text)) {
                     searchingText = text;
+                    remotePageNumber = 1;
                     searchingArchive();
                 } else {
                     searchingText = "";
@@ -181,6 +182,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             public void onTimeSelect(Date date, View v) {
                 searchingMonth = Utils.format("yyyy-MM", date);
                 //restoreSearchingResult();
+                remotePageNumber = 1;
                 searchingArchive();
             }
         }).setLayoutRes(R.layout.tool_view_custom_time_picker, new CustomListener() {
@@ -255,7 +257,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onLoadingMore() {
-
+        searchingArchive();
     }
 
     @Override
@@ -623,6 +625,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 tAdapter.update(d);
             }
             //restoreSearchingResult();
+            remotePageNumber = 1;
             searchingArchive();
         }
     };
