@@ -77,7 +77,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        layoutType = TYPE_FLEX;
+        layoutType = TYPE_GRID;
         super.onActivityCreated(savedInstanceState);
     }
 

@@ -4,11 +4,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
-import com.hlk.hlklib.lib.inject.ViewUtility;
 
 /**
  * <b>功能描述：</b>显示照片的ViewHolder<br />
@@ -75,6 +75,7 @@ public class ImageViewHolder extends BaseViewHolder {
     public void setImageSize(int width, int height) {
         this.width = width;
         this.height = height;
+        //FlexboxLayout.LayoutParams params = (FlexboxLayout.LayoutParams) itemView.getLayoutParams();
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
         params.width = width;
         params.height = height;

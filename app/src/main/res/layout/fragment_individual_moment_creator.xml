@@ -22,8 +22,6 @@
 
     <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
 
-    <include layout="@layout/tool_view_divider_big" />
-
     <include layout="@layout/tool_view_half_line_horizontal" />
 
     <include layout="@layout/holder_view_simple_clickable" />

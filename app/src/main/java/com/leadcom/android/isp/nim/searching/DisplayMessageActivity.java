@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
+import com.netease.nim.uikit.api.wrapper.NimToolBarOptions;
 import com.netease.nim.uikit.business.session.module.Container;
 import com.netease.nim.uikit.business.session.module.ModuleProxy;
 import com.netease.nim.uikit.business.session.module.list.MessageListPanelEx;
@@ -62,7 +63,7 @@ public class DisplayMessageActivity extends UI implements ModuleProxy {
             searchBox.setVisibility(View.GONE);
         }
 
-        ToolBarOptions options = new ToolBarOptions();
+        ToolBarOptions options = new NimToolBarOptions();
         options.titleId = R.string.ui_activity_property_chat_history_title_anchor_point;
         setToolBar(R.id.activity_toolbar, options);
 

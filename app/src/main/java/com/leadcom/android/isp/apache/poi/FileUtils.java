@@ -224,4 +224,23 @@ public class FileUtils {
         }
         return size;
     }
+
+    /**
+     * 删除指定的文件或文件夹
+     */
+    public static void removeFile(String path) {
+        removeFile(new File(path));
+    }
+
+    private static void removeFile(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (File f : files) {
+                removeFile(f);
+            }
+            file.delete();
+        } else {
+            file.delete();
+        }
+    }
 }
