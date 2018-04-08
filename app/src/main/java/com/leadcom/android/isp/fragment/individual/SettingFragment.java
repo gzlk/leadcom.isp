@@ -35,13 +35,16 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     private View passwordView;
     @ViewId(R.id.ui_setting_to_messaging)
     private View messagingView;
-    @ViewId(R.id.ui_setting_to_privacy)
-    private View privacyView;
+    @ViewId(R.id.ui_setting_to_cache)
+    private View cacheView;
+    @ViewId(R.id.ui_setting_to_about)
+    private View aboutView;
 
     // holders
     private SimpleClickableViewHolder passwordHolder;
     private SimpleClickableViewHolder messagingHolder;
-    private SimpleClickableViewHolder privacyHolder;
+    private SimpleClickableViewHolder cacheHolder;
+    private SimpleClickableViewHolder aboutHolder;
     private String[] strings;
 
     @Override
@@ -91,10 +94,15 @@ public class SettingFragment extends BaseTransparentSupportFragment {
             messagingHolder.addOnViewHolderClickListener(holderClickListener);
             messagingHolder.showContent(strings[1]);
         }
-        if (null == privacyHolder) {
-            privacyHolder = new SimpleClickableViewHolder(privacyView, SettingFragment.this);
-            privacyHolder.addOnViewHolderClickListener(holderClickListener);
-            privacyHolder.showContent(strings[2]);
+        if (null == cacheHolder) {
+            cacheHolder = new SimpleClickableViewHolder(cacheView, this);
+            cacheHolder.addOnViewHolderClickListener(holderClickListener);
+            cacheHolder.showContent(strings[2]);
+        }
+        if (null == aboutHolder) {
+            aboutHolder = new SimpleClickableViewHolder(aboutView, SettingFragment.this);
+            aboutHolder.addOnViewHolderClickListener(holderClickListener);
+            aboutHolder.showContent(strings[3]);
         }
     }
 
@@ -118,7 +126,11 @@ public class SettingFragment extends BaseTransparentSupportFragment {
                     openActivity(SettingMessagingFragment.class.getName(), "", true, false);
                     break;
                 case 2:
-                    // 隐私设置
+                    // 缓存管理
+                    SettingCacheFragment.open(SettingFragment.this);
+                    break;
+                case 3:
+                    // 关于
                     openActivity(AboutFragment.class.getName(), "", true, false);
                     break;
             }

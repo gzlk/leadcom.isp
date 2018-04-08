@@ -65,6 +65,17 @@
             android:textColor="@color/textColorHint"
             android:visibility="gone" />
 
+        <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+            android:id="@+id/ui_holder_view_simple_clickable_progress"
+            android:layout_width="@dimen/ui_static_dp_30"
+            android:layout_height="@dimen/ui_static_dp_30"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:mlpb_enable_circle_background="false"
+            app:mlpb_progress_color="@color/colorProgressing"
+            app:mlpb_progress_stoke_width="@dimen/ui_static_dp_2"
+            app:mlpb_progress_text_visibility="invisible" />
+
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_holder_view_simple_clickable_right_icon"
             android:layout_width="wrap_content"

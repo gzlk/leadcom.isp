@@ -3,7 +3,6 @@ package com.leadcom.android.isp.holder.activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -32,9 +31,12 @@ import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.SimpleCallback;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.friend.FriendService;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.netease.nimlib.sdk.team.constant.TeamMessageNotifyTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
 import com.netease.nimlib.sdk.team.model.TeamMember;
 import com.netease.nimlib.sdk.uinfo.model.UserInfo;
@@ -81,6 +83,8 @@ public class ActivityViewHolder extends BaseViewHolder {
     private View deleteView;
     @ViewId(R.id.ui_holder_view_activity_item_sticker)
     private View stickIcon;
+    @ViewId(R.id.ui_holder_view_activity_item_mutex)
+    private View mutexIcon;
 
     public ActivityViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -179,12 +183,23 @@ public class ActivityViewHolder extends BaseViewHolder {
         iconText.setVisibility(View.GONE);
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
         stickIcon.setVisibility(isStick(contact) ? View.VISIBLE : View.GONE);
-        stickCancel.setVisibility(isStick(contact) ? View.VISIBLE : View.GONE);
-        stickView.setVisibility(isStick(contact) ? View.GONE : View.VISIBLE);
+        mutexIcon.setVisibility(isMutex(contact) ? View.VISIBLE : View.GONE);
+        //stickCancel.setVisibility(isStick(contact) ? View.VISIBLE : View.GONE);
+        //stickView.setVisibility(isStick(contact) ? View.GONE : View.VISIBLE);
         // 重设置顶、删除UI的高度
         //resetDeletableHeight(stickView);
         //resetDeletableHeight(deleteView);
         //resetDeletableHeight(stickCancel);
+    }
+
+    private boolean isMutex(RecentContact contact) {
+        if (contact.getSessionType() == SessionTypeEnum.P2P) {
+            return !NIMClient.getService(FriendService.class).isNeedMessageNotify(contact.getContactId());
+        } else if (contact.getSessionType() == SessionTypeEnum.Team) {
+            Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
+            return null != team && team.getMessageNotifyType() == TeamMessageNotifyTypeEnum.Mute;
+        }
+        return false;
     }
 
     private boolean isStick(RecentContact contact) {

@@ -682,6 +682,9 @@ public class TalkTeamPropertyFragment extends BaseTalkTeamFragment {
             @Override
             public void onSuccess(Void param) {
                 ToastHelper.make().showMsg(notify ? R.string.ui_team_talk_team_mute : R.string.ui_team_talk_team_muted);
+                if (null != stickChangeCallback) {
+                    stickChangeCallback.onChange(getRecentContact());
+                }
             }
 
             @Override
@@ -701,6 +704,9 @@ public class TalkTeamPropertyFragment extends BaseTalkTeamFragment {
             @Override
             public void onSuccess(Void param) {
                 ToastHelper.make().showMsg(mute ? R.string.ui_team_talk_team_muted : R.string.ui_team_talk_team_mute);
+                if (null != stickChangeCallback) {
+                    stickChangeCallback.onChange(getRecentContact());
+                }
             }
 
             @Override

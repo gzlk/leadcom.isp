@@ -85,6 +85,7 @@
     <string name="ui_icon_building">&#xe679;</string>
     <string name="ui_icon_business_card">&#xe66f;</string>
     <string name="ui_icon_telephone">&#xe67a;</string>
+    <string name="ui_icon_mutex">&#xe698;</string>
 
     <!--系统消息界面的icon-->
     <string name="ui_icon_system_msg">&#xe614;</string>
@@ -122,6 +123,7 @@
     <string name="ui_icon_material_list_numbered">&#xE242;</string>
     <string name="ui_icon_material_comment">&#xE0B9;</string>
     <string name="ui_icon_material_content_paste">&#xE14F;</string>
+    <string name="ui_icon_material_notification_off">&#xE7F6;</string>
 
     <!--富文本编辑器控制按钮-->
     <string name="ui_icon_rich_editor_undo">&#xe657;</string>

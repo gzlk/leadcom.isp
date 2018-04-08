@@ -19,6 +19,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 /**
  * <b>功能描述：</b>简单的可点击的viewholder<br />
@@ -45,6 +46,8 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
     public CustomTextView appendIcon;
     @ViewId(R.id.ui_holder_view_simple_clickable_right_icon)
     public CustomTextView rightIcon;
+    @ViewId(R.id.ui_holder_view_simple_clickable_progress)
+    private CircleProgressBar progress;
     @ViewId(R.id.ui_tool_view_contact_button2)
     private TextView deleteView;
 
@@ -53,6 +56,12 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
         if (null != imageView) {
             imageView.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
+    }
+
+    public void showProgress(boolean shown) {
+        if (null != progress) {
+            progress.setVisibility(shown ? View.VISIBLE : View.GONE);
         }
     }
 

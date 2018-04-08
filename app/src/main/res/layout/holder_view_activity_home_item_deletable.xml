@@ -19,6 +19,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="@dimen/ui_base_dimen_margin_padding"
+            android:visibility="gone"
             app:layout_itemType="menu">
 
             <com.hlk.hlklib.lib.view.CustomTextView
@@ -47,6 +48,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="@dimen/ui_base_dimen_margin_padding"
+            android:visibility="gone"
             app:layout_itemType="menu">
 
             <com.hlk.hlklib.lib.view.CustomTextView

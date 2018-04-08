@@ -172,8 +172,56 @@ public class FileUtils {
         return true;
     }
 
-    public static boolean fileExists(String filePath) {
-        File file = new File(filePath);
-        return file.exists();
+    private static boolean fileExists(String filePath) {
+        return new File(filePath).exists();
+    }
+
+    /**
+     * 获取指定文件夹或文件的大小
+     */
+    public static long getFileSize(String path) {
+        long size = 0;//如果原文件不存在
+        if (!fileExists(path)) {
+            return size;
+        }
+        File file = new File(path);
+        try {
+            if (file.isDirectory()) {
+                size = getFileSizes(file);
+            } else {
+                size = getFileSize(file);
+            }
+        } catch (Exception ignore) {
+            ignore.printStackTrace();
+        }
+        return size;
+    }
+
+    /**
+     * 获取指定文件大小
+     */
+    private static long getFileSize(File file) throws Exception {
+        long size = 0;
+        if (file.exists()) {
+            FileInputStream fis = new FileInputStream(file);
+            size = fis.available();
+        }
+        return size;
+    }
+
+    /**
+     * 获取指定文件夹大小
+     */
+    private static long getFileSizes(File f) throws Exception {
+        long size = 0;
+        File list[] = f.listFiles();
+        for (File file : list) {
+            if (file.isDirectory()) {
+                size = size + getFileSizes(file);
+            } else {
+                size = size + getFileSize(file);
+            }
+        }
+        return size;
     }
 }
