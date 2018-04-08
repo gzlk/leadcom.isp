@@ -180,7 +180,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onTimeSelect(Date date, View v) {
                 searchingMonth = Utils.format("yyyy-MM", date);
-                restoreSearchingResult();
+                //restoreSearchingResult();
+                searchingArchive();
             }
         }).setLayoutRes(R.layout.tool_view_custom_time_picker, new CustomListener() {
             @Override
@@ -621,7 +622,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 d.setSelected(true);
                 tAdapter.update(d);
             }
-            restoreSearchingResult();
+            //restoreSearchingResult();
+            searchingArchive();
         }
     };
 
