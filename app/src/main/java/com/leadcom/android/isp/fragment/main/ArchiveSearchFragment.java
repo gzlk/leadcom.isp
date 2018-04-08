@@ -59,22 +59,21 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_TYPE = "param_searching_type";
     private static final String PARAM_TEXT = "param_searching_text";
 
-    public static ArchiveSearchFragment newInstance(String params) {
+    public static ArchiveSearchFragment newInstance(Bundle bundle) {
         ArchiveSearchFragment asf = new ArchiveSearchFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 搜索方式
-        bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
-        // 传过来的组织id或者用户的id
-        bundle.putString(PARAM_QUERY_ID, strings[1]);
-        // 搜索的文本
-        bundle.putString(PARAM_TEXT, strings[2]);
         asf.setArguments(bundle);
         return asf;
     }
 
     public static void open(BaseFragment fragment, int searchType, String searchId, String searchText) {
-        fragment.openActivity(ArchiveSearchFragment.class.getName(), format("%d,%s,%s", searchType, searchId, searchText), false, false);
+        Bundle bundle = new Bundle();
+        // 搜索方式
+        bundle.putInt(PARAM_TYPE, searchType);
+        // 传过来的组织id或者用户的id
+        bundle.putString(PARAM_QUERY_ID, searchId);
+        // 搜索的文本
+        bundle.putString(PARAM_TEXT, searchText);
+        fragment.openActivity(ArchiveSearchFragment.class.getName(), bundle, false, false);
     }
 
     @ViewId(R.id.ui_holder_view_searchable_container)
@@ -543,7 +542,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 restoreSearchingResult();
             }
-        }).search(mQueryId, searchingText, remotePageNumber);
+        }).search(mQueryId, searchingMonth, searchingNature, searchingType, searchingText, remotePageNumber);
     }
 
     private void searchingUserArchive() {
