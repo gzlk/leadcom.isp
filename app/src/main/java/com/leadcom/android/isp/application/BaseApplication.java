@@ -160,6 +160,10 @@ public class BaseApplication extends Application {
      */
     public static final String VOICE_DIR = "voices";
     /**
+     * 本地视频缓存目录
+     */
+    public static final String VIDEO_DIR = "video";
+    /**
      * 本地其他文件缓存目录
      */
     public static final String OTHER_DIR = "others";

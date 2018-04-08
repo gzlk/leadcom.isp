@@ -253,8 +253,10 @@ public class DialogHelper {
                 }
             } else if (id == R.id.ui_dialog_button_cancel || id == R.id.ui_dialog_button_closer) {
                 // 取消或关闭按钮时
-                if (null != cancelListener) {
-                    cancelListener.onCancel();
+                if (id == R.id.ui_dialog_button_cancel) {
+                    if (null != cancelListener) {
+                        cancelListener.onCancel();
+                    }
                 }
                 dismiss();
             }

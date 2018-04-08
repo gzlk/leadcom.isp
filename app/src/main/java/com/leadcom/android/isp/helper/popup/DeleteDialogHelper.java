@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.helper.popup;
 
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
@@ -25,13 +26,13 @@ public class DeleteDialogHelper {
     }
 
     private int layout = R.layout.popup_dialog_common_delete;
-    private BaseFragment fragment;
+    private AppCompatActivity activity;
     private DialogHelper.OnDialogConfirmListener confirmListener;
     private DialogHelper dialogHelper;
     private String titleString, confirmString;
 
     public DeleteDialogHelper init(BaseFragment fragment) {
-        this.fragment = fragment;
+        activity = fragment.Activity();
         // 默认是删除
         confirmString = StringHelper.getString(R.string.ui_base_text_delete);
         return this;
@@ -72,11 +73,11 @@ public class DeleteDialogHelper {
 
     public void show() {
         if (null == dialogHelper) {
-            dialogHelper = DialogHelper.init(fragment.Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            dialogHelper = DialogHelper.init(activity).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
                 @Override
                 public View onInitializeView() {
                     if (null == dialogView) {
-                        dialogView = View.inflate(fragment.Activity(), layout, null);
+                        dialogView = View.inflate(activity, layout, null);
                         textView = dialogView.findViewById(R.id.ui_custom_dialog_text);
                     }
                     return dialogView;

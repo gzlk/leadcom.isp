@@ -34,6 +34,7 @@
 
     <string name="ui_nim_location_service_invalid">位置服务未开启</string>
 
+    <string name="ui_nim_attachment_video_download_needed">在线播放视频会消耗大量流量，建议在wifi环境下播放，土豪请随意。您也可以下载之后播放(请及时清理不再使用的视频文件以免占用手机内存空间)。</string>
     <string name="ui_nim_attachment_download_failure">文件下载失败</string>
     <string name="ui_nim_attachment_open_failure" formatted="false">无法打开文件，您可能需要安装相应的第三方app</string>
 </resources>

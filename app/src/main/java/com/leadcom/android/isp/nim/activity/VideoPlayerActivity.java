@@ -15,11 +15,21 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
+import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.helper.DownloadingHelper;
+import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.listener.OnTaskCompleteListener;
+import com.leadcom.android.isp.listener.OnTaskFailureListener;
+import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.leadcom.android.isp.nim.file.FilePreviewHelper;
+
+import java.io.File;
 
 /**
  * <b>功能描述：</b>视频播放页面<br />
@@ -54,6 +64,8 @@ public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallba
     private TextView titleView;
     @ViewId(R.id.ui_ui_custom_title_right_text)
     private TextView rightView;
+    @ViewId(R.id.ui_tool_loading_container)
+    private View loadingView;
     private String videoUrl;
 
     @Override
@@ -72,15 +84,91 @@ public class VideoPlayerActivity extends BaseActivity implements EasyVideoCallba
         player.setCallback(this);
 
         // Get the video url source from intent
-        videoUrl = getIntent().getStringExtra(PARAM_URL) + "#.mp4";
+        videoUrl = getIntent().getStringExtra(PARAM_URL);
         //url="http://120.25.124.199:8008/group1/M00/00/07/cErYIVlRFM-AGxabANsDmhQhlq8675.mp4";
         // Sets the source to the HTTP URL held in the TEST_URL variable.
         // To play files, you can use Uri.fromFile(new File("..."))
-        player.setSource(Uri.parse(videoUrl));
+        player.setSource(Uri.parse(videoUrl + "#.mp4"));
 
-        ToastHelper.make(this).showMsg("建议在wifi环境下播放视频");
+        //ToastHelper.make(this).showMsg("建议在wifi环境下播放视频");
         // From here, the player view will show a progress indicator until the player is prepared.
         // Once it's prepared, the progress indicator goes away and the controls become enabled for the user to begin playback.
+
+        titleLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                checkLocalStorage();
+            }
+        }, 300);
+    }
+
+    /**
+     * 检测本地缓存的视频文件
+     */
+    private void checkLocalStorage() {
+        boolean isNim = FilePreviewHelper.isNimFile(videoUrl);
+        String local = HttpHelper.helper().getLocalFilePath(videoUrl, App.VIDEO_DIR);
+        String extension = Attachment.getExtension(videoUrl);
+        if (isNim) {
+            // 易信文件需要后续加.mp4才行，否则有可能打不开视频
+            local += ".mp4";
+            extension = "mp4";
+        }
+        File file = new File(local);
+        if (file.exists()) {
+            resetPlayer(local);
+        } else {
+            warningNeedDownload(local, extension);
+        }
+    }
+
+    private void warningNeedDownload(final String local, final String extension) {
+        DialogHelper.init(this).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                return View.inflate(VideoPlayerActivity.this, R.layout.popup_dialog_video_need_download, null);
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                // 下载后播放
+                startDownload(local, extension);
+                return true;
+            }
+        }).addOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                player.start();
+            }
+        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    }
+
+    private void startDownload(final String local, String extension) {
+        loadingView.setVisibility(View.VISIBLE);
+        DownloadingHelper.helper().init(this).setOnTaskCompleteListener(new OnTaskCompleteListener() {
+            @Override
+            public void onComplete() {
+                loadingView.setVisibility(View.GONE);
+                resetPlayer(local);
+            }
+        }).setOnTaskFailureListener(new OnTaskFailureListener() {
+            @Override
+            public void onFailure() {
+                loadingView.setVisibility(View.GONE);
+            }
+        }).setShowNotification(false).download(videoUrl, local, extension, "", "");
+    }
+
+    private void resetPlayer(String path) {
+        player.stop();
+        player.reset();
+        player.setSource(Uri.parse("file://" + path));
+        player.start();
     }
 
     @Click({R.id.ui_ui_custom_title_left_container,

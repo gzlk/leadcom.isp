@@ -189,7 +189,6 @@ public class HttpHelper {
     /**
      * 获取http url在本地缓存的路径
      */
-    @SuppressWarnings("ConstantConditions")
     public String getLocalFilePath(String httpUrl, String dir) {
         return App.app().getLocalFilePath(httpUrl, dir);
     }
