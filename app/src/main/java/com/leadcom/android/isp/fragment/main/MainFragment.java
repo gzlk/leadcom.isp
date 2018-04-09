@@ -23,11 +23,18 @@ import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
+import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.ResponseCode;
+import com.netease.nimlib.sdk.friend.FriendService;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.RecentContact;
+import com.netease.nimlib.sdk.team.constant.TeamMessageNotifyTypeEnum;
+import com.netease.nimlib.sdk.team.model.Team;
 
 import java.util.List;
 
@@ -59,7 +66,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
     @ViewId(R.id.ui_tool_main_bottom_icon_2)
     private CustomTextView iconView2;
     @ViewId(R.id.ui_tool_main_bottom_icon_unread)
-    private LinearLayout icon2Unread;
+    private View icon2Unread;
     @ViewId(R.id.ui_tool_main_bottom_icon_unread_num)
     private TextView icon2UnreadNum;
     @ViewId(R.id.ui_tool_main_bottom_clickable_center_icon)
@@ -101,10 +108,52 @@ public class MainFragment extends BaseTransparentSupportFragment {
     Observer<List<RecentContact>> recentContactChangeObserver = new Observer<List<RecentContact>>() {
         @Override
         public void onEvent(List<RecentContact> recentContacts) {
-            log("message observer onEvent: " + (null == recentContacts ? "null" : recentContacts.size()));
-            showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
+            log("message observer onEvent(Main): " + (null == recentContacts ? "null" : recentContacts.size()));
+            showUnreadFlag();
         }
     };
+
+    private void checkUnreadTotalCountIgnoreMutex() {
+        NIMClient.getService(MsgService.class).queryRecentContacts().setCallback(new RequestCallback<List<RecentContact>>() {
+            @Override
+            public void onSuccess(List<RecentContact> list) {
+                int count = 0;
+                if (list == null || list.size() < 1) {
+                    return;
+                }
+                for (RecentContact contact : list) {
+                    int unread = contact.getUnreadCount();
+                    if (unread > 0) {
+                        if (contact.getSessionType() == SessionTypeEnum.Team) {
+                            // 查看群聊是否静音，静音的话不统计
+                            Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
+                            if (team.getMessageNotifyType() != TeamMessageNotifyTypeEnum.Mute) {
+                                count += unread;
+                            }
+                        } else if (contact.getSessionType() == SessionTypeEnum.P2P) {
+                            boolean notify = NIMClient.getService(FriendService.class).isNeedMessageNotify(contact.getContactId());
+                            if (!notify) {
+                                count += unread;
+                            }
+                        } else {
+                            count += unread;
+                        }
+                    }
+                }
+                showUnreadFlag(NimMessage.getUnRead() + count);
+            }
+
+            @Override
+            public void onFailed(int code) {
+
+            }
+
+            @Override
+            public void onException(Throwable exception) {
+
+            }
+        });
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -122,8 +171,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            int size = NimMessage.getUnRead();
-            showUnreadFlag(size + NIMClient.getService(MsgService.class).getTotalUnreadCount());
+            showUnreadFlag();
         }
     };
 
@@ -169,7 +217,11 @@ public class MainFragment extends BaseTransparentSupportFragment {
     /**
      * 显示有未读消息的标记
      */
-    public void showUnreadFlag(int num) {
+    public void showUnreadFlag() {
+        checkUnreadTotalCountIgnoreMutex();
+    }
+
+    private void showUnreadFlag(int num) {
         if (null != icon2Unread) {
             icon2Unread.setVisibility(num > 0 ? View.VISIBLE : View.GONE);
             icon2UnreadNum.setText(formatUnread(num));

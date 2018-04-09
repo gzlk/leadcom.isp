@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -28,15 +29,20 @@
             android:textColor="@color/textColorHintDark"
             android:textSize="@dimen/ui_text_size_main_bottom_icon" />
 
-        <LinearLayout
+        <com.hlk.hlklib.lib.view.CorneredView
             android:id="@+id/ui_tool_main_bottom_icon_unread"
             android:layout_width="@dimen/ui_base_unread_flag_size_with_text"
             android:layout_height="@dimen/ui_base_unread_flag_size_with_text"
             android:layout_toEndOf="@+id/ui_tool_main_bottom_icon_2"
-            android:background="@drawable/ui_background_oval_caution"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="gone"
+            app:cv_active_border="@android:color/white"
+            app:cv_background="@color/colorUnreadFlag"
+            app:cv_background_active="@color/colorUnreadFlag"
+            app:cv_background_type="fill"
+            app:cv_border_size="@dimen/ui_static_dp_1"
+            app:cv_corner_size="@dimen/ui_static_dp_10"
+            app:cv_normal_border="@android:color/white">
 
             <TextView
                 android:id="@+id/ui_tool_main_bottom_icon_unread_num"
@@ -44,7 +50,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColorLight"
                 android:textSize="@dimen/ui_base_text_size_tiny" />
-        </LinearLayout>
+
+        </com.hlk.hlklib.lib.view.CorneredView>
+
     </RelativeLayout>
 
     <View

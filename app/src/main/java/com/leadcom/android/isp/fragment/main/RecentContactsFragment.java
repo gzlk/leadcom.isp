@@ -96,7 +96,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
 
     private void showUnreadMsg() {
         if (null != mainFragment) {
-            mainFragment.showUnreadFlag(NIMClient.getService(MsgService.class).getTotalUnreadCount());
+            mainFragment.showUnreadFlag();
         }
     }
 

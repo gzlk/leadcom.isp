@@ -176,14 +176,15 @@ public class ActivityViewHolder extends BaseViewHolder {
             titleView.setText(null == team ? "无活动名称" : team.getName());
             descView.setText(format("%s：%s", contact.getFromNick(), getRecentMsgType(contact)));
         }
+        boolean mutex = isMutex(contact);
         flagView.setVisibility(contact.getUnreadCount() > 0 ? View.VISIBLE : View.GONE);
-        unreadNum.setText(fragment().formatUnread(contact.getUnreadCount()));
+        unreadNum.setText(mutex ? "" : fragment().formatUnread(contact.getUnreadCount()));
         timeView.setText(fragment().formatTimeAgo(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), contact.getTime())));
         headers.setVisibility(View.VISIBLE);
         iconText.setVisibility(View.GONE);
         iconContainer.setBackground(getColor(R.color.textColorHintLight));
         stickIcon.setVisibility(isStick(contact) ? View.VISIBLE : View.GONE);
-        mutexIcon.setVisibility(isMutex(contact) ? View.VISIBLE : View.GONE);
+        mutexIcon.setVisibility(mutex ? View.VISIBLE : View.GONE);
         //stickCancel.setVisibility(isStick(contact) ? View.VISIBLE : View.GONE);
         //stickView.setVisibility(isStick(contact) ? View.GONE : View.VISIBLE);
         // 重设置顶、删除UI的高度
