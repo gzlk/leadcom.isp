@@ -20,6 +20,7 @@ public abstract class BaseTransparentSupportFragment extends BaseLocationSupport
 
     private static final String PARAM_INITIALIZED = "bmf_initialized";
     protected static final String PARAM_QUERY_ID = "btsf_param_query";
+    protected static final String PARAM_SEARCHED = "btsf_param_searching_text";
     protected static final String PARAM_JSON = "btsf_param_json";
     /**
      * fragment是否已经初始化了，为false时，需要设置顶部的padding

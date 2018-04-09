@@ -381,6 +381,18 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         clearExtras();
         for (UserExtra extra : user.getExtra()) {
             if (null != extra) {
+                if (extra.getTitle().equals("单位")) {
+                    //extra.setContent(user.getCompany());
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_building));
+                }
+                if (extra.getTitle().equals("职务")) {
+                    //extra.setContent(user.getPosition());
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_business_card));
+                }
+                if (extra.getTitle().equals("电话")) {
+                    //extra.setContent(user.getPhone());
+                    extra.setAccessToken(StringHelper.getString(R.string.ui_icon_telephone));
+                }
                 // 如果额外的属性是可显示状态或者不可显示但当前用户是登录用户时，也可以显示
                 if (extra.isShowing() || isSelf) {
                     mAdapter.update(extra);

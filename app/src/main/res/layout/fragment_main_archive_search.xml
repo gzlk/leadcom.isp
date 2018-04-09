@@ -133,7 +133,8 @@
             android:animateLayoutChanges="true"
             android:background="@color/transparent_40"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/ui_main_archive_search_time_picker"

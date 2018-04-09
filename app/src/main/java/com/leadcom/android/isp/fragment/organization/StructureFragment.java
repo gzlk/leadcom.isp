@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -33,7 +32,6 @@ import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.organization.OrgStructureViewHolder;
 import com.leadcom.android.isp.holder.organization.SquadAddViewHolder;
 import com.leadcom.android.isp.lib.DepthViewPager;
-import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Dao;
@@ -337,15 +335,15 @@ public class StructureFragment extends BaseOrganizationFragment {
                 switch (((SimpleClickableItem) model).getIndex()) {
                     case 1:
                         if (my.groupAssociatable()) {
-                            Organization org = concernedViewHolder.get(selectedIndex);
-                            ArrayList<Concern> concerns = org.getConGroup();
-                            for (Concern concern : concerns) {
-                                concern.setConcerned(true);
-                            }
-                            String json = Json.gson().toJson(concerns, new TypeToken<ArrayList<Concern>>() {
-                            }.getType());
+//                            Organization org = concernedViewHolder.get(selectedIndex);
+//                            ArrayList<Concern> concerns = org.getConGroup();
+//                            for (Concern concern : concerns) {
+//                                concern.setConcerned(true);
+//                            }
+//                            String json = Json.gson().toJson(concerns, new TypeToken<ArrayList<Concern>>() {
+//                            }.getType());
                             // 已关注的组织列表
-                            ConcernedOrganizationFragment.open(StructureFragment.this, selectedGroupId, StringHelper.replaceJson(json, false), REQUEST_CONCERNED);
+                            ConcernedOrganizationFragment.open(StructureFragment.this, selectedGroupId);
                         } else {
                             ToastHelper.make().showMsg(R.string.ui_organization_structure_no_permission_concern);
                         }

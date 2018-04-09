@@ -24,16 +24,22 @@
     <string name="ui_organization_interesting_concerning">正在关注组织</string>
     <string name="ui_organization_interesting_concerned">已关注</string>
     <string name="ui_organization_interesting_concern">关注</string>
-    <string name="ui_organization_interesting_cancel_concern_warning">您确定要取消关注这个组织吗？</string>
+    <string name="ui_organization_interesting_concern_warning" formatted="false">
+        <![CDATA[关注<font color="#3cbaff">%s</font>，关注更多组织，获取更多资讯]]>
+    </string>
+    <string name="ui_organization_interesting_cancel_concern_warning" formatted="false">
+        <![CDATA[您确定要取消关注<font color="#3cbaff">%s</font>吗？]]>
+    </string>
     <string name="ui_organization_interesting_cancel_concern">正在取消关注</string>
     <string name="ui_organization_interesting_concern_as_upper">上级组织</string>
     <string name="ui_organization_interesting_concern_as_friend">友好组织</string>
-    <string name="ui_organization_concerned_fragment_title">上级下级</string>
+    <string name="ui_organization_concerned_fragment_title">关注组织</string>
     <string-array name="ui_organization_concerned_type">
         <item>当前组织</item>
         <item>上级</item>
         <item>下级</item>
         <item>友好</item>
+        <item>未关注</item>
     </string-array>
 
     <string name="ui_organization_creator_fragment_title">增加组织</string>

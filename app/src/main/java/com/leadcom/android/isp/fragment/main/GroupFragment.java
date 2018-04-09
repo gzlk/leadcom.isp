@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -34,7 +33,6 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.home.GroupHeaderViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
-import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
@@ -43,7 +41,6 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
-import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
@@ -213,6 +210,9 @@ public class GroupFragment extends BaseOrganizationFragment {
             case REQUEST_CHANGE:
                 mQueryId = getResultedData(data);
                 // 组织创建成功，需要重新刷新组织列表
+                onSwipeRefreshing();
+                break;
+            case REQUEST_CONCERNED:
                 onSwipeRefreshing();
                 break;
         }
@@ -510,30 +510,19 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 4:
                 // 上下级
-//                InterestingOrganizationFragment.open(this, group.getId());
-                ArrayList<Concern> concerns = group.getConGroup();
-                for (Concern concern : concerns) {
-                    concern.setConcernType(getConcerned(concern.getConGroup(), group.getId()));
+//                ArrayList<Concern> concerns = group.getConGroup();
+//                if (null != concerns) {
+//                    for (Concern concern : concerns) {
+//                        concern.setConcernType(getConcerned(concern.getConGroup(), group.getId()));
+//                    }
+//                }
+//                String json = Json.gson().toJson(concerns, new TypeToken<ArrayList<Concern>>() {
+//                }.getType());
+                if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
+                    ConcernedOrganizationFragment.open(this, group.getId());
                 }
-                String json = Json.gson().toJson(concerns, new TypeToken<ArrayList<Concern>>() {
-                }.getType());
-                ConcernedOrganizationFragment.open(this, group.getId(), StringHelper.replaceJson(json, false), REQUEST_CONCERNED);
                 break;
         }
-    }
-
-    /**
-     * 检查组织是否互相关注
-     */
-    private int getConcerned(ArrayList<Concern> list, String hostGroupId) {
-        if (null == list || list.size() <= 0) return Concern.ConcernType.CONCERNED;
-        for (Concern concern : list) {
-            if (concern.getId().equals(hostGroupId)) {
-                return Concern.ConcernType.EACH;
-            }
-        }
-        // 对方的已关注列表里没有本组织，则说明是本组织已关注
-        return Concern.ConcernType.CONCERNED;
     }
 
     /**

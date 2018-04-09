@@ -1,11 +1,13 @@
 package com.leadcom.android.isp.holder.organization;
 
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.organization.Concern;
@@ -73,6 +75,30 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         nameView.setText(name);
         buttonView.setText(organization.isConcerned() ? R.string.ui_organization_interesting_concerned : R.string.ui_organization_interesting_concern);
         buttonView.setNormalColor(getColor(organization.isConcerned() ? R.color.color_3eb135 : R.color.colorPrimary));
+    }
+
+    public void showContent(Concern concern, String searchingText) {
+        coverView.setVisibility(selectable ? View.GONE : View.VISIBLE);
+        buttonView.setVisibility(selectable || concern.isSelectable() ? View.GONE : View.VISIBLE);
+        selector.setVisibility(selectable && !concern.isSelectable() ? View.VISIBLE : View.GONE);
+        selector.setTextColor(getColor(concern.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        // 勾选颜色
+        selectorLine.setVisibility(concern.isSelectable() ? View.VISIBLE : View.GONE);
+        selectorLine.setTextColor(getColor(concern.isSelected() ? R.color.colorPrimary : R.color.transparent_00));
+        String cover = concern.getLogo();
+        if (isEmpty(cover)) {
+            cover = "drawable://" + R.mipmap.img_image_loading_fail;
+        }
+        coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_35), false, false);
+        String name = concern.getName();
+        if (isEmpty(name)) {
+            name = StringHelper.getString(R.string.ui_base_text_no_name_group);
+        }
+        name = getSearchingText(name, searchingText);
+        //name += format((concern.isConcerned() ? "(%s)" : ""), Concern.getTypeString(concern.getType()));
+        nameView.setText(Html.fromHtml(name));
+        buttonView.setText(concern.isConcerned() ? R.string.ui_organization_interesting_concerned : R.string.ui_organization_interesting_concern);
+        buttonView.setNormalColor(getColor(concern.isConcerned() ? R.color.color_3eb135 : R.color.colorPrimary));
     }
 
     @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button})

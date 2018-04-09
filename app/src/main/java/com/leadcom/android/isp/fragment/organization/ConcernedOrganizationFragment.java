@@ -1,26 +1,31 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.org.OrgRequest;
+import com.leadcom.android.isp.api.org.ConcernRequest;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
-import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
-import com.leadcom.android.isp.model.organization.Organization;
-import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.model.organization.Role;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>已关注的组织列表<br />
@@ -35,43 +40,58 @@ import java.util.ArrayList;
 
 public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragment {
 
-    private static final String PARAM_GROUPS = "cof_concerned_groups";
+    private static final String PARAM_UPPER = "cof_upper";
 
-    public static ConcernedOrganizationFragment newInstance(String params) {
+    public static ConcernedOrganizationFragment newInstance(Bundle bundle) {
         ConcernedOrganizationFragment cof = new ConcernedOrganizationFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 传过来的组织id
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 已关注的组织列表
-        bundle.putString(PARAM_GROUPS, StringHelper.replaceJson(strings[1], true));
         cof.setArguments(bundle);
         return cof;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String conGroups, int req) {
-        fragment.openActivity(ConcernedOrganizationFragment.class.getName(), format("%s,%s", groupId, conGroups), req, true, false);
+    public static void open(BaseFragment fragment, String groupId) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        fragment.openActivity(ConcernedOrganizationFragment.class.getName(), bundle, REQUEST_CONCERNED, true, false);
     }
 
-    String groupJson;
-    private ArrayList<Concern> concerned = new ArrayList<>();
+    private ArrayList<Concern> concerns = new ArrayList<>();
     private ConcernedAdapter mAdapter;
+
+    @ViewId(R.id.ui_main_archive_search_functions)
+    private View functionView;
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private View searchableView;
+    private String searchingText;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Activity().setResult(Activity.RESULT_OK);
+        functionView.setVisibility(View.GONE);
+        enableSwipe(false);
+        isLoadingComplete(true);
+        InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchableView, this);
+        searchViewHolder.setOnSearchingListener(new InputableSearchViewHolder.OnSearchingListener() {
+            @Override
+            public void onSearching(String text) {
+                searchingText = text;
+                searching();
+            }
+        });
+    }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        groupJson = bundle.getString(PARAM_GROUPS, EMPTY_ARRAY);
-        concerned = Json.gson().fromJson(groupJson, new TypeToken<ArrayList<Concern>>() {
-        }.getType());
-        if (null == concerned) {
-            concerned = new ArrayList<>();
-        }
+        searchingText = bundle.getString(PARAM_SEARCHED, "");
+        isUpper = bundle.getBoolean(PARAM_UPPER, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putString(PARAM_GROUPS, groupJson);
+        bundle.putString(PARAM_SEARCHED, searchingText);
+        bundle.putBoolean(PARAM_UPPER, isUpper);
     }
 
     @Override
@@ -86,7 +106,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
 
     @Override
     public int getLayout() {
-        return R.layout.tool_view_recycler_view_none_swipe_refreshable;
+        return R.layout.fragment_main_archive_search;
     }
 
     @Override
@@ -119,60 +139,85 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
             setCustomTitle(R.string.ui_organization_concerned_fragment_title);
             mAdapter = new ConcernedAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            mAdapter.update(concerned);
+            fetchingConcernableGroups();
         }
+    }
+
+    private void fetchingConcernableGroups() {
+        ConcernRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Concern>() {
+            @Override
+            public void onResponse(List<Concern> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                concerns.clear();
+                if (success && null != list) {
+                    concerns.addAll(list);
+                    mAdapter.update(list);
+                }
+            }
+        }).list(mQueryId, remotePageNumber, "");
+    }
+
+    private void searching() {
+        mAdapter.clear();
+        for (Concern concern : concerns) {
+            if (!isEmpty(searchingText)) {
+                if (concern.getName().contains(searchingText)) {
+                    mAdapter.update(concern);
+                }
+            } else {
+                mAdapter.update(concern);
+            }
+        }
+    }
+
+    private boolean hasOperation(String groupId, String operation) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.hasOperation(operation);
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
+            if (!hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION)) {
+                return;
+            }
             Concern concern = mAdapter.get(index);
             if (concern.isConcerned()) {
                 // 取消关注
-                cancelDialog(index);
+                warningCancelConcern(index);
             } else {
                 // 点击关注
-                concernDialog(index);
+                warningConcern(index);
             }
         }
     };
 
-    private void cancelDialog(final int index) {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                return View.inflate(Activity(), R.layout.popup_dialog_group_interest_cancel_concern, null);
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-
-            }
-        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+    private void warningCancelConcern(final int index) {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 cancelConcern(index);
                 return true;
             }
-        }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+        }).setTitleText(getString(R.string.ui_organization_interesting_cancel_concern_warning, mAdapter.get(index).getName())).setConfirmText(R.string.ui_base_text_confirm).show();
     }
 
     private void cancelConcern(final int index) {
         setLoadingText(R.string.ui_organization_interesting_cancel_concern);
         displayLoading(true);
-        OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
+        ConcernRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Concern>() {
             @Override
-            public void onResponse(Organization organization, boolean success, String message) {
-                super.onResponse(organization, success, message);
-                displayLoading(false);
+            public void onResponse(Concern concern, boolean success, String message) {
+                super.onResponse(concern, success, message);
                 if (success) {
-                    Concern concern = mAdapter.get(index);
-                    concern.setConcernType(Concern.ConcernType.NONE);
-                    concern.setType(0);
+                    Concern c = mAdapter.get(index);
+                    // 未关注
+                    c.setType(Concern.Type.CONCERNABLE);
                     mAdapter.notifyItemChanged(index);
                 }
+                displayLoading(false);
             }
-        }).concern(mQueryId, mAdapter.get(index).getId(), OrgRequest.CONCERN_CANCEL);
+        }).delete(mQueryId, mAdapter.get(index).getId());
     }
 
     private View dialogView;
@@ -247,23 +292,32 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
+    private void warningConcern(final int index) {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                concernGroup(index);
+                return true;
+            }
+        }).setTitleText(getString(R.string.ui_organization_interesting_concern_warning, mAdapter.get(index).getName())).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
+
     private void concernGroup(final int index) {
         setLoadingText(R.string.ui_organization_interesting_concerning);
         displayLoading(true);
-        OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
+        ConcernRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Concern>() {
             @Override
-            public void onResponse(Organization organization, boolean success, String message) {
-                super.onResponse(organization, success, message);
+            public void onResponse(Concern concern, boolean success, String message) {
+                super.onResponse(concern, success, message);
                 displayLoading(false);
                 if (success) {
                     // 关注成功之后设置关注属性并刷新列表
-                    Concern concern = mAdapter.get(index);
-                    concern.setConcernType(Concern.ConcernType.CONCERNED);
-                    concern.setType(isUpper ? Concern.Type.UPPER : Concern.Type.FRIEND);
+                    Concern c = mAdapter.get(index);
+                    c.setType(Concern.Type.FRIEND);
                     mAdapter.notifyItemChanged(index);
                 }
             }
-        }).concern(mQueryId, mAdapter.get(index).getId(), (isUpper ? OrgRequest.CONCERN_UPPER : OrgRequest.CONCERN_FRIEND));
+        }).add(mQueryId, mAdapter.get(index).getId());
     }
 
     private class ConcernedAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Concern> {
@@ -281,7 +335,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
 
         @Override
         public void onBindHolderOfView(GroupInterestViewHolder holder, int position, @Nullable Concern item) {
-            holder.showContent(item);
+            holder.showContent(item, searchingText);
         }
 
         @Override

@@ -261,6 +261,13 @@ public class OrgRequest extends Request<Organization> {
     }
 
     /**
+     * 返回关注的组织列表
+     */
+    public void listConcerned(String groupId, int pageNumber) {
+        httpRequest(getRequest(MultipleGroup.class, format("%s?groupId=%s&pageNumber=%d", url("/listInterest"), groupId, pageNumber), "", HttpMethods.Get));
+    }
+
+    /**
      * 关注为上级组织
      */
     public static final int CONCERN_UPPER = 1;
