@@ -39,6 +39,10 @@ import java.io.File;
 
 public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
 
+    /**
+     * 是否是显示已经收藏了的内容
+     */
+    public static boolean isCollected = false;
     private static final String PARAM_TITLE = "oopf_title";
     private static final String PARAM_EXT = "oopf_extension";
     private static final String PARAM_MINUTES = "oopf_is_minutes";
@@ -89,6 +93,7 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     @Override
     public void onDestroy() {
         localReal = "";
+        isCollected = false;
         super.onDestroy();
     }
 
@@ -146,6 +151,7 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     }
 
     private void resetCollectEvent() {
+        if (isCollected) return;
         setRightIcon(R.string.ui_icon_more);
         //setRightText(R.string.ui_base_text_favorite);
         setRightTitleClickListener(new OnTitleButtonClickListener() {

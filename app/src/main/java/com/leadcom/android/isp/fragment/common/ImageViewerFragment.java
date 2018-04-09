@@ -53,6 +53,10 @@ import java.util.List;
 
 public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment implements ViewPager.OnPageChangeListener {
 
+    /**
+     * 是否是显示已经收藏了的内容
+     */
+    public static boolean isCollected = false;
     protected static final String PARAM_SELECTED = "ivf_param_selected";
 
     public static ImageViewerFragment newInstance(Bundle bundle) {
@@ -109,6 +113,12 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
         bundle.putStringArrayList(PARAM_QUERY_ID, images);
     }
 
+    @Override
+    public void onDestroy() {
+        isCollected = false;
+        super.onDestroy();
+    }
+
     @ViewId(R.id.ui_viewer_image_title_container)
     private LinearLayout titleContainer;
     @ViewId(R.id.ui_ui_custom_title_text)
@@ -158,6 +168,9 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
+                if (isCollected) {
+                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_favorite).setVisibility(View.GONE);
+                }
             }
         }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
             @Override

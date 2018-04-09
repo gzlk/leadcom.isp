@@ -38,6 +38,10 @@ import java.io.File;
  */
 public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragment {
 
+    /**
+     * 是否是显示已经收藏了的内容
+     */
+    public static boolean isCollected = false;
     private static final String PARAM_TITLE = "fpx5_title";
     private static final String PARAM_EXT = "fpx5_ext";
     private static final String PARAM_MINUTE = "fpx5_minute";
@@ -97,6 +101,12 @@ public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragme
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
+        isCollected = false;
+        super.onDestroy();
     }
 
     @Override
@@ -178,6 +188,7 @@ public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragme
     }
 
     private void resetCollectEvent() {
+        if (isCollected) return;
         setRightIcon(R.string.ui_icon_more);
         //setRightText(R.string.ui_base_text_favorite);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
