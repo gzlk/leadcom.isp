@@ -37,7 +37,6 @@ public class MomentHomeCameraViewHolder extends BaseViewHolder {
     private TextView messageNumber;
 
     private int imageSize;
-    private boolean showIcon;
 
     public MomentHomeCameraViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -52,8 +51,7 @@ public class MomentHomeCameraViewHolder extends BaseViewHolder {
     }
 
     public void showIcon(boolean shown) {
-        showIcon = shown;
-        cameraIcon.setVisibility(showIcon ? View.VISIBLE : View.GONE);
+        cameraIcon.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     public void showContent(Moment moment) {

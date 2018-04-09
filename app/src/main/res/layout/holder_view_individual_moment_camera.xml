@@ -5,20 +5,14 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical"
-    android:padding="@dimen/ui_base_dimen_margin_padding">
-
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_holder_view_moment_camera_icon"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/ui_icon_camera"
-        android:textColor="@color/textColorHintLight"
-        android:textSize="@dimen/ui_static_sp_45" />
+    android:paddingTop="@dimen/ui_base_dimen_margin_padding">
 
     <LinearLayout
         android:id="@+id/ui_holder_view_moment_camera_message_layer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:orientation="horizontal"
         android:visibility="gone">
 
@@ -34,7 +28,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="@dimen/ui_static_dp_5"
-            app:cv_background="@color/colorPrimary"
+            app:cv_background="@color/buttonNormalColor"
             app:cv_background_active="@color/buttonActivityColor"
             app:cv_background_type="fill"
             app:cv_border_size="@dimen/ui_static_dp_zero"
@@ -71,4 +65,18 @@
             android:layout_weight="1" />
 
     </LinearLayout>
+
+    <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_moment_camera_icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+        android:text="@string/ui_icon_camera"
+        android:textSize="@dimen/ui_static_sp_45"
+        app:ctv_active_color="@color/textColorHint"
+        app:ctv_normal_color="@color/textColorHintLight" />
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
 </LinearLayout>

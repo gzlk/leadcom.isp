@@ -396,20 +396,20 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         isLoadingComplete(fetchedCount < pageSize);
         displayLoading(false);
         stopRefreshing();
-        if (userInfoNum > 0) {
-            Moment today = today();
+        //if (userInfoNum > 0) {
+        Moment today = today();
 
-            today.setAuthPublic(userInfoNum);
-            today.setContent(lastHeader);
-            mAdapter.notifyItemChanged(2);
-            if (!mAdapter.exist(today())) {
-                mAdapter.add(today(), 0);
-            } else {
-                mAdapter.update(today);
-            }
+        today.setAuthPublic(userInfoNum);
+        today.setContent(lastHeader);
+        //mAdapter.notifyItemChanged(2);
+        if (!mAdapter.exist(today())) {
+            mAdapter.add(today(), 0);
         } else {
-            mAdapter.remove(today());
+            mAdapter.update(today);
         }
+        //} else {
+        //    mAdapter.remove(today());
+        //}
     }
 
     private IndividualAdapter mAdapter;
@@ -580,7 +580,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_holder_view_moment_camera_message_layer:
                     // 打开消息列表
                     UserMessageFragment.open(IndividualFragment.this, (function == TYPE_MOMENT ? UserMsgRequest.TYPE_MOMENT : UserMsgRequest.TYPE_NONE));
-                    mAdapter.remove(today());
+                    //mAdapter.remove(today());
                     break;
                 case R.id.ui_holder_view_moment_details_header:
                     Moment m = (Moment) mAdapter.get(index);
@@ -939,7 +939,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     return mdvh;
                 case VT_CAMERA:
                     MomentHomeCameraViewHolder mhcvh = new MomentHomeCameraViewHolder(itemView, fragment);
-                    mhcvh.showIcon(false);
+                    //mhcvh.showIcon(false);
                     mhcvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
                     return mhcvh;
                 case VT_ARCHIVE:

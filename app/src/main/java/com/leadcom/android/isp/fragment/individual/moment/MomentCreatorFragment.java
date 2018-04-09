@@ -63,16 +63,16 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     private String privacy = "";
     private String imageJson = "[]";
 
-    public static MomentCreatorFragment newInstance(String params) {
+    public static MomentCreatorFragment newInstance(Bundle bundle) {
         MomentCreatorFragment mnf = new MomentCreatorFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_IMAGE, params);
         mnf.setArguments(bundle);
         return mnf;
     }
 
     public static void open(BaseFragment fragment, String jsonSelected) {
-        fragment.openActivity(MomentCreatorFragment.class.getName(), jsonSelected, REQUEST_CREATE, true, true);
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_IMAGE, jsonSelected);
+        fragment.openActivity(MomentCreatorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
     }
 
     @Override

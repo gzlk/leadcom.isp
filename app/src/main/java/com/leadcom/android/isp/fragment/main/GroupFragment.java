@@ -141,9 +141,8 @@ public class GroupFragment extends BaseOrganizationFragment {
         @Override
         public void onUploadingComplete(ArrayList<Attachment> uploaded) {
             Organization group = (Organization) dAdapter.get(0);
-            Role role = Cache.cache().getGroupRole(group.getId());
             final String groupId = group.getId(), url = uploaded.get(0).getUrl();
-            if (null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) {
+            if (hasOperation(groupId, GRPOperation.GROUP_PROPERTY)) {
                 // 重新检查一遍更改权限之后更改组织的logo
                 OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
                     @Override
@@ -159,6 +158,11 @@ public class GroupFragment extends BaseOrganizationFragment {
             }
         }
     };
+
+    private boolean hasOperation(String groupId, String operation) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.hasOperation(operation);
+    }
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -472,8 +476,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 case R.id.ui_holder_view_group_header_logo:
                     // 打开组织编辑
                     Organization group = (Organization) dAdapter.get(0);
-                    Role role = Cache.cache().getGroupRole(group.getId());
-                    if (null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) {
+                    if (hasOperation(group.getId(), GRPOperation.GROUP_PROPERTY)) {
                         if (view.getId() == R.id.ui_holder_view_group_header_logo) {
                             // 选择图片上传更改组织的logo
                             openImageSelector(true);
@@ -507,6 +510,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 4:
                 // 上下级
+//                InterestingOrganizationFragment.open(this, group.getId());
                 ArrayList<Concern> concerns = group.getConGroup();
                 for (Concern concern : concerns) {
                     concern.setConcernType(getConcerned(concern.getConGroup(), group.getId()));

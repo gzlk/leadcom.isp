@@ -32,17 +32,17 @@ import java.util.List;
 
 public class InterestingOrganizationFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static InterestingOrganizationFragment newInstance(String params) {
+    public static InterestingOrganizationFragment newInstance(Bundle bundle) {
         InterestingOrganizationFragment iof = new InterestingOrganizationFragment();
-        Bundle bundle = new Bundle();
-        // 传过来的组织id
-        bundle.putString(PARAM_QUERY_ID, params);
         iof.setArguments(bundle);
         return iof;
     }
 
-    public static void open(BaseFragment fragment, String groupId, int req) {
-        fragment.openActivity(InterestingOrganizationFragment.class.getName(), groupId, req, true, false);
+    public static void open(BaseFragment fragment, String groupId) {
+        Bundle bundle = new Bundle();
+        // 传过来的组织id
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        fragment.openActivity(InterestingOrganizationFragment.class.getName(), bundle, REQUEST_INTEREST, true, false);
     }
 
     private InterestAdapter mAdapter;

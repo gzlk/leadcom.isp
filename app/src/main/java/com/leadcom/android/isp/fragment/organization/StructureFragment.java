@@ -353,7 +353,7 @@ public class StructureFragment extends BaseOrganizationFragment {
                     case 2:
                         // 可能感兴趣的组织列表
                         if (my.groupAssociatable()) {
-                            InterestingOrganizationFragment.open(StructureFragment.this, selectedGroupId, REQUEST_INTEREST);
+                            InterestingOrganizationFragment.open(StructureFragment.this, selectedGroupId);
                         } else {
                             ToastHelper.make().showMsg(R.string.ui_organization_structure_no_permission_concern);
                         }
