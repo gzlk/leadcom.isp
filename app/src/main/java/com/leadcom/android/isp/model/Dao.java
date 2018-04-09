@@ -35,12 +35,20 @@ public class Dao<E> {
 
     public void save(E entity) {
         if (null != entity && null != orm) {
+            if (entity instanceof Model) {
+                ((Model) entity).onSave();
+            }
             orm.save(entity);
         }
     }
 
     public void save(List<E> list) {
         if (null != list && list.size() > 0 && null != orm) {
+            for (E entity : list) {
+                if (entity instanceof Model) {
+                    ((Model) entity).onSave();
+                }
+            }
             orm.save(list);
         }
     }

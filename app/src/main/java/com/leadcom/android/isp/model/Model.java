@@ -26,6 +26,7 @@ public class Model extends BaseModel {
      */
     public static class Field {
         public static final String Id = "id";
+        public static final String PrimaryId = "_id";
         public static final String CreateDate = "createDate";
         public static final String Name = "name";
         public static final String UserId = "userId";
@@ -84,8 +85,19 @@ public class Model extends BaseModel {
     @Ignore
     private boolean isSelected;
 
-    @Ignore
+    //@NotNull
+    //@PrimaryKey(AssignType.BY_MYSELF)
+    @Column(Field.PrimaryId)
     private String _id;
+
+    /**
+     * 保存事件
+     */
+    public void onSave() {
+        if (!isEmpty(_id)) {
+            id = _id;
+        }
+    }
 
     public String get_id() {
         return _id;
@@ -170,6 +182,6 @@ public class Model extends BaseModel {
     }
 
     public boolean equals(Model model) {
-        return null != model && !StringHelper.isEmpty(getId()) && !StringHelper.isEmpty(model.getId()) && model.getId().equals(getId());
+        return null != model && !isEmpty(getId()) && !isEmpty(model.getId()) && model.getId().equals(getId());
     }
 }
