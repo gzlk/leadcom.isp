@@ -939,7 +939,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     return mdvh;
                 case VT_CAMERA:
                     MomentHomeCameraViewHolder mhcvh = new MomentHomeCameraViewHolder(itemView, fragment);
-                    //mhcvh.showIcon(false);
+                    mhcvh.showIcon(function == TYPE_MOMENT);
                     mhcvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
                     return mhcvh;
                 case VT_ARCHIVE:

@@ -108,7 +108,7 @@ public class Model extends BaseModel {
     }
 
     public String getId() {
-        if (isEmpty(id)) {
+        if (isEmpty(id) || (!isEmpty(_id) && !id.equals(_id))) {
             id = _id;
         }
         return id;
@@ -116,6 +116,7 @@ public class Model extends BaseModel {
 
     public void setId(String id) {
         this.id = id;
+        this._id = id;
     }
 
     public String getAccessToken() {

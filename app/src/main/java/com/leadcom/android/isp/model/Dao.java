@@ -27,7 +27,6 @@ public class Dao<E> {
      */
     private Class<E> clazz;
 
-    @SuppressWarnings("unchecked")
     public Dao(Class<E> clazz) {
         orm = App.Orm;
         this.clazz = clazz;
