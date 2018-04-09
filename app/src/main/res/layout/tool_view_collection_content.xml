@@ -108,7 +108,7 @@
             android:id="@+id/ui_tool_view_collection_content_archive"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/textColorHintLightLight"
+            android:background="@drawable/ui_background_clickable_reverse"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="@dimen/ui_static_dp_5">
@@ -117,6 +117,7 @@
                 android:id="@+id/ui_tool_view_collection_content_archive_cover"
                 android:layout_width="@dimen/ui_static_dp_50"
                 android:layout_height="@dimen/ui_static_dp_50"
+                app:id_image_scale_type="centerCrop"
                 app:id_image_src="@mipmap/img_image_default" />
 
             <TextView

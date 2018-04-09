@@ -29,17 +29,18 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.individual.CollectionDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
-import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.EditableDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.EditableDialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
@@ -135,6 +136,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
             }
         } else if (function == TYPE_COLLECT) {
             setCustomTitle(R.string.ui_individual_collection_list_fragment_title);
+            mRootView.setBackgroundColor(getColor(R.color.windowBackground));
         }
     }
 
@@ -635,15 +637,32 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     break;
                 case R.id.ui_holder_view_collection_header:
                     Collection collection = (Collection) mAdapter.get(index);
-                    App.openUserInfo(IndividualFragment.this, collection.getUserId());
+                    App.openUserInfo(IndividualFragment.this, collection.getCreatorId());
                     break;
-                case R.id.ui_holder_view_collection_content_cover:
+                case R.id.ui_tool_view_collection_content_archive:
                     collectionClick((Collection) mAdapter.get(index));
                     break;
                 case R.id.ui_holder_view_collection_label_add:
                     // 给收藏添加标签
                     selectedMoment = index;
                     prepareCollectionLabelAdd();
+                    break;
+                case R.id.ui_holder_view_collection_delete:
+                    selectedMoment = index;
+                    warningRemoveCollect();
+                    break;
+                case R.id.ui_tool_view_collection_content_attachment:
+                    // 收藏的文档附件
+                    Collection attCol = (Collection) mAdapter.get(index);
+                    Attachment attachment = new Attachment();
+                    attachment.setUrl(attCol.getContent());
+                    attachment.resetInformation();
+                    FilePreviewHelper.previewFile(Activity(), attachment.getUrl(), attachment.getName(), attachment.getExt());
+                    break;
+                case R.id.ui_tool_view_collection_content_image:
+                    // 收藏的图片
+                    Collection imgCol = (Collection) mAdapter.get(index);
+                    ImageViewerFragment.open(IndividualFragment.this, imgCol.getContent());
                     break;
             }
         }
@@ -693,6 +712,28 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         Collection col = (Collection) mAdapter.get(selectedMoment);
         col.getLabel().add(label);
         tryEditCollectionLabel(col.getLabel());
+    }
+
+    private void warningRemoveCollect() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                removeCollect();
+                return true;
+            }
+        }).setTitleText(R.string.ui_individual_collection_item_remove_title).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
+
+    private void removeCollect() {
+        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
+            @Override
+            public void onResponse(Collection collection, boolean success, String message) {
+                super.onResponse(collection, success, message);
+                if (success) {
+                    mAdapter.remove(selectedMoment);
+                }
+            }
+        }).delete(mAdapter.get(selectedMoment).getId());
     }
 
     @Override

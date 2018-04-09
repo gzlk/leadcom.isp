@@ -195,7 +195,6 @@ public class FilePreviewHelper {
     private static void previewOnlineOffice(Context context, String path, String fileName, String extension) {
         //String url = path.contains(NIM) ? StringHelper.format("%s%s", OFFICE_PREVIEW, path) : path;
         boolean minutes = !StringHelper.isEmpty(fileName) && fileName.equals(StringHelper.getString(R.string.ui_nim_action_minutes));
-        String param = StringHelper.format("%s,%s,%s,%s", path, fileName, extension, (minutes ? "true" : "false"));
-        BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), param, true, false);
+        OfficeOnlinePreviewFragment.open(context, BaseFragment.ACTIVITY_BASE_REQUEST, path, fileName, extension, minutes);
     }
 }

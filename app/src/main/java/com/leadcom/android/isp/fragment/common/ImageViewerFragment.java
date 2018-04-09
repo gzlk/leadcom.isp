@@ -55,28 +55,39 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
 
     protected static final String PARAM_SELECTED = "ivf_param_selected";
 
-    public static ImageViewerFragment newInstance(String params) {
+    public static ImageViewerFragment newInstance(Bundle bundle) {
         ImageViewerFragment ivf = new ImageViewerFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 选中的图片
-        bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[0]));
-        // 要显示的图片列表
-        bundle.putString(PARAM_QUERY_ID, StringHelper.replaceJson(strings[1], true));
         ivf.setArguments(bundle);
         return ivf;
     }
 
+    private static Bundle getBundle(int selectedIndex, ArrayList<String> ids) {
+        Bundle bundle = new Bundle();
+        // 选中的图片
+        bundle.putInt(PARAM_SELECTED, selectedIndex);
+        // 要显示的图片列表
+        bundle.putStringArrayList(PARAM_QUERY_ID, ids);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String url) {
+        ArrayList<String> arr = new ArrayList<>();
+        arr.add(url);
+        open(fragment, 0, arr);
+    }
+
     public static void open(BaseFragment fragment, int selectedIndex, ArrayList<String> urls) {
-        String json = StringHelper.replaceJson(Json.gson().toJson(urls, new TypeToken<ArrayList<String>>() {
-        }.getType()), false);
-        fragment.openActivity(ImageViewerFragment.class.getName(), format("%d,%s", selectedIndex, json), false, false, true);
+        fragment.openActivity(ImageViewerFragment.class.getName(), getBundle(selectedIndex, urls), false, false, true);
+    }
+
+    public static void open(Context context, String url) {
+        ArrayList<String> arr = new ArrayList<>();
+        arr.add(url);
+        open(context, 0, arr);
     }
 
     public static void open(Context context, int selectedIndex, ArrayList<String> urls) {
-        String json = StringHelper.replaceJson(Json.gson().toJson(urls, new TypeToken<ArrayList<String>>() {
-        }.getType()), false);
-        BaseActivity.openActivity(context, ImageViewerFragment.class.getName(), format("%d,%s", selectedIndex, json), false, false, true);
+        BaseActivity.openActivity(context, ImageViewerFragment.class.getName(), getBundle(selectedIndex, urls), false, false, true);
     }
 
     private int selectedIndex = 0;
@@ -85,17 +96,9 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         selectedIndex = bundle.getInt(PARAM_SELECTED, 0);
-        if (isEmpty(mQueryId)) {
-            mQueryId = EMPTY_ARRAY;
-        }
-        if (mQueryId.charAt(0) == '[') {
-            images = Json.gson().fromJson(StringHelper.replaceJson(mQueryId, true), new TypeToken<ArrayList<String>>() {
-            }.getType());
-            if (null == images) {
-                images = new ArrayList<>();
-            }
-        } else {
-            images.add(mQueryId);
+        images = bundle.getStringArrayList(PARAM_QUERY_ID);
+        if (null == images) {
+            images = new ArrayList<>();
         }
     }
 
@@ -103,6 +106,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_SELECTED, selectedIndex);
+        bundle.putStringArrayList(PARAM_QUERY_ID, images);
     }
 
     @ViewId(R.id.ui_viewer_image_title_container)
@@ -342,7 +346,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
         }).start();
     }
 
-    private List<String> images = new ArrayList<>();
+    private ArrayList<String> images = new ArrayList<>();
 
     private void changePosition() {
         if (images.size() > 1) {

@@ -86,6 +86,14 @@ public class CollectionItemViewHolder extends BaseViewHolder {
                 }
             }
         });
+        imageContent.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(ImageDisplayer displayer, String url) {
+                if (null != mOnViewHolderElementClickListener) {
+                    mOnViewHolderElementClickListener.onClick(imageContent, getAdapterPosition());
+                }
+            }
+        });
     }
 
     public void showContent(Collection collection) {
@@ -193,7 +201,10 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         createTime.setVisibility(showLargeImage ? View.GONE : View.VISIBLE);
     }
 
-    @Click({R.id.ui_holder_view_collection_content_cover, R.id.ui_holder_view_collection_label_add})
+    @Click({R.id.ui_tool_view_collection_content_archive,
+            R.id.ui_holder_view_collection_label_add,
+            R.id.ui_holder_view_collection_delete,
+            R.id.ui_tool_view_collection_content_attachment})
     private void click(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

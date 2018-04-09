@@ -45,32 +45,33 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     private static final String PARAM_DOWNLOADED = "oopf_is_downloaded";
     private static String localReal = "";
 
-    public static OfficeOnlinePreviewFragment newInstance(String params) {
+    public static OfficeOnlinePreviewFragment newInstance(Bundle bundle) {
         OfficeOnlinePreviewFragment oopf = new OfficeOnlinePreviewFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // url地址
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 标题
-        bundle.putString(PARAM_TITLE, strings[1]);
-        // 后缀
-        bundle.putString(PARAM_EXT, strings[2]);
-        // 是否会议纪要文档
-        bundle.putBoolean(PARAM_MINUTES, Boolean.valueOf(strings[3]));
         oopf.setArguments(bundle);
         return oopf;
     }
 
     public static void open(Context context, int req, String url, String title, String extension, boolean isMinute) {
         localReal = "";
-        String params = format("%s,%s,%s,%s", url, title, extension, isMinute);
-        BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), params, req, true, false);
+        Bundle bundle = new Bundle();
+        // url地址
+        bundle.putString(PARAM_QUERY_ID, url);
+        // 标题
+        bundle.putString(PARAM_TITLE, title);
+        // 后缀
+        bundle.putString(PARAM_EXT, extension);
+        // 是否会议纪要文档
+        bundle.putBoolean(PARAM_MINUTES, isMinute);
+        BaseActivity.openActivity(context, OfficeOnlinePreviewFragment.class.getName(), bundle, req, true, false);
     }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mTitle = bundle.getString(PARAM_TITLE, "");
+        if (StringHelper.isEmpty(mTitle, true)) {
+            mTitle = "";
+        }
         mExtension = bundle.getString(PARAM_EXT, "");
         mMinutes = bundle.getBoolean(PARAM_MINUTES, false);
         mDownloaded = bundle.getBoolean(PARAM_DOWNLOADED, false);

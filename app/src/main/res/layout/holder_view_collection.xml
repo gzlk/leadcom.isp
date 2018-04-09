@@ -1,36 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ui_holder_view_collection_content_cover"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
-    android:orientation="vertical"
-    app:cv_active_border="@color/activeBorderColor"
-    app:cv_background="@android:color/white"
-    app:cv_background_active="@android:color/white"
-    app:cv_border_size="@dimen/ui_base_border_size_normal"
-    app:cv_normal_border="@android:color/white">
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
     <include layout="@layout/tool_view_collection_creator" />
 
     <include layout="@layout/tool_view_collection_content" />
 
-    <TextView
-        android:id="@+id/ui_holder_view_collection_label_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/textColorHint"
-        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
-        android:text="@string/ui_individual_collection_item_add_label" />
-
-    <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/ui_holder_view_collection_labels"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
-        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-        android:paddingStart="@dimen/ui_base_dimen_margin_padding">
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    </com.google.android.flexbox.FlexboxLayout>
-</com.hlk.hlklib.lib.view.CorneredView>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ui_holder_view_collection_label_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:text="@string/ui_individual_collection_item_add_label"
+                android:textColor="@color/textColorHint" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/ui_holder_view_collection_labels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                android:paddingStart="@dimen/ui_base_dimen_margin_padding" />
+
+        </LinearLayout>
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_collection_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_icon_delete"
+            android:textColor="@color/colorCaution" />
+    </LinearLayout>
+
+</LinearLayout>
