@@ -19,6 +19,7 @@
 
     <string name="ui_text_home_archive_recommend_group_name" formatted="false">【%s推荐】</string>
     <string name="ui_text_home_archive_search_empty">什么都没有，换个姿势试试？</string>
+    <string name="ui_text_home_archive_search_clear_time">重置</string>
 
     <string name="ui_text_home_top_channel1">推荐</string>
     <string name="ui_text_home_top_channel2">关注</string>

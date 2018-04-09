@@ -584,7 +584,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 dialogTitle.setText(Html.fromHtml(getString(R.string.ui_base_share_to_forward_dialog_title, groupName)));
                 Archive archive = (Archive) mAdapter.get(mQueryId);
                 shareTitle.setText(archive.getTitle());
-                shareSummary.setText(Html.fromHtml(archive.getContent()));
+                shareSummary.setText(isEmpty(archive.getContent()) ? "" : Html.fromHtml(archive.getContent()));
                 shareImage.setVisibility(isEmpty(archive.getCover()) ? View.GONE : View.VISIBLE);
                 shareImage.displayImage(archive.getCover(), getDimension(R.dimen.ui_static_dp_50), false, false);
             }

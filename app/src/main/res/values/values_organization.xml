@@ -64,7 +64,7 @@
         <item>1|组织成员|%d人|1|0xe674</item>
         <item>2|下属小组|%d个|1|0xe696</item>
         <item>3|组织档案|%d篇|1|0xe670</item>
-        <item>4|上级下级|%d个|1|0xe678</item>
+        <item>4|关注组织|%d个|1|0xe678</item>
     </string-array>
     <string name="ui_group_archive_fragment_title">组织档案</string>
     <string name="ui_group_member_fragment_title">组织成员</string>

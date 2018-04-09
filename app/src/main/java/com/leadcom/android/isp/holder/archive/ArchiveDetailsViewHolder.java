@@ -1,7 +1,9 @@
 package com.leadcom.android.isp.holder.archive;
 
 import android.view.View;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -54,6 +56,12 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         contentView.getSettings().setDefaultTextEncodingName("UTF-8");
+        contentView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return true;
+            }
+        });
         margin = getDimension(R.dimen.ui_static_dp_5);
         resetCoverSize();
     }

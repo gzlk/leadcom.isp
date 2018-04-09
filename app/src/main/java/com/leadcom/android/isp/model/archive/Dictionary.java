@@ -61,7 +61,7 @@ public class Dictionary extends Model {
     @Column(Archive.Field.TypeName)
     private String typeName;
     @Column(Archive.Field.Code)
-    private String code;
+    private int code;
     @Column(Archive.Field.Description)
     private String description;
     @Column(Archive.Field.ParentId)
@@ -85,11 +85,11 @@ public class Dictionary extends Model {
         this.typeName = typeName;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

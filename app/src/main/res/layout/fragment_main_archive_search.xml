@@ -123,7 +123,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/ui_main_archive_search_functions">
 
-        <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
+        <include layout="@layout/tool_view_recycler_view_swipe_refreshable" />
 
         <RelativeLayout
             android:id="@+id/ui_main_archive_search_content_background"

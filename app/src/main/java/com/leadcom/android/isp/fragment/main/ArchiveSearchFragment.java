@@ -41,6 +41,7 @@ import com.leadcom.android.isp.model.archive.RecommendArchive;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -152,7 +153,9 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         super.onActivityCreated(savedInstanceState);
         selectedFunction = FUNC_NONE;
         enableSwipe(false);
-        isLoadingComplete(true);
+        if (selectedFunction != SEARCH_GROUP) {
+            isLoadingComplete(true);
+        }
         InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchableView, this);
         //searchViewHolder.setBackground(getColor(R.color.colorPrimary));
         searchViewHolder.setOnSearchingListener(new InputableSearchViewHolder.OnSearchingListener() {
@@ -161,6 +164,10 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 if (!isEmpty(text)) {
                     searchingText = text;
                     remotePageNumber = 1;
+                    if (searchingFunction == SEARCH_GROUP) {
+                        // 组织搜索可以翻页查询
+                        setSupportLoadingMore(true);
+                    }
                     searchingArchive();
                 } else {
                     searchingText = "";
@@ -176,40 +183,59 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         initializePositions();
     }
 
+    private TextView timePickerTitle;
+
     private void initializeTimePickerView() {
-        timePickerView = new TimePickerView.Builder(Activity(), new TimePickerView.OnTimeSelectListener() {
-            @Override
-            public void onTimeSelect(Date date, View v) {
-                searchingMonth = Utils.format("yyyy-MM", date);
-                //restoreSearchingResult();
-                remotePageNumber = 1;
-                searchingArchive();
-            }
-        }).setLayoutRes(R.layout.tool_view_custom_time_picker, new CustomListener() {
-            @Override
-            public void customLayout(View v) {
-                v.findViewById(R.id.timepicker_cancel).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // 关闭时间选择器
-                        hideSelector();
-                        resetFunctionStatus();
+        if (null == timePickerView) {
+            timePickerView = new TimePickerView.Builder(Activity(), new TimePickerView.OnTimeSelectListener() {
+                @Override
+                public void onTimeSelect(Date date, View v) {
+                    searchingMonth = Utils.format("yyyy-MM", date);
+                    if (null != timePickerTitle) {
+                        timePickerTitle.setText(searchingMonth);
                     }
-                });
-                v.findViewById(R.id.timepicker_confirm).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // 确定时间
-                        timePickerView.returnData();
+                    //restoreSearchingResult();
+                    remotePageNumber = 1;
+                    setSupportLoadingMore(true);
+                    searchingArchive();
+                }
+            }).setLayoutRes(R.layout.tool_view_custom_time_picker, new CustomListener() {
+                @Override
+                public void customLayout(final View root) {
+                    root.findViewById(R.id.timepicker_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // 清除已选择了的日期
+                            searchingMonth = "";
+                            resetTitle(root);
+                            //hideSelector();
+                            //resetFunctionStatus();
+                            searchingArchive();
+                        }
+                    });
+                    root.findViewById(R.id.timepicker_confirm).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // 确定时间
+                            timePickerView.returnData();
+                        }
+                    });
+                    resetTitle(root);
+                }
+
+                private void resetTitle(View root) {
+                    if (null == timePickerTitle) {
+                        timePickerTitle = root.findViewById(R.id.timepicker_title);
                     }
-                });
-            }
-        }).setType(new boolean[]{true, true, false, false, false, false})
-                .setDecorView(timePickerContainer)
-                .setOutSideCancelable(false).setDividerColor(getColor(R.color.textColorHint))
-                .setContentSize(getFontDimension(R.dimen.ui_base_text_size))
-                .isCenterLabel(false)
-                .build();
+                    timePickerTitle.setText(searchingMonth);
+                }
+            }).setType(new boolean[]{true, true, false, false, false, false})
+                    .setDecorView(timePickerContainer)
+                    .setOutSideCancelable(false).setDividerColor(getColor(R.color.textColorHint))
+                    .setContentSize(getFontDimension(R.dimen.ui_base_text_size))
+                    .isCenterLabel(false)
+                    .build();
+        }
         timePickerView.setKeyBackCancelable(false);
     }
 
@@ -436,11 +462,14 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     private void resetTypeList() {
         tAdapter.clear();
-        Dictionary d = none();
-        d.setTypeCode(selectedFunction == FUNC_NATURE ? Dictionary.Type.ARCHIVE_NATURE : Dictionary.Type.ARCHIVE_TYPE);
-        tAdapter.add(d);
+        //Dictionary d = none();
+        //d.setTypeCode(selectedFunction == FUNC_NATURE ? Dictionary.Type.ARCHIVE_NATURE : Dictionary.Type.ARCHIVE_TYPE);
+        //tAdapter.add(d);
         for (Dictionary dictionary : dictionaries) {
             if (dictionary.getTypeCode().equals(selectedFunction == FUNC_NATURE ? Dictionary.Type.ARCHIVE_NATURE : Dictionary.Type.ARCHIVE_TYPE)) {
+                if (dictionary.getCode() == 0) {
+                    dictionary.setSelected(true);
+                }
                 tAdapter.add(dictionary);
             }
         }
@@ -489,17 +518,17 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         return last;
     }
 
-    private Dictionary none;
-
-    private Dictionary none() {
-        if (null == none) {
-            none = new Dictionary();
-            none.setId("none");
-            none.setName("不限");
-            none.setSelected(true);
-        }
-        return none;
-    }
+//    private Dictionary none;
+//
+//    private Dictionary none() {
+//        if (null == none) {
+//            none = new Dictionary();
+//            none.setId("none");
+//            none.setName("不限");
+//            none.setSelected(true);
+//        }
+//        return none;
+//    }
 
     private void clearList(int count, int pageSize) {
         if (remotePageNumber <= 1) {
@@ -545,7 +574,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 restoreSearchingResult();
             }
-        }).search(mQueryId, searchingMonth, searchingNature, searchingType, searchingText, remotePageNumber);
+        }).search(mQueryId, searchingText, searchingMonth, searchingNature, searchingType, remotePageNumber);
     }
 
     private void searchingUserArchive() {
@@ -567,7 +596,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void restoreSearchingResult() {
-        mAdapter.clear();
+        mAdapter.remove(last());
         for (Archive archive : searched) {
             if (isInMonth(archive) && isNature(archive) && isType(archive)) {
                 mAdapter.update(archive);
@@ -599,13 +628,24 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    private Dictionary getNoLimit() {
+        Iterator<Dictionary> iterator = tAdapter.iterator();
+        while (iterator.hasNext()) {
+            Dictionary dic = iterator.next();
+            if (dic.getCode() == 0) {
+                return dic;
+            }
+        }
+        return null;
+    }
+
     private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
             Dictionary dic = tAdapter.get(index);
             dic.setSelected(!dic.isSelected());
             tAdapter.update(dic);
-            String selected = dic.isSelected() ? (dic.getId().equals("none") ? "" : dic.getName()) : "";
+            String selected = dic.isSelected() ? (dic.getCode() == 0 ? "" : dic.getName()) : "";
             if (dic.getTypeCode().equals(Dictionary.Type.ARCHIVE_NATURE)) {
                 searchingNature = selected;
             } else {
@@ -620,12 +660,18 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             }
             if (isEmpty(searchingNature) && isEmpty(searchingType)) {
                 // 如果两个筛选条件都为空，则选中“不限”选项
-                Dictionary d = none();
-                d.setSelected(true);
-                tAdapter.update(d);
+                Dictionary d = getNoLimit();
+                if (null != d) {
+                    d.setSelected(true);
+                    tAdapter.update(d);
+                }
             }
             //restoreSearchingResult();
             remotePageNumber = 1;
+            if (searchingFunction == SEARCH_GROUP) {
+                // 组织搜索可以翻页查询
+                setSupportLoadingMore(true);
+            }
             searchingArchive();
         }
     };

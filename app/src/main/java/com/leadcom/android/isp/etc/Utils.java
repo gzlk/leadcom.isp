@@ -348,6 +348,7 @@ public class Utils {
     private static final String regEx_html = "<[^>]+>"; // 定义HTML标签的正则表达式
     private static final String regEx_space = "\\s*|\t|\r|\n";//定义空格回车换行符
     private static final String regEx_style1 = "style\\=\\\"[^\\\"]*\\\"";
+    private static final String regEx_href = "href\\=\\\"[^\\\"]*\\\"";
 
     /**
      * 清除所有 html 标签(在显示档案摘要或内容时)
@@ -382,6 +383,8 @@ public class Utils {
 
         // 过滤所有 style="xxx" 代码
         htmlStr = clearStyleEqualsXXX(htmlStr);
+        // 过滤所有的 href="xxx" 代码
+        htmlStr = clearHrefEqualsXXX(htmlStr);
         return htmlStr.trim(); // 返回文本字符串
     }
 
@@ -408,6 +411,13 @@ public class Utils {
      */
     public static String clearStyleEqualsXXX(String htmlStr) {
         return Pattern.compile(regEx_style1, Pattern.CASE_INSENSITIVE).matcher(htmlStr).replaceAll("");
+    }
+
+    /**
+     * 清除所有href="xxx"标签内容
+     */
+    public static String clearHrefEqualsXXX(String htmlStr) {
+        return Pattern.compile(regEx_href, Pattern.CASE_INSENSITIVE).matcher(htmlStr).replaceAll("");
     }
 
     /**
