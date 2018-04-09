@@ -38,6 +38,13 @@ public class DeleteDialogHelper {
         return this;
     }
 
+    public DeleteDialogHelper init(AppCompatActivity activity) {
+        this.activity = activity;
+        // 默认是删除
+        confirmString = StringHelper.getString(R.string.ui_base_text_delete);
+        return this;
+    }
+
     public DeleteDialogHelper setLayout(int resLayout) {
         this.layout = resLayout;
         return this;

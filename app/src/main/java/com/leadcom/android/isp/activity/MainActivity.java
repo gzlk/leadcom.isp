@@ -20,6 +20,7 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.leadcom.android.isp.fragment.main.MainFragment;
 import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragment;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -202,7 +203,7 @@ public class MainActivity extends TitleActivity {
                 super.onResponse(systemUpdate, success, message);
                 if (success) {
                     String ver = systemUpdate.getVersion();
-                    //warningUpdatable("http://file.ws.126.net/3g/client/netease_newsreader_android.apk");
+                    //warningUpdatable("http://file.ws.126.net/3g/client/netease_newsreader_android.apk","2.0.1");
                     if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
                         String url = systemUpdate.getResourceURI();
                         if (StringHelper.isEmpty(url) || !Utils.isUrl(url)) {
@@ -218,7 +219,7 @@ public class MainActivity extends TitleActivity {
 
     private void warningUpdatable(final String url, final String version) {
         String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default), version);
-        SimpleDialogHelper.init(this).show(text, R.string.ui_base_text_ok, R.string.ui_base_text_cancel, new DialogHelper.OnDialogConfirmListener() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 // 打开下载对话框，并开始下载（下载对话框可以隐藏）
@@ -229,7 +230,7 @@ public class MainActivity extends TitleActivity {
                 UpgradeHelper.helper(MainActivity.this, version).startDownload(url, title, description);
                 return true;
             }
-        }, null);
+        }).setTitleText(text).setConfirmText(R.string.ui_base_text_yes).show();
     }
 
     private OnNimMessageEvent nimMessageEvent = new OnNimMessageEvent() {
