@@ -355,6 +355,12 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_ADDRESS = ACTIVITY_BASE_REQUEST + 20;
     /**
+     * 编辑请求
+     */
+    public static final int REQUEST_EDIT = ACTIVITY_BASE_REQUEST + 21;
+    protected static final int REQUEST_PHONE = ACTIVITY_BASE_REQUEST + 22;
+    protected static final int REQUEST_PHONE_CONFIRM = ACTIVITY_BASE_REQUEST + 23;
+    /**
      * 感兴趣
      */
     protected static final int REQUEST_INTEREST = ACTIVITY_BASE_REQUEST + 100;
@@ -362,8 +368,6 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 关注组织
      */
     protected static final int REQUEST_CONCERNED = ACTIVITY_BASE_REQUEST + 101;
-    protected static final int REQUEST_PHONE = ACTIVITY_BASE_REQUEST + 20;
-    protected static final int REQUEST_PHONE_CONFIRM = REQUEST_PHONE + 1;
 
     /**
      * 启动容器Activity(此时打开的新Activity不需要返回确认)

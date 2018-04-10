@@ -315,6 +315,12 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 }
                 break;
+            case REQUEST_EDIT:
+                User user = (User) mAdapter.get(0);
+                if (isSelf) {
+                    UserNameEditFragment.open(PersonalityFragment.this, user.getName(), user.getSignature());
+                }
+                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -682,13 +688,19 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                         openImageSelector(true);
                     }
                     break;
+                case R.id.ui_tool_individual_edit_icon:
+                    User u = (User) mAdapter.get(0);
+                    if (isSelf) {
+                        UserNameEditFragment.open(PersonalityFragment.this, u.getName(), u.getSignature());
+                    }
+                    break;
                 case R.id.ui_holder_view_user_header_name_layout:
                     User user = (User) mAdapter.get(0);
-                    if (isSelf) {
-                        UserNameEditFragment.open(PersonalityFragment.this, user.getName(), user.getSignature());
-                    } else {
-                        UserIntroductionFragment.open(PersonalityFragment.this, "", user.getName(), user.getHeadPhoto(), user.getCreateDate(), user.getSignature());
-                    }
+                    //if (isSelf) {
+                    //    UserNameEditFragment.open(PersonalityFragment.this, user.getName(), user.getSignature());
+                    //} else {
+                    UserIntroductionFragment.open(PersonalityFragment.this, user);
+                    //}
                     break;
                 case R.id.ui_holder_view_simple_clickable:
                     // 打开或编辑置顶的项目

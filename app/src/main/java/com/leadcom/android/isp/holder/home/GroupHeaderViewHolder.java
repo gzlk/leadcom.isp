@@ -63,7 +63,7 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         editIcon.setVisibility((null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) ? View.VISIBLE : View.INVISIBLE);
     }
 
-    @Click({R.id.ui_holder_view_group_header_logo, R.id.ui_holder_view_group_header_container})
+    @Click({R.id.ui_holder_view_group_header_logo, R.id.ui_holder_view_group_header_edit_icon, R.id.ui_holder_view_group_header_container})
     private void viewClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

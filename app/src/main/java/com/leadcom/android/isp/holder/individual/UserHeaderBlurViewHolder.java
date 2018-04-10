@@ -235,7 +235,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
         return Color.argb(alpha, red, green, blue);
     }
 
-    @Click({R.id.ui_holder_view_user_header_layout, R.id.ui_holder_view_user_header_name_layout})
+    @Click({R.id.ui_holder_view_user_header_layout, R.id.ui_tool_individual_edit_icon, R.id.ui_holder_view_user_header_name_layout})
     private void viewClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

@@ -7,9 +7,15 @@ import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseLayoutSupportFragment;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
+import com.leadcom.android.isp.model.operation.GRPOperation;
+import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.model.user.User;
 
 
 /**
@@ -29,6 +35,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     private static final String PARAM_HEAD = "uif_header";
     private static final String PARAM_DATE = "uif_date";
     private static final String PARAM_INTRO = "uif_intro";
+    private static final String PARAM_IS_GROUP = "uif_is_group";
 
     public static UserIntroductionFragment newInstance(Bundle bundle) {
         UserIntroductionFragment uif = new UserIntroductionFragment();
@@ -36,14 +43,23 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         return uif;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String name, String header, String date, String intro) {
+    public static void open(BaseFragment fragment, User user) {
+        open(fragment, false, user.getId(), user.getName(), user.getHeadPhoto(), user.getCreateDate(), user.getSignature());
+    }
+
+    public static void open(BaseFragment fragment, Organization group) {
+        open(fragment, true, group.getId(), group.getName(), group.getLogo(), group.getCreateDate(), group.getIntro());
+    }
+
+    private static void open(BaseFragment fragment, boolean isGroup, String groupId, String name, String header, String date, String intro) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_NAME, name);
         bundle.putString(PARAM_GROUP, groupId);
         bundle.putString(PARAM_HEAD, header);
         bundle.putString(PARAM_DATE, date);
         bundle.putString(PARAM_INTRO, intro);
-        fragment.openActivity(UserIntroductionFragment.class.getName(), bundle, true, false);
+        bundle.putBoolean(PARAM_IS_GROUP, isGroup);
+        fragment.openActivity(UserIntroductionFragment.class.getName(), bundle, REQUEST_EDIT, true, false);
     }
 
     @ViewId(R.id.ui_tool_view_document_user_header_layout)
@@ -58,6 +74,12 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     private TextView introView;
 
     private String name, groupId, header, date, intro;
+    private boolean isGroup;
+
+    private boolean hasOperation(String groupId, String operation) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.hasOperation(operation);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -68,6 +90,20 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         nameView.setText(name);
         timeView.setText(formatDate(date, R.string.ui_base_text_date_format));
         introView.setText(Html.fromHtml(intro));
+        resetTitleEvent();
+    }
+
+    private void resetTitleEvent() {
+        if ((isGroup && hasOperation(groupId, GRPOperation.GROUP_PROPERTY)) || (!isGroup && Cache.cache().userId.equals(groupId))) {
+            setRightText(R.string.ui_base_text_edit);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    // 编辑组织简介
+                    resultSucceededActivity();
+                }
+            });
+        }
     }
 
     @Override
@@ -82,6 +118,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         header = bundle.getString(PARAM_HEAD, "");
         date = bundle.getString(PARAM_DATE, "");
         intro = bundle.getString(PARAM_INTRO, "");
+        isGroup = bundle.getBoolean(PARAM_IS_GROUP, false);
     }
 
     @Override
@@ -101,6 +138,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         bundle.putString(PARAM_HEAD, header);
         bundle.putString(PARAM_DATE, date);
         bundle.putString(PARAM_INTRO, intro);
+        bundle.putBoolean(PARAM_IS_GROUP, isGroup);
     }
 
     @Override

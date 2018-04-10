@@ -215,6 +215,14 @@ public class GroupFragment extends BaseOrganizationFragment {
             case REQUEST_CONCERNED:
                 onSwipeRefreshing();
                 break;
+            case REQUEST_EDIT:
+                // 可以编辑组织简介
+                Organization group = (Organization) dAdapter.get(0);
+                if (hasOperation(group.getId(), GRPOperation.GROUP_PROPERTY)) {
+                    // 登录者有组织属性编辑权限时，打开组织属性编辑页面
+                    CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                }
+                break;
         }
         super.onActivityResult(requestCode, data);
     }
@@ -472,6 +480,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 case R.id.ui_holder_view_simple_clickable:
                     handleItemClick(index);
                     break;
+                case R.id.ui_holder_view_group_header_edit_icon:
                 case R.id.ui_holder_view_group_header_container:
                 case R.id.ui_holder_view_group_header_logo:
                     // 打开组织编辑
@@ -480,13 +489,16 @@ public class GroupFragment extends BaseOrganizationFragment {
                         if (view.getId() == R.id.ui_holder_view_group_header_logo) {
                             // 选择图片上传更改组织的logo
                             openImageSelector(true);
-                        } else {
+                        } else if (view.getId() == R.id.ui_holder_view_group_header_edit_icon) {
                             // 登录者有组织属性编辑权限时，打开组织属性编辑页面
                             CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                        } else {
+                            // 查看组织简介
+                            UserIntroductionFragment.open(GroupFragment.this, group);
                         }
                     } else {
                         // 查看组织简介
-                        UserIntroductionFragment.open(GroupFragment.this, group.getId(), group.getName(), group.getLogo(), group.getCreateDate(), group.getIntro());
+                        UserIntroductionFragment.open(GroupFragment.this, group);
                     }
                     break;
             }
