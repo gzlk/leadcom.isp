@@ -61,6 +61,7 @@ import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
@@ -93,10 +94,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
      * 标记是否是app内部打开的详情页
      */
     private static boolean innerOpen = false;
-    /**
-     * 是否可推送
-     */
-    public static boolean pushable = false;
 
     public static ArchiveDetailsWebViewFragment newInstance(Bundle bundle) {
         ArchiveDetailsWebViewFragment adwvf = new ArchiveDetailsWebViewFragment();
@@ -168,7 +165,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             }
         }
         innerOpen = false;
-        pushable = false;
         super.onDestroy();
     }
 
@@ -466,17 +462,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             }
         } else {
             // 非草稿档案，可以分享等等
-            setRightIcon(pushable ? 0 : R.string.ui_icon_more);
-            setRightText(pushable ? R.string.ui_base_text_push : 0);
+            setRightIcon(R.string.ui_icon_more);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
-                    if (pushable) {
-                        // 打开推送页面
-                        openPushDialog();
-                    } else {
-                        fetchingShareInfo();
-                    }
+                    fetchingShareInfo();
                 }
             });
         }
@@ -490,13 +480,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             enableShareDelete = archive.isAuthor();
         } else {
             // 组织档案
-            if (null != myRole && (myRole.isManager() || myRole.isArchiveManager())) {
-                // 是否可以删除档案
-                enableShareDelete = true;
-                enableShareForward = true;
-                enableShareRecommend = !archive.isRecommend();
-                enableShareRecommended = archive.isRecommend();
-            }
+            // 是否可以删除档案
+            enableShareDelete = hasOperation(GRPOperation.ARCHIVE_DELETE);
+            enableShareForward = hasOperation(GRPOperation.ARCHIVE_FORWARD);
+            enableShareRecommend = !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
+            enableShareRecommended = archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
         }
         // 档案创建者可以删除评论
         deletable = enableShareDelete;
@@ -569,10 +557,21 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             String teamId = getResultedData(data);
             NimUIKit.startTeamSession(Activity(), teamId);
         } else if (requestCode == REQUEST_GROUP) {
-            RelateGroup grp = RelateGroup.fromJson(getResultedData(data));
+            ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
             // 转发到指定的组织
-            if (null != grp && !isEmpty(grp.getGroupId())) {
-                openForwardDialog(grp.getGroupId(), grp.getGroupName(), grp.getLogo());
+            if (null != groups && groups.size() > 0) {
+                ArrayList<String> ids = new ArrayList<>();
+                String name = "";
+                for (RelateGroup group : groups) {
+                    if (ids.size() < 1) {
+                        name = group.getGroupName();
+                    }
+                    ids.add(group.getId());
+                }
+                if (ids.size() > 1) {
+                    name += "等";
+                }
+                openForwardDialog(ids, name);
             }
         }
         super.onActivityResult(requestCode, data);
@@ -582,7 +581,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private TextView dialogTitle, shareTitle, shareSummary;
     private ImageDisplayer shareImage;
 
-    private void openForwardDialog(String groupId, final String groupName, final String groupLogo) {
+    private void openForwardDialog(final ArrayList<String> groupIds, final String groupName) {
         DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
             @Override
             public View onInitializeView() {
@@ -609,6 +608,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
+                tryPushArchive(groupIds);
                 return true;
             }
         }).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
@@ -665,20 +665,20 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                tryPushArchive();
+                //tryPushArchive();
                 return true;
             }
         }).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
 
-    private void tryPushArchive() {
-        ArrayList<String> groupIds = new ArrayList<>();
-        for (int i = 0; i < cAdapter.getItemCount(); i++) {
-            Model model = cAdapter.get(i);
-            if (model.isSelected()) {
-                groupIds.add(model.getId());
-            }
-        }
+    private void tryPushArchive(ArrayList<String> groupIds) {
+//        ArrayList<String> groupIds = new ArrayList<>();
+//        for (int i = 0; i < cAdapter.getItemCount(); i++) {
+//            Model model = cAdapter.get(i);
+//            if (model.isSelected()) {
+//                groupIds.add(model.getId());
+//            }
+//        }
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {

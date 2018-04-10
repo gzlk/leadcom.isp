@@ -318,25 +318,25 @@ public class Message extends Model {
      * 查看本条消息是否可以保存
      */
     public boolean isSavable() {
-        return msgType > 0 && (msgType < Type.USER_ARCHIVE_LIKE || getMsgType() > Type.MOMENT_COMMENT);
+        return getMsgType() > 0 && (getMsgType() < Type.USER_ARCHIVE_LIKE || getMsgType() > Type.MOMENT_COMMENT);
     }
 
     /**
      * 是否是群聊相关的通知消息
      */
     public boolean isTeamMsg() {
-        return msgType >= Type.TALK_TEAM_DISMISS && msgType <= Type.TALK_TEAM_MEMBER_REMOVE;
+        return getMsgType() >= Type.TALK_TEAM_DISMISS && getMsgType() <= Type.TALK_TEAM_MEMBER_REMOVE;
     }
 
     public boolean isGroupMsg() {
-        return msgType >= Type.GROUP_JOIN && msgType <= Type.GROUP_KICK_OUT;
+        return getMsgType() >= Type.GROUP_JOIN && getMsgType() <= Type.GROUP_KICK_OUT;
     }
 
     /**
      * 是否是档案相关消息
      */
     public boolean isArchiveMsg() {
-        return msgType >= Type.ARCHIVE_FORWARD && msgType <= Type.ARCHIVE_SHARE_DRAFT;
+        return getMsgType() >= Type.ARCHIVE_FORWARD && getMsgType() <= Type.ARCHIVE_SHARE_DRAFT;
     }
 
     public void setType(int type) {
@@ -377,7 +377,7 @@ public class Message extends Model {
 
     public int getMsgType() {
         if (1 > msgType) {
-            return type;
+            msgType = type;
         }
         return msgType;
     }

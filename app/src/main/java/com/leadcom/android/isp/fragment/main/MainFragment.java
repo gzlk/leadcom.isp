@@ -140,7 +140,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
                         }
                     }
                 }
-                showUnreadFlag(NimMessage.getUnRead() + count);
+                showUnreadFlag(count);
             }
 
             @Override

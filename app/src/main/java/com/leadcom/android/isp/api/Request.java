@@ -75,6 +75,10 @@ public abstract class Request<T> {
      */
     protected static final String SEARCH = "/search";
     /**
+     * 转发、推送
+     */
+    protected static final String PUSH = "/push";
+    /**
      * 分享
      */
     protected static final String SHARE = "/share";

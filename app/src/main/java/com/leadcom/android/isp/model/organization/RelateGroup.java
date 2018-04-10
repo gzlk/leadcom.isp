@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
 
+import java.util.ArrayList;
+
 /**
  * <b>功能描述：</b>关联的组织<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -18,12 +20,22 @@ import com.leadcom.android.isp.model.Model;
 public class RelateGroup extends Model {
 
     public static RelateGroup fromJson(String json) {
-        return Json.gson().fromJson(isEmpty(json) ? "{}" : json, new TypeToken<RelateGroup>() {
+        return Json.gson().fromJson(isEmpty(json) ? EMPTY_JSON : json, new TypeToken<RelateGroup>() {
+        }.getType());
+    }
+
+    public static ArrayList<RelateGroup> from(String json) {
+        return Json.gson().fromJson(isEmpty(json) ? EMPTY_ARRAY : json, new TypeToken<ArrayList<RelateGroup>>() {
         }.getType());
     }
 
     public static String toJson(RelateGroup group) {
-        return null == group ? "{}" : Json.gson().toJson(group, new TypeToken<RelateGroup>() {
+        return null == group ? EMPTY_JSON : Json.gson().toJson(group, new TypeToken<RelateGroup>() {
+        }.getType());
+    }
+
+    public static String toJson(ArrayList<RelateGroup> groups) {
+        return null == groups ? EMPTY_ARRAY : Json.gson().toJson(groups, new TypeToken<ArrayList<RelateGroup>>() {
         }.getType());
     }
 

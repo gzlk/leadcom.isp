@@ -80,4 +80,20 @@ public interface GRPOperation {
      * 删除小组成员
      */
     String SQUAD_MEMBER_DELETE = "ROLE_4d90a8ecec404d1280112fd907c6ae73";
+
+    /* ***********************************************************
+       档案相关
+    *************************************************************/
+    /**
+     * 推荐档案
+     */
+    String ARCHIVE_RECOMMEND = "ROLE_1f62645fd86d44d483c9f6816bf5e639";
+    /**
+     * 转发档案
+     */
+    String ARCHIVE_FORWARD = "ROLE_65e81bfb1f5940daa3d86c99bcda79f3";
+    /**
+     * 分享档案
+     */
+    String ARCHIVE_SHARE = "ROLE_d10c0bff7cbf41f7a2247e4788996024";
 }

@@ -14,6 +14,8 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -30,22 +32,36 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  */
 public class GroupPickerFragment extends BaseOrganizationFragment {
 
-    public static GroupPickerFragment newInstance(String params) {
+    private static final String PARAM_MULTIPLE = "gpf_multiple_selectable";
+
+    public static GroupPickerFragment newInstance(Bundle bundle) {
         GroupPickerFragment gpf = new GroupPickerFragment();
-        Bundle bundle = new Bundle();
-        // 传过来的以选中的组织id
-        bundle.putString(PARAM_SQUAD_ID, params);
         gpf.setArguments(bundle);
         return gpf;
     }
 
-    public static void open(BaseFragment fragment, String selectedGroupId) {
-        selected = -1;
-        fragment.openActivity(GroupPickerFragment.class.getName(), selectedGroupId, REQUEST_GROUP, true, false);
+    public static void open(BaseFragment fragment, String selectedGroupId, boolean multiSelect) {
+        Bundle bundle = new Bundle();
+        // 传过来的以选中的组织id
+        bundle.putString(PARAM_SQUAD_ID, selectedGroupId);
+        bundle.putBoolean(PARAM_MULTIPLE, multiSelect);
+        fragment.openActivity(GroupPickerFragment.class.getName(), bundle, REQUEST_GROUP, true, false);
     }
 
-    private static int selected = -1;
+    private boolean multipleSelectable = false;
     private GroupAdapter mAdapter;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        multipleSelectable = bundle.getBoolean(PARAM_MULTIPLE, false);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_MULTIPLE, multipleSelectable);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -96,11 +112,15 @@ public class GroupPickerFragment extends BaseOrganizationFragment {
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
-                    if (selected >= 0) {
-                        Organization org = mAdapter.get(selected);
-                        RelateGroup group = new RelateGroup(org);
-                        resultData(RelateGroup.toJson(group));
+                    ArrayList<RelateGroup> groups = new ArrayList<>();
+                    Iterator<Organization> iterator = mAdapter.iterator();
+                    while (iterator.hasNext()) {
+                        Organization group = iterator.next();
+                        if (group.isSelected()) {
+                            groups.add(new RelateGroup(group));
+                        }
                     }
+                    resultData(RelateGroup.toJson(groups));
                 }
             });
             mAdapter = new GroupAdapter();
@@ -116,7 +136,6 @@ public class GroupPickerFragment extends BaseOrganizationFragment {
             for (Organization group : list) {
                 if (group.getId().equals(mQueryId)) {
                     group.setSelected(true);
-                    selected = mAdapter.getItemCount();
                 }
                 mAdapter.update(group);
             }
@@ -128,16 +147,17 @@ public class GroupPickerFragment extends BaseOrganizationFragment {
         public void onClick(int index) {
             Organization group = mAdapter.get(index);
             group.setSelected(!group.isSelected());
-            if (group.isSelected()) {
-                selected = index;
-            }
             mAdapter.update(group);
-            for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
-                Organization org = mAdapter.get(i);
-                if (!org.getId().equals(group.getId())) {
-                    if (org.isSelected()) {
-                        org.setSelected(false);
-                        mAdapter.update(org);
+            if (!multipleSelectable) {
+                // 不是多选时，需要清理掉其他选中项
+                Iterator<Organization> iterator = mAdapter.iterator();
+                while (iterator.hasNext()) {
+                    Organization org = iterator.next();
+                    if (!org.getId().equals(group.getId())) {
+                        if (org.isSelected()) {
+                            org.setSelected(false);
+                            mAdapter.update(org);
+                        }
                     }
                 }
             }

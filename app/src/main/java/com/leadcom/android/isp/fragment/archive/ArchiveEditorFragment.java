@@ -646,7 +646,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         resetGroupArchiveOrUser();
                         break;
                     case R.id.ui_popup_rich_editor_setting_group_picker:
-                        GroupPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId());
+                        GroupPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false);
                         break;
                     case R.id.ui_popup_rich_editor_setting_time:
                         // 发生时间
@@ -1163,11 +1163,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 //                }
                 break;
             case REQUEST_GROUP:
-                RelateGroup group = RelateGroup.fromJson(getResultedData(data));
-                if (null != group && !isEmpty(group.getGroupId())) {
-                    mArchive.setGroupId(group.getGroupId());
+                ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
+                if (null != groups && groups.size() > 0) {
+                    mArchive.setGroupId(groups.get(0).getGroupId());
                     if (null != groupNameText) {
-                        groupNameText.setText(group.getGroupName());
+                        groupNameText.setText(groups.get(0).getGroupName());
                     }
                 }
                 break;

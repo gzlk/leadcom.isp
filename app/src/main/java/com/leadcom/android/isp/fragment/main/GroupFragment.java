@@ -99,7 +99,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         public void onMessageEvent(NimMessage message) {
             // 如果是组织相关的推送，则重新拉取组织列表
             if (null != message && message.isGroupMsg()) {
-                fetchingJoinedRemoteOrganizations(0);
+                fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
             }
         }
     };
