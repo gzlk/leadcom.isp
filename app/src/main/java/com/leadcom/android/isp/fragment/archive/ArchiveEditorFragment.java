@@ -136,7 +136,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private void createNewDraftArchive() {
         mArchive = new Archive();
         // 新建的档案都为临时档案
-        mArchive.setId(Archive.getDraftId());
+        //mArchive.setId(Archive.getDraftId());
         // 标记是否为组织档案
         //mArchive.setGroupId(mQueryId);
         // 设置来源为自己
