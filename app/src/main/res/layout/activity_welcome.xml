@@ -63,9 +63,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
         android:gravity="center"
         android:text="@string/app_company_website"
         android:textSize="@dimen/ui_base_text_size_little" />
 
-    <include layout="@layout/tool_view_divider_big" />
 </LinearLayout>
