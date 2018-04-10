@@ -45,6 +45,24 @@ public class SubMember implements Serializable {
         }.getType());
     }
 
+    public static String getMemberNames(ArrayList<SubMember> members) {
+        String name = "";
+        int count = 0;
+        if (null != members && members.size() > 0) {
+            for (SubMember member : members) {
+                if (count < 3) {
+                    name += (StringHelper.isEmpty(name) ? "" : "、") + member.getUserName();
+                }
+                count++;
+            }
+            name = "[" + name + "]";
+            if (members.size() > 1) {
+                name += "等";
+            }
+        }
+        return name;
+    }
+
     public static String getMemberInfo(ArrayList<SubMember> list) {
         String string = "";
         if (list.size() < 1) {

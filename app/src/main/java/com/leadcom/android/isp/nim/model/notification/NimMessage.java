@@ -117,6 +117,8 @@ public class NimMessage extends Message implements MsgAttachment {
     // 活动的tid
     @Column(Activity.Field.NimId)
     private String tid;// 原有属性
+    @Column(Archive.Field.ArchiveId)
+    private String docId;// 档案的id
     // 活动所属的组织
     @Column(Organization.Field.GroupId)
     private String groupId;// 原有属性
@@ -134,6 +136,14 @@ public class NimMessage extends Message implements MsgAttachment {
 
     public void setTid(String tid) {
         this.tid = tid;
+    }
+
+    public String getDocId() {
+        return docId;
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
     }
 
     public String getGroupId() {

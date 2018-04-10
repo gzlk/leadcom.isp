@@ -39,30 +39,27 @@ import java.util.List;
 
 public class GroupContactPickFragment extends BaseOrganizationFragment {
 
-    private static final String PARAM_USER_IDS = "ocpf_members";
     private static final String PARAM_SELECT_ALL = "ocpf_select_all";
     private static final String PARAM_FORCE_LOCK = "ocpf_force_to_lock";
     private static final String PARAM_SINGLE_PICK = "ocpf_single_pick";
 
-    public static GroupContactPickFragment newInstance(String params) {
+    public static GroupContactPickFragment newInstance(Bundle bundle) {
         GroupContactPickFragment ocp = new GroupContactPickFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 组织的id
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 是否锁定传过来的已存在项目
-        bundle.putBoolean(PARAM_FORCE_LOCK, Boolean.valueOf(strings[1]));
-        // 是否单选
-        bundle.putBoolean(PARAM_SINGLE_PICK, Boolean.valueOf(strings[2]));
-        // 已选中的成员列表
-        bundle.putString(PARAM_USER_IDS, replaceJson(strings[3], true));
         ocp.setArguments(bundle);
         return ocp;
     }
 
     public static void open(BaseFragment fragment, String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
-        String params = format("%s,%s,%s,%s", groupId, lockExist, singlePick, StringHelper.replaceJson(jsonExitMembers, false));
-        fragment.openActivity(GroupContactPickFragment.class.getName(), params, REQUEST_MEMBER, true, false);
+        Bundle bundle = new Bundle();
+        // 组织的id
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        // 是否锁定传过来的已存在项目
+        bundle.putBoolean(PARAM_FORCE_LOCK, lockExist);
+        // 是否单选
+        bundle.putBoolean(PARAM_SINGLE_PICK, singlePick);
+        // 已选中的成员列表
+        bundle.putString(PARAM_JSON, jsonExitMembers);
+        fragment.openActivity(GroupContactPickFragment.class.getName(), bundle, REQUEST_MEMBER, true, false);
     }
 
     @Override
@@ -71,7 +68,7 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         isSelectAll = bundle.getBoolean(PARAM_SELECT_ALL, false);
         isLockable = bundle.getBoolean(PARAM_FORCE_LOCK, false);
         isSinglePick = bundle.getBoolean(PARAM_SINGLE_PICK, false);
-        String json = bundle.getString(PARAM_USER_IDS, "[]");
+        String json = bundle.getString(PARAM_JSON, "[]");
         existsUsers = Json.gson().fromJson(StringHelper.replaceJson(json, true), new TypeToken<ArrayList<SubMember>>() {
         }.getType());
         if (null == existsUsers) {
@@ -85,7 +82,7 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         bundle.putBoolean(PARAM_SELECT_ALL, isSelectAll);
         bundle.putBoolean(PARAM_FORCE_LOCK, isLockable);
         bundle.putBoolean(PARAM_SINGLE_PICK, isSinglePick);
-        bundle.putString(PARAM_USER_IDS, Json.gson().toJson(existsUsers));
+        bundle.putString(PARAM_JSON, Json.gson().toJson(existsUsers));
     }
 
     // UI

@@ -216,6 +216,14 @@ public class Message extends Model {
          * 群聊通知
          */
         int TALK_TEAM_NOTICE = 44;
+        /**
+         * 档案转发
+         */
+        int ARCHIVE_FORWARD = 45;
+        /**
+         * 分享草稿
+         */
+        int ARCHIVE_SHARE_DRAFT = 46;
     }
 
     /**
@@ -263,6 +271,10 @@ public class Message extends Model {
                 return "被移出群聊";
             case Type.TALK_TEAM_NOTICE:
                 return "群通知";
+            case Type.ARCHIVE_FORWARD:
+                return "转发档案";
+            case Type.ARCHIVE_SHARE_DRAFT:
+                return "分享档案草稿";
             default:
                 return StringHelper.format("不晓得是什么通知(%d)", type);
         }
@@ -318,6 +330,13 @@ public class Message extends Model {
 
     public boolean isGroupMsg() {
         return msgType >= Type.GROUP_JOIN && msgType <= Type.GROUP_KICK_OUT;
+    }
+
+    /**
+     * 是否是档案相关消息
+     */
+    public boolean isArchiveMsg() {
+        return msgType >= Type.ARCHIVE_FORWARD && msgType <= Type.ARCHIVE_SHARE_DRAFT;
     }
 
     public void setType(int type) {

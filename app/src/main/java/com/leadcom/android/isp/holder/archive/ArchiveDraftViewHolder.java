@@ -3,17 +3,16 @@ package com.leadcom.android.isp.holder.archive;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.archive.ArchiveDraft;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CustomTextView;
 
 /**
  * <b>功能描述：</b><br />
@@ -43,14 +42,13 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
-    public void showContent(ArchiveDraft draft) {
-        Archive archive = Archive.fromJson(draft.getArchiveJson());
+    public void showContent(Archive archive) {
         coverView.displayImage(archive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size), false, false);
         titleView.setText(archive.getTitle());
-        timeView.setText(StringHelper.getString(R.string.ui_text_archive_creator_editor_create_draft_time, fragment().formatTimeAgo(draft.getCreateDate())));
-        selectorView.setTextColor(getColor(draft.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
-        if (!isEmpty(draft.getGroupId())) {
-            groupView.setText(draft.getGroupName());
+        timeView.setText(StringHelper.getString(R.string.ui_text_archive_creator_editor_create_draft_time, fragment().formatTimeAgo(archive.getCreateDate())));
+        selectorView.setTextColor(getColor(archive.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        if (!isEmpty(archive.getGroupId())) {
+            groupView.setText("组织档案");
         } else {
             groupView.setText("个人档案");
         }

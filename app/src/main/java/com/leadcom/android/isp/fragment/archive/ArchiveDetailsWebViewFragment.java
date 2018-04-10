@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.fragment.archive;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
@@ -96,22 +98,29 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
      */
     public static boolean pushable = false;
 
-    public static ArchiveDetailsWebViewFragment newInstance(String params) {
+    public static ArchiveDetailsWebViewFragment newInstance(Bundle bundle) {
         ArchiveDetailsWebViewFragment adwvf = new ArchiveDetailsWebViewFragment();
-        Bundle bundle = new Bundle();
-        String[] strings = splitParameters(params);
-        // 档案id
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 档案类型：组织档案或个人档案
-        bundle.putInt(PARAM_DOC_TYPE, Integer.valueOf(strings[1]));
         adwvf.setArguments(bundle);
         return adwvf;
     }
 
+    private static Bundle getBundle(String archiveId, int archiveType) {
+        Bundle bundle = new Bundle();
+        // 档案id
+        bundle.putString(PARAM_QUERY_ID, archiveId);
+        // 档案类型：组织档案或个人档案
+        bundle.putInt(PARAM_DOC_TYPE, archiveType);
+        return bundle;
+    }
+
     public static void open(BaseFragment fragment, String archiveId, int archiveType) {
         innerOpen = true;
-        String params = format("%s,%d", archiveId, archiveType);
-        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), params, REQUEST_DELETE, true, false);
+        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), getBundle(archiveId, archiveType), REQUEST_DELETE, true, false);
+    }
+
+    public static void open(Context context, String archiveId, int archiveType) {
+        innerOpen = true;
+        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), getBundle(archiveId, archiveType), REQUEST_DELETE, true, false);
     }
 
     @Override

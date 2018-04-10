@@ -97,11 +97,13 @@ public class DeleteDialogHelper {
             }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
                 @Override
                 public int[] clickEventHandleIds() {
+                    // 默认添加背景点击事件，点击之后关闭dialog
                     return new int[]{R.id.ui_custom_dialog_background};
                 }
 
                 @Override
                 public boolean onClick(View view) {
+                    // 背景点击事件，返回true表示立即关闭dialog
                     return true;
                 }
             }).setConfirmText(confirmString).addOnDialogConfirmListener(confirmListener).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true);

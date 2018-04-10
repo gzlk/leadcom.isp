@@ -74,6 +74,10 @@ public abstract class Request<T> {
      * 搜索
      */
     protected static final String SEARCH = "/search";
+    /**
+     * 分享
+     */
+    protected static final String SHARE = "/share";
 
     protected static final int MAX_PAGE_SIZE = 1000;
     protected static final String SUMMARY = format("abstrSize=%d&abstrRow=%d", 100, 5);

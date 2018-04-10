@@ -657,6 +657,9 @@ public class ArchiveRequest extends Request<Archive> {
             } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
                 object.put("authUser", new JSONArray(archive.getAuthUser()));
             }
+            if (!isEmpty(archive.getId())) {
+                object.put("_id", archive.getId());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -697,6 +700,9 @@ public class ArchiveRequest extends Request<Archive> {
                         .put("participant", checkNull(archive.getParticipant()))
                         .put("happenDate", archive.getHappenDate());
             }
+            if (!isEmpty(archive.getId())) {
+                object.put("_id", archive.getId());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -706,9 +712,21 @@ public class ArchiveRequest extends Request<Archive> {
     /**
      * 查询组织档案列表，此列表不保存到本地缓存
      */
-    public void listDraft(String groupId, int pageNumber) {
-        String params = format("%s/draft?groupId=%s&pageNumber=%d", group(LIST), groupId, pageNumber);
+    public void listDraft(int pageNumber) {
+        String params = format("%s/draft?pageNumber=%d&pageSize=99", group(LIST), pageNumber);
         httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
     }
 
+    /**
+     * 分享草稿档案到指定用户
+     */
+    public void shareDraft(String archiveId, ArrayList<String> userIds) {
+        if (null == userIds || userIds.size() <= 0) {
+            ToastHelper.make().showMsg("无法分享草稿：未指定成员");
+        } else {
+            String json = Json.gson().toJson(userIds);
+            String params = format("%s?groDocId=%s&userIdList=%s", group(SHARE), archiveId, json);
+            httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+        }
+    }
 }

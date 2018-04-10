@@ -6,18 +6,20 @@ import android.view.View;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.archive.ArchiveRequest;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.archive.ArchiveDraftViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.archive.ArchiveDraft;
+import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.List;
@@ -82,15 +84,15 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         boolean selected = false;
         for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
             Model model = mAdapter.get(i);
-            if (model.isSelected() && model instanceof ArchiveDraft) {
-                ArchiveDraft draft = (ArchiveDraft) model;
-                json = draft.getArchiveJson();
+            if (model.isSelected() && model instanceof Archive) {
+                Archive draft = (Archive) model;
+                json = Archive.toJson(draft);
                 selected = true;
                 break;
             }
         }
         if (selected) {
-            resultData(StringHelper.replaceJson(json, false));
+            resultData(json);
         }
     }
 
@@ -124,14 +126,24 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new DraftAdapter();
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
-            List<ArchiveDraft> drafts = ArchiveDraft.getDraft("");
-            if (null != drafts) {
-                for (ArchiveDraft draft : drafts) {
-                    mAdapter.add(draft);
-                }
-            }
-            mAdapter.add(noMore);
+            fetchingDraft();
         }
+    }
+
+    private void fetchingDraft() {
+        mAdapter.remove(noMore);
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
+            @Override
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list && list.size() > 0) {
+                    for (Archive archive : list) {
+                        mAdapter.add(archive);
+                    }
+                }
+                mAdapter.add(noMore);
+            }
+        }).listDraft(remotePageNumber);
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
@@ -161,12 +173,22 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         DeleteDialogHelper.helper().init(this).setTitleText(R.string.ui_text_archive_creator_editor_create_draft_delete).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                ArchiveDraft.delete(mAdapter.get(index).getId());
-                mAdapter.remove(index);
-                mAdapter.notifyItemRemoved(index);
+                deleteDraft(index);
                 return true;
             }
         }).show();
+    }
+
+    private void deleteDraft(final int index) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    mAdapter.remove(index);
+                }
+            }
+        }).delete(Archive.Type.GROUP, mAdapter.get(index).getId());
     }
 
     private class DraftAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
@@ -194,7 +216,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int getItemViewType(int position) {
-            if (get(position) instanceof ArchiveDraft) {
+            if (get(position) instanceof Archive) {
                 return VT_DRAFT;
             }
             return VT_LAST;
@@ -203,7 +225,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof ArchiveDraftViewHolder) {
-                ((ArchiveDraftViewHolder) holder).showContent((ArchiveDraft) item);
+                ((ArchiveDraftViewHolder) holder).showContent((Archive) item);
             } else if (holder instanceof NothingMoreViewHolder) {
                 ((NothingMoreViewHolder) holder).showContent(item);
             }

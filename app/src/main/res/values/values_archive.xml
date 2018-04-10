@@ -23,6 +23,7 @@
     <string name="ui_text_archive_creator_editor_create_cover_null">请给新建的档案挑选一个封面</string>
     <string name="ui_text_archive_creator_editor_create_cover_notime">还在上传其他附件，请稍候&#8230;</string>
     <string name="ui_text_archive_creator_editor_create_cover_invalid" formatted="false">封面图片可能不符合要求(%s)</string>
+    <string name="ui_text_archive_creator_editor_create_group_null">组织档案需要选择所属的组织</string>
     <string name="ui_text_archive_creator_editor_create_label_null">请给新建的档案打上标签</string>
     <string name="ui_text_archive_creator_editor_create_author_null">请提供档案的来源或作者信息</string>
     <string name="ui_text_archive_creator_editor_create_time">创建时间</string>
@@ -124,6 +125,10 @@
     <string name="ui_text_archive_details_editor_setting_participant_title">参与人员(点击选择或直接输入)</string>
     <string name="ui_text_archive_details_editor_setting_participant_hint">参与人员</string>
     <string name="ui_text_archive_details_editor_setting_share_title">草稿分享</string>
+    <string name="ui_text_archive_details_editor_setting_share_names" formatted="false">
+        <![CDATA[分享草稿给 <font color="#3cbaff">%s</font>共%d人]]>
+    </string>
+    <string name="ui_text_archive_details_editor_setting_share_draft">您的草稿已分享，去参与他们的讨论吧</string>
     <string name="ui_text_archive_details_editor_setting_commit_title">提交审核</string>
     <dimen name="ui_dimen_archive_details_editor_setting_item_vertical_padding">@dimen/ui_static_dp_8</dimen>
 

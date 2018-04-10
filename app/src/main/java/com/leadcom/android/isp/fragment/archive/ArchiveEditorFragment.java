@@ -25,6 +25,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.cache.Cache;
@@ -37,12 +38,12 @@ import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.GroupsContactPickerFragment;
-import com.leadcom.android.isp.helper.popup.DateTimeHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.DictionaryHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DateTimeHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.DictionaryHelper;
 import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
@@ -51,7 +52,6 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Label;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.archive.ArchiveDraft;
 import com.leadcom.android.isp.model.archive.Dictionary;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
@@ -84,7 +84,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     public static final String ATTACHABLE = "attachable";
     public static final String MOMENT = "moment";
     private static final String PARAM_UPLOAD_TYPE = "aecf_upload_type";
-    private static final String PARAM_ARCHIVE = "aecf_archive_content";
     private static final String PARAM_EDITOR_TYPE = "aecf_archive_editor_type";
 
     private static final int UP_NOTHING = 0;
@@ -102,21 +101,19 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private static final int TYPE_ATTACHMENT = 2;
     private static boolean editorFocused = false;
 
-    public static ArchiveEditorFragment newInstance(String params) {
+    public static ArchiveEditorFragment newInstance(Bundle bundle) {
         ArchiveEditorFragment aecf = new ArchiveEditorFragment();
-        Bundle bundle = new Bundle();
-        String[] strings = splitParameters(params);
-        // 传过来的档案id（草稿档案），需要从服务器上拉取草稿内容再编辑
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 编辑器方式（附件方式、图文方式）
-        bundle.putInt(PARAM_EDITOR_TYPE, Integer.valueOf(strings[1]));
         aecf.setArguments(bundle);
         return aecf;
     }
 
     public static void open(BaseFragment fragment, String remoteDraftId, String attachType) {
-        String params = format("%s,%d", remoteDraftId, attachType.equals(ATTACHABLE) ? TYPE_ATTACHMENT : TYPE_MULTIMEDIA);
-        fragment.openActivity(ArchiveEditorFragment.class.getName(), params, REQUEST_CREATE, true, true);
+        Bundle bundle = new Bundle();
+        // 传过来的档案id（草稿档案），需要从服务器上拉取草稿内容再编辑
+        bundle.putString(PARAM_QUERY_ID, remoteDraftId);
+        // 编辑器方式（附件方式、图文方式）
+        bundle.putInt(PARAM_EDITOR_TYPE, attachType.equals(ATTACHABLE) ? TYPE_ATTACHMENT : TYPE_MULTIMEDIA);
+        fragment.openActivity(ArchiveEditorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
     }
 
     @Override
@@ -124,9 +121,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         super.getParamsFromBundle(bundle);
         uploadType = bundle.getInt(PARAM_UPLOAD_TYPE, UP_NOTHING);
         editorType = bundle.getInt(PARAM_EDITOR_TYPE, TYPE_MULTIMEDIA);
-        String json = bundle.getString(PARAM_ARCHIVE, "");
+        String json = bundle.getString(PARAM_JSON, Model.EMPTY_JSON);
         if (!isEmpty(json)) {
             mArchive = Archive.fromJson(json);
+            if (isEmpty(mArchive.getId())) {
+                createNewDraftArchive();
+            }
         } else {
             createNewDraftArchive();
         }
@@ -144,6 +144,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         mArchive.setUserName(Cache.cache().userName);
         // 默认为个人普通档案或组织普通档案
         mArchive.setType(Archive.ArchiveType.NORMAL);
+        // 新建档案默认为草稿
+        mArchive.setStatus(Archive.DraftType.DRAFT);
         // 档案默认向所有人公开的
         mArchive.setAuthPublic(Seclusion.Type.Public);
         // 默认草稿作者为当前登录用户
@@ -160,8 +162,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_UPLOAD_TYPE, uploadType);
         bundle.putInt(PARAM_EDITOR_TYPE, editorType);
-        bundle.putString(PARAM_ARCHIVE, Json.gson().toJson(mArchive, new TypeToken<Archive>() {
-        }.getType()));
+        bundle.putString(PARAM_JSON, Archive.toJson(mArchive));
     }
 
     @Override
@@ -256,10 +257,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 如果不是传入的服务器草稿id则判断本地是否有草稿
         if (isEmpty(mQueryId)) {
             // 检索是否有未提交的草稿
-            List<ArchiveDraft> drafts = ArchiveDraft.getDraft("");
-            if (null != drafts && drafts.size() > 0) {
-                warningDraftExist(drafts.get(0), drafts.size());
-            }
+            fetchingDraft();
+//            List<ArchiveDraft> drafts = ArchiveDraft.getDraft("");
+//            if (null != drafts && drafts.size() > 0) {
+//                warningDraftExist(drafts.get(0), drafts.size());
+//            }
         }
         attachmentView.setVisibility(editorType == TYPE_ATTACHMENT ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
@@ -269,29 +271,36 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         attachmentRecyclerView.setAdapter(aAdapter);
     }
 
-    private void warningDraftExist(final ArchiveDraft draft, final int size) {
+    private void fetchingDraft() {
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
+            @Override
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list && list.size() > 0) {
+                    warningDraftExist(list.get(0), list.size());
+                }
+            }
+        }).listDraft(remotePageNumber);
+    }
+
+    private void warningDraftExist(final Archive draft, final int size) {
         int text = size > 1 ? R.string.ui_text_archive_creator_editor_create_draft_more : R.string.ui_text_archive_creator_editor_create_draft_1;
-        SimpleDialogHelper.init(Activity()).show(text, size > 1 ? R.string.ui_base_text_have_a_look : R.string.ui_base_text_edit, R.string.ui_text_archive_creator_editor_create_new, new DialogHelper.OnDialogConfirmListener() {
+        final String json = Archive.toJson(draft);
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 if (size > 1) {
                     // 打开草稿选择页面
                     ArchiveDraftFragment.open(ArchiveEditorFragment.this);
                 } else {
-                    String json = draft.getArchiveJson();
                     mArchive = Archive.fromJson(json);
+                    isGroupArchive = !isEmpty(mArchive.getGroupId());
                     titleView.setValue(mArchive.getTitle());
                     mEditor.setHtml(mArchive.getContent());
                 }
                 return true;
             }
-        }, new DialogHelper.OnDialogCancelListener() {
-            @Override
-            public void onCancel() {
-                // 创建新档案
-                createNewDraftArchive();
-            }
-        });
+        }).setTitleText(text).setConfirmText(size > 1 ? R.string.ui_base_text_have_a_look : R.string.ui_base_text_edit).show();
     }
 
     @Override
@@ -336,6 +345,16 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }
+        if (isGroupArchive) {
+            if (isEmpty(mArchive.getGroupId())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
+                return;
+            }
+        } else {
+            // 个人档案需要清空组织id
+            mArchive.setGroupId("");
+            mArchive.setType(Archive.ArchiveType.INDIVIDUAL);
+        }
         // 组织档案需要标签
         if (isEmpty(mArchive.getGroupId()) && mArchive.getLabel().size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
@@ -376,7 +395,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(archive, success, message);
                 if (success) {
                     // 提交成功，删除草稿
-                    ArchiveDraft.delete(mArchive.getId());
+                    //ArchiveDraft.delete(mArchive.getId());
                     mArchive = archive;
                     resultSucceededActivity();
                     //mArchive = archive;
@@ -385,14 +404,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     //openSettingDialog();
                 }
             }
-        }).add(mArchive);
+        }).addFormal(mArchive);
     }
 
     /**
      * 当前档案是否为草稿档案
      */
     private boolean isDraft() {
-        return isEmpty(mArchive.getId()) || mArchive.getId().contains("draft_");
+        return mArchive.isDraft() || isEmpty(mArchive.getId()) || mArchive.getId().contains("draft_");
     }
 
     @Override
@@ -412,21 +431,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
         if (isDraft() && (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent()))) {
-            ArchiveDraft draft = new ArchiveDraft();
-            draft.setId(mArchive.getId());
-            draft.setTitle(mArchive.getTitle());
-            draft.setGroupId(mArchive.getGroupId());
-            if (!isEmpty(mArchive.getGroupId()) && isEmpty(draft.getGroupName())) {
-                Organization group = Organization.get(mArchive.getId());
-                if (null != group) {
-                    draft.setGroupName(group.getName());
+            savingDraft();
+        }
+    }
+
+    private void savingDraft() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    if (null != archive && !isEmpty(archive.getId())) {
+                        mArchive = archive;
+                    }
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
                 }
             }
-            draft.setArchiveJson(Archive.toJson(mArchive));
-            draft.setCreateDate(Utils.formatDateOfNow(StringHelper.getString(R.string.ui_base_text_date_time_format)));
-            ArchiveDraft.save(draft);
-            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
-        }
+        }).addDraft(mArchive);
     }
 
     @Override
@@ -445,6 +466,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private CustomTextView userIcon, groupIcon;
     private ClearEditText participantText, siteText;
     private ClearEditText creatorText;
+    private View archiveTypeUser;
 
     private void openSettingDialog() {
         mArchive.setTitle(titleView.getValue());
@@ -467,6 +489,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     userIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_user_icon);
                     groupIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_group_icon);
                     groupNameText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker_text);
+                    archiveTypeUser = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_user);
+                    //archiveTypeGroup = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_group);
                     // 根据个人档案和组织档案显示某些元素
 //                    if (isEmpty(mQueryId)) {
 //                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(View.GONE);
@@ -543,6 +567,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         fetchingGroup(mArchive.getGroupId());
                     }
                 }
+                if (editorType == TYPE_ATTACHMENT) {
+                    isGroupArchive = true;
+                }
+                archiveTypeUser.setVisibility(editorType == TYPE_ATTACHMENT ? View.GONE : View.VISIBLE);
                 resetGroupArchiveOrUser();
             }
 
@@ -631,17 +659,17 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     case R.id.ui_popup_rich_editor_setting_share_draft:
                         if (!isEmpty(mArchive.getGroupId())) {
                             // 组织档案才能分享草稿
-                            ArrayList<SubMember> members = new ArrayList<>();
-                            if (!isEmpty(mArchive.getParticipant())) {
-                                String[] names = mArchive.getParticipant().split("、");
-                                for (String string : names) {
-                                    SubMember member = new SubMember();
-                                    member.setUserName(string);
-                                    member.getUserId();
-                                    members.add(member);
-                                }
-                            }
-                            GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, SubMember.toJson(members));
+//                            ArrayList<SubMember> members = new ArrayList<>();
+//                            if (!isEmpty(mArchive.getParticipant())) {
+//                                String[] names = mArchive.getParticipant().split("、");
+//                                for (String string : names) {
+//                                    SubMember member = new SubMember();
+//                                    member.setUserName(string);
+//                                    member.getUserId();
+//                                    members.add(member);
+//                                }
+//                            }
+                            GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
                             //getDraftShareInfo();
                         } else {
                             ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
@@ -1099,16 +1127,17 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mEditor.setHtml(mArchive.getContent());
                 break;
             case REQUEST_MEMBER:
-                List<SubMember> members = SubMember.fromJson(getResultedData(data));
-                String names = "";
-                if (null != members && members.size() > 0) {
-                    for (SubMember member : members) {
-                        names += (isEmpty(names) ? "" : "、") + member.getUserName();
-                    }
-                }
-                mArchive.setParticipant(names);
-                participantText.setValue(names);
-                getDraftShareInfo();
+                ArrayList<SubMember> members = SubMember.fromJson(getResultedData(data));
+                warningShareDraftTo(SubMember.getMemberNames(members), SubMember.getUserIds(members));
+//                String names = "";
+//                if (null != members && members.size() > 0) {
+//                    for (SubMember member : members) {
+//                        names += (isEmpty(names) ? "" : "、") + member.getUserName();
+//                    }
+//                }
+                //mArchive.setParticipant(names);
+                //participantText.setValue(names);
+                //getDraftShareInfo();
 //                if (!isEmpty(names)) {
 //                    participantText.focusEnd();
 //                }
@@ -1124,6 +1153,30 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 break;
         }
         super.onActivityResult(requestCode, data);
+    }
+
+    private void warningShareDraftTo(String names, final ArrayList<String> userIds) {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                shareDraftTo(userIds);
+                return true;
+            }
+        }).setTitleText(getString(R.string.ui_text_archive_details_editor_setting_share_names, names, userIds.size())).setConfirmText(R.string.ui_base_text_share).show();
+    }
+
+    private void shareDraftTo(ArrayList<String> userIds) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
+                    finish();
+                    ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive.getId(), Archive.Type.GROUP);
+                }
+            }
+        }).shareDraft(mArchive.getId(), userIds);
     }
 
     private void updateArchive(int type) {

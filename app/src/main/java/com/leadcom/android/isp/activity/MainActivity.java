@@ -18,6 +18,7 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.activity.ActivityEntranceFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.main.MainFragment;
 import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragment;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
@@ -27,6 +28,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
+import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.common.SystemUpdate;
 import com.leadcom.android.isp.model.organization.Invitation;
@@ -422,6 +424,9 @@ public class MainActivity extends TitleActivity {
                             break;
                         default:
                             saveMessage(msg, true, true);
+                            if (msg.isArchiveMsg()) {
+                                ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP);
+                            }
                             break;
                     }
                     return true;
