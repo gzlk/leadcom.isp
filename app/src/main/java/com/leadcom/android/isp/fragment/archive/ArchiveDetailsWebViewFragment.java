@@ -127,7 +127,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         archiveType = bundle.getInt(PARAM_DOC_TYPE, Archive.Type.GROUP);
-        isDraft = archiveType >= 3;
+        //isDraft = archiveType >= 3;
         selectedIndex = bundle.getInt(PARAM_CMT_INDEX, 0);
     }
 
@@ -405,7 +405,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                openEditSelector();
+                //openEditSelector();
+                Archive archive = (Archive) mAdapter.get(mQueryId);
+                String type = archive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE : ArchiveEditorFragment.MULTIMEDIA;
+                ArchiveEditorFragment.open(ArchiveDetailsWebViewFragment.this, mQueryId, type);
+                finish();
             }
         });
     }
@@ -451,7 +455,31 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private void displayArchive(Archive archive) {
+        isDraft = archive.isDraft();
         setCustomTitle(archive.getTitle());
+
+        if (isDraft) {
+            // 草稿档案只能查看
+            additionalLayout.setVisibility(View.GONE);
+            if (archive.isAuthor()) {
+                resetRightIconEvent();
+            }
+        } else {
+            // 非草稿档案，可以分享等等
+            setRightIcon(pushable ? 0 : R.string.ui_icon_more);
+            setRightText(pushable ? R.string.ui_base_text_push : 0);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    if (pushable) {
+                        // 打开推送页面
+                        openPushDialog();
+                    } else {
+                        fetchingShareInfo();
+                    }
+                }
+            });
+        }
         myRole = Cache.cache().getGroupRole(archive.getGroupId());
         // 设置收藏的参数为档案
         Collectable.resetArchiveCollectionParams(archive);
@@ -485,10 +513,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         for (Attachment attachment : archive.getAttach()) {
             mAdapter.update(attachment);
         }
-        if (!isDraft) {
-            displayAdditional(archive);
-            loadingComments(archive);
-        }
+        //if (!isDraft) {
+        // 草稿也可以有评论和赞什么的
+        displayAdditional(archive);
+        loadingComments(archive);
+        //}
     }
 
     private int getAdditionalPosition(Archive archive) {
@@ -525,26 +554,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private void initializeAdapter() {
         if (null == mAdapter) {
             setCustomTitle(R.string.ui_text_archive_details_fragment_title);
-            if (isDraft) {
-                // 草稿档案只能查看
-                additionalLayout.setVisibility(View.GONE);
-            }
-            if (!isDraft) {
-                // 非草稿档案，可以分享等等
-                setRightIcon(pushable ? 0 : R.string.ui_icon_more);
-                setRightText(pushable ? R.string.ui_base_text_push : 0);
-                setRightTitleClickListener(new OnTitleButtonClickListener() {
-                    @Override
-                    public void onClick() {
-                        if (pushable) {
-                            // 打开推送页面
-                            openPushDialog();
-                        } else {
-                            fetchingShareInfo();
-                        }
-                    }
-                });
-            }
             mAdapter = new DetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
 

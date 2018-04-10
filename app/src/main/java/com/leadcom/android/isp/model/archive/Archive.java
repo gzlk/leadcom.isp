@@ -342,6 +342,13 @@ public class Archive extends Additional {
         return Cache.cache().userId.equals(userId);
     }
 
+    /**
+     * 是否是附件类型的档案
+     */
+    public boolean isAttachmentArchive() {
+        return image.size() > 0 || video.size() > 0 || office.size() > 0 || attach.size() > 0;
+    }
+
     @Column(Organization.Field.GroupId)
     private String groupId;            //群ID
 

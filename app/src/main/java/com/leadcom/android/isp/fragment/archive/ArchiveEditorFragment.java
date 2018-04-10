@@ -262,6 +262,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 //            if (null != drafts && drafts.size() > 0) {
 //                warningDraftExist(drafts.get(0), drafts.size());
 //            }
+        } else {
+            fetchingSingleDraft();
         }
         attachmentView.setVisibility(editorType == TYPE_ATTACHMENT ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
@@ -269,6 +271,24 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
         aAdapter = new AttachmentAdapter();
         attachmentRecyclerView.setAdapter(aAdapter);
+    }
+
+    private void fetchingSingleDraft() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success && null != archive && !isEmpty(archive.getId())) {
+                    mArchive = archive;
+                    isGroupArchive = !isEmpty(mArchive.getGroupId());
+                    titleView.setValue(mArchive.getTitle());
+                    mEditor.setHtml(mArchive.getContent());
+                } else {
+                    ToastHelper.make().showMsg("要编辑的文档不存在");
+                    finish();
+                }
+            }
+        }).find(Archive.Type.GROUP, mQueryId, false);
     }
 
     private void fetchingDraft() {
