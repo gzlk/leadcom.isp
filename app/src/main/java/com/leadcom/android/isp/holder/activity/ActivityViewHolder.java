@@ -30,6 +30,7 @@ import com.leadcom.android.isp.nim.model.extension.TopicAttachment;
 import com.leadcom.android.isp.nim.model.extension.VoteAttachment;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.SimpleCallback;
+import com.netease.nim.uikit.business.uinfo.UserInfoHelper;
 import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.friend.FriendService;
@@ -174,7 +175,7 @@ public class ActivityViewHolder extends BaseViewHolder {
                 fetchTeamMembers(team);
             }
             titleView.setText(null == team ? "无活动名称" : team.getName());
-            descView.setText(format("%s：%s", contact.getFromNick(), getRecentMsgType(contact)));
+            descView.setText(format("%s：%s", UserInfoHelper.getUserTitleName(contact.getContactId(), contact.getSessionType()), getRecentMsgType(contact)));
         }
         boolean mutex = isMutex(contact);
         flagView.setVisibility(contact.getUnreadCount() > 0 ? View.VISIBLE : View.GONE);
