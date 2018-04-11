@@ -8,6 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <include
+            layout="@layout/tool_view_activity_normal_title_left_container"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/ui_main_group_title_container"
             android:layout_width="wrap_content"

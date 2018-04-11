@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.fragment.main;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,12 +16,14 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
 import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
@@ -63,13 +66,52 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 public class GroupFragment extends BaseOrganizationFragment {
 
+    private static final String PARAM_SINGLE = "gf_single";
     private static boolean isFirst = true;
+
+    public static GroupFragment newInstance(Bundle bundle) {
+        GroupFragment gf = new GroupFragment();
+        gf.setArguments(bundle);
+        return gf;
+    }
+
+    private static Bundle getBundle(String groupId) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        bundle.putBoolean(PARAM_SINGLE, true);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String groupId) {
+        fragment.openActivity(GroupFragment.class.getName(), getBundle(groupId), false, false);
+    }
+
+    public static void open(Context context, String groupId) {
+        BaseActivity.openActivity(context, GroupFragment.class.getName(), getBundle(groupId), false, false);
+    }
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        isSingle = bundle.getBoolean(PARAM_SINGLE, false);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_SINGLE, isSingle);
+    }
+
     @ViewId(R.id.ui_main_tool_bar_container)
     private View toolBar;
+    @ViewId(R.id.ui_ui_custom_title_left_container)
+    private View leftContainer;
     @ViewId(R.id.ui_main_group_title_text)
     private TextView titleTextView;
     @ViewId(R.id.ui_main_group_title_allow)
     private CustomTextView titleAllow;
+    @ViewId(R.id.ui_main_group_create)
+    private View createView;
     @ViewId(R.id.ui_main_group_mine_background)
     private RelativeLayout groupsBkg;
     @ViewId(R.id.ui_main_group_mine_list_bg)
@@ -80,6 +122,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     private GroupAdapter gAdapter;
     private DetailsAdapter dAdapter;
     private String[] items;
+    private boolean isSingle = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,7 +152,10 @@ public class GroupFragment extends BaseOrganizationFragment {
         super.onActivityCreated(savedInstanceState);
         //tryPaddingContent(toolBar, false);
         isLoadingComplete(true);
-
+        // 单个组织查询时，需要显示左侧的返回
+        leftContainer.setVisibility(isSingle ? View.VISIBLE : View.GONE);
+        createView.setVisibility(isSingle ? View.GONE : View.VISIBLE);
+        titleAllow.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         // 头像选择是需要剪切的
         isChooseImageForCrop = true;
         // 头像是需要压缩的
@@ -169,7 +215,9 @@ public class GroupFragment extends BaseOrganizationFragment {
     @Override
     public void doingInResume() {
         initializeDetailsAdapter();
-        initializeGroupsAdapter();
+        if (!isSingle) {
+            initializeGroupsAdapter();
+        }
     }
 
     @Override
@@ -228,7 +276,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     }
 
     @Click({R.id.ui_main_group_title_container, R.id.ui_main_group_mine_background,
-            R.id.ui_main_group_create})
+            R.id.ui_main_group_create, R.id.ui_ui_custom_title_left_container})
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_main_group_title_container:
@@ -241,6 +289,9 @@ public class GroupFragment extends BaseOrganizationFragment {
             case R.id.ui_main_group_create:
                 view.startAnimation(App.clickAnimation());
                 CreateOrganizationFragment.open(GroupFragment.this);
+                break;
+            case R.id.ui_ui_custom_title_left_container:
+                finish();
                 break;
         }
     }
@@ -329,9 +380,9 @@ public class GroupFragment extends BaseOrganizationFragment {
         if (null != list) {
             for (Organization group : list) {
                 group.setSelectable(true);
-                gAdapter.update(group);
                 Cache.cache().updateGroup(group);
             }
+            gAdapter.update(list, true);
             if (isFirst) {
                 isFirst = false;
                 initializeGroupsPosition();
@@ -378,16 +429,18 @@ public class GroupFragment extends BaseOrganizationFragment {
 
     private void onGroupChange(Organization group) {
         titleTextView.setText(group.getName());
-        for (int i = 0, len = gAdapter.getItemCount(); i < len; i++) {
-            Organization org = gAdapter.get(i);
-            if (org.isSelected()) {
-                if (!org.getId().equals(group.getId())) {
-                    org.setSelected(false);
+        if (null != gAdapter) {
+            for (int i = 0, len = gAdapter.getItemCount(); i < len; i++) {
+                Organization org = gAdapter.get(i);
+                if (org.isSelected()) {
+                    if (!org.getId().equals(group.getId())) {
+                        org.setSelected(false);
+                        gAdapter.update(org);
+                    }
+                } else if (org.getId().equals(group.getId())) {
+                    org.setSelected(true);
                     gAdapter.update(org);
                 }
-            } else if (org.getId().equals(group.getId())) {
-                org.setSelected(true);
-                gAdapter.update(org);
             }
         }
         if (isEmpty(dAdapter.get(0).getId()) || !isEmpty(mQueryId) || !dAdapter.get(0).getId().equals(group.getId())) {
@@ -469,6 +522,16 @@ public class GroupFragment extends BaseOrganizationFragment {
                 SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
                 dAdapter.add(item);
             }
+            if (isSingle) {
+                fetchingRemoteOrganization(mQueryId);
+            }
+        }
+    }
+
+    @Override
+    protected void onFetchingRemoteOrganizationComplete(Organization organization) {
+        if (null != organization) {
+            onGroupChange(organization);
         }
     }
 
@@ -530,9 +593,10 @@ public class GroupFragment extends BaseOrganizationFragment {
 //                }
 //                String json = Json.gson().toJson(concerns, new TypeToken<ArrayList<Concern>>() {
 //                }.getType());
-                if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
-                    ConcernedOrganizationFragment.open(this, group.getId());
-                }
+                //if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
+                // 每个人都可以打开查看关注的组织列表？
+                ConcernedOrganizationFragment.open(this, group.getId());
+                //}
                 break;
         }
     }

@@ -16,7 +16,6 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.FullTextQueryViewHolder;
@@ -252,7 +251,7 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
             if (model instanceof SimpleUser) {
                 App.openUserInfo(FullTextQueryFragment.this, ((SimpleUser) model).getUserId());
             } else if (model instanceof Organization) {
-                openActivity(OrganizationPropertiesFragment.class.getName(), model.getId(), false, false, true);
+                GroupFragment.open(FullTextQueryFragment.this, model.getId());
             } else if (model instanceof Archive) {
                 Archive archive = (Archive) model;
                 // 档案类型：1个人档案，2组织档案(这里的档案类型不一样)

@@ -34,6 +34,8 @@
     <string name="ui_organization_interesting_concern_as_upper">上级组织</string>
     <string name="ui_organization_interesting_concern_as_friend">友好组织</string>
     <string name="ui_organization_concerned_fragment_title">关注组织</string>
+    <string name="ui_organization_concerned_nothing">没有关注过其他组织</string>
+    <string name="ui_organization_concerned_search_nothing">没有组织</string>
     <string-array name="ui_organization_concerned_type">
         <item>当前组织</item>
         <item>上级</item>

@@ -15,11 +15,12 @@ import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
-import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Role;
@@ -151,15 +152,22 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                 concerns.clear();
                 if (success && null != list) {
                     concerns.addAll(list);
-                    mAdapter.update(list);
                 }
+                searching();
             }
         }).list(mQueryId, remotePageNumber, "");
     }
 
     private void searching() {
         mAdapter.clear();
+        setNothingText(isEmpty(searchingText) ? R.string.ui_organization_concerned_nothing : R.string.ui_organization_concerned_search_nothing);
+        // 是否有权限关注或取消关注
+        boolean able = hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION);
         for (Concern concern : concerns) {
+            if (!able && !concern.isConcerned()) {
+                // 没有关注权限的人只能查看已关注的列表
+                continue;
+            }
             if (!isEmpty(searchingText)) {
                 if (concern.getName().contains(searchingText)) {
                     mAdapter.update(concern);
@@ -168,6 +176,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                 mAdapter.update(concern);
             }
         }
+        displayNothing(mAdapter.getItemCount() < 1);
     }
 
     private boolean hasOperation(String groupId, String operation) {
@@ -175,22 +184,19 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         return null != role && role.hasOperation(operation);
     }
 
-    private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
-        @Override
-        public void onClick(int index) {
-            if (!hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION)) {
-                return;
-            }
-            Concern concern = mAdapter.get(index);
-            if (concern.isConcerned()) {
-                // 取消关注
-                warningCancelConcern(index);
-            } else {
-                // 点击关注
-                warningConcern(index);
-            }
+    private void checkConcern(int index) {
+        if (!hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION)) {
+            return;
         }
-    };
+        Concern concern = mAdapter.get(index);
+        if (concern.isConcerned()) {
+            // 取消关注
+            warningCancelConcern(index);
+        } else {
+            // 点击关注
+            warningConcern(index);
+        }
+    }
 
     private void warningCancelConcern(final int index) {
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
@@ -320,11 +326,28 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         }).add(mQueryId, mAdapter.get(index).getId());
     }
 
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            switch (view.getId()) {
+                case R.id.ui_holder_view_group_interest_root:
+                case R.id.ui_holder_view_group_interest_cover:
+                    UserIntroductionFragment.open(ConcernedOrganizationFragment.this, mAdapter.get(index));
+                    //GroupFragment.open(ConcernedOrganizationFragment.this, mAdapter.get(index).getId());
+                    break;
+                case R.id.ui_holder_view_group_interest_button:
+                    checkConcern(index);
+                    break;
+            }
+        }
+    };
+
     private class ConcernedAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Concern> {
         @Override
         public GroupInterestViewHolder onCreateViewHolder(View itemView, int viewType) {
             GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ConcernedOrganizationFragment.this);
-            holder.addOnViewHolderClickListener(onViewHolderClickListener);
+            holder.setOnViewHolderElementClickListener(elementClickListener);
+            holder.setButtonShown(hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION));
             return holder;
         }
 

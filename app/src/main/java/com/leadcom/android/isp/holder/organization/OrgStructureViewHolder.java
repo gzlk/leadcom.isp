@@ -10,17 +10,17 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragment;
+import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.DepthViewPager;
 import com.leadcom.android.isp.lib.view.WrapContentViewPager;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.view.OrganizationConcerned;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -389,7 +389,7 @@ public class OrgStructureViewHolder extends BaseViewHolder {
     private OrganizationConcerned.OnContainerClickListener containerClickListener = new OrganizationConcerned.OnContainerClickListener() {
         @Override
         public void onClick(OrganizationConcerned concerned, String id) {
-            openActivity(OrganizationPropertiesFragment.class.getName(), id, false, false, true);
+            GroupFragment.open(fragment(), id);
         }
     };
 }

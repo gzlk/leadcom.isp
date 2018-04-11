@@ -41,15 +41,25 @@ public class GroupInterestViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_group_interest_button)
     private CorneredButton buttonView;
 
-    private boolean selectable = false;
+    private boolean selectable = false, showButton = true;
 
     public GroupInterestViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        coverView.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(ImageDisplayer displayer, String url) {
+                coverView.performClick();
+            }
+        });
     }
 
     public void setSelectable(boolean selectable) {
         this.selectable = selectable;
+    }
+
+    public void setButtonShown(boolean shown) {
+        showButton = shown;
     }
 
     public void showContent(Organization organization) {
@@ -97,12 +107,17 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         name = getSearchingText(name, searchingText);
         //name += format((concern.isConcerned() ? "(%s)" : ""), Concern.getTypeString(concern.getType()));
         nameView.setText(Html.fromHtml(name));
+        buttonView.setVisibility(showButton ? View.VISIBLE : View.GONE);
         buttonView.setText(concern.isConcerned() ? R.string.ui_organization_interesting_concerned : R.string.ui_organization_interesting_concern);
         buttonView.setNormalColor(getColor(concern.isConcerned() ? R.color.color_3eb135 : R.color.colorPrimary));
     }
 
     @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button})
     private void elementClick(View view) {
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+            return;
+        }
         switch (view.getId()) {
             case R.id.ui_holder_view_group_interest_root:
                 if (buttonView.getVisibility() == View.GONE) {
