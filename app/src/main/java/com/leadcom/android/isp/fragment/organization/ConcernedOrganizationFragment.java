@@ -16,6 +16,7 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
+import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
@@ -336,8 +337,8 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
             switch (view.getId()) {
                 case R.id.ui_holder_view_group_interest_root:
                 case R.id.ui_holder_view_group_interest_cover:
-                    UserIntroductionFragment.open(ConcernedOrganizationFragment.this, mAdapter.get(index));
-                    //GroupFragment.open(ConcernedOrganizationFragment.this, mAdapter.get(index).getId());
+                    //UserIntroductionFragment.open(ConcernedOrganizationFragment.this, mAdapter.get(index));
+                    GroupFragment.open(ConcernedOrganizationFragment.this, mAdapter.get(index).getId());
                     break;
                 case R.id.ui_holder_view_group_interest_button:
                     checkConcern(index);
