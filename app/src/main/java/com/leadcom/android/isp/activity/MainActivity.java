@@ -19,14 +19,14 @@ import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.fragment.main.MainFragment;
-import com.leadcom.android.isp.fragment.organization.OrganizationPropertiesFragment;
-import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Message;
@@ -311,7 +311,7 @@ public class MainActivity extends TitleActivity {
             case NimMessage.Type.GROUP_INVITE:
                 // 受邀者出现的对话框是“好”,“不用了”
                 if (msg.isHandled()) {
-                    openActivity(activity, OrganizationPropertiesFragment.class.getName(), msg.getGroupId(), false, false, true);
+                    GroupFragment.open(activity, msg.getGroupId());
                 } else {
                     yes = StringHelper.getString(R.string.ui_base_text_ok);
                     no = StringHelper.getString(R.string.ui_base_text_no_need);
@@ -428,6 +428,10 @@ public class MainActivity extends TitleActivity {
                                 ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP);
                             }
                             break;
+                    }
+                    if (msg.isGroupMsg()) {
+                        // 组织邀请等信息，需要通知app内所有已打开的页面刷新
+                        NimApplication.dispatchEvents(msg);
                     }
                     return true;
                 }

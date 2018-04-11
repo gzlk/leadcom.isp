@@ -430,7 +430,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     /**
      * 按照列表挨个通知回调处理消息到达事件
      */
-    private static void dispatchEvents(NimMessage message) {
+    public static void dispatchEvents(NimMessage message) {
         for (OnNimMessageEvent event : messageEvents) {
             event.onMessageEvent(message);
         }

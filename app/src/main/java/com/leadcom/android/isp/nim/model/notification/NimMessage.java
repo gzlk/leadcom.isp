@@ -10,6 +10,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.assit.WhereBuilder;
+import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 
 import java.util.ArrayList;
@@ -112,6 +113,13 @@ public class NimMessage extends Message implements MsgAttachment {
 
     public static void clear() {
         new Dao<>(NimMessage.class).clear();
+    }
+
+    public static List<NimMessage> count() {
+        QueryBuilder<NimMessage> builder = new QueryBuilder<>(NimMessage.class)
+                .columns(new String[]{Field.MessageType, " count(*) as type "})
+                .groupBy(Field.MessageType);
+        return new Dao<>(NimMessage.class).query(builder);
     }
 
     // 活动的tid

@@ -85,11 +85,6 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
-    public int getLayout() {
-        return R.layout.fragment_top_paddingable_swipe_recycler_view;
-    }
-
-    @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_system_message_fragment_title);
         setNothingText(R.string.ui_system_message_nothing);
@@ -135,6 +130,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 }
             });
             fetchingPushMessages();
+            //NimMessage.count();
         }
     }
 
