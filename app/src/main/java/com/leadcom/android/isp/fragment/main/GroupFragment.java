@@ -51,8 +51,6 @@ import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
-
 /**
  * <b>功能描述：</b>首页 - 组织<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -402,6 +400,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         }
         // 重新拉取我的权限列表
         App.app().fetchPermissions();
+        stopRefreshing();
     }
 
     private void initializeGroupsAdapter() {
@@ -514,8 +513,6 @@ public class GroupFragment extends BaseOrganizationFragment {
         if (null == dAdapter) {
             dAdapter = new DetailsAdapter();
             mRecyclerView.setAdapter(dAdapter);
-            // ios style
-            OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
 
             dAdapter.add(new Organization());
             for (String string : items) {
