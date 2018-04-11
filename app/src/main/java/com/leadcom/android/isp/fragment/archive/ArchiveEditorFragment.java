@@ -139,11 +139,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         //mArchive.setId(Archive.getDraftId());
         // 标记是否为组织档案
         //mArchive.setGroupId(mQueryId);
-        // 设置来源为自己
-        mArchive.setUserId(Cache.cache().userId);
-        mArchive.setUserName(Cache.cache().userName);
         // 默认为个人普通档案或组织普通档案
-        mArchive.setType(Archive.ArchiveType.NORMAL);
+        mArchive.setType(Archive.Type.USER);
         // 新建档案默认为草稿
         mArchive.setStatus(Archive.DraftType.DRAFT);
         // 档案默认向所有人公开的
@@ -483,7 +480,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View settingDialogView;
     private ImageDisplayer coverView;
     private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText, groupNameText;
-    private CustomTextView userIcon, groupIcon;
+    private CustomTextView userIcon, groupIcon, publicIcon, privateIcon;
     private ClearEditText participantText, siteText;
     private ClearEditText creatorText;
     private View archiveTypeUser;
@@ -510,6 +507,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     groupIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_group_icon);
                     groupNameText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker_text);
                     archiveTypeUser = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_user);
+                    publicIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_public_icon);
+                    privateIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_private_icon);
                     //archiveTypeGroup = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_group);
                     // 根据个人档案和组织档案显示某些元素
 //                    if (isEmpty(mQueryId)) {
@@ -617,7 +616,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         R.id.ui_popup_rich_editor_setting_property,
                         R.id.ui_popup_rich_editor_setting_category,
                         R.id.ui_popup_rich_editor_setting_participant,
-                        R.id.ui_popup_rich_editor_setting_public,
+                        //R.id.ui_popup_rich_editor_setting_public,
+                        R.id.ui_popup_rich_editor_setting_public_public,
+                        R.id.ui_popup_rich_editor_setting_public_private,
                         R.id.ui_popup_rich_editor_setting_label,
                         R.id.ui_popup_rich_editor_setting_share,
                         R.id.ui_popup_rich_editor_setting_share_draft,
@@ -638,11 +639,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     case R.id.ui_popup_rich_editor_setting_type_user:
                         // 选择新建用户档案
                         isGroupArchive = false;
+                        mArchive.setType(Archive.Type.USER);
                         resetGroupArchiveOrUser();
                         break;
                     case R.id.ui_popup_rich_editor_setting_type_group:
                         // 选择新建组织档案
                         isGroupArchive = true;
+                        mArchive.setType(Archive.Type.GROUP);
                         resetGroupArchiveOrUser();
                         break;
                     case R.id.ui_popup_rich_editor_setting_group_picker:
@@ -672,6 +675,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     case R.id.ui_popup_rich_editor_setting_public:
                         openSecuritySetting();
                         break;
+                    case R.id.ui_popup_rich_editor_setting_public_public:
+                        mArchive.setAuthPublic(Seclusion.Type.Public);
+                        resetPublicStatus();
+                        break;
+                    case R.id.ui_popup_rich_editor_setting_public_private:
+                        mArchive.setAuthPublic(isEmpty(mArchive.getGroupId()) ? Seclusion.Type.Private : Seclusion.Type.Group);
+                        resetPublicStatus();
+                        break;
                     case R.id.ui_popup_rich_editor_setting_label:
                         openLabelPicker();
                         break;
@@ -700,6 +711,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         break;
                 }
                 return false;
+            }
+
+            private void resetPublicStatus() {
+                boolean isPublic = mArchive.getAuthPublic() == Seclusion.Type.Public;
+                publicIcon.setTextColor(getColor(isPublic ? R.color.colorPrimary : R.color.textColorHintLight));
+                privateIcon.setTextColor(getColor(!isPublic ? R.color.colorPrimary : R.color.textColorHintLight));
             }
 
             private DictionaryHelper.OnDictionarySelectedListener selectedListener = new DictionaryHelper.OnDictionarySelectedListener() {
@@ -1165,7 +1182,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             case REQUEST_GROUP:
                 ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
                 if (null != groups && groups.size() > 0) {
+                    // 设置组织id
                     mArchive.setGroupId(groups.get(0).getGroupId());
+                    // 设置类别为组织档案
+                    mArchive.setType(Archive.Type.GROUP);
                     if (null != groupNameText) {
                         groupNameText.setText(groups.get(0).getGroupName());
                     }

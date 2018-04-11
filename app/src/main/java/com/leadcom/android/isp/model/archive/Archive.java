@@ -151,7 +151,7 @@ public class Archive extends Additional {
         /**
          * 个人
          */
-        public static final int USER = 0;
+        public static final int USER = 2;
         /**
          * 组织、活动
          */
@@ -365,12 +365,7 @@ public class Archive extends Additional {
     }
 
     /**
-     * 档案类型
-     * <p>
-     * 个人档案时：(1.普通个人档案,2.个人转到组织的档案,3.活动)
-     * </p>
-     * <p>
-     * 组织档案时：(1.普通组织档案,2.个人转到组织的档案,3.活动存档)
+     * 档案类型：1，组织档案；2，个人档案
      * </p>
      */
     @Column(Field.Type)

@@ -331,16 +331,16 @@ public class TalkTeamPropertyFragment extends BaseTalkTeamFragment {
     }
 
     private void dismissTeam() {
-        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
+        TeamRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<TalkTeam>() {
             @Override
-            public void onResponse(Member member, boolean success, String message) {
-                super.onResponse(member, success, message);
+            public void onResponse(TalkTeam talkTeam, boolean success, String message) {
+                super.onResponse(talkTeam, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_team_talk_team_dismissed);
                     resultData(TeamExtras.RESULT_EXTRA_REASON_DISMISS);
                 }
             }
-        }).exitTeam(mQueryId);
+        }).end(mQueryId);
     }
 
     private void initializeTeam(Team team) {

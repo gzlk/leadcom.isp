@@ -502,8 +502,69 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                        android:background="@drawable/ui_background_clickable"
+                        android:baselineAligned="false"
                         android:orientation="horizontal"
-                        android:paddingTop="@dimen/ui_static_dp_5">
+                        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                        android:paddingStart="@dimen/ui_static_dp_zero">
+
+                        <LinearLayout
+                            android:id="@+id/ui_popup_rich_editor_setting_public_public"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:minHeight="@dimen/ui_base_dimen_button_height"
+                            android:orientation="horizontal">
+
+                            <com.hlk.hlklib.lib.view.CustomTextView
+                                android:id="@+id/ui_popup_rich_editor_setting_public_public_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                                android:text="@string/ui_icon_radio_selected"
+                                android:textColor="@color/colorPrimary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ui_base_text_public" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ui_popup_rich_editor_setting_public_private"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:minHeight="@dimen/ui_base_dimen_button_height"
+                            android:orientation="horizontal">
+
+                            <com.hlk.hlklib.lib.view.CustomTextView
+                                android:id="@+id/ui_popup_rich_editor_setting_public_private_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/ui_static_dp_5"
+                                android:text="@string/ui_icon_radio_selected"
+                                android:textColor="@color/textColorHintLight" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ui_base_text_private" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/ui_static_dp_5"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/ui_popup_rich_editor_setting_public_text"
