@@ -8,16 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/transparent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+        <include layout="@layout/holder_view_searchable_inputable" />
 
-            <include layout="@layout/holder_view_searchable_inputable" />
-
-        </LinearLayout>
     </FrameLayout>
 
     <LinearLayout

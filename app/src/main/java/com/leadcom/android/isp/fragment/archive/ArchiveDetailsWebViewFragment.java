@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,6 +18,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.hlk.hlklib.lib.view.ToggleButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
@@ -26,19 +26,20 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.crash.system.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.organization.StructureFragment;
+import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.archive.ArchiveAttachmentViewHolder;
@@ -46,7 +47,6 @@ import com.leadcom.android.isp.holder.archive.ArchiveDetailsAdditionalViewHolder
 import com.leadcom.android.isp.holder.archive.ArchiveDetailsCommentViewHolder;
 import com.leadcom.android.isp.holder.archive.ArchiveDetailsViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
-import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnKeyboardChangeListener;
@@ -60,10 +60,10 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
-import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.user.Collection;
@@ -456,7 +456,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
         if (isDraft) {
             // 草稿档案只能查看
-            additionalLayout.setVisibility(View.GONE);
+            //additionalLayout.setVisibility(View.GONE);
             if (archive.isAuthor()) {
                 resetRightIconEvent();
             }
@@ -483,7 +483,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             // 是否可以删除档案
             enableShareDelete = hasOperation(GRPOperation.ARCHIVE_DELETE);
             enableShareForward = hasOperation(GRPOperation.ARCHIVE_FORWARD);
-            enableShareRecommend = !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
+            enableShareRecommend = archive.isPublic() && !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
             enableShareRecommended = archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
         }
         // 档案创建者可以删除评论
@@ -634,29 +634,15 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             }
 
             private void showConcernedGroups() {
-                Model supper = new Model();
-                supper.setId("supper");
-                supper.setAccessToken("上级组织");
-                Model sub = new Model();
-                sub.setId("subgroup");
-                sub.setAccessToken("下级组织");
-                ArrayList<Concern> concerns = StructureFragment.selectedOrganization.getConGroup();
-                for (Concern concern : concerns) {
-                    if (concern.getType() == Concern.Type.UPPER) {
-                        if (!cAdapter.exist(supper)) {
-                            cAdapter.add(supper);
+                ConcernRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Concern>() {
+                    @Override
+                    public void onResponse(List<Concern> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                        super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                        if (success && null != list) {
+                            cAdapter.update(list);
                         }
-                        cAdapter.update(concern);
                     }
-                }
-                for (Concern concern : concerns) {
-                    if (concern.getType() == Concern.Type.SUBGROUP) {
-                        if (!cAdapter.exist(sub)) {
-                            cAdapter.add(sub);
-                        }
-                        cAdapter.update(concern);
-                    }
-                }
+                }).list(((Archive) mAdapter.get(mQueryId)).getGroupId(), 1, "");
             }
 
             @Override
@@ -665,20 +651,21 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                //tryPushArchive();
+                ArrayList<String> groupIds = new ArrayList<>();
+                Iterator<Concern> iterator = cAdapter.iterator();
+                while (iterator.hasNext()) {
+                    Concern concern = iterator.next();
+                    if (concern.isSelected()) {
+                        groupIds.add(concern.getId());
+                    }
+                }
+                tryPushArchive(groupIds);
                 return true;
             }
         }).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
 
     private void tryPushArchive(ArrayList<String> groupIds) {
-//        ArrayList<String> groupIds = new ArrayList<>();
-//        for (int i = 0; i < cAdapter.getItemCount(); i++) {
-//            Model model = cAdapter.get(i);
-//            if (model.isSelected()) {
-//                groupIds.add(model.getId());
-//            }
-//        }
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
@@ -693,56 +680,34 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            Concern concern = (Concern) cAdapter.get(index);
+            Concern concern = cAdapter.get(index);
             concern.setSelected(!concern.isSelected());
             cAdapter.update(concern);
         }
     };
 
-    private class ConcernAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
-
-        private static final int TP_TITLE = 0, TP_GROUP = 1;
+    private class ConcernAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Concern> {
 
         @Override
-        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
-            if (viewType == TP_GROUP) {
-                GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
-                holder.setSelectable(true);
-                holder.addOnViewHolderClickListener(clickListener);
-                return holder;
-            } else {
-                TextViewHolder tvh = new TextViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
-                tvh.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-                return tvh;
-            }
+        public GroupInterestViewHolder onCreateViewHolder(View itemView, int viewType) {
+            GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+            holder.setSelectable(true);
+            holder.addOnViewHolderClickListener(clickListener);
+            return holder;
         }
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == TP_TITLE ? R.layout.holder_view_text_olny : R.layout.holder_view_group_interesting_item;
+            return R.layout.holder_view_group_interesting_item;
         }
 
         @Override
-        public int getItemViewType(int position) {
-            Model model = get(position);
-            if (model.getId().equals("supper") || model.getId().equals("subgroup")) {
-                return TP_TITLE;
-            }
-            return TP_GROUP;
+        public void onBindHolderOfView(GroupInterestViewHolder holder, int position, @Nullable Concern item) {
+            holder.showContent(item);
         }
 
         @Override
-        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-            if (holder instanceof GroupInterestViewHolder) {
-                ((GroupInterestViewHolder) holder).showContent((Organization) item);
-            } else if (holder instanceof TextViewHolder) {
-                assert item != null;
-                ((TextViewHolder) holder).showContent(item.getAccessToken());
-            }
-        }
-
-        @Override
-        protected int comparator(Model item1, Model item2) {
+        protected int comparator(Concern item1, Concern item2) {
             return 0;
         }
     }
@@ -776,6 +741,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     @Override
+    protected void shareToForward() {
+        openPushDialog();
+    }
+
+    @Override
     protected void shareToRecommend() {
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
@@ -800,28 +770,28 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private void tryRecommendArchive() {
         Archive archive = (Archive) mAdapter.get(mQueryId);
         if (null != archive) {
-            // 没有推荐则推荐，有推荐则取消推荐
-            if (!archive.isRecommend()) {
-                if (!archive.isRecommendable()) {
-                    // 无图无视频
-                    ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_no_image_video);
-                } else {
-                    // 有图或者视频，可以推荐
-                    if (Utils.hasImage(archive.getContent()) || Utils.hasVideo(archive.getContent())) {
-                        recommendArchive(archive);
-                    } else {
-                        long len = archive.getHtmlClearedLength();
-                        if (len < 70) {
-                            ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_too_short);
-                        } else {
-                            // 推荐
-                            recommendArchive(archive);
-                        }
-                    }
-                }
+            if (isEmpty(archive.getId()) || archive.getId().equals("null")) {
+                ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_id_null);
             } else {
-                if (isEmpty(archive.getId()) || archive.getId().equals("null")) {
-                    ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_id_null);
+                // 没有推荐则推荐，有推荐则取消推荐
+                if (!archive.isRecommend()) {
+//                    if (!archive.isRecommendable()) {
+//                        // 无图无视频
+//                        ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_no_image_video);
+//                    } else {
+//                        // 有图或者视频，可以推荐
+//                        if (Utils.hasImage(archive.getContent()) || Utils.hasVideo(archive.getContent())) {
+//                            recommendArchive(archive);
+//                        } else {
+//                            long len = archive.getHtmlClearedLength();
+//                            if (len < 70) {
+//                                ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_content_too_short);
+//                            } else {
+                    // 推荐
+                    recommendArchive(archive);
+//                            }
+//                        }
+//                    }
                 } else {
                     unRecommendArchive(archive.getRcmdId());
                 }
@@ -902,9 +872,35 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     Attachment attachment = (Attachment) mAdapter.get(index);
                     FilePreviewHelper.previewFile(Activity(), attachment.getUrl(), attachment.getName(), attachment.getExt());
                     break;
+                case R.id.ui_holder_view_archive_details_public_toggle:
+                    ToggleButton toggleButton = (ToggleButton) view;
+                    updateArchivePublic(toggleButton.isToggleOn());
+                    break;
             }
         }
     };
+
+    private void resetPublic() {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        enableShareRecommend = archive.isPublic() && !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
+    }
+
+    private void updateArchivePublic(final boolean isPublic) {
+        Archive archive = (Archive) mAdapter.get(mQueryId);
+        final boolean isGroup = !isEmpty(archive.getGroupId());
+        archive.setAuthPublic(isPublic ? Seclusion.Type.Public : (!isGroup ? Seclusion.Type.Private : Seclusion.Type.Group));
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    mAdapter.notifyItemChanged(0);
+                    resetPublic();
+                    ToastHelper.make().showMsg(isPublic ? (isGroup ? R.string.ui_text_archive_details_public_group : R.string.ui_text_archive_details_public_individual) : R.string.ui_text_archive_details_publicable);
+                }
+            }
+        }).update((Archive) mAdapter.get(mQueryId), ArchiveRequest.TYPE_AUTH);
+    }
 
     private void showInputBoard(boolean showInput) {
         additionalLayout.setVisibility(showInput ? View.GONE : View.VISIBLE);

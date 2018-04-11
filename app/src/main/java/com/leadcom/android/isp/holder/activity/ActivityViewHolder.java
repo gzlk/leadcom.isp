@@ -174,8 +174,14 @@ public class ActivityViewHolder extends BaseViewHolder {
             if (null != team) {
                 fetchTeamMembers(team);
             }
+            String nickName = "";
+            try {
+                nickName = contact.getFromNick();
+            } catch (Exception ignore) {
+
+            }
             titleView.setText(null == team ? "无活动名称" : team.getName());
-            descView.setText(format("%s：%s", UserInfoHelper.getUserTitleName(contact.getContactId(), contact.getSessionType()), getRecentMsgType(contact)));
+            descView.setText(isEmpty(nickName) ? "" : format("%s：%s", nickName, getRecentMsgType(contact)));
         }
         boolean mutex = isMutex(contact);
         flagView.setVisibility(contact.getUnreadCount() > 0 ? View.VISIBLE : View.GONE);

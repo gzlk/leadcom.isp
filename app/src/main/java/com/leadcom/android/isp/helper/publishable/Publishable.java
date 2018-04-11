@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.helper.publishable;
 
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Comment;
@@ -32,7 +33,7 @@ public abstract class Publishable {
 
     int getMethodType() {
         if (null != mArchive) {
-            return null == mArchive.getGroEntity() ? Comment.Type.USER : Comment.Type.GROUP;
+            return StringHelper.isEmpty(mArchive.getGroupId()) ? Comment.Type.USER : Comment.Type.GROUP;
         }
         return Comment.Type.MOMENT;
     }

@@ -462,13 +462,13 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     private void resetTypeList() {
         tAdapter.clear();
-        //Dictionary d = none();
-        //d.setTypeCode(selectedFunction == FUNC_NATURE ? Dictionary.Type.ARCHIVE_NATURE : Dictionary.Type.ARCHIVE_TYPE);
-        //tAdapter.add(d);
         for (Dictionary dictionary : dictionaries) {
             if (dictionary.getTypeCode().equals(selectedFunction == FUNC_NATURE ? Dictionary.Type.ARCHIVE_NATURE : Dictionary.Type.ARCHIVE_TYPE)) {
                 if (dictionary.getCode() == 0) {
-                    dictionary.setSelected(true);
+                    if ((selectedFunction == FUNC_NATURE && isEmpty(searchingNature)) ||
+                            (selectedFunction == FUNC_TYPE && isEmpty(searchingType))) {
+                        dictionary.setSelected(true);
+                    }
                 }
                 tAdapter.add(dictionary);
             }

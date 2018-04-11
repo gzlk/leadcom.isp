@@ -10,6 +10,7 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
@@ -484,6 +485,10 @@ public class Archive extends Additional {
      */
     public boolean isRecommend() {
         return recommend == RecommendArchive.RecommendStatus.RECOMMENDED;
+    }
+
+    public boolean isPublic() {
+        return authPublic == Seclusion.Type.Public;
     }
 
     @Override

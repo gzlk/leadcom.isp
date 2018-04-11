@@ -162,7 +162,7 @@
     <!--modelTag,title,content,default selected,user visible,group visible-->
     <string-array name="ui_security_setting_items">
         <item>1|公开|所有人可见|1|1|1</item>
-        <item>0|私密|仅自己可见|0|1|0</item>
+        <item>4|私密|仅自己可见|0|1|0</item>
         <item>2|组织内公开|对组织内所有人可见|0|0|1</item>
         <item>3|指定部分人|选中朋友可见|0|0|1</item>
     </string-array>

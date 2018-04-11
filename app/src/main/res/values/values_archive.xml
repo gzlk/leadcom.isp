@@ -132,7 +132,10 @@
     <string name="ui_text_archive_details_editor_setting_commit_title">提交审核</string>
     <dimen name="ui_dimen_archive_details_editor_setting_item_vertical_padding">@dimen/ui_static_dp_8</dimen>
 
-    <string name="ui_text_archive_details_push_dialog_title">推送到：</string>
+    <string name="ui_text_archive_details_public_individual">已设为公开，可以有更多人看得到这个档案了</string>
+    <string name="ui_text_archive_details_public_group">已设为公开，可以推荐到首页</string>
+    <string name="ui_text_archive_details_publicable">档案已设为私密</string>
+    <string name="ui_text_archive_details_push_dialog_title">转发到：</string>
     <string name="ui_text_archive_details_push_user_names_title">手动添加参与人</string>
     <string name="ui_text_archive_details_push_user_names_hint">请以顿号(、)隔开多个人名</string>
 

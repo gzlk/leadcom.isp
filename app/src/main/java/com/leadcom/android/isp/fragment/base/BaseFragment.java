@@ -618,7 +618,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                             shareToDelete();
                             break;
                         case R.id.ui_dialog_share_to_forward:
-                            GroupPickerFragment.open(BaseFragment.this, "", true);
+                            shareToForward();
                             break;
                         case R.id.ui_dialog_share_to_recommend:
                             shareToRecommend();
@@ -685,6 +685,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 转发档案到别的组织
      */
     protected void shareToForward() {
+        GroupPickerFragment.open(BaseFragment.this, "", true);
     }
 
     /**

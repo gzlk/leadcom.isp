@@ -71,12 +71,16 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         functionView.setVisibility(View.GONE);
         enableSwipe(false);
         isLoadingComplete(true);
+        // 没有权限关注或取关时，不显示搜索框
+        if (!hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION)) {
+            searchableView.setVisibility(View.GONE);
+        }
         InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchableView, this);
         searchViewHolder.setOnSearchingListener(new InputableSearchViewHolder.OnSearchingListener() {
             @Override
             public void onSearching(String text) {
                 searchingText = text;
-                searching();
+                fetchingConcernableGroups();
             }
         });
     }
@@ -155,7 +159,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                 }
                 searching();
             }
-        }).list(mQueryId, remotePageNumber, "");
+        }).list(mQueryId, remotePageNumber, searchingText);
     }
 
     private void searching() {

@@ -71,6 +71,6 @@ public class ConcernRequest extends Request<Concern> {
      * 列出指定组织可以关注的组织列表
      */
     public void list(String groupId, int pageNumber, String searchingText) {
-        httpRequest(getRequest(MultiConcern.class, format("%s?groupId=%s&pageNumber=%d&pageSize=99&info=%s", url(LIST), groupId, pageNumber, searchingText), "", HttpMethods.Get));
+        httpRequest(getRequest(MultiConcern.class, format("%s?groupId=%s&pageNumber=%d&pageSize=999&info=%s", url(LIST), groupId, pageNumber, searchingText), "", HttpMethods.Get));
     }
 }

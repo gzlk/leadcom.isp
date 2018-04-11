@@ -23,7 +23,7 @@ public class Seclusion extends Model {
         /**
          * 私密，只能自己看
          */
-        int Private = 0;
+        int Private = 4;
         /**
          * 公开，对所有人公开
          */
