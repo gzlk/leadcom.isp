@@ -302,18 +302,24 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void warningDraftExist(final Archive draft, final int size) {
         int text = size > 1 ? R.string.ui_text_archive_creator_editor_create_draft_more : R.string.ui_text_archive_creator_editor_create_draft_1;
-        final String json = Archive.toJson(draft);
+        //final String json = Archive.toJson(draft);
+        final String id = draft.getId();
+        final int type = isEmpty(draft.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 if (size > 1) {
                     // 打开草稿选择页面
                     ArchiveDraftFragment.open(ArchiveEditorFragment.this);
+                    finish();
                 } else {
-                    mArchive = Archive.fromJson(json);
-                    isGroupArchive = !isEmpty(mArchive.getGroupId());
-                    titleView.setValue(mArchive.getTitle());
-                    mEditor.setHtml(mArchive.getContent());
+                    // 只有一个草稿，打开到草稿详情页查看评论
+                    ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, id, type);
+                    finish();
+//                    mArchive = Archive.fromJson(json);
+//                    isGroupArchive = !isEmpty(mArchive.getGroupId());
+//                    titleView.setValue(mArchive.getTitle());
+//                    mEditor.setHtml(mArchive.getContent());
                 }
                 return true;
             }

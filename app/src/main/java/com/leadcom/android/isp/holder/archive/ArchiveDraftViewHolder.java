@@ -26,6 +26,8 @@ import com.leadcom.android.isp.model.archive.Archive;
  */
 public class ArchiveDraftViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_tool_view_archive_draft_layout)
+    private View rootLayout;
     @ViewId(R.id.ui_tool_view_archive_draft_cover)
     private ImageDisplayer coverView;
     @ViewId(R.id.ui_tool_view_archive_draft_title)
@@ -40,6 +42,12 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
     public ArchiveDraftViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+        coverView.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+            @Override
+            public void onImageClick(ImageDisplayer displayer, String url) {
+                rootLayout.performClick();
+            }
+        });
     }
 
     public void showContent(Archive archive) {
@@ -54,7 +62,7 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
         }
     }
 
-    @Click({R.id.ui_tool_view_archive_draft_layout, R.id.ui_tool_view_archive_draft_delete})
+    @Click({R.id.ui_tool_view_archive_draft_layout, R.id.ui_tool_view_archive_draft_selector, R.id.ui_tool_view_archive_draft_delete})
     private void elementClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

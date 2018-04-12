@@ -64,8 +64,11 @@
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_tool_view_archive_draft_selector"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="center"
+            android:paddingEnd="@dimen/ui_static_dp_zero"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/ui_icon_select_solid"
             android:textColor="@color/textColorHintLight"
             android:textSize="@dimen/ui_base_text_size_big" />

@@ -34,10 +34,14 @@ public class ArchiveDetailsAdditionalViewHolder extends BaseViewHolder {
     private LinearLayout additionalView;
     @ViewId(R.id.ui_tool_view_archive_additional_comment_number)
     private TextView commentView;
+    @ViewId(R.id.ui_tool_view_archive_additional_like_layout)
+    private View likeLayout;
     @ViewId(R.id.ui_tool_view_archive_additional_like_icon)
     private CustomTextView likeIcon;
     @ViewId(R.id.ui_tool_view_archive_additional_like_number)
     private TextView likeNumber;
+    @ViewId(R.id.ui_tool_view_archive_additional_collection_layout)
+    private View collectLayout;
     @ViewId(R.id.ui_tool_view_archive_additional_collection_icon)
     private CustomTextView collectIcon;
     @ViewId(R.id.ui_tool_view_archive_additional_collection_number)
@@ -46,6 +50,11 @@ public class ArchiveDetailsAdditionalViewHolder extends BaseViewHolder {
     public ArchiveDetailsAdditionalViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+    }
+
+    public void setIsDraft(boolean isDraft) {
+        likeLayout.setVisibility(isDraft ? View.GONE : View.VISIBLE);
+        collectLayout.setVisibility(isDraft ? View.GONE : View.VISIBLE);
     }
 
     public void showContent(Additional additional) {

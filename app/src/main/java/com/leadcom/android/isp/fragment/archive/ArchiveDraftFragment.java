@@ -50,12 +50,14 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         fragment.openActivity(ArchiveDraftFragment.class.getName(), "", REQUEST_DRAFT, true, false);
     }
 
+    private static int selected = -1;
     private DraftAdapter mAdapter;
     private Model noMore;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        selected = -1;
         enableSwipe(false);
         isLoadingComplete(true);
         noMore = Model.getNoMore("");
@@ -68,32 +70,30 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_base_text_draft);
-        setRightText(R.string.ui_base_text_confirm);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                resultSelected();
-            }
-        });
         initializeAdapter();
     }
 
     private void resultSelected() {
-        String json = "";
-        boolean selected = false;
-        for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
-            Model model = mAdapter.get(i);
-            if (model.isSelected() && model instanceof Archive) {
-                Archive draft = (Archive) model;
-                json = Archive.toJson(draft);
-                selected = true;
-                break;
-            }
+        if (selected >= 0) {
+            Archive draft = (Archive) mAdapter.get(selected);
+            ArchiveEditorFragment.open(this, draft.getId(), draft.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE : ArchiveEditorFragment.MULTIMEDIA);
         }
-        if (selected) {
-            resultData(json);
-        }
+        finish();
+//        String json = "";
+//        boolean selected = false;
+//        for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
+//            Model model = mAdapter.get(i);
+//            if (model.isSelected() && model instanceof Archive) {
+//                Archive draft = (Archive) model;
+//                json = Archive.toJson(draft);
+//                selected = true;
+//                break;
+//            }
+//        }
+//        if (selected) {
+//            ArchiveEditorFragment.open(this, json, );
+//            resultData(json);
+//        }
     }
 
     @Override
@@ -123,11 +123,22 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
+            setCustomTitle(R.string.ui_base_text_draft);
             mAdapter = new DraftAdapter();
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             fetchingDraft();
         }
+    }
+
+    private void resetRightEvent() {
+        setRightText(selected >= 0 ? R.string.ui_base_text_edit : 0);
+        setRightTitleClickListener(selected >= 0 ? new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                resultSelected();
+            }
+        } : null);
     }
 
     private void fetchingDraft() {
@@ -151,9 +162,19 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(View view, int index) {
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_draft_layout:
+                    finish();
+                    Archive draft = (Archive) mAdapter.get(index);
+                    ArchiveDetailsWebViewFragment.open(ArchiveDraftFragment.this, draft.getId(), isEmpty(draft.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP);
+                    break;
+                case R.id.ui_tool_view_archive_draft_selector:
                     Model selected = mAdapter.get(index);
                     selected.setSelected(!selected.isSelected());
                     mAdapter.update(selected);
+                    if (selected.isSelected()) {
+                        ArchiveDraftFragment.selected = index;
+                    } else {
+                        ArchiveDraftFragment.selected = -1;
+                    }
                     for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
                         Model model = mAdapter.get(i);
                         if (!model.getId().equals(selected.getId()) && model.isSelected()) {
@@ -161,6 +182,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
                             mAdapter.update(model);
                         }
                     }
+                    resetRightEvent();
                     break;
                 case R.id.ui_tool_view_archive_draft_delete:
                     warningDraftDelete(index);

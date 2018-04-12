@@ -170,10 +170,14 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     @ViewId(R.id.ui_tool_view_archive_additional_comment_number)
     private TextView commentNumber;
+    @ViewId(R.id.ui_tool_view_archive_additional_like_layout)
+    private View likeLayout;
     @ViewId(R.id.ui_tool_view_archive_additional_like_icon)
     private CustomTextView likeIcon;
     @ViewId(R.id.ui_tool_view_archive_additional_like_number)
     private TextView likeNumber;
+    @ViewId(R.id.ui_tool_view_archive_additional_collection_layout)
+    private View collectLayout;
     @ViewId(R.id.ui_tool_view_archive_additional_collection_icon)
     private CustomTextView collectIcon;
     @ViewId(R.id.ui_tool_view_archive_additional_collection_number)
@@ -452,6 +456,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private void displayArchive(Archive archive) {
         isDraft = archive.isDraft();
+        likeLayout.setVisibility(isDraft ? View.GONE : View.VISIBLE);
+        collectLayout.setVisibility(isDraft ? View.GONE : View.VISIBLE);
         setCustomTitle(archive.getTitle());
 
         if (isDraft) {
@@ -473,19 +479,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         myRole = Cache.cache().getGroupRole(archive.getGroupId());
         // 设置收藏的参数为档案
         Collectable.resetArchiveCollectionParams(archive);
-        // 档案管理员/组织管理员/档案作者可以删除档案
-        if (isEmpty(archive.getGroupId())) {
-            //resetRightIconEvent();
-            // 个人档案且当前用户是作者时，允许删除
-            enableShareDelete = archive.isAuthor();
-        } else {
-            // 组织档案
-            // 是否可以删除档案
-            enableShareDelete = hasOperation(GRPOperation.ARCHIVE_DELETE);
-            enableShareForward = hasOperation(GRPOperation.ARCHIVE_FORWARD);
-            enableShareRecommend = archive.isPublic() && !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
-            enableShareRecommended = archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
-        }
+        prepareShareDialogElement(archive);
         // 档案创建者可以删除评论
         deletable = enableShareDelete;
         mAdapter.update(archive);
@@ -506,6 +500,21 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         displayAdditional(archive);
         loadingComments(archive);
         //}
+    }
+
+    private void prepareShareDialogElement(Archive archive) {
+        // 档案管理员/组织管理员/档案作者可以删除档案
+        if (isEmpty(archive.getGroupId())) {
+            // 个人档案且当前用户是作者时，允许删除
+            enableShareDelete = archive.isAuthor();
+        } else {
+            // 组织档案
+            // 是否可以删除档案
+            enableShareDelete = archive.isAuthor() || hasOperation(GRPOperation.ARCHIVE_DELETE);
+            enableShareForward = hasOperation(GRPOperation.ARCHIVE_FORWARD);
+            enableShareRecommend = archive.isPublic() && !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
+            enableShareRecommended = archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
+        }
     }
 
     private int getAdditionalPosition(Archive archive) {
@@ -805,6 +814,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     // 推荐档案
     private void recommendArchive(Archive archive) {
         final int index = mAdapter.indexOf(archive);
+        int type = archive.getType();
+        if (type > Archive.Type.USER) {
+            type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+        }
         RecommendArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<RecommendArchive>() {
             @Override
             public void onResponse(RecommendArchive archive, boolean success, String message) {
@@ -813,10 +826,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     Archive doc = (Archive) mAdapter.get(index);
                     doc.setRecommend(RecommendArchive.RecommendStatus.RECOMMENDED);
                     mAdapter.notifyItemChanged(index);
-                    onSwipeRefreshing();
+                    prepareShareDialogElement(doc);
                 }
             }
-        }).recommend(archive.getType(), archive.getGroupId(), mQueryId, archive.getUserId());
+        }).recommend(type, archive.getGroupId(), mQueryId, archive.getUserId());
     }
 
     // 取消推荐档案
@@ -829,7 +842,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     Archive doc = (Archive) mAdapter.get(mQueryId);
                     doc.setRecommend(RecommendArchive.RecommendStatus.UN_RECOMMEND);
                     mAdapter.notifyItemChanged(0);
-                    onSwipeRefreshing();
+                    prepareShareDialogElement(doc);
                 }
                 displayLoading(false);
             }
@@ -880,22 +893,26 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }
     };
 
-    private void resetPublic() {
-        Archive archive = (Archive) mAdapter.get(mQueryId);
-        enableShareRecommend = archive.isPublic() && !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
-    }
-
     private void updateArchivePublic(final boolean isPublic) {
         Archive archive = (Archive) mAdapter.get(mQueryId);
         final boolean isGroup = !isEmpty(archive.getGroupId());
         archive.setAuthPublic(isPublic ? Seclusion.Type.Public : (!isGroup ? Seclusion.Type.Private : Seclusion.Type.Group));
+        //final int auth = archive.getAuthPublic();
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
+                    Archive doc = (Archive) mAdapter.get(mQueryId);
+                    //doc.setAuthPublic(auth);
+                    if (!isPublic) {
+                        // 如果是设为私密，则一同撤销组织档案的推荐状态
+                        if (isGroup) {
+                            doc.setRecommend(RecommendArchive.RecommendStatus.UN_RECOMMEND);
+                        }
+                    }
+                    prepareShareDialogElement(doc);
                     mAdapter.notifyItemChanged(0);
-                    resetPublic();
                     ToastHelper.make().showMsg(isPublic ? (isGroup ? R.string.ui_text_archive_details_public_group : R.string.ui_text_archive_details_public_individual) : R.string.ui_text_archive_details_publicable);
                 }
             }
@@ -1024,6 +1041,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 case VT_ADDITIONAL:
                     ArchiveDetailsAdditionalViewHolder adavh = new ArchiveDetailsAdditionalViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
                     adavh.setOnViewHolderElementClickListener(elementClickListener);
+                    adavh.setIsDraft(isDraft);
                     return adavh;
                 default:
                     return new NothingMoreViewHolder(itemView, ArchiveDetailsWebViewFragment.this);

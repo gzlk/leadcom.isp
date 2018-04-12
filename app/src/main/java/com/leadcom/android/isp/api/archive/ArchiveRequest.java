@@ -620,7 +620,7 @@ public class ArchiveRequest extends Request<Archive> {
             ToastHelper.make().showMsg("无效的推送：被推送的组织为空");
         } else {
             String json = Json.gson().toJson(groupIdList);
-            String params = format("%s?groDocId=%s&groupIdList=%s", group(PUSH), json, groupDocId);
+            String params = format("%s?groDocId=%s&groupIdList=%s", group(PUSH), groupDocId, json);
             httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
         }
     }

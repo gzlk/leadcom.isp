@@ -39,7 +39,6 @@ public class MsgViewHolderArchive extends MsgViewHolderMoment {
 
     @Override
     protected void onItemClick() {
-        String params = StringHelper.format("%s,%d", archive.getCustomId(), archive.getArchiveType() - 1);
-        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), params, true, false);
+        ArchiveDetailsWebViewFragment.open(context, archive.getCustomId(), archive.getArchiveType() - 1);
     }
 }

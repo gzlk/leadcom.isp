@@ -147,15 +147,15 @@ public class Archive extends Additional {
     /**
      * 档案类型
      */
-    public static class Type {
+    public interface Type {
         /**
          * 个人
          */
-        public static final int USER = 2;
+        int USER = 2;
         /**
          * 组织、活动
          */
-        public static final int GROUP = 1;
+        int GROUP = 1;
     }
 
     /**

@@ -154,6 +154,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         leftContainer.setVisibility(isSingle ? View.VISIBLE : View.GONE);
         createView.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         titleAllow.setVisibility(isSingle ? View.GONE : View.VISIBLE);
+        groupsBkg.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         // 头像选择是需要剪切的
         isChooseImageForCrop = true;
         // 头像是需要压缩的
@@ -383,7 +384,9 @@ public class GroupFragment extends BaseOrganizationFragment {
             gAdapter.update(list, true);
             if (isFirst) {
                 isFirst = false;
-                initializeGroupsPosition();
+                if (!isSingle) {
+                    initializeGroupsPosition();
+                }
                 // 初始化第一个组织
                 if (gAdapter.getItemCount() > 0) {
                     if (isEmpty(mQueryId)) {
