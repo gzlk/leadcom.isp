@@ -132,7 +132,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resetRightEvent() {
-        setRightText(selected >= 0 ? R.string.ui_base_text_edit : 0);
+        setRightText(selected >= 0 ? R.string.ui_text_archive_creator_editor_create_draft_right_button_text : 0);
         setRightTitleClickListener(selected >= 0 ? new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
@@ -164,7 +164,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
                 case R.id.ui_tool_view_archive_draft_layout:
                     finish();
                     Archive draft = (Archive) mAdapter.get(index);
-                    ArchiveDetailsWebViewFragment.open(ArchiveDraftFragment.this, draft.getId(), isEmpty(draft.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP);
+                    ArchiveDetailsWebViewFragment.open(ArchiveDraftFragment.this, draft.getId(), Archive.Type.GROUP);
                     break;
                 case R.id.ui_tool_view_archive_draft_selector:
                     Model selected = mAdapter.get(index);

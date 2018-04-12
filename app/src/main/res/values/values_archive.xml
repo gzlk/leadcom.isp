@@ -9,11 +9,13 @@
     <string name="ui_archive_creator_selector_text_moment">动态</string>
 
     <string name="ui_text_archive_creator_editor_create_draft_1">
-        <![CDATA[您还有未提交的档案草稿。<br/>要继续编辑吗？]]>
+        <![CDATA[您有未提交的档案草稿。<br/>要继续编辑还是去看看大伙的看法？]]>
     </string>
     <string name="ui_text_archive_creator_editor_create_draft_more" formatted="false">
         <![CDATA[您还有几个未提交的档案草稿。<br/>要去看看吗？]]>
     </string>
+    <string name="ui_text_archive_creator_editor_create_draft_right_button_text">继续编辑</string>
+    <string name="ui_text_archive_creator_editor_create_draft_to_details">先看看评论</string>
     <string name="ui_text_archive_creator_editor_create_draft_time" formatted="false">最后修改：%s</string>
     <string name="ui_text_archive_creator_editor_create_draft_delete">草稿删除后不能恢复，您确定吗？</string>
     <string name="ui_text_archive_creator_editor_create_draft_saved">档案草稿已保存，下次可以继续编辑。</string>

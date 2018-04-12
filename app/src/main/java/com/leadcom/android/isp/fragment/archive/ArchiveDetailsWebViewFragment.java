@@ -225,6 +225,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
+        setSupportLoadingMore(true);
         loadingArchive();
     }
 
@@ -427,6 +428,9 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     displayLoading(false);
                     if (success && null != archive) {
                         displayArchive(archive);
+                    } else {
+                        stopRefreshing();
+                        isLoadingComplete(true);
                     }
                 }
 
@@ -442,6 +446,9 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 displayLoading(false);
                 if (success && null != archive) {
                     displayArchive(archive);
+                } else {
+                    stopRefreshing();
+                    isLoadingComplete(true);
                 }
             }
         }).findShare(mQueryId, archiveType + 1);

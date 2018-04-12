@@ -28,8 +28,9 @@ public class DeleteDialogHelper {
     private int layout = R.layout.popup_dialog_common_delete;
     private AppCompatActivity activity;
     private DialogHelper.OnDialogConfirmListener confirmListener;
+    private DialogHelper.OnDialogCancelListener cancelListener;
     private DialogHelper dialogHelper;
-    private String titleString, confirmString;
+    private String titleString, confirmString, cancelString;
 
     public DeleteDialogHelper init(BaseFragment fragment) {
         activity = fragment.Activity();
@@ -42,6 +43,7 @@ public class DeleteDialogHelper {
         this.activity = activity;
         // 默认是删除
         confirmString = StringHelper.getString(R.string.ui_base_text_delete);
+        cancelString = StringHelper.getString(R.string.ui_base_text_cancel);
         return this;
     }
 
@@ -52,6 +54,11 @@ public class DeleteDialogHelper {
 
     public DeleteDialogHelper setOnDialogConfirmListener(DialogHelper.OnDialogConfirmListener listener) {
         this.confirmListener = listener;
+        return this;
+    }
+
+    public DeleteDialogHelper setOnDialogCancelListener(DialogHelper.OnDialogCancelListener listener) {
+        cancelListener = listener;
         return this;
     }
 
@@ -72,6 +79,16 @@ public class DeleteDialogHelper {
 
     public DeleteDialogHelper setConfirmText(String text) {
         confirmString = text;
+        return this;
+    }
+
+    public DeleteDialogHelper setCancelText(String text) {
+        cancelString = text;
+        return this;
+    }
+
+    public DeleteDialogHelper setCancelText(int text) {
+        cancelString = StringHelper.getString(text);
         return this;
     }
 
@@ -106,7 +123,11 @@ public class DeleteDialogHelper {
                     // 背景点击事件，返回true表示立即关闭dialog
                     return true;
                 }
-            }).setConfirmText(confirmString).addOnDialogConfirmListener(confirmListener).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true);
+            }).setConfirmText(confirmString).setCancelText(cancelString)
+                    .addOnDialogConfirmListener(confirmListener)
+                    .addOnDialogCancelListener(cancelListener)
+                    .setPopupType(DialogHelper.SLID_IN_BOTTOM)
+                    .setAdjustScreenWidth(true);
         }
         dialogHelper.show();
     }

@@ -163,6 +163,25 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    protected boolean checkStillEditing() {
+        if (editorType == TYPE_ATTACHMENT || isEmpty(mArchive.getGroupId())) {
+            // 附件方式需要检测是否真要放弃
+            String title = titleView.getValue();
+            String content = Utils.clearContentHtml(mArchive.getContent());
+            if (!isEmpty(title)) {
+                if (isEmpty(mArchive.getTitle())) {
+                    return true;
+                } else if (!title.equals(mArchive.getTitle())) {
+                    return true;
+                }
+            } else if (!isEmpty(content)) {
+                return true;
+            }
+        }
+        return super.checkStillEditing();
+    }
+
+    @Override
     protected void onSwipeRefreshing() {
 
     }
@@ -294,36 +313,50 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success && null != list && list.size() > 0) {
-                    warningDraftExist(list.get(0), list.size());
+                    if (list.size() <= 1) {
+                        warningSingleDraft(list.get(0));
+                    } else {
+                        warningDraftExist();
+                    }
                 }
             }
         }).listDraft(remotePageNumber);
     }
 
-    private void warningDraftExist(final Archive draft, final int size) {
-        int text = size > 1 ? R.string.ui_text_archive_creator_editor_create_draft_more : R.string.ui_text_archive_creator_editor_create_draft_1;
-        //final String json = Archive.toJson(draft);
+    private void warningSingleDraft(Archive draft) {
+        final String json = Archive.toJson(draft);
         final String id = draft.getId();
-        final int type = isEmpty(draft.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                if (size > 1) {
-                    // 打开草稿选择页面
-                    ArchiveDraftFragment.open(ArchiveEditorFragment.this);
-                    finish();
-                } else {
-                    // 只有一个草稿，打开到草稿详情页查看评论
-                    ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, id, type);
-                    finish();
-//                    mArchive = Archive.fromJson(json);
-//                    isGroupArchive = !isEmpty(mArchive.getGroupId());
-//                    titleView.setValue(mArchive.getTitle());
-//                    mEditor.setHtml(mArchive.getContent());
-                }
+                // 继续编辑则直接停留在本页面
+                mArchive = Archive.fromJson(json);
+                isGroupArchive = !isEmpty(mArchive.getGroupId());
+                titleView.setValue(mArchive.getTitle());
+                mEditor.setHtml(mArchive.getContent());
                 return true;
             }
-        }).setTitleText(text).setConfirmText(size > 1 ? R.string.ui_base_text_have_a_look : R.string.ui_base_text_edit).show();
+        }).setOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                // 打开到草稿详情页查看评论，无论是个人档案草稿还是组织档案草稿都是组织档案
+                ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, id, Archive.Type.GROUP);
+                finish();
+            }
+        }).setTitleText(R.string.ui_text_archive_creator_editor_create_draft_1)
+                .setConfirmText(R.string.ui_text_archive_creator_editor_create_draft_right_button_text).setCancelText(R.string.ui_text_archive_creator_editor_create_draft_to_details).show();
+    }
+
+    private void warningDraftExist() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                // 打开草稿选择页面
+                ArchiveDraftFragment.open(ArchiveEditorFragment.this);
+                finish();
+                return true;
+            }
+        }).setTitleText(R.string.ui_text_archive_creator_editor_create_draft_more).setConfirmText(R.string.ui_base_text_have_a_look).show();
     }
 
     @Override
@@ -439,7 +472,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onStop() {
-        saveDraft();
+        if (editorType == TYPE_MULTIMEDIA) {
+            saveDraft();
+        }
         super.onStop();
     }
 

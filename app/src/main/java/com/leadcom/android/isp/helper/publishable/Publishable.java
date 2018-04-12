@@ -33,7 +33,8 @@ public abstract class Publishable {
 
     int getMethodType() {
         if (null != mArchive) {
-            return StringHelper.isEmpty(mArchive.getGroupId()) ? Comment.Type.USER : Comment.Type.GROUP;
+            // 草稿的评论直接是组织档案评论
+            return mArchive.isDraft() ? Comment.Type.GROUP : StringHelper.isEmpty(mArchive.getGroupId()) ? Comment.Type.USER : Comment.Type.GROUP;
         }
         return Comment.Type.MOMENT;
     }
