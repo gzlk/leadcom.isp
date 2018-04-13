@@ -3,15 +3,24 @@ package com.leadcom.android.isp.fragment.individual;
 import android.os.Bundle;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.common.UpdateRequest;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.UpgradeHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
+import com.leadcom.android.isp.model.common.SystemUpdate;
 
 /**
  * <b>功能描述：</b>个人设置页面<br />
@@ -37,6 +46,8 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     private View messagingView;
     @ViewId(R.id.ui_setting_to_cache)
     private View cacheView;
+    @ViewId(R.id.ui_about_to_upgrade)
+    private View upgradeView;
     @ViewId(R.id.ui_setting_to_about)
     private View aboutView;
 
@@ -44,6 +55,7 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     private SimpleClickableViewHolder passwordHolder;
     private SimpleClickableViewHolder messagingHolder;
     private SimpleClickableViewHolder cacheHolder;
+    private SimpleClickableViewHolder upgradeHolder;
     private SimpleClickableViewHolder aboutHolder;
     private String[] strings;
 
@@ -99,10 +111,15 @@ public class SettingFragment extends BaseTransparentSupportFragment {
             cacheHolder.addOnViewHolderClickListener(holderClickListener);
             cacheHolder.showContent(strings[2]);
         }
+        if (null == upgradeHolder) {
+            upgradeHolder = new SimpleClickableViewHolder(upgradeView, this);
+            upgradeHolder.addOnViewHolderClickListener(holderClickListener);
+            upgradeHolder.showContent(format(strings[3], BuildConfig.VERSION_NAME));
+        }
         if (null == aboutHolder) {
             aboutHolder = new SimpleClickableViewHolder(aboutView, SettingFragment.this);
             aboutHolder.addOnViewHolderClickListener(holderClickListener);
-            aboutHolder.showContent(strings[3]);
+            aboutHolder.showContent(strings[4]);
         }
     }
 
@@ -130,10 +147,57 @@ public class SettingFragment extends BaseTransparentSupportFragment {
                     SettingCacheFragment.open(SettingFragment.this);
                     break;
                 case 3:
+                    // 检查更新
+                    checkClientVersion();
+                    break;
+                case 4:
                     // 关于
                     openActivity(AboutFragment.class.getName(), "", true, false);
                     break;
             }
         }
     };
+
+    /**
+     * 检测服务器上的最新客户端版本并提示用户更新
+     */
+    private void checkClientVersion() {
+        UpdateRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<SystemUpdate>() {
+            @Override
+            public void onResponse(SystemUpdate systemUpdate, boolean success, String message) {
+                super.onResponse(systemUpdate, success, message);
+                if (success) {
+                    String ver = systemUpdate.getVersion();
+                    //warningUpdatable("http://file.ws.126.net/3g/client/netease_newsreader_android.apk","2.0.1");
+                    if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
+                        String url = systemUpdate.getResourceURI();
+                        if (StringHelper.isEmpty(url) || !Utils.isUrl(url)) {
+                            ToastHelper.make().showMsg(R.string.ui_system_updatable_url_invalid);
+                        } else {
+                            warningUpdatable(url, ver);
+                        }
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_text_setting_fragment_no_update);
+                    }
+                }
+            }
+        }).getClientVersion();
+    }
+
+    private void warningUpdatable(final String url, final String version) {
+        String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default), version);
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                // 打开下载对话框，并开始下载（下载对话框可以隐藏）
+                //showUpgradeDownloadingDialog();
+                String app = getString(R.string.app_name_default);
+                String title = getString(R.string.ui_system_updating_title, app);
+                String description = getString(R.string.ui_system_updating_description);
+                UpgradeHelper.helper(Activity(), version).startDownload(url, title, description);
+                return true;
+            }
+        }).setTitleText(text).setConfirmText(R.string.ui_base_text_yes).show();
+    }
+
 }

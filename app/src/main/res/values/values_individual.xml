@@ -94,9 +94,11 @@
         <item>0|修改密码|</item>
         <item>1|消息管理|</item>
         <item>2|手动清理缓存|</item>
-        <item>3|关于我们|</item>
+        <item>3|检查更新|Ver %s|1</item>
+        <item>4|关于我们|</item>
     </string-array>
     <string name="ui_text_setting_fragment_title">@string/ui_base_text_setting</string>
+    <string name="ui_text_setting_fragment_no_update">您已经安装的是最新版了</string>
     <string name="ui_text_setting_sign_out">退出登录</string>
 
     <string name="ui_text_edit_password_fragment_title">修改密码</string>

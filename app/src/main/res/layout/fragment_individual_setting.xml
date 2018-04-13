@@ -19,6 +19,12 @@
         android:id="@+id/ui_setting_to_cache"
         layout="@layout/holder_view_simple_clickable" />
 
+    <include layout="@layout/tool_view_divider_big" />
+
+    <include
+        android:id="@+id/ui_about_to_upgrade"
+        layout="@layout/holder_view_simple_clickable" />
+
     <include
         android:id="@+id/ui_setting_to_about"
         layout="@layout/holder_view_simple_clickable" />
