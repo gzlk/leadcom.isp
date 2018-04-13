@@ -31,7 +31,7 @@ import com.leadcom.android.isp.view.SwipeItemLayout;
 import java.util.List;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>用户消息<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2017/10/19 13:05 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -51,7 +51,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
 
     public static void open(BaseFragment fragment, int type) {
         Bundle bundle = new Bundle();
-        bundle.putInt(PARAM_QUERY_ID, type);
+        bundle.putString(PARAM_QUERY_ID, String.valueOf(type));
         fragment.openActivity(UserMessageFragment.class.getName(), bundle, true, false);
     }
 
@@ -60,7 +60,6 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        mQueryId = String.valueOf(bundle.getInt(PARAM_QUERY_ID, 0));
     }
 
     @Override

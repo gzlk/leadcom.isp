@@ -731,17 +731,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     case R.id.ui_popup_rich_editor_setting_share_draft:
                         if (!isEmpty(mArchive.getGroupId())) {
                             // 组织档案才能分享草稿
-//                            ArrayList<SubMember> members = new ArrayList<>();
-//                            if (!isEmpty(mArchive.getParticipant())) {
-//                                String[] names = mArchive.getParticipant().split("、");
-//                                for (String string : names) {
-//                                    SubMember member = new SubMember();
-//                                    member.setUserName(string);
-//                                    member.getUserId();
-//                                    members.add(member);
-//                                }
-//                            }
-                            GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
+                            mArchive.setTitle(titleView.getValue());
+                            if (isEmpty(mArchive.getTitle())) {
+                                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_title_invalid);
+                            } else if (isEmpty(mArchive.getContent())) {
+                                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
+                            } else {
+                                GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
+                            }
                             //getDraftShareInfo();
                         } else {
                             ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);

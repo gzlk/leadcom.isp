@@ -128,11 +128,12 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         if (function >= TYPE_ARCHIVE_MINE) {
             setCustomTitle(R.string.ui_text_archive_list_fragment_title);
             if (function == TYPE_ARCHIVE_MINE) {
-                setRightIcon(R.string.ui_icon_more);
+                setRightIcon(R.string.ui_icon_comment);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
                     public void onClick() {
-                        openUserMessageList();
+                        // 用户个人档案相关的消息
+                        UserMessageFragment.open(IndividualFragment.this, UserMsgRequest.TYPE_USER_ARCHIVE);
                     }
                 });
             }
@@ -489,17 +490,6 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 break;
         }
         super.onActivityResult(requestCode, data);
-    }
-
-    public void openUserMessageList() {
-        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                // 用户个人档案相关的消息
-                UserMessageFragment.open(IndividualFragment.this, UserMsgRequest.TYPE_USER_ARCHIVE);
-                return true;
-            }
-        }).setTitleText(R.string.ui_individual_message_list_title).setConfirmText(R.string.ui_individual_message_list).show();
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

@@ -19,8 +19,6 @@ import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.individual.MomentViewHolder;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
@@ -196,17 +194,6 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    private void openUserMessageList() {
-        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                // 用户动态相关的消息
-                UserMessageFragment.open(MomentListFragment.this, UserMsgRequest.TYPE_MOMENT);
-                return true;
-            }
-        }).setTitleText(R.string.ui_individual_moment_msg_list_title).setConfirmText(R.string.ui_individual_message_list).show();
-    }
-
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new MomentAdapter();
@@ -218,11 +205,12 @@ public class MomentListFragment extends BaseSwipeRefreshSupportFragment {
                 isSupportDirectlyUpload = false;
                 // 添加图片选择
                 addOnImageSelectedListener(imageSelectedListener);
-                setRightIcon(R.string.ui_icon_more);
+                setRightIcon(R.string.ui_icon_comment);
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
                     public void onClick() {
-                        openUserMessageList();
+                        // 用户动态相关的消息
+                        UserMessageFragment.open(MomentListFragment.this, UserMsgRequest.TYPE_MOMENT);
                     }
                 });
             } else {

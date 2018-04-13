@@ -10,23 +10,28 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.main.ArchiveSearchFragment;
 import com.leadcom.android.isp.fragment.organization.archive.GroupArchiveManagementFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.organization.Member;
+import com.leadcom.android.isp.model.organization.Role;
 
 import java.util.List;
 
@@ -46,16 +51,16 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_TITLE = "af_title";
     private static final String PARAM_HAS_TITLE = "af_has_title";
 
-    public static ArchivesFragment newInstance(String params) {
+    public static ArchivesFragment newInstance(Bundle bundle) {
         ArchivesFragment af = new ArchivesFragment();
-        Bundle bundle = new Bundle();
-        String[] strings = splitParameters(params);
-        // 组织id
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        if (strings.length > 1) {
-            bundle.putString(PARAM_TITLE, strings[1]);
-            bundle.putBoolean(PARAM_HAS_TITLE, Boolean.valueOf(strings[2]));
-        }
+//        Bundle bundle = new Bundle();
+//        String[] strings = splitParameters(params);
+//        // 组织id
+//        bundle.putString(PARAM_QUERY_ID, strings[0]);
+//        if (strings.length > 1) {
+//            bundle.putString(PARAM_TITLE, strings[1]);
+//            bundle.putBoolean(PARAM_HAS_TITLE, Boolean.valueOf(strings[2]));
+//        }
         af.setArguments(bundle);
         return af;
     }
@@ -64,12 +69,33 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
      * 打开具有标题栏的组织档案列表页面
      */
     public static void open(BaseFragment fragment, String groupId, String groupName) {
-        fragment.openActivity(ArchivesFragment.class.getName(), format("%s,%s,true", groupId, groupName, true), true, false);
+        Bundle bundle = new Bundle();
+        // 组织id
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        bundle.putString(PARAM_TITLE, groupName);
+        bundle.putBoolean(PARAM_HAS_TITLE, true);
+        fragment.openActivity(ArchivesFragment.class.getName(), bundle, true, false);
     }
 
     private boolean hasTitle = false;
     private String mTitle = "";
     private ArchiveAdapter mAdapter;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Role role = Cache.cache().getGroupRole(mQueryId);
+        if (null != role) {
+            setRightIcon(R.string.ui_icon_comment);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    // 用户动态相关的消息
+                    UserMessageFragment.open(ArchivesFragment.this, UserMsgRequest.TYPE_GROUP_ARCHIVE);
+                }
+            });
+        }
+    }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {

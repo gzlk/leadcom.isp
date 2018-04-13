@@ -110,6 +110,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         return bundle;
     }
 
+    // 打开详情页并指定一个档案，收藏时用
+    public static void open(BaseFragment fragment, Archive archive) {
+
+    }
+
     public static void open(BaseFragment fragment, String archiveId, int archiveType) {
         innerOpen = true;
         fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), getBundle(archiveId, archiveType), REQUEST_DELETE, true, false);
@@ -730,6 +735,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private void fetchingShareInfo() {
         if (null == mShareInfo) {
+            int type = archiveType == Archive.Type.GROUP ? ShareRequest.ARCHIVE_GROUP : ShareRequest.ARCHIVE_USER;
             ShareRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ShareInfo>() {
                 @Override
                 public void onResponse(ShareInfo shareInfo, boolean success, String message) {
@@ -739,7 +745,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                         openShareDialog();
                     }
                 }
-            }).getShareInfo(mQueryId, 1, archiveType + 1);
+            }).getShareInfo(mQueryId, 1, type);
         } else {
             openShareDialog();
         }

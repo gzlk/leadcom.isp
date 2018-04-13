@@ -288,9 +288,9 @@ public class NimSessionHelper {
         actions.add(new CameraAction());
         if (!Cache.isReleasable()) {
             // 相机录制视频
-            actions.add(new VideoCaptureAction());
+            //actions.add(new VideoCaptureAction());
             // 相册选择视频
-            actions.add(new VideoChooseAction());
+            //actions.add(new VideoChooseAction());
         }
         // 跟电脑对话时不需要发送位置
         if (type != SessionTypeEnum.System) {

@@ -224,6 +224,10 @@ public class Message extends Model {
          * 分享草稿
          */
         int ARCHIVE_SHARE_DRAFT = 46;
+        /**
+         * 被踢出小组
+         */
+        int SQUAD_KICK_OUT = 47;
     }
 
     /**
@@ -235,6 +239,8 @@ public class Message extends Model {
                 return "申请加入组织";
             case Type.GROUP_INVITE:
                 return "邀请您加入组织";
+            case Type.GROUP_KICK_OUT:
+                return "被移出组织";
             case Type.ACTIVITY_INVITE:
                 return "邀请您加入活动";
             case Type.ACTIVITY_END:
@@ -253,6 +259,8 @@ public class Message extends Model {
                 return "加入小组";
             case Type.TOPIC_INVITE:
                 return "邀请您加入议题";
+            case Type.SQUAD_KICK_OUT:
+                return "被移出小组";
             case Type.TOPIC_EXIT:
                 return "退出议题";
             case Type.TOPIC_KICK_OUT:
