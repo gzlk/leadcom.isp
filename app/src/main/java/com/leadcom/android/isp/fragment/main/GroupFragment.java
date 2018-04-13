@@ -541,7 +541,11 @@ public class GroupFragment extends BaseOrganizationFragment {
         public void onClick(View view, int index) {
             switch (view.getId()) {
                 case R.id.ui_holder_view_simple_clickable:
-                    handleItemClick(index);
+                    Role role = Cache.cache().getGroupRole(dAdapter.get(0).getId());
+                    if (null != role) {
+                        // 当前登录用户在这个组织里时才能打开相应的选项内容
+                        handleItemClick(index);
+                    }
                     break;
                 case R.id.ui_holder_view_group_header_edit_icon:
                 case R.id.ui_holder_view_group_header_container:
