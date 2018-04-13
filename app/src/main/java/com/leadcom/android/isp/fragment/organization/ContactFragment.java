@@ -829,7 +829,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             holder.setOnSetArchiveManagerListener(archiveManagerListener);
             // 点击拨号
             holder.setOnPhoneDialListener(onPhoneDialListener);
-            holder.setPhoneVisible(showType != TYPE_MINE);
+            //holder.setPhoneVisible(showType != TYPE_MINE);
             return holder;
         }
 

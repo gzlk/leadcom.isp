@@ -60,7 +60,7 @@ public class ContactViewHolder extends BaseViewHolder {
 
     private boolean buttonInviteVisible = false;
     private boolean pickerVisible = false;
-    private boolean phoneVisible = true;
+    private boolean phoneVisible = false;
     private int imageSize;
 
     public ContactViewHolder(View itemView, BaseFragment fragment) {
@@ -165,6 +165,8 @@ public class ContactViewHolder extends BaseViewHolder {
             }
             text = getSearchingText(text, searchingText);
             phoneView.setText(Html.fromHtml(text));
+        } else {
+            phoneView.setText(null);
         }
         headerView.displayImage(member.getHeadPhoto(), imageSize, false, false);
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
