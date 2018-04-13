@@ -513,10 +513,8 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 openActivity(CollectionDetailsFragment.class.getName(), collection.getId(), true, false);
                 break;
             case Collection.Type.GROUP_ARCHIVE:
-                ArchiveDetailsWebViewFragment.open(this, collection.getSourceId(), Archive.Type.GROUP);
-                break;
             case Collection.Type.USER_ARCHIVE:
-                ArchiveDetailsWebViewFragment.open(this, collection.getSourceId(), Archive.Type.USER);
+                ArchiveDetailsWebViewFragment.open(this, collection);
                 break;
             case Collection.Type.ATTACHMENT:
             case Collection.Type.ARCHIVE:
@@ -529,9 +527,13 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 break;
             case Collection.Type.USER_MOMENT:
                 if (collection.getUserMmt().getImage().size() > 0) {
-                    MomentImagesFragment.open(this, collection.getSourceId(), 0);
+                    MomentImagesFragment.isCollected = true;
+                    MomentImagesFragment.open(this, collection.getUserMmt());
+                    //MomentImagesFragment.open(this, collection.getSourceId(), 0);
                 } else {
-                    MomentDetailsFragment.open(this, collection.getSourceId());
+                    MomentDetailsFragment.isCollected = true;
+                    MomentDetailsFragment.open(this, collection.getUserMmt());
+                    //MomentDetailsFragment.open(this, collection.getSourceId());
                 }
                 break;
             case Collection.Type.VIDEO:

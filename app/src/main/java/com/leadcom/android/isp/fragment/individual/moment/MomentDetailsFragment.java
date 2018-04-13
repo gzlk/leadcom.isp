@@ -50,19 +50,33 @@ import java.util.List;
 
 public class MomentDetailsFragment extends BaseMomentFragment {
 
+    /**
+     * 是否是显示已经收藏了的内容
+     */
+    public static boolean isCollected = false;
     private static final String PARAM_CMT_INDEX = "mdf_cmt_index";
 
-    public static MomentDetailsFragment newInstance(String params) {
+    public static MomentDetailsFragment newInstance(Bundle bundle) {
         MomentDetailsFragment mdf = new MomentDetailsFragment();
-        Bundle bundle = new Bundle();
-        // 单个说说的id
-        bundle.putString(PARAM_QUERY_ID, params);
         mdf.setArguments(bundle);
         return mdf;
     }
 
+    private static Bundle getBundle(String momentId) {
+        Bundle bundle = new Bundle();
+        // 单个说说的id
+        bundle.putString(PARAM_QUERY_ID, momentId);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, Moment moment) {
+        Bundle bundle = getBundle(moment.getId());
+        bundle.putSerializable(PARAM_MOMENT, moment);
+        fragment.openActivity(MomentDetailsFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
+    }
+
     public static void open(BaseFragment fragment, String momentId) {
-        fragment.openActivity(MomentDetailsFragment.class.getName(), momentId, REQUEST_DELETE, true, false);
+        fragment.openActivity(MomentDetailsFragment.class.getName(), getBundle(momentId), REQUEST_DELETE, true, false);
     }
 
     private static boolean deletable = false;
@@ -75,6 +89,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         super.getParamsFromBundle(bundle);
         mSelectedIndex = bundle.getInt(PARAM_INDEX, -1);
         selectedComment = bundle.getInt(PARAM_CMT_INDEX, 0);
+        mMoment = (Moment) bundle.getSerializable(PARAM_MOMENT);
     }
 
     @Override
@@ -82,6 +97,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_INDEX, mSelectedIndex);
         bundle.putInt(PARAM_CMT_INDEX, selectedComment);
+        bundle.putSerializable(PARAM_MOMENT, mMoment);
     }
 
     @Override
@@ -107,6 +123,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
 
     @Override
     public void onDestroy() {
+        isCollected = false;
         if (null != mOnKeyboardChangeListener) {
             mOnKeyboardChangeListener.destroy();
         }
@@ -207,24 +224,28 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     protected void onFetchingMomentComplete(Moment moment, boolean success) {
         if (success) {
             mMoment = moment;
-            Collectable.resetMomentCollectionParams(moment);
-            // 我发布的动态可以删除全部评论
-            deletable = mMoment.isMine();
-            setRightIcon(R.string.ui_icon_more);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
-                @Override
-                public void onClick() {
-                    showMoreButtons();
-                }
-            });
-            // 拉取回来之后立即显示
-            if (!mAdapter.exist(moment)) {
-                mAdapter.add(moment, 0);
-            } else {
-                mAdapter.update(moment);
-            }
-            onSwipeRefreshing();
+            displayMoment();
         }
+    }
+
+    private void displayMoment() {
+        Collectable.resetMomentCollectionParams(mMoment);
+        // 我发布的动态可以删除全部评论
+        deletable = mMoment.isMine();
+        setRightIcon(R.string.ui_icon_more);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                showMoreButtons();
+            }
+        });
+        // 拉取回来之后立即显示
+        if (!mAdapter.exist(mMoment)) {
+            mAdapter.add(mMoment, 0);
+        } else {
+            mAdapter.update(mMoment);
+        }
+        onSwipeRefreshing();
     }
 
     private void showMoreButtons() {
@@ -244,7 +265,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 return true;
             }
         }).showPrivacy(mMoment.isMine()).showShare(true).showSave(false)
-                .showDelete(mMoment.isMine()).showFavorite(!mMoment.isMine())
+                .showDelete(mMoment.isMine()) // 不是我发布的不能删除
+                .showFavorite(!isCollected && !mMoment.isMine()) // 不是收藏过来的，且不是我发布的才可以显示收藏
                 .setPrivacyText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public)
                 .setCollectText(mMoment.isCollected() ? R.string.ui_text_moment_details_button_favorited : R.string.ui_text_moment_details_button_favorite)
                 .show();
@@ -328,7 +350,11 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             addOnInputCompleteListener(onInputCompleteListener);
             mAdapter = new MomentDetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
-            fetchingMoment();
+            if (null != mMoment && !isEmpty(mMoment.getId())) {
+                displayMoment();
+            } else {
+                fetchingMoment();
+            }
         }
     }
 

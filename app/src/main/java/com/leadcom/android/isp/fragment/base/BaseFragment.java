@@ -361,6 +361,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     protected static final int REQUEST_PHONE = ACTIVITY_BASE_REQUEST + 22;
     protected static final int REQUEST_PHONE_CONFIRM = ACTIVITY_BASE_REQUEST + 23;
     /**
+     * 动态图片页中的评论
+     */
+    public static final int REQUEST_COMMENT = ACTIVITY_BASE_REQUEST + 24;
+    /**
      * 感兴趣
      */
     protected static final int REQUEST_INTEREST = ACTIVITY_BASE_REQUEST + 100;

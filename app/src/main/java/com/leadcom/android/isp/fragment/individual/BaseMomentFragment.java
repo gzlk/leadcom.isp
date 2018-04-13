@@ -31,6 +31,8 @@ import com.leadcom.android.isp.share.ShareToWeiXin;
 
 public abstract class BaseMomentFragment extends BaseCmtLikeColFragment {
 
+    protected static final String PARAM_MOMENT = "bmf_moment";
+
     @Override
     protected void onSwipeRefreshing() {
 

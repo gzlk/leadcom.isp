@@ -89,6 +89,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
     private static final String PARAM_CMT_INDEX = "adwvf_archive_cmt_index";
+    private static final String PARAM_ARCHIVE = "adwvf_archive";
     private static boolean deletable = false;
     /**
      * 标记是否是app内部打开的详情页
@@ -110,9 +111,19 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         return bundle;
     }
 
+    public static void open(BaseFragment fragment, Collection collection) {
+        if (collection.getType() == Collection.Type.GROUP_ARCHIVE) {
+            open(fragment, collection.getGroDoc());
+        } else if (collection.getType() == Collection.Type.USER_ARCHIVE) {
+            open(fragment, collection.getUserDoc());
+        }
+    }
+
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
-
+        Bundle bundle = getBundle(archive.getId(), archive.getType());
+        bundle.putSerializable(PARAM_ARCHIVE, archive);
+        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
 
     public static void open(BaseFragment fragment, String archiveId, int archiveType) {
@@ -131,6 +142,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         archiveType = bundle.getInt(PARAM_DOC_TYPE, Archive.Type.GROUP);
         //isDraft = archiveType >= 3;
         selectedIndex = bundle.getInt(PARAM_CMT_INDEX, 0);
+        mArchive = (Archive) bundle.getSerializable(PARAM_ARCHIVE);
     }
 
     @Override
@@ -138,6 +150,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_DOC_TYPE, archiveType);
         bundle.putInt(PARAM_CMT_INDEX, selectedIndex);
+        bundle.putSerializable(PARAM_ARCHIVE, mArchive);
     }
 
     @Override
@@ -203,6 +216,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private int archiveType, selectedIndex;
     private boolean isDraft;
     private DetailsAdapter mAdapter;
+    private Archive mArchive;
     private ArchiveDetailsViewHolder detailsViewHolder;
     private OnKeyboardChangeListener mOnKeyboardChangeListener;
     private Role myRole;
@@ -421,25 +435,29 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private void loadingArchive() {
-        setLoadingText(R.string.ui_text_archive_details_loading);
-        displayLoading(true);
-        if (isDraft) {
-            loadingSharedArchive();
+        if (null != mArchive && !isEmpty(mArchive.getId())) {
+            displayArchive(mArchive);
         } else {
-            ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
-                @Override
-                public void onResponse(Archive archive, boolean success, String message) {
-                    super.onResponse(archive, success, message);
-                    displayLoading(false);
-                    if (success && null != archive) {
-                        displayArchive(archive);
-                    } else {
-                        stopRefreshing();
-                        isLoadingComplete(true);
+            setLoadingText(R.string.ui_text_archive_details_loading);
+            displayLoading(true);
+            if (isDraft) {
+                loadingSharedArchive();
+            } else {
+                ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+                    @Override
+                    public void onResponse(Archive archive, boolean success, String message) {
+                        super.onResponse(archive, success, message);
+                        displayLoading(false);
+                        if (success && null != archive) {
+                            displayArchive(archive);
+                        } else {
+                            stopRefreshing();
+                            isLoadingComplete(true);
+                        }
                     }
-                }
 
-            }).find(archiveType, mQueryId, false);
+                }).find(archiveType, mQueryId, false);
+            }
         }
     }
 

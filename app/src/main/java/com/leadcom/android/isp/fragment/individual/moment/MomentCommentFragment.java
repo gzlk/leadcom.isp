@@ -26,10 +26,8 @@ public class MomentCommentFragment extends BaseLayoutSupportFragment {
         return new MomentCommentFragment();
     }
 
-    public static final int REQ_COMMENT = ACTIVITY_BASE_REQUEST + 100;
-
     public static void open(BaseFragment fragment) {
-        fragment.openActivity(MomentCommentFragment.class.getName(), "", REQ_COMMENT, true, false);
+        fragment.openActivity(MomentCommentFragment.class.getName(), "", REQUEST_COMMENT, true, false);
     }
 
     @ViewId(R.id.ui_individual_moment_comment_content)

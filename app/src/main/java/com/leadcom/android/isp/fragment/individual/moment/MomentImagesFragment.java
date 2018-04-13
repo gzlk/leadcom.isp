@@ -51,24 +51,37 @@ import java.util.ArrayList;
 
 public class MomentImagesFragment extends BaseMomentFragment {
 
+    /**
+     * 是否是显示已经收藏了的内容
+     */
+    public static boolean isCollected = false;
     private static final String PARAM_SELECTED = "mdf_moment_selected";
     private static final String PARAM_USER_ID = "mdf_moment_user_id";
     private static final String PARAM_USER_NAME = "mdf_moment_user_name";
 
-    public static MomentImagesFragment newInstance(String params) {
+    public static MomentImagesFragment newInstance(Bundle bundle) {
         MomentImagesFragment mdf = new MomentImagesFragment();
-        Bundle bundle = new Bundle();
-        String[] strings = splitParameters(params);
-        // 动态的id
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 选中的图片索引
-        bundle.putInt(PARAM_SELECTED, Integer.valueOf(strings[1]));
         mdf.setArguments(bundle);
         return mdf;
     }
 
+    private static Bundle getBundle(String momentId, int selectedIndex) {
+        Bundle bundle = new Bundle();
+        // 动态的id
+        bundle.putString(PARAM_QUERY_ID, momentId);
+        // 选中的图片索引
+        bundle.putInt(PARAM_SELECTED, selectedIndex);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, Moment moment) {
+        Bundle bundle = getBundle(moment.getId(), 0);
+        bundle.putSerializable(PARAM_MOMENT, moment);
+        fragment.openActivity(MomentImagesFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
+    }
+
     public static void open(BaseFragment fragment, String momentId, int displayIndex) {
-        fragment.openActivity(MomentImagesFragment.class.getName(), format("%s,%d", momentId, displayIndex), REQUEST_DELETE, true, false);
+        fragment.openActivity(MomentImagesFragment.class.getName(), getBundle(momentId, displayIndex), REQUEST_DELETE, true, false);
     }
 
     private int selected;
@@ -80,6 +93,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
         selected = bundle.getInt(PARAM_SELECTED, 0);
         momentUser = bundle.getString(PARAM_USER_ID, "");
         momentName = bundle.getString(PARAM_USER_NAME, "");
+        mMoment = (Moment) bundle.getSerializable(PARAM_MOMENT);
     }
 
     @Override
@@ -88,6 +102,13 @@ public class MomentImagesFragment extends BaseMomentFragment {
         bundle.putInt(PARAM_SELECTED, selected);
         bundle.putString(PARAM_USER_ID, momentUser);
         bundle.putString(PARAM_USER_NAME, momentName);
+        bundle.putSerializable(PARAM_MOMENT, mMoment);
+    }
+
+    @Override
+    public void onDestroy() {
+        isCollected = false;
+        super.onDestroy();
     }
 
     // UI
@@ -124,15 +145,13 @@ public class MomentImagesFragment extends BaseMomentFragment {
         if (null == images) {
             images = new ArrayList<>();
             displayMomentDetails();
-        } else {
-            fetchingMoment();
         }
         detailContentTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         initializeAdapter();
     }
 
     private void displayMomentDetails() {
-        if (null == mMoment) {
+        if (null == mMoment || isEmpty(mMoment.getId())) {
             fetchingMoment();
         } else {
             momentUser = mMoment.getUserId();
@@ -204,14 +223,15 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 break;
             case R.id.ui_moment_detail_switch_more_container:
                 // 打开更多详情页面
-                MomentDetailsFragment.open(MomentImagesFragment.this, mQueryId);
+                MomentDetailsFragment.isCollected = isCollected;
+                MomentDetailsFragment.open(MomentImagesFragment.this, mMoment);
                 break;
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
-        if (requestCode == MomentCommentFragment.REQ_COMMENT) {
+        if (requestCode == REQUEST_COMMENT) {
             // 发布对本说说的评论
             String result = getResultedData(data);
             if (!isEmpty(result)) {
@@ -237,7 +257,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 handlePopupClick(view.getId());
                 return true;
             }
-        }).showPrivacy(mMoment.isMine()).showFavorite(!mMoment.isMine()).showShare(true).showSave(mMoment.getImage().size() > 0)
+        }).showPrivacy(mMoment.isMine()).showFavorite(!isCollected && !mMoment.isMine()).showShare(true).showSave(mMoment.getImage().size() > 0)
                 .showDelete(mMoment.isMine())
                 .setPrivacyText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public)
                 .setCollectText(mMoment.isCollected() ? R.string.ui_text_moment_details_button_favorited : R.string.ui_text_moment_details_button_favorite)
