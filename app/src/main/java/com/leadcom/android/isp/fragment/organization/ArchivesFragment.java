@@ -319,17 +319,19 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
                     App.openUserInfo(ArchivesFragment.this, mAdapter.get(index).getUserId());
                     break;
                 case R.id.ui_tool_view_archive_additional_comment_layout:
+                case R.id.ui_tool_view_archive_additional_like_layout:
+                case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 个人档案评论
                     ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index).getId(), Archive.Type.GROUP);
                     break;
-                case R.id.ui_tool_view_archive_additional_like_layout:
-                    // 个人档案点赞
-                    like(mAdapter.get(index));
-                    break;
-                case R.id.ui_tool_view_archive_additional_collection_layout:
-                    // 个人档案收藏
-                    collect(mAdapter.get(index));
-                    break;
+//                case R.id.ui_tool_view_archive_additional_like_layout:
+//                    // 个人档案点赞
+//                    like(mAdapter.get(index));
+//                    break;
+//                case R.id.ui_tool_view_archive_additional_collection_layout:
+//                    // 个人档案收藏
+//                    collect(mAdapter.get(index));
+//                    break;
             }
         }
     };
