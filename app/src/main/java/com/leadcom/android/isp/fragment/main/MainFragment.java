@@ -132,7 +132,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
                             }
                         } else if (contact.getSessionType() == SessionTypeEnum.P2P) {
                             boolean notify = NIMClient.getService(FriendService.class).isNeedMessageNotify(contact.getContactId());
-                            if (!notify) {
+                            if (notify) {
                                 count += unread;
                             }
                         } else {
