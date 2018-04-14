@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignEnd="@+id/ui_main_personality_title_left_icon"
                     android:layout_marginEnd="-3dp"
-                    android:layout_marginTop="@dimen/ui_static_dp_16"
+                    android:layout_marginTop="@dimen/ui_static_dp_10"
                     android:background="@drawable/ui_background_oval_primary"
                     android:visibility="gone">
 

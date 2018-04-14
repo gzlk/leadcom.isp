@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -27,7 +26,6 @@ import com.netease.nim.uikit.impl.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.ResponseCode;
 import com.netease.nimlib.sdk.friend.FriendService;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
@@ -85,6 +83,8 @@ public class MainFragment extends BaseTransparentSupportFragment {
     private TextView textView3;
     @ViewId(R.id.ui_tool_main_bottom_text_4)
     private TextView textView4;
+    @ViewId(R.id.ui_tool_main_bottom_icon_4_unread)
+    private View icon4Unread;
 
     // 首页4个fragment
     private HomeFragment homeFragment;
@@ -225,6 +225,10 @@ public class MainFragment extends BaseTransparentSupportFragment {
         if (null != icon2Unread) {
             icon2Unread.setVisibility(num > 0 ? View.VISIBLE : View.GONE);
             icon2UnreadNum.setText(formatUnread(num));
+        }
+        if (null != icon4Unread) {
+            int size = NimMessage.getUnRead();
+            icon4Unread.setVisibility(size > 0 ? View.VISIBLE : View.GONE);
         }
     }
 
