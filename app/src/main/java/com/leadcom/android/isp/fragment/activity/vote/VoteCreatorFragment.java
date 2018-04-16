@@ -143,6 +143,10 @@ public class VoteCreatorFragment extends BaseVoteFragment {
             ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_desc_invalid);
             return;
         }
+        if (isEmpty(mAppVote.getEndDate(), true)) {
+            ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_end_date_invalid);
+            return;
+        }
         if (!checkOptions()) {
             ToastHelper.make().showMsg(R.string.ui_activity_vote_creator_options_invalid);
             return;

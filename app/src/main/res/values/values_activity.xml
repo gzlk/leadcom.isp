@@ -294,6 +294,7 @@
     <string name="ui_activity_vote_creator_invalid_activity">无效的活动</string>
     <string name="ui_activity_vote_creator_title_invalid">投票标题不符合要求</string>
     <string name="ui_activity_vote_creator_desc_invalid">投票内容不符合要求</string>
+    <string name="ui_activity_vote_creator_end_date_invalid">请选择投票截止时间</string>
     <string name="ui_activity_vote_creator_options_invalid">投票选项不符合要求</string>
     <string name="ui_activity_vote_creator_publishing">正在创建投票，请稍候&#8230;</string>
     <string name="ui_activity_vote_creator_publish_vote_item">正在添加投票选项&#8239;</string>
