@@ -66,6 +66,10 @@ public class Archive extends Additional {
          */
         String LIKE = "archiveLike";
         /**
+         * 封面
+         */
+        String Cover = "coverTemplate";
+        /**
          * 组织的公开档案
          */
         String PUBLIC_ARCHIVE = "publicArchive";
