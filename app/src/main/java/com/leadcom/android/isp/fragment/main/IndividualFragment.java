@@ -583,7 +583,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     App.openUserInfo(IndividualFragment.this, m.getUserId());
                     break;
                 case R.id.ui_holder_view_moment_details_container:
-                case R.id.ui_holder_view_moment_details_more:
+                    //case R.id.ui_holder_view_moment_details_more:
                     // 打开详情页了
                     Moment moment = (Moment) mAdapter.get(index);
                     if (moment.getImage().size() < 1) {
@@ -594,17 +594,17 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                         MomentImagesFragment.open(IndividualFragment.this, moment.getId(), 0);
                     }
                     break;
-//                case R.id.ui_holder_view_moment_details_more:
-//                    // 打开快捷赞、评论菜单
-//                    selectedMoment = index;
-//                    Model model = mAdapter.get(index);
-//                    if (model instanceof Moment) {
-//                        Moment mmt = (Moment) model;
-//                        // 已赞和未赞
-//                        int layout = mmt.isLiked() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
-//                        showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
-//                    }
-//                    break;
+                case R.id.ui_holder_view_moment_details_more:
+                    // 打开快捷赞、评论菜单
+                    selectedMoment = index;
+                    Model model = mAdapter.get(index);
+                    if (model instanceof Moment) {
+                        Moment mmt = (Moment) model;
+                        // 已赞和未赞
+                        int layout = mmt.isLiked() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
+                        showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
+                    }
+                    break;
                 case R.id.ui_holder_view_individual_moment_comment_name_container:
                     selectedComment = index;
                     Comment comment = (Comment) mAdapter.get(selectedComment);
