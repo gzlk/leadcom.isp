@@ -187,13 +187,13 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                     tryModifyMyPhoneNumber();
                 } else {
                     verifyCaptcha();
-                    if (verifyType == VT_PASSWORD) {
-                        // 重置密码时需要先校验验证码是否正确
-                        verifyCaptcha();
-                    } else {
-                        String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, code);
-                        openActivity(SignUpFragment.class.getName(), params, true, true);
-                    }
+//                    if (verifyType == VT_PASSWORD) {
+//                        // 重置密码时需要先校验验证码是否正确
+//                        verifyCaptcha();
+//                    } else {
+//                        String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, code);
+//                        openActivity(SignUpFragment.class.getName(), params, true, true);
+//                    }
                 }
                 break;
         }
