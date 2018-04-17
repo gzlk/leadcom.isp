@@ -396,17 +396,21 @@ public class MainFragment extends BaseTransparentSupportFragment {
         int color1 = getColor(R.color.textColorHintDark);
         int color2 = getColor(R.color.colorPrimary);
 
+        iconView1.setText(showType == SHOW_HOME ? R.string.ui_icon_home : R.string.ui_icon_home_unselected);
         iconView1.setTextColor(showType == SHOW_HOME ? color2 : color1);
         textView1.setTextColor(showType == SHOW_HOME ? color2 : color1);
 
+        iconView2.setText(showType == SHOW_RECENT ? R.string.ui_icon_chat_left_solid : R.string.ui_icon_chat_left_hollow);
         iconView2.setTextColor(showType == SHOW_RECENT ? color2 : color1);
         textView2.setTextColor(showType == SHOW_RECENT ? color2 : color1);
 
         textView2d5.setTextColor(color1);
 
+        iconView3.setText(showType == SHOW_GROUP ? R.string.ui_icon_pentagon_solid : R.string.ui_icon_pentagon_hollow);
         iconView3.setTextColor(showType == SHOW_GROUP ? color2 : color1);
         textView3.setTextColor(showType == SHOW_GROUP ? color2 : color1);
 
+        iconView4.setText(showType == SHOW_MINE ? R.string.ui_icon_main_individual_solid : R.string.ui_icon_main_individual_holow);
         iconView4.setTextColor(showType == SHOW_MINE ? color2 : color1);
         textView4.setTextColor(showType == SHOW_MINE ? color2 : color1);
     }
