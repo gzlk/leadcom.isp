@@ -47,7 +47,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
     @ViewId(R.id.ui_modify_phone_confirm_number)
     private TextView phoneTextView;
     @ViewId(R.id.ui_verify_code_code)
-    private ClearEditText verifyCode;
+    private ClearEditText codeView;
     @ViewId(R.id.ui_verify_code_to_resend)
     private TextView resend;
     @ViewId(R.id.ui_verify_code_to_next_step)
@@ -81,7 +81,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
             phoneTextView.setText(StringHelper.getString(R.string.ui_text_modify_phone_number_86, verifyPhone));
         }
         //startTimeCounter();
-        verifyCode.addOnValueVerifyingListener(valueVerifyingListener);
+        codeView.addOnValueVerifyingListener(valueVerifyingListener);
     }
 
     private CorneredEditText.OnValueVerifyingListener valueVerifyingListener = new CorneredEditText.OnValueVerifyingListener() {
@@ -93,7 +93,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
             } else {
                 if (!StringHelper.isEmpty(receivedVerifyCode)) {
                     // 如果已经收到了验证码了则验证输入是否跟收到的一样
-                    nextStep.setEnabled(verifyCode.getValue().equals(receivedVerifyCode));
+                    nextStep.setEnabled(codeView.getValue().equals(receivedVerifyCode));
                 } else {
                     // 没收到验证码时，依靠输入内容是否符合验证规则进行下一步操作
                     nextStep.setEnabled(true);
@@ -171,7 +171,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                 if (null != timeCounter) {
                     timeCounter.cancel();
                 }
-                String code = verifyCode.getValue();
+                String code = codeView.getValue();
                 if (StringHelper.isEmpty(code)) {
                     ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_incorrect);
                     return;
@@ -186,6 +186,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                     // 更改手机号码时验证手机号码
                     tryModifyMyPhoneNumber();
                 } else {
+                    verifyCaptcha();
                     if (verifyType == VT_PASSWORD) {
                         // 重置密码时需要先校验验证码是否正确
                         verifyCaptcha();
@@ -204,8 +205,13 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, "");
-                    openActivity(ResetPasswordFragment.class.getName(), params, true, true);
+                    if (verifyType == VT_PASSWORD) {
+                        String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, "");
+                        openActivity(ResetPasswordFragment.class.getName(), params, true, true);
+                    } else {
+                        String params = StringHelper.format("%d,%s,%s", verifyType, verifyPhone, CodeVerifyFragment.super.verifyCode);
+                        openActivity(SignUpFragment.class.getName(), params, true, true);
+                    }
                 } else {
                     ToastHelper.make().showMsg(R.string.ui_text_verify_code_value_error);
                 }
@@ -258,7 +264,7 @@ public class CodeVerifyFragment extends BaseVerifyFragment {
                 resend.setText(R.string.ui_text_verify_code_fetched);
                 timeCounter.cancel();
                 receivedVerifyCode = SmsReceiver.getVerifyCode(body);
-                verifyCode.setValue(receivedVerifyCode);
+                codeView.setValue(receivedVerifyCode);
             }
         }
     };
