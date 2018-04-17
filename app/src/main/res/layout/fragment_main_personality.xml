@@ -99,7 +99,8 @@
                 android:animateLayoutChanges="true"
                 android:minWidth="@dimen/ui_base_dimen_button_height"
                 android:paddingEnd="@dimen/ui_static_dp_5"
-                android:paddingStart="@dimen/ui_static_dp_10">
+                android:paddingStart="@dimen/ui_static_dp_10"
+                android:visibility="gone">
 
                 <com.hlk.hlklib.lib.view.CustomTextView
                     android:id="@+id/ui_main_personality_title_left_icon"

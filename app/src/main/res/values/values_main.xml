@@ -5,7 +5,7 @@
     <dimen name="ui_text_size_main_bottom_text">@dimen/ui_static_sp_12</dimen>
 
     <string name="ui_text_main_bottom_button_text_1">首页</string>
-    <string name="ui_text_main_bottom_button_text_2">沟通</string>
+    <string name="ui_text_main_bottom_button_text_2">消息</string>
     <string name="ui_text_main_bottom_button_text_2d5">新增</string>
     <string name="ui_text_main_bottom_button_text_3">组织</string>
     <string name="ui_text_main_bottom_button_text_4">个人</string>

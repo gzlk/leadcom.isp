@@ -4,7 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
@@ -12,17 +16,18 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.SystemMessageViewHolder;
+import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
-import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.common.Message;
@@ -50,32 +55,76 @@ import java.util.List;
 
 public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
 
+    private static final String PARAM_IS_IN_MAIN = "smf_is_in_main";
+
+    public static SystemMessageFragment newInstance(Bundle bundle) {
+        SystemMessageFragment smf = new SystemMessageFragment();
+        smf.setArguments(bundle);
+        return smf;
+    }
+
+    private static Bundle getBundle(boolean inMain) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(PARAM_IS_IN_MAIN, inMain);
+        return bundle;
+    }
+
+    public static SystemMessageFragment getInstance(boolean isInMain) {
+        return newInstance(getBundle(isInMain));
+    }
+
     public static void open(Context context) {
-        BaseActivity.openActivity(context, SystemMessageFragment.class.getName(), "", true, false);
+        BaseActivity.openActivity(context, SystemMessageFragment.class.getName(), getBundle(false), true, false);
     }
 
     public static void open(BaseFragment fragment) {
-        fragment.openActivity(SystemMessageFragment.class.getName(), "", true, false);
+        fragment.openActivity(SystemMessageFragment.class.getName(), getBundle(false), true, false);
     }
 
+    @ViewId(R.id.ui_ui_custom_title_right_icon)
+    private CustomTextView rightIconView;
+    @ViewId(R.id.ui_ui_custom_title_right_text)
+    private TextView rightTextView;
     private MessageAdapter mAdapter;
+    private boolean isInMainPage = false;
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        isInMainPage = bundle.getBoolean(PARAM_IS_IN_MAIN, false);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_IS_IN_MAIN, isInMainPage);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NimApplication.addNimMessageEvent(event);
+        NimApplication.addNotificationChangeCallback(callback);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        isLoadingComplete(true);
+        rightIconView.setVisibility(isInMainPage ? View.GONE : View.VISIBLE);
+        rightTextView.setVisibility(isInMainPage ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public void onDestroy() {
-        NimApplication.removeNimMessageEvent(event);
+        NimApplication.removeNotificationChangeCallback(callback);
         super.onDestroy();
     }
 
-    private OnNimMessageEvent event = new OnNimMessageEvent() {
+    private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
-        public void onMessageEvent(NimMessage message) {
-            mAdapter.update(message);
+        public void onChanged() {
+            // 重新拉取推送消息列表
+            onSwipeRefreshing();
         }
     };
 
@@ -86,14 +135,16 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_system_message_fragment_title);
+        if (!isInMainPage) {
+            setCustomTitle(R.string.ui_system_message_fragment_title);
+        }
         setNothingText(R.string.ui_system_message_nothing);
         initializeAdapter();
     }
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return true;
+        return !isInMainPage;
     }
 
     @Override
@@ -102,13 +153,19 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    public int getLayout() {
+        return R.layout.fragment_main_recent_contacts;
+    }
+
+    @Override
     protected void onSwipeRefreshing() {
-        stopRefreshing();
+        remotePageNumber = 1;
+        fetchingPushMessages();
     }
 
     @Override
     protected void onLoadingMore() {
-        isLoadingComplete(true);
+        fetchingPushMessages();
     }
 
     @Override
@@ -116,19 +173,27 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
+    @Click({R.id.ui_ui_custom_title_right_text})
+    private void viewClick(View view) {
+        view.startAnimation(App.clickAnimation());
+        warningClear();
+    }
+
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new MessageAdapter();
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
-            setRightIcon(R.string.ui_icon_delete);
-            setRightText(R.string.ui_base_text_clear);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
-                @Override
-                public void onClick() {
-                    warningClear();
-                }
-            });
+            if (!isInMainPage) {
+                setRightIcon(R.string.ui_icon_delete);
+                setRightText(R.string.ui_base_text_clear);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        warningClear();
+                    }
+                });
+            }
             fetchingPushMessages();
             //NimMessage.count();
         }
@@ -167,11 +232,15 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onResponse(List<NimMessage> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (remotePageNumber <= 1) {
+                    mAdapter.clear();
+                }
                 if (success) {
                     mAdapter.update(list);
                 }
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
+                stopRefreshing();
             }
         }).list();
     }

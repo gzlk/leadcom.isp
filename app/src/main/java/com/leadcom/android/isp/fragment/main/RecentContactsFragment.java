@@ -174,7 +174,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
         return null;
     }
 
-    @Click({R.id.ui_recent_contacts_add})
+    @Click({R.id.ui_ui_custom_title_right_icon})
     private void viewClick(View view) {
         view.startAnimation(App.clickAnimation());
         showTooltip(view, R.id.ui_tooltip_recent_contact, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {

@@ -22,19 +22,6 @@ import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
-import com.netease.nim.uikit.impl.cache.TeamDataCache;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.friend.FriendService;
-import com.netease.nimlib.sdk.msg.MsgService;
-import com.netease.nimlib.sdk.msg.MsgServiceObserve;
-import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.netease.nimlib.sdk.msg.model.RecentContact;
-import com.netease.nimlib.sdk.team.constant.TeamMessageNotifyTypeEnum;
-import com.netease.nimlib.sdk.team.model.Team;
-
-import java.util.List;
 
 /**
  * <b>功能描述：</b>首页<br />
@@ -53,11 +40,12 @@ public class MainFragment extends BaseTransparentSupportFragment {
      */
     public static final String PARAM_SELECTED = "mf_param1";
     private static final String TAG_HOME = "main_home";
-    private static final String TAG_RECENT = "main_recent";
+    //    private static final String TAG_RECENT = "main_recent";
+    private static final String TAG_MESSAGE = "main_message";
     private static final String TAG_GROUP = "main_group";
     private static final String TAG_MINE = "main_mine";
 
-    private static final int SHOW_HOME = 0, SHOW_RECENT = 1, SHOW_GROUP = 2, SHOW_MINE = 3;
+    private static final int SHOW_HOME = 0, SHOW_MSG = 1, SHOW_GROUP = 2, SHOW_MINE = 3;
 
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
     private CustomTextView iconView1;
@@ -88,7 +76,8 @@ public class MainFragment extends BaseTransparentSupportFragment {
 
     // 首页4个fragment
     private HomeFragment homeFragment;
-    private RecentContactsFragment recentFragment;
+    //    private RecentContactsFragment recentFragment;
+    private SystemMessageFragment messageFragment;
     private GroupFragment groupFragment;
     private PersonalityFragment mineFragment;
     private int showType = SHOW_HOME;
@@ -97,63 +86,63 @@ public class MainFragment extends BaseTransparentSupportFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NimApplication.addNotificationChangeCallback(callback);
-        registerObservers(true);
+        //registerObservers(true);
         setDisplayPage();
     }
 
-    private void registerObservers(boolean register) {
-        NIMClient.getService(MsgServiceObserve.class).observeRecentContact(recentContactChangeObserver, register);
-    }
-
-    Observer<List<RecentContact>> recentContactChangeObserver = new Observer<List<RecentContact>>() {
-        @Override
-        public void onEvent(List<RecentContact> recentContacts) {
-            log("message observer onEvent(Main): " + (null == recentContacts ? "null" : recentContacts.size()));
-            showUnreadFlag();
-        }
-    };
-
-    private void checkUnreadTotalCountIgnoreMutex() {
-        NIMClient.getService(MsgService.class).queryRecentContacts().setCallback(new RequestCallback<List<RecentContact>>() {
-            @Override
-            public void onSuccess(List<RecentContact> list) {
-                int count = 0;
-                if (list == null || list.size() < 1) {
-                    return;
-                }
-                for (RecentContact contact : list) {
-                    int unread = contact.getUnreadCount();
-                    if (unread > 0) {
-                        if (contact.getSessionType() == SessionTypeEnum.Team) {
-                            // 查看群聊是否静音，静音的话不统计
-                            Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
-                            if (team.getMessageNotifyType() != TeamMessageNotifyTypeEnum.Mute) {
-                                count += unread;
-                            }
-                        } else if (contact.getSessionType() == SessionTypeEnum.P2P) {
-                            boolean notify = NIMClient.getService(FriendService.class).isNeedMessageNotify(contact.getContactId());
-                            if (notify) {
-                                count += unread;
-                            }
-                        } else {
-                            count += unread;
-                        }
-                    }
-                }
-                showUnreadFlag(count);
-            }
-
-            @Override
-            public void onFailed(int code) {
-
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-
-            }
-        });
-    }
+//    private void registerObservers(boolean register) {
+//        NIMClient.getService(MsgServiceObserve.class).observeRecentContact(recentContactChangeObserver, register);
+//    }
+//
+//    Observer<List<RecentContact>> recentContactChangeObserver = new Observer<List<RecentContact>>() {
+//        @Override
+//        public void onEvent(List<RecentContact> recentContacts) {
+//            log("message observer onEvent(Main): " + (null == recentContacts ? "null" : recentContacts.size()));
+//            showUnreadFlag();
+//        }
+//    };
+//
+//    private void checkUnreadTotalCountIgnoreMutex() {
+//        NIMClient.getService(MsgService.class).queryRecentContacts().setCallback(new RequestCallback<List<RecentContact>>() {
+//            @Override
+//            public void onSuccess(List<RecentContact> list) {
+//                int count = 0;
+//                if (list == null || list.size() < 1) {
+//                    return;
+//                }
+//                for (RecentContact contact : list) {
+//                    int unread = contact.getUnreadCount();
+//                    if (unread > 0) {
+//                        if (contact.getSessionType() == SessionTypeEnum.Team) {
+//                            // 查看群聊是否静音，静音的话不统计
+//                            Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
+//                            if (team.getMessageNotifyType() != TeamMessageNotifyTypeEnum.Mute) {
+//                                count += unread;
+//                            }
+//                        } else if (contact.getSessionType() == SessionTypeEnum.P2P) {
+//                            boolean notify = NIMClient.getService(FriendService.class).isNeedMessageNotify(contact.getContactId());
+//                            if (notify) {
+//                                count += unread;
+//                            }
+//                        } else {
+//                            count += unread;
+//                        }
+//                    }
+//                }
+//                showUnreadFlag(count);
+//            }
+//
+//            @Override
+//            public void onFailed(int code) {
+//
+//            }
+//
+//            @Override
+//            public void onException(Throwable exception) {
+//
+//            }
+//        });
+//    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -163,7 +152,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
 
     @Override
     public void onDestroy() {
-        registerObservers(false);
+//        registerObservers(false);
         NimApplication.removeNotificationChangeCallback(callback);
         super.onDestroy();
     }
@@ -171,7 +160,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            showUnreadFlag();
+            showUnreadFlag(NimMessage.getUnRead());
         }
     };
 
@@ -218,18 +207,18 @@ public class MainFragment extends BaseTransparentSupportFragment {
      * 显示有未读消息的标记
      */
     public void showUnreadFlag() {
-        checkUnreadTotalCountIgnoreMutex();
+//        checkUnreadTotalCountIgnoreMutex();
     }
 
     private void showUnreadFlag(int num) {
         if (null != icon2Unread) {
             icon2Unread.setVisibility(num > 0 ? View.VISIBLE : View.GONE);
-            icon2UnreadNum.setText(formatUnread(num));
+            //icon2UnreadNum.setText(formatUnread(num));
         }
-        if (null != icon4Unread) {
-            int size = NimMessage.getUnRead();
-            icon4Unread.setVisibility(size > 0 ? View.VISIBLE : View.GONE);
-        }
+//        if (null != icon4Unread) {
+//            int size = NimMessage.getUnRead();
+//            icon4Unread.setVisibility(size > 0 ? View.VISIBLE : View.GONE);
+//        }
     }
 
     @Override
@@ -250,8 +239,8 @@ public class MainFragment extends BaseTransparentSupportFragment {
                 }
                 break;
             case R.id.ui_tool_main_bottom_clickable_2:
-                if (showType != SHOW_RECENT) {
-                    showType = SHOW_RECENT;
+                if (showType != SHOW_MSG) {
+                    showType = SHOW_MSG;
                     setDisplayPage();
                 }
                 break;
@@ -303,18 +292,29 @@ public class MainFragment extends BaseTransparentSupportFragment {
         }
     }
 
-    private void initializeRecent() {
-        Fragment fragment = findFragment(TAG_RECENT);
+    private void initializeMessage() {
+        Fragment fragment = findFragment(TAG_MESSAGE);
         if (null != fragment) {
-            if (null == recentFragment) {
-                recentFragment = (RecentContactsFragment) fragment;
-                recentFragment.mainFragment = this;
+            if (null == messageFragment) {
+                messageFragment = (SystemMessageFragment) fragment;
             }
         } else {
-            recentFragment = new RecentContactsFragment();
-            recentFragment.mainFragment = this;
+            messageFragment = SystemMessageFragment.getInstance(true);
         }
     }
+
+//    private void initializeRecent() {
+//        Fragment fragment = findFragment(TAG_RECENT);
+//        if (null != fragment) {
+//            if (null == recentFragment) {
+//                recentFragment = (RecentContactsFragment) fragment;
+//                recentFragment.mainFragment = this;
+//            }
+//        } else {
+//            recentFragment = new RecentContactsFragment();
+//            recentFragment.mainFragment = this;
+//        }
+//    }
 
     private void initializeGroup() {
         Fragment fragment = findFragment(TAG_GROUP);
@@ -343,9 +343,12 @@ public class MainFragment extends BaseTransparentSupportFragment {
         if (null != homeFragment && showType != SHOW_HOME) {
             transaction.hide(homeFragment);
         }
-        if (null != recentFragment && showType != SHOW_RECENT) {
-            transaction.hide(recentFragment);
+        if (null != messageFragment && showType != SHOW_MSG) {
+            transaction.hide(messageFragment);
         }
+//        if (null != recentFragment && showType != SHOW_RECENT) {
+//            transaction.hide(recentFragment);
+//        }
         if (null != groupFragment && showType != SHOW_GROUP) {
             transaction.hide(groupFragment);
         }
@@ -373,9 +376,12 @@ public class MainFragment extends BaseTransparentSupportFragment {
                 initializeHome();
                 showFragment(homeFragment, TAG_HOME);
                 break;
-            case SHOW_RECENT:
-                initializeRecent();
-                showFragment(recentFragment, TAG_RECENT);
+            case SHOW_MSG:
+                initializeMessage();
+                showFragment(messageFragment, TAG_MESSAGE);
+//            case SHOW_RECENT:
+//                initializeRecent();
+//                showFragment(recentFragment, TAG_RECENT);
                 break;
             case SHOW_GROUP:
                 initializeGroup();
@@ -400,9 +406,9 @@ public class MainFragment extends BaseTransparentSupportFragment {
         iconView1.setTextColor(showType == SHOW_HOME ? color2 : color1);
         textView1.setTextColor(showType == SHOW_HOME ? color2 : color1);
 
-        iconView2.setText(showType == SHOW_RECENT ? R.string.ui_icon_chat_left_solid : R.string.ui_icon_chat_left_hollow);
-        iconView2.setTextColor(showType == SHOW_RECENT ? color2 : color1);
-        textView2.setTextColor(showType == SHOW_RECENT ? color2 : color1);
+        iconView2.setText(showType == SHOW_MSG ? R.string.ui_icon_chat_left_solid : R.string.ui_icon_chat_left_hollow);
+        iconView2.setTextColor(showType == SHOW_MSG ? color2 : color1);
+        textView2.setTextColor(showType == SHOW_MSG ? color2 : color1);
 
         textView2d5.setTextColor(color1);
 
