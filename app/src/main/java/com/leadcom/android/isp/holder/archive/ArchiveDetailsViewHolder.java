@@ -104,8 +104,8 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
 //            Random random = new Random(10);
 //            cover = "drawable://" + (random.nextInt() % 2 == 0 ? R.drawable.img_activity_cover_1 : R.drawable.img_activity_cover_2);
 //        }
-        coverView.displayImage(cover, width, height, false, false);
-        coverView.setVisibility(isEmpty(cover) ? View.GONE : View.VISIBLE);
+        //coverView.displayImage(cover, width, height, false, false);
+        //coverView.setVisibility(isEmpty(cover) ? View.GONE : View.VISIBLE);
         String content = archive.getContent();
         contentView.setVisibility((isEmpty(content) || content.equals("null")) ? View.GONE : View.VISIBLE);
         content = isEmpty(content) ? "" : Utils.clearStyleEqualsXXX(content);

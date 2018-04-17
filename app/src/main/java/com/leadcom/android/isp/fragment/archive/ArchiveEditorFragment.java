@@ -453,6 +453,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 提交成功，删除草稿
                     //ArchiveDraft.delete(mArchive.getId());
                     mArchive = archive;
+                    if (null != mArchive && !isEmpty(mArchive.getId())) {
+                        ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive);
+                    }
                     resultSucceededActivity();
                     //mArchive = archive;
                     //resetRightIcons();
