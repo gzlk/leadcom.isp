@@ -4,6 +4,7 @@ import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.ListQuery;
+import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.model.common.CoverTemplate;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -24,7 +25,7 @@ public class CoverRequest extends Request<CoverTemplate> {
         return new CoverRequest();
     }
 
-    private static class ListCover extends ListQuery<CoverTemplate> {
+    private static class ListCover extends PaginationQuery<CoverTemplate> {
     }
 
     @Override

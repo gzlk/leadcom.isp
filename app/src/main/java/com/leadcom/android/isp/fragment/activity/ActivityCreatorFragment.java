@@ -20,6 +20,7 @@ import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.common.CoverPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupsContactPickerFragment;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;

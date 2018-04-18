@@ -1,18 +1,18 @@
-package com.leadcom.android.isp.fragment.activity;
+package com.leadcom.android.isp.fragment.common;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseImageSelectableSupportFragment;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.hlk.hlklib.lib.inject.ViewId;
 
 import java.util.ArrayList;
 
@@ -34,24 +34,28 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
     private static final String PARAM_ASPECT_X = "cpf_aspect_x";
     private static final String PARAM_ASPECT_Y = "cpf_aspect_y";
 
-    public static CoverPickFragment newInstance(String params) {
+    public static CoverPickFragment newInstance(Bundle bundle) {
         CoverPickFragment cpf = new CoverPickFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 传过来的params也即queryId就是已经设置好了的封面地址
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 是否需要裁剪图片
-        bundle.putBoolean(PARAM_CROP, Boolean.valueOf(strings[1]));
-        // 裁剪图片宽高比
-        bundle.putInt(PARAM_ASPECT_X, Integer.valueOf(strings[2]));
-        // 裁剪图片宽高比
-        bundle.putInt(PARAM_ASPECT_Y, Integer.valueOf(strings[3]));
         cpf.setArguments(bundle);
         return cpf;
     }
 
+    private static Bundle getBundle(boolean coropable, String cover, int aspectX, int aspectY) {
+        Bundle bundle = new Bundle();
+        // 传过来的params也即queryId就是已经设置好了的封面地址
+        bundle.putString(PARAM_QUERY_ID, cover);
+        // 是否需要裁剪图片
+        bundle.putBoolean(PARAM_CROP, coropable);
+        // 裁剪图片宽高比
+        bundle.putInt(PARAM_ASPECT_X, aspectX);
+        // 裁剪图片宽高比
+        bundle.putInt(PARAM_ASPECT_Y, aspectY);
+        return bundle;
+    }
+
     public static void open(BaseFragment fragment, boolean cropable, String cover, int aspectX, int aspectY) {
-        fragment.openActivity(CoverPickFragment.class.getName(), format("%s,%s,%d,%d", cover, cropable, aspectX, aspectY), REQUEST_COVER, true, false);
+        Bundle bundle = getBundle(cropable, cover, aspectX, aspectY);
+        fragment.openActivity(CoverPickFragment.class.getName(), bundle, REQUEST_COVER, true, false);
     }
 
     private String selectedImage = "";
@@ -115,6 +119,18 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
         initializeHolders();
         addOnImageSelectedListener(imageSelectedListener);
         setOnFileUploadingListener(onFileUploadingListener);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_SELECT) {
+            // 封面选择返回了
+            String cover = getResultedData(data);
+            if (!isEmpty(cover)) {
+                resultData(getResultedData(data));
+            }
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     private void confirmCover() {
@@ -211,7 +227,7 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
                     break;
                 case 2:
                     // 模板库
-                    ToastHelper.make().showMsg("模板库");
+                    CoverTemplateFragment.open(CoverPickFragment.this, mQueryId);
                     break;
             }
         }

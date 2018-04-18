@@ -104,8 +104,10 @@
     <string name="ui_activity_create_member_select_title">选择参与人</string>
 
     <string name="ui_activity_cover_picker_fragment_title">添加封面</string>
+    <string name="ui_activity_cover_picker_fragment_title1">选择封面</string>
     <string name="ui_activity_cover_picker_image_warning">建议图片尺寸900x525,小于4M</string>
     <string name="ui_activity_cover_picker_none_image_selected">请为您的活动选择一张宣传照</string>
+    <string name="ui_activity_cover_picker_none_image_selected1">您没有选择封面</string>
     <string-array name="ui_activity_cover_picker_items">
         <item>0|从手机相册选取|%s|1</item>
         <item>1|拍照|打开相机直接拍照|1</item>
