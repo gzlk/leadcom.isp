@@ -92,6 +92,7 @@ public class Archive extends Additional {
         String Title = "title";
         String Cover = "cover";
         String Content = "content";
+        String AbstractContent = "abstractContent";
         String Image = "image";
         String Source = "source";
         String Location = "location";
@@ -389,6 +390,8 @@ public class Archive extends Additional {
     //档案内容(html)
     @Column(Field.Content)
     private String content;
+    @Column(Field.AbstractContent)
+    private String abstrContent;       //档案摘要(html)
     //档案内容(markdown)
     @Column(Field.Markdown)
     private String markdown;
@@ -548,6 +551,14 @@ public class Archive extends Additional {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getAbstrContent() {
+        return abstrContent;
+    }
+
+    public void setAbstrContent(String abstrContent) {
+        this.abstrContent = abstrContent;
     }
 
     /**

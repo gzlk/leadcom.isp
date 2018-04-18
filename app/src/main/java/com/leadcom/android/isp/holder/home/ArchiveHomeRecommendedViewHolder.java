@@ -133,8 +133,9 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         }
         titleView.setText(Html.fromHtml(text));
         // 去掉所有html标签
-        contentView.setVisibility(isEmpty(archive.getContent()) ? View.GONE : View.VISIBLE);
-        contentView.setText(isEmpty(archive.getContent()) ? "" : Html.fromHtml(Utils.clearHtml(archive.getContent())));
+        text = isEmpty(archive.getContent()) ? archive.getAbstrContent() : archive.getContent();
+        contentView.setVisibility(isEmpty(text) ? View.GONE : View.VISIBLE);
+        contentView.setText(isEmpty(text) ? "" : Html.fromHtml(Utils.clearHtml(text)));
         commentsView.setText(String.valueOf(archive.getCmtNum()));
 
         likesView.setText(String.valueOf(archive.getLikeNum()));
