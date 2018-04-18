@@ -11,6 +11,7 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.model.archive.Additional;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.hlk.hlklib.lib.inject.Click;
@@ -72,7 +73,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         headerSize = getDimension(R.dimen.ui_base_user_header_image_size_small);
         width = fragment.getScreenWidth() - getDimension(R.dimen.ui_base_dimen_margin_padding) * 2;
         height = width / 2;
-        resetImageHeight();
+        //resetImageHeight();
         coverView.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
             public void onImageClick(ImageDisplayer displayer, String url) {
@@ -123,7 +124,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
             authorName.setText(archive.getUserName());
             timeView.setText(fragment().formatTimeAgo(archive.getCreateDate()));
         }
-        coverView.displayImage(archive.getCover(), width, height, false, false);
+        coverView.displayImage(archive.getCover(), getDimension(R.dimen.ui_static_dp_80), false, false);
         coverView.setVisibility(isEmpty(archive.getCover()) ? View.GONE : View.VISIBLE);
         String text = archive.getTitle();
         if (!isEmpty(text)) {
@@ -133,9 +134,12 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         }
         titleView.setText(Html.fromHtml(text));
         // 去掉所有html标签
-        text = isEmpty(archive.getContent()) ? archive.getAbstrContent() : archive.getContent();
-        contentView.setVisibility(isEmpty(text) ? View.GONE : View.VISIBLE);
-        contentView.setText(isEmpty(text) ? "" : Html.fromHtml(Utils.clearHtml(text)));
+        //text = isEmpty(archive.getContent()) ? archive.getAbstrContent() : archive.getContent();
+        //contentView.setVisibility(isEmpty(text) ? View.GONE : View.VISIBLE);
+        //contentView.setText(isEmpty(text) ? "" : Html.fromHtml(Utils.clearHtml(text)));
+        // 显示新版赞、收藏等内容
+        Additional add = archive.getAddition();
+        contentView.setText(StringHelper.getString(R.string.ui_text_home_archive_additional, add.getCmtNum(), add.getLike(), add.getColNum()));
         commentsView.setText(String.valueOf(archive.getCmtNum()));
 
         likesView.setText(String.valueOf(archive.getLikeNum()));
