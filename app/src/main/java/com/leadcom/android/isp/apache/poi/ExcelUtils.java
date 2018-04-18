@@ -222,22 +222,32 @@ public class ExcelUtils {
                     }
                     Date date = cell.getDateCellValue();
                     result = sdf.format(date);
-                } else if (cell.getCellStyle().getDataFormat() == 58) {
-                    // 处理自定义日期格式：m月d日(通过判断单元格的格式id解决，id的值是58)
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    double value = cell.getNumericCellValue();
-                    Date date = org.apache.poi.ss.usermodel.DateUtil.getJavaDate(value);
-                    result = sdf.format(date);
                 } else {
-                    double value = cell.getNumericCellValue();
-                    CellStyle style = cell.getCellStyle();
-                    DecimalFormat format = new DecimalFormat();
-                    String temp = style.getDataFormatString();
-                    // 单元格设置成常规
-                    if (!TextUtils.isEmpty(temp) && temp.equals("General")) {
-                        format.applyPattern("#");
+                    short style = cell.getCellStyle().getDataFormat();
+                    if (style == 14 || style == 31 || style == 57 || style == 58
+                            || (176 <= style && style <= 178) || (182 <= style && style <= 196)
+                            || (210 <= style && style <= 213) || (208 == style)) {
+                        // 处理自定义日期格式：m月d日(通过判断单元格的格式id解决，id的值是58)
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        double value = cell.getNumericCellValue();
+                        Date date = org.apache.poi.ss.usermodel.DateUtil.getJavaDate(value);
+                        result = sdf.format(date);
+                    } else if (style == 20 || style == 32 || style == 183 || (200 <= style && style <= 209)) { // 时间
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                        double value = cell.getNumericCellValue();
+                        Date date = org.apache.poi.ss.usermodel.DateUtil.getJavaDate(value);
+                        result = sdf.format(date);
+                    } else {
+                        double value = cell.getNumericCellValue();
+                        CellStyle cellStyle = cell.getCellStyle();
+                        DecimalFormat format = new DecimalFormat();
+                        String temp = cellStyle.getDataFormatString();
+                        // 单元格设置成常规
+                        if (!TextUtils.isEmpty(temp) && temp.equals("General")) {
+                            format.applyPattern("#");
+                        }
+                        result = format.format(value);
                     }
-                    result = format.format(value);
                 }
                 break;
             case STRING:// String类型
