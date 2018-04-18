@@ -179,7 +179,7 @@ public class FilePreviewHelper {
      * 预览在线或本地图片
      */
     private static void previewImage(Context context, String path) {
-        BaseActivity.openActivity(context, ImageViewerFragment.class.getName(), StringHelper.format("0,%s", path), false, false, true);
+        ImageViewerFragment.open(context, path);
     }
 
     /**
