@@ -152,7 +152,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             // 查找未读的推送通知
             NimApplication.dispatchCallbacks();
         } else {
-            chatToUser.setVisibility(View.VISIBLE);
+            //chatToUser.setVisibility(View.VISIBLE);
             toolbarBackground.setVisibility(View.GONE);
             paddingLayout.setVisibility(View.GONE);
             selfDefineView.setVisibility(View.GONE);
