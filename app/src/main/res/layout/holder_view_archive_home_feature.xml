@@ -80,7 +80,8 @@
             android:layout_height="@dimen/ui_static_dp_80"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
             app:id_image_scale_type="centerCrop"
-            app:id_image_src="@mipmap/img_image_default" />
+            app:id_image_src="@mipmap/img_image_default"
+            app:id_image_type="rounded" />
 
     </LinearLayout>
 
