@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.apache.poi;
 
+import android.text.TextUtils;
+
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -232,7 +234,7 @@ public class ExcelUtils {
                     DecimalFormat format = new DecimalFormat();
                     String temp = style.getDataFormatString();
                     // 单元格设置成常规
-                    if (temp.equals("General")) {
+                    if (!TextUtils.isEmpty(temp) && temp.equals("General")) {
                         format.applyPattern("#");
                     }
                     result = format.format(value);
