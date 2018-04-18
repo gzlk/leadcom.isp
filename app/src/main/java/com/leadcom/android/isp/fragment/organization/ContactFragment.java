@@ -98,6 +98,17 @@ public class ContactFragment extends BaseOrganizationFragment {
         return cf;
     }
 
+    private static Bundle getBundle(int type, String groupId, String squadId) {
+        Bundle bundle = new Bundle();
+        // 类型
+        bundle.putInt(PARAM_TYPE, type);
+        // 组织的id
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        // 小组的id
+        bundle.putString(PARAM_SQUAD_ID, squadId);
+        return bundle;
+    }
+
     /**
      * 打开具有标题栏的组织成员列表页面
      */

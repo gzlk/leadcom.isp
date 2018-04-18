@@ -51,6 +51,8 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_archive_home_recommend_content)
     private TextView contentView;
     // 附加信息
+    @ViewId(R.id.ui_holder_view_archive_home_recommend_additional)
+    private TextView additionalText;
     @ViewId(R.id.ui_tool_view_archive_additional_comment_number)
     private TextView commentsView;
     @ViewId(R.id.ui_tool_view_archive_additional_like_number)
@@ -134,12 +136,12 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         }
         titleView.setText(Html.fromHtml(text));
         // 去掉所有html标签
-        //text = isEmpty(archive.getContent()) ? archive.getAbstrContent() : archive.getContent();
-        //contentView.setVisibility(isEmpty(text) ? View.GONE : View.VISIBLE);
-        //contentView.setText(isEmpty(text) ? "" : Html.fromHtml(Utils.clearHtml(text)));
+        text = isEmpty(archive.getContent()) ? archive.getAbstrContent() : archive.getContent();
+        contentView.setVisibility(isEmpty(text) ? View.GONE : View.VISIBLE);
+        contentView.setText(isEmpty(text) ? "" : Html.fromHtml(Utils.clearHtml(text)));
         // 显示新版赞、收藏等内容
         Additional add = archive.getAddition();
-        contentView.setText(StringHelper.getString(R.string.ui_text_home_archive_additional, add.getCmtNum(), add.getLike(), add.getColNum()));
+        additionalText.setText(StringHelper.getString(R.string.ui_text_home_archive_additional, add.getCmtNum(), add.getLike(), add.getColNum()));
         commentsView.setText(String.valueOf(archive.getCmtNum()));
 
         likesView.setText(String.valueOf(archive.getLikeNum()));

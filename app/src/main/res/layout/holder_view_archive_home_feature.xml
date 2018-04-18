@@ -4,7 +4,7 @@
     android:id="@+id/ui_holder_view_archive_home_recommend_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="@drawable/ui_background_clickable"
     android:gravity="center_vertical"
     android:orientation="vertical">
 
@@ -51,7 +51,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="3"
+                android:maxLines="2"
+                android:text="@string/app_name_default"
+                android:textColor="@color/textColorHint"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <TextView
+                android:id="@+id/ui_holder_view_archive_home_recommend_additional"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ui_static_dp_5"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:text="@string/app_name_default"
                 android:textColor="@color/textColorHint"
                 android:textSize="@dimen/ui_base_text_size_small" />
