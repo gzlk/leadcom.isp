@@ -77,6 +77,10 @@ public class Message extends Model {
          */
         int GROUP_JOIN = 4;
         /**
+         * 用户被直接加入组织
+         */
+        int GROUP_ADDED = 5;
+        /**
          * 批准新成员加入
          */
         int GROUP_JOIN_APPROVE = 6;
@@ -237,6 +241,8 @@ public class Message extends Model {
         switch (type) {
             case Type.GROUP_JOIN:
                 return "申请加入组织";
+            case Type.GROUP_ADDED:
+                return "添加组织成员";
             case Type.GROUP_INVITE:
                 return "邀请您加入组织";
             case Type.GROUP_KICK_OUT:

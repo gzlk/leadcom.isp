@@ -263,7 +263,7 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
                 WordUtils word = new WordUtils(localReal);
                 log(word.htmlPath);
                 loadingUrl("file:///" + word.htmlPath);
-            } else if (Attachment.isExcel(mExtension) && mExtension.equals("xls")) {
+            } else if (Attachment.isExcel(mExtension)) {
                 // 下载完毕，打开 excel 预览
                 ExcelUtils excel = new ExcelUtils(localReal);
                 log(excel.htmlPath);

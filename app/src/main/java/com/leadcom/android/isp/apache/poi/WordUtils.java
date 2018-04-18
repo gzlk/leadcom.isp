@@ -37,7 +37,7 @@ import java.util.zip.ZipFile;
  * <b>修改备注：</b><br />
  */
 
-public class WordUtils {
+public class WordUtils extends OfficeUtils {
 
     private final static String TAG = "POIWordUtil";
     public String htmlPath;
@@ -65,6 +65,7 @@ public class WordUtils {
     private String imgBegin = "<img src=\"%s\" >";
 
     public WordUtils(String docName) {
+        super();
         docPath = docName;
         String fileName = FileUtils.getFileName(docPath);
         htmlPath = FileUtils.createFile(fileName + ".html");

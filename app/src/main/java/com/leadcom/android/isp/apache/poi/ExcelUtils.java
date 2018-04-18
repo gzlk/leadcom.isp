@@ -48,12 +48,13 @@ import java.util.Map;
  * <b>修改备注：</b><br />
  */
 
-public class ExcelUtils {
+public class ExcelUtils extends OfficeUtils {
 
     private final static String TAG = "POIExcelUtil";
     public String htmlPath;
 
     public ExcelUtils(String xlsName) {
+        super();
         String fileName = FileUtils.getFileName(xlsName);
         htmlPath = FileUtils.createFile(fileName + ".html");
         // 判断已转换的文件是否存在，不用每次打开时都转换，节省时间

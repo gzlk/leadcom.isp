@@ -31,7 +31,6 @@ import com.sina.weibo.sdk.auth.AuthInfo;
 import com.tencent.smtt.sdk.QbSdk;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
