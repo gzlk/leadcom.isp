@@ -95,6 +95,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
      * 标记是否是app内部打开的详情页
      */
     private static boolean innerOpen = false;
+    private static boolean isCollected = false;
 
     public static ArchiveDetailsWebViewFragment newInstance(Bundle bundle) {
         ArchiveDetailsWebViewFragment adwvf = new ArchiveDetailsWebViewFragment();
@@ -112,6 +113,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     public static void open(BaseFragment fragment, Collection collection) {
+        isCollected = true;
         if (collection.getType() == Collection.Type.GROUP_ARCHIVE) {
             open(fragment, collection.getGroDoc());
         } else if (collection.getType() == Collection.Type.USER_ARCHIVE) {
@@ -184,6 +186,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             }
         }
         innerOpen = false;
+        isCollected = false;
         super.onDestroy();
     }
 
@@ -497,7 +500,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             if (archive.isAuthor()) {
                 resetRightIconEvent();
             }
-        } else {
+        } else if (!isCollected) {
+            // 不是收藏过来的内容
             // 非草稿档案，可以分享等等
             setRightIcon(R.string.ui_icon_more);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
@@ -577,6 +581,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         liked = archive.getCollection() == Collection.CollectionType.COLLECTED;
         collectIcon.setText(liked ? R.string.ui_icon_pentagon_corner_solid : R.string.ui_icon_pentagon_corner_hollow);
         collectIcon.setTextColor(getColor(liked ? R.color.colorCaution : R.color.textColorHint));
+
+        additionalLayout.setVisibility(isCollected ? View.GONE : View.VISIBLE);
     }
 
     private void initializeAdapter() {
@@ -892,14 +898,16 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     App.openUserInfo(ArchiveDetailsWebViewFragment.this, ((Comment) mAdapter.get(index)).getUserId());
                     break;
                 case R.id.ui_holder_view_archive_details_comment_layout:
-                    // 回复评论或自己
-                    Comment comment = (Comment) mAdapter.get(index);
-                    if (!comment.isMine()) {
-                        selectedIndex = index;
-                        // 要回复别人的评论
-                        replyView.setText(StringHelper.getString(R.string.ui_text_archive_details_comment_hint_to, comment.getUserName()));
-                        replyView.setVisibility(View.VISIBLE);
-                        showInputBoard(true);
+                    if (!isCollected) {
+                        // 回复评论或自己
+                        Comment comment = (Comment) mAdapter.get(index);
+                        if (!comment.isMine()) {
+                            selectedIndex = index;
+                            // 要回复别人的评论
+                            replyView.setText(StringHelper.getString(R.string.ui_text_archive_details_comment_hint_to, comment.getUserName()));
+                            replyView.setVisibility(View.VISIBLE);
+                            showInputBoard(true);
+                        }
                     }
                     break;
                 case R.id.ui_holder_view_archive_details_comment_delete:
@@ -908,11 +916,15 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     break;
                 case R.id.ui_tool_view_archive_additional_like_layout:
                     // 点赞
-                    like(mAdapter.get(mQueryId));
+                    if (!isCollected) {
+                        like(mAdapter.get(mQueryId));
+                    }
                     break;
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏
-                    collect(mAdapter.get(mQueryId));
+                    if (!isCollected) {
+                        collect(mAdapter.get(mQueryId));
+                    }
                     break;
                 case R.id.ui_holder_view_archive_attachment_layout:
                     // 点击打开附件

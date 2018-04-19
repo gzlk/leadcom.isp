@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.application.App;
@@ -83,6 +84,8 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     private int selectedComment = 0;
     private static final String PARAM_INDEX = "mdf_selected_index";
     private Model noMore = Model.getNoMore();
+    @ViewId(R.id.ui_tool_chatable_inputbar_container)
+    private View inputLayout;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -119,6 +122,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
             }
         });
         setInputHint(R.string.ui_text_archive_details_comment_hint);
+        inputLayout.setVisibility(isCollected ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -232,13 +236,15 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         Collectable.resetMomentCollectionParams(mMoment);
         // 我发布的动态可以删除全部评论
         deletable = mMoment.isMine();
-        setRightIcon(R.string.ui_icon_more);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                showMoreButtons();
-            }
-        });
+        if (!isCollected) {
+            setRightIcon(R.string.ui_icon_more);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    showMoreButtons();
+                }
+            });
+        }
         // 拉取回来之后立即显示
         if (!mAdapter.exist(mMoment)) {
             mAdapter.add(mMoment, 0);
@@ -400,6 +406,9 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     // 这里已经是详情页，不再需要打开详情页了
                     break;
                 case R.id.ui_holder_view_moment_details_more:
+                    if (isCollected) {
+                        return;
+                    }
                     // 打开快捷赞、评论菜单
                     mSelectedIndex = index;
                     // 已赞和未赞
@@ -407,6 +416,9 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
                     break;
                 case R.id.ui_holder_view_moment_comment_container:
+                    if (isCollected) {
+                        return;
+                    }
                     // 回复别人的评论或删除自己的评论
                     selectedComment = index;
                     Comment comment = (Comment) mAdapter.get(index);
@@ -415,6 +427,9 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     openKeyboard();
                     break;
                 case R.id.ui_holder_view_moment_comment_delete:
+                    if (isCollected) {
+                        return;
+                    }
                     selectedComment = index;
                     openCommentDeleteDialog();
                     break;
