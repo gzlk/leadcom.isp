@@ -20,7 +20,7 @@ android {
 //        }
         ndk {
             // 设置支持的SO库架构(网易云信)
-            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "x86", "x86_64"
+            abiFilters "armeabi", "armeabi-v7a", "mips", "x86"
         }
         manifestPlaceholders = [APP_PKG_NAME: applicationId]
         resValue "string", "app_internal_version", getInternalVersion()

@@ -117,7 +117,7 @@ public class App extends NimApplication {
         super.onCreate();
         instance = this;
         AppCrashHandler.getInstance(this);
-        initializeX5();
+        //initializeX5();
         initializeNim();
         if (shouldInit()) {
             WbSdk.install(this, new AuthInfo(this, StringHelper.getString(R.string.weibo_app_key), "https://api.weibo.com/oauth2/default.html", ""));
