@@ -858,6 +858,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     doc.setRecommend(RecommendArchive.RecommendStatus.RECOMMENDED);
                     mAdapter.notifyItemChanged(index);
                     prepareShareDialogElement(doc);
+                    ToastHelper.make().showMsg(message);
                 }
             }
         }).recommend(type, archive.getGroupId(), mQueryId, archive.getUserId());
@@ -874,6 +875,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     doc.setRecommend(RecommendArchive.RecommendStatus.UN_RECOMMEND);
                     mAdapter.notifyItemChanged(0);
                     prepareShareDialogElement(doc);
+                    ToastHelper.make().showMsg(message);
                 }
                 displayLoading(false);
             }
