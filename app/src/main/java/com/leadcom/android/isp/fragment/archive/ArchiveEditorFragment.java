@@ -237,7 +237,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 是否是组织档案，默认个人档案
      */
-    private boolean isGroupArchive = false;
+    private boolean isGroupArchive = false, isUserArchive = true;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -297,6 +297,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (success && null != archive && !isEmpty(archive.getId())) {
                     mArchive = archive;
                     isGroupArchive = !isEmpty(mArchive.getGroupId());
+                    isUserArchive = !isGroupArchive;
                     titleView.setValue(mArchive.getTitle());
                     mEditor.setHtml(mArchive.getContent());
                 } else {
@@ -332,6 +333,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 // 继续编辑则直接停留在本页面
                 mArchive = Archive.fromJson(json);
                 isGroupArchive = !isEmpty(mArchive.getGroupId());
+                isUserArchive = !isGroupArchive;
                 titleView.setValue(mArchive.getTitle());
                 mEditor.setHtml(mArchive.getContent());
                 return true;
@@ -402,16 +404,18 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         if (isGroupArchive) {
+            mArchive.setType(Archive.Type.GROUP);
             if (isEmpty(mArchive.getGroupId())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
                 return;
             }
         } else {
+            mArchive.setType(Archive.Type.USER);
             // 个人档案需要清空组织id
             mArchive.setGroupId("");
             mArchive.setType(Archive.ArchiveType.INDIVIDUAL);
         }
-        // 组织档案需要标签
+        // 个人档案需要标签
         if (isEmpty(mArchive.getGroupId()) && mArchive.getLabel().size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
             return;
@@ -450,17 +454,27 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
-                    // 提交成功，删除草稿
-                    //ArchiveDraft.delete(mArchive.getId());
-                    mArchive = archive;
-                    if (null != mArchive && !isEmpty(mArchive.getId())) {
-                        ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive);
+                    // 提交成功，判断是否需要再提交个人档案
+                    if (isGroupArchive) {
+                        // 去掉组织档案需求
+                        isGroupArchive = false;
+                        if (isUserArchive) {
+                            mArchive.setId("");
+                            // 如果选择了还要存为个人档案，则还要再调用一次
+                            tryCreateArchive();
+                        }
+                    } else {
+                        //ArchiveDraft.delete(mArchive.getId());
+                        mArchive = archive;
+                        if (null != mArchive && !isEmpty(mArchive.getId())) {
+                            ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive);
+                        }
+                        resultSucceededActivity();
+                        //mArchive = archive;
+                        //resetRightIcons();
+                        //mEditor.setInputEnabled(false);
+                        //openSettingDialog();
                     }
-                    resultSucceededActivity();
-                    //mArchive = archive;
-                    //resetRightIcons();
-                    //mEditor.setInputEnabled(false);
-                    //openSettingDialog();
                 }
             }
         }).addFormal(mArchive);
@@ -681,15 +695,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         }
                         break;
                     case R.id.ui_popup_rich_editor_setting_type_user:
-                        // 选择新建用户档案
-                        isGroupArchive = false;
-                        mArchive.setType(Archive.Type.USER);
+                        // 是否选中个人档案标签
+                        isUserArchive = !isUserArchive;
+                        if (!isUserArchive && !isGroupArchive) {
+                            // 如果不是选择用户文档，且也不是组织文档，则默认选中组织文档
+                            isGroupArchive = true;
+                        }
+                        //mArchive.setType(Archive.Type.USER);
                         resetGroupArchiveOrUser();
                         break;
                     case R.id.ui_popup_rich_editor_setting_type_group:
                         // 选择新建组织档案
-                        isGroupArchive = true;
-                        mArchive.setType(Archive.Type.GROUP);
+                        isGroupArchive = !isGroupArchive;
+                        if (!isGroupArchive && !isUserArchive) {
+                            // 如果不是选择组织文档，且也不是个人文档，则默认选中个人文档
+                            isUserArchive = true;
+                        }
+                        //mArchive.setType(Archive.Type.GROUP);
                         resetGroupArchiveOrUser();
                         break;
                     case R.id.ui_popup_rich_editor_setting_group_picker:
@@ -748,10 +770,24 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         }
                         break;
                     case R.id.ui_popup_rich_editor_setting_commit:
-                        tryCreateArchive();
+                        if (isUserArchive && isGroupArchive) {
+                            warningSaveUserAndGroupArchive();
+                        } else {
+                            tryCreateArchive();
+                        }
                         break;
                 }
                 return false;
+            }
+
+            private void warningSaveUserAndGroupArchive() {
+                DeleteDialogHelper.helper().init(ArchiveEditorFragment.this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+                    @Override
+                    public boolean onConfirm() {
+                        tryCreateArchive();
+                        return true;
+                    }
+                }).setTitleText(R.string.ui_text_archive_creator_editor_create_both).setConfirmText(R.string.ui_base_text_confirm).show();
             }
 
             private void resetPublicStatus() {
@@ -827,7 +863,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
      * 重置当前选择是组织档案还是个人档案
      */
     private void resetGroupArchiveOrUser() {
-        userIcon.setTextColor(getColor(isGroupArchive ? R.color.textColorHintLight : R.color.colorPrimary));
+        userIcon.setTextColor(getColor(isUserArchive ? R.color.colorPrimary : R.color.textColorHintLight));
         groupIcon.setTextColor(getColor(isGroupArchive ? R.color.colorPrimary : R.color.textColorHintLight));
         int groupVisibility = isGroupArchive ? View.VISIBLE : View.GONE;
         // 组织档案需要选择组织
@@ -837,7 +873,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 组织档案需要设置档案的类型
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category).setVisibility(groupVisibility);
         // 个人档案需要选择标签
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isGroupArchive ? View.GONE : View.VISIBLE);
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isUserArchive ? View.VISIBLE : View.GONE);
         // 个人档案不需要分享草稿
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
     }

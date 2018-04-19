@@ -141,7 +141,8 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         contentView.setText(isEmpty(text) ? "" : Html.fromHtml(Utils.clearHtml(text)));
         // 显示新版赞、收藏等内容
         Additional add = archive.getAddition();
-        additionalText.setText(StringHelper.getString(R.string.ui_text_home_archive_additional, add.getCmtNum(), add.getLike(), add.getColNum()));
+        text = StringHelper.getString(R.string.ui_text_home_archive_additional, add.getCmtNum(), add.getLikeNum(), add.getColNum());
+        additionalText.setText(text);
         commentsView.setText(String.valueOf(archive.getCmtNum()));
 
         likesView.setText(String.valueOf(archive.getLikeNum()));
