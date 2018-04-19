@@ -23,6 +23,7 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -57,16 +58,19 @@ import java.util.List;
 
 public class PhoneContactFragment extends BaseOrganizationFragment {
 
-    public static PhoneContactFragment newInstance(String params) {
+    public static PhoneContactFragment newInstance(Bundle bundle) {
         PhoneContactFragment pcf = new PhoneContactFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 组织的id
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 小组的id
-        bundle.putString(PARAM_SQUAD_ID, strings[1]);
         pcf.setArguments(bundle);
         return pcf;
+    }
+
+    public static void open(BaseFragment fragment, String groupId, String squadId) {
+        Bundle bundle = new Bundle();
+        // 组织的id
+        bundle.putString(PARAM_QUERY_ID, groupId);
+        // 小组的id
+        bundle.putString(PARAM_SQUAD_ID, squadId);
+        fragment.openActivity(PhoneContactFragment.class.getName(), bundle, true, false);
     }
 
     private static boolean hasPermission = false;

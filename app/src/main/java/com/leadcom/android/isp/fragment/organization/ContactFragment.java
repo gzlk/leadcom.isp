@@ -181,7 +181,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
                     public void onClick() {
-                        openActivity(PhoneContactFragment.class.getName(), format("%s,", mQueryId), true, false);
+                        PhoneContactFragment.open(ContactFragment.this, mQueryId, "");
                     }
                 });
                 //phoneContactView.setVisibility(View.VISIBLE);
@@ -252,7 +252,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Click({R.id.ui_tool_view_phone_contact_container})
     private void elementClick(View view) {
         if (!isEmpty(mQueryId)) {
-            openActivity(PhoneContactFragment.class.getName(), format("%s,", mQueryId), true, false);
+            PhoneContactFragment.open(ContactFragment.this, mQueryId, "");
         }
     }
 
@@ -294,7 +294,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 break;
             case R.id.ui_tooltip_menu_squad_contact_phone:
                 // 打开手机通讯录，并尝试将用户拉进小组
-                openActivity(PhoneContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
+                PhoneContactFragment.open(ContactFragment.this, mOrganizationId, mSquadId);
                 break;
         }
     }
@@ -308,7 +308,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
             return;
         }
-        openActivity(PhoneContactFragment.class.getName(), format("%s,", mQueryId), true, false);
+        PhoneContactFragment.open(ContactFragment.this, mQueryId, "");
     }
 
     @Override
