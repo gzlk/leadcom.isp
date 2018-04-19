@@ -156,6 +156,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        INTERNAL_SHAREABLE = false;
         nothingMore = Model.getNoMore();
         inputContent.addTextChangedListener(inputTextWatcher);
         mOnKeyboardChangeListener = new OnKeyboardChangeListener(Activity());
