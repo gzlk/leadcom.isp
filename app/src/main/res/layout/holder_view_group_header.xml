@@ -4,7 +4,6 @@
     android:id="@+id/ui_holder_view_group_header_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/img_group_header_bg"
     android:minHeight="@dimen/ui_static_dp_150">
 
     <com.leadcom.android.isp.lib.view.ImageDisplayer
@@ -14,7 +13,7 @@
         android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginTop="@dimen/ui_static_dp_20"
-        app:id_image_src="@drawable/img_default_activity_header"
+        app:id_image_src="@drawable/img_default_group"
         app:id_image_type="oval" />
 
     <TextView
@@ -30,7 +29,7 @@
         android:maxLines="7"
         android:minLines="4"
         android:text="@string/temp_long_text_value"
-        android:textColor="@color/textColorLight"
+        android:textColor="@color/textColorHintDark"
         android:textSize="@dimen/ui_base_text_size_small" />
 
     <com.hlk.hlklib.lib.view.CustomTextView
@@ -41,7 +40,7 @@
         android:layout_alignTop="@+id/ui_holder_view_group_header_intro"
         android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/ui_icon_edit"
-        android:textColor="@color/textColorLight"
+        android:textColor="@color/textColorHintDark"
         android:visibility="invisible" />
 
 </RelativeLayout>

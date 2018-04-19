@@ -13,7 +13,6 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
@@ -54,7 +53,7 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
     public void showContent(Organization organization) {
         String logo = organization.getLogo();
         if (isEmpty(logo)) {
-            logo = "drawable://" + R.drawable.img_default_activity_header;
+            logo = "drawable://" + R.drawable.img_default_group;
         }
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
         logo = organization.getIntro();
