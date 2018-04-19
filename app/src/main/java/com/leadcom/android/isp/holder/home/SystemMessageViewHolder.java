@@ -53,7 +53,7 @@ public class SystemMessageViewHolder extends BaseViewHolder {
         return msg.getMsgTitle();
     }
 
-    @Click({R.id.ui_holder_view_system_message_container, R.id.ui_holder_view_system_message_delete})
+    @Click({R.id.ui_holder_view_system_message_container, R.id.ui_tool_view_contact_button2})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_holder_view_system_message_container:
@@ -62,7 +62,7 @@ public class SystemMessageViewHolder extends BaseViewHolder {
                     mOnViewHolderClickListener.onClick(getAdapterPosition());
                 }
                 break;
-            case R.id.ui_holder_view_system_message_delete:
+            case R.id.ui_tool_view_contact_button2:
                 // 删除
                 if (null != mOnHandlerBoundDataListener) {
                     mOnHandlerBoundDataListener.onHandlerBoundData(SystemMessageViewHolder.this);

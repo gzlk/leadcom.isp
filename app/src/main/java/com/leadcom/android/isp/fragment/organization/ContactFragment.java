@@ -61,6 +61,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     private static final String PARAM_TYPE = "_cf_type_";
     private static final String PARAM_CREATOR = "_cf_manager_";
     private static final String PARAM_DIAL_INDEX = "_cf_dial_index";
+    private static final String PARAM_OPENABLE = "_cf_openable";
     /**
      * 没有查询任何数据
      */
@@ -78,22 +79,14 @@ public class ContactFragment extends BaseOrganizationFragment {
      */
     public static final int TYPE_MINE = 3;
 
-    private static boolean isOpenable = false;
+    private boolean isOpenable = false;
 
     /**
      * 新建一个实例
      * param: 0=type,1=groupId,2=squadId
      */
-    public static ContactFragment newInstance(String params) {
+    public static ContactFragment newInstance(Bundle bundle) {
         ContactFragment cf = new ContactFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // 类型
-        bundle.putInt(PARAM_TYPE, Integer.valueOf(strings[0]));
-        // 组织的id
-        bundle.putString(PARAM_QUERY_ID, strings[1]);
-        // 小组的id
-        bundle.putString(PARAM_SQUAD_ID, strings[2]);
         cf.setArguments(bundle);
         return cf;
     }
@@ -113,16 +106,18 @@ public class ContactFragment extends BaseOrganizationFragment {
      * 打开具有标题栏的组织成员列表页面
      */
     public static void open(BaseFragment fragment, String groupId) {
-        isOpenable = true;
-        fragment.openActivity(ContactFragment.class.getName(), format("%d,%s,", TYPE_ORG, groupId), true, false);
+        Bundle bundle = getBundle(TYPE_ORG, groupId, "");
+        bundle.putBoolean(PARAM_OPENABLE, true);
+        fragment.openActivity(ContactFragment.class.getName(), bundle, true, false);
     }
 
     /**
      * 打开具有标题栏的小组成员列表页面
      */
     public static void open(BaseFragment fragment, String groupId, String squadId) {
-        isOpenable = true;
-        fragment.openActivity(ContactFragment.class.getName(), format("%d,%s,%s", TYPE_SQUAD, groupId, squadId), true, false);
+        Bundle bundle = getBundle(TYPE_SQUAD, groupId, squadId);
+        bundle.putBoolean(PARAM_OPENABLE, true);
+        fragment.openActivity(ContactFragment.class.getName(), bundle, true, false);
     }
 
     /**
@@ -138,6 +133,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         showType = bundle.getInt(PARAM_TYPE, TYPE_NONE);
         isCreator = bundle.getBoolean(PARAM_CREATOR, false);
         dialIndex = bundle.getInt(PARAM_DIAL_INDEX, -1);
+        isOpenable = bundle.getBoolean(PARAM_OPENABLE, false);
     }
 
     @Override
@@ -146,6 +142,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         bundle.putInt(PARAM_TYPE, showType);
         bundle.putBoolean(PARAM_CREATOR, isCreator);
         bundle.putInt(PARAM_DIAL_INDEX, dialIndex);
+        bundle.putBoolean(PARAM_OPENABLE, isOpenable);
     }
 
     // view
@@ -320,12 +317,6 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Override
     protected void destroyView() {
 
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        isOpenable = false;
     }
 
     @Override

@@ -265,18 +265,26 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
                 loadingUrl("file:///" + word.htmlPath);
             } else if (Attachment.isExcel(mExtension)) {
                 // 下载完毕，打开 excel 预览
-                ExcelUtils excel = new ExcelUtils(localReal);
-                log(excel.htmlPath);
-                loadingUrl("file:///" + excel.htmlPath);
+                try {
+                    ExcelUtils excel = new ExcelUtils(localReal);
+                    log(excel.htmlPath);
+                    loadingUrl("file:///" + excel.htmlPath);
+                } catch (Exception ignore) {
+                    previewFile();
+                }
 //            } else if (Attachment.isPowerPoint(mExtension)) {
 //                PptUtil ppt = new PptUtil(localReal);
 //                log(ppt.htmlPath);
 //                loadingUrl("file:///" + ppt.htmlPath);
             } else {
                 // 下载完毕，使用本地第三方app打开office文档
-                finish();
-                FilePreviewHelper.previewMimeFile(Activity(), localReal, mExtension);
+                previewFile();
             }
         }
+    }
+
+    private void previewFile() {
+        finish();
+        FilePreviewHelper.previewMimeFile(Activity(), localReal, mExtension);
     }
 }

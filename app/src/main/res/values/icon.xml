@@ -61,7 +61,7 @@
     <string name="ui_icon_pentagon_corner_solid">&#xe628;</string>
     <string name="ui_icon_pentagon_corner_hollow">&#xe626;</string>
     <string name="ui_icon_home">&#xe687;</string>
-    <string name="ui_icon_home_unselected">&#xe688;</string>
+    <string name="ui_icon_home_unselected">&#xe997;</string>
     <string name="ui_icon_chat_left_hollow">&#xe66d;</string>
     <string name="ui_icon_chat_left_solid">&#xe66c;</string>
     <string name="ui_icon_main_activity">&#xe62e;</string>
@@ -82,6 +82,7 @@
     <string name="ui_icon_document">&#xe646;</string>
     <string name="ui_icon_moment_add">&#xe63d;</string>
     <string name="ui_icon_folder">&#xe67d;</string>
+    <string name="ui_icon_group">&#xe688;</string>
     <string name="ui_icon_favorite_oval">&#xe67e;</string>
     <string name="ui_icon_stick">&#xe680;</string>
     <string name="ui_icon_building">&#xe679;</string>
