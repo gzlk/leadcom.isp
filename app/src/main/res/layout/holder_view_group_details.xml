@@ -3,19 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     app:layout_itemType="main">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/ui_holder_view_simple_clickable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ui_background_clickable">
+        android:background="@drawable/ui_background_clickable"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_holder_view_simple_clickable_value_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_margin="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/ui_icon_group_member"
             android:textColor="@color/textColorHint"
@@ -25,20 +27,19 @@
             android:id="@+id/ui_holder_view_simple_clickable_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/ui_holder_view_simple_clickable_value_icon"
+            android:ellipsize="middle"
+            android:maxLength="10"
+            android:singleLine="true"
             android:text="@string/app_name_default" />
 
         <TextView
             android:id="@+id/ui_holder_view_simple_clickable_value"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/ui_static_dp_30"
-            android:ellipsize="end"
+            android:layout_weight="1"
+            android:ellipsize="middle"
             android:gravity="end|center_vertical"
-            android:maxLines="1"
+            android:singleLine="true"
             android:text="@string/app_name"
             android:textColor="@color/textColorHint"
             android:textSize="@dimen/ui_base_text_size_small" />
@@ -47,17 +48,15 @@
             android:id="@+id/ui_holder_view_simple_clickable_right_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/ui_icon_right"
             android:textColor="@color/textColorHint" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/ui_base_border_size_normal"
-            android:layout_below="@+id/ui_holder_view_simple_clickable_value_icon"
-            android:layout_toEndOf="@+id/ui_holder_view_simple_clickable_value_icon"
-            android:background="@color/windowBackground" />
-    </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_marginStart="@dimen/ui_static_dp_35"
+        android:background="@color/windowBackground" />
 </LinearLayout>
