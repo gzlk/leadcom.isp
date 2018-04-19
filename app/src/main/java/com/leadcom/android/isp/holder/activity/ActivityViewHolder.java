@@ -250,7 +250,7 @@ public class ActivityViewHolder extends BaseViewHolder {
                         img.add(null == info ? "" : info.getAvatar());
                     }
                 } else {
-                    img.add(isEmpty(team.getIcon()) ? ("drawable://" + R.drawable.img_default_group) : team.getIcon());
+                    img.add(isEmpty(team.getIcon()) ? ("drawable://" + R.drawable.img_default_group_icon) : team.getIcon());
                 }
                 headers.setImagesData(img);
             }

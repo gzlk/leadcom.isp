@@ -64,7 +64,7 @@ public class ActivityListItemViewHolder extends BaseViewHolder {
         } else if (contact.getSessionType() == SessionTypeEnum.Team) {
             // 群聊
             Team team = TeamDataCache.getInstance().getTeamById(contact.getContactId());
-            String img = (null == team || isEmpty(team.getIcon())) ? ("drawable://" + R.drawable.img_default_group) : team.getIcon();
+            String img = (null == team || isEmpty(team.getIcon())) ? ("drawable://" + R.drawable.img_default_group_icon) : team.getIcon();
             iconView.displayImage(img, getDimension(R.dimen.ui_base_dimen_button_height), false, false);
             nameView.setText((null == team || isEmpty(team.getName())) ? StringHelper.getString(R.string.ui_base_text_no_name_team) : team.getName());
         }

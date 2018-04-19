@@ -13,7 +13,7 @@
         android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:layout_marginTop="@dimen/ui_static_dp_20"
-        app:id_image_src="@drawable/img_default_group"
+        app:id_image_src="@drawable/img_default_group_icon"
         app:id_image_type="oval" />
 
     <TextView

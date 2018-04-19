@@ -53,7 +53,7 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
     public void showContent(Organization organization) {
         String logo = organization.getLogo();
         if (isEmpty(logo)) {
-            logo = "drawable://" + R.drawable.img_default_group;
+            logo = "drawable://" + R.drawable.img_default_group_icon;
         }
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
         logo = organization.getIntro();

@@ -91,7 +91,7 @@ public class UserHeaderBigViewHolder extends BaseViewHolder {
         String text = null != activity && !isEmpty(activity.getTitle()) ? activity.getTitle() : StringHelper.getString(R.string.ui_base_text_not_set);
         nameTextView.setText(text);
         signatureTextView.setVisibility(View.GONE);
-        text = null != activity && !isEmpty(activity.getCover()) ? activity.getCover() : ("drawable://" + R.drawable.img_default_group);
+        text = null != activity && !isEmpty(activity.getCover()) ? activity.getCover() : ("drawable://" + R.drawable.img_default_group_icon);
         headerImage.displayImage(text, getDimension(R.dimen.ui_static_dp_100), false, false);
         nameIcon.setVisibility(View.GONE);
         headerIcon.setVisibility(View.GONE);
