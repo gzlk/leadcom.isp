@@ -191,8 +191,8 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             mAdapter = new ContactAdapter();
             mRecyclerView.addItemDecoration(new StickDecoration());
             mRecyclerView.setAdapter(mAdapter);
-            // 加载本地成员列表
-            loadingLocalMembers(mOrganizationId, mSquadId);
+            // 加载成员列表
+            fetchingRemoteMembers(mOrganizationId, mSquadId);
             // 读取缓存中已经处理过的联系人列表
             gotContactFromCache();
             // 尝试读取手机联系人并更新当前列表
@@ -201,7 +201,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     }
 
     @Override
-    protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
+    protected void onFetchingRemoteMembersComplete(List<Member> list) {
         members.clear();
         if (null != list) {
             members.addAll(list);

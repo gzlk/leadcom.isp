@@ -83,7 +83,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     protected void initializeFragments() {
         if (mFragments.size() < 1) {
             mFragments.add(new StructureFragment());
-            mFragments.add(ContactFragment.newInstance(format("%d,,", ContactFragment.TYPE_ORG)));
+            mFragments.add(ContactFragment.newInstance(ContactFragment.getBundle(ContactFragment.TYPE_ORG, "", "")));
             mFragments.add(new ArchivesFragment());
             //mFragments.add(new LivenessFragment());
             //((StructureFragment) mFragments.get(0)).mainFragment = mainFragment;

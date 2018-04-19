@@ -91,7 +91,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         return cf;
     }
 
-    private static Bundle getBundle(int type, String groupId, String squadId) {
+    public static Bundle getBundle(int type, String groupId, String squadId) {
         Bundle bundle = new Bundle();
         // 类型
         bundle.putInt(PARAM_TYPE, type);
