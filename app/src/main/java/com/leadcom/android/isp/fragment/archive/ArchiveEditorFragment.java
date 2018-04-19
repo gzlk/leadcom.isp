@@ -272,8 +272,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         //mEditor.focusEditor();
         // 如果不是传入的服务器草稿id则判断本地是否有草稿
         if (isEmpty(mQueryId)) {
-            // 检索是否有未提交的草稿
-            fetchingDraft();
+            // 图文模式下检索是否有未提交的草稿
+            if (editorType == TYPE_MULTIMEDIA) {
+                fetchingDraft();
+            }
 //            List<ArchiveDraft> drafts = ArchiveDraft.getDraft("");
 //            if (null != drafts && drafts.size() > 0) {
 //                warningDraftExist(drafts.get(0), drafts.size());
@@ -462,14 +464,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                             mArchive.setId("");
                             // 如果选择了还要存为个人档案，则还要再调用一次
                             tryCreateArchive();
+                        } else {
+                            mArchive = archive;
+                            createSuccess();
                         }
                     } else {
                         //ArchiveDraft.delete(mArchive.getId());
                         mArchive = archive;
-                        if (null != mArchive && !isEmpty(mArchive.getId())) {
-                            ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive);
-                        }
-                        resultSucceededActivity();
+                        createSuccess();
                         //mArchive = archive;
                         //resetRightIcons();
                         //mEditor.setInputEnabled(false);
@@ -478,6 +480,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).addFormal(mArchive);
+    }
+
+    private void createSuccess() {
+        if (null != mArchive && !isEmpty(mArchive.getId())) {
+            ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive);
+        }
+        resultSucceededActivity();
     }
 
     /**
@@ -646,6 +655,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 if (editorType == TYPE_ATTACHMENT) {
                     isGroupArchive = true;
+                    isUserArchive = false;
                 }
                 archiveTypeUser.setVisibility(editorType == TYPE_ATTACHMENT ? View.GONE : View.VISIBLE);
                 resetGroupArchiveOrUser();

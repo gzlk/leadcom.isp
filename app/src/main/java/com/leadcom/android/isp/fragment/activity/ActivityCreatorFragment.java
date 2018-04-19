@@ -463,7 +463,7 @@ public class ActivityCreatorFragment extends BaseSwipeRefreshSupportFragment {
             switch (index) {
                 case 0:
                     // 到活动封面拾取器
-                    CoverPickFragment.open(ActivityCreatorFragment.this, true, cover, 2, 1);
+                    CoverPickFragment.open(ActivityCreatorFragment.this, true, cover, 1, 1);
                     //openActivity(CoverPickFragment.class.getName(), format("%s,true,2,1", cover), REQ_COVER, true, false);
                     break;
                 case 1:
