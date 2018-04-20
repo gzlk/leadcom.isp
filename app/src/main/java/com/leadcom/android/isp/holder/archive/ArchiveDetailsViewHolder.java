@@ -82,6 +82,12 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         publicView.setVisibility(this.isManager ? View.VISIBLE : View.GONE);
     }
 
+    public void setIsCollected(boolean isCollect) {
+        if (isCollect) {
+            publicView.setVisibility(View.GONE);
+        }
+    }
+
     public void onFragmentDestroy() {
         contentView.destroy();
     }

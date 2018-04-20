@@ -1073,6 +1073,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                         detailsViewHolder = new ArchiveDetailsViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
                         detailsViewHolder.setOnViewHolderElementClickListener(elementClickListener);
                         detailsViewHolder.setIsManager(enableShareDelete);
+                        detailsViewHolder.setIsCollected(isCollected);
                     }
                     return detailsViewHolder;
                 case VT_COMMENT:

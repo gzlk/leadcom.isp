@@ -550,7 +550,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private CustomTextView userIcon, groupIcon, publicIcon, privateIcon;
     private ClearEditText participantText, siteText;
     private ClearEditText creatorText;
-    private View archiveTypeUser;
+    private View archiveTypeUser, shareDraftButton;
 
     private void openSettingDialog() {
         mArchive.setTitle(titleView.getValue());
@@ -576,6 +576,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     archiveTypeUser = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_user);
                     publicIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_public_icon);
                     privateIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_private_icon);
+                    shareDraftButton = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft);
                     //archiveTypeGroup = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_group);
                     // 根据个人档案和组织档案显示某些元素
 //                    if (isEmpty(mQueryId)) {
@@ -658,6 +659,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     isUserArchive = false;
                 }
                 archiveTypeUser.setVisibility(editorType == TYPE_ATTACHMENT ? View.GONE : View.VISIBLE);
+                if (editorType == TYPE_ATTACHMENT) {
+                    shareDraftButton.setVisibility(View.GONE);
+                }
                 resetGroupArchiveOrUser();
             }
 
