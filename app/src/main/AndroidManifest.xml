@@ -40,7 +40,7 @@
 
     <application
         android:name=".application.App"
-        android:allowBackup="true"
+        android:allowBackup="@bool/app_allow_full_backup"
         android:fullBackupContent="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"

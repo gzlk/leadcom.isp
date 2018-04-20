@@ -47,6 +47,8 @@ android {
     buildTypes {
         // 发布版本
         release {
+            // 是否允许备份
+            resValue "bool", "app_allow_full_backup", "false"
             minifyEnabled false
             signingConfig signingConfigs.release
             zipAlignEnabled true  // 混淆后的zip优化
@@ -55,6 +57,7 @@ android {
         // 内测测试版本
         alpha {
             initWith release
+            resValue "bool", "app_allow_full_backup", "true"
             signingConfig signingConfigs.release
             debuggable true
             matchingFallbacks = ['debug', 'release']
@@ -62,12 +65,14 @@ android {
         // 正式测试版本
         beta {
             initWith release
+            resValue "bool", "app_allow_full_backup", "false"
             signingConfig signingConfigs.release
             debuggable true
             matchingFallbacks = ['debug', 'release']
         }
         debug {
             initWith release
+            resValue "bool", "app_allow_full_backup", "true"
             signingConfig signingConfigs.release
             debuggable true
         }
