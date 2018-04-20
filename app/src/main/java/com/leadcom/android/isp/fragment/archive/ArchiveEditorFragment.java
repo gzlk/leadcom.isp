@@ -889,7 +889,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 个人档案需要选择标签
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isUserArchive ? View.VISIBLE : View.GONE);
         // 个人档案不需要分享草稿
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
+        if (editorType != TYPE_ATTACHMENT) {
+            settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
+        }
     }
 
     // 插入图片的对话框
