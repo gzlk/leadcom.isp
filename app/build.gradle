@@ -164,7 +164,7 @@ dependencies {
     api "com.android.support:palette-v7:${rootProject.ext.supportSdkVersion}"
     api "com.android.support:support-v4:${rootProject.ext.supportSdkVersion}"
     api "com.android.support:exifinterface:${rootProject.ext.supportSdkVersion}"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.code.gson:gson:2.8.2'
     // Google自动换行的layout
@@ -222,12 +222,12 @@ dependencies {
     // 2D地图
     implementation 'com.amap.api:map2d:5.2.0'
     // 搜索
-    implementation 'com.amap.api:search:5.3.1'
+    implementation 'com.amap.api:search:6.1.0'
     // 定位
-    implementation 'com.amap.api:location:3.6.1'
+    implementation 'com.amap.api:location:3.8.0'
 
     // 桌面提醒
-    implementation 'me.leolin:ShortcutBadger:1.1.17'
+    implementation 'me.leolin:ShortcutBadger:1.1.21'
     // 仿iOS下拉回弹控件
     implementation 'me.everything:overscroll-decor-android:1.0.4'
 
