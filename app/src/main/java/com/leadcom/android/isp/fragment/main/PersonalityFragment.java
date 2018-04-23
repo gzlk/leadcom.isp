@@ -31,11 +31,11 @@ import com.leadcom.android.isp.fragment.individual.UserNameEditFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
+import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.EditableDialogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.common.ToggleableViewHolder;
@@ -49,7 +49,6 @@ import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
@@ -120,10 +119,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            int size = NimMessage.getUnRead();
-            if (null != leftFlag) {
-                leftFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
-            }
+//            int size = NimMessage.getUnRead();
+//            if (null != leftFlag) {
+//                leftFlag.setVisibility((size > 0) ? View.VISIBLE : View.GONE);
+//            }
         }
     };
 

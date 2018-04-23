@@ -21,7 +21,6 @@ import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 /**
  * <b>功能描述：</b>首页<br />
@@ -160,7 +159,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            showUnreadFlag(NimMessage.getUnRead());
+            showUnreadFlag(0);
         }
     };
 
@@ -208,11 +207,12 @@ public class MainFragment extends BaseTransparentSupportFragment {
      */
     public void showUnreadFlag() {
 //        checkUnreadTotalCountIgnoreMutex();
+        showUnreadFlag(0);
     }
 
     private void showUnreadFlag(int num) {
         if (null != icon2Unread) {
-            icon2Unread.setVisibility(num > 0 ? View.VISIBLE : View.GONE);
+            icon2Unread.setVisibility(App.app().getUnreadCount() > 0 ? View.VISIBLE : View.GONE);
             //icon2UnreadNum.setText(formatUnread(num));
         }
 //        if (null != icon4Unread) {

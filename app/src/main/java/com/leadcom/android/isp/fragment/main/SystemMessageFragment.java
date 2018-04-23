@@ -81,6 +81,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         fragment.openActivity(SystemMessageFragment.class.getName(), getBundle(false), true, false);
     }
 
+    public MainFragment mainFragment;
+
     @ViewId(R.id.ui_ui_custom_title_right_icon)
     private CustomTextView rightIconView;
     @ViewId(R.id.ui_ui_custom_title_right_text)
@@ -241,8 +243,16 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
                 stopRefreshing();
+                App.app().setUnreadCount(unreadNum);
+                updateUnreadFlag();
             }
         }).list();
+    }
+
+    private void updateUnreadFlag() {
+        if (null != mainFragment) {
+            mainFragment.showUnreadFlag();
+        }
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
@@ -290,6 +300,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                             NimApplication.dispatchCallbacks();
                         }
                     }
+                    App.app().setUnreadCount(App.app().getUnreadCount() - 1);
                 }
             }
         }).update(uuid);

@@ -392,6 +392,26 @@ public class NimApplication extends BaseActivityManagedApplication {
         }
     }
 
+    private static int unreadCount = 0;
+
+    /**
+     * 获取未读推送消息数量
+     */
+    public int getUnreadCount() {
+        return unreadCount;
+    }
+
+    /**
+     * 重设未读推送消息数量
+     */
+    public synchronized void setUnreadCount(int count) {
+        unreadCount = count;
+        if (unreadCount <= 0) {
+            unreadCount = 0;
+        }
+        resetBadgeNumber();
+    }
+
     public void observerRecentContact(boolean setting) {
         //  注册/注销观察者
         NIMClient.getService(MsgServiceObserve.class).observeRecentContact(messageObserver, setting);
@@ -456,8 +476,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     }
 
     private static void resetBadgeNumber() {
-        int size = NimMessage.getUnRead();
-        size += NIMClient.getService(MsgService.class).getTotalUnreadCount();
-        ShortcutBadger.applyCount(App.app(), size);
+        //int size = NIMClient.getService(MsgService.class).getTotalUnreadCount() + unreadCount;
+        ShortcutBadger.applyCount(App.app(), unreadCount);
     }
 }

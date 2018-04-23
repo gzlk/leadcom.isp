@@ -19,6 +19,7 @@ import java.util.List;
 public abstract class OnMultipleRequestListener<Data> {
 
     public int invtNum;
+    public int unreadNum;
     public ArrayList<AppTopic> actTopicList;
 
     // 个人消息

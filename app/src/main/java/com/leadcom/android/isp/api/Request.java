@@ -213,6 +213,7 @@ public abstract class Request<T> {
                         if (null != onMultipleRequestListener) {
                             ListQuery<T> listQuery = (ListQuery<T>) data;
                             save(listQuery.getData());
+                            onMultipleRequestListener.unreadNum = listQuery.getUnreadNum();
                             onMultipleRequestListener.onResponse(listQuery.getData(), data.success(),
                                     1, PAGE_SIZE, listQuery.getData().size(), 1);
                         }
