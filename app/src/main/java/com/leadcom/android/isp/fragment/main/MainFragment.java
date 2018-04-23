@@ -355,18 +355,25 @@ public class MainFragment extends BaseTransparentSupportFragment {
         if (null != mineFragment && showType != SHOW_MINE) {
             transaction.hide(mineFragment);
         }
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     private void showFragment(BaseFragment fragment, String tag) {
         FragmentManager manager = Activity().getSupportFragmentManager();
+        Fragment f = manager.findFragmentByTag(tag);
         FragmentTransaction transaction = manager.beginTransaction();
-        if (!fragment.isAdded()) {
+        if (!fragment.isAdded() && null == f) {
+            log("fragment " + tag + " is now add to fragment manager.");
             transaction.add(R.id.ui_fragment_main_frame_layout, fragment, tag);
         } else {
+            if (null != f && fragment != f) {
+                log(format("reset fragment %s to %s by tag %s", fragment.toString(), f.toString(), tag));
+                fragment = (BaseFragment) f;
+            }
+            log(format("now show fragment %s by tag %s", fragment.toString(), tag));
             transaction.show(fragment);
         }
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     private void setDisplayPage() {
