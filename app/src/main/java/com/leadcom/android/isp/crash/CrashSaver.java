@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-class CrashSaver {
+public class CrashSaver {
 
     public static final void save(Context context, Throwable ex, boolean uncaught) {
 

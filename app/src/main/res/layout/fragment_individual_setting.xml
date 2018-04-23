@@ -29,6 +29,10 @@
         android:id="@+id/ui_setting_to_about"
         layout="@layout/holder_view_simple_clickable" />
 
+    <include
+        android:id="@+id/ui_setting_to_log"
+        layout="@layout/holder_view_simple_clickable" />
+
     <com.hlk.hlklib.lib.view.CorneredButton
         android:id="@+id/ui_setting_sign_out"
         android:layout_width="match_parent"

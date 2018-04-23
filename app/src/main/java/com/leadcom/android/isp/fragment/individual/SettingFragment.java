@@ -7,9 +7,12 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.apache.poi.FileUtils;
 import com.leadcom.android.isp.api.common.UpdateRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.crash.CrashSaver;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -50,6 +53,8 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     private View upgradeView;
     @ViewId(R.id.ui_setting_to_about)
     private View aboutView;
+    @ViewId(R.id.ui_setting_to_log)
+    private View saveLogView;
 
     // holders
     private SimpleClickableViewHolder passwordHolder;
@@ -57,7 +62,14 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     private SimpleClickableViewHolder cacheHolder;
     private SimpleClickableViewHolder upgradeHolder;
     private SimpleClickableViewHolder aboutHolder;
+    private SimpleClickableViewHolder logHolder;
     private String[] strings;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        saveLogView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
+    }
 
     @Override
     public int getLayout() {
@@ -121,6 +133,11 @@ public class SettingFragment extends BaseTransparentSupportFragment {
             aboutHolder.addOnViewHolderClickListener(holderClickListener);
             aboutHolder.showContent(strings[4]);
         }
+        if (null == logHolder) {
+            logHolder = new SimpleClickableViewHolder(saveLogView, this);
+            logHolder.addOnViewHolderClickListener(holderClickListener);
+            logHolder.showContent(strings[5]);
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -154,9 +171,25 @@ public class SettingFragment extends BaseTransparentSupportFragment {
                     // 关于
                     openActivity(AboutFragment.class.getName(), "", true, false);
                     break;
+                case 5:
+                    // 保存log
+                    warningLogSaving();
+                    break;
             }
         }
     };
+
+    private void warningLogSaving() {
+        // 清理log缓存目录
+        //FileUtils.removeFile(App.app().getCachePath("nim") + "log/");
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                CrashSaver.save(App.app(), new IllegalArgumentException("Manual saving logs."), false);
+                return true;
+            }
+        }).setTitleText(R.string.ui_text_setting_log_save_dialog_title).setConfirmText(R.string.ui_base_text_save).show();
+    }
 
     /**
      * 检测服务器上的最新客户端版本并提示用户更新
