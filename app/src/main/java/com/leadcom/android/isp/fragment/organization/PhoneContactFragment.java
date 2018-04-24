@@ -2,6 +2,7 @@ package com.leadcom.android.isp.fragment.organization;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -43,6 +44,7 @@ import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.tasks.AsyncedTask;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -301,11 +303,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     private void scrolling(String text) {
         int position = -1;
-        for (int i = 0, len = mAdapter.getItemCount(); i < len; i++) {
-            if (mAdapter.get(i).getSpell().charAt(0) == text.charAt(0)) {
+        Iterator<Contact> iterator = mAdapter.iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            Contact contact = iterator.next();
+            if (contact.getSpell().charAt(0) == text.charAt(0)) {
                 position = i;
                 break;
             }
+            i++;
         }
         if (position >= 0) {
             LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();

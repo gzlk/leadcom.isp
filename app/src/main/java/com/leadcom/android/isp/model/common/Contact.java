@@ -73,7 +73,7 @@ public class Contact extends Model {
     }
 
     public String getSpell() {
-        if (StringHelper.isEmpty(spell)) {
+        if (StringHelper.isEmpty(spell, true)) {
             spell = Utils.transformPinyin(name);
         }
         return spell;
