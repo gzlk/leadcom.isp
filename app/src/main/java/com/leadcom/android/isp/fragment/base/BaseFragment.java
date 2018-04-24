@@ -17,14 +17,13 @@ import com.leadcom.android.isp.activity.LoginActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
-import com.leadcom.android.isp.fragment.main.MainFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.helper.ClipboardHelper;
-import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.ShareInfo;
@@ -261,7 +260,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
             Bundle bundle = new Bundle();
             // 这里默认返回到主页的时候都显示“找”页面
-            bundle.putInt(MainFragment.PARAM_SELECTED, mainPageDisplayIndex);
+            bundle.putInt(MainActivity.PARAM_SELECTED, mainPageDisplayIndex);
             intent.putExtras(bundle);
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

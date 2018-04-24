@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.main;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
@@ -9,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.FullTextQueryRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -53,6 +55,10 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
 
     public static void open(BaseFragment fragment) {
         fragment.openActivity(FullTextQueryFragment.class.getName(), "", false, false, true);
+    }
+
+    public static void open(Context context) {
+        BaseActivity.openActivity(context, FullTextQueryFragment.class.getName(), "", true, false, true);
     }
 
     // view

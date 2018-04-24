@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.fragment.archive;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -22,6 +23,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
@@ -107,13 +109,21 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         return aecf;
     }
 
-    public static void open(BaseFragment fragment, String remoteDraftId, String attachType) {
+    private static Bundle getBundle(String remoteDraftId, String attachType) {
         Bundle bundle = new Bundle();
         // 传过来的档案id（草稿档案），需要从服务器上拉取草稿内容再编辑
         bundle.putString(PARAM_QUERY_ID, remoteDraftId);
         // 编辑器方式（附件方式、图文方式）
         bundle.putInt(PARAM_EDITOR_TYPE, attachType.equals(ATTACHABLE) ? TYPE_ATTACHMENT : TYPE_MULTIMEDIA);
-        fragment.openActivity(ArchiveEditorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String remoteDraftId, String attachType) {
+        fragment.openActivity(ArchiveEditorFragment.class.getName(), getBundle(remoteDraftId, attachType), REQUEST_CREATE, true, true);
+    }
+
+    public static void open(Context context, String remoteDraftId, String attachType) {
+        BaseActivity.openActivity(context, ArchiveEditorFragment.class.getName(), getBundle(remoteDraftId, attachType), REQUEST_CREATE, true, true);
     }
 
     @Override

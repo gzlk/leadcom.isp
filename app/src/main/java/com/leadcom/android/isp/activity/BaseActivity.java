@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.view.WindowManager;
 
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.helper.LogHelper;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.statusbar.StatusBarConfig;
 
 import static com.leadcom.android.isp.fragment.base.BaseFragment.ACTIVITY_BASE_REQUEST;
@@ -68,10 +70,38 @@ public class BaseActivity extends AppCompatActivity {
 
     private View statusBarView;
 
+    protected static String format(String fmt, Object... args) {
+        return StringHelper.format(fmt, args);
+    }
+
+    protected void getParametersFromBundle(Bundle bundle) {
+    }
+
+    protected void saveParametersToBundle(Bundle bundle) {
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        if (null == outState) {
+            outState = new Bundle();
+        }
+        saveParametersToBundle(outState);
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        getParametersFromBundle(savedInstanceState);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         app().addActivity(this);
+        if (null != savedInstanceState) {
+            getParametersFromBundle(savedInstanceState);
+        }
         //延时加载数据.
 //        Looper.myQueue().addIdleHandler(new MessageQueue.IdleHandler() {
 //            @Override

@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.individual.moment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.MomentRequest;
@@ -73,6 +75,12 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_IMAGE, jsonSelected);
         fragment.openActivity(MomentCreatorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
+    }
+
+    public static void open(Context context, String jsonSelected) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_IMAGE, jsonSelected);
+        BaseActivity.openActivity(context, MomentCreatorFragment.class.getName(), bundle, REQUEST_CREATE, true, true);
     }
 
     @Override

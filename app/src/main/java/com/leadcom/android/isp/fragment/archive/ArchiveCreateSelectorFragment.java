@@ -1,9 +1,11 @@
 package com.leadcom.android.isp.fragment.archive;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -32,6 +34,10 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
 
     public static void open(BaseFragment fragment, String groupId) {
         fragment.openActivity(ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, false, false);
+    }
+
+    public static void open(Context context, String groupId) {
+        BaseActivity.openActivity(context, ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, true, false);
     }
 
     @Override

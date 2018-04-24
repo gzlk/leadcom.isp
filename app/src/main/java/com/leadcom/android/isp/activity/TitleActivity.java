@@ -72,6 +72,10 @@ public class TitleActivity extends BaseActivity {
      */
     protected boolean supportTransparentStatusBar = false;
 
+    protected int getLayout() {
+        return isToolbarSupported ? R.layout.activity_has_toolbar : R.layout.activity_no_toolbar;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         initializeParams(savedInstanceState);
@@ -81,7 +85,7 @@ public class TitleActivity extends BaseActivity {
             transparentStatusBar();
         }
         // 是否有默认的toolbar布局，否则需要自己加载toolbar布局
-        int layout = isToolbarSupported ? R.layout.activity_has_toolbar : R.layout.activity_no_toolbar;
+        int layout = getLayout();
         setContentView(layout);
         tryBindViews();
         if (isToolbarSupported && null != mToolbar) {
@@ -142,6 +146,7 @@ public class TitleActivity extends BaseActivity {
 
     // 重置左侧按钮的边距
     private void resetLeftIconMargin() {
+        if (null == mLeftContainer) return;
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mLeftContainer.getLayoutParams();
         // Toolbar有自己的边距，所以这里把左侧icon的左边距清零
         params.leftMargin = 0;

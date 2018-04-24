@@ -81,8 +81,6 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         fragment.openActivity(SystemMessageFragment.class.getName(), getBundle(false), true, false);
     }
 
-    public MainFragment mainFragment;
-
     @ViewId(R.id.ui_ui_custom_title_right_icon)
     private CustomTextView rightIconView;
     @ViewId(R.id.ui_ui_custom_title_right_text)
@@ -250,9 +248,12 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void updateUnreadFlag() {
-        if (null != mainFragment) {
-            mainFragment.showUnreadFlag();
+        if (Activity() instanceof MainActivity) {
+            ((MainActivity) Activity()).showUnreadFlag();
         }
+//        if (null != mainFragment) {
+//            mainFragment.showUnreadFlag();
+//        }
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

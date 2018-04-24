@@ -34,10 +34,24 @@ import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
  */
 
 public class MainFragment extends BaseTransparentSupportFragment {
+
+    public static MainFragment newInstance(Bundle bundle) {
+        MainFragment mf = new MainFragment();
+        mf.setArguments(bundle);
+        return mf;
+    }
+
+    public static Bundle getBundle(boolean isCreateNew) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(PARAM_CREATE, isCreateNew);
+        return bundle;
+    }
+
     /**
      * 新建MainFragment的时候传入的参数，以此当作初始化显示的页面（也即ViewPager当前显示的页面的index），int型
      */
     public static final String PARAM_SELECTED = "mf_param1";
+    private static final String PARAM_CREATE = "mf_create_type";
     private static final String TAG_HOME = "main_home";
     //    private static final String TAG_RECENT = "main_recent";
     private static final String TAG_MESSAGE = "main_message";
@@ -73,6 +87,10 @@ public class MainFragment extends BaseTransparentSupportFragment {
     @ViewId(R.id.ui_tool_main_bottom_icon_4_unread)
     private View icon4Unread;
 
+    /**
+     * 是否是新创建的MainFragment
+     */
+    public boolean isCreateNew = false;
     // 首页4个fragment
     private HomeFragment homeFragment;
     //    private RecentContactsFragment recentFragment;
@@ -86,7 +104,6 @@ public class MainFragment extends BaseTransparentSupportFragment {
         super.onCreate(savedInstanceState);
         NimApplication.addNotificationChangeCallback(callback);
         //registerObservers(true);
-        setDisplayPage();
     }
 
 //    private void registerObservers(boolean register) {
@@ -146,6 +163,7 @@ public class MainFragment extends BaseTransparentSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setDisplayPage();
         NimApplication.dispatchCallbacks();
     }
 
@@ -180,12 +198,14 @@ public class MainFragment extends BaseTransparentSupportFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         showType = bundle.getInt(PARAM_SELECTED, SHOW_HOME);
+        isCreateNew = bundle.getBoolean(PARAM_CREATE, false);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_SELECTED, showType);
+        bundle.putBoolean(PARAM_CREATE, isCreateNew);
     }
 
     @Override
@@ -276,30 +296,83 @@ public class MainFragment extends BaseTransparentSupportFragment {
         }
     }
 
+    public void recreateFragment() {
+        FragmentManager manager = Activity().getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Fragment fragment = manager.findFragmentByTag(TAG_HOME);
+        if (null != fragment) {
+            transaction.remove(fragment);
+            homeFragment = null;
+        }
+
+        fragment = manager.findFragmentByTag(TAG_MESSAGE);
+        if (null != fragment) {
+            transaction.remove(fragment);
+            messageFragment = null;
+        }
+
+        fragment = manager.findFragmentByTag(TAG_GROUP);
+        if (null != fragment) {
+            transaction.remove(fragment);
+            groupFragment = null;
+        }
+
+        fragment = manager.findFragmentByTag(TAG_MINE);
+        if (null != fragment) {
+            transaction.remove(fragment);
+            mineFragment = null;
+        }
+        transaction.commitAllowingStateLoss();
+        isCreateNew = false;
+    }
+
     private Fragment findFragment(String tag) {
         FragmentManager manager = Activity().getSupportFragmentManager();
         return manager.findFragmentByTag(tag);
     }
 
+    private void removeFragment(Fragment fragment) {
+        Activity().getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
+    }
+
     private void initializeHome() {
         Fragment fragment = findFragment(TAG_HOME);
         if (null != fragment) {
-            if (null == homeFragment) {
-                homeFragment = (HomeFragment) fragment;
+            log(format("find exist fragment by tag %s", TAG_HOME));
+            if (isCreateNew) {
+                // 如果是新建的，则清除现有的fragment
+                recreateFragment();
+                homeFragment = new HomeFragment();
+                log(format("create new fragment to %s by tag %s and isCreateNew = true", homeFragment.toString(), TAG_MESSAGE));
+            } else {
+                if (null == homeFragment) {
+                    log(format("reset fragment %s to %s by tag %s", "null", fragment.toString(), TAG_HOME));
+                    homeFragment = (HomeFragment) fragment;
+                }
             }
         } else {
             homeFragment = new HomeFragment();
+            log(format("create new fragment to %s by tag %s", homeFragment.toString(), TAG_MESSAGE));
         }
     }
 
     private void initializeMessage() {
         Fragment fragment = findFragment(TAG_MESSAGE);
         if (null != fragment) {
-            if (null == messageFragment) {
-                messageFragment = (SystemMessageFragment) fragment;
+            log(format("find exist fragment by tag %s", TAG_MESSAGE));
+            if (isCreateNew) {
+                recreateFragment();
+                messageFragment = SystemMessageFragment.getInstance(true);
+                log(format("create new fragment to %s by tag %s and isCreateNew = true", messageFragment.toString(), TAG_MESSAGE));
+            } else {
+                if (null == messageFragment) {
+                    log(format("reset fragment %s to %s by tag %s", "null", fragment.toString(), TAG_MESSAGE));
+                    messageFragment = (SystemMessageFragment) fragment;
+                }
             }
         } else {
             messageFragment = SystemMessageFragment.getInstance(true);
+            log(format("create new fragment to %s by tag %s", messageFragment.toString(), TAG_MESSAGE));
         }
     }
 
@@ -319,40 +392,63 @@ public class MainFragment extends BaseTransparentSupportFragment {
     private void initializeGroup() {
         Fragment fragment = findFragment(TAG_GROUP);
         if (null != fragment) {
-            if (null == groupFragment) {
-                groupFragment = (GroupFragment) fragment;
+            log(format("find exist fragment by tag %s", TAG_GROUP));
+            if (isCreateNew) {
+                recreateFragment();
+                groupFragment = new GroupFragment();
+                log(format("create new fragment to %s by tag %s and isCreateNew = true", groupFragment.toString(), TAG_GROUP));
+            } else {
+                if (null == groupFragment) {
+                    log(format("reset fragment %s to %s by tag %s", "null", fragment.toString(), TAG_GROUP));
+                    groupFragment = (GroupFragment) fragment;
+                }
             }
         } else {
             groupFragment = new GroupFragment();
+            log(format("create new fragment to %s by tag %s", groupFragment.toString(), TAG_GROUP));
         }
     }
 
     private void initializeMine() {
         Fragment fragment = findFragment(TAG_MINE);
         if (null != fragment) {
-            if (null == mineFragment) {
-                mineFragment = (PersonalityFragment) fragment;
+            log(format("find exist fragment by tag %s", TAG_MINE));
+            if (isCreateNew) {
+                recreateFragment();
+                mineFragment = new PersonalityFragment();
+                log(format("create new fragment to %s by tag %s and isCreateNew = true", mineFragment.toString(), TAG_MINE));
+            } else {
+                if (null == mineFragment) {
+                    log(format("reset fragment %s to %s by tag %s", "null", fragment.toString(), TAG_MINE));
+                    mineFragment = (PersonalityFragment) fragment;
+                }
             }
         } else {
             mineFragment = new PersonalityFragment();
+            log(format("create new fragment to %s by tag %s", mineFragment.toString(), TAG_MINE));
         }
     }
 
     private void hideFragments() {
         FragmentTransaction transaction = Activity().getSupportFragmentManager().beginTransaction();
         if (null != homeFragment && showType != SHOW_HOME) {
+            log("hide fragment home");
             transaction.hide(homeFragment);
         }
         if (null != messageFragment && showType != SHOW_MSG) {
+            log("hide fragment message");
             transaction.hide(messageFragment);
         }
 //        if (null != recentFragment && showType != SHOW_RECENT) {
+//            log("hide fragment recent");
 //            transaction.hide(recentFragment);
 //        }
         if (null != groupFragment && showType != SHOW_GROUP) {
+            log("hide fragment group");
             transaction.hide(groupFragment);
         }
         if (null != mineFragment && showType != SHOW_MINE) {
+            log("hide fragment mine");
             transaction.hide(mineFragment);
         }
         transaction.commitAllowingStateLoss();
@@ -367,12 +463,12 @@ public class MainFragment extends BaseTransparentSupportFragment {
             transaction.add(R.id.ui_fragment_main_frame_layout, fragment, tag);
         } else {
             if (null != f && fragment != f) {
-                log(format("reset fragment %s to %s by tag %s", fragment.toString(), f.toString(), tag));
+                log(format("reset(show) fragment %s to %s by tag %s", fragment.toString(), f.toString(), tag));
                 fragment = (BaseFragment) f;
             }
             log(format("now show fragment %s by tag %s", fragment.toString(), tag));
-            transaction.show(fragment);
         }
+        transaction.show(fragment);
         transaction.commitAllowingStateLoss();
     }
 

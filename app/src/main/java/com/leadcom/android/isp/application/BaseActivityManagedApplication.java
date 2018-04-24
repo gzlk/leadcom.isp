@@ -31,6 +31,7 @@ public class BaseActivityManagedApplication extends OrmApplication {
      * 设置app是否转入后台运行
      */
     public void setAppStayInBackground(boolean background) {
+        log("app stay in background: " + background);
         isAppStayInBackground = background;
     }
 

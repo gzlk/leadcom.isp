@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.individual;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
@@ -7,6 +8,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.apache.poi.FileUtils;
 import com.leadcom.android.isp.api.common.UpdateRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -40,6 +42,10 @@ public class SettingFragment extends BaseTransparentSupportFragment {
 
     public static void open(BaseFragment fragment) {
         fragment.openActivity(SettingFragment.class.getName(), "", true, false);
+    }
+
+    public static void open(Context context) {
+        BaseActivity.openActivity(context, SettingFragment.class.getName(), "", true, false);
     }
 
     // UI

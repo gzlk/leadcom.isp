@@ -9,6 +9,7 @@ import android.view.View;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.team.TeamRequest;
@@ -78,7 +79,6 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     private static boolean loaded = false, needRefresh = false;
     @ViewId(R.id.ui_main_tool_bar_container)
     private View toolBar;
-    public MainFragment mainFragment;
     private ContactAdapter mAdapter;
 
     @Override
@@ -95,9 +95,7 @@ public class RecentContactsFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void showUnreadMsg() {
-        if (null != mainFragment) {
-            mainFragment.showUnreadFlag();
-        }
+        ((MainActivity) Activity()).showUnreadFlag();
     }
 
     @Override

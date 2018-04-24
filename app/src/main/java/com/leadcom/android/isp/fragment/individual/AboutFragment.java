@@ -91,6 +91,7 @@ public class AboutFragment extends BaseLayoutSupportFragment {
             helpHolder.addOnViewHolderClickListener(holderClickListener);
             helpHolder.showContent(strings[1]);
         }
+        //throw new IllegalArgumentException("test");
     }
 
     private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
@@ -98,7 +99,7 @@ public class AboutFragment extends BaseLayoutSupportFragment {
         public void onClick(int index) {
             switch (index) {
                 case 0:
-                    ToastHelper.make().showMsg(strings[index].replaceAll("[\\d+\\|]", ""));
+                    ToastHelper.make().showMsg(strings[index].replaceAll("[\\d+|]", ""));
                     break;
                 case 1:
                     openActivity(FeedbackFragment.class.getName(), "", true, false);

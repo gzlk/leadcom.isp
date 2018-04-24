@@ -225,7 +225,9 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                     headline.clear();
                     if (null != list) {
                         headline.addAll(list);
-                        homeImagesViewHolder.addImages(headline);
+                        if (null != homeImagesViewHolder) {
+                            homeImagesViewHolder.addImages(headline);
+                        }
                     }
                 }
                 displayLoading(false);
@@ -436,6 +438,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                     if (null == homeImagesViewHolder) {
                         homeImagesViewHolder = new HomeImagesViewHolder(itemView, HomeFeaturedFragment.this);
                         homeImagesViewHolder.setOnImageClickListener(onImageClickListener);
+                        homeImagesViewHolder.addImages(headline);
                     }
                     return homeImagesViewHolder;
                 case VT_ACTIVITY:
