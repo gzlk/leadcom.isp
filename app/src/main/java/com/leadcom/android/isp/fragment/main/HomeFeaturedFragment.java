@@ -370,11 +370,11 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_additional_comment_layout:
                     // 打开档案详情页评论
-                    selectedIndex = index;
+                    //selectedIndex = index;
                     //break;
                 case R.id.ui_tool_view_archive_additional_like_layout:
                     // 赞或取消赞
-                    selectedIndex = index;
+                    //selectedIndex = index;
                     //like(doc);
                     //break;
                 case R.id.ui_tool_view_archive_additional_collection_layout:

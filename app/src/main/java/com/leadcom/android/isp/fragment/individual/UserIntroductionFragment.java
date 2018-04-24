@@ -87,7 +87,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         setCustomTitle(isEmpty(groupId) ? R.string.ui_text_personality_introduction_fragment_title : R.string.ui_organization_introduction_fragment_title);
         headerLayout.setVisibility(View.VISIBLE);
         headerView.displayImage(header, getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
-        nameView.setText(name);
+        nameView.setText(Html.fromHtml(name));
         timeView.setText(formatDate(date, R.string.ui_base_text_date_format));
         introView.setText(Html.fromHtml(intro));
         resetTitleEvent();

@@ -681,7 +681,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     public void onResponse(Organization organization, boolean success, String message) {
                         super.onResponse(organization, success, message);
                         if (success && null != organization) {
-                            groupNameText.setText(organization.getName());
+                            groupNameText.setText(Html.fromHtml(organization.getName()));
                         }
                     }
                 }).find(groupId);

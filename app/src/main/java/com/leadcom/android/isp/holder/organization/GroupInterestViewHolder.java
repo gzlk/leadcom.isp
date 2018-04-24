@@ -82,7 +82,7 @@ public class GroupInterestViewHolder extends BaseViewHolder {
                 name += format("(%s)", Concern.getTypeString(concern.getType()));
             }
         }
-        nameView.setText(name);
+        nameView.setText(Html.fromHtml(name));
         buttonView.setText(organization.isConcerned() ? R.string.ui_organization_interesting_concerned : R.string.ui_organization_interesting_concern);
         buttonView.setNormalColor(getColor(organization.isConcerned() ? R.color.color_3eb135 : R.color.colorPrimary));
     }

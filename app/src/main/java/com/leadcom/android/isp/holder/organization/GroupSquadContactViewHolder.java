@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.holder.organization;
 
+import android.text.Html;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.LinearLayout;
@@ -64,7 +65,7 @@ public class GroupSquadContactViewHolder extends BaseViewHolder {
         // 组织不需要缩进
         resetLeftMargin(0);
         rightIcon.setVisibility(View.VISIBLE);
-        titleText.setText(group.getName());
+        titleText.setText(Html.fromHtml(group.getName()));
         selectorIcon.setText(group.isSelectable() ? R.string.ui_icon_checkbox_checked : R.string.ui_icon_checkbox_unchecked);
         selectorIcon.setTextColor(getColor(group.isSelected() ? R.color.colorPrimary : R.color.textColorHintLightLight));
         //selectAll.setVisibility(group.isSelected() ? View.VISIBLE : View.GONE);

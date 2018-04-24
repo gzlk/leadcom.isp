@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.holder.archive;
 
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -65,7 +66,7 @@ public class ArchiveRecommendViewHolder extends BaseViewHolder {
                 groupName = doc.getGroEntity().getName();
             }
         }
-        groupView.setText(StringHelper.getString(R.string.ui_archive_recommend_belong_group, groupName));
+        groupView.setText(StringHelper.getString(R.string.ui_archive_recommend_belong_group, Html.fromHtml(groupName)));
         timeView.setText(fragment().formatDate(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_format)));
         iconView.setTextColor(getColor(archive.isRecommended() ? R.color.colorCaution : R.color.textColorHint));
     }
