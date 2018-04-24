@@ -83,7 +83,6 @@ public class StructureFragment extends BaseOrganizationFragment {
     // 是否第一次初始化，此时需要隐藏添加小组的输入框
     private boolean initialized = false;
 
-    //public MainFragment mainFragment;
     public OrganizationFragment organizationFragment;
 
     private OnOrganizationChangedListener organizationChangedListener;

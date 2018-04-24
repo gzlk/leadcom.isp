@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -78,11 +79,11 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     public static void open(Context context, String userId) {
-        BaseActivity.openActivity(context, PersonalityFragment.class.getName(), userId, false, false, true);
+        BaseActivity.openActivity(context, PersonalityFragment.class.getName(), userId, true, false);
     }
 
     public static void open(BaseFragment fragment, String userId) {
-        fragment.openActivity(PersonalityFragment.class.getName(), userId, false, false, true);
+        fragment.openActivity(PersonalityFragment.class.getName(), userId, true, false);
     }
 
     @ViewId(R.id.ui_main_tool_bar_background)
@@ -152,9 +153,12 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             NimApplication.dispatchCallbacks();
         } else {
             //chatToUser.setVisibility(View.VISIBLE);
-            toolbarBackground.setVisibility(View.GONE);
             paddingLayout.setVisibility(View.GONE);
+            leftIcon.setText(R.string.ui_icon_left);
+            toolbarBackground.setVisibility(View.GONE);
+            rightIcon.setVisibility(View.GONE);
             selfDefineView.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
         }
     }
 
@@ -258,7 +262,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return !isSelf;
     }
 
     @Override
@@ -383,6 +387,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         } else {
             //mAdapter.replace(user, 0);
         }
+        if (!isSelf) {
+            setCustomTitle(user.getName());
+        }
         clearExtras();
         for (UserExtra extra : user.getExtra()) {
             if (null != extra) {
@@ -469,7 +476,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter = new PersonalityAdapter();
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.addOnScrollListener(scrollListener);
+            if (isSelf) {
+                mRecyclerView.addOnScrollListener(scrollListener);
+            }
             if (isSelf) {
                 mAdapter.add(Cache.cache().me);
             }

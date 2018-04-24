@@ -95,10 +95,8 @@ public class MainActivity extends TitleActivity {
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (null != extras) {
-            //if (!intent.hasExtra(MainFragment.RESULT_STRING)) {
             // 默认打开第一页
             intent.putExtra(PARAM_SELECTED, 0);
-            //}
             intent.putExtras(extras);
         }
         return intent;
@@ -299,7 +297,6 @@ public class MainActivity extends TitleActivity {
                 break;
             case R.id.ui_tool_main_bottom_clickable_center:
                 iconCenter.startAnimation(App.clickAnimation());
-                //ShortcutFragment.open(MainFragment.this);
                 ArchiveCreateSelectorFragment.open(this, "");
                 break;
             case R.id.ui_tool_main_bottom_clickable_3:
@@ -502,6 +499,7 @@ public class MainActivity extends TitleActivity {
         }
         transaction.show(fragment);
         transaction.commitAllowingStateLoss();
+        //setTranslucentStatus(tag.equals(TAG_MINE));
     }
 
     private void setDisplayPage() {

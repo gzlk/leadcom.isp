@@ -60,7 +60,6 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
     private TextView channel4;
 
     private String selectedOrganizationId;
-    //public MainFragment mainFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -84,9 +84,6 @@ public class ActivityFragment extends BaseOrganizationFragment {
     private ActivityAdapter mAdapter;
     private OrgStructureViewHolder concernedViewHolder;
 
-    //public MainFragment mainFragment;
-    public StructureFragment structureFragment;
-
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         selectedIndex = bundle.getInt(PARAM_SELECTED_, -1);

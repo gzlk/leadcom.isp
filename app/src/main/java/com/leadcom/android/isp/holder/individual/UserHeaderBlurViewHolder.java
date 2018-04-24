@@ -19,7 +19,6 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -77,7 +76,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
 
     private void paddingContent(boolean isSelf) {
         int status = BaseActivity.getStatusHeight(fragment().Activity());
-        int actionSize = fragment().Activity().getActionBarSize();
+        int actionSize = getDimension(R.dimen.ui_base_dimen_simple_item_height);
         topPadding.setPadding(0, status + (isSelf ? actionSize : 0), 0, 0);
     }
 
@@ -208,7 +207,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                     int color = (vibrant.getRgb());
                     //nameTextView.setTextColor(color);
                     //additionalTextView.setTextColor(color);
-                    ((PersonalityFragment) fragment()).resetIconColor(color);
+                    //((PersonalityFragment) fragment()).resetIconColor(color);
                 }
             }
         });
