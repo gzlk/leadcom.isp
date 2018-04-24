@@ -102,7 +102,7 @@ public abstract class Request<T> {
         HttpLog.isPrint = false;
         http = LiteHttp.build(App.app()).create();
         // 15 秒网络超时
-        http.getConfig()
+        http.getConfig().setDebugged(false)
                 .setConnectTimeout(15000)
                 .setSocketTimeout(15000);
         accessToken = Cache.cache().accessToken;

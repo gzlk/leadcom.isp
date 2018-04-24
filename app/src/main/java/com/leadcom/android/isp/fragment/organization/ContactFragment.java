@@ -81,10 +81,6 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     private boolean isOpenable = false;
 
-    /**
-     * 新建一个实例
-     * param: 0=type,1=groupId,2=squadId
-     */
     public static ContactFragment newInstance(Bundle bundle) {
         ContactFragment cf = new ContactFragment();
         cf.setArguments(bundle);
@@ -124,7 +120,8 @@ public class ContactFragment extends BaseOrganizationFragment {
      * 打开我的联系人列表
      */
     public static void open(BaseFragment fragment) {
-        fragment.openActivity(ContactFragment.class.getName(), format("%d,,", TYPE_MINE), true, false);
+        Bundle bundle = getBundle(TYPE_MINE, "", "");
+        fragment.openActivity(ContactFragment.class.getName(), bundle, true, false);
     }
 
     @Override

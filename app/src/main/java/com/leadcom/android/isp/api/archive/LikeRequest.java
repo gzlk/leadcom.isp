@@ -119,8 +119,7 @@ public class LikeRequest extends Request<ArchiveLike> {
         // userDocId
         // groDocId
         httpRequest(getRequest(MultiLike.class,
-                format("%s?%s=%s&pageNumber=%d", url(type, LIST), CommentRequest.getArchiveId(type), archiveId, pageNumber),
-                "", HttpMethods.Get));
+                format("%s?%s=%s&pageNumber=%d&pageSize=9999", url(type, LIST), CommentRequest.getArchiveId(type), archiveId, pageNumber), "", HttpMethods.Get));
     }
 
     /**
