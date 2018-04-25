@@ -192,6 +192,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
+        setSupportLoadingMore(true);
         if (mType == TYPE_ALL || mType == TYPE_ARCHIVE) {
             fetchingFocusImages();
         } else {
