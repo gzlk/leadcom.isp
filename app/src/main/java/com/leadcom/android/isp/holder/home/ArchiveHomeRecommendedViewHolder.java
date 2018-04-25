@@ -108,7 +108,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
     }
 
     public void showContent(RecommendArchive archive) {
-        groupView.setText(StringHelper.getString(R.string.ui_text_home_archive_recommend_group_name, archive.getGroupName()));
+        groupView.setText(StringHelper.getString(R.string.ui_text_home_archive_recommend_group_name, Html.fromHtml(archive.getGroupName())));
         Archive doc = null == archive.getUserDoc() ? archive.getGroDoc() : archive.getUserDoc();
         if (null != doc) {
             showContent(doc);
