@@ -340,15 +340,18 @@ public class Utils {
         return !StringHelper.isEmpty(path) && path.startsWith("drawable://");
     }
 
-    private static final String regEx_script = "<script[^>]*?>[\\s\\S]*?<\\/script>"; // 定义script的正则表达式
-    private static final String regEx_style = "<style[^>]*?>[\\s\\S]*?<\\/style>"; // 定义style的正则表达式
-    private static final String regEx_img = "<img[^>]*?(\\/>|><\\/img>|>)"; // 定义img的正则表达式
-    private static final String regEx_video = "<video[^>]*?>[\\s\\S]*?<\\/video>"; // 定义video的正则表达式
-    private static final String regEx_audio = "<audio[^>]*?>[\\s\\S]*?<\\/audio>"; // 定义audio的正则表达式
+    private static final String regEx_script = "<script[^>]*?>[\\s\\S]*?</script>"; // 定义script的正则表达式
+    private static final String regEx_style = "<style[^>]*?>[\\s\\S]*?</style>"; // 定义style的正则表达式
+    private static final String regEx_img = "<img[^>]*?(/>|></img>|>)"; // 定义img的正则表达式
+    private static final String regEx_video = "<video[^>]*?>[\\s\\S]*?</video>"; // 定义video的正则表达式
+    private static final String regEx_audio = "<audio[^>]*?>[\\s\\S]*?</audio>"; // 定义audio的正则表达式
     private static final String regEx_html = "<[^>]+>"; // 定义HTML标签的正则表达式
     private static final String regEx_space = "\\s*|\t|\r|\n";//定义空格回车换行符
-    private static final String regEx_style1 = "style\\=\\\"[^\\\"]*\\\"";
-    private static final String regEx_href = "href\\=\\\"[^\\\"]*\\\"";
+    private static final String regEx_style1 = "style=\"[^\"]*\"";
+    private static final String regEx_href = "href=\"[^\"]*\"";
+    private static final String regEx_class = "class=\"[^\"]*\"";
+    private static final String regEx_htmlAll = "</?[^>]+>";//剔出<html>的标签
+    private static final String regEx_blank = "<a>\\s*|\t|\r|\n</a>";//去除字符串中的空格,回车,换行符,制表符
 
     /**
      * 清除所有 html 标签(在显示档案摘要或内容时)
@@ -385,6 +388,8 @@ public class Utils {
         htmlStr = clearStyleEqualsXXX(htmlStr);
         // 过滤所有的 href="xxx" 代码
         htmlStr = clearHrefEqualsXXX(htmlStr);
+        // 过滤所有的 class="xxx" 代码
+        htmlStr = clearClassEqualsXXX(htmlStr);
         return htmlStr.trim(); // 返回文本字符串
     }
 
@@ -393,6 +398,7 @@ public class Utils {
         if (StringHelper.isEmpty(htmlString, true)) {
             htmlString = "";
         }
+//        htmlString = htmlString.replaceAll(regEx_htmlAll, "").replaceAll(regEx_others, "");
         Pattern p_script = Pattern.compile(regEx_script, Pattern.CASE_INSENSITIVE);
         Matcher m_script = p_script.matcher(htmlString);
         htmlString = m_script.replaceAll(""); // 过滤script标签
@@ -403,6 +409,10 @@ public class Utils {
 
         // 过滤所有 style="xxx" 代码
         htmlString = clearStyleEqualsXXX(htmlString);
+        // 过滤所有的 href="xxx" 代码
+        htmlString = clearHrefEqualsXXX(htmlString);
+        // 过滤所有的 class="xxx" 代码
+        htmlString = clearClassEqualsXXX(htmlString);
         return htmlString.trim(); // 返回文本字符串
     }
 
@@ -414,10 +424,24 @@ public class Utils {
     }
 
     /**
-     * 清除所有href="xxx"标签内容
+     * 清除所有href="xxx" 标签内容
      */
     public static String clearHrefEqualsXXX(String htmlStr) {
         return Pattern.compile(regEx_href, Pattern.CASE_INSENSITIVE).matcher(htmlStr).replaceAll("");
+    }
+
+    /**
+     * 清除所有class="xxx" 标签内容
+     */
+    public static String clearClassEqualsXXX(String htmlStr) {
+        return Pattern.compile(regEx_class, Pattern.CASE_INSENSITIVE).matcher(htmlStr).replaceAll("");
+    }
+
+    /**
+     * 清除<a></a>标签中的空格
+     */
+    public static String clearBlanks(String htmlStr) {
+        return Pattern.compile(regEx_blank, Pattern.CASE_INSENSITIVE).matcher(htmlStr).replaceAll("");
     }
 
     /**

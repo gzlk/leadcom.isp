@@ -2,6 +2,9 @@
 *.apk
 !/release/*.apk
 
+# bat
+*.bat
+
 # log
 *.log
 

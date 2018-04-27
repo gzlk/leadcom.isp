@@ -7,6 +7,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
@@ -636,7 +637,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("cover", checkNull(archive.getCover()))
                     .put("type", archive.getType())// 必要字段
                     .put("authPublic", archive.getAuthPublic())// 必要字段
-                    .put("content", archive.getContent())
+                    .put("content", Utils.clearContentHtml(archive.getContent()))
                     .put("markdown", archive.getMarkdown())
                     .put("label", new JSONArray(archive.getLabel()))
                     .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
@@ -677,7 +678,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("cover", checkNull(archive.getCover()))
                     .put("type", archive.getType())// 必要字段
                     .put("authPublic", archive.getAuthPublic())// 必要字段
-                    .put("content", archive.getContent())
+                    .put("content", Utils.clearContentHtml(archive.getContent()))
                     .put("markdown", archive.getMarkdown())
                     .put("label", new JSONArray(archive.getLabel()))
                     .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
