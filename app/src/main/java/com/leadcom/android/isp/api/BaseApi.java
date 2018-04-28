@@ -33,5 +33,5 @@ abstract class BaseApi implements Serializable {
     /**
      * 验证失败，需要重新登录
      */
-    static final String RELOGIN = "100000";
+    static final String RELOGIN = "110000";
 }
