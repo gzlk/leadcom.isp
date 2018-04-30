@@ -60,6 +60,7 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     private int imageSize;
     private boolean showLike = false;
     private boolean isToDetails = false;
+    private boolean isCollected = false;
 
     public MomentDetailsViewHolder(View itemView, final BaseFragment fragment) {
         super(itemView, fragment);
@@ -79,8 +80,10 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
                         int index = moment.getImage().indexOf(url);
                         if (isToDetails) {
                             // 到说说图片详情页
+                            MomentImagesFragment.isCollected = isCollected;
                             MomentImagesFragment.open(fragment(), moment.getId(), index);
                         } else {
+                            ImageViewerFragment.isCollected = isCollected;
                             ImageViewerFragment.open(fragment(), index, moment.getImage());
                         }
                     }
@@ -98,6 +101,10 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
                 }
             }
         });
+    }
+
+    public void setCollected(boolean collected) {
+        isCollected = collected;
     }
 
     /**

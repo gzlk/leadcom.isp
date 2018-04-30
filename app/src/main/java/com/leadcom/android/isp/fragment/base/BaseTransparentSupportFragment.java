@@ -38,15 +38,21 @@ public abstract class BaseTransparentSupportFragment extends BaseLocationSupport
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         isInitialized = bundle.getBoolean(PARAM_INITIALIZED, false);
-        mQueryId = bundle.getString(PARAM_QUERY_ID, "");
-        mJsonString = bundle.getString(PARAM_JSON, "");
+        try {
+            mQueryId = bundle.getString(PARAM_QUERY_ID, "");
+            mJsonString = bundle.getString(PARAM_JSON, "");
+        } catch (Exception ignore) {
+        }
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         bundle.putBoolean(PARAM_INITIALIZED, isInitialized);
-        bundle.putString(PARAM_QUERY_ID, mQueryId);
-        bundle.putString(PARAM_JSON, mJsonString);
+        try {
+            bundle.putString(PARAM_QUERY_ID, mQueryId);
+            bundle.putString(PARAM_JSON, mJsonString);
+        } catch (Exception ignore) {
+        }
     }
 
     /**

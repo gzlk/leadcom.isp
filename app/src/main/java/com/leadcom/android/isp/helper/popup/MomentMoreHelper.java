@@ -25,7 +25,6 @@ public class MomentMoreHelper {
 
     private int layout = R.layout.popup_dialog_moment_details;
     private BaseFragment fragment;
-    private DialogHelper.OnEventHandlerListener eventHandlerListener;
     private DialogHelper dialogHelper;
     private String privacyText = StringHelper.getString(R.string.ui_text_moment_details_button_privacy);
     private String collectText = StringHelper.getString(R.string.ui_text_moment_details_button_favorite);
@@ -42,11 +41,6 @@ public class MomentMoreHelper {
 
     public MomentMoreHelper setLayout(int layout) {
         this.layout = layout;
-        return this;
-    }
-
-    public MomentMoreHelper setOnEventHandlerListener(DialogHelper.OnEventHandlerListener listener) {
-        this.eventHandlerListener = listener;
         return this;
     }
 
@@ -131,6 +125,34 @@ public class MomentMoreHelper {
                 save.setVisibility(showSave ? View.VISIBLE : View.GONE);
                 delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
             }
-        }).addOnEventHandlerListener(eventHandlerListener).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
+        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+            @Override
+            public int[] clickEventHandleIds() {
+                return new int[]{R.id.ui_dialog_moment_details_button_privacy,
+                        R.id.ui_dialog_moment_details_button_favorite,
+                        R.id.ui_dialog_moment_details_button_share,
+                        R.id.ui_dialog_moment_details_button_save,
+                        R.id.ui_dialog_moment_details_button_delete};
+            }
+
+            @Override
+            public boolean onClick(View view) {
+                return null != onButtonClickListener && onButtonClickListener.onClick(view);
+            }
+        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
+    }
+
+    /**
+     * 设置点击事件处理回调
+     */
+    public MomentMoreHelper setOnButtonClickListener(OnButtonClickListener l) {
+        onButtonClickListener = l;
+        return this;
+    }
+
+    private OnButtonClickListener onButtonClickListener;
+
+    public interface OnButtonClickListener {
+        boolean onClick(View view);
     }
 }

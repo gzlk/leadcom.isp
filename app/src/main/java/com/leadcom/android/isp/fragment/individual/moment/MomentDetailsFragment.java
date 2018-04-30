@@ -12,7 +12,6 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.BaseMomentFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
@@ -255,16 +254,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     }
 
     private void showMoreButtons() {
-        MomentMoreHelper.helper().init(this).setOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_moment_details_button_privacy,
-                        R.id.ui_dialog_moment_details_button_favorite,
-                        R.id.ui_dialog_moment_details_button_share,
-                        R.id.ui_dialog_moment_details_button_save,
-                        R.id.ui_dialog_moment_details_button_delete};
-            }
-
+        MomentMoreHelper.helper().init(this).setOnButtonClickListener(new MomentMoreHelper.OnButtonClickListener() {
             @Override
             public boolean onClick(View view) {
                 handlePopupClick(view.getId());
@@ -518,6 +508,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     holder.setOnViewHolderElementClickListener(elementClickListener);
                     holder.addOnHandlerBoundDataListener(boundDataListener);
                     holder.isShowLike(false);
+                    holder.setCollected(isCollected);
                     return holder;
                 case VT_PRAISE:
                     if (null == praiseViewHolder) {

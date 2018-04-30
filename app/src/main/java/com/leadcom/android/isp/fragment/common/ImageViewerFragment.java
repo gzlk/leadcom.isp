@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -22,11 +21,10 @@ import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
@@ -38,7 +36,6 @@ import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <b>功能描述：</b>图片预览<br />
@@ -119,16 +116,25 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
         super.onDestroy();
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        int color = getColor(R.color.textColorLight);
+        titleLeftIcon.setTextColor(color);
+        titleTextView.setTextColor(color);
+        titleRightIcon.setTextColor(color);
+    }
+
     @ViewId(R.id.ui_viewer_image_title_container)
     private LinearLayout titleContainer;
     @ViewId(R.id.ui_ui_custom_title_text)
     private TextView titleTextView;
+    @ViewId(R.id.ui_ui_custom_title_left_icon)
+    private CustomTextView titleLeftIcon;
     @ViewId(R.id.ui_ui_custom_title_left_text)
     private TextView titleLeftText;
     @ViewId(R.id.ui_ui_custom_title_right_icon)
     private CustomTextView titleRightIcon;
-    @ViewId(R.id.ui_ui_custom_title_right_text)
-    private TextView titleRightText;
     @ViewId(R.id.ui_tool_view_pager)
     private ViewPager viewPager;
 
@@ -151,43 +157,19 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
         }
     }
 
-    private View dialogView;
-
     private void showMoreDialog() {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == dialogView) {
-                    dialogView = View.inflate(Activity(), R.layout.popup_dialog_moment_details, null);
-                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_privacy).setVisibility(View.GONE);
-                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_delete).setVisibility(View.GONE);
-                    //dialogView.findViewById(R.id.ui_dialog_moment_details_button_share).setVisibility(View.GONE);
-                }
-                return dialogView;
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-                if (isCollected) {
-                    dialogView.findViewById(R.id.ui_dialog_moment_details_button_favorite).setVisibility(View.GONE);
-                }
-            }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_moment_details_button_privacy,
-                        R.id.ui_dialog_moment_details_button_favorite,
-                        R.id.ui_dialog_moment_details_button_share,
-                        R.id.ui_dialog_moment_details_button_save,
-                        R.id.ui_dialog_moment_details_button_delete};
-            }
-
+        MomentMoreHelper.helper().init(this).setOnButtonClickListener(new MomentMoreHelper.OnButtonClickListener() {
             @Override
             public boolean onClick(View view) {
                 handlePopupClick(view.getId());
                 return true;
             }
-        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
+        }).showPrivacy(false)
+                .showShare(true)
+                .showSave(true)
+                .showDelete(false)
+                .showFavorite(!isCollected)
+                .show();
     }
 
     private void handlePopupClick(int id) {

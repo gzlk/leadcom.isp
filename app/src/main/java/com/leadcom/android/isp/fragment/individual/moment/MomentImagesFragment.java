@@ -18,7 +18,6 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.BaseMomentFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
@@ -248,16 +247,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
     }
 
     private void showMoreButtons() {
-        MomentMoreHelper.helper().init(this).setOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_moment_details_button_privacy,
-                        R.id.ui_dialog_moment_details_button_favorite,
-                        R.id.ui_dialog_moment_details_button_share,
-                        R.id.ui_dialog_moment_details_button_save,
-                        R.id.ui_dialog_moment_details_button_delete};
-            }
-
+        MomentMoreHelper.helper().init(this).setOnButtonClickListener(new MomentMoreHelper.OnButtonClickListener() {
             @Override
             public boolean onClick(View view) {
                 handlePopupClick(view.getId());
