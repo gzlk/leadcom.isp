@@ -9,6 +9,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
+import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.share.ShareToQQ;
@@ -368,6 +370,16 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            String image = images.get(position);
+            String ext = Attachment.getExtension(image);
+            if (!isEmpty(ext) && ext.equals("gif")) {
+                // 动图
+                ImageView imageView = new ImageView(App.app());
+                container.addView(imageView);
+                Glide.with(ImageViewerFragment.this)
+                        .load(image).into(imageView);
+                return imageView;
+            }
             final SubsamplingScaleImageView ssiv = new SubsamplingScaleImageView(App.app());
             container.addView(ssiv);
             Glide.with(ImageViewerFragment.this)

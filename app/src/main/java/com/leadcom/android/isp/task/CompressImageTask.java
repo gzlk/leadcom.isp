@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.task;
 
+import android.graphics.BitmapFactory;
+
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -7,6 +9,7 @@ import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnTaskPreparedListener;
 import com.hlk.hlklib.etc.Cryptography;
 import com.hlk.hlklib.tasks.AsyncedTask;
+import com.leadcom.android.isp.model.common.Attachment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,12 +70,24 @@ public final class CompressImageTask extends AsyncedTask<String, Integer, Intege
         for (String image : images) {
             File f = new File(image);
             if (f.exists()) {
-                String compressed = compressImage(image, to, toWidth, toHeight);
-                if (StringHelper.isEmpty(errors) && ret == 0) {
-                    ret = 3;
+                String ext = Attachment.getExtension(image);
+                if (!StringHelper.isEmpty(ext, true) && ext.equals("gif")) {
+                    // gif 不要压缩
+                    this.compressed.add(image);
+                } else {
+                    BitmapFactory.Options options = ImageCompress.getBitmapOptions(image);
+                    if (null != options && options.outHeight > options.outWidth * 1.5) {
+                        // 如果图片的原始高度大于宽度的1.5倍，则可以判定为长图，不需要压缩
+                        this.compressed.add(image);
+                    } else {
+                        String compressed = compressImage(image, to, toWidth, toHeight);
+                        if (StringHelper.isEmpty(errors) && ret == 0) {
+                            ret = 3;
+                        }
+                        // 压缩失败的图片也要加入列表，只是路径为空
+                        this.compressed.add(compressed);
+                    }
                 }
-                // 压缩失败的图片也要加入列表，只是路径为空
-                this.compressed.add(compressed);
             } else {
                 errors = "The image you wanna compress is not exist.";
                 ret = 2;

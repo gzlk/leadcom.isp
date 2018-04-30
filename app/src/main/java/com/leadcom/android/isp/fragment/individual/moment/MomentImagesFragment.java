@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +24,6 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.individual.BaseMomentFragment;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
@@ -33,6 +33,7 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Comment;
+import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.user.Moment;
 import com.leadcom.android.isp.nim.file.FilePreviewHelper;
@@ -378,10 +379,20 @@ public class MomentImagesFragment extends BaseMomentFragment {
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            String image = images.get(position);
+            String ext = Attachment.getExtension(image);
+            if (!isEmpty(ext) && ext.equals("gif")) {
+                // 动图
+                ImageView imageView = new ImageView(App.app());
+                container.addView(imageView);
+                Glide.with(MomentImagesFragment.this)
+                        .load(image).into(imageView);
+                return imageView;
+            }
             final SubsamplingScaleImageView ssiv = new SubsamplingScaleImageView(App.app());
             container.addView(ssiv);
             Glide.with(MomentImagesFragment.this)
-                    .load(images.get(position)).downloadOnly(new SimpleTarget<File>() {
+                    .load(image).downloadOnly(new SimpleTarget<File>() {
                 @Override
                 public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                     ssiv.setImage(ImageSource.uri(FilePreviewHelper.getUriFromFile(resource.getAbsolutePath())));
