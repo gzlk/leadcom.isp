@@ -252,10 +252,12 @@ public class MainActivity extends TitleActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == BaseFragment.REQUEST_SELECT) {
             String result = BaseFragment.getResultedData(data);
-            if (result.equals(ArchiveEditorFragment.MOMENT)) {
-                MomentCreatorFragment.open(this, "[]");
-            } else {
-                ArchiveEditorFragment.open(this, "", result);
+            if (!StringHelper.isEmpty(result, true)) {
+                if (result.equals(ArchiveEditorFragment.MOMENT)) {
+                    MomentCreatorFragment.open(this, "[]");
+                } else {
+                    ArchiveEditorFragment.open(this, "", result);
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

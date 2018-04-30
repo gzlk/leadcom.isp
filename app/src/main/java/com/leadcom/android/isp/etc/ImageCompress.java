@@ -3,7 +3,7 @@ package com.leadcom.android.isp.etc;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.text.TextUtils;
 
@@ -33,10 +33,6 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 public final class ImageCompress {
 
     private static String TAG = ImageCompress.class.getSimpleName();
-    /**
-     * 压缩后的文件大小限制(500K)
-     */
-    public static int MAX_COMPRESSED_SIZE = 500 * 1024;
     /**
      * 默认压缩模式 JPEG
      */
@@ -69,13 +65,13 @@ public final class ImageCompress {
      * @param prepareToHeight 期望压缩到的图片高度
      * @param options         被压缩图片的 options
      */
-    private static int getSampleSize(int prepareToWidth, int prepareToHeight, BitmapFactory.Options options) {
+    private static int getSampleSize(boolean fitMax, int prepareToWidth, int prepareToHeight, BitmapFactory.Options options) {
         int width = options.outWidth;
         int height = options.outHeight;
-        int maxScreen = prepareToWidth > prepareToHeight ? prepareToWidth : prepareToHeight;
-        int max = width > height ? width : height;
-        int sampleSize = max / maxScreen;
-        return sampleSize < 1 ? 1 : sampleSize;
+        int screen = prepareToWidth > prepareToHeight ? (fitMax ? prepareToWidth : prepareToHeight) : (fitMax ? prepareToHeight : prepareToWidth);
+        int min = width > height ? (fitMax ? width : height) : (fitMax ? height : width);
+        float sampleSize = (1.0f * min) / screen;
+        return sampleSize < 1 ? 1 : (int) sampleSize;
     }
 
     /**
@@ -283,12 +279,12 @@ public final class ImageCompress {
     private static void compress(String fromPath, String toPath, int prepareToWidth, int prepareToHeight) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // 默认原始尺寸大小以及旋转的角度
-        int sampleSize, quality = 50, degree = readPictureDegree(fromPath);
+        int sampleSize, quality = 100, degree = readPictureDegree(fromPath);
         // 原始尺寸获取
         BitmapFactory.Options options = getBitmapOptions(fromPath);
 
-        // 与当前屏幕分辨率对比，获取缩放率
-        sampleSize = getSampleSize(prepareToWidth, prepareToHeight, options);
+        // 与当前屏幕分辨率对比，获取缩放率(根据最小边缩放)
+        sampleSize = getSampleSize(false, prepareToWidth, prepareToHeight, options);
 
         // if (options.outWidth <= BaseFragment.MAX_THUMB_IMAGE_SIZE
         // || options.outHeight <= BaseFragment.MAX_THUMB_IMAGE_SIZE) {
@@ -316,12 +312,14 @@ public final class ImageCompress {
 
         bitmap.compress(cfJPEG, quality, baos);
         log(String.format(Locale.getDefault(), fmt, fromPath, sampleSize, quality, baos.toByteArray().length));
-//        while (baos.toByteArray().length > MAX_COMPRESSED_SIZE) {
-//            baos.reset();
-//            quality -= 10;
-//            bitmap.compress(cfJPEG, quality, baos);
-//            log(String.format(Locale.getDefault(), fmt, fromPath, sampleSize, quality, baos.toByteArray().length));
-//        }
+        // 压缩后的文件大小限制(1M)
+        int MAX_COMPRESSED_SIZE = 1024 * 1024;
+        while (baos.toByteArray().length > MAX_COMPRESSED_SIZE) {
+            baos.reset();
+            quality -= 10;
+            bitmap.compress(cfJPEG, quality, baos);
+            log(String.format(Locale.getDefault(), fmt, fromPath, sampleSize, quality, baos.toByteArray().length));
+        }
         byte[] data = baos.toByteArray();
         bitmap.recycle();
         FileOutputStream fos = new FileOutputStream(toPath);
