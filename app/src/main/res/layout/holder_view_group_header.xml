@@ -37,7 +37,7 @@
         android:layout_toEndOf="@+id/ui_holder_view_group_header_logo"
         android:layout_toStartOf="@+id/ui_holder_view_group_header_edit_icon"
         android:ellipsize="end"
-        android:maxLines="7"
+        android:maxLines="5"
         android:minLines="4"
         android:text="@string/temp_long_text_value"
         android:textColor="@color/textColorLight"

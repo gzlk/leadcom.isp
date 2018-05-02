@@ -146,7 +146,11 @@ public class ContactViewHolder extends BaseViewHolder {
         text = getSearchingText(text, searching);
         nameView.setText(Html.fromHtml(text));
         phoneView.setText(user.getPhone());
-        headerView.displayImage(user.getHeadPhoto(), imageSize, false, false);
+        String header = user.getHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        headerView.displayImage(header, imageSize, false, false);
         myselfView.setVisibility(user.getId().equals(Cache.cache().userId) ? View.VISIBLE : View.GONE);
     }
 
@@ -168,7 +172,11 @@ public class ContactViewHolder extends BaseViewHolder {
         } else {
             phoneView.setText(null);
         }
-        headerView.displayImage(member.getHeadPhoto(), imageSize, false, false);
+        String header = member.getHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        headerView.displayImage(header, imageSize, false, false);
         boolean isMe = !isEmpty(member.getUserId()) && member.getUserId().equals(Cache.cache().userId);
         myselfView.setVisibility(isMe ? View.VISIBLE : View.GONE);
 

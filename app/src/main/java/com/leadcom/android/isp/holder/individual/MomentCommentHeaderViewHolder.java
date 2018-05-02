@@ -68,7 +68,11 @@ public class MomentCommentHeaderViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Comment comment) {
-        header.displayImage(comment.getHeadPhoto(), imageSize, false, false);
+        String head = comment.getHeadPhoto();
+        if (isEmpty(head) || head.length() < 20) {
+            head = "drawable://" + R.drawable.img_default_user_header;
+        }
+        header.displayImage(head, imageSize, false, false);
         String text;
         if (!isEmpty(comment.getToUserId())) {
             text = StringHelper.getString(R.string.ui_individual_moment_comment_content_header_name_to, comment.getUserName(), comment.getToUserName());

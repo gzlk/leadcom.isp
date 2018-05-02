@@ -62,7 +62,11 @@ public class ArchiveDetailsCommentViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Comment comment) {
-        headerView.displayImage(comment.getHeadPhoto(), imageSize, false, false);
+        String header = comment.getHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        headerView.displayImage(header, imageSize, false, false);
         String text;
         if (!isEmpty(comment.getToUserId())) {
             text = StringHelper.getString(R.string.ui_individual_moment_comment_content_header_name_to, comment.getUserName(), comment.getToUserName());

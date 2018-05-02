@@ -659,7 +659,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 } else {
                     Organization group = Organization.get(mArchive.getGroupId());
                     if (null != group) {
-                        groupNameText.setText(group.getName());
+                        groupNameText.setText(Html.fromHtml(group.getName()));
                     } else {
                         fetchingGroup(mArchive.getGroupId());
                     }
@@ -1290,7 +1290,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 设置类别为组织档案
                     mArchive.setType(Archive.Type.GROUP);
                     if (null != groupNameText) {
-                        groupNameText.setText(groups.get(0).getGroupName());
+                        groupNameText.setText(Html.fromHtml(groups.get(0).getGroupName()));
                     }
                 }
                 break;

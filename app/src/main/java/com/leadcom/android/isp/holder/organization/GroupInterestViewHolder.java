@@ -71,8 +71,8 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         selectorLine.setVisibility(organization.isSelectable() ? View.VISIBLE : View.GONE);
         selectorLine.setTextColor(getColor(organization.isSelected() ? R.color.colorPrimary : R.color.transparent_00));
         String cover = organization.getLogo();
-        if (isEmpty(cover)) {
-            cover = "drawable://" + R.mipmap.img_image_loading_fail;
+        if (isEmpty(cover) || cover.length() < 20) {
+            cover = "drawable://" + R.drawable.img_default_group_icon;
         }
         coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_35), false, false);
         String name = organization.getName();
@@ -96,8 +96,8 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         selectorLine.setVisibility(concern.isSelectable() ? View.VISIBLE : View.GONE);
         selectorLine.setTextColor(getColor(concern.isSelected() ? R.color.colorPrimary : R.color.transparent_00));
         String cover = concern.getLogo();
-        if (isEmpty(cover)) {
-            cover = "drawable://" + R.mipmap.img_image_loading_fail;
+        if (isEmpty(cover) || cover.length() < 20) {
+            cover = "drawable://" + R.drawable.img_default_group_icon;
         }
         coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_35), false, false);
         String name = concern.getName();
