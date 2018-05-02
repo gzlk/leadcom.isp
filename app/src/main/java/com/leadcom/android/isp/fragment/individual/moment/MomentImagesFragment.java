@@ -111,6 +111,12 @@ public class MomentImagesFragment extends BaseMomentFragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        INTERNAL_SHAREABLE = false;
+    }
+
+    @Override
     public void onDestroy() {
         isCollected = false;
         super.onDestroy();

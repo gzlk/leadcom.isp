@@ -125,6 +125,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        INTERNAL_SHAREABLE = false;
         int color = getColor(R.color.textColorLight);
         titleLeftIcon.setTextColor(color);
         titleTextView.setTextColor(color);
