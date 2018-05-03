@@ -110,6 +110,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        INTERNAL_SHAREABLE = false;
         mOnKeyboardChangeListener = new OnKeyboardChangeListener(Activity());
         mOnKeyboardChangeListener.setKeyboardListener(new OnKeyboardChangeListener.KeyboardListener() {
             @Override
