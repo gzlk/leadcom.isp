@@ -122,7 +122,11 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
     public void showContent(Archive archive) {
         //headerView.setVisibility(showHeader ? View.VISIBLE : View.GONE);
         if (showHeader) {
-            authorHeader.displayImage(archive.getHeadPhoto(), headerSize, false, false);
+            String header = archive.getHeadPhoto();
+            if (isEmpty(header) || header.length() < 20) {
+                header = "drawable://" + R.drawable.img_default_user_header;
+            }
+            authorHeader.displayImage(header, headerSize, false, false);
             authorName.setText(archive.getUserName());
             timeView.setText(fragment().formatTimeAgo(archive.getCreateDate()));
         }

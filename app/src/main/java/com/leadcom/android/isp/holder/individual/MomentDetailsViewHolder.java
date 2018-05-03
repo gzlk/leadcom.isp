@@ -122,7 +122,11 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Moment moment) {
-        authorHeader.displayImage(moment.getHeadPhoto(), imageSize, false, false);
+        String header = moment.getHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        authorHeader.displayImage(header, imageSize, false, false);
         authorName.setText(moment.getUserName());
         momentContent.setText(EmojiUtility.getEmojiString(momentContent.getContext(), moment.getContent(), true));
         momentContent.makeExpandable();

@@ -63,7 +63,11 @@ public class UserMessageViewHolder extends BaseViewHolder {
     }
 
     public void showContent(UserMessage msg) {
-        headerView.displayImage(msg.getHeadPhoto(), imageSize, false, false);
+        String header = msg.getHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        headerView.displayImage(header, imageSize, false, false);
         nameView.setText(msg.getUserName());
         switch (msg.getType()) {
             case UserMessage.Type.COMMENT:
