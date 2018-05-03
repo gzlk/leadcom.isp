@@ -195,7 +195,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void addMoment(ArrayList<String> images, String fileIds) {
         Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
-        String content = StringHelper.escapeToHtml(momentContent.getValue());
+        String content = momentContent.getValue();
         int auth = seclusion.getStatus();
         if (auth == Seclusion.Type.Private) {
             auth = 2;

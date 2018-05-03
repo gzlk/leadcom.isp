@@ -60,7 +60,7 @@ public class UserNameEditFragment extends BaseLayoutSupportFragment {
             public void onClick() {
                 Intent data = new Intent();
                 data.putExtra(PARAM_NAME, cetName.getValue());
-                data.putExtra(PARAM_INTRO, StringHelper.escapeToHtml(cetIntro.getValue()));
+                data.putExtra(PARAM_INTRO, cetIntro.getValue());
                 resultData(data);
             }
         });

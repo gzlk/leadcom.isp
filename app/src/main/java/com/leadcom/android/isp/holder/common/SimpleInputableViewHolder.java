@@ -66,8 +66,7 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
      * 获取输入内容
      */
     public String getValue() {
-        String value = contentView.getValue();
-        return StringHelper.escapeToHtml(value);
+        return contentView.getValue();
     }
 
     public void showContent(String title, String value, String hint, String valueExtract, String valueVerify, int maxLength) {
