@@ -56,7 +56,7 @@ public class ActivityListItemViewHolder extends BaseViewHolder {
 
                 @Override
                 public void onResult(boolean success, UserInfo info, int code) {
-                    String img = null == info ? ("drawable://" + R.mipmap.img_default_user_header) : info.getAvatar();
+                    String img = null == info ? ("drawable://" + R.drawable.img_default_user_header) : info.getAvatar();
                     iconView.displayImage(img, getDimension(R.dimen.ui_base_dimen_button_height), false, false);
                     nameView.setText(null == info ? StringHelper.getString(R.string.ui_base_text_no_name) : info.getName());
                 }

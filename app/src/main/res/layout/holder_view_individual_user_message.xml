@@ -14,7 +14,7 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/ui_static_dp_5"
         app:id_image_scale_type="centerCrop"
-        app:id_image_src="@mipmap/img_default_user_header"
+        app:id_image_src="@drawable/img_default_user_header"
         app:id_image_type="rounded" />
 
     <LinearLayout

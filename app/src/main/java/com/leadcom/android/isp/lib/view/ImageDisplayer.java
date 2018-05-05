@@ -132,7 +132,7 @@ public class ImageDisplayer extends RelativeLayout {
             imageView.setImageDrawable(null);
         } else {
             // 未设置是显示系统默认的头像图片
-            imageView.setImageResource(R.mipmap.img_default_user_header);
+            imageView.setImageResource(R.drawable.img_default_user_header);
             //imageView.setImageResource(R.mipmap.img_image_loading_fail);
         }
     }
@@ -234,7 +234,7 @@ public class ImageDisplayer extends RelativeLayout {
         showSelect = selectable;
         displayUrl = url;
         if (StringHelper.isEmpty(displayUrl) || displayUrl.contains("(null)")) {
-            displayUrl = "drawable://" + (isShowHeader ? R.mipmap.img_default_user_header : R.mipmap.img_image_loading_fail);
+            displayUrl = "drawable://" + (isShowHeader ? R.drawable.img_default_user_header : R.mipmap.img_image_loading_fail);
         }
         displayImage2();
     }

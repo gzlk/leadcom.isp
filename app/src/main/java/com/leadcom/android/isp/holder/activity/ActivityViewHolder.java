@@ -290,7 +290,7 @@ public class ActivityViewHolder extends BaseViewHolder {
         @Override
         protected void onDisplayImage(Context context, ImageView imageView, String s) {
             int size = getDimension(R.dimen.ui_static_dp_55);
-            String url = (isEmpty(s) || (!Utils.isUrl(s) && !Utils.isLocalPath(s) && !Utils.isDrawable(s))) ? ("drawable://" + R.mipmap.img_default_user_header) : s;
+            String url = (isEmpty(s) || (!Utils.isUrl(s) && !Utils.isLocalPath(s) && !Utils.isDrawable(s))) ? ("drawable://" + R.drawable.img_default_user_header) : s;
             ImageLoader.getInstance().displayImage(url, imageView, new ImageSize(size, size));
         }
 

@@ -10,6 +10,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseLayoutSupportFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.operation.GRPOperation;
@@ -84,8 +85,12 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setCustomTitle(isEmpty(groupId) ? R.string.ui_text_personality_introduction_fragment_title : R.string.ui_organization_introduction_fragment_title);
+        setCustomTitle(!isGroup ? R.string.ui_text_personality_introduction_fragment_title : R.string.ui_organization_introduction_fragment_title);
         headerLayout.setVisibility(View.VISIBLE);
+        String logo = header;
+        if (isEmpty(logo) || logo.length() < 20) {
+            logo = "drawable://" + (isGroup ? R.drawable.img_default_group_icon : R.drawable.img_default_user_header);
+        }
         headerView.displayImage(header, getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         nameView.setText(Html.fromHtml(name));
         timeView.setText(formatDate(date, R.string.ui_base_text_date_format));
@@ -118,6 +123,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         header = bundle.getString(PARAM_HEAD, "");
         date = bundle.getString(PARAM_DATE, "");
         intro = bundle.getString(PARAM_INTRO, "");
+        intro = StringHelper.escapeToHtml(intro);
         isGroup = bundle.getBoolean(PARAM_IS_GROUP, false);
     }
 

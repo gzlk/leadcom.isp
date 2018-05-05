@@ -37,7 +37,7 @@
             android:id="@+id/ui_holder_view_user_header"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:id_image_src="@mipmap/img_default_user_header"
+            app:id_image_src="@drawable/img_default_user_header"
             app:id_image_type="oval"
             app:id_nullable_drawable="true"
             app:id_show_header="true" />
