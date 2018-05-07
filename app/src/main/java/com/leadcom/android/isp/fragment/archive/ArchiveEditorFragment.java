@@ -729,14 +729,16 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         resetGroupArchiveOrUser();
                         break;
                     case R.id.ui_popup_rich_editor_setting_type_group:
-                        // 选择新建组织档案
-                        isGroupArchive = !isGroupArchive;
-                        if (!isGroupArchive && !isUserArchive) {
-                            // 如果不是选择组织文档，且也不是个人文档，则默认选中个人文档
-                            isUserArchive = true;
+                        // 选择新建组织档案，只有图文模式下才可以组织、个人之间互相转换，附件模式下不可以
+                        if (editorType == TYPE_MULTIMEDIA) {
+                            isGroupArchive = !isGroupArchive;
+                            if (!isGroupArchive && !isUserArchive) {
+                                // 如果不是选择组织文档，且也不是个人文档，则默认选中个人文档
+                                isUserArchive = true;
+                            }
+                            //mArchive.setType(Archive.Type.GROUP);
+                            resetGroupArchiveOrUser();
                         }
-                        //mArchive.setType(Archive.Type.GROUP);
-                        resetGroupArchiveOrUser();
                         break;
                     case R.id.ui_popup_rich_editor_setting_group_picker:
                         GroupPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false);
