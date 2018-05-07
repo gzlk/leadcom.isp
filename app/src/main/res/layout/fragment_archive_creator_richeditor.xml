@@ -268,6 +268,11 @@
         android:orientation="vertical"
         android:visibility="gone">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ui_static_dp_1"
+            android:background="@color/windowBackground" />
+
         <include layout="@layout/holder_view_attachment_picker" />
 
         <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
