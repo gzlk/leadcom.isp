@@ -1,4 +1,4 @@
-package com.leadcom.android.isp.fragment.individual;
+package com.leadcom.android.isp.fragment.individual.moment;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
