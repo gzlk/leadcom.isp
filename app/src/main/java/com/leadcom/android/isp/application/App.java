@@ -10,7 +10,6 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.PermissionRequest;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.crash.AppCrashHandler;
 import com.leadcom.android.isp.crash.storage.StorageUtil;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
@@ -28,6 +27,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.auth.AuthInfo;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.smtt.sdk.QbSdk;
 
 import java.io.File;
@@ -116,7 +116,8 @@ public class App extends NimApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        AppCrashHandler.getInstance(this);
+        //AppCrashHandler.getInstance(this);
+        CrashReport.initCrashReport(getApplicationContext(), StringHelper.getString(R.string.tencent_app_id_bugly), !Cache.isReleasable());
         //initializeX5();
         initializeNim();
         if (shouldInit()) {
