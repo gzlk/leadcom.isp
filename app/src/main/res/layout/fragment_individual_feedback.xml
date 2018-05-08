@@ -9,7 +9,6 @@
         android:id="@+id/ui_feedback_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/ui_base_border_size_normal"
         app:cet_edit_count_input="true"
         app:cet_edit_count_input_text_size="@dimen/ui_base_text_size_tiny"
         app:cet_edit_hint="@string/ui_text_feedback_content_hint"
@@ -21,6 +20,8 @@
         app:cet_edit_value_max_length="@integer/integer_activity_introduction_max_length"
         app:cet_edit_value_verify_regex="@string/regex_normal_long_input_verify" />
 
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
     <com.hlk.hlklib.lib.view.CorneredButton
         android:id="@+id/ui_feedback_commit"
         android:layout_width="match_parent"
@@ -29,6 +30,7 @@
         android:layout_marginStart="@dimen/ui_static_dp_12"
         android:layout_marginTop="@dimen/ui_base_dimen_margin_padding"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:minHeight="@dimen/ui_base_dimen_button_height"
         android:text="@string/ui_base_text_commit"
