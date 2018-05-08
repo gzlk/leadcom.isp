@@ -550,6 +550,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 if (success && null != list) {
                     for (RecommendArchive archive : list) {
                         Archive doc = null == archive.getUserDoc() ? archive.getGroDoc() : archive.getUserDoc();
+                        doc.setId(archive.getDocId());
                         doc.resetAdditional(doc.getAddition());
                         searched.add(doc);
                     }
@@ -735,6 +736,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     return new NothingMoreViewHolder(itemView, ArchiveSearchFragment.this);
             }
             ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, ArchiveSearchFragment.this);
+            ahrvh.setShowGroup(false);
             ahrvh.addOnViewHolderClickListener(onViewHolderClickListener);
             return ahrvh;
         }

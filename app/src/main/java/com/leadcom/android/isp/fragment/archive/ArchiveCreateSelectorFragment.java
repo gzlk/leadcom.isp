@@ -37,7 +37,7 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
     }
 
     public static void open(Context context, String groupId) {
-        BaseActivity.openActivity(context, ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, true, false);
+        BaseActivity.openActivity(context, ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, false, false);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     @Override

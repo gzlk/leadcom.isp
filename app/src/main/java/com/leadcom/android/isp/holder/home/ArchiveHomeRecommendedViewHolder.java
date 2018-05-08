@@ -66,6 +66,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
 
     private int width, height, headerSize;
     private boolean showHeader;
+    private boolean showGroup;
     private String searchingText = "";
 
     public ArchiveHomeRecommendedViewHolder(View itemView, BaseFragment fragment) {
@@ -93,6 +94,10 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
                 }
             }
         });
+    }
+
+    public void setShowGroup(boolean shown) {
+        groupView.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     private void resetImageHeight() {
