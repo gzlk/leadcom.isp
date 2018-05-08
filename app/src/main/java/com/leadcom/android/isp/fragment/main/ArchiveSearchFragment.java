@@ -551,6 +551,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     for (RecommendArchive archive : list) {
                         Archive doc = null == archive.getUserDoc() ? archive.getGroDoc() : archive.getUserDoc();
                         doc.setId(archive.getDocId());
+                        doc.setGroupId(archive.getGroupId());
                         doc.resetAdditional(doc.getAddition());
                         searched.add(doc);
                     }
