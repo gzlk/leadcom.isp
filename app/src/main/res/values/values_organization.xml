@@ -44,7 +44,7 @@
         <item>未关注</item>
     </string-array>
 
-    <string name="ui_organization_creator_fragment_title">增加组织</string>
+    <string name="ui_organization_creator_fragment_title">添加组织</string>
     <string name="ui_organization_creator_fragment_title_edit">修改组织信息</string>
     <string name="ui_organization_creator_warning">敬请知悉：<br />此功能目前只为测试方便而开发，正式release版本会屏蔽。</string>
     <string-array name="ui_organization_creator_items">

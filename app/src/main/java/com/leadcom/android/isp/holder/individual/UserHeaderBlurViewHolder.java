@@ -76,7 +76,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
 
     private void paddingContent(boolean isSelf) {
         int status = BaseActivity.getStatusHeight(fragment().Activity());
-        int actionSize = getDimension(R.dimen.ui_base_dimen_simple_item_height);
+        int actionSize = getDimension(R.dimen.ui_static_dp_20);
         topPadding.setPadding(0, status + (isSelf ? actionSize : 0), 0, 0);
     }
 
