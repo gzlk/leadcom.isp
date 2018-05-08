@@ -379,10 +379,12 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
                 container.addView(imageView);
                 Glide.with(ImageViewerFragment.this)
                         .load(image).into(imageView);
+                imageView.setOnClickListener(imageViewClickListener);
                 return imageView;
             }
             final SubsamplingScaleImageView ssiv = new SubsamplingScaleImageView(App.app());
             container.addView(ssiv);
+            ssiv.setOnClickListener(imageViewClickListener);
             Glide.with(ImageViewerFragment.this)
                     .load(images.get(position)).downloadOnly(new SimpleTarget<File>() {
                 @Override
