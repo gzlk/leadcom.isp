@@ -194,4 +194,8 @@ public class Cache {
     public ArrayList<String> groupIds = new ArrayList<>();
 
     private ArrayList<RelateGroup> groups = new ArrayList<>();
+
+    public ArrayList<RelateGroup> getGroups() {
+        return groups;
+    }
 }
