@@ -81,6 +81,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         fragment.openActivity(SystemMessageFragment.class.getName(), getBundle(false), true, false);
     }
 
+    @ViewId(R.id.ui_ui_custom_title_text)
+    private TextView titleText;
     @ViewId(R.id.ui_ui_custom_title_right_icon)
     private CustomTextView rightIconView;
     @ViewId(R.id.ui_ui_custom_title_right_text)
@@ -110,6 +112,10 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLoadingComplete(true);
+        int color = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
+        rightTextView.setTextColor(color);
+        rightIconView.setTextColor(color);
+        titleText.setTextColor(color);
         rightIconView.setVisibility(isInMainPage ? View.GONE : View.VISIBLE);
         rightTextView.setVisibility(isInMainPage ? View.VISIBLE : View.GONE);
     }

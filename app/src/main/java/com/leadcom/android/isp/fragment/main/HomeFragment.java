@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
 
 /**
@@ -42,6 +43,10 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        int color = getColor(Cache.sdk >= 23 ? R.color.colorPrimary : R.color.textColorLight);
+        topLine1.setBackgroundColor(color);
+        topLine2.setBackgroundColor(color);
+        topLine3.setBackgroundColor(color);
         //tryPaddingContent(toolBar, false);
     }
 
@@ -70,7 +75,8 @@ public class HomeFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void viewPagerSelectionChanged(int position) {
         toolbarLine.setVisibility(position > 0 ? View.VISIBLE : View.GONE);
-        int color1 = getColor(R.color.textColor), color2 = getColor(R.color.textColorHint);
+        int color1 = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
+        int color2 = getColor(Cache.sdk >= 23 ? R.color.textColorHint : R.color.textColorLight);
         topLine1.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
         channel1.setTextColor(position == 0 ? color1 : color2);
 

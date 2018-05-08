@@ -3,6 +3,7 @@ package com.leadcom.android.isp.activity;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.hlk.hlklib.lib.inject.Click;
@@ -103,7 +105,24 @@ public class TitleActivity extends BaseActivity {
     private void tryBindViews() {
         if (isToolbarSupported) {
             ViewUtility.bind(this);
+            resetColor();
         }
+    }
+
+    private void resetColor() {
+        int color = ContextCompat.getColor(this, Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
+        if (null != mLeftText)
+            mLeftText.setTextColor(color);
+        if (null != mLeftIcon)
+            mLeftIcon.setTextColor(color);
+        if (null != mTitle)
+            mTitle.setTextColor(color);
+        if (null != mSubTitle)
+            mSubTitle.setTextColor(color);
+        if (null != mRightIcon)
+            mRightIcon.setTextColor(color);
+        if (null != mRightText)
+            mRightText.setTextColor(color);
     }
 
     @Override

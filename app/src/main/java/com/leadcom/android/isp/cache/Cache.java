@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.cache;
 
+import android.os.Build;
+
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
@@ -34,6 +36,8 @@ public class Cache {
     public static boolean isReleasable() {
         return BuildConfig.BUILD_TYPE.equals("beta") || BuildConfig.BUILD_TYPE.equals("release");
     }
+
+    public static int sdk = Build.VERSION.SDK_INT;
 
     private static Cache cache;
 

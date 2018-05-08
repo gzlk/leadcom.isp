@@ -110,7 +110,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     @ViewId(R.id.ui_main_group_title_allow)
     private CustomTextView titleAllow;
     @ViewId(R.id.ui_main_group_create)
-    private View createView;
+    private TextView createView;
     @ViewId(R.id.ui_main_group_mine_background)
     private RelativeLayout groupsBkg;
     @ViewId(R.id.ui_main_group_mine_list_bg)
@@ -150,6 +150,10 @@ public class GroupFragment extends BaseOrganizationFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //tryPaddingContent(toolBar, false);
+        int color = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
+        titleTextView.setTextColor(color);
+        titleAllow.setTextColor(color);
+        createView.setTextColor(color);
         isLoadingComplete(true);
         // 单个组织查询时，需要显示左侧的返回
         leftContainer.setVisibility(isSingle ? View.VISIBLE : View.GONE);
