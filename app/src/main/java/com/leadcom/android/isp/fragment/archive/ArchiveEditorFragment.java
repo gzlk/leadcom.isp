@@ -654,25 +654,38 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 } else {
                     happenDate.setText(mArchive.getHappenDate().substring(0, 10));
                 }
-                if (isEmpty(mArchive.getGroupId())) {
-                    groupNameText.setText(R.string.ui_text_archive_details_editor_setting_group_desc);
-                } else {
-                    Organization group = Organization.get(mArchive.getGroupId());
-                    if (null != group) {
-                        groupNameText.setText(Html.fromHtml(group.getName()));
-                    } else {
-                        fetchingGroup(mArchive.getGroupId());
-                    }
-                }
+
                 if (editorType == TYPE_ATTACHMENT) {
                     isGroupArchive = true;
                     isUserArchive = false;
                 }
+
+                if (isEmpty(mArchive.getGroupId())) {
+                    // 如果用户只要一个组织则直接填入组织id和名字
+                    if (isGroupArchive && Cache.cache().getGroups().size() == 1) {
+                        mArchive.setGroupId(Cache.cache().getGroups().get(0).getGroupId());
+                        resetGroupInfo(mArchive.getGroupId());
+                    } else {
+                        groupNameText.setText(R.string.ui_text_archive_details_editor_setting_group_desc);
+                    }
+                } else {
+                    resetGroupInfo(mArchive.getGroupId());
+                }
+
                 archiveTypeUser.setVisibility(editorType == TYPE_ATTACHMENT ? View.GONE : View.VISIBLE);
                 if (editorType == TYPE_ATTACHMENT) {
                     shareDraftButton.setVisibility(View.GONE);
                 }
                 resetGroupArchiveOrUser();
+            }
+
+            private void resetGroupInfo(String groupId) {
+                Organization group = Organization.get(groupId);
+                if (null != group) {
+                    groupNameText.setText(Html.fromHtml(group.getName()));
+                } else {
+                    fetchingGroup(mArchive.getGroupId());
+                }
             }
 
             private void fetchingGroup(String groupId) {
