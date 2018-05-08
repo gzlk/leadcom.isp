@@ -129,9 +129,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
                 // 如果当前显示的是组织页面才更改标题栏文字，否则不需要
                 //mainFragment.setTitleText(item.getName());
             }
-            ((ContactFragment) mFragments.get(1)).setNewQueryId(item.getId());
             String creatorId = item.getCreatorId();
-            ((ContactFragment) mFragments.get(1)).setIsCreator(!isEmpty(creatorId) && creatorId.equals(Cache.cache().userId));
             //((ArchivesFragment) mFragments.get(2)).setNewQueryId(item.getId());
 //            if (mFragments.size() > 3) {
 //                ((ArchiveNominateFragment) mFragments.get(3)).setNewQueryId(item.getId());
@@ -221,7 +219,7 @@ public class OrganizationFragment extends BaseViewPagerSupportFragment {
             }
         } else if (getDisplayedPage() == 1) {
             // 打开手机通讯录加人到组织
-            ((ContactFragment) mFragments.get(1)).addMemberToOrganizationFromPhoneContact(view);
+            //((ContactFragment) mFragments.get(1)).addMemberToOrganizationFromPhoneContact(view);
         } else if (getDisplayedPage() == 2) {
             // 打开弹出菜单新建或管理组织档案
             ((ArchivesFragment) mFragments.get(2)).openTooltipMenu(view);

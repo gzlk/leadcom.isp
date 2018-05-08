@@ -50,7 +50,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/ui_holder_view_group_header_intro"
         android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
-        android:text="@string/ui_icon_edit"
+        android:text="@string/ui_icon_edit_pen_book"
         android:textColor="@color/textColorLight"
         android:visibility="invisible" />
 

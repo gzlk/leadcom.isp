@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="@string/ui_icon_edit"
+            android:text="@string/ui_icon_edit_pen_book"
             android:textColor="@color/textColorLight"
             android:visibility="invisible" />
 

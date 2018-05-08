@@ -145,8 +145,6 @@ public class ContactFragment extends BaseOrganizationFragment {
     // view
     @ViewId(R.id.ui_holder_view_searchable_container)
     private View searchView;
-    @ViewId(R.id.ui_tool_view_phone_contact_container)
-    private View phoneContactView;
 
     // holder
     private InputableSearchViewHolder inputableSearchViewHolder;
@@ -168,7 +166,6 @@ public class ContactFragment extends BaseOrganizationFragment {
         super.onActivityCreated(savedInstanceState);
         if (isOpenable) {
             myRole = Cache.cache().getGroupRole(mQueryId);
-            phoneContactView.setVisibility(View.GONE);
             // 有权限添加成员时，显示手机通讯录入口
             if (showType == TYPE_ORG && hasOperation(GRPOperation.MEMBER_ADD)) {
                 setRightIcon(R.string.ui_icon_add);
@@ -195,6 +192,8 @@ public class ContactFragment extends BaseOrganizationFragment {
                 setCustomTitle(R.string.ui_group_squad_member_fragment_title);
             }
         }
+        // 小组成员、个人通讯录可以搜索成员名字
+        //searchView.setVisibility((showType == TYPE_SQUAD || showType == TYPE_MINE) ? View.VISIBLE : View.GONE);
     }
 
     private ArrayList<SubMember> getSubMembers() {
@@ -222,87 +221,9 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     }
 
-    public void setNewQueryId(String queryId) {
-        if (!StringHelper.isEmpty(mQueryId) && mQueryId.equals(queryId)) {
-            return;
-        }
-        // 切换组织指挥设置可以加载更多
-        remotePageNumber = 1;
-        isLoadingComplete(false);
-        setSupportLoadingMore(true);
-        mQueryId = queryId;
-        mOrganizationId = mQueryId;
-        members.clear();
-        if (null != mAdapter) {
-            mAdapter.clear();
-        }
-        loadingQueryItem();
-    }
-
-    public void setIsCreator(boolean isCreator) {
-        this.isCreator = isCreator;
-    }
-
-    @Click({R.id.ui_tool_view_phone_contact_container})
-    private void elementClick(View view) {
-        if (!isEmpty(mQueryId)) {
-            PhoneContactFragment.open(ContactFragment.this, mQueryId, "");
-        }
-    }
-
     @Override
     public void doingInResume() {
-        searchView.setVisibility(showType == TYPE_SQUAD ? View.VISIBLE : View.GONE);
-        phoneContactView.setVisibility(View.GONE);
-        setNothingText(showType == TYPE_ORG ? R.string.ui_organization_contact_no_member : R.string.ui_organization_contact_squad_no_member);
-        //initializeTitleEvent();
         initializeHolders();
-    }
-
-    // 小组联系人列表时，需要处理标题栏
-    private void initializeTitleEvent() {
-        if (showType == TYPE_SQUAD) {
-            // 有邀请成员到小组的权限时才显示 + 号
-            if (hasOperation(GRPOperation.SQUAD_MEMBER_INVITE)) {
-                setRightIcon(R.string.ui_icon_add);
-                setRightTitleClickListener(new OnTitleButtonClickListener() {
-                    @Override
-                    public void onClick() {
-//                    showTooltip(((TitleActivity) Activity()).getRightButton(), R.id.ui_tooltip_squad_contact_picker, true, TooltipHelper.TYPE_RIGHT, new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            popupMenuClickHandle(v);
-//                        }
-//                    });
-                    }
-                });
-            }
-        }
-    }
-
-    private void popupMenuClickHandle(View view) {
-        switch (view.getId()) {
-            case R.id.ui_tooltip_menu_squad_contact_organization:
-                // 打开组织通讯录并尝试将里面的用户邀请到小组
-                openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
-                break;
-            case R.id.ui_tooltip_menu_squad_contact_phone:
-                // 打开手机通讯录，并尝试将用户拉进小组
-                PhoneContactFragment.open(ContactFragment.this, mOrganizationId, mSquadId);
-                break;
-        }
-    }
-
-    /**
-     * 打开手机通讯录并添加成员到当前组织
-     */
-    public void addMemberToOrganizationFromPhoneContact(View view) {
-        if (showType != TYPE_ORG) return;
-        if (StringHelper.isEmpty(mQueryId)) {
-            ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
-            return;
-        }
-        PhoneContactFragment.open(ContactFragment.this, mQueryId, "");
     }
 
     @Override
@@ -393,7 +314,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     private void initializeHolders() {
         if (null == inputableSearchViewHolder) {
-            inputableSearchViewHolder = new InputableSearchViewHolder(mRootView, this);
+            inputableSearchViewHolder = new InputableSearchViewHolder(searchView, this);
             inputableSearchViewHolder.setOnSearchingListener(searchingListener);
         }
         initializeAdapter();
@@ -409,16 +330,6 @@ public class ContactFragment extends BaseOrganizationFragment {
             mRecyclerView.setAdapter(mAdapter);
             searchingListener.onSearching("");
             loadingQueryItem();
-        } else {
-            //refreshContact();
-        }
-    }
-
-    private void refreshContact() {
-        if (!isEmpty(mQueryId)) {
-            if (isNeedRefresh()) {
-                loadingQueryItem();
-            }
         }
     }
 
@@ -428,9 +339,11 @@ public class ContactFragment extends BaseOrganizationFragment {
     private void loadingQueryItem() {
         switch (showType) {
             case TYPE_ORG:
+                setNothingText(R.string.ui_organization_contact_no_member);
                 fetchingRemoteMembers(mQueryId, "");
                 break;
             case TYPE_SQUAD:
+                setNothingText(R.string.ui_organization_contact_squad_no_member);
                 loadingSquad();
                 break;
             case TYPE_MINE:
@@ -458,6 +371,9 @@ public class ContactFragment extends BaseOrganizationFragment {
         isLoadingComplete(true);
         setCustomTitle(R.string.ui_text_personality_contact_fragment_title);
         setNothingText(R.string.ui_text_personality_contact_nothing);
+        setLoadingText(R.string.ui_text_personality_contact_loading);
+        displayLoading(true);
+        displayNothing(false);
         OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
         MemberRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Member>() {
             @Override
@@ -466,11 +382,13 @@ public class ContactFragment extends BaseOrganizationFragment {
                 if (success && null != list) {
                     for (Member member : list) {
                         member.setId(member.getUserId());
+                        members.add(member);
                         mAdapter.update(member);
                     }
                 }
                 mAdapter.sort();
                 displayNothing(mAdapter.getItemCount() <= 0);
+                displayLoading(false);
                 //isLoadingComplete(true);
                 //stopRefreshing();
             }
@@ -501,8 +419,10 @@ public class ContactFragment extends BaseOrganizationFragment {
         if (null != list && list.size() > 0) {
             members.clear();
             members.addAll(list);
-            //Collections.sort(members, new MemberComparator());
-            searchingListener.onSearching(searchingText);
+            clearAdapterNotExists();
+            mAdapter.clear();
+            mAdapter.add(members);
+            mAdapter.sort();
         }
         displayLoading(false);
         displayNothing(mAdapter.getItemCount() < 1);
@@ -513,33 +433,23 @@ public class ContactFragment extends BaseOrganizationFragment {
     private InputableSearchViewHolder.OnSearchingListener searchingListener = new InputableSearchViewHolder.OnSearchingListener() {
         @Override
         public void onSearching(String text) {
-            if (!StringHelper.isEmpty(text)) {
-                searching(text);
-            } else {
-                searchingText = "";
-                for (Member member : members) {
-                    mAdapter.update(member);
-                }
-                if (showType != TYPE_ORG) {
-                    mAdapter.sort();
-                }
-                clearAdapterNotExists();
-            }
+            searching(text);
             stopRefreshing();
         }
     };
 
+    /**
+     * 清除列表里不在新队列里的记录
+     */
     private void clearAdapterNotExists() {
         Iterator<Member> iterator = mAdapter.iterator();
-        int index = 0;
         while (iterator.hasNext()) {
             Member member = iterator.next();
             if (!members.contains(member)) {
                 iterator.remove();
-                mAdapter.notifyItemRemoved(index);
             }
-            index++;
         }
+        mAdapter.notifyDataSetChanged();
     }
 
     private void searching(String text) {
@@ -547,15 +457,15 @@ public class ContactFragment extends BaseOrganizationFragment {
         mAdapter.clear();
         for (Member member : members) {
             // 根据姓名和手机号码模糊查询
-            if (member.getUserName().contains(text) || member.getPhone().contains(text)) {
-                if (showType != TYPE_ORG) {
+            if (!isEmpty(searchingText)) {
+                if (!isEmpty(member.getUserName()) && member.getUserName().contains(text)) {
                     mAdapter.add(member);
                 }
+            } else {
+                mAdapter.add(member);
             }
         }
-        if (showType != TYPE_ORG) {
-            mAdapter.sort();
-        }
+        mAdapter.sort();
     }
 
     private ContactViewHolder.OnUserDeleteListener onUserDeleteListener = new ContactViewHolder.OnUserDeleteListener() {
@@ -627,42 +537,6 @@ public class ContactFragment extends BaseOrganizationFragment {
                 displayLoading(false);
             }
         }).squadMemberDelete(memberId);
-    }
-
-    // 转让组群，转让管理权
-    private ContactViewHolder.OnTransferManagementListener transferManagementListener = new ContactViewHolder.OnTransferManagementListener() {
-        @Override
-        public void onTransfer(ContactViewHolder holder) {
-//            Member member = mAdapter.get(holder.getAdapterPosition());
-//            String name = member.getUserName();
-//            if (isEmpty(name)) {
-//                name = member.getPhone();
-//            }
-//            Member me = StructureFragment.my;
-//            String text = StringHelper.getString(me.isOwner() ? R.string.ui_organization_contact_transfer_owner_to : R.string.ui_organization_contact_transfer_management_to, name);
-//            warningTransfer(text, holder.getAdapterPosition());
-        }
-    };
-
-    private void warningTransfer(String text, final int index) {
-        SimpleDialogHelper.init(Activity()).show(text, StringHelper.getString(R.string.ui_base_text_yes), StringHelper.getString(R.string.ui_base_text_cancel), new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                transferManage(index);
-                return true;
-            }
-        }, null);
-    }
-
-    private void transferManage(int index) {
-//        Member member = mAdapter.get(index);
-//        Member me = StructureFragment.my;
-//        setLoadingText(me.isOwner() ? R.string.ui_organization_contact_transferring_owner : R.string.ui_organization_contact_transferring_management);
-//        displayLoading(true);
-//        Role role = new Role();
-//        role.setRoleName(me.isOwner() ? Member.Code.GROUP_OWNER_ROLE_NAME : Member.Code.GROUP_MANAGER_ROLE_NAME);
-//        role.setRolCode(me.isOwner() ? Member.Code.GROUP_OWNER_ROLE_CODE : Member.Code.GROUP_ROLE_CODE_MANAGER);
-//        updateMember(member, role, true);
     }
 
     /**
@@ -792,14 +666,6 @@ public class ContactFragment extends BaseOrganizationFragment {
 
         @Override
         protected int comparator(Member item1, Member item2) {
-//            int type1 = item1.getGroRole().getRoleType();
-//            int type2 = item2.getGroRole().getRoleType();
-//            if (type1 < type2) {
-//                return -1;
-//            }
-//            if (type1 > type2) {
-//                return 1;
-//            }
             return item1.getSpell().compareTo(item2.getSpell());
         }
 
@@ -823,7 +689,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             // 删除用户
             holder.setOnUserDeleteListener(onUserDeleteListener);
             // 转让管理权
-            holder.setOnTransferManagementListener(transferManagementListener);
+            //holder.setOnTransferManagementListener(transferManagementListener);
             // 设置档案管理员
             holder.setOnSetArchiveManagerListener(archiveManagerListener);
             // 点击拨号

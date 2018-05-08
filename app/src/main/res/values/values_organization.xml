@@ -102,12 +102,12 @@
     <string name="ui_squad_contact_set_to_admin">设为管理员</string>
     <string name="ui_squad_contact_unset_to_admin">撤销管理员</string>
 
-    <string name="ui_organization_contact_no_member">组织目前没有其他成员</string>
+    <string name="ui_organization_contact_no_member">组织目前没有更多成员</string>
     <string name="ui_organization_contact_transfer_owner">转让群组</string>
     <string name="ui_organization_contact_transfer_manager">转让管理权</string>
     <string name="ui_organization_contact_set_archive_manager">设为档案管理员</string>
     <string name="ui_organization_contact_unset_archive_manager">撤销档案管理员</string>
-    <string name="ui_organization_contact_squad_no_member">小组目前没有其他成员</string>
+    <string name="ui_organization_contact_squad_no_member">小组目前没有更多成员</string>
     <string name="ui_organization_contact_remove_member" formatted="false">
         <![CDATA[您确定要踢出<font color="#3cbaff">%s</font>吗？]]>
     </string>
