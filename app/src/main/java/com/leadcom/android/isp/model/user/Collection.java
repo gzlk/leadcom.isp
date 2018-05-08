@@ -152,7 +152,6 @@ public class Collection extends Model {
         col.setSourceType(null == archive.getGroEntity() ? SourceType.USER_ARCHIVE : SourceType.GROUP_ARCHIVE);
         col.setSourceId(archive.getId());
         col.setSourceTitle(archive.getTitle());
-        col.setLabel(archive.getLabel());
         return col;
     }
 

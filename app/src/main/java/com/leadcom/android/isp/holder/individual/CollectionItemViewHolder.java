@@ -99,7 +99,11 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     public void showContent(Collection collection) {
         creatorName.setText(collection.getCreatorName());
         createTime.setText(format("%s收藏", fragment().formatTimeAgo(collection.getCreateDate())));
-        creatorImage.displayImage(collection.getCreatorHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
+        String header = collection.getCreatorHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        creatorImage.displayImage(header, getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         checkViews(collection.getType());
         showCollection(collection);
         labelAdd.setVisibility(collection.getLabel().size() > 0 ? View.GONE : View.VISIBLE);
