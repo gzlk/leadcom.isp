@@ -159,7 +159,7 @@ public class MomentViewHolder extends BaseViewHolder {
         monthTextView.setText(m);
         int left = rootView.getPaddingStart();
         int right = rootView.getPaddingEnd();
-        rootView.setPadding(left, ((!isEmpty(d) || !isEmpty(m)) ? getDimension(R.dimen.ui_base_dimen_margin_padding) : 0), right, 0);
+        rootView.setPadding(left, ((!isEmpty(d) || !isEmpty(m)) ? getDimension(R.dimen.ui_static_dp_15) : 0), right, 0);
     }
 
     private void showMoment(Moment moment) {
