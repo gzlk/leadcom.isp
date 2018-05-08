@@ -5,6 +5,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -12,10 +15,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.user.Moment;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CorneredView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,13 +35,15 @@ import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class MomentViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_moment_root)
+    private View rootView;
     @ViewId(R.id.ui_holder_view_moment_date)
     private TextView dateTextView;
     @ViewId(R.id.ui_holder_view_moment_month)
     private TextView monthTextView;
 
     @ViewId(R.id.ui_tool_moment_item_today)
-    private CorneredView todayContent;
+    private View todayContent;
 
     @ViewId(R.id.ui_tool_moment_item_content)
     private RelativeLayout momentContent;
@@ -156,6 +157,9 @@ public class MomentViewHolder extends BaseViewHolder {
     private void showTime(String d, String m) {
         dateTextView.setText(d);
         monthTextView.setText(m);
+        int left = rootView.getPaddingStart();
+        int right = rootView.getPaddingEnd();
+        rootView.setPadding(left, ((!isEmpty(d) || !isEmpty(m)) ? getDimension(R.dimen.ui_base_dimen_margin_padding) : 0), right, 0);
     }
 
     private void showMoment(Moment moment) {

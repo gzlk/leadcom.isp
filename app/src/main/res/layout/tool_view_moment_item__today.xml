@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hlk.hlklib.lib.view.CorneredView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ui_tool_moment_item_today"
     android:layout_width="@dimen/ui_individual_moment_content_size"
     android:layout_height="@dimen/ui_individual_moment_content_size"
-    android:gravity="center"
-    android:orientation="vertical"
-    app:cv_background="@color/textColorHintLight"
-    app:cv_background_active="@color/textColorHint"
-    app:cv_border_size="@dimen/ui_static_dp_zero">
+    android:orientation="vertical">
 
     <com.hlk.hlklib.lib.view.CustomTextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:text="@string/ui_icon_camera"
-        android:textColor="@color/textColorLight"
+        android:textColor="@color/textColorHintLight"
         android:textSize="@dimen/ui_static_sp_45" />
 
-</com.hlk.hlklib.lib.view.CorneredView>
+</LinearLayout>

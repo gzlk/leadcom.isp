@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_moment_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/ui_static_dp_3"
+    android:baselineAligned="false"
     android:orientation="horizontal"
     android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
     android:paddingStart="@dimen/ui_base_dimen_margin_padding">
@@ -11,7 +13,8 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:gravity="center_horizontal">
 
         <TextView
             android:id="@+id/ui_holder_view_moment_date"
@@ -57,8 +60,9 @@
             android:layout_alignTop="@+id/ui_holder_view_moment_content"
             app:cv_active_border="@color/activeBorderColor"
             app:cv_background="@android:color/transparent"
-            app:cv_background_active="@color/transparent_20"
+            app:cv_background_active="@color/transparent_10"
             app:cv_background_type="fill"
+            app:cv_corner_size="@dimen/ui_base_border_size_normal"
             app:cv_normal_border="@android:color/white" />
     </RelativeLayout>
 
