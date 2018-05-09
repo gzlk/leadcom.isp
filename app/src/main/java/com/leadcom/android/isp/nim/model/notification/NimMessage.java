@@ -147,6 +147,9 @@ public class NimMessage extends Message implements MsgAttachment {
     }
 
     public String getDocId() {
+        if (isEmpty(docId)) {
+            docId = getSourceId();
+        }
         return docId;
     }
 

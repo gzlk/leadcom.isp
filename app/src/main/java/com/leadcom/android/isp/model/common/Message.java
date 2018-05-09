@@ -36,6 +36,8 @@ public class Message extends Model {
         String MessageType = "messageType";
         String MessageContent = "messageContent";
         String SendDate = "sendDate";
+        String SourceType = "sourceType";
+        String SourceId = "sourceId";
     }
 
     /**
@@ -232,6 +234,10 @@ public class Message extends Model {
          * 被踢出小组
          */
         int SQUAD_KICK_OUT = 47;
+        /**
+         * 组织关注
+         */
+        int GROUP_CONCERNED = 48;
     }
 
     /**
@@ -247,6 +253,8 @@ public class Message extends Model {
                 return "邀请您加入组织";
             case Type.GROUP_KICK_OUT:
                 return "被移出组织";
+            case Type.GROUP_CONCERNED:
+                return "关注组织";
             case Type.ACTIVITY_INVITE:
                 return "邀请您加入活动";
             case Type.ACTIVITY_END:
@@ -315,6 +323,10 @@ public class Message extends Model {
     //消息内容
     @Column(Field.MessageContent)
     private String msgContent;// 原有属性
+    @Column(Field.SourceType)
+    private String sourceType;          //来源类型:0.没有来源,1.个人档案,2.组织档案,3.个人动态
+    @Column(Field.SourceId)
+    private String sourceId;            //来源ID
     //发送时间
     @Column(Field.SendDate)
     private String sendDate;// 原有属性
@@ -414,6 +426,22 @@ public class Message extends Model {
 
     public void setMsgContent(String msgContent) {
         this.msgContent = msgContent;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     public String getSendDate() {

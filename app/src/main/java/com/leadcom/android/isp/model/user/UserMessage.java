@@ -23,6 +23,10 @@ public class UserMessage extends Model {
      */
     public interface SourceType {
         /**
+         * 无来源
+         */
+        int NONE = 0;
+        /**
          * 用户个人档案
          */
         int USER_ARCHIVE = 1;
