@@ -2,7 +2,6 @@ package com.leadcom.android.isp.fragment.organization;
 
 import android.Manifest;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -17,6 +16,10 @@ import android.text.TextPaint;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hlk.hlklib.etc.Utility;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CorneredView;
+import com.hlk.hlklib.tasks.AsyncedTask;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
@@ -25,10 +28,10 @@ import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.PhoneContactViewHolder;
 import com.leadcom.android.isp.lib.view.SlidView;
@@ -38,10 +41,6 @@ import com.leadcom.android.isp.model.common.Contact;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.user.User;
-import com.hlk.hlklib.etc.Utility;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.CorneredView;
-import com.hlk.hlklib.tasks.AsyncedTask;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -297,7 +296,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         public void slidChanged(String text, boolean shown) {
             centerTextContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
             centerTextView.setText(text);
-            scrolling(text);
+            if (!isEmpty(text)) {
+                scrolling(text);
+            }
         }
     };
 
