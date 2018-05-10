@@ -18,6 +18,8 @@ import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
 
+import java.util.regex.Pattern;
+
 
 /**
  * <b>功能描述：</b>组织详细信息的头部<br />
@@ -33,6 +35,8 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_group_header_logo)
     private ImageDisplayer logoView;
+    @ViewId(R.id.ui_holder_view_group_header_flag)
+    private View minmentTag;
     @ViewId(R.id.ui_holder_view_group_header_intro)
     private TextView introView;
     @ViewId(R.id.ui_holder_view_group_header_edit_icon)
@@ -50,11 +54,16 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         });
     }
 
+    private boolean isMinMeng(String name) {
+        return !isEmpty(name) && Pattern.compile(".*(民盟|民主同盟).*").matcher(name).find();
+    }
+
     public void showContent(Organization organization) {
         String logo = organization.getLogo();
         if (isEmpty(logo)) {
             logo = "drawable://" + R.drawable.img_default_group_icon;
         }
+        minmentTag.setVisibility(isMinMeng(organization.getName()) ? View.VISIBLE : View.GONE);
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
         logo = organization.getIntro();
         introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo));
