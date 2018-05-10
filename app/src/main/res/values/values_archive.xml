@@ -22,6 +22,9 @@
     <string name="ui_text_archive_creator_editor_create_draft_saved">档案草稿已保存，下次可以继续编辑。</string>
     <string name="ui_text_archive_creator_editor_create_draft_individual">个人档案</string>
     <string name="ui_text_archive_creator_editor_create_new">新建档案</string>
+    <string name="ui_text_archive_creator_editor_create_paste_warning">
+        <![CDATA[请尽量提供原创作品，不要从其他媒体复制粘贴内容。谢谢您的支持！]]>
+    </string>
     <string name="ui_text_archive_creator_editor_create_cover">档案封面</string>
     <string name="ui_text_archive_creator_editor_create_cover_null">请给新建的档案挑选一个封面</string>
     <string name="ui_text_archive_creator_editor_create_cover_notime">还在上传其他附件，请稍候&#8230;</string>

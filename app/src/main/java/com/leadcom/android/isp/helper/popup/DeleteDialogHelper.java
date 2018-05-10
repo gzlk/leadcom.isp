@@ -109,7 +109,7 @@ public class DeleteDialogHelper {
 
                 @Override
                 public void onBindData(View dialogView, DialogHelper helper) {
-                    textView.setText(Html.fromHtml(titleString));
+                    textView.setText(!StringHelper.isEmpty(titleString) ? Html.fromHtml(titleString) : titleString);
                 }
             }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
                 @Override

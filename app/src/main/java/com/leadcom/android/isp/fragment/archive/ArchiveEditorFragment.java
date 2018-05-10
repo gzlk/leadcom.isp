@@ -248,6 +248,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
      * 是否是组织档案，默认个人档案
      */
     private boolean isGroupArchive = false, isUserArchive = true;
+    private boolean isLongClickEditor = false;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -261,6 +262,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onClick(View v) {
                 editorFocused = true;
+            }
+        });
+        mEditor.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                isLongClickEditor = true;
+                // 长按了编辑器
+                return false;
             }
         });
         // 每次最大选取1张图片
@@ -441,6 +450,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         mEditor.getMarkdown();
     }
 
+    private int lastEditorContentLength = 0;
     private RichEditor.OnTextChangeListener textChangeListener = new RichEditor.OnTextChangeListener() {
         @Override
         public void onTextChange(String s) {
@@ -450,6 +460,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 String html = text.replace("html:", "");
                 mArchive.setContent(html);
                 log("HTML: " + text);
+                int len = text.length() - lastEditorContentLength;
+                if (isLongClickEditor && len > 30) {
+                    // 恢复长按监控
+                    isLongClickEditor = false;
+                    warningPaste();
+                }
+                lastEditorContentLength = len;
             } else if (text.contains("mark:")) {
                 text = Utils.clearContentHtml(text);
                 mArchive.setMarkdown(text.replace("mark:", ""));
@@ -459,6 +476,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
     };
+
+    private void warningPaste() {
+        DeleteDialogHelper.helper().init(this)
+                .setLayout(R.layout.popup_dialog_rich_editor_paste)
+                .setTitleText(R.string.ui_text_archive_creator_editor_create_paste_warning).setCancelText(0).show();
+    }
 
     private void createArchive() {
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {

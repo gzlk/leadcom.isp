@@ -98,6 +98,7 @@
     <string name="ui_base_text_disagree">不同意</string>
     <string name="ui_base_text_reject">拒绝</string>
     <string name="ui_base_text_ok">好</string>
+    <string name="ui_base_text_ok_de">好的</string>
     <string name="ui_base_text_ok_ba">好吧</string>
     <string name="ui_base_text_abandon">放弃</string>
     <string name="ui_base_text_stop">停止</string>
@@ -116,6 +117,7 @@
     <string name="ui_base_text_have_a_look">去看看</string>
     <string name="ui_base_text_finish">完成</string>
     <string name="ui_base_text_i_known">我知道了</string>
+    <string name="ui_base_text_known">知道了</string>
     <string name="ui_base_text_favorite">收藏</string>
     <string name="ui_base_text_edit">编辑</string>
     <string name="ui_base_text_copy">复制</string>
