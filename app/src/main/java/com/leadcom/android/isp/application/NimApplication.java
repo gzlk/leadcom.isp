@@ -291,19 +291,19 @@ public class NimApplication extends BaseActivityManagedApplication {
                 log("User status changed to: " + status);
                 if (status.wontAutoLogin()) {
                     if (StatusCode.typeOfValue(status.getValue()) == StatusCode.PWD_ERROR) {
-                        ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_pwd_error);
+                        toast(R.string.ui_text_nim_pwd_error);
                     } else if (StatusCode.typeOfValue(status.getValue()) == StatusCode.FORBIDDEN) {
-                        ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_forbidden);
+                        toast(R.string.ui_text_nim_forbidden);
                     } else {
                         // 被踢出、账号被禁用、密码错误等情况，自动登录失败，需要返回到登录界面进行重新登录操作
-                        ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_kick_out);
+                        toast(R.string.ui_text_nim_kick_out);
                     }
                     // 退出到登录页面
                     App.app().logout();
                     LoginActivity.start(App.app());
                 } else if (status.shouldReLogin()) {
                     if (StatusCode.typeOfValue(status.getValue()) == StatusCode.NET_BROKEN) {
-                        ToastHelper.make(NimApplication.this).showMsg(R.string.ui_text_nim_net_broken);
+                        toast(R.string.ui_text_nim_net_broken);
                     }
                 }
                 if (StatusCode.typeOfValue(status.getValue()) == StatusCode.LOGINED) {
@@ -311,6 +311,12 @@ public class NimApplication extends BaseActivityManagedApplication {
                 }
             }
         }, true);
+    }
+
+    private void toast(int string) {
+        if (!isAppStayInBackground()) {
+            ToastHelper.make(this).showMsg(string);
+        }
     }
 
     private void observeCustomNotification() {
