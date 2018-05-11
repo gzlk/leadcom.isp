@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
@@ -19,6 +20,8 @@ import com.litesuits.orm.db.annotation.Table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <b>功能描述：</b>档案基类<br />
@@ -538,6 +541,56 @@ public class Archive extends Additional {
 
     public String getContent() {
         return content;
+    }
+
+    /**
+     * 检测内容是否是从其他平台复制过来的内容
+     * src=(?:(?:'([^']*)')|(?:"([^"]*)")|([^\s]*))
+     */
+    public boolean isContentPasteFromOtherPlatform() {
+        if (isEmpty(content)) return false;
+        Matcher matcher = Pattern.compile("<img[^>]*?(/>|></img>|>)", Pattern.CASE_INSENSITIVE).matcher(content);
+        while (matcher.find()) {
+            String image = matcher.group(0);
+            Matcher srcMatcher = Pattern.compile("src=(?:(?:'([^']*)')|(?:\"([^\"]*)\")|([^\\s]*))", Pattern.CASE_INSENSITIVE).matcher(image);
+            if (srcMatcher.find()) {
+                String src = srcMatcher.group(0);
+                if (!isLocalServerUrl(src)) {
+                    // 如果不是树脉自己文件服务器上的连接，则说明是从别的地方粘贴过来的
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 删除粘贴过来的内容里的图片表填
+     */
+    public void clearPastedContentImages() {
+        if (!isEmpty(content)) {
+            Matcher matcher = Pattern.compile("<img[^>]*?(/>|></img>|>)", Pattern.CASE_INSENSITIVE).matcher(content);
+            while (matcher.find()) {
+                String image = matcher.group(0);
+                Matcher srcMatcher = Pattern.compile("src=(?:(?:'([^']*)')|(?:\"([^\"]*)\")|([^\\s]*))", Pattern.CASE_INSENSITIVE).matcher(image);
+                if (srcMatcher.find()) {
+                    String src = srcMatcher.group(0);
+                    LogHelper.log("archive src", src);
+                    if (!isLocalServerUrl(src)) {
+                        // 如果不是树脉自己文件服务器上的连接，则说明是从别的地方粘贴过来的，将img标签重置为空
+                        content = content.replace(image, "");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 是否是树脉文件服务器上的链接
+     * ((http[s]{0,1})|ftp)://(120.25.124.199|image.py17w.net)
+     */
+    private boolean isLocalServerUrl(String url) {
+        return Pattern.compile("(http[s]{0,1})://(120.25.124.199|image.py17w.net)", Pattern.CASE_INSENSITIVE).matcher(url).find();
     }
 
     public String getSharableSummary() {

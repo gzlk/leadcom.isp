@@ -87,6 +87,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     public static final String MOMENT = "moment";
     private static final String PARAM_UPLOAD_TYPE = "aecf_upload_type";
     private static final String PARAM_EDITOR_TYPE = "aecf_archive_editor_type";
+    private static final String PARAM_PASTE_CONTENT = "aecf_paste_content";
 
     private static final int UP_NOTHING = 0;
     private static final int UP_IMAGE = 1;
@@ -131,6 +132,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         super.getParamsFromBundle(bundle);
         uploadType = bundle.getInt(PARAM_UPLOAD_TYPE, UP_NOTHING);
         editorType = bundle.getInt(PARAM_EDITOR_TYPE, TYPE_MULTIMEDIA);
+        isPasteContent = bundle.getBoolean(PARAM_PASTE_CONTENT, false);
         String json = bundle.getString(PARAM_JSON, Model.EMPTY_JSON);
         if (!isEmpty(json)) {
             mArchive = Archive.fromJson(json);
@@ -170,6 +172,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putInt(PARAM_UPLOAD_TYPE, uploadType);
         bundle.putInt(PARAM_EDITOR_TYPE, editorType);
         bundle.putString(PARAM_JSON, Archive.toJson(mArchive));
+        bundle.putBoolean(PARAM_PASTE_CONTENT, isPasteContent);
     }
 
     @Override
@@ -249,6 +252,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
      */
     private boolean isGroupArchive = false, isUserArchive = true;
     private boolean isLongClickEditor = false;
+    /**
+     * 是否是粘贴了内容
+     */
+    private boolean isPasteContent = false;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -461,9 +468,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setContent(html);
                 log("HTML: " + text);
                 int len = text.length() - lastEditorContentLength;
-                if (isLongClickEditor && len > 30) {
+                if (isLongClickEditor && len > 100) {
+                    // 标记是复制来的内容
+                    isPasteContent = true;
                     // 恢复长按监控
                     isLongClickEditor = false;
+                    //mArchive.isContentPasteFromOtherPlatform();
                     warningPaste();
                 }
                 lastEditorContentLength = len;
@@ -472,6 +482,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setMarkdown(text.replace("mark:", ""));
                 log("MARK: " + text);
                 mArchive.setContent(Utils.clearContentHtml(mArchive.getContent()));
+                if (isPasteContent && mArchive.isContentPasteFromOtherPlatform()) {
+                    // 如果是粘贴过来的内容，则清理里面所有非树脉自有的img标签
+                    mArchive.clearPastedContentImages();
+                }
                 createArchive();
             }
         }
@@ -526,7 +540,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
      * 当前档案是否为草稿档案
      */
     private boolean isDraft() {
-        return mArchive.isDraft() || isEmpty(mArchive.getId()) || mArchive.getId().contains("draft_");
+        return mArchive.isDraft() || isEmpty(mArchive.getId());
     }
 
     @Override
@@ -548,6 +562,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
         if (isDraft() && (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent()))) {
+            if (isPasteContent && mArchive.isContentPasteFromOtherPlatform()) {
+                // 如果是粘贴过来的内容，则清理里面所有非树脉自有的img标签
+                mArchive.clearPastedContentImages();
+            }
             savingDraft();
         }
     }
