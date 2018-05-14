@@ -159,8 +159,12 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         @Override
         public void onMessageEvent(NimMessage message) {
             if (!message.isSavable()) {
-                // 拉取消息列表
-                performRefresh();
+                // 尝试初始化adapter并拉取信息
+                if (null == mAdapter) {
+                    initializeAdapter();
+                } else {
+                    performRefresh();
+                }
             }
         }
     };
