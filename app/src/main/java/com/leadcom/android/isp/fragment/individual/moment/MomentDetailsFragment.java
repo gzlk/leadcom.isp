@@ -31,6 +31,7 @@ import com.leadcom.android.isp.model.archive.ArchiveLike;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.user.Moment;
+import com.leadcom.android.isp.share.ShareToQQ;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -289,6 +290,12 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 deleteMoment();
                 break;
         }
+    }
+
+    @Override
+    protected void shareToQQ() {
+        String image = mMoment.getImage().size() > 0 ? mMoment.getImage().get(0) : "";
+        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "", "", "", image, null);
     }
 
     @Override

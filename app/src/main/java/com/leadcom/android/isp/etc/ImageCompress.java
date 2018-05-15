@@ -32,6 +32,12 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public final class ImageCompress {
 
+    // 压缩后的文件大小限制(1M)
+    private static final int MAX_COMPRESSED_SIZE = 1024 * 1024;
+    /**
+     * 想要压缩后的文件的最大尺寸
+     */
+    public static int PREPARE_COMPRESSED_SIZE = 0;
     private static String TAG = ImageCompress.class.getSimpleName();
     /**
      * 默认压缩模式 JPEG
@@ -312,9 +318,8 @@ public final class ImageCompress {
 
         bitmap.compress(cfJPEG, quality, baos);
         log(String.format(Locale.getDefault(), fmt, fromPath, sampleSize, quality, baos.toByteArray().length));
-        // 压缩后的文件大小限制(1M)
-        int MAX_COMPRESSED_SIZE = 1024 * 1024;
-        while (baos.toByteArray().length > MAX_COMPRESSED_SIZE) {
+        int max = PREPARE_COMPRESSED_SIZE > 0 ? PREPARE_COMPRESSED_SIZE : MAX_COMPRESSED_SIZE;
+        while (baos.toByteArray().length > max) {
             baos.reset();
             quality -= 10;
             bitmap.compress(cfJPEG, quality, baos);

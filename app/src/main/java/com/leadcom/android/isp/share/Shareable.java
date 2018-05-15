@@ -126,7 +126,9 @@ public class Shareable {
     @SuppressWarnings("ConstantConditions")
     private static byte[] compressThumb(String localPath) {
         String tempThumb = App.app().getTempLocalPath(App.THUMB_DIR);
+        ImageCompress.PREPARE_COMPRESSED_SIZE = 32 * 1024;
         ImageCompress.compressBitmap(localPath, tempThumb, THUMB_WIDTH, THUMB_HEIGHT);
+        ImageCompress.PREPARE_COMPRESSED_SIZE = 0;
         return readFile(tempThumb);
     }
 

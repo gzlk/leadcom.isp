@@ -112,7 +112,7 @@ public class ShareToQQ extends Shareable {
                 bundle.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
                 bundle.putString(QQShare.SHARE_TO_QQ_TITLE, title);
                 bundle.putString(QQShare.SHARE_TO_QQ_SUMMARY, summary);
-                bundle.putString(QQShare.SHARE_TO_QQ_TARGET_URL, targetUrl);
+                bundle.putString(QQShare.SHARE_TO_QQ_TARGET_URL, isEmpty(targetUrl) ? "http://www.baidu.com" : targetUrl);
                 bundle.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, imageUrl);
             }
             // app name
