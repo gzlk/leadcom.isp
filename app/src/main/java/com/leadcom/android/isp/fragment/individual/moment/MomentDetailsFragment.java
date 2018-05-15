@@ -261,7 +261,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 handlePopupClick(view.getId());
                 return true;
             }
-        }).showPrivacy(mMoment.isMine()).showShare(true).showSave(false)
+        }).showPrivacy(mMoment.isMine()).showShare(false).showSave(false)
                 .showDelete(mMoment.isMine()) // 不是我发布的不能删除
                 .showFavorite(!isCollected && !mMoment.isMine()) // 不是收藏过来的，且不是我发布的才可以显示收藏
                 .setPrivacyText(mMoment.getAuthPublic() == Seclusion.Type.Public ? R.string.ui_text_moment_details_button_privacy : R.string.ui_text_moment_details_button_public)
