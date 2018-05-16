@@ -22,7 +22,12 @@ android {
             // 设置支持的SO库架构(网易云信)
             abiFilters "armeabi", "armeabi-v7a", "mips", "x86"
         }
-        manifestPlaceholders = [APP_PKG_NAME: applicationId]
+        manifestPlaceholders = [
+                APP_PKG_NAME : applicationId,
+                JPUSH_PKGNAME: applicationId,
+                JPUSH_APPKEY : "eb9a33432be87668b36a94d6", //JPush上注册的包名对应的appkey.
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+        ]
         resValue "string", "app_internal_version", getInternalVersion()
         resValue "string", "app_api_version", "v2"
         resValue "string", "app_api_version_release", "v2"
@@ -187,6 +192,10 @@ dependencies {
     implementation('com.github.hsiangleekwok:hlklib:1.0.6.3-SNAPSHOT') {
 //        changing = true;
     }
+
+    // 激光推送
+    implementation 'cn.jiguang.sdk:jpush:3.1.2'
+    implementation 'cn.jiguang.sdk:jcore:1.2.0'
     // jMail
     // https://mvnrepository.com/artifact/com.sun.mail/android-mail
     //compile group: 'com.sun.mail', name: 'android-mail', version: '1.6.0-rc2'

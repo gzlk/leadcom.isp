@@ -33,6 +33,8 @@ import com.tencent.smtt.sdk.QbSdk;
 import java.io.File;
 import java.util.List;
 
+import cn.jpush.android.api.JPushInterface;
+
 /**
  * <b>功能描述：</b>Application类<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -116,10 +118,12 @@ public class App extends NimApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
         //AppCrashHandler.getInstance(this);
         CrashReport.initCrashReport(getApplicationContext(), StringHelper.getString(R.string.tencent_app_id_bugly), !Cache.isReleasable());
         //initializeX5();
-        initializeNim();
+        //initializeNim();
         if (shouldInit()) {
             WbSdk.install(this, new AuthInfo(this, StringHelper.getString(R.string.weibo_app_key), "https://api.weibo.com/oauth2/default.html", ""));
             StorageUtil.init(this, null);
