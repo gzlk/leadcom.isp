@@ -565,7 +565,7 @@ public class Archive extends Additional {
     }
 
     /**
-     * 删除粘贴过来的内容里的图片表填
+     * 删除粘贴过来的内容里的图片标记
      */
     public void clearPastedContentImages() {
         if (!isEmpty(content)) {
@@ -580,6 +580,18 @@ public class Archive extends Additional {
                         // 如果不是树脉自己文件服务器上的连接，则说明是从别的地方粘贴过来的，将img标签重置为空
                         content = content.replace(image, "");
                     }
+                }
+            }
+        }
+    }
+
+    public void resetImageStyle() {
+        if (!isEmpty(content)) {
+            Matcher matcher = Pattern.compile("<img[^>]*?(/>|></img>|>)", Pattern.CASE_INSENSITIVE).matcher(content);
+            while (matcher.find()) {
+                String image = matcher.group(0);
+                if (!image.contains("style=\"width: 100%;\"")) {
+                    content = content.replace(image, image.replace("<img", "<img style=\"width: 100%;\""));
                 }
             }
         }

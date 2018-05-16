@@ -118,12 +118,12 @@ public class App extends NimApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        JPushInterface.setDebugMode(true);
-        JPushInterface.init(this);
+        //JPushInterface.setDebugMode(true);
+        //JPushInterface.init(this);
         //AppCrashHandler.getInstance(this);
         CrashReport.initCrashReport(getApplicationContext(), StringHelper.getString(R.string.tencent_app_id_bugly), !Cache.isReleasable());
         //initializeX5();
-        //initializeNim();
+        initializeNim();
         if (shouldInit()) {
             WbSdk.install(this, new AuthInfo(this, StringHelper.getString(R.string.weibo_app_key), "https://api.weibo.com/oauth2/default.html", ""));
             StorageUtil.init(this, null);

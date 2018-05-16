@@ -327,6 +327,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     isGroupArchive = !isEmpty(mArchive.getGroupId());
                     isUserArchive = !isGroupArchive;
                     titleView.setValue(mArchive.getTitle());
+                    mArchive.resetImageStyle();
                     mEditor.setHtml(mArchive.getContent());
                 } else {
                     ToastHelper.make().showMsg("要编辑的文档不存在");
@@ -363,6 +364,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 isGroupArchive = !isEmpty(mArchive.getGroupId());
                 isUserArchive = !isGroupArchive;
                 titleView.setValue(mArchive.getTitle());
+                mArchive.resetImageStyle();
                 mEditor.setHtml(mArchive.getContent());
                 return true;
             }
@@ -468,7 +470,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setContent(html);
                 log("HTML: " + text);
                 int len = text.length() - lastEditorContentLength;
-                if (isLongClickEditor && len > 100) {
+                if (isLongClickEditor && len > 200) {
                     // 标记是复制来的内容
                     isPasteContent = true;
                     // 恢复长按监控
@@ -482,6 +484,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setMarkdown(text.replace("mark:", ""));
                 log("MARK: " + text);
                 mArchive.setContent(Utils.clearContentHtml(mArchive.getContent()));
+                // 重置 img 的 style
+                mArchive.resetImageStyle();
                 if (isPasteContent && mArchive.isContentPasteFromOtherPlatform()) {
                     // 如果是粘贴过来的内容，则清理里面所有非树脉自有的img标签
                     mArchive.clearPastedContentImages();
@@ -1320,6 +1324,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive = Archive.fromJson(StringHelper.replaceJson(draftJson, true));
                 isGroupArchive = !isEmpty(mArchive.getGroupId());
                 titleView.setValue(mArchive.getTitle());
+                mArchive.resetImageStyle();
                 mEditor.setHtml(mArchive.getContent());
                 break;
             case REQUEST_MEMBER:
