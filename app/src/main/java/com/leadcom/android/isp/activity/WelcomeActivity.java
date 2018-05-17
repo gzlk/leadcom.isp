@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.crash.system.SysInfoUtil;
+import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
