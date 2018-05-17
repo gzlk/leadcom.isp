@@ -10,7 +10,6 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.PermissionRequest;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.crash.storage.StorageUtil;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -118,15 +117,13 @@ public class App extends NimApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        //JPushInterface.setDebugMode(true);
-        //JPushInterface.init(this);
-        //AppCrashHandler.getInstance(this);
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
         CrashReport.initCrashReport(getApplicationContext(), StringHelper.getString(R.string.tencent_app_id_bugly), !Cache.isReleasable());
         //initializeX5();
-        initializeNim();
+        //initializeNim();
         if (shouldInit()) {
             WbSdk.install(this, new AuthInfo(this, StringHelper.getString(R.string.weibo_app_key), "https://api.weibo.com/oauth2/default.html", ""));
-            StorageUtil.init(this, null);
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();
             initializeDatabase();

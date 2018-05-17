@@ -9,12 +9,10 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.apache.poi.FileUtils;
 import com.leadcom.android.isp.api.common.UpdateRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.crash.CrashSaver;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
@@ -74,7 +72,7 @@ public class SettingFragment extends BaseTransparentSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        saveLogView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
+        saveLogView.setVisibility(View.GONE);
     }
 
     @Override
@@ -179,7 +177,7 @@ public class SettingFragment extends BaseTransparentSupportFragment {
                     break;
                 case 5:
                     // 保存log
-                    warningLogSaving();
+                    //warningLogSaving();
                     break;
             }
         }
@@ -191,7 +189,7 @@ public class SettingFragment extends BaseTransparentSupportFragment {
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                CrashSaver.save(App.app(), new IllegalArgumentException("Manual saving logs."), false);
+                //CrashSaver.save(App.app(), new IllegalArgumentException("Manual saving logs."), false);
                 return true;
             }
         }).setTitleText(R.string.ui_text_setting_log_save_dialog_title).setConfirmText(R.string.ui_base_text_save).show();
