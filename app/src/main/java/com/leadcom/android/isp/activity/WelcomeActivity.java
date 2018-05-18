@@ -90,7 +90,7 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     private void handleIntentOrGoingToLogin() {
-        if (StringHelper.isEmpty(Cache.cache().userId)) {
+        if (isEmptyUser()) {
             // 当前没有登录则转到登录页面
             toLogin();
         } else {
@@ -179,9 +179,13 @@ public class WelcomeActivity extends BaseActivity {
         overridePendingTransition(0, 0);
     }
 
+    private boolean isEmptyUser() {
+        return StringHelper.isEmpty(Cache.cache().userId);
+    }
+
     @SuppressWarnings({"unchecked", "ConstantConditions"})
     private void handleIntent() {
-        if (StringHelper.isEmpty(Cache.cache().userId)) {
+        if (isEmptyUser()) {
             // 判断当前app是否正在运行
             if (!SysInfoUtil.stackResumed(this)) {
                 LoginActivity.start(this);
@@ -193,22 +197,26 @@ public class WelcomeActivity extends BaseActivity {
                 ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
                 if (null == messages) {
                     String action = intent.getAction();
-                    if (!StringHelper.isEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
-                        Uri uri = intent.getData();
-                        if (null != uri) {
-                            String path = uri.getPath();
-                            String id = uri.getQueryParameter("id");
-                            String type = uri.getQueryParameter("type");
-                            int tp = StringHelper.isEmpty(type, true) ? 2 : Integer.valueOf(type);
-                            if (StringHelper.isEmpty(type, true)) {
-                                log("传入的参数错误：type = null");
+                    if (!StringHelper.isEmpty(action)) {
+                        if (action.equals(Intent.ACTION_VIEW)) {
+                            Uri uri = intent.getData();
+                            if (null != uri) {
+                                String path = uri.getPath();
+                                String id = uri.getQueryParameter("id");
+                                String type = uri.getQueryParameter("type");
+                                int tp = StringHelper.isEmpty(type, true) ? 2 : Integer.valueOf(type);
+                                if (StringHelper.isEmpty(type, true)) {
+                                    log("传入的参数错误：type = null");
+                                }
+                                if (path.contains("archive")) {
+                                    openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
+                                }
+                                finish();
+                            } else {
+                                toLogin();
                             }
-                            if (path.contains("archive")) {
-                                openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
-                            }
-                            finish();
                         } else {
-                            toLogin();
+                            switchToMain();
                         }
                     } else {
                         // 如果消息为空则打开登录页面，同步用户信息后登录

@@ -121,7 +121,7 @@ public class App extends NimApplication {
         JPushInterface.init(this);
         CrashReport.initCrashReport(getApplicationContext(), StringHelper.getString(R.string.tencent_app_id_bugly), !Cache.isReleasable());
         //initializeX5();
-        initializeNim();
+        //initializeNim();
         if (shouldInit()) {
             WbSdk.install(this, new AuthInfo(this, StringHelper.getString(R.string.weibo_app_key), "https://api.weibo.com/oauth2/default.html", ""));
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));

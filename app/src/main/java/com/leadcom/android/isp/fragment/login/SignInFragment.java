@@ -192,21 +192,6 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 }
             }
         }).find(Cache.cache().userId, true);
-//        SystemRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
-//            @SuppressWarnings("ConstantConditions")
-//            @Override
-//            public void onResponse(User user, boolean success, String message) {
-//                super.onResponse(user, success, message);
-//                if (success) {
-//                    cacheUser(user);
-//                    // 同步成功之后检测网易云登录状态
-//                    checkNimStatus();
-//                } else {
-//                    ToastHelper.make().showMsg(message);
-//                    needToReLogin();
-//                }
-//            }
-//        }).sync();
     }
 
     private void cacheUser(User user) {
@@ -237,54 +222,15 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private void checkNimStatus() {
-        StatusCode code = NIMClient.getStatus();
-        if (code.shouldReLogin() || code.wontAutoLogin()) {
-            // 如果网易云需要重新登录则重新登陆网易云
-            doLogin();
-        } else {
-            // 如不需要重新登录网易云则进入主页面
-            delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
-        }
+        //StatusCode code = NIMClient.getStatus();
+        //if (code.shouldReLogin() || code.wontAutoLogin()) {
+        // 如果网易云需要重新登录则重新登陆网易云
+        //    doLogin();
+        //} else {
+        // 如不需要重新登录网易云则进入主页面
+        delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
+        //}
     }
-
-//    /**
-//     * 检测基本权限要求
-//     */
-//    private boolean checkBasePermission() {
-//        basePermissions.clear();
-//        permissionRequest = "";
-//        // 存储设备
-//        if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) && needGrantPermission()) {
-//            permissionRequest = StringHelper.getString(R.string.ui_grant_permission_storage);
-//            basePermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-//        }
-//        // 定位，在使用时获取好了
-////        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) && needGrantPermission()) {
-////            permissionRequest = permissionRequest + "、" + StringHelper.getString(R.string.ui_grant_permission_gps);
-////            basePermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-////        }
-//        // 电话设备，在使用时获取好了
-//        if (!hasPermission(Manifest.permission.READ_PHONE_STATE) && needGrantPermission()) {
-//            permissionRequest = permissionRequest + "、" + StringHelper.getString(R.string.ui_grant_permission_phone_state);
-//            basePermissions.add(Manifest.permission.READ_PHONE_STATE);
-//        }
-//
-//        return StringHelper.isEmpty(permissionRequest);
-//    }
-//
-//    private void grandBasePermissions() {
-//        if (!StringHelper.isEmpty(permissionRequest) && basePermissions.size() > 0) {
-//            String text = StringHelper.getString(R.string.ui_base_text_permission_warning, permissionRequest);
-//            // 提醒用户需要相关权限
-//            SimpleDialogHelper.init(Activity()).show(text, new DialogHelper.OnDialogConfirmListener() {
-//                @Override
-//                public boolean onConfirm() {
-//                    tryGrantPermissions(basePermissions.toArray(new String[basePermissions.size()]), GRANT_BASE, "");
-//                    return true;
-//                }
-//            });
-//        }
-//    }
 
     private boolean checkStoragePermission() {
         // 存储设备

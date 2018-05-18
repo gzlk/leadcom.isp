@@ -175,7 +175,7 @@ public class ArchiveListFragment extends BaseOrganizationFragment {
             Archive acv = (Archive) mAdapter.get(index);
             if (mType == TYPE_ARCHIVING) {
                 // 待存档档案，打开活动存档页面（2017-06-21 11:30）
-                openActivity(ActivityArchivingManagementFragment.class.getName(), format("%s,%s", acv.getActId(), acv.getId()), true, false);
+                //openActivity(ActivityArchivingManagementFragment.class.getName(), format("%s,%s", acv.getActId(), acv.getId()), true, false);
                 // 只有活动的档案才会出现未存档
                 // 打开未存档档案页，将其存档
 //                String json = Json.gson().toJson(acv, new TypeToken<Archive>() {

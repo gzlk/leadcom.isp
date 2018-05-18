@@ -426,7 +426,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                     if (null == homeImagesViewHolder) {
                         homeImagesViewHolder = new HomeImagesViewHolder(itemView, HomeFeaturedFragment.this);
                         homeImagesViewHolder.setOnImageClickListener(onImageClickListener);
-                        homeImagesViewHolder.addImages(headline);
+                        //homeImagesViewHolder.addImages(headline);
                     }
                     return homeImagesViewHolder;
                 case VT_ACTIVITY:
