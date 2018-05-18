@@ -21,7 +21,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -96,19 +95,19 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         titleView.setLayoutParams(params);
     }
 
-    public void addImages(List<RecommendArchive> list) {
+    public void addImages(List<Archive> list) {
         if (null != list && list.size() > 0) {
             indicator.removeAllViews();
             dots.clear();
-            recommendArchives.clear();
+            archives.clear();
             images.clear();
-            recommendArchives.addAll(list);
+            archives.addAll(list);
             int size = list.size();
             if (size > 1) {
-                recommendArchives.add(0, list.get(size - 1));
-                recommendArchives.add(list.get(0));
+                archives.add(0, list.get(size - 1));
+                archives.add(list.get(0));
             }
-            for (int i = 0; i < recommendArchives.size(); i++) {
+            for (int i = 0; i < archives.size(); i++) {
                 // 图片
                 ImageDisplayer imageDisplayer = new ImageDisplayer(viewPager.getContext());
                 imageDisplayer.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -130,10 +129,10 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
             }
         }
         mAdapter.notifyDataSetChanged();
-        if (recommendArchives.size() > 0) {
+        if (archives.size() > 0) {
             container.setVisibility(View.VISIBLE);
-            viewPager.setCurrentItem(recommendArchives.size() > 1 ? 1 : 0, false);
-            if (recommendArchives.size() == 1) {
+            viewPager.setCurrentItem(archives.size() > 1 ? 1 : 0, false);
+            if (archives.size() == 1) {
                 onPageSelected(0);
             }
         } else {
@@ -142,7 +141,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     }
 
     private ImageAdapter mAdapter;
-    private ArrayList<RecommendArchive> recommendArchives = new ArrayList<>();
+    private ArrayList<Archive> archives = new ArrayList<>();
     private ArrayList<ImageDisplayer> images = new ArrayList<>();
 
     @Override
@@ -153,7 +152,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     @Override
     public void onPageSelected(int position) {
         currentPosition = position;
-        titleView.setText(recommendArchives.get(currentPosition).getDoc().getTitle());
+        titleView.setText(archives.get(currentPosition).getTitle());
         titleView.setEllipsize(TextUtils.TruncateAt.END);
         titleView.setSelected(true);
         Handler().postDelayed(new Runnable() {
@@ -209,7 +208,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             ImageDisplayer displayer = images.get(position);
-            Archive archive = recommendArchives.get(position).getDoc();
+            Archive archive = archives.get(position);
             String cover = archive.getCover();
             // 有封面显示封面
             if (isEmpty(cover)) {

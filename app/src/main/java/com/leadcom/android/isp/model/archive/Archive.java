@@ -115,19 +115,13 @@ public class Archive extends Additional {
         String Attach = "attach";
         String HappenDate = "happenDate";
         String AuthPublic = "authPublic";
-        String AuthGroup = "authGroup";
-        String AuthUser = "authUser";
-        String AuthUserName = "authUserName";
-        String ApproverId = "approverId";
-        String ApproveDate = "approveDate";
         String ReadNumber = "readNumber";
         String LikeNumber = "likeNumber";
         String CommentNumber = "commentNumber";
         String CollectNumber = "collectNumber";
-        String AttachmentNum = "attachmentNum";
-        String PassedNum = "passedNum";
-        String ArchiveDate = "archiveDate";
         String ArchiveId = "archiveId";
+        String ArchiveType = "archiveType";
+        String OwnType = "ownType";
         String ReferrerId = "referrerId";
         String ReferrerName = "referrerName";
         String ReferrerHeadPhoto = "referrerHeadPhoto";
@@ -141,7 +135,6 @@ public class Archive extends Additional {
         String ToUserId = "toUserId";
         String ToUserName = "toUserName";
         String ToHeadPhoto = "toHeadPhoto";
-        String DraftJson = "draftJson";
         String Property = "property";
         String Category = "category";
         String Participant = "participant";
@@ -150,6 +143,9 @@ public class Archive extends Additional {
         String Description = "description";
         String ParentId = "parentId";
         String TypeCode = "typeCode";
+        String Topic = "topic";
+        String Resolution = "resolution";
+        String Branch = "branch";
     }
 
     /**
@@ -284,15 +280,15 @@ public class Archive extends Additional {
         switch (status) {
             case ArchiveApproveStatus.APPROVING:
                 // 不是活动档案时为未审核，活动档案为未存档
-                return type == ArchiveType.ACTIVITY ? "待存档" : "待审核";
-            //return "待审核";
+                //return type == ArchiveType.ACTIVITY ? "待存档" : "待审核";
+                //return "待审核";
             case ArchiveApproveStatus.APPROVED:
                 // 不是活动档案时为已审核，活动档案为已存档
-                return type == ArchiveType.ACTIVITY ? "已存档" : "已审核";
-            //return "已审核";
+                //return type == ArchiveType.ACTIVITY ? "已存档" : "已审核";
+                //return "已审核";
             case ArchiveApproveStatus.FAILURE:
-                return type == ArchiveType.ACTIVITY ? "存档失败" : "审核失败";
-            //return "未通过审核";
+                //return type == ArchiveType.ACTIVITY ? "存档失败" : "审核失败";
+                //return "未通过审核";
             default:
                 //return type == ArchiveType.ACTIVITY ? "" : "未通过审核";
                 return "未知(" + String.valueOf(status) + ")";
@@ -358,9 +354,6 @@ public class Archive extends Additional {
         return image.size() > 0 || video.size() > 0 || office.size() > 0 || attach.size() > 0;
     }
 
-    @Column(Organization.Field.GroupId)
-    private String groupId;            //群ID
-
     //状态:1.正式,2.草稿
     @Column(Activity.Field.Status)
     private int status;
@@ -372,32 +365,43 @@ public class Archive extends Additional {
         return status == DraftType.DRAFT;
     }
 
-    /**
-     * 档案类型：1，组织档案；2，个人档案
-     * </p>
-     */
-    @Column(Field.Type)
-    private int type;
-    // 标签
-    @Column(Field.Label)
-    private ArrayList<String> label;
+    // 档案基本信息 **********************************************************************************
     //档案封面
     @Column(Field.Cover)
     private String cover;
     //档案名称
     @Column(Field.Title)
     private String title;
-    //档案简介
-    @Column(Organization.Field.Introduction)
-    private String intro;
     //档案内容(html)
     @Column(Field.Content)
     private String content;
     @Column(Field.AbstractContent)
     private String abstrContent;       //档案摘要(html)
-    //档案内容(markdown)
-    @Column(Field.Markdown)
-    private String markdown;
+    @Column(Field.Source)
+    private String source;
+    //档案发生时间
+    @Column(Field.HappenDate)
+    private String happenDate;
+    // 档案发生地点
+    @Column(Activity.Field.Site)
+    private String site;
+    // 档案参与人
+    @Column(Field.Participant)
+    private String participant;
+    //授权公开(0.私密，自己可以看,1.公开，所有人都能查看)，个人档案的属性
+    @Column(Field.AuthPublic)
+    private int authPublic;
+    //档案类型：1图文2附件3模板档案
+    @Column(Field.ArchiveType)
+    private int docType;
+    // 档案归属类型：1组织档案，2个人档案
+    @Column(Field.OwnType)
+    private int ownType;
+    @Column(Field.ArchiveId)
+    private String docId;
+    // 标签
+    @Column(Field.Label)
+    private ArrayList<String> label;
     // Office 文档地址
     @Ignore
     private ArrayList<Attachment> office;
@@ -410,6 +414,9 @@ public class Archive extends Additional {
     //附件地址
     @Ignore
     private ArrayList<Attachment> attach;
+
+    // 创建者相关信息 ********************************************************************************
+
     //档案发起者ID
     @Column(Model.Field.UserId)
     private String userId;
@@ -419,64 +426,40 @@ public class Archive extends Additional {
     //创建者头像
     @Column(User.Field.HeadPhoto)
     private String headPhoto;
-    //授权公开(0.私密，自己可以看,1.公开，所有人都能查看)，个人档案的属性
-    @Column(Field.AuthPublic)
-    private int authPublic;
-    //授权组织(组织ID Json数组)，授权的组织才能查看
-    @Column(Field.AuthGroup)
-    private ArrayList<String> authGro;
-    //授权个人(用户ID Json数组)，授权的用户才能查看
-    @Column(Field.AuthUser)
-    private ArrayList<String> authUser;
-    @Column(Field.AuthUserName)
-    private ArrayList<String> authUserName;
     //档案发生时间
     @Column(Model.Field.CreateDate)
     private String createDate;
-    //档案发生时间
-    @Column(Field.HappenDate)
-    private String happenDate;
     //最后一次修改时间
     @Column(Field.LastModifiedDate)
     private String lastModifiedDate;
 
-    // 存档相关
-    @Column(Activity.Field.ActivityId)
-    private String actId;              //活动ID
-    @Column(Field.AttachmentNum)
-    private String attachNum;          //活动档案附件总数量
-    @Column(Field.PassedNum)
-    private String passNum;            //通过审核的活动档案附件数量
-    @Column(Field.ArchiveDate)
-    private String archiveDate;        //存档时间
-    @Column(Field.AttachmentNum)
-    private String archiverId;         //存档人用户ID
-
-    // 审核相关
-    //存档状态(1.未存档,2.存档成功,3.存档失败)
-    //1.未审核,2.审核成功,3.审核失败
-    //档案审核人用户ID
-    @Column(Field.ApproverId)
-    private String approverId;
-    //审核时间
-    @Column(Field.ApproveDate)
-    private String approveDate;
-    @Ignore
-    private Organization groEntity;
-    @Column(Field.Source)
-    private String source;
-    // 档案发生地点
-    @Column(Activity.Field.Site)
-    private String site;
-    // 档案性质
+    // 组织档案相关 *********************************************************************************
+    // 组织ID
+    @Column(Organization.Field.GroupId)
+    private String groupId;
+    // 组织名称
+    @Column(Organization.Field.GroupName)
+    private String groupName;
+    // 议题
+    @Column(Field.Topic)
+    private String topic;      //AppContants.docType.MB
+    // 纪要
+    @Column(Field.Resolution)
+    private String resolution; //AppContants.docType.MB
+    // 所属分支
+    @Column(Field.Branch)
+    private String branch;
+    // 档案属性
     @Column(Field.Property)
     private String property;
     // 档案类型
     @Column(Field.Category)
     private String category;
-    // 档案参与人
-    @Column(Field.Participant)
-    private String participant;
+
+
+    // 排序
+    @Column(Field.Sort)
+    private int sort;
 
     // 当前组织是否推荐：0.未推荐，1.已推荐
     @Column(Field.Recommend)
@@ -494,6 +477,38 @@ public class Archive extends Additional {
 
     public boolean isPublic() {
         return authPublic == Seclusion.Type.Public;
+    }
+
+    public int getDocType() {
+        return docType;
+    }
+
+    public void setDocType(int docType) {
+        this.docType = docType;
+    }
+
+    public int getOwnType() {
+        return ownType;
+    }
+
+    public void setOwnType(int ownType) {
+        this.ownType = ownType;
+    }
+
+    public String getDocId() {
+        return docId;
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
+    }
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
     }
 
     @Override
@@ -515,6 +530,38 @@ public class Archive extends Additional {
         this.groupId = groupId;
     }
 
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public String getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(String resolution) {
+        this.resolution = resolution;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -529,14 +576,6 @@ public class Archive extends Additional {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getIntro() {
-        return intro;
-    }
-
-    public void setIntro(String intro) {
-        this.intro = intro;
     }
 
     public String getContent() {
@@ -626,32 +665,6 @@ public class Archive extends Additional {
         this.abstrContent = abstrContent;
     }
 
-    /**
-     * 档案类型
-     * <p>
-     * 个人档案时：(1.普通个人档案,2.个人转到组织的档案)
-     * </p>
-     * <p>
-     * 组织档案时：(1.普通组织档案,2.个人转到组织的档案,3.活动存档)
-     * </p>
-     */
-    public int getType() {
-        return type;
-    }
-
-    /**
-     * 档案类型
-     * <p>
-     * 个人档案时：(1.普通个人档案,2.个人转到组织的档案)
-     * </p>
-     * <p>
-     * 组织档案时：(1.普通组织档案,2.个人转到组织的档案,3.活动存档)
-     * </p>
-     */
-    public void setType(int type) {
-        this.type = type;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -693,14 +706,6 @@ public class Archive extends Additional {
 
     public void setLastModifiedDate(String lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public String getMarkdown() {
-        return markdown;
-    }
-
-    public void setMarkdown(String markdown) {
-        this.markdown = markdown;
     }
 
     public ArrayList<String> getLabel() {
@@ -798,100 +803,12 @@ public class Archive extends Additional {
         this.authPublic = authPublic;
     }
 
-    public ArrayList<String> getAuthGro() {
-        return authGro;
-    }
-
-    public void setAuthGro(ArrayList<String> authGro) {
-        this.authGro = authGro;
-    }
-
-    public ArrayList<String> getAuthUser() {
-        return authUser;
-    }
-
-    public void setAuthUser(ArrayList<String> authUser) {
-        this.authUser = authUser;
-    }
-
-    public ArrayList<String> getAuthUserName() {
-        return authUserName;
-    }
-
-    public void setAuthUserName(ArrayList<String> authUserName) {
-        this.authUserName = authUserName;
-    }
-
     public int getStatus() {
         return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public String getApproverId() {
-        return approverId;
-    }
-
-    public void setApproverId(String approverId) {
-        this.approverId = approverId;
-    }
-
-    public String getApproveDate() {
-        return approveDate;
-    }
-
-    public void setApproveDate(String approveDate) {
-        this.approveDate = approveDate;
-    }
-
-    public String getActId() {
-        return actId;
-    }
-
-    public void setActId(String actId) {
-        this.actId = actId;
-    }
-
-    public String getAttachNum() {
-        return attachNum;
-    }
-
-    public void setAttachNum(String attachNum) {
-        this.attachNum = attachNum;
-    }
-
-    public String getPassNum() {
-        return passNum;
-    }
-
-    public void setPassNum(String passNum) {
-        this.passNum = passNum;
-    }
-
-    public String getArchiveDate() {
-        return archiveDate;
-    }
-
-    public void setArchiveDate(String archiveDate) {
-        this.archiveDate = archiveDate;
-    }
-
-    public String getArchiverId() {
-        return archiverId;
-    }
-
-    public void setArchiverId(String archiverId) {
-        this.archiverId = archiverId;
-    }
-
-    public Organization getGroEntity() {
-        return groEntity;
-    }
-
-    public void setGroEntity(Organization groEntity) {
-        this.groEntity = groEntity;
     }
 
     public String getSource() {

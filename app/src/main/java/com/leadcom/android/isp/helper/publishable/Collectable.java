@@ -1,15 +1,11 @@
 package com.leadcom.android.isp.helper.publishable;
 
-import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Activity;
-import com.leadcom.android.isp.model.activity.topic.AppTopic;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.model.user.Moment;
-import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 
 /**
@@ -28,7 +24,7 @@ public class Collectable {
     public static int sourceType;
 
     public static void resetArchiveCollectionParams(Archive archive) {
-        sourceType = null == archive.getGroEntity() ? Collection.SourceType.GROUP_ARCHIVE : Collection.SourceType.USER_ARCHIVE;
+        sourceType = !StringHelper.isEmpty(archive.getGroupId()) ? Collection.SourceType.GROUP_ARCHIVE : Collection.SourceType.USER_ARCHIVE;
         sourceTitle = archive.getTitle();
         sourceId = archive.getId();
         creatorId = archive.getUserId();
@@ -46,25 +42,11 @@ public class Collectable {
     }
 
     public static void resetSessionCollectionParams(IMMessage message) {
-//        Model model = NimSessionHelper.getObject(message.getSessionId());
-//        if (null != model) {
-            UserInfo user = NimUIKit.getUserInfoProvider().getUserInfo(message.getFromAccount());
-            if (null != user) {
-                creatorId = user.getAccount();
-                creatorName = user.getName();
-                creatorHeader = user.getAvatar();
-            }
-//            if (model instanceof Activity) {
-//                Activity act = (Activity) model;
-//                sourceId = act.getId();
-//                sourceTitle = act.getTitle();
-//                sourceType = Collection.SourceType.ACTIVITY;
-//            } else if (model instanceof AppTopic) {
-//                AppTopic topic = (AppTopic) model;
-//                sourceId = topic.getId();
-//                sourceTitle = topic.getTitle();
-//                sourceType = Collection.SourceType.TOPIC;
-//            }
-//        }
+        UserInfo user = NimUIKit.getUserInfoProvider().getUserInfo(message.getFromAccount());
+        if (null != user) {
+            creatorId = user.getAccount();
+            creatorName = user.getName();
+            creatorHeader = user.getAvatar();
+        }
     }
 }

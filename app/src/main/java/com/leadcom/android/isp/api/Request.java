@@ -5,6 +5,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.ListQuery;
+import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.application.App;
@@ -208,6 +209,12 @@ public abstract class Request<T> {
                             onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
                                     pagination.getTotalPages(), pagination.getPageSize(),
                                     pagination.getTotal(), pagination.getPageNumber());
+                        }
+                    } else if (data instanceof PageQuery) {
+                        if (null != onMultipleRequestListener) {
+                            PageQuery<T> pageQuery = (PageQuery<T>) data;
+                            onMultipleRequestListener.onResponse(pageQuery.getRows(), pageQuery.success(), pageQuery.getPages(),
+                                    pageQuery.getSize(), pageQuery.getTotal(), pageQuery.getCurrent());
                         }
                     } else if (data instanceof ListQuery) {
                         if (null != onMultipleRequestListener) {

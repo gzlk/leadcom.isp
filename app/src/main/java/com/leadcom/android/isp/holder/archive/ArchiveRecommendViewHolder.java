@@ -59,12 +59,7 @@ public class ArchiveRecommendViewHolder extends BaseViewHolder {
         titleView.setText(null == doc ? "" : doc.getTitle());
         String groupName = archive.getGroupName();
         if (isEmpty(groupName)) {
-            assert doc != null;
-            if (null == doc.getGroEntity()) {
-                groupName = doc.getUserName();
-            } else {
-                groupName = doc.getGroEntity().getName();
-            }
+            groupName = "空";
         }
         groupView.setText(StringHelper.getString(R.string.ui_archive_recommend_belong_group, Html.fromHtml(groupName)));
         timeView.setText(fragment().formatDate(archive.getCreateDate(), StringHelper.getString(R.string.ui_base_text_date_format)));

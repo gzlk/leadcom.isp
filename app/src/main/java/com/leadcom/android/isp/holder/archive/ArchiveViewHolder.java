@@ -6,20 +6,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredView;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CorneredView;
-import com.hlk.hlklib.lib.view.CustomTextView;
 
 import java.util.ArrayList;
 
@@ -82,7 +81,7 @@ public class ArchiveViewHolder extends BaseViewHolder {
         userName.setText(archive.getUserName());
         createTime.setText(fragment().formatDate(archive.getCreateDate()));
         documentTitle.setText(Html.fromHtml(archive.getTitle()));
-        documentContentText.setText(StringHelper.escapeFromHtml(archive.getIntro()));
+        //documentContentText.setText(StringHelper.escapeFromHtml(archive.getIntro()));
         documentContentText.makeExpandable();
         additionalViewHolder.showContent(archive);
         documentContentIconContainer.setVisibility(View.GONE);

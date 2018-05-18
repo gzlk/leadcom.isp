@@ -152,7 +152,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 标记是否为组织档案
         //mArchive.setGroupId(mQueryId);
         // 默认为个人普通档案或组织普通档案
-        mArchive.setType(Archive.Type.USER);
+        //mArchive.setType(Archive.Type.USER);
         // 新建档案默认为草稿
         mArchive.setStatus(Archive.DraftType.DRAFT);
         // 档案默认向所有人公开的
@@ -434,16 +434,16 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         if (isGroupArchive) {
-            mArchive.setType(Archive.Type.GROUP);
+            //mArchive.setType(Archive.Type.GROUP);
             if (isEmpty(mArchive.getGroupId())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
                 return;
             }
         } else {
-            mArchive.setType(Archive.Type.USER);
+            //mArchive.setType(Archive.Type.USER);
             // 个人档案需要清空组织id
             mArchive.setGroupId("");
-            mArchive.setType(Archive.ArchiveType.INDIVIDUAL);
+            //mArchive.setType(Archive.ArchiveType.INDIVIDUAL);
         }
         // 个人档案需要标签
         if (isEmpty(mArchive.getGroupId()) && mArchive.getLabel().size() < 1) {
@@ -481,7 +481,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 lastEditorContentLength = len;
             } else if (text.contains("mark:")) {
                 text = Utils.clearContentHtml(text);
-                mArchive.setMarkdown(text.replace("mark:", ""));
+                //mArchive.setMarkdown(text.replace("mark:", ""));
                 log("MARK: " + text);
                 mArchive.setContent(Utils.clearContentHtml(mArchive.getContent()));
                 // 重置 img 的 style
@@ -668,9 +668,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
                 labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
                 Seclusion seclusion = new Seclusion();
-                seclusion.setGroupIds(mArchive.getAuthGro());
-                seclusion.setUserIds(mArchive.getAuthUser());
-                seclusion.setUserNames(mArchive.getAuthUserName());
+                //seclusion.setGroupIds(mArchive.getAuthGro());
+                //seclusion.setUserIds(mArchive.getAuthUser());
+                //seclusion.setUserNames(mArchive.getAuthUserName());
                 // 这一步一定要在最后设置，否则状态会被重置
                 seclusion.setStatus(mArchive.getAuthPublic());
                 publicText.setText(PrivacyFragment.getPrivacy(seclusion));
@@ -899,11 +899,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             private void openSecuritySetting() {
                 Seclusion seclusion = PrivacyFragment.getSeclusion("");
                 seclusion.setStatus(mArchive.getAuthPublic());
-                if (mArchive.getAuthPublic() == Seclusion.Type.Specify) {
-                    seclusion.setUserIds(mArchive.getAuthUser());
-                } else if (mArchive.getAuthPublic() == Seclusion.Type.Group) {
-                    seclusion.setGroupIds(mArchive.getAuthGro());
-                }
+                //if (mArchive.getAuthPublic() == Seclusion.Type.Specify) {
+                //    seclusion.setUserIds(mArchive.getAuthUser());
+                //} else if (mArchive.getAuthPublic() == Seclusion.Type.Group) {
+                //    seclusion.setGroupIds(mArchive.getAuthGro());
+                //}
                 String json = PrivacyFragment.getSeclusion(seclusion);
                 // 隐私设置
                 if (!isGroupArchive) {
@@ -1290,9 +1290,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 String json = getResultedData(data);
                 Seclusion seclusion = PrivacyFragment.getSeclusion(json);
                 mArchive.setAuthPublic(seclusion.getStatus());
-                mArchive.setAuthGro(seclusion.getGroupIds());
-                mArchive.setAuthUser(seclusion.getUserIds());
-                mArchive.setAuthUserName(seclusion.getUserNames());
+                //mArchive.setAuthGro(seclusion.getGroupIds());
+                //mArchive.setAuthUser(seclusion.getUserIds());
+                //mArchive.setAuthUserName(seclusion.getUserNames());
                 if (null != publicText) {
                     publicText.setText(PrivacyFragment.getPrivacy(seclusion));
                 }
@@ -1349,7 +1349,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 设置组织id
                     mArchive.setGroupId(groups.get(0).getGroupId());
                     // 设置类别为组织档案
-                    mArchive.setType(Archive.Type.GROUP);
+                    //mArchive.setType(Archive.Type.GROUP);
                     if (null != groupNameText) {
                         groupNameText.setText(Html.fromHtml(groups.get(0).getGroupName()));
                     }

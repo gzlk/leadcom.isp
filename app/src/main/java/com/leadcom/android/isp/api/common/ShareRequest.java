@@ -83,7 +83,7 @@ public class ShareRequest extends Request<ShareInfo> {
                     .put("type", type)// 必要字段
                     .put("groupId", archive.getGroupId())// 必要字段
                     .put("content", archive.getContent())
-                    .put("markdown", archive.getMarkdown())
+                    //.put("markdown", archive.getMarkdown())
                     .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))

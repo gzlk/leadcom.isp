@@ -123,7 +123,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
-        Bundle bundle = getBundle(archive.getId(), archive.getType());
+        int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+        Bundle bundle = getBundle(archive.getId(), type);
         bundle.putSerializable(PARAM_ARCHIVE, archive);
         fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
@@ -848,14 +849,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }
     }
 
-
     // 推荐档案
     private void recommendArchive(Archive archive) {
         final int index = mAdapter.indexOf(archive);
-        int type = archive.getType();
-        if (type > Archive.Type.USER) {
-            type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-        }
+        int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
         RecommendArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<RecommendArchive>() {
             @Override
             public void onResponse(RecommendArchive archive, boolean success, String message) {

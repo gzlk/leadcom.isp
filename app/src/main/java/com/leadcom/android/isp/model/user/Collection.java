@@ -142,14 +142,14 @@ public class Collection extends Model {
 
     public static Collection get(Archive archive) {
         Collection col = new Collection();
-        col.setType(null == archive.getGroEntity() ? Type.USER_ARCHIVE : Type.GROUP_ARCHIVE);
+        col.setType(isEmpty(archive.getGroupId()) ? Type.USER_ARCHIVE : Type.GROUP_ARCHIVE);
         // 组织档案/个人档案不需要content
         col.setContent("");
         col.setCreatorId(archive.getUserId());
         col.setCreatorName(archive.getUserName());
         col.setCreatorHeadPhoto(archive.getHeadPhoto());
 
-        col.setSourceType(null == archive.getGroEntity() ? SourceType.USER_ARCHIVE : SourceType.GROUP_ARCHIVE);
+        col.setSourceType(isEmpty(archive.getGroupId()) ? SourceType.USER_ARCHIVE : SourceType.GROUP_ARCHIVE);
         col.setSourceId(archive.getId());
         col.setSourceTitle(archive.getTitle());
         return col;

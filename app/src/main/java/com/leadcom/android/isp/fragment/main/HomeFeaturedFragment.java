@@ -10,7 +10,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.ActRequest;
-import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
+import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.etc.Utils;
@@ -30,7 +30,6 @@ import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.leadcom.android.isp.model.common.PriorityPlace;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
 
@@ -70,7 +69,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_TYPE = "hrf_param_type";
 
-    private static int selectedIndex = 0;
+    private static int selectedIndex = -1;
 
     public static HomeFeaturedFragment newInstance(String params) {
         HomeFeaturedFragment hrf = new HomeFeaturedFragment();
@@ -81,6 +80,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     }
 
     private int mType = TYPE_NOTHING;
+    private Model mHeadLine;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -103,15 +103,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 Model result = getResultModel(data, RESULT_ARCHIVE);
                 if (null != result) {
                     if (selectedIndex > 0) {
-                        // 焦点图不需要更新点赞、收藏
-                        RecommendArchive archive = (RecommendArchive) mAdapter.get(selectedIndex);
-                        boolean isGroup = archive.getType() == RecommendArchive.RecommendType.GROUP;
-                        if (isGroup) {
-                            archive.setGroDoc((Archive) result);
-                        } else {
-                            archive.setUserDoc((Archive) result);
-                        }
-                        mAdapter.update(archive);
+                        mAdapter.update(result);
                     }
                 } else {
                     Model model = new Model();
@@ -175,6 +167,8 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mHeadLine = new Model();
+        mHeadLine.setId("headline");
         ClickableSearchViewHolder searchViewHolder = new ClickableSearchViewHolder(searchableView, this);
         searchViewHolder.addOnViewHolderClickListener(new OnViewHolderClickListener() {
             @Override
@@ -210,32 +204,36 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
         return null;
     }
 
-    private void setTestData() {
-        mAdapter.add(new Model());
-    }
-
     private void fetchingFocusImages() {
         setLoadingText(R.string.ui_text_home_focus_image_loading);
-        //displayLoading(true);
+        displayLoading(true);
         displayNothing(false);
-        RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
-            public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success) {
                     headline.clear();
                     if (null != list) {
+                        for (Archive archive : list) {
+                            archive.setId(archive.getDocId());
+                        }
                         headline.addAll(list);
                         if (null != homeImagesViewHolder) {
                             homeImagesViewHolder.addImages(headline);
                         }
                     }
                 }
+                if (headline.size() < 1) {
+                    mAdapter.remove(mHeadLine);
+                } else {
+                    mAdapter.update(mHeadLine);
+                }
                 displayLoading(false);
                 stopRefreshing();
                 fetchingRecommendedArchives();
             }
-        }).focusImage();
+        }).listHomeHeadline();
     }
 
     private void initializeAdapter() {
@@ -245,7 +243,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             mRecyclerView.setAdapter(mAdapter);
             if (getUserVisibleHint()) {
                 if (mType == TYPE_ALL || mType == TYPE_ARCHIVE) {
-                    setTestData();
+                    mAdapter.add(mHeadLine);
                     fetchingFocusImages();
                 } else {
                     fetchingRecommendedArchives();
@@ -257,22 +255,21 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     /**
      * 首页头条推荐
      */
-    private List<RecommendArchive> headline = new ArrayList<>();
+    private List<Archive> headline = new ArrayList<>();
 
-    private RecommendArchive getArchiveByCover(String imageUrl) {
-        for (RecommendArchive archive : headline) {
-            Archive doc = archive.getDoc();
+    private Archive getArchiveByCover(String imageUrl) {
+        for (Archive doc : headline) {
             String cover = doc.getCover();
             if (isEmpty(cover)) {
                 // 封面为空时，查找第一张图片是否为当前url
                 int size = doc.getImage().size();
                 if (size > 0 && imageUrl.equals(doc.getImage().get(0).getUrl())) {
-                    return archive;
+                    return doc;
                 } else if (imageUrl.equals(doc.getId())) {
-                    return archive;
+                    return doc;
                 }
             } else if (cover.equals(imageUrl)) {
-                return archive;
+                return doc;
             }
         }
         return null;
@@ -281,11 +278,12 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     private ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
         public void onImageClick(ImageDisplayer displayer, String url) {
-            RecommendArchive archive = getArchiveByCover(url);
+            selectedIndex = -1;
+            Archive archive = getArchiveByCover(url);
             if (null != archive) {
                 // 打开档案详情页
-                int type = archive.getType() == RecommendArchive.RecommendType.GROUP ? Archive.Type.GROUP : Archive.Type.USER;
-                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getDocId(), type);
+                int type = !isEmpty(archive.getGroupId()) ? Archive.Type.GROUP : Archive.Type.USER;
+                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getId(), type);
             } else {
                 ToastHelper.make().showMsg("无效的推荐内容");
             }
@@ -305,11 +303,11 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
     private void fetchingRecommendedArchives() {
         setLoadingText(R.string.ui_text_home_archive_loading);
-        //displayLoading(true);
+        displayLoading(remotePageNumber <= 1);
         displayNothing(false);
-        RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
-            public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (remotePageNumber <= 1) {
                     removeArchives();
@@ -318,7 +316,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 remotePageNumber += count < pageSize ? 0 : 1;
                 isLoadingComplete(count < pageSize);
                 if (success && null != list) {
-                    for (RecommendArchive archive : list) {
+                    for (Archive archive : list) {
                         mAdapter.update(archive);
                     }
                 }
@@ -326,7 +324,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 2);
             }
-        }).listHomeFeatured(remotePageNumber, "");
+        }).listHomeRecommend(remotePageNumber);
     }
 
     private void removeArchives() {
@@ -345,11 +343,6 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 // 到活动详情报名页
                 Activity act = (Activity) model;
                 isJoinedPublicAct(act.getId(), act.getTid());
-            } else if (model instanceof RecommendArchive) {
-                selectedIndex = index;
-                RecommendArchive recommend = (RecommendArchive) model;
-                int type = recommend.getType() == RecommendArchive.RecommendType.USER ? Archive.Type.USER : Archive.Type.GROUP;
-                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, recommend.getDocId(), type);
             } else if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
@@ -366,8 +359,8 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-            RecommendArchive archive = (RecommendArchive) mAdapter.get(index);
-            boolean isGroup = archive.getType() == RecommendArchive.RecommendType.GROUP;
+            Archive archive = (Archive) mAdapter.get(index);
+            boolean isGroup = !isEmpty(archive.getGroupId());
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_additional_comment_layout:
                     // 打开档案详情页评论
@@ -381,7 +374,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏或取消收藏
                     selectedIndex = index;
-                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getDocId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
+                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
                     //collect(doc);
                     break;
             }
@@ -389,14 +382,8 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     };
 
     private void resetArchive(Archive archive) {
-        RecommendArchive recmd = (RecommendArchive) mAdapter.get(selectedIndex);
-        if (recmd.getType() == RecommendArchive.RecommendType.GROUP) {
-            recmd.setGroDoc(archive);
-        } else {
-            recmd.setUserDoc(archive);
-        }
-        mAdapter.update(recmd);
-        selectedIndex = 0;
+        mAdapter.update(archive);
+        selectedIndex = -1;
     }
 
     private void isJoinedPublicAct(final String actId, final String tid) {
@@ -460,13 +447,13 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
         @Override
         public int getItemViewType(int position) {
-            if ((mType == TYPE_ALL || mType == TYPE_ARCHIVE) && position == 0) {
+            Model model = get(position);
+            if (model.getId().equals("headline")) {
                 return VT_HEADER;
             }
-            Model model = get(position);
             if (model instanceof Activity) {
                 return VT_ACTIVITY;
-            } else if (model instanceof RecommendArchive) {
+            } else if (model instanceof Archive) {
                 return VT_ARCHIVE;
             } else {
                 return VT_EDITOR;
@@ -501,7 +488,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             } else if (holder instanceof ActivityHomeViewHolder) {
                 ((ActivityHomeViewHolder) holder).showContent((Activity) item);
             } else if (holder instanceof ArchiveHomeRecommendedViewHolder) {
-                ((ArchiveHomeRecommendedViewHolder) holder).showContent((RecommendArchive) item);
+                ((ArchiveHomeRecommendedViewHolder) holder).showContent((Archive) item);
             }
         }
 
