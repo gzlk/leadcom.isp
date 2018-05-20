@@ -295,7 +295,6 @@ public class MyActivitiesFragment extends BaseSwipeRefreshSupportFragment {
 //                if (act.getStatus() == Activity.Status.ENDED) {
 //                    // 如果是我自己创建的，打开改活动待存档文件管理页面
 //                    if (act.getCreatorId().equals(Cache.cache().userId)) {
-//                        openActivity(ActivityArchivingManagementFragment.class.getName(), act.getId(), true, false);
 //                    } else {
 //                        // 不是我创建的则打开详情页
 //                        openActivity(ActivityDetailsMainFragment.class.getName(), act.getId(), false, false);

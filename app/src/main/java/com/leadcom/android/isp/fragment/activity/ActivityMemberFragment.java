@@ -22,7 +22,6 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.fragment.main.ActivityFragment;
 import com.leadcom.android.isp.fragment.organization.GroupsContactPickerFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
@@ -108,7 +107,6 @@ public class ActivityMemberFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actMember = ActivityFragment.myActMember;
         isMemberDeletable = null != actMember && actMember.activityMemberDeletable();
     }
 

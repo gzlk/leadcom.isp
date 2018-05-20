@@ -80,7 +80,7 @@ public class LikeHelper extends Publishable {
                     if (null != mArchive) {
                         if (success) {
                             mArchive.setLike(Archive.LikeType.LIKED);
-                            mArchive.setLikeId(like.getId());
+                            mArchive.setLikeId(null == like ? "" : like.getId());
                             mArchive.setLikeNum(mArchive.getLikeNum() + 1);
                         }
                         likeListener.onLiked(success, mArchive);

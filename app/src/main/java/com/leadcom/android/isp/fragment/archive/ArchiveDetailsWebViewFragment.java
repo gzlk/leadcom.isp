@@ -23,6 +23,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
@@ -39,7 +40,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.archive.ArchiveAttachmentViewHolder;
@@ -57,6 +57,8 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Additional;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.archive.ArchiveInfo;
+import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -255,8 +257,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void onLoadingMore() {
-        mAdapter.remove(nothingMore);
-        loadingComments(mAdapter.get(mQueryId));
+        //mAdapter.remove(nothingMore);
+        //loadingComments(mAdapter.get(mQueryId));
     }
 
     @Override
@@ -360,53 +362,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }
     }
 
-    private void openEditSelector() {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                return View.inflate(Activity(), R.layout.popup_dialog_edit_selector, null);
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-
-            }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_dialog_button_editor_to_change, R.id.ui_dialog_button_editor_to_delete};
-            }
-
-            @Override
-            public boolean onClick(View view) {
-                int id = view.getId();
-                switch (id) {
-                    case R.id.ui_dialog_button_editor_to_change:
-                        break;
-                    case R.id.ui_dialog_button_editor_to_delete:
-                        Archive archive = (Archive) mAdapter.get(mQueryId);
-                        if (archive.isAuthor()) {
-                            warningDeleteDocument();
-                        } else {
-                            ToastHelper.make().showMsg(R.string.ui_text_document_details_delete_no_permission);
-                        }
-                        break;
-                }
-                return true;
-            }
-        }).setPopupType(DialogHelper.SLID_IN_BOTTOM).setAdjustScreenWidth(true).show();
-    }
-
-    private void warningDeleteDocument() {
-        SimpleDialogHelper.init(Activity()).show(R.string.ui_text_document_details_delete, R.string.ui_base_text_yes, R.string.ui_base_text_no_need, new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                deleteDocument();
-                return true;
-            }
-        }, null);
-    }
-
     private void deleteDocument() {
         setLoadingText(R.string.ui_text_document_details_deleting_document);
         displayLoading(true);
@@ -448,20 +403,26 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             if (isDraft) {
                 loadingSharedArchive();
             } else {
-                ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+                ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
                     @Override
-                    public void onResponse(Archive archive, boolean success, String message) {
-                        super.onResponse(archive, success, message);
+                    public void onResponse(ArchiveQuery archiveQuery, boolean success, String message) {
+                        super.onResponse(archiveQuery, success, message);
                         displayLoading(false);
-                        if (success && null != archive) {
+                        if (success && null != archiveQuery) {
+                            mAdapter.remove(nothingMore);
+                            ArchiveInfo info = archiveQuery.getAdditionResult();
+                            boolean isUser = null == archiveQuery.getGroDoc();
+                            Archive archive = isUser ? archiveQuery.getUserDoc() : archiveQuery.getGroDoc();
+                            archive.resetInfo(info);
+                            archive.resetAdditional(archive.getAddition());
                             displayArchive(archive);
-                        } else {
-                            stopRefreshing();
-                            isLoadingComplete(true);
+                            onLoadingCommentComplete(true, isUser ? archiveQuery.getUserDocComment() : archiveQuery.getGroDocCmtList());
                         }
+                        stopRefreshing();
+                        isLoadingComplete(true);
                     }
 
-                }).find(archiveType, mQueryId, false);
+                }).find(archiveType, mQueryId);
             }
         }
     }
@@ -534,7 +495,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         //if (!isDraft) {
         // 草稿也可以有评论和赞什么的
         displayAdditional(archive);
-        loadingComments(archive);
+        //loadingComments(archive);
         //}
     }
 

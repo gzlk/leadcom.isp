@@ -209,7 +209,11 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             ImageDisplayer displayer = images.get(position);
             Archive archive = archives.get(position);
-            String cover = archive.getCover();
+            // 指定的显示图片
+            String cover = archive.getShowImage();
+            if (isEmpty(cover)) {
+                cover = archive.getCover();
+            }
             // 有封面显示封面
             if (isEmpty(cover)) {
                 int size = archive.getImage().size();

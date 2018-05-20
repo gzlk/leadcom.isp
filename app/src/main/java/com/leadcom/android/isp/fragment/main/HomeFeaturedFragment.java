@@ -281,9 +281,13 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             selectedIndex = -1;
             Archive archive = getArchiveByCover(url);
             if (null != archive) {
-                // 打开档案详情页
-                int type = !isEmpty(archive.getGroupId()) ? Archive.Type.GROUP : Archive.Type.USER;
-                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getId(), type);
+                if (isEmpty(archive.getDocId())) {
+                    ToastHelper.make().showMsg("docId is null");
+                } else {
+                    // 打开档案详情页
+                    int type = !isEmpty(archive.getGroupId()) ? Archive.Type.GROUP : Archive.Type.USER;
+                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getDocId(), type);
+                }
             } else {
                 ToastHelper.make().showMsg("无效的推荐内容");
             }
@@ -347,7 +351,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 // 到档案详情
                 Archive arc = (Archive) model;
                 int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, arc.getId(), type);
+                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, arc.getDocId(), type);
             } else if (model instanceof PriorityPlace) {
                 // 编辑推荐
                 PriorityPlace place = (PriorityPlace) model;
@@ -374,7 +378,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏或取消收藏
                     selectedIndex = index;
-                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
+                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive.getDocId(), isGroup ? Archive.Type.GROUP : Archive.Type.USER);
                     //collect(doc);
                     break;
             }

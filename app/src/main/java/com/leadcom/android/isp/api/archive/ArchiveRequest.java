@@ -12,8 +12,8 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.leadcom.android.isp.model.common.Seclusion;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -69,7 +69,7 @@ public class ArchiveRequest extends Request<Archive> {
         return format("%s%s", GROUP, action);
     }
 
-    private String url(int type, String action) {
+    public String url(int type, String action) {
         return type == Archive.Type.USER ? url(action) : group(action);
     }
 
@@ -154,13 +154,6 @@ public class ArchiveRequest extends Request<Archive> {
             switch (type) {
                 case TYPE_AUTH:
                     object.put("authPublic", archive.getAuthPublic());
-                    if (archive.getAuthPublic() == Seclusion.Type.Group) {
-                        // 对组织公开时，更新组织的id列表
-                        // 目前只有对当前组织内的所有人公开
-                    } else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
-                        // 对指定部分人公开时，更新指定公开的人的id列表
-                        //object.put("authUser", new JSONArray(archive.getAuthUser()));
-                    }
                     break;
                 case TYPE_LABEL:
                     object.put("label", new JSONArray(archive.getLabel()));
@@ -182,9 +175,9 @@ public class ArchiveRequest extends Request<Archive> {
     private String getArchiveId(int type) {
         switch (type) {
             case Archive.Type.GROUP:
-                return "groDocId";
+                return "docId";
             default:
-                return "userDocId";
+                return "docId";
         }
     }
 
@@ -196,19 +189,23 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void delete(int type, @NonNull String archiveId) {
         String params = format("%s=%s", getArchiveId(type), archiveId);
-        httpRequest(getRequest(SingleArchive.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
+        httpRequest(getRequest(SingleArchive.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Post));
     }
 
     /**
      * 查询单份组织档案
      *
-     * @param type      档案类型{@link Archive.Type}
      * @param archiveId 档案id
      */
-    public void find(int type, @NonNull String archiveId, boolean fromLocal) {
+    public void find(int type, @NonNull String archiveId) {
         // 调用网络数据
-        String params = format("%s=%s", getArchiveId(type), archiveId);
-        httpRequest(getRequest(SingleArchive.class, format("%s?%s", url(type, FIND), params), "", HttpMethods.Get));
+        JSONObject object = new JSONObject();
+        try {
+            object.put("docId", archiveId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(SingleArchive.class, url(type, FIND), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -251,9 +248,8 @@ public class ArchiveRequest extends Request<Archive> {
      * @param userId     用户的id
      */
     public void list(int pageNumber, String userId) {
-        // abstrSize,abstrRow,pageNumber,accessToken
-        String param = format("%s&pageNumber=%d&userId=%s", SUMMARY, pageNumber, userId);
-        httpRequest(getRequest(MultipleArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
+        String param = format("pageNumber=%d&userId=%s", pageNumber, userId);
+        httpRequest(getRequest(ListArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
 
     /**
@@ -263,120 +259,8 @@ public class ArchiveRequest extends Request<Archive> {
      * @param pageNumber     页码
      */
     public void list(String organizationId, int pageNumber) {
-        //groupId,abstrSize,abstrRow,pageNumber
-        String param = format("?%s&groupId=%s&pageNumber=%d", SUMMARY, organizationId, pageNumber);
-        httpRequest(getRequest(MultipleArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
-    }
-
-    /**
-     * 批准档案入群
-     *
-     * @param requestId 申请的id
-     * @param message   附加消息
-     */
-    public void approve(String requestId, String message) {
-        //{id:"",msg:"",accessToken:""}
-        approve("/group/appToBeDoc/approve", requestId, message);
-    }
-
-    private void approve(String action, String requestId, String message) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("id", requestId)
-                    .put("msg", message);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        log(object.toString());
-
-        httpRequest(getRequest(SingleArchive.class, action, object.toString(), HttpMethods.Post));
-    }
-
-    /**
-     * 否决档案入群
-     *
-     * @param requestId 申请的id
-     * @param message   附加消息
-     */
-    public void reject(String requestId, String message) {
-        approve("/group/appToBeDoc/reject", requestId, message);
-    }
-
-    /**
-     * 存档组织档案(活动结束后生成的档案)
-     *
-     * @param archiveId 档案id
-     * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveApproveStatus}
-     */
-    public void archive(String archiveId, int status) {
-        // groDocArchiveId,status,accessToken
-        String params = format("/group/groDocArchive/archive?groDocArchiveId=%s&status=%d", archiveId, status);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
-    }
-
-    /**
-     * 查找单个需存档的活动文档记录
-     */
-    public void archiveFind(String archiveId) {
-        httpRequest(getRequest(SingleArchive.class, format("/group/groDocArchive/find?groDocArchiveId=%s", archiveId), "", HttpMethods.Get));
-    }
-
-    /**
-     * 查询组织档案列表，此列表不保存到本地缓存
-     */
-    public void archiveList(String groupId, int pageNumber) {
-        //directlySave = false;
-        // groupId,pageSize,pageNumber
-        String params = format("/group/groDocArchive/list?groupId=%s&pageNumber=%d", groupId, pageNumber);
-        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
-    }
-
-    /**
-     * 搜索组织档案(通过文件名模糊搜索)，此返回列表不保存到本地缓存
-     */
-    public void archiveSearch(String groupId, String fileName, int pageNumber) {
-        //directlySave = false;
-        String params = format("/group/groDocArchive/list?groupId=%s&pageNumber=%d&info=%s", groupId, pageNumber, fileName);
-        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
-    }
-
-    /**
-     * 审核组织档案
-     *
-     * @param archiveId 档案id
-     * @param status    审核状态(1.未审核[不要],2.通过,3.不通过[暂时不要]) {@link Archive.ArchiveApproveStatus}
-     */
-    public void approve(String archiveId, int status) {
-        // groDocApproveId,status,accessToken
-        String params = format("/group/groDocApprove/approve?groDocApproveId=%s&status=%d", archiveId, status);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
-    }
-
-    /**
-     * 查询单份未审核组织档案
-     */
-    public void approveFind(String archiveId) {
-        // groDocApproveId
-        String params = format("/group/groDocApprove/find?groDocApproveId=%s", archiveId);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
-    }
-
-    /**
-     * 查询未审核组织档案列表
-     */
-    public void approveList(String groupId, int pageNumber) {
-        // groupId,pageSize,pageNumber
-        String params = format("/group/groDocApprove/list?groupId=%s&pageNumber=%d", groupId, pageNumber);
-        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
-    }
-
-    /**
-     * 查询公开的组织档案列表
-     */
-    public void listPublic(int pageNumber) {
-        // abstrSize,abstrRow,pageSize,pageNumber
-        String params = format("/group/groDoc/listPublic?%s&pageNumber=%d", SUMMARY, pageNumber);
-        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
+        String param = format("?groupId=%s&pageNumber=%d", organizationId, pageNumber);
+        httpRequest(getRequest(ListArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
     }
 
     /**

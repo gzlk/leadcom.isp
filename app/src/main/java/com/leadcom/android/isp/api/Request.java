@@ -8,6 +8,7 @@ import com.leadcom.android.isp.api.query.ListQuery;
 import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
+import com.leadcom.android.isp.api.query.StringQuery;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
@@ -243,6 +244,11 @@ public abstract class Request<T> {
                         BoolQuery<T> boolQuery = (BoolQuery<T>) data;
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.onResponse(null, boolQuery.getData(), data.getMsg());
+                        }
+                    } else if (data instanceof StringQuery) {
+                        StringQuery<T> stringQuery = (StringQuery<T>) data;
+                        if (null != onSingleRequestListener) {
+                            onSingleRequestListener.onResponse(null, stringQuery.success(), "");
                         }
                     }
                 } else {

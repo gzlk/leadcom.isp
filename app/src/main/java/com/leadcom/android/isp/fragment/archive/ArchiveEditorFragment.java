@@ -334,7 +334,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).find(Archive.Type.GROUP, mQueryId, false);
+        }).find(Archive.Type.GROUP, mQueryId);
     }
 
     private void fetchingDraft() {

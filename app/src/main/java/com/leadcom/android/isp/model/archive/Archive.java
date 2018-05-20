@@ -146,6 +146,7 @@ public class Archive extends Additional {
         String Topic = "topic";
         String Resolution = "resolution";
         String Branch = "branch";
+        String ShowImage = "showImage";
     }
 
     /**
@@ -460,20 +461,8 @@ public class Archive extends Additional {
     // 排序
     @Column(Field.Sort)
     private int sort;
-
-    // 当前组织是否推荐：0.未推荐，1.已推荐
-    @Column(Field.Recommend)
-    private int recommend;
-    // 当前组织推荐该档案后的组织档案推荐ID
-    @Column(Field.RecommendId)
-    private String rcmdId;
-
-    /**
-     * 档案是否已经推荐到首页
-     */
-    public boolean isRecommend() {
-        return recommend == RecommendArchive.RecommendStatus.RECOMMENDED;
-    }
+    @Column(Field.ShowImage)
+    private String showImage;
 
     public boolean isPublic() {
         return authPublic == Seclusion.Type.Public;
@@ -509,6 +498,14 @@ public class Archive extends Additional {
 
     public void setSort(int sort) {
         this.sort = sort;
+    }
+
+    public String getShowImage() {
+        return showImage;
+    }
+
+    public void setShowImage(String showImage) {
+        this.showImage = showImage;
     }
 
     @Override
@@ -851,19 +848,4 @@ public class Archive extends Additional {
         this.participant = participant;
     }
 
-    public int getRecommend() {
-        return recommend;
-    }
-
-    public void setRecommend(int recommend) {
-        this.recommend = recommend;
-    }
-
-    public String getRcmdId() {
-        return rcmdId;
-    }
-
-    public void setRcmdId(String rcmdId) {
-        this.rcmdId = rcmdId;
-    }
 }

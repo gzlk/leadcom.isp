@@ -6,6 +6,7 @@ import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.StringQuery;
 import com.leadcom.android.isp.model.archive.ArchiveLike;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.litesuits.http.request.param.HttpMethods;
@@ -39,8 +40,11 @@ public class LikeRequest extends Request<ArchiveLike> {
     private static class BoolLike extends BoolQuery<ArchiveLike> {
     }
 
-    private static final String USER = "/user/userDocLike";
-    private static final String GROUP = "/group/groDocLike";
+    private static class StringLike extends StringQuery<ArchiveLike> {
+    }
+
+    private static final String USER = "/user/userDoc/like";
+    private static final String GROUP = "/group/groDoc/like";
     private static final String MOMENT = "/user/userMmtLike";
 
     @Override
@@ -59,6 +63,10 @@ public class LikeRequest extends Request<ArchiveLike> {
                 break;
         }
         return format("%s%s", api, action);
+    }
+
+    private String url(int type) {
+        return type == Comment.Type.USER ? USER : GROUP;
     }
 
     @Override
@@ -93,7 +101,7 @@ public class LikeRequest extends Request<ArchiveLike> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleLike.class, url(type, ADD), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(StringLike.class, url(type) + "/do", object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -102,11 +110,18 @@ public class LikeRequest extends Request<ArchiveLike> {
      * @param type 个人或组织档案点赞{@link Comment.Type}
      */
     public void delete(int type, String archiveId) {
-        // momentId,accessToken
-        // userDocId,accessToken
-        // groDocId,accessToken
-        String params = format("%s=%s", CommentRequest.getArchiveId(type), archiveId);
-        httpRequest(getRequest(SingleLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
+        if (type == Comment.Type.MOMENT) {
+            String params = format("%s=%s", CommentRequest.getArchiveId(type), archiveId);
+            httpRequest(getRequest(SingleLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
+        } else {
+            JSONObject object = new JSONObject();
+            try {
+                object.put(CommentRequest.getArchiveId(type), archiveId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            httpRequest(getRequest(BoolLike.class, url(type) + "/undo", object.toString(), HttpMethods.Post));
+        }
     }
 
     /**

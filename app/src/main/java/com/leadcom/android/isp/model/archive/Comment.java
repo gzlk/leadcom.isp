@@ -19,7 +19,7 @@ import com.litesuits.orm.db.annotation.Table;
  */
 
 @Table(Archive.Table.COMMENT)
-public class Comment extends ArchiveInfo {
+public class Comment extends ArchiveIds {
 
     /**
      * 评论类别

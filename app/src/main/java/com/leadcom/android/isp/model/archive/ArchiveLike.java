@@ -16,7 +16,7 @@ import com.litesuits.orm.db.annotation.Table;
  */
 
 @Table(Archive.Table.LIKE)
-public class ArchiveLike extends ArchiveInfo {
+public class ArchiveLike extends ArchiveIds {
 
     @Column(Field.UserId)
     private String userId;      //用户ID

@@ -2,11 +2,13 @@ package com.leadcom.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.StringQuery;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -33,11 +35,17 @@ public class CommentRequest extends Request<Comment> {
     private static class SingleComment extends SingleQuery<Comment> {
     }
 
+    private static class StringComment extends StringQuery<Comment> {
+    }
+
+    private static class BoolComment extends BoolQuery<Comment> {
+    }
+
     private static class MultiComment extends PaginationQuery<Comment> {
     }
 
-    private static final String USER = "/user/userDocCmt";
-    private static final String GROUP = "/group/groDocCmt";
+    private static final String USER = "/user/userDoc/comment";
+    private static final String GROUP = "/group/groDoc/comment";
     private static final String MOMENT = "/user/userMmtCmt";
 
     @Override
@@ -58,6 +66,10 @@ public class CommentRequest extends Request<Comment> {
         return format("%s%s", api, action);
     }
 
+    private String url(int type) {
+        return type == Comment.Type.USER ? USER : GROUP;
+    }
+
     /**
      * 获取档案的id
      * <ul>
@@ -68,12 +80,12 @@ public class CommentRequest extends Request<Comment> {
      */
     static String getArchiveId(int type) {
         switch (type) {
-            case Comment.Type.GROUP:
-                return "groDocId";
+            //case Comment.Type.GROUP:
+            //    return "groDocId";
             case Comment.Type.MOMENT:
                 return "momentId";
             default:
-                return "userDocId";
+                return "docId";
         }
     }
 
@@ -87,12 +99,10 @@ public class CommentRequest extends Request<Comment> {
      */
     private static String getCommentId(int type) {
         switch (type) {
-            case Comment.Type.GROUP:
-                return "groDocCmtId";
             case Comment.Type.MOMENT:
                 return "momentCmtId";
             default:
-                return "userDocCmtId";
+                return "docCmtId";
         }
     }
 
@@ -130,7 +140,7 @@ public class CommentRequest extends Request<Comment> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleComment.class, url(type, ADD), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(StringComment.class, url(type, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -140,18 +150,18 @@ public class CommentRequest extends Request<Comment> {
         // userDocId,userDocCmtId
         // groDocId,groDocCmtId
         // momentId,momentCmtId
-        String params = format("%s=%s&%s=%s", getArchiveId(type), archiveId, getCommentId(type), commentId);
-        httpRequest(getRequest(SingleComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
-    }
-
-    /**
-     * 查询单个档案的单个评论
-     */
-    public void find(int type, @NonNull String commentId) {
-        // userDocCmtId
-        // groDocCmtId
-        // momentCmtId
-        httpRequest(getRequest(SingleComment.class, format("%s?%s=%s", url(type, FIND), getCommentId(type), commentId), "", HttpMethods.Get));
+        if (type == Comment.Type.MOMENT) {
+            String params = format("%s=%s&%s=%s", getArchiveId(type), archiveId, getCommentId(type), commentId);
+            httpRequest(getRequest(SingleComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
+        } else {
+            JSONObject object = new JSONObject();
+            try {
+                object.put(getCommentId(type), commentId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            httpRequest(getRequest(BoolComment.class, url(type, DELETE), object.toString(), HttpMethods.Post));
+        }
     }
 
     /**

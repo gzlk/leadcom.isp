@@ -43,6 +43,20 @@ public class Additional extends Model {
     @Ignore
     private String fileIds;  //文件ID，多个ID用逗号隔开
 
+    // 当前组织是否推荐：0.未推荐，1.已推荐
+    @Column(Archive.Field.Recommend)
+    private int recommend;
+    // 当前组织推荐该档案后的组织档案推荐ID
+    @Column(Archive.Field.RecommendId)
+    private String rcmdId;
+
+    /**
+     * 档案是否已经推荐到首页
+     */
+    public boolean isRecommend() {
+        return recommend == RecommendArchive.RecommendStatus.RECOMMENDED;
+    }
+
     public boolean isVisible() {
         return likeNum > 0 || cmtNum > 0 || colNum > 0;
     }
@@ -53,6 +67,17 @@ public class Additional extends Model {
             likeNum = additional.getLikeNum();
             cmtNum = additional.getCmtNum();
             colNum = additional.getColNum();
+        }
+    }
+
+    public void resetInfo(ArchiveInfo info) {
+        if (null != info) {
+            recommend = info.getRecommend();
+            rcmdId = info.getRcmdId();
+            collection = info.getCollection();
+            colId = info.getColId();
+            like = info.getLike();
+            likeId = info.getLikeId();
         }
     }
 
@@ -184,5 +209,21 @@ public class Additional extends Model {
 
     public void setFileIds(String fileIds) {
         this.fileIds = fileIds;
+    }
+
+    public int getRecommend() {
+        return recommend;
+    }
+
+    public void setRecommend(int recommend) {
+        this.recommend = recommend;
+    }
+
+    public String getRcmdId() {
+        return rcmdId;
+    }
+
+    public void setRcmdId(String rcmdId) {
+        this.rcmdId = rcmdId;
     }
 }
