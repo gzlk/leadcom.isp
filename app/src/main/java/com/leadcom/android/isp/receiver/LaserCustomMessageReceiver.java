@@ -3,8 +3,12 @@ package com.leadcom.android.isp.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
+import com.leadcom.android.isp.activity.WelcomeActivity;
 import com.leadcom.android.isp.helper.LogHelper;
+
+import cn.jpush.android.api.JPushInterface;
 
 /**
  * <b>功能描述：</b><br />
@@ -28,7 +32,27 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (null != intent) {
             String action = intent.getAction();
+            Bundle bundle = intent.getExtras();
             log("onReceive: " + action);
+            assert bundle != null;
+            if (JPushInterface.ACTION_REGISTRATION_ID.equals(action)) {
+                String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
+                log("[MyReceiver] 接收Registration Id : " + regId);
+            } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(action)) {
+                log("收到了自定义消息。消息内容是：" + bundle.getString(JPushInterface.EXTRA_MESSAGE));
+                // 自定义消息不会展示在通知栏，完全要开发者写代码去处理
+            } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(action)) {
+                log("收到了通知");
+                // 在这里可以做些统计，或者做些其他工作
+            } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(action)) {
+                log("用户点击打开了通知");
+                // 在这里可以自己写代码去定义用户点击后的行为
+                Intent i = new Intent(context, WelcomeActivity.class);  //自定义打开的界面
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            } else {
+                log("Unhandled intent - " + action);
+            }
         } else {
             log("onReceive: null intent");
         }
