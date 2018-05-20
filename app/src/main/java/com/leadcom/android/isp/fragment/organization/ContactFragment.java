@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
 import android.view.View;
 
-import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
@@ -186,7 +185,6 @@ public class ContactFragment extends BaseOrganizationFragment {
                         // 打开组织通讯录并尝试将里面的用户邀请到小组
                         String json = SubMember.toJson(getSubMembers());
                         GroupContactPickFragment.open(ContactFragment.this, mOrganizationId, true, false, json);
-                        //openActivity(OrganizationContactFragment.class.getName(), format("%s,%s", mOrganizationId, mSquadId), true, false);
                     }
                 });
                 setCustomTitle(R.string.ui_group_squad_member_fragment_title);
@@ -252,18 +250,6 @@ public class ContactFragment extends BaseOrganizationFragment {
     protected String getLocalPageTag() {
         if (StringHelper.isEmpty(mQueryId)) return null;
         return format("cf_grp_contact_%s", mQueryId);
-    }
-
-    @Override
-    protected void onViewPagerDisplayedChanged(boolean visible) {
-        super.onViewPagerDisplayedChanged(visible);
-        if (visible) {
-            if (isEmpty(mQueryId) || !mQueryId.equals(StructureFragment.selectedGroupId)) {
-                mQueryId = StructureFragment.selectedGroupId;
-                onSwipeRefreshing();
-            }
-            //refreshContact();
-        }
     }
 
     @Override
@@ -539,16 +525,6 @@ public class ContactFragment extends BaseOrganizationFragment {
         }).squadMemberDelete(memberId);
     }
 
-    /**
-     * 重置我的角色为普通角色
-     */
-    private void resetMyCharacter() {
-        Role normal = Role.getRoleByCode(Member.Code.GROUP_ROLE_CODE_COMMON_MEMBER);
-        assert normal != null;
-        StructureFragment.my.setGroRole(normal);
-        StructureFragment.my.setGroRoleId(normal.getId());
-    }
-
     private void updateMember(Member member, final Role toRole, final boolean resettable) {
         MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
             @Override
@@ -558,7 +534,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 if (success) {
                     if (resettable) {
                         // 需要重置本地我的角色
-                        resetMyCharacter();
+                        //resetMyCharacter();
                     }
                     // 设置成功之后重新拉取成员列表
                     fetchingRemoteMembers(mOrganizationId, mSquadId);
@@ -705,33 +681,8 @@ public class ContactFragment extends BaseOrganizationFragment {
 
         @Override
         public void onBindHolderOfView(ContactViewHolder holder, int position, @Nullable Member member) {
-            //Member me = StructureFragment.my;
             String memberUserId = (null != member) ? member.getUserId() : "";
             boolean isMe = !isEmpty(memberUserId) && memberUserId.equals(Cache.cache().userId);
-            // 转让群组或转让管理权
-//            if (showType == TYPE_ORG) {
-            // 组织内转让管理权
-//                if ((null != me) && me.memberRoleEditable() && member.memberRoleEditable()) {
-//                    holder.button0Text(R.string.ui_organization_contact_transfer_manager);
-//                    holder.showButton0(true);
-//                }
-//                else if ((null != me) && me.isOwner() && member.isGroupManager()) {
-//                    holder.button0Text(R.string.ui_organization_contact_transfer_owner);
-//                    holder.showButton0(true);
-//                }
-//                else {
-//                    holder.showButton0(false);
-//                }
-//                holder.button0Text(R.string.ui_organization_contact_transfer_manager);
-//                holder.showButton0(!isMe && (null != me) && me.isGroupManager() && member.isGroupManager());
-//                //} else if (showType == TYPE_SQUAD) {
-//                // 小组内转让组群
-//                holder.button0Text(R.string.ui_organization_contact_transfer_owner);
-//                // 我是群主且对方是管理员时才允许转让群组
-//                holder.showButton0(!isMe && (null != me) && me.isOwner() && member.isGroupManager());
-//            } else {
-//                holder.showButton0(false);
-//            }
 
             if (showType == TYPE_ORG) {
                 // 组织内可以显示设为档案管理员或取消档案管理员

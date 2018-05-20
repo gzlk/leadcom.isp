@@ -13,24 +13,19 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.main.ArchiveSearchFragment;
-import com.leadcom.android.isp.fragment.organization.archive.GroupArchiveManagementFragment;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Role;
 
 import java.util.List;
@@ -147,17 +142,6 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
         ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_GROUP, mQueryId, "");
     }
 
-    @Override
-    protected void onViewPagerDisplayedChanged(boolean visible) {
-        super.onViewPagerDisplayedChanged(visible);
-        if (visible) {
-            if (isEmpty(mQueryId) || !mQueryId.equals(StructureFragment.selectedGroupId)) {
-                mQueryId = StructureFragment.selectedGroupId;
-                onSwipeRefreshing();
-            }
-        }
-    }
-
     /**
      * 设置新的组织id并查找该组织的档案列表
      */
@@ -220,42 +204,6 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
         }
         super.onActivityResult(requestCode, data);
     }
-
-    // 我是否可以管理组织档案
-    private boolean isMeCanManageArchives() {
-        Member me = StructureFragment.my;
-        return null != me && (me.archiveApprovable() || me.isArchiveManager());
-    }
-
-    /**
-     * 打开新建、管理菜单
-     */
-    public void openTooltipMenu(View view) {
-        int layout = isMeCanManageArchives() ? R.id.ui_tooltip_organization_document_management :
-                R.id.ui_tooltip_organization_document_manage_normal;
-        showTooltip(view, layout, true, TooltipHelper.TYPE_LEFT, onClickListener);
-    }
-
-    private View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.ui_tooltip_menu_organization_document_new:
-                case R.id.ui_tooltip_menu_organization_document_new_normal:
-                    if (isEmpty(mQueryId)) {
-                        ToastHelper.make().showMsg(R.string.ui_organization_structure_no_group_exist);
-                    } else {
-                        // 新建组织档案
-                        ArchiveCreateSelectorFragment.open(ArchivesFragment.this, mQueryId);
-                    }
-                    break;
-                case R.id.ui_tooltip_menu_organization_document_manage:
-                    // 管理组织档案
-                    openActivity(GroupArchiveManagementFragment.class.getName(), mQueryId, REQUEST_CHANGE, false, false);
-                    break;
-            }
-        }
-    };
 
     private void fetchingRemoteArchives() {
         displayLoading(true);

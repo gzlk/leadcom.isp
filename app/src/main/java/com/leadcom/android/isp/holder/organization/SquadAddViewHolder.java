@@ -5,16 +5,15 @@ import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.organization.StructureFragment;
-import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.holder.BaseViewHolder;
 
 /**
  * <b>功能描述：</b>组织架构里添加小组<br />
@@ -54,7 +53,6 @@ public class SquadAddViewHolder extends BaseViewHolder {
                 // 显示编辑框
                 //showEditor(true);
                 //openSquadAddDialog();
-                ((StructureFragment) fragment()).showSquadAddPopup(true);
                 break;
             case R.id.ui_holder_view_squad_add_editor_confirm:
 //                String value = editorName.getValue();
@@ -62,7 +60,6 @@ public class SquadAddViewHolder extends BaseViewHolder {
 //                    ToastHelper.make().showMsg("输入不符合要求");
 //                    return;
 //                }
-//                ((StructureFragment) fragment()).addSquad(value, "");
 //                editorName.setValue("");
 //                showEditor(false);
                 break;
