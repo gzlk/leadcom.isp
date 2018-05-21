@@ -117,10 +117,10 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         content = isEmpty(content) ? "" : Utils.clearStyleEqualsXXX(content);
         contentView.loadData(StringHelper.getString(R.string.ui_text_archive_details_content_html, content).replace("width: 100per", "width: 100%"), "text/html; charset=UTF-8", null);
         //bottomLine.setVisibility(archive.getCmtNum() > 0 ? View.VISIBLE : View.GONE);
-        if (archive.isDraft()) {
+        //if (archive.isDraft()) {
             // 草稿不需要公开
-            publicView.setVisibility(View.GONE);
-        }
+        //    publicView.setVisibility(View.GONE);
+        //}
         if (archive.getAuthPublic() == 1) {
             // 公开
             publicToggle.setToggleOn(true);

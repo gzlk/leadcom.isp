@@ -92,6 +92,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
     private static final String PARAM_CMT_INDEX = "adwvf_archive_cmt_index";
     private static final String PARAM_ARCHIVE = "adwvf_archive";
+    private static final String PARAM_DRAFT = "adwvf_draft";
     private static boolean deletable = false;
     /**
      * 标记是否是app内部打开的详情页
@@ -138,6 +139,13 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     public static void open(Context context, String archiveId, int archiveType) {
         innerOpen = true;
+        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), getBundle(archiveId, archiveType), REQUEST_DELETE, true, false);
+    }
+
+    public static void openDraft(Context context, String archiveId, int archiveType) {
+        innerOpen = true;
+        Bundle bundle = getBundle(archiveId, archiveType);
+        bundle.putBoolean(PARAM_DRAFT, true);
         BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), getBundle(archiveId, archiveType), REQUEST_DELETE, true, false);
     }
 
@@ -451,7 +459,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private void displayArchive(Archive archive) {
-        isDraft = archive.isDraft();
+        isDraft = false;
         likeLayout.setVisibility(isDraft ? View.GONE : View.VISIBLE);
         collectLayout.setVisibility(isDraft ? View.GONE : View.VISIBLE);
         setCustomTitle(archive.getTitle());

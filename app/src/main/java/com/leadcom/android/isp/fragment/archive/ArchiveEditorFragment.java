@@ -155,8 +155,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         //mArchive.setGroupId(mQueryId);
         // 默认为个人普通档案或组织普通档案
         //mArchive.setType(Archive.Type.USER);
-        // 新建档案默认为草稿
-        mArchive.setStatus(Archive.DraftType.DRAFT);
         // 档案默认向所有人公开的
         mArchive.setAuthPublic(Seclusion.Type.Public);
         // 默认草稿作者为当前登录用户
@@ -332,7 +330,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     mArchive.resetImageStyle();
                     mEditor.setHtml(mArchive.getContent());
                 } else {
-                    ToastHelper.make().showMsg("要编辑的文档不存在");
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_not_exists);
                     finish();
                 }
             }
@@ -544,13 +542,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         resultSucceededActivity();
     }
 
-    /**
-     * 当前档案是否为草稿档案
-     */
-    private boolean isDraft() {
-        return mArchive.isDraft() || isEmpty(mArchive.getId());
-    }
-
     @Override
     public void onStop() {
         if (editorType == TYPE_MULTIMEDIA) {
@@ -569,7 +560,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             mArchive.setParticipant(participantText.getValue());
         }
         // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
-        if (isDraft() && (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent()))) {
+        if (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent())) {
             if (isPasteContent && mArchive.isContentPasteFromOtherPlatform()) {
                 // 如果是粘贴过来的内容，则清理里面所有非树脉自有的img标签
                 mArchive.clearPastedContentImages();
@@ -1274,9 +1265,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     }, 2000);
                 }
-                if (!isDraft()) {
-                    updateArchive(ArchiveRequest.TYPE_COVER);
-                }
+                updateArchive(ArchiveRequest.TYPE_COVER);
                 break;
             case REQUEST_VIDEO:
                 // 视频选择返回了
@@ -1300,9 +1289,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (null != publicText) {
                     publicText.setText(PrivacyFragment.getPrivacy(seclusion));
                 }
-                if (!isDraft()) {
-                    updateArchive(ArchiveRequest.TYPE_AUTH);
-                }
+                updateArchive(ArchiveRequest.TYPE_AUTH);
                 break;
             case REQUEST_LABEL:
                 String labelJson = getResultedData(data);
@@ -1315,9 +1302,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (null != labelText) {
                     labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
                 }
-                if (!isDraft()) {
-                    updateArchive(ArchiveRequest.TYPE_LABEL);
-                }
+                updateArchive(ArchiveRequest.TYPE_LABEL);
                 break;
             case REQUEST_ATTACHMENT:
 

@@ -278,22 +278,22 @@ public class Archive extends Additional {
      * 获取档案的审核状态
      */
     public String getArchiveApproveStatus() {
-        switch (status) {
-            case ArchiveApproveStatus.APPROVING:
+        //switch (status) {
+            //case ArchiveApproveStatus.APPROVING:
                 // 不是活动档案时为未审核，活动档案为未存档
                 //return type == ArchiveType.ACTIVITY ? "待存档" : "待审核";
                 //return "待审核";
-            case ArchiveApproveStatus.APPROVED:
+            //case ArchiveApproveStatus.APPROVED:
                 // 不是活动档案时为已审核，活动档案为已存档
                 //return type == ArchiveType.ACTIVITY ? "已存档" : "已审核";
                 //return "已审核";
-            case ArchiveApproveStatus.FAILURE:
+            //case ArchiveApproveStatus.FAILURE:
                 //return type == ArchiveType.ACTIVITY ? "存档失败" : "审核失败";
                 //return "未通过审核";
-            default:
+            //default:
                 //return type == ArchiveType.ACTIVITY ? "" : "未通过审核";
-                return "未知(" + String.valueOf(status) + ")";
-        }
+                return "未知";
+        //}
     }
 
     private void getLocalAttachments() {
@@ -353,17 +353,6 @@ public class Archive extends Additional {
      */
     public boolean isAttachmentArchive() {
         return image.size() > 0 || video.size() > 0 || office.size() > 0 || attach.size() > 0;
-    }
-
-    //状态:1.正式,2.草稿
-    @Column(Activity.Field.Status)
-    private int status;
-
-    /**
-     * 档案是否是草稿
-     */
-    public boolean isDraft() {
-        return status == DraftType.DRAFT;
     }
 
     // 档案基本信息 **********************************************************************************
@@ -798,14 +787,6 @@ public class Archive extends Additional {
 
     public void setAuthPublic(int authPublic) {
         this.authPublic = authPublic;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public String getSource() {

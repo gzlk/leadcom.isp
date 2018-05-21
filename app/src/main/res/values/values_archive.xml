@@ -14,6 +14,7 @@
     <string name="ui_text_archive_creator_editor_create_draft_more" formatted="false">
         <![CDATA[您还有几个未提交的档案草稿。<br/>要去看看吗？]]>
     </string>
+    <string name="ui_text_archive_creator_editor_create_draft_not_exists">您要编辑的文档不存在</string>
     <string name="ui_text_archive_creator_editor_create_both">这个档案将会分别存为个人档案和组织档案，确定要这样保存吗？</string>
     <string name="ui_text_archive_creator_editor_create_draft_right_button_text">继续编辑</string>
     <string name="ui_text_archive_creator_editor_create_draft_to_details">先看看评论</string>
