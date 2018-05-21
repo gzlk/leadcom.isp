@@ -25,6 +25,7 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -54,6 +55,7 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Label;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.archive.Dictionary;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
@@ -318,12 +320,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void fetchingSingleDraft() {
-        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+        ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
             @Override
-            public void onResponse(Archive archive, boolean success, String message) {
+            public void onResponse(ArchiveQuery archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
-                if (success && null != archive && !isEmpty(archive.getId())) {
-                    mArchive = archive;
+                if (success && null != archive) {
+                    mArchive = archive.getDocDraft();
                     isGroupArchive = !isEmpty(mArchive.getGroupId());
                     isUserArchive = !isGroupArchive;
                     titleView.setValue(mArchive.getTitle());
@@ -334,7 +336,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     finish();
                 }
             }
-        }).find(Archive.Type.GROUP, mQueryId);
+        }).find(Archive.Type.DRAFT, mQueryId);
     }
 
     private void fetchingDraft() {
@@ -433,6 +435,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }
+        // 档案模板设置为图文或附件
+        mArchive.setDocType(editorType == TYPE_MULTIMEDIA ? Archive.ArchiveType.MULTIMEDIA : Archive.ArchiveType.ATTACHMENT);
         if (isGroupArchive) {
             //mArchive.setType(Archive.Type.GROUP);
             if (isEmpty(mArchive.getGroupId())) {

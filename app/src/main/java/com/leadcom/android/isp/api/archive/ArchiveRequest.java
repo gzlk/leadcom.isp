@@ -2,9 +2,11 @@ package com.leadcom.android.isp.api.archive;
 
 import android.support.annotation.NonNull;
 
+import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
@@ -12,7 +14,6 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -49,11 +50,15 @@ public class ArchiveRequest extends Request<Archive> {
     private static class ListArchive extends PageQuery<Archive> {
     }
 
+    private static class BoolArchive extends BoolQuery<Archive> {
+    }
+
 //    private static class SpecialArchive extends Special<Archive> {
 //    }
 
     private static final String USER = "/user/userDoc";
     private static final String GROUP = "/group/groDoc";
+    private static final String DRAFT = "/docDraft";
 
     @Override
     protected String url(String action) {
@@ -67,6 +72,10 @@ public class ArchiveRequest extends Request<Archive> {
 
     private String group(String action) {
         return format("%s%s", GROUP, action);
+    }
+
+    private String draft(String action) {
+        return format("%s%s", DRAFT, action);
     }
 
     public String url(int type, String action) {
@@ -291,14 +300,13 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void push(ArrayList<String> groupIdList, String groupDocId) {
         if (null == groupIdList || groupIdList.size() < 1) {
-            ToastHelper.make().showMsg("无效的推送：被推送的组织为空");
+            ToastHelper.make().showMsg(R.string.ui_text_archive_details_push_no_group);
         } else {
             String json = Json.gson().toJson(groupIdList);
             String params = format("%s?groDocId=%s&groupIdList=%s", group(PUSH), groupDocId, json);
             httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
         }
     }
-
 
     /**
      * 添加组织档案草稿
@@ -308,10 +316,8 @@ public class ArchiveRequest extends Request<Archive> {
         try {
             object.put("title", archive.getTitle())// 必要字段
                     .put("cover", checkNull(archive.getCover()))
-                    //.put("type", archive.getType())// 必要字段
                     .put("authPublic", archive.getAuthPublic())// 必要字段
                     .put("content", archive.getContent())
-                    //.put("markdown", archive.getMarkdown())
                     .put("label", new JSONArray(archive.getLabel()))
                     .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
@@ -326,18 +332,19 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("category", checkNull(archive.getCategory()))
                     .put("participant", checkNull(archive.getParticipant()))
                     .put("happenDate", archive.getHappenDate());
-            //if (archive.getAuthPublic() == Seclusion.Type.Group) {
-            //object.put("authGro", new JSONArray(archive.getAuthGro()));
-            //} else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
-            //object.put("authUser", new JSONArray(archive.getAuthUser()));
-            //}
             if (!isEmpty(archive.getId())) {
                 object.put("_id", archive.getId());
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleArchive.class, format("%s/draft", group(ADD)), object.toString(), HttpMethods.Post));
+        if (isEmpty(archive.getId())) {
+            // 没有id是新建草稿
+            httpRequest(getRequest(SingleArchive.class, draft(ADD), object.toString(), HttpMethods.Post));
+        } else {
+            // 有id是更新草稿
+            httpRequest(getRequest(SingleArchive.class, draft(UPDATE), object.toString(), HttpMethods.Post));
+        }
     }
 
     /**
@@ -383,12 +390,35 @@ public class ArchiveRequest extends Request<Archive> {
         httpRequest(getRequest(SingleArchive.class, format("%s/formal", group(ADD)), object.toString(), HttpMethods.Post));
     }
 
+    public void findDraft(String draftId) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("docId", draftId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(BoolArchive.class, draft(FIND), object.toString(), HttpMethods.Post));
+    }
+
     /**
      * 查询组织档案列表，此列表不保存到本地缓存
      */
     public void listDraft(int pageNumber) {
-        String params = format("%s/draft?pageNumber=%d&pageSize=99", group(LIST), pageNumber);
-        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
+        String params = format("%s?pageNumber=%d&pageSize=99", draft(SELECT), pageNumber);
+        httpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
+    }
+
+    /**
+     * 删除草稿
+     */
+    public void deleteDraft(String draftId) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("docId", draftId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(BoolArchive.class, draft(DELETE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -396,11 +426,16 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void shareDraft(String archiveId, ArrayList<String> userIds) {
         if (null == userIds || userIds.size() <= 0) {
-            ToastHelper.make().showMsg("无法分享草稿：未指定成员");
+            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_no_member);
         } else {
-            String json = Json.gson().toJson(userIds);
-            String params = format("%s?groDocId=%s&userIdList=%s", group(SHARE), archiveId, json);
-            httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+            JSONObject object = new JSONObject();
+            try {
+                object.put("docId", archiveId);
+                object.put("shareUserIds", new JSONArray(userIds));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            httpRequest(getRequest(SingleArchive.class, draft(SHARE), object.toString(), HttpMethods.Post));
         }
     }
 }

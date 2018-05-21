@@ -33,6 +33,7 @@ public class ArchiveQueryRequest extends Request<ArchiveQuery> {
 
     private static final String USER = "/user/userDoc";
     private static final String GROUP = "/group/groDoc";
+    private static final String DRAFT = "/docDraft";
 
     @Override
     protected String url(String action) {
@@ -43,8 +44,21 @@ public class ArchiveQueryRequest extends Request<ArchiveQuery> {
         return format("%s%s", GROUP, action);
     }
 
+    private String draft(String action) {
+        return format("%s%s", DRAFT, action);
+    }
+
     private String url(int type, String action) {
-        return type == Archive.Type.USER ? url(action) : group(action);
+        switch (type) {
+            case Archive.Type.USER:
+                return url(action);
+            case Archive.Type.GROUP:
+                return group(action);
+            case Archive.Type.DRAFT:
+                return draft(action);
+            default:
+                return "";
+        }
     }
 
     @Override

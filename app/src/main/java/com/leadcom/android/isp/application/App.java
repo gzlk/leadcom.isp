@@ -16,8 +16,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.user.User;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.auth.AuthService;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -231,7 +229,7 @@ public class App extends NimApplication {
         // 清空当前登录的用户信息
         Cache.cache().clear();
         // 同时退出网易云
-        NIMClient.getService(AuthService.class).logout();
+        //NIMClient.getService(AuthService.class).logout();
         super.logout();
     }
 

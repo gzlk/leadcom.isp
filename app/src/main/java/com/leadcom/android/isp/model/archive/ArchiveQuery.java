@@ -14,9 +14,9 @@ import java.util.ArrayList;
  */
 public class ArchiveQuery {
 
-    private Archive groDoc, userDoc;
+    private Archive groDoc, userDoc, docDraft;
     private ArrayList<ArchiveLike> groDocLikeList, userDocLike;
-    private ArrayList<Comment> groDocCmtList, userDocComment;
+    private ArrayList<Comment> groDocCmtList, userDocComment, docDraftCmtList;
     private ArchiveInfo additionResult;
 
     public Archive getGroDoc() {
@@ -33,6 +33,14 @@ public class ArchiveQuery {
 
     public void setUserDoc(Archive userDoc) {
         this.userDoc = userDoc;
+    }
+
+    public Archive getDocDraft() {
+        return docDraft;
+    }
+
+    public void setDocDraft(Archive docDraft) {
+        this.docDraft = docDraft;
     }
 
     public ArrayList<ArchiveLike> getGroDocLikeList() {
@@ -65,6 +73,14 @@ public class ArchiveQuery {
 
     public void setUserDocComment(ArrayList<Comment> userDocComment) {
         this.userDocComment = userDocComment;
+    }
+
+    public ArrayList<Comment> getDocDraftCmtList() {
+        return docDraftCmtList;
+    }
+
+    public void setDocDraftCmtList(ArrayList<Comment> docDraftCmtList) {
+        this.docDraftCmtList = docDraftCmtList;
     }
 
     public ArchiveInfo getAdditionResult() {

@@ -161,6 +161,10 @@ public class Archive extends Additional {
          * 组织、活动
          */
         int GROUP = 1;
+        /**
+         * 自定义的草稿
+         */
+        int DRAFT = 3;
     }
 
     /**
@@ -168,21 +172,17 @@ public class Archive extends Additional {
      */
     public interface ArchiveType {
         /**
-         * 普通档案（个人档案、组织档案通用）
+         * 图文
          */
-        int NORMAL = 1;
+        int MULTIMEDIA = 1;
         /**
-         * 组织档案（个人档案有效）
+         * 附件档案
          */
-        int GROUP = 2;
+        int ATTACHMENT = 2;
         /**
-         * 个人档案（组织档案有效）
+         * 模板档案
          */
-        int INDIVIDUAL = 2;
-        /**
-         * 活动档案（组织档案有效）
-         */
-        int ACTIVITY = 3;
+        int TEMPLATE = 3;
     }
 
     /**

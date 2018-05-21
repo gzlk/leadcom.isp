@@ -17,6 +17,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnHttpListener;
 import com.leadcom.android.isp.model.Dao;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.query.FullTextQuery;
 import com.litesuits.http.LiteHttp;
@@ -25,7 +26,9 @@ import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.JsonBody;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
+import com.netease.nim.uikit.common.util.sys.ReflectionUtil;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -72,6 +75,10 @@ public abstract class Request<T> {
      * 列表
      */
     protected static final String LIST = "/list";
+    /**
+     * 列表
+     */
+    protected static final String SELECT = "/select";
     /**
      * 搜索
      */
@@ -248,7 +255,7 @@ public abstract class Request<T> {
                     } else if (data instanceof StringQuery) {
                         StringQuery<T> stringQuery = (StringQuery<T>) data;
                         if (null != onSingleRequestListener) {
-                            onSingleRequestListener.onResponse(null, stringQuery.success(), "");
+                            onSingleRequestListener.onResponse(newInstance(stringQuery.getData()), stringQuery.success(), data.getMsg());
                         }
                     }
                 } else {
@@ -260,6 +267,20 @@ public abstract class Request<T> {
                         LoginActivity.start(App.app());
                     }
                 }
+            }
+
+            @SuppressWarnings("unchecked")
+            private T newInstance(String data) {
+                T obj;
+                try {
+                    obj = getType().newInstance();
+                    if (null != obj) {
+                        ReflectionUtil.invokeMethod(obj, "setId", new Object[]{data});
+                    }
+                } catch (Exception e) {
+                    obj = null;
+                }
+                return obj;
             }
 
             @Override

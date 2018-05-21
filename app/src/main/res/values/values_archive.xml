@@ -118,6 +118,7 @@
     <string name="ui_text_archive_details_unliking">取消赞&#8230;</string>
     <string name="ui_text_archive_details_collecting">收藏档案&#8230;</string>
     <string name="ui_text_archive_details_uncollecting">取消档案收藏&#8230;</string>
+    <string name="ui_text_archive_details_push_no_group">无效的推送：被推送的组织为空</string>
     <string name="ui_text_archive_details_recommend">推荐到首页，让更多的人看见</string>
     <string name="ui_text_archive_details_recommended">确定要撤掉本档案的推荐吗？</string>
 
@@ -134,6 +135,7 @@
     <string name="ui_text_archive_details_editor_setting_share_names" formatted="false">
         <![CDATA[分享草稿给 <font color="#3cbaff">%s</font>共%d人]]>
     </string>
+    <string name="ui_text_archive_details_editor_setting_share_no_member">无法分享草稿：未指定成员</string>
     <string name="ui_text_archive_details_editor_setting_share_draft">您的草稿已分享，去参与他们的讨论吧</string>
     <string name="ui_text_archive_details_editor_setting_commit_title">提交审核</string>
     <dimen name="ui_dimen_archive_details_editor_setting_item_vertical_padding">@dimen/ui_static_dp_8</dimen>

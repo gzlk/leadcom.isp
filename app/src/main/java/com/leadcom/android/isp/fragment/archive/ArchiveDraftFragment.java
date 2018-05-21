@@ -210,7 +210,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
                     mAdapter.remove(index);
                 }
             }
-        }).delete(Archive.Type.GROUP, mAdapter.get(index).getId());
+        }).deleteDraft(mAdapter.get(index).getId());
     }
 
     private class DraftAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
