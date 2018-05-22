@@ -453,7 +453,34 @@ public class GroupFragment extends BaseOrganizationFragment {
         if (isEmpty(dAdapter.get(0).getId()) || !isEmpty(mQueryId) || !dAdapter.get(0).getId().equals(group.getId())) {
             mQueryId = "";
             dAdapter.replace(group, 0);
-            fetchingQuantity(group.getId());
+            if (null == group.getCalculate()) {
+                fetchingQuantity(group.getId());
+            } else {
+                resetQuantity(group.getCalculate());
+            }
+        }
+    }
+
+    private void resetQuantity(Quantity quantity) {
+        for (int i = 1, len = dAdapter.getItemCount(); i < len; i++) {
+            SimpleClickableItem item = (SimpleClickableItem) dAdapter.get(i);
+            int index = item.getIndex();
+            switch (index) {
+                case 1:
+                    item.setSource(format(items[index - 1], quantity.getMemberNum()));
+                    break;
+                case 2:
+                    item.setSource(format(items[index - 1], quantity.getSquadNum()));
+                    break;
+                case 3:
+                    item.setSource(format(items[index - 1], quantity.getDocNum()));
+                    break;
+                case 4:
+                    item.setSource(format(items[index - 1], quantity.getConGroupNum()));
+                    break;
+            }
+            item.reset();
+            dAdapter.update(item);
         }
     }
 
@@ -463,26 +490,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             public void onResponse(Quantity quantity, boolean success, String message) {
                 super.onResponse(quantity, success, message);
                 if (success && null != quantity) {
-                    for (int i = 1, len = dAdapter.getItemCount(); i < len; i++) {
-                        SimpleClickableItem item = (SimpleClickableItem) dAdapter.get(i);
-                        int index = item.getIndex();
-                        switch (index) {
-                            case 1:
-                                item.setSource(format(items[index - 1], quantity.getMemberNum()));
-                                break;
-                            case 2:
-                                item.setSource(format(items[index - 1], quantity.getSquadNum()));
-                                break;
-                            case 3:
-                                item.setSource(format(items[index - 1], quantity.getDocNum()));
-                                break;
-                            case 4:
-                                item.setSource(format(items[index - 1], quantity.getConGroupNum()));
-                                break;
-                        }
-                        item.reset();
-                        dAdapter.update(item);
-                    }
+                    resetQuantity(quantity);
                 }
             }
         }).findGroup(groupId);

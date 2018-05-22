@@ -6,6 +6,7 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.common.Quantity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -137,6 +138,8 @@ public class User extends Model {
     //自定义介绍
     @Ignore
     private ArrayList<UserExtra> extra;
+    @Ignore
+    private Quantity calculate;
 
     public String getName() {
         if (isEmpty(name)) {
@@ -318,5 +321,13 @@ public class User extends Model {
 
     public void setExtra(ArrayList<UserExtra> extra) {
         this.extra = extra;
+    }
+
+    public Quantity getCalculate() {
+        return calculate;
+    }
+
+    public void setCalculate(Quantity calculate) {
+        this.calculate = calculate;
     }
 }

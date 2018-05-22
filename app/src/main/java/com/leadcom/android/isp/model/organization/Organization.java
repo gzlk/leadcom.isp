@@ -4,6 +4,7 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.activity.vote.AppVote;
+import com.leadcom.android.isp.model.common.Quantity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -109,6 +110,8 @@ public class Organization extends Model {
     private ArrayList<Concern> conGroup; // 关注的组织列表
     @Ignore
     private ArrayList<Member> groMemberList;//组织成员列表
+    @Ignore
+    private Quantity calculate;
 
     public String getName() {
         return name;
@@ -271,5 +274,13 @@ public class Organization extends Model {
 
     public void setGroMemberList(ArrayList<Member> groMemberList) {
         this.groMemberList = groMemberList;
+    }
+
+    public Quantity getCalculate() {
+        return calculate;
+    }
+
+    public void setCalculate(Quantity calculate) {
+        this.calculate = calculate;
     }
 }

@@ -213,6 +213,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                         Cache.cache().saveCurrentUser();
                     }
                     resetExtras(user);
+                    if (null != user.getCalculate()) {
+                        resetQuantity(user.getCalculate());
+                    }
                 }
             }
         }).find(isSelf ? Cache.cache().userId : mQueryId, true);
@@ -434,7 +437,35 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.add(item);
             }
         }
-        fetchingQuantity();
+        if (isSelf) {
+            fetchingQuantity();
+        } else {
+            fetchingRemoteUserInfo();
+        }
+    }
+
+    private void resetQuantity(Quantity quantity) {
+        for (int i = 0; i < 4; i++) {
+            String text = "";
+            switch (i) {
+                case 0:
+                    text = format(items[0], quantity.getUserNum());
+                    break;
+                case 1:
+                    text = format(items[1], quantity.getDocNum());
+                    break;
+                case 2:
+                    text = format(items[2], quantity.getMmtNum());
+                    break;
+                case 3:
+                    text = format(items[3], quantity.getColNum());
+                    break;
+            }
+            if (!isEmpty(text)) {
+                SimpleClickableItem item = new SimpleClickableItem(text);
+                mAdapter.update(item);
+            }
+        }
     }
 
     private void fetchingQuantity() {
@@ -443,27 +474,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(Quantity quantity, boolean success, String message) {
                 super.onResponse(quantity, success, message);
                 if (success && null != quantity) {
-                    for (int i = 0; i < 4; i++) {
-                        String text = "";
-                        switch (i) {
-                            case 0:
-                                text = format(items[0], quantity.getUserNum());
-                                break;
-                            case 1:
-                                text = format(items[1], quantity.getDocNum());
-                                break;
-                            case 2:
-                                text = format(items[2], quantity.getMmtNum());
-                                break;
-                            case 3:
-                                text = format(items[3], quantity.getColNum());
-                                break;
-                        }
-                        if (!isEmpty(text)) {
-                            SimpleClickableItem item = new SimpleClickableItem(text);
-                            mAdapter.update(item);
-                        }
-                    }
+                    resetQuantity(quantity);
                 }
                 fetchingRemoteUserInfo();
             }
@@ -477,8 +488,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.setAdapter(mAdapter);
             if (isSelf) {
                 mRecyclerView.addOnScrollListener(scrollListener);
-            }
-            if (isSelf) {
                 mAdapter.add(Cache.cache().me);
             }
             initializeItems();
