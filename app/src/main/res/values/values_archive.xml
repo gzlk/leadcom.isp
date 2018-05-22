@@ -3,9 +3,9 @@
 
     <dimen name="ui_archive_creator_selector_icon_size">@dimen/ui_static_dp_60</dimen>
     <string name="ui_archive_creator_selector_text_title">任选一种新建档案，您说了算</string>
-    <string name="ui_archive_creator_selector_text_normal">标准</string>
-    <string name="ui_archive_creator_selector_text_image">图文</string>
-    <string name="ui_archive_creator_selector_text_attachment">附件</string>
+    <string name="ui_archive_creator_selector_text_template">活动档案</string>
+    <string name="ui_archive_creator_selector_text_image">提案报道</string>
+    <string name="ui_archive_creator_selector_text_attachment">上传文件</string>
     <string name="ui_archive_creator_selector_text_moment">动态</string>
 
     <string name="ui_text_archive_creator_editor_create_draft_1">
@@ -79,12 +79,19 @@
     <string name="ui_text_archive_creator_editor_title_empty"><![CDATA[<font color="#dbdcdc">请输入档案题名</font>]]></string>
     <string name="ui_text_archive_creator_editor_content_invalid">档案内容不能为空</string>
 
+    <string-array name="ui_text_archive_creator_editor_template_values">
+        <item>0|时间：|%s|2</item>
+        <item>地点：|%s|档案发生地点(必填)|||0</item>
+        <item>参与者：|%s||||200</item>
+    </string-array>
+
     <string name="ui_text_archive_list_fragment_title">个人档案</string>
 
     <string name="ui_text_archive_details_fragment_title">档案详细内容</string>
     <string name="ui_text_archive_details_title_empty">未提供标题</string>
     <string name="ui_text_archive_details_loading">正在加载档案请稍候&#8230;</string>
     <string name="ui_text_archive_details_delete">您确定要删除本档案吗？</string>
+    <string name="ui_text_archive_details_invalid_archive">无效的档案</string>
     <string name="ui_text_archive_details_comment_hint">写下你的评论</string>
     <string name="ui_text_archive_details_comment_hint_to" formatted="false">回复%s：</string>
     <string name="ui_text_archive_details_comment_title" formatted="false">评论 %s</string>

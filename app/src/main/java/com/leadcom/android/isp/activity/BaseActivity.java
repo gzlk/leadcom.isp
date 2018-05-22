@@ -386,9 +386,9 @@ public class BaseActivity extends AppCompatActivity {
         intent.putExtra(ContainerActivity.EXTRA_BUNDLE, b);
         if (context instanceof Activity) {
             ((Activity) context).startActivityForResult(intent, requestCode);
-        } else if (context instanceof Service) {
+        } else {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ((Service) context).startActivity(intent);
+            context.startActivity(intent);
         }
     }
 }

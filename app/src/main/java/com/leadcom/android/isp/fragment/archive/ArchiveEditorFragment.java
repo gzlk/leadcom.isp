@@ -16,6 +16,9 @@ import com.github.angads25.filepicker.controller.DialogSelectionListener;
 import com.github.angads25.filepicker.model.DialogConfigs;
 import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
@@ -34,10 +37,10 @@ import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.common.CoverPickFragment;
 import com.leadcom.android.isp.fragment.activity.LabelPickFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
+import com.leadcom.android.isp.fragment.common.CoverPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.GroupsContactPickerFragment;
@@ -47,7 +50,12 @@ import com.leadcom.android.isp.helper.popup.DateTimeHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.DictionaryHelper;
+import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
+import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
+import com.leadcom.android.isp.holder.common.SimpleInputableViewHolder;
+import com.leadcom.android.isp.holder.individual.ImageViewHolder;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
@@ -86,6 +94,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     public static final String MULTIMEDIA = "multimedia";
     public static final String ATTACHABLE = "attachable";
+    /**
+     * 模板档案
+     */
+    public static final String TEMPLATE = "template";
     public static final String MOMENT = "moment";
     private static final String PARAM_UPLOAD_TYPE = "aecf_upload_type";
     private static final String PARAM_EDITOR_TYPE = "aecf_archive_editor_type";
@@ -104,6 +116,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
      * 附件方式
      */
     private static final int TYPE_ATTACHMENT = 2;
+    /**
+     * 模板档案
+     */
+    private static final int TYPE_TEMPLATE = 3;
     private static boolean editorFocused = false;
 
     public static ArchiveEditorFragment newInstance(Bundle bundle) {
@@ -112,12 +128,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         return aecf;
     }
 
+    private static int getType(String type) {
+        switch (type) {
+            case ATTACHABLE:
+                return TYPE_ATTACHMENT;
+            case MULTIMEDIA:
+                return TYPE_MULTIMEDIA;
+            default:
+                return TYPE_TEMPLATE;
+        }
+    }
+
     private static Bundle getBundle(String remoteDraftId, String attachType) {
         Bundle bundle = new Bundle();
         // 传过来的档案id（草稿档案），需要从服务器上拉取草稿内容再编辑
         bundle.putString(PARAM_QUERY_ID, remoteDraftId);
         // 编辑器方式（附件方式、图文方式）
-        bundle.putInt(PARAM_EDITOR_TYPE, attachType.equals(ATTACHABLE) ? TYPE_ATTACHMENT : TYPE_MULTIMEDIA);
+        bundle.putInt(PARAM_EDITOR_TYPE, getType(attachType));
         return bundle;
     }
 
@@ -235,6 +262,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View multimediaView;
     @ViewId(R.id.ui_archive_creator_rich_editor_attachment)
     private View attachmentView;
+    @ViewId(R.id.ui_archive_creator_rich_editor_template)
+    private View templateView;
     @ViewId(R.id.ui_tool_swipe_refreshable_recycler_view)
     private RecyclerView attachmentRecyclerView;
     // 创建成功的档案信息
@@ -311,6 +340,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         attachmentView.setVisibility(editorType == TYPE_ATTACHMENT ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
+        templateView.setVisibility(editorType == TYPE_TEMPLATE ? View.VISIBLE : View.GONE);
 
         attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
         aAdapter = new AttachmentAdapter();
@@ -407,6 +437,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 openSettingDialog();
             }
         });
+        if (editorType == TYPE_TEMPLATE) {
+            initializeTemplate();
+        }
         //resetRightIcons();
     }
 
@@ -549,7 +582,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         super.onStop();
     }
-
 
     private void saveDraft() {
         mArchive.setTitle(titleView.getValue());
@@ -701,7 +733,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
 
                 if (isEmpty(mArchive.getGroupId())) {
-                    // 如果用户只要一个组织则直接填入组织id和名字
+                    // 如果用户只有一个组织则直接填入组织id和名字
                     if (isGroupArchive && Cache.cache().getGroups().size() == 1) {
                         mArchive.setGroupId(Cache.cache().getGroups().get(0).getGroupId());
                         resetGroupInfo(mArchive.getGroupId());
@@ -723,6 +755,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 Organization group = Organization.get(groupId);
                 if (null != group) {
                     groupNameText.setText(Html.fromHtml(group.getName()));
+                    mArchive.setGroupName(group.getName());
                 } else {
                     fetchingGroup(mArchive.getGroupId());
                 }
@@ -735,6 +768,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         super.onResponse(organization, success, message);
                         if (success && null != organization) {
                             groupNameText.setText(Html.fromHtml(organization.getName()));
+                            mArchive.setGroupName(organization.getName());
                         }
                     }
                 }).find(groupId);
@@ -1034,10 +1068,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
-            if (null != selected && selected.size() > 0) {
-                imageUrl.setValue(selected.get(0));
+            if (editorType == TYPE_TEMPLATE) {
+                resetImages(selected);
             } else {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_image_selected_nothing);
+                if (null != selected && selected.size() > 0) {
+                    imageUrl.setValue(selected.get(0));
+                } else {
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_image_selected_nothing);
+                }
             }
         }
     };
@@ -1366,7 +1404,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
                     finish();
-                    ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive.getId(), Archive.Type.GROUP);
+                    ArchiveDetailsWebViewFragment.openDraft(ArchiveEditorFragment.this, mArchive.getId(), Archive.Type.DRAFT);
                 }
             }
         }).shareDraft(mArchive.getId(), userIds);
@@ -1770,6 +1808,142 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             case R.id.ui_archive_creator_action_heading6:
                 mEditor.setHeading(6);
                 break;
+        }
+    }
+
+    // 模板档案UI元素
+    @ViewId(R.id.ui_archive_creator_rich_editor_time)
+    private View timeView;
+    @ViewId(R.id.ui_archive_creator_rich_editor_address)
+    private View addressView;
+    @ViewId(R.id.ui_archive_creator_rich_editor_participant)
+    private View participantView;
+    @ViewId(R.id.ui_archive_creator_rich_editor_author)
+    private View authorView;
+    @ViewId(R.id.ui_holder_view_simple_inputable_topic)
+    private ClearEditText topicContent;
+    @ViewId(R.id.ui_holder_view_simple_inputable_minute)
+    private ClearEditText minuteContent;
+    @ViewId(R.id.ui_archive_creator_rich_editor_template_images)
+    private RecyclerView templateRecyclerView;
+    private SimpleClickableViewHolder timeHolder;
+    private SimpleInputableViewHolder addressHolder, participantHolder, authorHolder;
+
+    private ImageAdapter imageAdapter;
+    private String[] templateItems;
+
+    private void initializeTemplate() {
+        if (null == templateItems) {
+            templateItems = StringHelper.getStringArray(R.array.ui_text_archive_creator_editor_template_values);
+        }
+        if (null == imageAdapter) {
+            // 模板档案的图片
+            //templateRecyclerView.setLayoutManager(new FlexboxLayoutManager(templateRecyclerView.getContext(), FlexDirection.ROW, FlexWrap.WRAP));
+            //imageAdapter = new ImageAdapter();
+            //templateRecyclerView.setAdapter(imageAdapter);
+            //resetImages(waitingFroCompressImages);
+        }
+        if (null == timeHolder) {
+            timeHolder = new SimpleClickableViewHolder(timeView, this);
+            timeHolder.showContent(format(templateItems[0], ""));
+        }
+        if (null == addressHolder) {
+            addressHolder = new SimpleInputableViewHolder(addressView, this);
+            addressHolder.showContent(format(templateItems[1], ""));
+        }
+    }
+
+    private void resetImages(ArrayList<String> images) {
+        imageAdapter.clear();
+        for (String string : images) {
+            Model model = new Model();
+            model.setId(string);
+            imageAdapter.add(model);
+        }
+        appendAttacher();
+    }
+
+    private Model appender;
+
+    private Model appender() {
+        if (null == appender) {
+            appender = new Model();
+            appender.setId("+");
+        }
+        return appender;
+    }
+
+    private void appendAttacher() {
+        if (imageAdapter.getItemCount() < getMaxSelectable()) {
+            imageAdapter.add(appender());
+        }
+    }
+
+    // 需要增加照片
+    private OnViewHolderClickListener imagePickClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            // 需要重新再选择图片
+            startGalleryForResult();
+        }
+    };
+
+    private class ImageAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+        private static final int VT_IMAGE = 0, VT_ATTACH = 1;
+
+        private int width, height;
+
+        private void gotSize() {
+            if (width == 0) {
+                int _width = getScreenWidth();
+                int padding = getDimension(R.dimen.ui_base_dimen_margin_padding) * 5;
+                int size = (_width - padding) / 4;
+                width = size;
+                height = size;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (get(position).getId().equals("+")) {
+                return VT_ATTACH;
+            } else {
+                return VT_IMAGE;
+            }
+        }
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            gotSize();
+            if (viewType == VT_IMAGE) {
+                ImageViewHolder holder = new ImageViewHolder(itemView, ArchiveEditorFragment.this);
+                //holder.addOnDeleteClickListener(imageDeleteClickListener);
+                //holder.addOnImageClickListener(imagePreviewClickListener);
+                // 这里是要尝试删除选择的文件
+                //holder.addOnHandlerBoundDataListener(handlerBoundDataListener);
+                holder.setImageSize(width, height);
+                return holder;
+            } else {
+                return new AttacherItemViewHolder(itemView, ArchiveEditorFragment.this)
+                        .setSize(width, height).setOnViewHolderClickListener(imagePickClickListener);
+            }
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return viewType == VT_IMAGE ? R.layout.holder_view_image : R.layout.holder_view_attach_item;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof ImageViewHolder) {
+                ((ImageViewHolder) holder).showContent(item.getId());
+            }
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return 0;
         }
     }
 }

@@ -6,7 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.leadcom.android.isp.activity.WelcomeActivity;
+import com.leadcom.android.isp.etc.SysInfoUtil;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.LogHelper;
+import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.common.PushMessage;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -28,12 +32,56 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
         LogHelper.log(TAG, string);
     }
 
+    private void displayBundle(Bundle bundle) {
+        if (bundle == null) {
+            return;
+        }
+        String string = "Bundle{";
+        for (String key : bundle.keySet()) {
+            string += " " + key + " => " + bundle.get(key) + ";";
+        }
+        string += " } Bundle";
+        log(string);
+    }
+
+    private void parseBundle(Bundle bundle) {
+        if (null == bundle) return;
+        PushMessage push = PushMessage.fromJson(bundle.getString(JPushInterface.EXTRA_EXTRA, "{}"));
+        if (null != push) {
+            push.setId(bundle.getString(JPushInterface.EXTRA_MSG_ID, ""));
+            push.setTitle(bundle.getString(JPushInterface.EXTRA_NOTIFICATION_TITLE, ""));
+            push.setContent(bundle.getString(JPushInterface.EXTRA_ALERT, ""));
+            PushMessage.save(push);
+        }
+    }
+
+    private void switchUI(Context context, Bundle bundle) {
+        if (null == bundle) return;
+        PushMessage push = PushMessage.fromJson(bundle.getString(JPushInterface.EXTRA_EXTRA, "{}"));
+        assert push != null;
+        switch (push.getMessageCode()) {
+            case PushMessage.MsgCode.GROUP_ATTENTION:
+                break;
+            case PushMessage.MsgCode.GROUP_DOC_COMMENT:
+            case PushMessage.MsgCode.GROUP_DOC_TRANSPORT:
+                ArchiveDetailsWebViewFragment.open(context, push.getDocId(), Archive.Type.GROUP, false);
+                break;
+            case PushMessage.MsgCode.GROUP_DOC_SHARE:
+                ArchiveDetailsWebViewFragment.openDraft(context, push.getDocId(), Archive.Type.DRAFT, false);
+                break;
+            case PushMessage.MsgCode.USER_DOC_COMMENT:
+                ArchiveDetailsWebViewFragment.open(context, push.getDocId(), Archive.Type.USER, false);
+                break;
+        }
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (null != intent) {
             String action = intent.getAction();
             Bundle bundle = intent.getExtras();
             log("onReceive: " + action);
+            displayBundle(bundle);
             assert bundle != null;
             if (JPushInterface.ACTION_REGISTRATION_ID.equals(action)) {
                 String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
@@ -43,13 +91,15 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
                 // 自定义消息不会展示在通知栏，完全要开发者写代码去处理
             } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(action)) {
                 log("收到了通知");
+                parseBundle(bundle);
                 // 在这里可以做些统计，或者做些其他工作
             } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(action)) {
                 log("用户点击打开了通知");
+                switchUI(context, bundle);
                 // 在这里可以自己写代码去定义用户点击后的行为
-                Intent i = new Intent(context, WelcomeActivity.class);  //自定义打开的界面
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
+                //Intent i = new Intent(context, WelcomeActivity.class);  //自定义打开的界面
+                //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //context.startActivity(i);
             } else {
                 log("Unhandled intent - " + action);
             }

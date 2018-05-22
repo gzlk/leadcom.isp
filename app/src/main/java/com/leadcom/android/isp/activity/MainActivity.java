@@ -791,7 +791,11 @@ public class MainActivity extends TitleActivity {
                         default:
                             saveMessage(msg, true, true);
                             if (msg.isArchiveMsg()) {
-                                ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP);
+                                if (msg.getMsgType() == Message.Type.ARCHIVE_SHARE_DRAFT) {
+                                    ArchiveDetailsWebViewFragment.openDraft(activity, msg.getDocId(), Archive.Type.DRAFT, true);
+                                } else {
+                                    ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP, true);
+                                }
                             }
                             break;
                     }

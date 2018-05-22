@@ -197,8 +197,14 @@ public class ArchiveRequest extends Request<Archive> {
      * @param archiveId 档案id
      */
     public void delete(int type, @NonNull String archiveId) {
-        String params = format("%s=%s", getArchiveId(type), archiveId);
-        httpRequest(getRequest(SingleArchive.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Post));
+        // 调用网络数据
+        JSONObject object = new JSONObject();
+        try {
+            object.put("docId", archiveId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(BoolArchive.class, url(type, DELETE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -367,13 +373,15 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
                     .put("source", archive.getSource())
                     .put("fileIds", checkNull(archive.getFileIds()));
-            //if (archive.getAuthPublic() == Seclusion.Type.Group) {
-            //object.put("authGro", new JSONArray(archive.getAuthGro()));
-            //} else if (archive.getAuthPublic() == Seclusion.Type.Specify) {
-            //object.put("authUser", new JSONArray(archive.getAuthUser()));
-            //}
+            if (archive.getDocType() == Archive.ArchiveType.TEMPLATE) {
+                // 模板档案需要增加以下字段
+                object.put("topic", archive.getTopic())
+                        .put("resolution", archive.getResolution())
+                        .put("branch", archive.getBranch());
+            }
             if (!isIndividual) {
                 object.put("groupId", archive.getGroupId())// 必要字段
+                        .put("groupName", archive.getGroupName())
                         // 组织档案需要增加以下参数
                         .put("site", checkNull(archive.getSite()))
                         .put("property", checkNull(archive.getProperty()))
@@ -388,16 +396,6 @@ public class ArchiveRequest extends Request<Archive> {
             e.printStackTrace();
         }
         httpRequest(getRequest(SingleArchive.class, format("%s/formal", group(ADD)), object.toString(), HttpMethods.Post));
-    }
-
-    public void findDraft(String draftId) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("docId", draftId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        httpRequest(getRequest(BoolArchive.class, draft(FIND), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -435,7 +433,7 @@ public class ArchiveRequest extends Request<Archive> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            httpRequest(getRequest(SingleArchive.class, draft(SHARE), object.toString(), HttpMethods.Post));
+            httpRequest(getRequest(BoolArchive.class, draft(SHARE), object.toString(), HttpMethods.Post));
         }
     }
 }

@@ -6,21 +6,20 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:id="@+id/ui_archive_creator_selector_normal"
+        android:id="@+id/ui_archive_creator_selector_template"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/ui_static_dp_30"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="vertical">
 
         <com.hlk.hlklib.lib.view.CorneredView
             android:layout_width="@dimen/ui_archive_creator_selector_icon_size"
             android:layout_height="@dimen/ui_archive_creator_selector_icon_size"
             android:elevation="@dimen/ui_base_translationZ_small"
             android:gravity="center"
-            app:cv_background="@color/color_3eb135"
-            app:cv_background_active="@color/color_3eb135"
+            app:cv_background="@color/color_49beff"
+            app:cv_background_active="@color/color_49beff"
             app:cv_border_size="@dimen/ui_static_dp_zero"
             app:cv_corner_size="@dimen/ui_archive_creator_selector_icon_size">
 
@@ -38,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ui_static_dp_5"
-            android:text="@string/ui_archive_creator_selector_text_normal" />
+            android:text="@string/ui_archive_creator_selector_text_template" />
     </LinearLayout>
 
     <LinearLayout

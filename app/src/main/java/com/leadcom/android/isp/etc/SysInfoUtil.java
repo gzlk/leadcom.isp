@@ -26,14 +26,11 @@ public class SysInfoUtil {
     }
 
     public static final boolean isAppOnForeground(Context context) {
-        ActivityManager manager = (ActivityManager) context
-                .getApplicationContext().getSystemService(
-                        Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         String packageName = context.getApplicationContext().getPackageName();
-        List<ActivityManager.RunningAppProcessInfo> list = manager
-                .getRunningAppProcesses();
-        if (list == null)
-            return false;
+        assert manager != null;
+        List<ActivityManager.RunningAppProcessInfo> list = manager.getRunningAppProcesses();
+        if (list == null) return false;
         boolean ret = false;
         Iterator<ActivityManager.RunningAppProcessInfo> it = list.iterator();
         while (it.hasNext()) {
@@ -50,20 +47,18 @@ public class SysInfoUtil {
     public static final boolean isScreenOn(Context context) {
         PowerManager powerManager = (PowerManager) context
                 .getSystemService(Context.POWER_SERVICE);
+        assert powerManager != null;
         return powerManager.isScreenOn();
     }
 
     public static boolean stackResumed(Context context) {
-        ActivityManager manager = (ActivityManager) context
-                .getApplicationContext().getSystemService(
-                        Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         String packageName = context.getApplicationContext().getPackageName();
+        assert manager != null;
         List<RunningTaskInfo> recentTaskInfos = manager.getRunningTasks(1);
         if (recentTaskInfos != null && recentTaskInfos.size() > 0) {
             RunningTaskInfo taskInfo = recentTaskInfos.get(0);
-            if (taskInfo.baseActivity.getPackageName().equals(packageName) && taskInfo.numActivities > 1) {
-                return true;
-            }
+            return taskInfo.baseActivity.getPackageName().equals(packageName) && taskInfo.numActivities > 1;
         }
 
         return false;

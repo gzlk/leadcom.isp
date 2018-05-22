@@ -50,7 +50,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
     private FlexboxLayout labelsLayout;
 
     private int width, height, margin;
-    private boolean isManager = false;
+    private boolean isManager = false, isDraft = false;
 
     public ArchiveDetailsViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -88,6 +88,13 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         }
     }
 
+    public void setIsDraft(boolean isDraft) {
+        this.isDraft = isDraft;
+        if (isDraft) {
+            publicView.setVisibility(View.GONE);
+        }
+    }
+
     public void onFragmentDestroy() {
         contentView.destroy();
     }
@@ -118,7 +125,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         contentView.loadData(StringHelper.getString(R.string.ui_text_archive_details_content_html, content).replace("width: 100per", "width: 100%"), "text/html; charset=UTF-8", null);
         //bottomLine.setVisibility(archive.getCmtNum() > 0 ? View.VISIBLE : View.GONE);
         //if (archive.isDraft()) {
-            // 草稿不需要公开
+        // 草稿不需要公开
         //    publicView.setVisibility(View.GONE);
         //}
         if (archive.getAuthPublic() == 1) {

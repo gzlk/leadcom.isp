@@ -33,7 +33,7 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
     }
 
     public static void open(BaseFragment fragment, String groupId) {
-        fragment.openActivity(ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, false, false);
+        //fragment.openActivity(ArchiveCreateSelectorFragment.class.getName(), groupId, REQUEST_SELECT, false, false);
     }
 
     public static void open(Context context, String groupId) {
@@ -60,7 +60,7 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
     }
 
     @Click({R.id.ui_archive_creator_selector_cancel,
-            R.id.ui_archive_creator_selector_normal,
+            R.id.ui_archive_creator_selector_template,
             R.id.ui_archive_creator_selector_rich_text,
             R.id.ui_archive_creator_selector_attachment,
             R.id.ui_archive_creator_selector_moment})
@@ -70,7 +70,8 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
             case R.id.ui_archive_creator_selector_cancel:
                 finish();
                 break;
-            case R.id.ui_archive_creator_selector_normal:
+            case R.id.ui_archive_creator_selector_template:
+                resultData(ArchiveEditorFragment.TEMPLATE);
                 break;
             case R.id.ui_archive_creator_selector_rich_text:
                 resultData(ArchiveEditorFragment.MULTIMEDIA);

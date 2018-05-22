@@ -93,11 +93,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_CMT_INDEX = "adwvf_archive_cmt_index";
     private static final String PARAM_ARCHIVE = "adwvf_archive";
     private static final String PARAM_DRAFT = "adwvf_draft";
+    private static final String PARAM_INNER_OPEN = "adwvf_inner_open";
     private static boolean deletable = false;
-    /**
-     * 标记是否是app内部打开的详情页
-     */
-    private static boolean innerOpen = false;
     private static boolean isCollected = false;
 
     public static ArchiveDetailsWebViewFragment newInstance(Bundle bundle) {
@@ -106,12 +103,14 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         return adwvf;
     }
 
-    private static Bundle getBundle(String archiveId, int archiveType) {
+    private static Bundle getBundle(String archiveId, int archiveType, boolean innerOpen) {
         Bundle bundle = new Bundle();
         // 档案id
         bundle.putString(PARAM_QUERY_ID, archiveId);
         // 档案类型：组织档案或个人档案
         bundle.putInt(PARAM_DOC_TYPE, archiveType);
+        // 是否app内部打开的详情页
+        bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
         return bundle;
     }
 
@@ -127,35 +126,41 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
         int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-        Bundle bundle = getBundle(archive.getId(), type);
+        Bundle bundle = getBundle(archive.getId(), type, true);
         bundle.putSerializable(PARAM_ARCHIVE, archive);
         fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
 
     public static void open(BaseFragment fragment, String archiveId, int archiveType) {
-        innerOpen = true;
-        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), getBundle(archiveId, archiveType), REQUEST_DELETE, true, false);
+        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(),
+                getBundle(archiveId, archiveType, true), REQUEST_DELETE, true, false);
     }
 
-    public static void open(Context context, String archiveId, int archiveType) {
-        innerOpen = true;
-        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), getBundle(archiveId, archiveType), REQUEST_DELETE, true, false);
-    }
-
-    public static void openDraft(Context context, String archiveId, int archiveType) {
-        innerOpen = true;
-        Bundle bundle = getBundle(archiveId, archiveType);
+    public static void openDraft(BaseFragment fragment, String archiveId, int archiveType) {
+        Bundle bundle = getBundle(archiveId, archiveType, true);
         bundle.putBoolean(PARAM_DRAFT, true);
-        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), getBundle(archiveId, archiveType), REQUEST_DELETE, true, false);
+        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
+    }
+
+    public static void open(Context context, String archiveId, int archiveType, boolean innerOpen) {
+        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(),
+                getBundle(archiveId, archiveType, innerOpen), REQUEST_DELETE, true, false);
+    }
+
+    public static void openDraft(Context context, String archiveId, int archiveType, boolean innerOpen) {
+        Bundle bundle = getBundle(archiveId, archiveType, innerOpen);
+        bundle.putBoolean(PARAM_DRAFT, true);
+        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         archiveType = bundle.getInt(PARAM_DOC_TYPE, Archive.Type.GROUP);
-        //isDraft = archiveType >= 3;
+        isDraft = bundle.getBoolean(PARAM_DRAFT, false);
         selectedIndex = bundle.getInt(PARAM_CMT_INDEX, 0);
         mArchive = (Archive) bundle.getSerializable(PARAM_ARCHIVE);
+        innerOpen = bundle.getBoolean(PARAM_INNER_OPEN, false);
     }
 
     @Override
@@ -164,6 +169,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         bundle.putInt(PARAM_DOC_TYPE, archiveType);
         bundle.putInt(PARAM_CMT_INDEX, selectedIndex);
         bundle.putSerializable(PARAM_ARCHIVE, mArchive);
+        bundle.putBoolean(PARAM_DRAFT, isDraft);
+        bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
     }
 
     @Override
@@ -196,7 +203,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 MainActivity.start(Activity());
             }
         }
-        innerOpen = false;
         isCollected = false;
         super.onDestroy();
     }
@@ -230,6 +236,10 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private Model nothingMore;
     private int archiveType, selectedIndex;
     private boolean isDraft;
+    /**
+     * 标记是否是app内部打开的详情页
+     */
+    private boolean innerOpen;
     private DetailsAdapter mAdapter;
     private Archive mArchive;
     private ArchiveDetailsViewHolder detailsViewHolder;
@@ -408,47 +418,32 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         } else {
             setLoadingText(R.string.ui_text_archive_details_loading);
             displayLoading(true);
-            if (isDraft) {
-                loadingSharedArchive();
-            } else {
-                ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
-                    @Override
-                    public void onResponse(ArchiveQuery archiveQuery, boolean success, String message) {
-                        super.onResponse(archiveQuery, success, message);
-                        displayLoading(false);
-                        if (success && null != archiveQuery) {
-                            mAdapter.remove(nothingMore);
-                            ArchiveInfo info = archiveQuery.getAdditionResult();
-                            boolean isUser = null == archiveQuery.getGroDoc();
-                            Archive archive = isUser ? archiveQuery.getUserDoc() : archiveQuery.getGroDoc();
+            ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
+                @Override
+                public void onResponse(ArchiveQuery archiveQuery, boolean success, String message) {
+                    super.onResponse(archiveQuery, success, message);
+                    displayLoading(false);
+                    if (success && null != archiveQuery) {
+                        mAdapter.remove(nothingMore);
+                        ArchiveInfo info = archiveQuery.getAdditionResult();
+                        boolean isUser = null == archiveQuery.getGroDoc();
+                        Archive archive = isDraft ? archiveQuery.getDocDraft() : isUser ? archiveQuery.getUserDoc() : archiveQuery.getGroDoc();
+                        if (null == archive) {
+                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_invalid_archive);
+                            finish();
+                        } else {
                             archive.resetInfo(info);
                             archive.resetAdditional(archive.getAddition());
                             displayArchive(archive);
-                            onLoadingCommentComplete(true, isUser ? archiveQuery.getUserDocComment() : archiveQuery.getGroDocCmtList());
                         }
-                        stopRefreshing();
-                        isLoadingComplete(true);
+                        onLoadingCommentComplete(true, isUser ? archiveQuery.getUserDocComment() : archiveQuery.getGroDocCmtList());
                     }
-
-                }).find(archiveType, mQueryId);
-            }
-        }
-    }
-
-    private void loadingSharedArchive() {
-        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
-            @Override
-            public void onResponse(Archive archive, boolean success, String message) {
-                super.onResponse(archive, success, message);
-                displayLoading(false);
-                if (success && null != archive) {
-                    displayArchive(archive);
-                } else {
                     stopRefreshing();
                     isLoadingComplete(true);
                 }
-            }
-        }).findShare(mQueryId, archiveType + 1);
+
+            }).find(archiveType, mQueryId);
+        }
     }
 
     /**
@@ -459,7 +454,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private void displayArchive(Archive archive) {
-        isDraft = false;
         likeLayout.setVisibility(isDraft ? View.GONE : View.VISIBLE);
         collectLayout.setVisibility(isDraft ? View.GONE : View.VISIBLE);
         setCustomTitle(archive.getTitle());
@@ -500,11 +494,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         for (Attachment attachment : archive.getAttach()) {
             mAdapter.update(attachment);
         }
-        //if (!isDraft) {
-        // 草稿也可以有评论和赞什么的
-        displayAdditional(archive);
-        //loadingComments(archive);
-        //}
+        if (!isDraft) {
+            // 草稿也可以有评论和赞什么的
+            displayAdditional(archive);
+            //loadingComments(archive);
+        }
     }
 
     private void prepareShareDialogElement(Archive archive) {
@@ -527,7 +521,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private void displayAdditional(Archive archive) {
-
+        if (null == archive) return;
         archive.getAddition().setId(format("additional_%s", archive.getId()));
         if (archive.getAddition().isVisible()) {
             int index = mAdapter.indexOf(archive.getAddition());
@@ -1040,6 +1034,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                         detailsViewHolder.setOnViewHolderElementClickListener(elementClickListener);
                         detailsViewHolder.setIsManager(enableShareDelete);
                         detailsViewHolder.setIsCollected(isCollected);
+                        detailsViewHolder.setIsDraft(isDraft);
                     }
                     return detailsViewHolder;
                 case VT_COMMENT:

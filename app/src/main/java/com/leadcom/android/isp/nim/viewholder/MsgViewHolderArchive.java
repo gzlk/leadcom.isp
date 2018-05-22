@@ -7,6 +7,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 
@@ -39,6 +40,6 @@ public class MsgViewHolderArchive extends MsgViewHolderMoment {
 
     @Override
     protected void onItemClick() {
-        ArchiveDetailsWebViewFragment.openDraft(context, archive.getCustomId(), archive.getArchiveType() - 1);
+        ArchiveDetailsWebViewFragment.openDraft(context, archive.getCustomId(), Archive.Type.DRAFT, false);
     }
 }

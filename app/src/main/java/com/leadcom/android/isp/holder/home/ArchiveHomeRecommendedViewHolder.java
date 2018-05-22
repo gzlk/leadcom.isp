@@ -145,6 +145,11 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
             text = StringHelper.getString(R.string.ui_text_archive_details_title_empty);
         }
         titleView.setText(Html.fromHtml(text));
+        text = archive.getGroupName();
+        if (isEmpty(text)) {
+            text = "";
+        }
+        groupView.setText(StringHelper.getString(R.string.ui_text_home_archive_recommend_group_name, Html.fromHtml(text)));
         // 去掉所有html标签
         text = isEmpty(archive.getContent()) ? archive.getAbstrContent() : archive.getContent();
         contentView.setVisibility(isEmpty(text) ? View.GONE : View.VISIBLE);

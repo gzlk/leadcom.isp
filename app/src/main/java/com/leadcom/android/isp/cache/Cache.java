@@ -20,8 +20,6 @@ import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jpush.android.api.JPushInterface;
-
 /**
  * <b>功能描述：</b>全局缓存<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -111,9 +109,6 @@ public class Cache {
         accessToken = PreferenceHelper.get(get(R.string.pf_last_login_user_token, R.string.pf_last_login_user_token_beta));
         nimToken = PreferenceHelper.get(get(R.string.pf_last_login_user_nim_token, R.string.pf_last_login_user_nim_token_beta));
         restoreGroups();
-        if (!StringHelper.isEmpty(userId)) {
-            JPushInterface.setAlias(App.app(), 0, userId);
-        }
     }
 
     public void restoreGroups() {

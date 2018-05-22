@@ -197,6 +197,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     private void cacheUser(User user) {
         Cache.cache().setCurrentUser(user);
         Cache.cache().saveCurrentUser();
+        App.app().setJPushAlias();
     }
 
     private void signIn(String account, String password) {

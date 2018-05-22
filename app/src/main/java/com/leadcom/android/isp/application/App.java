@@ -204,6 +204,16 @@ public class App extends NimApplication {
                 Cache.cache().setCurrentUser(dao().query(Cache.cache().userId));
             }
         }
+        setJPushAlias();
+    }
+
+    /**
+     * 设置极光推送的别名
+     */
+    public void setJPushAlias() {
+        if (!isEmpty(Cache.cache().userId)) {
+            JPushInterface.setAlias(App.app(), 0, Cache.cache().userId);
+        }
     }
 
     private Dao<User> userDao;
