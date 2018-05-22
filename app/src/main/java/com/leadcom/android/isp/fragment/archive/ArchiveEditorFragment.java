@@ -4,9 +4,11 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
@@ -16,11 +18,10 @@ import com.github.angads25.filepicker.controller.DialogSelectionListener;
 import com.github.angads25.filepicker.model.DialogConfigs;
 import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
+import com.hlk.hlklib.layoutmanager.CustomStaggeredGridLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -259,6 +260,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     @ViewId(R.id.ui_archive_creator_rich_editor_uploader)
     private View updatingIndicator;
     @ViewId(R.id.ui_archive_creator_controls_layout)
+    private View multimediaControlView;
+    @ViewId(R.id.ui_archive_creator_rich_editor_multimedia)
     private View multimediaView;
     @ViewId(R.id.ui_archive_creator_rich_editor_attachment)
     private View attachmentView;
@@ -339,6 +342,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             fetchingSingleDraft();
         }
         attachmentView.setVisibility(editorType == TYPE_ATTACHMENT ? View.VISIBLE : View.GONE);
+        multimediaControlView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
         templateView.setVisibility(editorType == TYPE_TEMPLATE ? View.VISIBLE : View.GONE);
 
@@ -1722,6 +1726,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             case R.id.ui_archive_creator_action_image:
                 mImageIcon.setTextColor(getColor(R.color.colorAccent));
                 tryFocusEditor();
+                // 单张图片最大可以选取1张
+                maxSelectable = 1;
                 openImageDialog();
                 break;
             case R.id.ui_archive_creator_action_font:
@@ -1838,21 +1844,27 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (null == imageAdapter) {
             // 模板档案的图片
-            FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(templateRecyclerView.getContext());
-            layoutManager.setFlexDirection(FlexDirection.ROW);
-            layoutManager.setFlexWrap(FlexWrap.WRAP);
-            templateRecyclerView.setLayoutManager(layoutManager);
+            templateRecyclerView.setLayoutManager(new CustomGridLayoutManager(templateRecyclerView.getContext(), 4));
+            templateRecyclerView.addItemDecoration(new SpacesItemDecoration());
             imageAdapter = new ImageAdapter();
             templateRecyclerView.setAdapter(imageAdapter);
             resetImages(waitingFroCompressImages);
         }
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
-            timeHolder.showContent(format(templateItems[0], ""));
+            timeHolder.showContent(format(templateItems[0], "选择时间"));
         }
         if (null == addressHolder) {
             addressHolder = new SimpleInputableViewHolder(addressView, this);
             addressHolder.showContent(format(templateItems[1], ""));
+        }
+        if (null == participantHolder) {
+            participantHolder = new SimpleInputableViewHolder(participantView, this);
+            participantHolder.showContent(format(templateItems[2], ""));
+        }
+        if (null == authorHolder) {
+            authorHolder = new SimpleInputableViewHolder(authorView, this);
+            authorHolder.showContent(format(templateItems[3], Cache.cache().userName));
         }
     }
 
@@ -1886,20 +1898,40 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener imagePickClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
+            maxSelectable = 8;
             // 需要重新再选择图片
             startGalleryForResult();
         }
     };
 
+    private class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int dimen = getDimension(R.dimen.ui_base_dimen_margin_padding);
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view);
+            outRect.bottom = 0;
+            outRect.left = 0;
+            GridLayoutManager manager = (GridLayoutManager) parent.getLayoutManager();
+            int spanCount = manager.getSpanCount();
+            // 第一行有顶部无空白，其余行顶部有空白
+            outRect.top = (position / spanCount == 0) ? 0 : dimen;
+            // 最后列右侧无空白，其余列右侧有空白
+            outRect.right = (position % spanCount < (spanCount - 1)) ? dimen : 0;
+        }
+    }
+
     private class ImageAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
         private static final int VT_IMAGE = 0, VT_ATTACH = 1;
 
-        private int width, height;
+        private int width, height, margin;
 
         private void gotSize() {
             if (width == 0) {
+                margin = getDimension(R.dimen.ui_base_dimen_margin_padding);
                 int _width = getScreenWidth();
-                int padding = getDimension(R.dimen.ui_base_dimen_margin_padding) * 5;
+                int padding = margin * 5;
                 int size = (_width - padding) / 4;
                 width = size;
                 height = size;

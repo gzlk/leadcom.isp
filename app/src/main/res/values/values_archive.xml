@@ -80,10 +80,13 @@
     <string name="ui_text_archive_creator_editor_content_invalid">档案内容不能为空</string>
 
     <string-array name="ui_text_archive_creator_editor_template_values">
-        <item>0|时间：|%s|2</item>
+        <item>0|时间：|%s|0</item>
         <item>地点：|%s|档案发生地点(必填)|||0</item>
-        <item>参与者：|%s||||200</item>
+        <item>参与者：|%s|输入或选择参与人|||0|2</item>
+        <item>记录人：|%s|活动记录人|||0</item>
     </string-array>
+    <string name="ui_text_archive_creator_editor_template_topic_hint">1、\n2、\n3、\n</string>
+    <string name="ui_text_archive_creator_editor_template_minute">纪要</string>
 
     <string name="ui_text_archive_list_fragment_title">个人档案</string>
 
@@ -146,7 +149,9 @@
     <string name="ui_text_archive_details_editor_setting_share_no_member">无法分享草稿：未指定成员</string>
     <string name="ui_text_archive_details_editor_setting_share_draft">您的草稿已分享，去参与他们的讨论吧</string>
     <string name="ui_text_archive_details_editor_setting_commit_title">提交审核</string>
-    <dimen name="ui_dimen_archive_details_editor_setting_item_vertical_padding">@dimen/ui_static_dp_8</dimen>
+    <dimen name="ui_dimen_archive_details_editor_setting_item_vertical_padding">
+        @dimen/ui_static_dp_8
+    </dimen>
 
     <string name="ui_text_archive_details_public_individual">已设为公开，可以有更多人看得到这个档案了</string>
     <string name="ui_text_archive_details_public_group">已设为公开，可以推荐到首页</string>

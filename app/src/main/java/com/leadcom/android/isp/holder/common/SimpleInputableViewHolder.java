@@ -3,6 +3,7 @@ package com.leadcom.android.isp.holder.common;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -28,6 +29,10 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
     private TextView titleTextView;
     @ViewId(R.id.ui_holder_view_simple_inputable_content)
     private ClearEditText contentView;
+    @ViewId(R.id.ui_holder_view_simple_clickable_right_icon_add)
+    private View rightAddIcon;
+    @ViewId(R.id.ui_holder_view_simple_clickable_right_icon)
+    private View rightIcon;
 
     public SimpleInputableViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -42,6 +47,11 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
         String[] strings = string.split("\\|");
         if (strings.length < 6) {
             throw new IllegalArgumentException("cannot display contents less than 6 items");
+        }
+        if (strings.length > 6) {
+            int icon = Integer.valueOf(strings[6]);
+            rightIcon.setVisibility(icon >= 1 ? View.VISIBLE : View.GONE);
+            rightAddIcon.setVisibility(icon >= 2 ? View.VISIBLE : View.GONE);
         }
         showContent(strings[0], strings[1], strings[2], strings[3], strings[4], Integer.valueOf(strings[5]));
     }
@@ -77,5 +87,12 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
         contentView.setValueExtract(valueExtract);
         contentView.setValueVerify(valueVerify);
         contentView.setMaxLength(maxLength);
+    }
+
+    @Click({R.id.ui_holder_view_simple_clickable_right_icon_clickable})
+    private void viewClick(View view) {
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+        }
     }
 }
