@@ -1838,10 +1838,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (null == imageAdapter) {
             // 模板档案的图片
-            //templateRecyclerView.setLayoutManager(new FlexboxLayoutManager(templateRecyclerView.getContext(), FlexDirection.ROW, FlexWrap.WRAP));
-            //imageAdapter = new ImageAdapter();
-            //templateRecyclerView.setAdapter(imageAdapter);
-            //resetImages(waitingFroCompressImages);
+            FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(templateRecyclerView.getContext());
+            layoutManager.setFlexDirection(FlexDirection.ROW);
+            layoutManager.setFlexWrap(FlexWrap.WRAP);
+            templateRecyclerView.setLayoutManager(layoutManager);
+            imageAdapter = new ImageAdapter();
+            templateRecyclerView.setAdapter(imageAdapter);
+            resetImages(waitingFroCompressImages);
         }
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
