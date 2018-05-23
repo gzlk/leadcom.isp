@@ -126,7 +126,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
-        open(fragment, archive.getTitle(), archive.getOwnType(), (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false);
+        open(fragment, archive.getTitle(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP), (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false);
         //int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
         //Bundle bundle = getBundle(archive.getId(), type, true);
         //bundle.putSerializable(PARAM_ARCHIVE, archive);
@@ -135,7 +135,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive, boolean isDraft) {
-        open(fragment, archive.getTitle(), archive.getOwnType(), (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft);
+        open(fragment, archive.getTitle(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP), (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft);
     }
 
 //    public static void open(BaseFragment fragment, String archiveId, int archiveType) {
