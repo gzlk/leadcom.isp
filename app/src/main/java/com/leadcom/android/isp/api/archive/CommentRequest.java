@@ -140,7 +140,7 @@ public class CommentRequest extends Request<Comment> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(StringComment.class, url(type, ADD), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(type == Comment.Type.MOMENT ? SingleComment.class : StringComment.class, url(type, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**

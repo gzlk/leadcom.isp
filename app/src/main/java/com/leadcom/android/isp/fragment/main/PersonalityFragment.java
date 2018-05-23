@@ -201,21 +201,25 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         }).update(type, value);
     }
 
+    private void refreshUser(User user){
+        if (isSelf) {
+            // 随时更新我的信息
+            Cache.cache().setCurrentUser(user);
+            Cache.cache().saveCurrentUser();
+        }
+        resetExtras(user);
+        if (null != user.getCalculate()) {
+            resetQuantity(user.getCalculate());
+        }
+    }
+
     private void fetchingRemoteUserInfo() {
         UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
             @Override
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success && null != user) {
-                    if (isSelf) {
-                        // 随时更新我的信息
-                        Cache.cache().setCurrentUser(user);
-                        Cache.cache().saveCurrentUser();
-                    }
-                    resetExtras(user);
-                    if (null != user.getCalculate()) {
-                        resetQuantity(user.getCalculate());
-                    }
+                    refreshUser(user);
                 }
             }
         }).find(isSelf ? Cache.cache().userId : mQueryId, true);

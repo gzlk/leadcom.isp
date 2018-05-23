@@ -101,7 +101,8 @@ public class LikeRequest extends Request<ArchiveLike> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(StringLike.class, url(type) + "/do", object.toString(), HttpMethods.Post));
+        String action = type == Comment.Type.MOMENT ? url(type, ADD) : (url(type) + "/do");
+        httpRequest(getRequest(type == Comment.Type.MOMENT ? SingleLike.class : StringLike.class, action, object.toString(), HttpMethods.Post));
     }
 
     /**

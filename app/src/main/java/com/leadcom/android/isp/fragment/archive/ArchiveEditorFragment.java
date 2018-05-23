@@ -1520,6 +1520,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void updateArchive(int type) {
+        if (isEmpty(mArchive.getId())) {
+            return;
+        }
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
