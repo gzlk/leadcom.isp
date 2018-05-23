@@ -18,14 +18,14 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnTaskPreparedListener;
+import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.task.CompressImageTask;
-import com.netease.nim.uikit.api.NimUIKit;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.durban.Controller;
 import com.yanzhenjie.durban.Durban;
@@ -215,7 +215,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
 
     // 处理Android 7.0+的Uri问题
     private Uri getUriFromFile(String filePath) {
-        return NimUIKit.getUriFromFile(Activity(), filePath);
+        return FilePreviewHelper.getUriFromFile(filePath);
     }
 
     /**
@@ -647,7 +647,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                         if (null != picture) {
                             cameraPicturePath = picture.getAbsolutePath();
                             // 存储相机照片的预定路径
-                            Uri uri = NimUIKit.getUriFromFile(Activity(), cameraPicturePath);
+                            Uri uri = getUriFromFile(cameraPicturePath);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                             startActivityForResult(intent, REQUEST_CAMERA);
                         } else {

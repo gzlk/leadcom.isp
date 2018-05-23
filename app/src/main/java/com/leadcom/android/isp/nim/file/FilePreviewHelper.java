@@ -6,10 +6,13 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 
+import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.application.App;
@@ -25,8 +28,8 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.nim.activity.VideoPlayerActivity;
-import com.netease.nim.uikit.api.NimUIKit;
 
+import java.io.File;
 import java.util.Locale;
 
 /**
@@ -163,9 +166,16 @@ public class FilePreviewHelper {
         }
     }
 
+    private static final String fileProvider = StringHelper.format("%s.fileProvider", BuildConfig.APPLICATION_ID);
+
     // 处理Android 7.0+的Uri问题
     public static Uri getUriFromFile(String filePath) {
-        return NimUIKit.getUriFromFile(App.app(), filePath);
+        if (Build.VERSION.SDK_INT >= 24) {
+            File tempFile = new File(filePath);
+            return FileProvider.getUriForFile(App.app(), fileProvider, tempFile);
+        } else {
+            return Uri.fromFile(new File(filePath));
+        }
     }
 
     /**

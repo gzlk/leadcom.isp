@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -42,7 +41,6 @@ import com.leadcom.android.isp.task.CopyLocalFileTask;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
  * <b>功能描述：</b>说说中的图片列表(有图片时打开本页面)<br />
@@ -399,26 +397,13 @@ public class MomentImagesFragment extends BaseMomentFragment {
             }
             final SubsamplingScaleImageView ssiv = new SubsamplingScaleImageView(App.app());
             container.addView(ssiv);
-            loadImage(ssiv, image);
-//            Glide.with(MomentImagesFragment.this).asFile().load(image).downloadOnly(new SimpleTarget<File>() {
-//                @Override
-//                public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-//                    ssiv.setImage(ImageSource.uri(FilePreviewHelper.getUriFromFile(resource.getAbsolutePath())));
-//                }
-//            });
+            Glide.with(MomentImagesFragment.this).downloadOnly().load(image).into(new SimpleTarget<File>() {
+                @Override
+                public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                    ssiv.setImage(ImageSource.uri(FilePreviewHelper.getUriFromFile(resource.getAbsolutePath())));
+                }
+            });
             return ssiv;
-        }
-
-        private void loadImage(final SubsamplingScaleImageView view, final String url) {
-            try {
-                FutureTarget<File> target = Glide.with(MomentImagesFragment.this).asFile().load(url).submit();
-                File file = target.get();
-                view.setImage(ImageSource.uri(FilePreviewHelper.getUriFromFile(file.getAbsolutePath())));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
         }
 
         @Override
