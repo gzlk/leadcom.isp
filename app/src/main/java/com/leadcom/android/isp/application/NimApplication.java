@@ -120,7 +120,7 @@ public class NimApplication extends BaseActivityManagedApplication {
     @Override
     public void logout() {
         //  注册/注销观察者
-        observerRecentContact(false);
+        //observerRecentContact(false);
         // 退出后桌面提醒清零
         ShortcutBadger.applyCount(this, 0);
         super.logout();
