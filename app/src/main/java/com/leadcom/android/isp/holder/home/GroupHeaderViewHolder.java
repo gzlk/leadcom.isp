@@ -35,7 +35,7 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_group_header_logo)
     private ImageDisplayer logoView;
-    @ViewId(R.id.ui_holder_view_group_header_flag)
+    @ViewId(R.id.ui_holder_view_archive_watermark)
     private View minmentTag;
     @ViewId(R.id.ui_holder_view_group_header_intro)
     private TextView introView;

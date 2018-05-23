@@ -28,6 +28,8 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.gpu.GPUFilterTransformation;
+
 /**
  * <b>功能描述：</b>首页会议中的图片轮播<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -45,6 +47,8 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     private RelativeLayout container;
     @ViewId(R.id.ui_tool_view_pager_embedded)
     private ViewPager viewPager;
+    @ViewId(R.id.ui_holder_view_archive_watermark)
+    private View watermark;
     @ViewId(R.id.ui_holder_view_home_image_title)
     private TextView titleView;
     @ViewId(R.id.ui_holder_view_home_image_indicator)
@@ -166,6 +170,8 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
     }
 
     private void changeDotsColor(int position, int color) {
+        Archive archive = archives.get(position);
+        watermark.setVisibility(isEmpty(archive.getWatermark()) ? View.GONE : View.VISIBLE);
         for (int i = 0, len = dots.size(); i < len; i++) {
             dots.get(i).setVisibility((i > 0 && i < len - 1) ? View.VISIBLE : View.INVISIBLE);
             if (dots.get(i).getVisibility() == View.VISIBLE) {

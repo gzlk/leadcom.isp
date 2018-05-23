@@ -339,7 +339,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         attachmentView.setVisibility(editorType == TYPE_ATTACHMENT ? View.VISIBLE : View.GONE);
         multimediaControlView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
-        multimediaView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
+        multimediaView.setVisibility(editorType == TYPE_TEMPLATE ? View.GONE : View.VISIBLE);
         templateView.setVisibility(editorType == TYPE_TEMPLATE ? View.VISIBLE : View.GONE);
         if (editorType == TYPE_TEMPLATE) {
             isGroupArchive = true;

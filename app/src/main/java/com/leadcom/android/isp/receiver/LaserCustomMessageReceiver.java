@@ -9,6 +9,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.PushMessage;
 
 import cn.jpush.android.api.JPushInterface;
@@ -63,11 +64,13 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
                 break;
             case PushMessage.MsgCode.GROUP_DOC_COMMENT:
             case PushMessage.MsgCode.GROUP_DOC_TRANSPORT:
+                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title), push.getDocId(), Archive.Type.GROUP, false);
+                break;
             case PushMessage.MsgCode.USER_DOC_COMMENT:
-                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title), push.getDocId(), push.getDocType(), false);
+                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title), push.getDocId(), Archive.Type.USER, false);
                 break;
             case PushMessage.MsgCode.GROUP_DOC_SHARE:
-                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), push.getDocId(), push.getDocType(), true);
+                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), push.getDocId(), Archive.Type.GROUP, true);
                 break;
         }
     }

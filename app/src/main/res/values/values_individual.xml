@@ -241,10 +241,10 @@
     <string name="ui_text_modify_phone_confirm_fragment_title">填写验证码</string>
 
     <string-array name="ui_text_personality_items">
-        <item>1|通讯录|%d人|1|0xe67b</item>
-        <item>2|档案|%d个|1|0xe670</item>
-        <item>3|动态|%d篇|1|0xe63d</item>
-        <item>4|收藏|%d个|1|0xe626</item>
+        <item>1|通讯录|%d|1|0xe67b</item>
+        <item>2|档案|%d|1|0xe670</item>
+        <item>3|动态|%d|1|0xe63d</item>
+        <item>4|收藏|%d|1|0xe626</item>
         <item>-</item>
     </string-array>
     <string name="ui_text_personality_contact_fragment_title">通讯录</string>
