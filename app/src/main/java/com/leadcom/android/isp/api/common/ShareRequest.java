@@ -88,7 +88,6 @@ public class ShareRequest extends Request<ShareInfo> {
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
-                    .put("fileIds", checkNull(archive.getFileIds()))
                     .put("userId", archive.getUserId())
                     .put("userName", archive.getUserName())
                     .put("createDate", archive.getCreateDate());

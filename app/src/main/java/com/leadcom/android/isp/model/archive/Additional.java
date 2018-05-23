@@ -40,8 +40,8 @@ public class Additional extends Model {
     private String likeId;
     @Column(Archive.Field.Liked)
     private int like;
-    @Ignore
-    private String fileIds;  //文件ID，多个ID用逗号隔开
+    //@Ignore
+    //private String fileIds;  //文件ID，多个ID用逗号隔开
 
     // 当前组织是否推荐：0.未推荐，1.已推荐
     @Column(Archive.Field.Recommend)
@@ -191,24 +191,6 @@ public class Additional extends Model {
         if (null != addition) {
             addition.setLike(like);
         }
-    }
-
-    public void addFileId(String fileId) {
-        if (isEmpty(fileIds)) {
-            fileIds = fileId;
-        } else {
-            if (!fileIds.contains(fileId)) {
-                fileIds += "," + fileId;
-            }
-        }
-    }
-
-    public String getFileIds() {
-        return fileIds;
-    }
-
-    public void setFileIds(String fileIds) {
-        this.fileIds = fileIds;
     }
 
     public int getRecommend() {

@@ -98,7 +98,7 @@ public class SquadRequest extends Request<Squad> {
      * 查询指定组织的小组列表
      */
     public void list(String groupId, int pageNumber) {
-        httpRequest(getRequest(MultipleSquad.class, format("%s?pageNumber=%d&groupId=%s&pageSize=50", url(LIST), pageNumber, groupId), "", HttpMethods.Get));
+        httpRequest(getRequest(MultipleSquad.class, format("%s?pageNumber=%d&groupId=%s&pageSize=500", url(LIST), pageNumber, groupId), "", HttpMethods.Get));
     }
 
     /**

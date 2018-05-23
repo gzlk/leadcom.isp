@@ -403,6 +403,7 @@
                         android:text="@string/ui_base_text_image" />
 
                     <com.hlk.hlklib.lib.view.CustomTextView
+                        android:id="@+id/ui_archive_creator_rich_editor_template_images_clear"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"

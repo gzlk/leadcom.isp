@@ -43,7 +43,7 @@ import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.common.CoverPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
-import com.leadcom.android.isp.fragment.organization.GroupsContactPickerFragment;
+import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DateTimeHelper;
@@ -60,6 +60,7 @@ import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Label;
 import com.leadcom.android.isp.model.archive.Archive;
@@ -70,6 +71,7 @@ import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
+import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.organization.SubMember;
 
 import java.io.File;
@@ -108,6 +110,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private static final int UP_MUSIC = 2;
     private static final int UP_VIDEO = 3;
     private static final int UP_ATTACH = 4;
+    private static final int UP_TEMPLATE = 5;
     /**
      * 图文方式
      */
@@ -340,6 +343,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         templateView.setVisibility(editorType == TYPE_TEMPLATE ? View.VISIBLE : View.GONE);
         if (editorType == TYPE_TEMPLATE) {
             isGroupArchive = true;
+            isUserArchive = false;
         }
 
         attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
@@ -402,7 +406,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onCancel() {
                 // 打开到草稿详情页查看评论，无论是个人档案草稿还是组织档案草稿都是组织档案
-                ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, draft);
+                ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, draft, true);
                 finish();
             }
         }).setTitleText(R.string.ui_text_archive_creator_editor_create_draft_1)
@@ -429,7 +433,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_text_document_create_fragment_title);
-        setRightIcon(R.string.ui_icon_more);
+        setRightIcon(0);
+        setRightText(R.string.ui_base_text_next_step);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
@@ -438,6 +443,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         });
         if (editorType == TYPE_TEMPLATE) {
+            isGroupArchive = true;
             initializeTemplate();
         }
         //resetRightIcons();
@@ -450,9 +456,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         mArchive.setTitle(title);
-        if (isEmpty(mArchive.getContent())) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
-            return;
+        if (editorType != TYPE_TEMPLATE) {
+            if (isEmpty(mArchive.getContent())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
+                return;
+            }
         }
         if (editorType == TYPE_MULTIMEDIA) {
             // 图文模式下需要检测
@@ -464,6 +472,39 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (!ImageCompress.isImage(ext)) {
                     ToastHelper.make().showMsg(getString(R.string.ui_text_archive_creator_editor_create_cover_invalid, ext));
                 }
+            }
+        } else if (editorType == TYPE_TEMPLATE) {
+            // 设置模板档案的各个属性值
+            if (mArchive.getHappenDate().equals(Model.DFT_DATE)) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_happen_date_null);
+                return;
+            }
+            mArchive.setSite(addressHolder.getValue());
+            if (isEmpty(mArchive.getSite())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_site_null);
+                return;
+            }
+            mArchive.setTopic(topicContent.getValue());
+            if (isEmpty(mArchive.getTopic())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_topic_null);
+                return;
+            }
+            mArchive.setResolution(minuteContent.getValue());
+            if (isEmpty(mArchive.getResolution())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_minute_null);
+                return;
+            }
+            if (isEmpty(mArchive.getBranch())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_branch_null);
+                return;
+            }
+            if (isEmpty(mArchive.getProperty())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
+                return;
+            }
+            if (isEmpty(mArchive.getCategory())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
+                return;
             }
         }
         // 档案模板设置为图文或附件
@@ -485,13 +526,25 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
             return;
         }
-        String author = creatorText.getValue();
+        String author = editorType == TYPE_TEMPLATE ? authorHolder.getValue() : creatorText.getValue();
         if (isEmpty(author)) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_author_null);
             return;
         }
         mArchive.setSource(author);
-        mEditor.getMarkdown();
+        if (editorType == TYPE_TEMPLATE) {
+            // 如果选择了图片，则压缩图片然后上传
+            if (waitingFroCompressImages.size() > 0) {
+                // 不需要显示上传进度
+                needShowUploading = true;
+                uploadType = UP_TEMPLATE;
+                compressImage();
+            } else {
+                createArchive();
+            }
+        } else {
+            mEditor.getMarkdown();
+        }
     }
 
     private int lastEditorContentLength = 0;
@@ -628,11 +681,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private View settingDialogView;
     private ImageDisplayer coverView;
-    private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText, groupNameText;
+    private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText, groupNameText,
+            branchText;
     private CustomTextView userIcon, groupIcon, publicIcon, privateIcon;
     private ClearEditText participantText, siteText;
     private ClearEditText creatorText;
     private View archiveTypeUser, shareDraftButton;
+
 
     private void openSettingDialog() {
         mArchive.setTitle(titleView.getValue());
@@ -659,6 +714,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     publicIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_public_icon);
                     privateIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_private_icon);
                     shareDraftButton = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft);
+                    branchText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker_text);
                     //archiveTypeGroup = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_group);
                     // 根据个人档案和组织档案显示某些元素
 //                    if (isEmpty(mQueryId)) {
@@ -781,6 +837,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         R.id.ui_popup_rich_editor_setting_type_user,
                         R.id.ui_popup_rich_editor_setting_type_group,
                         R.id.ui_popup_rich_editor_setting_group_picker,
+                        R.id.ui_popup_rich_editor_setting_branch_picker,
                         R.id.ui_popup_rich_editor_setting_time,
                         R.id.ui_popup_rich_editor_setting_property,
                         R.id.ui_popup_rich_editor_setting_category,
@@ -830,15 +887,15 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     case R.id.ui_popup_rich_editor_setting_group_picker:
                         GroupPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false);
                         break;
+                    case R.id.ui_popup_rich_editor_setting_branch_picker:
+                        if (isEmpty(mArchive.getGroupId())) {
+                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
+                        } else {
+                            SquadPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), mArchive.getBranch());
+                        }
+                        break;
                     case R.id.ui_popup_rich_editor_setting_time:
-                        // 发生时间
-                        DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
-                            @Override
-                            public void onPicked(Date date) {
-                                mArchive.setHappenDate(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date));
-                                happenDate.setText(mArchive.getHappenDate().substring(0, 10));
-                            }
-                        }).show(ArchiveEditorFragment.this, true, true, true, true, mArchive.getHappenDate());
+                        openDateTimePicker();
                         break;
                     case R.id.ui_popup_rich_editor_setting_property:
                         // 档案性质
@@ -849,7 +906,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         DictionaryHelper.helper(ArchiveEditorFragment.this).setOnDictionarySelectedListener(selectedListener).showDialog(Dictionary.Type.ARCHIVE_TYPE, mArchive.getCategory());
                         break;
                     case R.id.ui_popup_rich_editor_setting_participant:
-                        GroupsContactPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId());
+                        openMemberPicker();
                         break;
                     case R.id.ui_popup_rich_editor_setting_public:
                         openSecuritySetting();
@@ -952,6 +1009,27 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
 
+    private void openMemberPicker() {
+        GroupContactPickFragment.open(this, "", true, false, "[]");
+    }
+
+    private void openDateTimePicker() {
+        // 发生时间
+        DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
+            @Override
+            public void onPicked(Date date) {
+                mArchive.setHappenDate(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date));
+                String time = mArchive.getHappenDate().substring(0, 10);
+                if (null != happenDate) {
+                    happenDate.setText(time);
+                }
+                if (null != timeHolder) {
+                    timeHolder.showContent(format(templateItems[0], time));
+                }
+            }
+        }).show(ArchiveEditorFragment.this, true, true, true, editorType != TYPE_TEMPLATE, mArchive.getHappenDate());
+    }
+
     /**
      * 获取草稿档案的分享内容
      */
@@ -987,6 +1065,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category).setVisibility(groupVisibility);
         // 个人档案需要选择标签
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isUserArchive ? View.VISIBLE : View.GONE);
+        // 模板档案不需要组织、个人选择
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(editorType == TYPE_TEMPLATE ? View.GONE : View.VISIBLE);
+        // 模板档案不需要有封面
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(editorType == TYPE_TEMPLATE ? View.GONE : View.VISIBLE);
+        // 模板档案不需要来源
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_source).setVisibility(editorType == TYPE_TEMPLATE ? View.GONE : View.VISIBLE);
+        // 模板档案需要显示支部选择器
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(editorType == TYPE_TEMPLATE ? View.VISIBLE : View.GONE);
         // 个人档案不需要分享草稿
         if (editorType != TYPE_ATTACHMENT) {
             settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
@@ -1106,7 +1192,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 如果上传完毕的是图片，则插入图片
                     if (ImageCompress.isImage(Attachment.getExtension(url))) {
                         insertImage(url, imageAlt.getValue());
-                        mArchive.addFileId(uploaded.get(0).getId());
                         //mArchive.getImage().add(uploaded.get(0));
                     }
                     break;
@@ -1116,7 +1201,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     mEditor.insertAudio(music);
                     musicUrl.setValue("");
                     musicSize.setVisibility(View.GONE);
-                    mArchive.addFileId(uploaded.get(0).getId());
                     //mArchive.getAttach().add(uploaded.get(0));
                     break;
                 case UP_VIDEO:
@@ -1125,7 +1209,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     mEditor.insertVideo("", video);
                     videoUrl.setValue("");
                     videoSize.setVisibility(View.GONE);
-                    mArchive.addFileId(uploaded.get(0).getId());
                     //mArchive.getVideo().add(uploaded.get(0));
                     break;
                 case UP_ATTACH:
@@ -1143,10 +1226,17 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                                 mArchive.getAttach().add(attachment);
                             }
                             aAdapter.update(attachment);
-                            mArchive.addFileId(uploaded.get(0).getId());
                         }
                         mAdapter.clear();
                     }
+                    break;
+                case UP_TEMPLATE:
+                    // 模板档案上传了图片
+                    if (null != uploaded) {
+                        mArchive.getImage().addAll(uploaded);
+                    }
+                    // 模板档案上传图片完毕之后尝试发布档案
+                    createArchive();
                     break;
             }
             // 上传完毕，设置上传方式为nothing
@@ -1356,19 +1446,25 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case REQUEST_MEMBER:
                 ArrayList<SubMember> members = SubMember.fromJson(getResultedData(data));
-                warningShareDraftTo(SubMember.getMemberNames(members), SubMember.getUserIds(members));
-//                String names = "";
-//                if (null != members && members.size() > 0) {
-//                    for (SubMember member : members) {
-//                        names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                if (editorType != TYPE_TEMPLATE) {
+                    warningShareDraftTo(SubMember.getMemberNames(members), SubMember.getUserIds(members));
+                } else {
+                    String names = "";
+                    if (null != members && members.size() > 0) {
+                        for (SubMember member : members) {
+                            names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                        }
+                    }
+                    mArchive.setParticipant(names);
+                    if (null != participantHolder) {
+                        participantHolder.showContent(format(templateItems[3], names));
+                    }
+//                    participantText.setValue(names);
+//                    getDraftShareInfo();
+//                    if (!isEmpty(names)) {
+//                        participantText.focusEnd();
 //                    }
-//                }
-                //mArchive.setParticipant(names);
-                //participantText.setValue(names);
-                //getDraftShareInfo();
-//                if (!isEmpty(names)) {
-//                    participantText.focusEnd();
-//                }
+                }
                 break;
             case REQUEST_GROUP:
                 ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
@@ -1379,6 +1475,17 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     //mArchive.setType(Archive.Type.GROUP);
                     if (null != groupNameText) {
                         groupNameText.setText(Html.fromHtml(groups.get(0).getGroupName()));
+                    }
+                }
+                break;
+            case REQUEST_SQUAD:
+                // 选择了小组
+                String string = getResultedData(data);
+                if (!isEmpty(string)) {
+                    Squad squad = Squad.fromJson(string);
+                    if (null != squad && !isEmpty(squad.getId())) {
+                        mArchive.setBranch(squad.getName());
+                        branchText.setText(squad.getName());
                     }
                 }
                 break;
@@ -1405,7 +1512,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
                     finish();
                     //ArchiveDetailsWebViewFragment.openDraft(ArchiveEditorFragment.this, mArchive.getId(), Archive.Type.DRAFT);
-                    ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive.getTitle(), mArchive.getDocType(), mArchive.getId());
+                    ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive, true);
                 }
             }
         }).shareDraft(mArchive.getId(), userIds);
@@ -1703,7 +1810,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             R.id.ui_archive_creator_action_audio, R.id.ui_archive_creator_action_quote,
             R.id.ui_archive_creator_action_link, R.id.ui_archive_creator_action_ordered_list,
             R.id.ui_archive_creator_action_unordered_list, R.id.ui_tool_attachment_button,
-            // 一下为字体格式设置
+            // 以下为字体格式设置
             R.id.ui_archive_creator_action_bold, R.id.ui_archive_creator_action_italic,
             R.id.ui_archive_creator_action_underline, R.id.ui_archive_creator_action_strike_through,
             R.id.ui_archive_creator_action_superscript, R.id.ui_archive_creator_action_subscript,
@@ -1711,7 +1818,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             R.id.ui_archive_creator_action_align_right,
             R.id.ui_archive_creator_action_heading1, R.id.ui_archive_creator_action_heading2,
             R.id.ui_archive_creator_action_heading3, R.id.ui_archive_creator_action_heading4,
-            R.id.ui_archive_creator_action_heading5, R.id.ui_archive_creator_action_heading6})
+            R.id.ui_archive_creator_action_heading5, R.id.ui_archive_creator_action_heading6,
+            // 以下为模板方式点击事件
+            R.id.ui_archive_creator_rich_editor_template_images_clear})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_archive_creator_action_undo:
@@ -1811,6 +1920,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             case R.id.ui_archive_creator_action_heading6:
                 mEditor.setHeading(6);
                 break;
+            case R.id.ui_archive_creator_rich_editor_template_images_clear:
+                if (waitingFroCompressImages.size() > 0) {
+                    warningClearSelectedImages();
+                }
+                break;
         }
     }
 
@@ -1849,7 +1963,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
-            timeHolder.showContent(format(templateItems[0], "选择时间"));
+            timeHolder.showContent(format(templateItems[0], "选择时间(必填)"));
+            timeHolder.addOnViewHolderClickListener(holderClickListener);
         }
         if (null == addressHolder) {
             addressHolder = new SimpleInputableViewHolder(addressView, this);
@@ -1858,11 +1973,37 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         if (null == participantHolder) {
             participantHolder = new SimpleInputableViewHolder(participantView, this);
             participantHolder.showContent(format(templateItems[2], ""));
+            participantHolder.setOnViewHolderElementClickListener(elementClickListener);
         }
         if (null == authorHolder) {
             authorHolder = new SimpleInputableViewHolder(authorView, this);
             authorHolder.showContent(format(templateItems[3], Cache.cache().userName));
         }
+    }
+
+    private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            openDateTimePicker();
+        }
+    };
+
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            openMemberPicker();
+        }
+    };
+
+    private void warningClearSelectedImages() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                waitingFroCompressImages.clear();
+                resetImages(waitingFroCompressImages);
+                return true;
+            }
+        }).setTitleText(R.string.ui_text_archive_creator_editor_template_clear_images).setConfirmText(R.string.ui_base_text_confirm).show();
     }
 
     private void resetImages(ArrayList<String> images) {
@@ -1900,6 +2041,26 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             startGalleryForResult();
         }
     };
+
+    // 照片预览点击
+    private ImageDisplayer.OnImageClickListener imagePreviewClickListener = new ImageDisplayer.OnImageClickListener() {
+        @Override
+        public void onImageClick(ImageDisplayer displayer, String url) {
+            // 相册预览
+            startGalleryPreview(waitingFroCompressImages.indexOf(url));
+        }
+    };
+
+    // 照片删除
+    private ImageDisplayer.OnDeleteClickListener imageDeleteClickListener = new ImageDisplayer.OnDeleteClickListener() {
+        @Override
+        public void onDeleteClick(String url) {
+            waitingFroCompressImages.remove(url);
+            imageAdapter.remove(url);
+            appendAttacher();
+        }
+    };
+
 
     private class SpacesItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -1949,8 +2110,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             gotSize();
             if (viewType == VT_IMAGE) {
                 ImageViewHolder holder = new ImageViewHolder(itemView, ArchiveEditorFragment.this);
-                //holder.addOnDeleteClickListener(imageDeleteClickListener);
-                //holder.addOnImageClickListener(imagePreviewClickListener);
+                holder.addOnDeleteClickListener(imageDeleteClickListener);
+                holder.addOnImageClickListener(imagePreviewClickListener);
                 // 这里是要尝试删除选择的文件
                 //holder.addOnHandlerBoundDataListener(handlerBoundDataListener);
                 holder.setImageSize(width, height);

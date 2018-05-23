@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.model.organization;
 
+import com.google.gson.reflect.TypeToken;
+import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
@@ -20,6 +22,16 @@ import java.util.ArrayList;
  */
 @Table(Organization.Table.SQUAD)
 public class Squad extends Model {
+
+    public static String toJson(Squad squad) {
+        return Json.gson().toJson(squad, new TypeToken<Squad>() {
+        }.getType());
+    }
+
+    public static Squad fromJson(String json) {
+        return Json.gson().fromJson(isEmpty(json) ? "{}" : json, new TypeToken<Squad>() {
+        }.getType());
+    }
 
     @Column(Organization.Field.GroupId)
     private String groupId;        //所属群ID

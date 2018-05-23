@@ -64,10 +64,10 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
             case PushMessage.MsgCode.GROUP_DOC_COMMENT:
             case PushMessage.MsgCode.GROUP_DOC_TRANSPORT:
             case PushMessage.MsgCode.USER_DOC_COMMENT:
-                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title), push.getDocId(), push.getDocType());
+                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title), push.getDocId(), push.getDocType(), false);
                 break;
             case PushMessage.MsgCode.GROUP_DOC_SHARE:
-                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), push.getDocId(), push.getDocType());
+                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), push.getDocId(), push.getDocType(), true);
                 break;
         }
     }

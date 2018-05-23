@@ -186,7 +186,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
         if (null == progressDialog) {
             progressDialog = new ProgressDialog(Activity());
             progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setCancelable(false);
+            progressDialog.setCancelable(true);
             progressDialogView = View.inflate(Activity(), R.layout.popup_dialog_image_handling, null);
             handlingTextView = progressDialogView.findViewById(R.id.ui_dialog_image_handling_text);
         }

@@ -38,6 +38,21 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
     protected String mOrganizationId, mSquadId;
 
     @Override
+    protected String getLocalPageTag() {
+        return null;
+    }
+
+    @Override
+    protected void onDelayRefreshComplete(int type) {
+
+    }
+
+    @Override
+    protected void destroyView() {
+
+    }
+
+    @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         mOrganizationId = mQueryId;

@@ -792,7 +792,7 @@ public class MainActivity extends TitleActivity {
                             saveMessage(msg, true, true);
                             if (msg.isArchiveMsg()) {
                                 if (msg.getMsgType() == Message.Type.ARCHIVE_SHARE_DRAFT) {
-                                    ArchiveDetailsWebViewFragment.open(activity, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), msg.getDocId(), Archive.ArchiveType.MULTIMEDIA);
+                                    ArchiveDetailsWebViewFragment.open(activity, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), msg.getDocId(), Archive.ArchiveType.MULTIMEDIA, true);
                                 } else {
                                     //ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP, true);
                                 }

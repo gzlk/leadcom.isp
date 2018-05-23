@@ -16,6 +16,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.leadcom.android.isp.model.organization.Squad;
 
 /**
  * <b>功能描述：</b>感兴趣的组织item<br />
@@ -85,6 +86,18 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         nameView.setText(Html.fromHtml(name));
         buttonView.setText(organization.isConcerned() ? R.string.ui_organization_interesting_concerned : R.string.ui_organization_interesting_concern);
         buttonView.setNormalColor(getColor(organization.isConcerned() ? R.color.color_3eb135 : R.color.colorPrimary));
+    }
+
+    public void showContent(Squad squad) {
+        coverView.setVisibility(selectable ? View.GONE : View.VISIBLE);
+        buttonView.setVisibility(selectable || squad.isSelectable() ? View.GONE : View.VISIBLE);
+        selector.setVisibility(selectable && !squad.isSelectable() ? View.VISIBLE : View.GONE);
+        selector.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        // 勾选颜色
+        selectorLine.setVisibility(squad.isSelectable() ? View.VISIBLE : View.GONE);
+        selectorLine.setTextColor(getColor(squad.isSelected() ? R.color.colorPrimary : R.color.transparent_00));
+        String name = squad.getName();
+        nameView.setText(Html.fromHtml(name));
     }
 
     public void showContent(Concern concern, String searchingText) {

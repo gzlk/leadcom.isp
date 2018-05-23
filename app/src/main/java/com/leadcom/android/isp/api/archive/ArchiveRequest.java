@@ -330,7 +330,6 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
                     .put("source", archive.getSource())
-                    .put("fileIds", checkNull(archive.getFileIds()))
                     .put("groupId", checkNull(archive.getGroupId()))
                     // 组织档案需要增加以下参数
                     .put("site", checkNull(archive.getSite()))
@@ -362,7 +361,7 @@ public class ArchiveRequest extends Request<Archive> {
         try {
             object.put("title", archive.getTitle())// 必要字段
                     .put("cover", checkNull(archive.getCover()))
-                    //.put("type", archive.getType())// 必要字段
+                    .put("docType", archive.getDocType())// 必要字段
                     .put("authPublic", archive.getAuthPublic())// 必要字段
                     .put("content", archive.getContent())
                     //.put("markdown", archive.getMarkdown())
@@ -371,8 +370,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
                     .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
-                    .put("source", archive.getSource())
-                    .put("fileIds", checkNull(archive.getFileIds()));
+                    .put("source", archive.getSource());
             if (archive.getDocType() == Archive.ArchiveType.TEMPLATE) {
                 // 模板档案需要增加以下字段
                 object.put("topic", archive.getTopic())
@@ -395,7 +393,7 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleArchive.class, format("%s/formal", group(ADD)), object.toString(), HttpMethods.Post));
+        httpRequest(getRequest(SingleArchive.class, (archive.getOwnType() == Archive.Type.USER ? url(ADD) : group(ADD)), object.toString(), HttpMethods.Post));
     }
 
     /**

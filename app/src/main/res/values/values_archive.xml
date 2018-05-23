@@ -87,6 +87,14 @@
     </string-array>
     <string name="ui_text_archive_creator_editor_template_topic_hint">1、\n2、\n3、\n</string>
     <string name="ui_text_archive_creator_editor_template_minute">纪要</string>
+    <string name="ui_text_archive_creator_editor_template_clear_images">您确定要清空这些选中的图片吗？</string>
+    <string name="ui_text_archive_creator_editor_template_happen_date_null">请提供活动档案的发生时间</string>
+    <string name="ui_text_archive_creator_editor_template_site_null">请提供活动档案的地点</string>
+    <string name="ui_text_archive_creator_editor_template_topic_null">请提供活动档案的议题内容</string>
+    <string name="ui_text_archive_creator_editor_template_minute_null">请提供活动档案的纪要内容</string>
+    <string name="ui_text_archive_creator_editor_template_branch_null">请提供活动档案所属支部</string>
+    <string name="ui_text_archive_creator_editor_template_property_null">请提供活动档案属性</string>
+    <string name="ui_text_archive_creator_editor_template_category_null">请提供活动档案类型</string>
 
     <string name="ui_text_archive_list_fragment_title">个人档案</string>
 
@@ -137,8 +145,10 @@
     <string name="ui_text_archive_details_editor_setting_time_title">发生时间</string>
     <string name="ui_text_archive_details_editor_setting_site_title">发生地点</string>
     <string name="ui_text_archive_details_editor_setting_group_title">所属组织</string>
-    <string name="ui_text_archive_details_editor_setting_group_desc">新档案所属的组织</string>
+    <string name="ui_text_archive_details_editor_setting_group_desc">档案所属的组织</string>
     <string name="ui_text_archive_details_editor_setting_group_empty">请选择档案所属的组织</string>
+    <string name="ui_text_archive_details_editor_setting_branch_title">所属支部</string>
+    <string name="ui_text_archive_details_editor_setting_branch_desc">活动档案所属支部</string>
     <string name="ui_text_archive_details_editor_setting_property_title">档案性质</string>
     <string name="ui_text_archive_details_editor_setting_category_title">档案类型</string>
     <string name="ui_text_archive_details_editor_setting_participant_title">参与人员(点击选择或直接输入)</string>

@@ -371,6 +371,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_COMMENT = ACTIVITY_BASE_REQUEST + 24;
     /**
+     * 小组选择
+     */
+    public static final int REQUEST_SQUAD = ACTIVITY_BASE_REQUEST + 25;
+    /**
      * 感兴趣
      */
     protected static final int REQUEST_INTEREST = ACTIVITY_BASE_REQUEST + 100;
