@@ -21,7 +21,6 @@ import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.layoutmanager.CustomGridLayoutManager;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
-import com.hlk.hlklib.layoutmanager.CustomStaggeredGridLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -181,8 +180,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         //mArchive.setId(Archive.getDraftId());
         // 标记是否为组织档案
         //mArchive.setGroupId(mQueryId);
-        // 默认为个人普通档案或组织普通档案
-        //mArchive.setType(Archive.Type.USER);
         // 档案默认向所有人公开的
         mArchive.setAuthPublic(Seclusion.Type.Public);
         // 默认草稿作者为当前登录用户
@@ -334,10 +331,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             if (editorType == TYPE_MULTIMEDIA) {
                 fetchingDraft();
             }
-//            List<ArchiveDraft> drafts = ArchiveDraft.getDraft("");
-//            if (null != drafts && drafts.size() > 0) {
-//                warningDraftExist(drafts.get(0), drafts.size());
-//            }
         } else {
             fetchingSingleDraft();
         }
@@ -345,6 +338,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         multimediaControlView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
         templateView.setVisibility(editorType == TYPE_TEMPLATE ? View.VISIBLE : View.GONE);
+        if (editorType == TYPE_TEMPLATE) {
+            isGroupArchive = true;
+        }
 
         attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
         aAdapter = new AttachmentAdapter();
@@ -387,7 +383,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }).listDraft(remotePageNumber);
     }
 
-    private void warningSingleDraft(Archive draft) {
+    private void warningSingleDraft(final Archive draft) {
         final String json = Archive.toJson(draft);
         final String id = draft.getId();
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
@@ -406,7 +402,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onCancel() {
                 // 打开到草稿详情页查看评论，无论是个人档案草稿还是组织档案草稿都是组织档案
-                ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, id, Archive.Type.GROUP);
+                ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, draft);
                 finish();
             }
         }).setTitleText(R.string.ui_text_archive_creator_editor_create_draft_1)
@@ -471,18 +467,18 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         // 档案模板设置为图文或附件
-        mArchive.setDocType(editorType == TYPE_MULTIMEDIA ? Archive.ArchiveType.MULTIMEDIA : Archive.ArchiveType.ATTACHMENT);
+        mArchive.setDocType(editorType == TYPE_MULTIMEDIA ? Archive.ArchiveType.MULTIMEDIA :
+                (editorType == TYPE_ATTACHMENT ? Archive.ArchiveType.ATTACHMENT : Archive.ArchiveType.TEMPLATE));
         if (isGroupArchive) {
-            //mArchive.setType(Archive.Type.GROUP);
+            mArchive.setOwnType(Archive.Type.GROUP);
             if (isEmpty(mArchive.getGroupId())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
                 return;
             }
         } else {
-            //mArchive.setType(Archive.Type.USER);
+            mArchive.setOwnType(Archive.Type.USER);
             // 个人档案需要清空组织id
             mArchive.setGroupId("");
-            //mArchive.setType(Archive.ArchiveType.INDIVIDUAL);
         }
         // 个人档案需要标签
         if (isEmpty(mArchive.getGroupId()) && mArchive.getLabel().size() < 1) {
@@ -1408,7 +1404,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
                     finish();
-                    ArchiveDetailsWebViewFragment.openDraft(ArchiveEditorFragment.this, mArchive.getId(), Archive.Type.DRAFT);
+                    //ArchiveDetailsWebViewFragment.openDraft(ArchiveEditorFragment.this, mArchive.getId(), Archive.Type.DRAFT);
+                    ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive.getTitle(), mArchive.getDocType(), mArchive.getId());
                 }
             }
         }).shareDraft(mArchive.getId(), userIds);

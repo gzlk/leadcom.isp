@@ -1,8 +1,11 @@
 package com.leadcom.android.isp.fragment.common;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 
 /**
@@ -20,16 +23,27 @@ public class InnerWebViewFragment extends BaseWebViewFragment {
 
     private static final String PARAM_TITLE = "iwvf_title";
 
-    public static InnerWebViewFragment newInstance(String params) {
+    public static InnerWebViewFragment newInstance(Bundle bundle) {
         InnerWebViewFragment iwvf = new InnerWebViewFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        // url地址
-        bundle.putString(PARAM_QUERY_ID, strings[0]);
-        // 标题
-        bundle.putString(PARAM_TITLE, strings[1]);
         iwvf.setArguments(bundle);
         return iwvf;
+    }
+
+    private static Bundle getBundle(String title, String url) {
+        Bundle bundle = new Bundle();
+        // url地址
+        bundle.putString(PARAM_QUERY_ID, url);
+        // 标题
+        bundle.putString(PARAM_TITLE, title);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String title, String url) {
+        fragment.openActivity(InnerWebViewFragment.class.getName(), getBundle(title, url), true, false);
+    }
+
+    public static void open(Context context, String title, String url) {
+        BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), getBundle(title, url), true, false);
     }
 
     @Override

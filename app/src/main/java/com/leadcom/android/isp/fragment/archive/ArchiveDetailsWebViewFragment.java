@@ -36,6 +36,7 @@ import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.common.InnerWebViewFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
@@ -125,32 +126,48 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
-        int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-        Bundle bundle = getBundle(archive.getId(), type, true);
-        bundle.putSerializable(PARAM_ARCHIVE, archive);
-        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
+        open(fragment, archive.getTitle(), archive.getOwnType(), archive.getId());
+        //int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+        //Bundle bundle = getBundle(archive.getId(), type, true);
+        //bundle.putSerializable(PARAM_ARCHIVE, archive);
+        //fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
 
-    public static void open(BaseFragment fragment, String archiveId, int archiveType) {
-        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(),
-                getBundle(archiveId, archiveType, true), REQUEST_DELETE, true, false);
+//    public static void open(BaseFragment fragment, String archiveId, int archiveType) {
+//        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(),
+//                getBundle(archiveId, archiveType, true), REQUEST_DELETE, true, false);
+//    }
+
+//    public static void openDraft(BaseFragment fragment, String archiveId, int archiveType) {
+//        Bundle bundle = getBundle(archiveId, archiveType, true);
+//        bundle.putBoolean(PARAM_DRAFT, true);
+//        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
+//    }
+
+//    public static void open(Context context, String archiveId, int archiveType, boolean innerOpen) {
+//        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(),
+//                getBundle(archiveId, archiveType, innerOpen), REQUEST_DELETE, true, false);
+//    }
+
+//    public static void openDraft(Context context, String archiveId, int archiveType, boolean innerOpen) {
+//        Bundle bundle = getBundle(archiveId, archiveType, innerOpen);
+//        bundle.putBoolean(PARAM_DRAFT, true);
+//        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
+//    }
+
+    private static String getUrl(String archiveId, int archiveType) {
+        // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
+        // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
+        return format("%s/html/h5file.html?docid=%s&owntype=%d&accesstoken=%s",
+                Cache.isReleasable() ? "https://www.chacx.cn" : "http://113.108.144.2:8038", archiveId, archiveType, Cache.cache().accessToken);
     }
 
-    public static void openDraft(BaseFragment fragment, String archiveId, int archiveType) {
-        Bundle bundle = getBundle(archiveId, archiveType, true);
-        bundle.putBoolean(PARAM_DRAFT, true);
-        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
+    public static void open(Context context, String title, String archiveId, int archiveType) {
+        InnerWebViewFragment.open(context, title, getUrl(archiveId, archiveType));
     }
 
-    public static void open(Context context, String archiveId, int archiveType, boolean innerOpen) {
-        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(),
-                getBundle(archiveId, archiveType, innerOpen), REQUEST_DELETE, true, false);
-    }
-
-    public static void openDraft(Context context, String archiveId, int archiveType, boolean innerOpen) {
-        Bundle bundle = getBundle(archiveId, archiveType, innerOpen);
-        bundle.putBoolean(PARAM_DRAFT, true);
-        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
+    public static void open(BaseFragment fragment, String title, int archiveType, String archiveId) {
+        InnerWebViewFragment.open(fragment, title, getUrl(archiveId, archiveType));
     }
 
     @Override

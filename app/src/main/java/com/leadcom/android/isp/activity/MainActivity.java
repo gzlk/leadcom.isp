@@ -792,9 +792,9 @@ public class MainActivity extends TitleActivity {
                             saveMessage(msg, true, true);
                             if (msg.isArchiveMsg()) {
                                 if (msg.getMsgType() == Message.Type.ARCHIVE_SHARE_DRAFT) {
-                                    ArchiveDetailsWebViewFragment.openDraft(activity, msg.getDocId(), Archive.Type.DRAFT, true);
+                                    ArchiveDetailsWebViewFragment.open(activity, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), msg.getDocId(), Archive.ArchiveType.MULTIMEDIA);
                                 } else {
-                                    ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP, true);
+                                    //ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP, true);
                                 }
                             }
                             break;

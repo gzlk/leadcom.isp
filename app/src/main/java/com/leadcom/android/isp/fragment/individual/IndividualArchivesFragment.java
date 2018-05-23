@@ -145,8 +145,7 @@ public class IndividualArchivesFragment extends BaseSwipeRefreshSupportFragment 
         public void onClick(int index) {
             // 打开档案详情页
             Archive archive = mAdapter.get(index);
-            int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-            ArchiveDetailsWebViewFragment.open(IndividualArchivesFragment.this, archive.getId(), type);
+            ArchiveDetailsWebViewFragment.open(IndividualArchivesFragment.this, archive);
         }
     };
 

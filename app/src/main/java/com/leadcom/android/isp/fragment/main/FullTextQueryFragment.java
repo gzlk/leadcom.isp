@@ -260,9 +260,7 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
                 GroupFragment.open(FullTextQueryFragment.this, model.getId());
             } else if (model instanceof Archive) {
                 Archive archive = (Archive) model;
-                // 档案类型：1个人档案，2组织档案(这里的档案类型不一样)
-                int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                ArchiveDetailsWebViewFragment.open(FullTextQueryFragment.this, archive.getId(), type);
+                ArchiveDetailsWebViewFragment.open(FullTextQueryFragment.this, archive);
             } else if (model instanceof Activity) {
                 NimSessionHelper.startTeamSession(Activity(), ((Activity) model).getTid());
             }

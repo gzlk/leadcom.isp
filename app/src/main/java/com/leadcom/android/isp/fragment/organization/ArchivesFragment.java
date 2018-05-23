@@ -254,7 +254,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
         @Override
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
-            ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index).getId(), Archive.Type.GROUP);
+            ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index));
         }
     };
 
@@ -270,7 +270,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_like_layout:
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 个人档案评论
-                    ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index).getId(), Archive.Type.GROUP);
+                    ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index));
                     break;
 //                case R.id.ui_tool_view_archive_additional_like_layout:
 //                    // 个人档案点赞

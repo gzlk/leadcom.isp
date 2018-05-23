@@ -14,7 +14,6 @@ import android.webkit.MimeTypeMap;
 
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
@@ -142,7 +141,7 @@ public class FilePreviewHelper {
      */
     private static void previewOnline(Context context, String path, String fileName) {
         // 尝试在线预览方式
-        BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
+        InnerWebViewFragment.open(context, fileName, path);
     }
 
     /**

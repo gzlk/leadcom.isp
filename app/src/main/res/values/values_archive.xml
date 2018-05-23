@@ -91,6 +91,7 @@
     <string name="ui_text_archive_list_fragment_title">个人档案</string>
 
     <string name="ui_text_archive_details_fragment_title">档案详细内容</string>
+    <string name="ui_text_archive_details_fragment_title_draft">草稿详细内容</string>
     <string name="ui_text_archive_details_title_empty">未提供标题</string>
     <string name="ui_text_archive_details_loading">正在加载档案请稍候&#8230;</string>
     <string name="ui_text_archive_details_delete">您确定要删除本档案吗？</string>

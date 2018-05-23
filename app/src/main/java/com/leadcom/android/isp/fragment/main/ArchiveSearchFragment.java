@@ -710,8 +710,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
-                int type = isEmpty(arc.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-                ArchiveDetailsWebViewFragment.open(ArchiveSearchFragment.this, arc.getId(), type);
+                ArchiveDetailsWebViewFragment.open(ArchiveSearchFragment.this, arc);
             }
         }
     };

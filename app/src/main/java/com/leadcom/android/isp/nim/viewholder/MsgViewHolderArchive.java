@@ -4,7 +4,6 @@ import android.text.Html;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.archive.Archive;
@@ -40,6 +39,6 @@ public class MsgViewHolderArchive extends MsgViewHolderMoment {
 
     @Override
     protected void onItemClick() {
-        ArchiveDetailsWebViewFragment.openDraft(context, archive.getCustomId(), Archive.Type.DRAFT, false);
+        ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), archive.getCustomId(), Archive.ArchiveType.MULTIMEDIA);
     }
 }

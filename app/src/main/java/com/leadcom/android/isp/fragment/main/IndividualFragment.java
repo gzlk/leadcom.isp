@@ -622,7 +622,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_like_layout:
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 个人档案评论
-                    ArchiveDetailsWebViewFragment.open(IndividualFragment.this, mAdapter.get(index).getId(), Archive.Type.USER);
+                    ArchiveDetailsWebViewFragment.open(IndividualFragment.this, (Archive) mAdapter.get(index));
                     break;
 //                case R.id.ui_tool_view_archive_additional_like_layout:
 //                    // 个人档案点赞
@@ -918,8 +918,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     private void archiveClick(Archive archive) {
         if (null != archive) {
-            int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-            ArchiveDetailsWebViewFragment.open(IndividualFragment.this, archive.getId(), type);
+            ArchiveDetailsWebViewFragment.open(IndividualFragment.this, archive);
         }
     }
 
