@@ -474,6 +474,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         } else if (editorType == TYPE_TEMPLATE) {
+            mArchive.setOwnType(Archive.Type.GROUP);
             // 设置模板档案的各个属性值
             if (mArchive.getHappenDate().equals(Model.DFT_DATE)) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_happen_date_null);

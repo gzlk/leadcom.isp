@@ -135,7 +135,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive, boolean isDraft) {
-        open(fragment, archive.getTitle(), archive.getOwnType(), archive.getId(), isDraft);
+        open(fragment, archive.getTitle(), archive.getOwnType(), (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft);
     }
 
 //    public static void open(BaseFragment fragment, String archiveId, int archiveType) {
@@ -163,9 +163,9 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private static String getUrl(String archiveId, int archiveType, boolean isDraft) {
         // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
         // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
-        return format("%s/html/h5file.html?docId=%s&ownType=%d&isdraft=%s&accessToken=%s",
+        return format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&accesstoken=%s",
                 (Cache.isReleasable() ? "https://www.chacx.cn" : "http://113.108.144.2:8038"),
-                archiveId, archiveType, isDraft, Cache.cache().accessToken);
+                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, Cache.cache().accessToken);
     }
 
     public static void open(Context context, String title, String archiveId, int archiveType, boolean isDraft) {
