@@ -367,7 +367,7 @@ public class Archive extends Additional {
      * 是否是附件类型的档案
      */
     public boolean isAttachmentArchive() {
-        return image.size() > 0 || video.size() > 0 || office.size() > 0 || attach.size() > 0;
+        return getImage().size() > 0 || getVideo().size() > 0 || getOffice().size() > 0 || getAttach().size() > 0;
     }
 
     // 档案基本信息 **********************************************************************************
