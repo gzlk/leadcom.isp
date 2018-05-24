@@ -22,7 +22,10 @@
     </string>
 
     <string name="ui_system_updatable" formatted="false">
-        <![CDATA[%s有新版本(v%s)可用。<br/>安装新版本试一试最新功能吧。]]>
+        <![CDATA[%s有新版本(v%s)可用<br/><br/>安装并试一试最新功能吧%s。]]>
+    </string>
+    <string name="ui_system_updatable_force">
+        <![CDATA[(<font color="#148dfe">强烈建议</font>您升级到此版本)]]>
     </string>
     <string name="ui_system_updatable_url_invalid">
         <![CDATA[有新版本可用，但下载地址无效。<br/>请联系管理员。]]>

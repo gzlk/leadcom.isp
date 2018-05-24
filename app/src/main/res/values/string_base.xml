@@ -150,6 +150,8 @@
     <string name="ui_base_text_stick">置顶</string>
     <string name="ui_base_text_stick_cancel">取消置顶</string>
     <string name="ui_base_text_download">下载</string>
+    <string name="ui_base_text_upgrade">更新</string>
+    <string name="ui_base_text_upgrade_now">立即更新</string>
     <string name="ui_base_text_play_online">在线播放</string>
 
     <string name="ui_base_text_not_read">未读</string>

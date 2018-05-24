@@ -606,7 +606,7 @@ public class MainActivity extends TitleActivity {
                         if (StringHelper.isEmpty(url) || !Utils.isUrl(url)) {
                             SimpleDialogHelper.init(MainActivity.this).show(R.string.ui_system_updatable_url_invalid);
                         } else {
-                            warningUpdatable(url, ver);
+                            warningUpdatable(url, ver, systemUpdate.getForceUpdate());
                         }
                     }
                 }
@@ -614,9 +614,11 @@ public class MainActivity extends TitleActivity {
         }).getClientVersion();
     }
 
-    private void warningUpdatable(final String url, final String version) {
-        String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default), version);
-        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+    private void warningUpdatable(final String url, final String version, String forceVersion) {
+        String thisVersion = App.app().version();
+        boolean isForce = thisVersion.compareTo(forceVersion) < 0;
+        String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default), version, (isForce ? getString(R.string.ui_system_updatable_force) : ""));
+        SimpleDialogHelper.init(this).show(text, getString(isForce ? R.string.ui_base_text_upgrade_now : R.string.ui_base_text_upgrade), (isForce ? "" : getString(R.string.ui_base_text_no_need)), new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 // 打开下载对话框，并开始下载（下载对话框可以隐藏）
@@ -627,7 +629,7 @@ public class MainActivity extends TitleActivity {
                 UpgradeHelper.helper(MainActivity.this, version).startDownload(url, title, description);
                 return true;
             }
-        }).setTitleText(text).setConfirmText(R.string.ui_base_text_yes).show();
+        }, null);
     }
 
     private void parseIntent() {

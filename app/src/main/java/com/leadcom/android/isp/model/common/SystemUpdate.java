@@ -14,8 +14,11 @@ package com.leadcom.android.isp.model.common;
 public class SystemUpdate {
 
     private String version;
-    private String patchCode;
     private String resourceURI;
+    private String content;
+    private String updateDate;
+    private String forceUpdate;
+    private String terminalType;
 
     public String getVersion() {
         return version;
@@ -25,19 +28,43 @@ public class SystemUpdate {
         this.version = version;
     }
 
-    public String getPatchCode() {
-        return patchCode;
-    }
-
-    public void setPatchCode(String patchCode) {
-        this.patchCode = patchCode;
-    }
-
     public String getResourceURI() {
         return resourceURI;
     }
 
     public void setResourceURI(String resourceURI) {
         this.resourceURI = resourceURI;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(String updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public String getForceUpdate() {
+        return forceUpdate;
+    }
+
+    public void setForceUpdate(String forceUpdate) {
+        this.forceUpdate = forceUpdate;
+    }
+
+    public String getTerminalType() {
+        return terminalType;
+    }
+
+    public void setTerminalType(String terminalType) {
+        this.terminalType = terminalType;
     }
 }
