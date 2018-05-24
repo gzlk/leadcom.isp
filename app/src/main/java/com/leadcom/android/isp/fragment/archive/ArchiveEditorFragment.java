@@ -861,7 +861,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_notime);
                         } else {
                             // 选择封面，到封面拾取器
-                            CoverPickFragment.open(ArchiveEditorFragment.this, false, mArchive.getCover(), 1, 1);
+                            CoverPickFragment.open(ArchiveEditorFragment.this, true, mArchive.getCover(), 1, 1);
                         }
                         break;
                     case R.id.ui_popup_rich_editor_setting_type_user:

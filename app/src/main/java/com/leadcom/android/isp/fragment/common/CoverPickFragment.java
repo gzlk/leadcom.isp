@@ -103,10 +103,10 @@ public class CoverPickFragment extends BaseImageSelectableSupportFragment {
     public void doingInResume() {
         // 只能选择一张图片
         maxSelectable = 1;
-        isChooseImageForCrop = true;
+        //isChooseImageForCrop = true;
         isSupportCompress = true;
-        croppedAspectX = 2;
-        croppedAspectY = 1;
+        //croppedAspectX = 2;
+        //croppedAspectY = 1;
         setCustomTitle(R.string.ui_activity_cover_picker_fragment_title);
 //        setRightText(R.string.ui_base_text_confirm);
 //        setRightTitleClickListener(new OnTitleButtonClickListener() {
