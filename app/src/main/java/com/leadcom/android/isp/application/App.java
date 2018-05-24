@@ -25,7 +25,6 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.tencent.bugly.Bugly;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.smtt.sdk.QbSdk;
 
 import java.io.File;

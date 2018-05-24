@@ -1528,16 +1528,18 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void updateArchive(int type) {
-        if (isEmpty(mArchive.getId())) {
-            return;
-        }
-        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
-            @Override
-            public void onResponse(Archive archive, boolean success, String message) {
-                super.onResponse(archive, success, message);
-                ToastHelper.make().showMsg(message);
-            }
-        }).update(mArchive, type);
+//        if (isEmpty(mArchive.getId()) || isEmpty(mQueryId)) {
+//            return;
+//        }
+//        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+//            @Override
+//            public void onResponse(Archive archive, boolean success, String message) {
+//                super.onResponse(archive, success, message);
+//                if (!success) {
+//                    ToastHelper.make().showMsg(message);
+//                }
+//            }
+//        }).update(mArchive, type);
     }
 
     private void showFileSize(boolean video, String path, TextView view) {
