@@ -23,10 +23,10 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
@@ -43,7 +43,6 @@ import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
-import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.common.SystemUpdate;
 import com.leadcom.android.isp.model.organization.Invitation;
@@ -246,6 +245,9 @@ public class MainActivity extends TitleActivity {
         setDisplayPage();
         NimApplication.dispatchCallbacks();
         checkClientVersion();
+        if (!Cache.isReleasable()) {
+            ToastHelper.make().showMsg(R.string.ui_text_main_inner_test_toast);
+        }
     }
 
     @Override
@@ -792,7 +794,7 @@ public class MainActivity extends TitleActivity {
                             saveMessage(msg, true, true);
                             if (msg.isArchiveMsg()) {
                                 if (msg.getMsgType() == Message.Type.ARCHIVE_SHARE_DRAFT) {
-                                    ArchiveDetailsWebViewFragment.open(activity, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), msg.getDocId(), Archive.ArchiveType.MULTIMEDIA, true);
+                                    //ArchiveDetailsWebViewFragment.open(activity, msg.getGroupId(), msg.getDocId(), Archive.ArchiveType.MULTIMEDIA, true);
                                 } else {
                                     //ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP, true);
                                 }

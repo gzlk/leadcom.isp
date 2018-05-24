@@ -36,7 +36,6 @@ import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.common.InnerWebViewFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
@@ -51,7 +50,6 @@ import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnKeyboardChangeListener;
-import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Dao;
@@ -95,6 +93,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_ARCHIVE = "adwvf_archive";
     private static final String PARAM_DRAFT = "adwvf_draft";
     private static final String PARAM_INNER_OPEN = "adwvf_inner_open";
+    private static final String PARAM_GROUP_ID = "adwvf_group_id";
+    private static final String PARAM_AUTHOR_ID = "adwvf_author_id";
     private static boolean deletable = false;
     private static boolean isCollected = false;
 
@@ -104,14 +104,20 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         return adwvf;
     }
 
-    private static Bundle getBundle(String archiveId, int archiveType, boolean innerOpen) {
+    private static Bundle getBundle(String archiveId, String groupId, int archiveType, boolean innerOpen, boolean isDraft, String authorId) {
         Bundle bundle = new Bundle();
         // 档案id
         bundle.putString(PARAM_QUERY_ID, archiveId);
+        // 档案所属的组织id
+        bundle.putString(PARAM_GROUP_ID, groupId);
         // 档案类型：组织档案或个人档案
         bundle.putInt(PARAM_DOC_TYPE, archiveType);
         // 是否app内部打开的详情页
         bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
+        // 是否是草稿档案
+        bundle.putBoolean(PARAM_DRAFT, isDraft);
+        // 档案作者id
+        bundle.putString(PARAM_AUTHOR_ID, authorId);
         return bundle;
     }
 
@@ -126,7 +132,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
-        open(fragment, archive.getTitle(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP), (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false);
+        open(fragment, archive.getGroupId(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
+                (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false, archive.getUserId());
         //int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
         //Bundle bundle = getBundle(archive.getId(), type, true);
         //bundle.putSerializable(PARAM_ARCHIVE, archive);
@@ -135,7 +142,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive, boolean isDraft) {
-        open(fragment, archive.getTitle(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP), (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft);
+        open(fragment, archive.getGroupId(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
+                (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft, archive.getUserId());
     }
 
 //    public static void open(BaseFragment fragment, String archiveId, int archiveType) {
@@ -160,20 +168,16 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 //        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
 //    }
 
-    private static String getUrl(String archiveId, int archiveType, boolean isDraft) {
-        // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
-        // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
-        return format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&accesstoken=%s",
-                (Cache.isReleasable() ? "https://www.chacx.cn" : "http://113.108.144.2:8038"),
-                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, Cache.cache().accessToken);
+    public static void open(Context context, String groupId, String archiveId, int archiveType, boolean isDraft, boolean innerOpen, String authorId) {
+        //InnerWebViewFragment.open(context, title, getUrl(archiveId, archiveType, isDraft));
+        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(),
+                getBundle(archiveId, groupId, archiveType, innerOpen, isDraft, authorId), false, false);
     }
 
-    public static void open(Context context, String title, String archiveId, int archiveType, boolean isDraft) {
-        InnerWebViewFragment.open(context, title, getUrl(archiveId, archiveType, isDraft));
-    }
-
-    public static void open(BaseFragment fragment, String title, int archiveType, String archiveId, boolean isDraft) {
-        InnerWebViewFragment.open(fragment, title, getUrl(archiveId, archiveType, isDraft));
+    public static void open(BaseFragment fragment, String groupId, int archiveType, String archiveId, boolean isDraft, String authorId) {
+        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(),
+                getBundle(archiveId, groupId, archiveType, true, isDraft, authorId), false, false);
+        //InnerWebViewFragment.open(fragment, title, getUrl(archiveId, archiveType, isDraft));
     }
 
     @Override
@@ -184,6 +188,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         selectedIndex = bundle.getInt(PARAM_CMT_INDEX, 0);
         mArchive = (Archive) bundle.getSerializable(PARAM_ARCHIVE);
         innerOpen = bundle.getBoolean(PARAM_INNER_OPEN, false);
+        groupId = bundle.getString(PARAM_GROUP_ID, "");
+        authorId = bundle.getString(PARAM_AUTHOR_ID, "");
     }
 
     @Override
@@ -194,6 +200,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         bundle.putSerializable(PARAM_ARCHIVE, mArchive);
         bundle.putBoolean(PARAM_DRAFT, isDraft);
         bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
+        bundle.putString(PARAM_GROUP_ID, groupId);
+        bundle.putString(PARAM_AUTHOR_ID, authorId);
     }
 
     @Override
@@ -204,6 +212,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         inputContent.addTextChangedListener(inputTextWatcher);
         mOnKeyboardChangeListener = new OnKeyboardChangeListener(Activity());
         mOnKeyboardChangeListener.setKeyboardListener(keyboardListener);
+
+        // WebView 显示档案详情时的UI处理
+        additionalLayout.setVisibility(View.GONE);
+        enableSwipe(false);
+        isLoadingComplete(true);
     }
 
     @Override
@@ -229,6 +242,13 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         isCollected = false;
         super.onDestroy();
     }
+
+    @ViewId(R.id.ui_main_tool_bar_background)
+    private View titleBackground;
+    @ViewId(R.id.ui_ui_custom_title_right_icon)
+    private CustomTextView rightIcon;
+    @ViewId(R.id.ui_ui_custom_title_right_text)
+    private TextView rightText;
 
     @ViewId(R.id.ui_tool_view_archive_additional_comment_number)
     private TextView commentNumber;
@@ -259,6 +279,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private Model nothingMore;
     private int archiveType, selectedIndex;
     private boolean isDraft;
+    private String groupId, authorId;
     /**
      * 标记是否是app内部打开的详情页
      */
@@ -328,7 +349,9 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     @Click({R.id.ui_tool_view_archive_additional_comment_layout,
             R.id.ui_tool_view_archive_additional_like_layout,
             R.id.ui_tool_view_archive_additional_collection_layout,
-            R.id.ui_tool_view_simple_inputable_send})
+            R.id.ui_tool_view_simple_inputable_send,
+            R.id.ui_ui_custom_title_left_container,
+            R.id.ui_ui_custom_title_right_container})
     private void elementClick(View view) {
         switch (view.getId()) {
             case R.id.ui_tool_view_simple_inputable_send:
@@ -345,6 +368,12 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 break;
             case R.id.ui_tool_view_archive_additional_collection_layout:
                 collect(mAdapter.get(mQueryId));
+                break;
+            case R.id.ui_ui_custom_title_left_container:
+                finish();
+                break;
+            case R.id.ui_ui_custom_title_right_container:
+                rightIconClick(view);
                 break;
         }
     }
@@ -422,17 +451,31 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     }
 
     private void resetRightIconEvent() {
-        setRightText(R.string.ui_base_text_edit);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                //openEditSelector();
-                Archive archive = (Archive) mAdapter.get(mQueryId);
-                String type = archive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE : ArchiveEditorFragment.MULTIMEDIA;
-                ArchiveEditorFragment.open(ArchiveDetailsWebViewFragment.this, mQueryId, type);
-                finish();
-            }
-        });
+        rightIcon.setText(null);
+        rightText.setText(R.string.ui_base_text_edit);
+//        setRightText(R.string.ui_base_text_edit);
+//        setRightTitleClickListener(new OnTitleButtonClickListener() {
+//            @Override
+//            public void onClick() {
+//                //openEditSelector();
+//                Archive archive = (Archive) mAdapter.get(mQueryId);
+//                String type = archive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE : ArchiveEditorFragment.MULTIMEDIA;
+//                ArchiveEditorFragment.open(ArchiveDetailsWebViewFragment.this, mQueryId, type);
+//                finish();
+//            }
+//        });
+    }
+
+    private void rightIconClick(View view) {
+        view.startAnimation(App.clickAnimation());
+        if (isDraft) {
+            Archive archive = (Archive) mAdapter.get(mQueryId);
+            String type = archive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE : ArchiveEditorFragment.MULTIMEDIA;
+            ArchiveEditorFragment.open(ArchiveDetailsWebViewFragment.this, mQueryId, type);
+            finish();
+        } else {
+            fetchingShareInfo();
+        }
     }
 
     private void loadingArchive() {
@@ -490,17 +533,20 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         } else if (!isCollected) {
             // 不是收藏过来的内容
             // 非草稿档案，可以分享等等
-            setRightIcon(R.string.ui_icon_more);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
-                @Override
-                public void onClick() {
-                    fetchingShareInfo();
-                }
-            });
+            rightIcon.setText(R.string.ui_icon_more);
+            //setRightIcon(R.string.ui_icon_more);
+            //setRightTitleClickListener(new OnTitleButtonClickListener() {
+            //    @Override
+            //    public void onClick() {
+            //        fetchingShareInfo();
+            //    }
+            //});
         }
         myRole = Cache.cache().getGroupRole(archive.getGroupId());
         // 设置收藏的参数为档案
-        Collectable.resetArchiveCollectionParams(archive);
+        if (!isCollected) {
+            Collectable.resetArchiveCollectionParams(archive);
+        }
         prepareShareDialogElement(archive);
         // 档案创建者可以删除评论
         deletable = enableShareDelete;
@@ -517,10 +563,28 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         for (Attachment attachment : archive.getAttach()) {
             mAdapter.update(attachment);
         }
-        if (!isDraft) {
-            // 草稿也可以有评论和赞什么的
-            displayAdditional(archive);
-            //loadingComments(archive);
+        //if (!isDraft) {
+        // 草稿也可以有评论和赞什么的
+        //displayAdditional(archive);
+        //loadingComments(archive);
+        //}
+    }
+
+    private void displayArchive() {
+        if (null == mArchive) {
+            mArchive = new Archive();
+            // 档案id
+            mArchive.setId(mQueryId);
+            // 组织id
+            mArchive.setGroupId(groupId);
+            // 档案id
+            mArchive.setDocId(mQueryId);
+            // 档案类型：1=组织、2=个人
+            mArchive.setOwnType(archiveType);
+            // 档案作者id
+            mArchive.setUserId(authorId);
+
+            displayArchive(mArchive);
         }
     }
 
@@ -574,11 +638,12 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
-            setCustomTitle(R.string.ui_text_archive_details_fragment_title);
+            //setCustomTitle(R.string.ui_text_archive_details_fragment_title);
             mAdapter = new DetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
 
-            loadingArchive();
+            displayArchive();
+            //loadingArchive();
         }
     }
 
@@ -1045,6 +1110,13 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }
     }
 
+    private ArchiveDetailsViewHolder.OnScrollChangedListener scrollChangedListener = new ArchiveDetailsViewHolder.OnScrollChangedListener() {
+        @Override
+        public void onScroll(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            //log(format("scrollX: %d, scrollY: %d, oldScrollX: %d, oldScrollY: %d", scrollX, scrollY, oldScrollX, oldScrollY));
+        }
+    };
+
     private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
         private static final int VT_ARCHIVE = 0, VT_COMMENT = 1, VT_NOTHING = 2, VT_ATTACHMENT = 3, VT_ADDITIONAL = 4;
 
@@ -1058,6 +1130,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                         detailsViewHolder.setIsManager(enableShareDelete);
                         detailsViewHolder.setIsCollected(isCollected);
                         detailsViewHolder.setIsDraft(isDraft);
+                        detailsViewHolder.setOnScrollChangedListener(scrollChangedListener);
                     }
                     return detailsViewHolder;
                 case VT_COMMENT:

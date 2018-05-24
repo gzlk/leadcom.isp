@@ -4,6 +4,8 @@
     <dimen name="ui_text_size_main_bottom_icon">@dimen/ui_static_sp_22</dimen>
     <dimen name="ui_text_size_main_bottom_text">@dimen/ui_static_sp_12</dimen>
 
+    <string name="ui_text_main_inner_test_toast">您所在的是测试环境</string>
+
     <string name="ui_text_main_bottom_button_text_1">首页</string>
     <string name="ui_text_main_bottom_button_text_2">消息</string>
     <string name="ui_text_main_bottom_button_text_2d5">新增</string>

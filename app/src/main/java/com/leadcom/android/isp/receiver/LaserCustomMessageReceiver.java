@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -36,12 +39,12 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
         if (bundle == null) {
             return;
         }
-        String string = "Bundle{";
+        StringBuilder string = new StringBuilder("Bundle {");
         for (String key : bundle.keySet()) {
-            string += " " + key + " => " + bundle.get(key) + ";";
+            string.append("\"").append(key).append("\": \"").append(bundle.get(key)).append("\",");
         }
-        string += " } Bundle";
-        log(string);
+        string.append("}Bundle");
+        log(string.toString());
     }
 
     private void parseBundle(Bundle bundle) {
@@ -59,18 +62,22 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
         if (null == bundle) return;
         PushMessage push = PushMessage.fromJson(bundle.getString(JPushInterface.EXTRA_EXTRA, "{}"));
         assert push != null;
+        boolean isAppForeground = SysInfoUtil.isAppOnForeground(context, BuildConfig.APPLICATION_ID);
         switch (push.getMessageCode()) {
             case PushMessage.MsgCode.GROUP_ATTENTION:
                 break;
             case PushMessage.MsgCode.GROUP_DOC_COMMENT:
             case PushMessage.MsgCode.GROUP_DOC_TRANSPORT:
-                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title), push.getDocId(), Archive.Type.GROUP, false);
+                ArchiveDetailsWebViewFragment.open(context, push.getGroupId(), push.getDocId(),
+                        Archive.Type.GROUP, false, isAppForeground, push.getDocUserId());
                 break;
             case PushMessage.MsgCode.USER_DOC_COMMENT:
-                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title), push.getDocId(), Archive.Type.USER, false);
+                ArchiveDetailsWebViewFragment.open(context, push.getGroupId(), push.getDocId(),
+                        Archive.Type.USER, false, isAppForeground, push.getDocUserId());
                 break;
             case PushMessage.MsgCode.GROUP_DOC_SHARE:
-                ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), push.getDocId(), Archive.Type.GROUP, true);
+                ArchiveDetailsWebViewFragment.open(context, push.getGroupId(), push.getDocId(),
+                        Archive.Type.GROUP, true, isAppForeground, push.getDocUserId());
                 break;
         }
     }

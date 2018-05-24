@@ -631,7 +631,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onStop() {
-        if (editorType == TYPE_MULTIMEDIA) {
+        if (editorType == TYPE_MULTIMEDIA && isGroupArchive) {
+            // 图文的组织档案才保存草稿
             saveDraft();
         }
         super.onStop();

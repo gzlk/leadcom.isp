@@ -1,5 +1,8 @@
 package com.leadcom.android.isp.holder.archive;
 
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -8,16 +11,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.ToggleButton;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
 
 /**
  * <b>功能描述：</b><br />
@@ -44,11 +48,19 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
     private WebView contentView;
     @ViewId(R.id.ui_holder_view_archive_details_public_layout)
     private View publicView;
+    @ViewId(R.id.ui_holder_view_archive_details_author_layout)
+    private View authorLayout;
     @ViewId(R.id.ui_holder_view_archive_details_public_toggle)
     private ToggleButton publicToggle;
     @ViewId(R.id.ui_holder_view_archive_details_labels)
     private FlexboxLayout labelsLayout;
+    @ViewId(R.id.ui_holder_view_archive_details_divider)
+    private View divider;
 
+    @ViewId(R.id.ui_tool_loading_container)
+    private View loadingView;
+
+    private boolean isOnlyWebView = true;
     private int width, height, margin;
     private boolean isManager = false, isDraft = false;
 
@@ -57,11 +69,40 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
         contentView.getSettings().setDefaultTextEncodingName("UTF-8");
         contentView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return true;
             }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                loadingView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                loadingView.setVisibility(View.GONE);
+                super.onPageFinished(view, url);
+            }
         });
+        if (Build.VERSION.SDK_INT >= 23) {
+            contentView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    if (null != onScrollChangedListener) {
+                        onScrollChangedListener.onScroll(scrollX, scrollY, oldScrollX, oldScrollY);
+                    }
+                }
+            });
+        }
         margin = getDimension(R.dimen.ui_static_dp_5);
         resetCoverSize();
         publicToggle.addOnToggleChangedListener(new ToggleButton.OnToggleChangedListener() {
@@ -107,7 +148,33 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         coverView.setLayoutParams(params);
     }
 
+    private static String getUrl(String archiveId, int archiveType, boolean isDraft) {
+        // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
+        // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
+        return StringHelper.format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&accesstoken=%s",
+                (Cache.isReleasable() ? "https://www.chacx.cn" : "http://113.108.144.2:8038"),
+                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, Cache.cache().accessToken);
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
     public void showContent(Archive archive) {
+        if (isOnlyWebView) {
+            titleView.setVisibility(View.GONE);
+            authorLayout.setVisibility(View.GONE);
+            publicView.setVisibility(View.GONE);
+            labelsLayout.setVisibility(View.GONE);
+            divider.setVisibility(View.GONE);
+
+            contentView.getSettings().setUseWideViewPort(true);
+            contentView.getSettings().setLoadWithOverviewMode(true);
+            contentView.getSettings().setDomStorageEnabled(true);
+            contentView.getSettings().setJavaScriptEnabled(true);
+
+            String url = getUrl(archive.getId(), archive.getOwnType(), isDraft);
+            log(url);
+            contentView.loadUrl(url);
+            return;
+        }
         titleView.setText(archive.getTitle());
         timeView.setText(fragment().formatDate(archive.getCreateDate(), R.string.ui_base_text_date_time_format));
         String source = (isEmpty(archive.getSource()) || archive.getSource().equals(archive.getUserName())) ? "" : StringHelper.getString(R.string.ui_text_archive_details_source_text, archive.getSource());
@@ -154,5 +221,15 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
             params.topMargin = lines > 0 ? margin : 0;
             textView.setLayoutParams(params);
         }
+    }
+
+    private OnScrollChangedListener onScrollChangedListener;
+
+    public void setOnScrollChangedListener(OnScrollChangedListener l) {
+        onScrollChangedListener = l;
+    }
+
+    public interface OnScrollChangedListener {
+        void onScroll(int scrollX, int scrollY, int oldScrollX, int oldScrollY);
     }
 }

@@ -5,6 +5,7 @@ import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.organization.Organization;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
@@ -67,6 +68,8 @@ public class PushMessage extends Model {
     private int docType;
     @Column(Archive.Field.UserArchiveId)
     private String docUserId;
+    @Column(Organization.Field.GroupId)
+    private String groupId;
     @Column(Field.MessageCode)
     private String messageCode;
     @Column(Archive.Field.Title)
@@ -96,6 +99,14 @@ public class PushMessage extends Model {
 
     public void setDocUserId(String docUserId) {
         this.docUserId = docUserId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public String getMessageCode() {

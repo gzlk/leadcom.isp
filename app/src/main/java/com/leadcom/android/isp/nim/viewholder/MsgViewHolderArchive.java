@@ -4,9 +4,7 @@ import android.text.Html;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.nim.model.extension.ArchiveAttachment;
 import com.netease.nim.uikit.common.ui.recyclerview.adapter.BaseMultiItemFetchLoadAdapter;
 
@@ -39,6 +37,6 @@ public class MsgViewHolderArchive extends MsgViewHolderMoment {
 
     @Override
     protected void onItemClick() {
-        ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), archive.getCustomId(), Archive.ArchiveType.MULTIMEDIA, true);
+        //ArchiveDetailsWebViewFragment.open(context, StringHelper.getString(R.string.ui_text_archive_details_fragment_title_draft), archive.getCustomId(), Archive.ArchiveType.MULTIMEDIA, true);
     }
 }

@@ -25,9 +25,9 @@ public class SysInfoUtil {
         return Build.MODEL;
     }
 
-    public static final boolean isAppOnForeground(Context context) {
+    public static final boolean isAppOnForeground(Context context, String packageName) {
         ActivityManager manager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-        String packageName = context.getApplicationContext().getPackageName();
+        //String packageName = context.getApplicationContext().getPackageName();
         assert manager != null;
         List<ActivityManager.RunningAppProcessInfo> list = manager.getRunningAppProcesses();
         if (list == null) return false;
