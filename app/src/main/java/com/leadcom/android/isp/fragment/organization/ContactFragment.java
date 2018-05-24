@@ -17,6 +17,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.MemberRequest;
+import com.leadcom.android.isp.api.org.RoleRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -579,6 +580,24 @@ public class ContactFragment extends BaseOrganizationFragment {
         }, null);
     }
 
+    private final int TYPE_MANAGER = 1, TYPE_ARCHIVE = 2;
+
+    private void fetchingRemoteRoles(final int index, final int type) {
+        RoleRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Role>() {
+            @Override
+            public void onResponse(List<Role> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success) {
+                    if (type == TYPE_MANAGER) {
+                        resetManager(index);
+                    } else if (type == TYPE_ARCHIVE) {
+                        setAsArchiveManager(index);
+                    }
+                }
+            }
+        }).list();
+    }
+
     private void resetManager(final int index) {
         Member member = mAdapter.get(index);
         setLoadingText(member.isGroupManager() ? R.string.ui_organization_contact_unseting_manager : R.string.ui_organization_contact_seting_manager);
@@ -586,7 +605,12 @@ public class ContactFragment extends BaseOrganizationFragment {
         boolean isManager = member.isGroupManager();
         Role role = Role.getRoleByCode(isManager ? Member.Code.GROUP_ROLE_CODE_COMMON_MEMBER :
                 showType == TYPE_ORG ? Member.Code.GROUP_ROLE_CODE_MANAGER : Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
-        updateMember(member, role, false);
+        if (null == role) {
+            // 如果角色为空则拉取服务器上的角色列表
+            fetchingRemoteRoles(index, TYPE_MANAGER);
+        } else {
+            updateMember(member, role, false);
+        }
     }
 
     // 设置为档案管理员
@@ -603,7 +627,12 @@ public class ContactFragment extends BaseOrganizationFragment {
         displayLoading(true);
         boolean isArchiveManager = member.isArchiveManager();
         Role role = Role.getRoleByCode(isArchiveManager ? Member.Code.GROUP_ROLE_CODE_COMMON_MEMBER : Member.Code.GROUP_ROLE_CODE_DOC_MANAGER);
-        updateMember(member, role, false);
+        if (null == role) {
+            // 如果角色为空则拉取服务器上的角色列表
+            fetchingRemoteRoles(index, TYPE_ARCHIVE);
+        } else {
+            updateMember(member, role, false);
+        }
     }
 
     private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
