@@ -25,7 +25,6 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -39,7 +38,6 @@ import com.leadcom.android.isp.fragment.main.SystemMessageFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
-import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
@@ -703,19 +701,6 @@ public class MainActivity extends TitleActivity {
                 yes = StringHelper.getString(R.string.ui_base_text_i_known);
                 break;
             case NimMessage.Type.ACTIVITY_INVITE:
-                if (msg.isRead()) {
-                    if (msg.isHandled()) {
-                        // 直接打开活动群聊页面
-                        NimSessionHelper.startTeamSession(activity, msg.getTid());
-                    } else {
-                        // 消息已处理过且属于暂不参加则打开加入活动页面
-                        openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%s", msg.getTid(), msg.getId()), true, false);
-                    }
-                } else {
-                    // 活动邀请，下一步打开未处理活动页面
-                    yes = StringHelper.getString(R.string.ui_base_text_have_a_look);
-                    no = StringHelper.getString(R.string.ui_base_text_i_known);
-                }
                 break;
             case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
                 // 系统通知，只提醒就可以了
@@ -763,13 +748,6 @@ public class MainActivity extends TitleActivity {
                             inviteToSquadPassed(msg);
                             break;
                         case NimMessage.Type.ACTIVITY_INVITE:
-                            if (msg.isHandled()) {
-                                // 如果消息已经处理过了，则直接打开群聊页面
-                                NimSessionHelper.startTeamSession(activity, msg.getTid());
-                            } else {
-                                // 消息没有处理过则打开加入活动页面
-                                openActivity(activity, ActivityEntranceFragment.class.getName(), StringHelper.format(",%s,%s", msg.getTid(), msg.getId()), true, false);
-                            }
                             break;
                         case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
                             // 系统通知的话，点击按钮设置已读标记

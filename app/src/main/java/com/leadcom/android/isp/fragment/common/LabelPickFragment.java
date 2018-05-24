@@ -1,4 +1,4 @@
-package com.leadcom.android.isp.fragment.activity;
+package com.leadcom.android.isp.fragment.common;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

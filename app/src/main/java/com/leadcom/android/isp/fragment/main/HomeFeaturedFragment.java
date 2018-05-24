@@ -9,29 +9,23 @@ import android.view.View;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
-import com.leadcom.android.isp.api.activity.ActRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
-import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.activity.ActivityEntranceFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.leadcom.android.isp.holder.common.ClickableSearchViewHolder;
-import com.leadcom.android.isp.holder.home.ActivityHomeViewHolder;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.leadcom.android.isp.holder.home.HomeImagesViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.PriorityPlace;
-import com.leadcom.android.isp.nim.session.NimSessionHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -342,11 +336,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
         @Override
         public void onClick(int index) {
             Model model = mAdapter.get(index);
-            if (model instanceof Activity) {
-                // 到活动详情报名页
-                Activity act = (Activity) model;
-                isJoinedPublicAct(act.getId(), act.getTid());
-            } else if (model instanceof Archive) {
+            if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
                 ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, arc);
@@ -388,21 +378,6 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
         selectedIndex = -1;
     }
 
-    private void isJoinedPublicAct(final String actId, final String tid) {
-        ActRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Activity>() {
-            @Override
-            public void onResponse(Activity activity, boolean success, String message) {
-                super.onResponse(activity, success, message);
-                if (success) {
-                    NimSessionHelper.startTeamSession(Activity(), tid);
-                } else {
-                    // 如果不在该群则打开报名页面
-                    openActivity(ActivityEntranceFragment.class.getName(), format("%s,%s", actId, tid), true, false);
-                }
-            }
-        }).isJoinPublicAct(actId);
-    }
-
     @Override
     protected void onLikeComplete(boolean success, Model model) {
         if (success) {
@@ -419,7 +394,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
     private class RecommendedAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_HEADER = 0, VT_ACTIVITY = 1, VT_ARCHIVE = 2, VT_EDITOR = 3;
+        private static final int VT_HEADER = 0, VT_ARCHIVE = 1, VT_EDITOR = 2;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -431,10 +406,6 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                         //homeImagesViewHolder.addImages(headline);
                     }
                     return homeImagesViewHolder;
-                case VT_ACTIVITY:
-                    ActivityHomeViewHolder holder = new ActivityHomeViewHolder(itemView, HomeFeaturedFragment.this);
-                    holder.addOnViewHolderClickListener(onViewHolderClickListener);
-                    return holder;
                 case VT_ARCHIVE:
                     ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, HomeFeaturedFragment.this);
                     ahrvh.addOnViewHolderClickListener(onViewHolderClickListener);
@@ -453,9 +424,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             if (model.getId().equals("headline")) {
                 return VT_HEADER;
             }
-            if (model instanceof Activity) {
-                return VT_ACTIVITY;
-            } else if (model instanceof Archive) {
+            if (model instanceof Archive) {
                 return VT_ARCHIVE;
             } else {
                 return VT_EDITOR;
@@ -468,9 +437,6 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 case VT_HEADER:
                     // 轮播图
                     return R.layout.holder_view_home_images;
-                case VT_ACTIVITY:
-                    // 活动
-                    return R.layout.holder_view_home_seminar;
                 case VT_ARCHIVE:
                     return R.layout.holder_view_archive_home_feature;
                 default:
@@ -487,8 +453,6 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 } else if (item instanceof PriorityPlace) {
                     ((ArchiveManagementViewHolder) holder).showContent((PriorityPlace) item);
                 }
-            } else if (holder instanceof ActivityHomeViewHolder) {
-                ((ActivityHomeViewHolder) holder).showContent((Activity) item);
             } else if (holder instanceof ArchiveHomeRecommendedViewHolder) {
                 ((ArchiveHomeRecommendedViewHolder) holder).showContent((Archive) item);
             }

@@ -1,19 +1,9 @@
 package com.leadcom.android.isp.nim.action;
 
-import android.app.Activity;
 import android.content.Intent;
 
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.fragment.activity.topic.TopicCreatorFragment;
-import com.leadcom.android.isp.fragment.activity.topic.TopicListFragment;
-import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.model.activity.topic.AppTopic;
-import com.leadcom.android.isp.nim.constant.RequestCode;
-import com.leadcom.android.isp.nim.model.extension.TopicAttachment;
 import com.netease.nim.uikit.business.session.actions.BaseAction;
-import com.netease.nimlib.sdk.msg.MessageBuilder;
-import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 /**
  * <b>功能描述：</b>网易云信议题Action<br />
@@ -37,32 +27,10 @@ public class IssueAction extends BaseAction {
 
     @Override
     public void onClick() {
-        // 打开通知列表页面
-        int requestCode = makeRequestCode(RequestCode.REQ_TOPIC_LIST);
-        TopicListFragment.open(getActivity(), getAccount(), requestCode);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case RequestCode.REQ_TOPIC_LIST:
-                    // 到议题创建页面
-                    TopicCreatorFragment.open(getActivity(), makeRequestCode(RequestCode.REQ_TOPIC_NEW), getAccount());
-                    break;
-                case RequestCode.REQ_TOPIC_NEW:
-                    String json = BaseFragment.getResultedData(data);
-                    AppTopic topic = AppTopic.fromJson(json);
-                    TopicAttachment attachment = new TopicAttachment();
-                    attachment.setCustomId(topic.getTid());
-                    attachment.setActId(topic.getActId());
-                    attachment.setTopicId(topic.getId());
-                    attachment.setTitle(topic.getTitle());
-                    IMMessage message = MessageBuilder.createCustomMessage(getAccount(), SessionTypeEnum.Team, topic.getTitle(), attachment);
-                    sendMessage(message);
-                    break;
-            }
-        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 }
