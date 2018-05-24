@@ -247,13 +247,23 @@ public class ArchiveRequest extends Request<Archive> {
      * 搜索组织档案
      *
      * @param organizationId 组织的id
-     * @param info           档案的名称
+     * @param searchTitle    档案的名称
      */
-    public void search(String organizationId, String info, String createDate, String property, String category, int pageNumber) {
-        //groupId,info
-        String params = format("%s?groupId=%s&createDate=%s&property=%s&category=%s&pageNumber=%d&info=%s",
-                group(SEARCH), organizationId, createDate, property, category, pageNumber, info);
-        httpRequest(getRequest(MultipleArchive.class, params, "", HttpMethods.Get));
+    public void search(String organizationId, String searchTitle, String createDate, String property, String category, int pageNumber) {
+        String params = format("%s?groupId=%s&pageNumber=%d", group(LIST), organizationId, pageNumber);
+        if (!isEmpty(createDate)) {
+            params = format("%s&createDate=%s", params, createDate);
+        }
+        if (!isEmpty(property)) {
+            params = format("%s&property=%s", params, property);
+        }
+        if (!isEmpty(category)) {
+            params = format("%s&category=%s", params, category);
+        }
+        if (!isEmpty(searchTitle)) {
+            params = format("%s&title=%s", params, searchTitle);
+        }
+        httpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -273,8 +283,9 @@ public class ArchiveRequest extends Request<Archive> {
      * @param organizationId 组织id
      * @param pageNumber     页码
      */
-    public void list(String organizationId, int pageNumber) {
-        String param = format("?groupId=%s&pageNumber=%d", organizationId, pageNumber);
+    public void list(String organizationId, int pageNumber, String searchTitle) {
+        String param = format("?groupId=%s&pageNumber=%d%s", organizationId, pageNumber,
+                (isEmpty(searchTitle) ? "" : (format("&title=%s", searchTitle))));
         httpRequest(getRequest(ListArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
     }
 
@@ -288,8 +299,9 @@ public class ArchiveRequest extends Request<Archive> {
     /**
      * 首页 - 推荐列表
      */
-    public void listHomeRecommend(int pageNumber) {
-        String params = format("/index/recommend?pageNumber=%d", pageNumber);
+    public void listHomeRecommend(int pageNumber, String searchTitle) {
+        String params = format("/index/recommend?pageNumber=%d%s", pageNumber,
+                (isEmpty(searchTitle) ? "" : format("&title=%s", searchTitle)));
         httpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
     }
 

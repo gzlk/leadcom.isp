@@ -327,7 +327,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 2);
             }
-        }).listHomeRecommend(remotePageNumber);
+        }).listHomeRecommend(remotePageNumber, "");
     }
 
     private void removeArchives() {

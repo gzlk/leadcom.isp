@@ -21,7 +21,6 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.DictionaryRequest;
-import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
@@ -37,7 +36,6 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Dictionary;
-import com.leadcom.android.isp.model.archive.RecommendArchive;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -190,14 +188,17 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             timePickerView = new TimePickerView.Builder(Activity(), new TimePickerView.OnTimeSelectListener() {
                 @Override
                 public void onTimeSelect(Date date, View v) {
-                    searchingMonth = Utils.format("yyyy-MM", date);
+                    String dd = Utils.format("yyyy-MM", date);
+                    if (!dd.equals(searchingMonth)) {
+                        remotePageNumber = 1;
+                        searchingMonth = dd;
+                        setSupportLoadingMore(true);
+                        searchingArchive();
+                    }
                     if (null != timePickerTitle) {
                         timePickerTitle.setText(searchingMonth);
                     }
                     //restoreSearchingResult();
-                    remotePageNumber = 1;
-                    setSupportLoadingMore(true);
-                    searchingArchive();
                 }
             }).setLayoutRes(R.layout.tool_view_custom_time_picker, new CustomListener() {
                 @Override
@@ -205,6 +206,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     root.findViewById(R.id.timepicker_cancel).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            remotePageNumber = 1;
                             // 清除已选择了的日期
                             searchingMonth = "";
                             resetTitle(root);
@@ -493,6 +495,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void searchingArchive() {
+        displayLoading(true);
         switch (searchingFunction) {
             case SEARCH_HOME:
                 // 首页推荐的查询
@@ -531,6 +534,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 //    }
 
     private void clearList(int count, int pageSize) {
+        displayLoading(false);
         if (remotePageNumber <= 1) {
             searched.clear();
             mAdapter.clear();
@@ -541,24 +545,21 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     private void searchingHomeArchive() {
         mAdapter.remove(last());
-        RecommendArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RecommendArchive>() {
+        ArchiveRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Archive>() {
             @Override
-            public void onResponse(List<RecommendArchive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+            public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 int count = null == list ? 0 : list.size();
                 clearList(count, pageSize);
                 if (success && null != list) {
-                    for (RecommendArchive archive : list) {
-                        Archive doc = null == archive.getUserDoc() ? archive.getGroDoc() : archive.getUserDoc();
-                        doc.setId(archive.getDocId());
-                        doc.setGroupId(archive.getGroupId());
-                        doc.resetAdditional(doc.getAddition());
-                        searched.add(doc);
+                    for (Archive archive : list) {
+                        archive.resetAdditional(archive.getAddition());
+                        searched.add(archive);
                     }
                 }
                 restoreSearchingResult();
             }
-        }).listHomeFeatured(remotePageNumber, searchingText);
+        }).listHomeRecommend(remotePageNumber, searchingText);
     }
 
     private void searchingGroupArchive() {
@@ -649,9 +650,15 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             tAdapter.update(dic);
             String selected = dic.isSelected() ? (dic.getCode() == 0 ? "" : dic.getName()) : "";
             if (dic.getTypeCode().equals(Dictionary.Type.ARCHIVE_NATURE)) {
-                searchingNature = selected;
+                if (!searchingNature.equals(selected)) {
+                    remotePageNumber = 1;
+                    searchingNature = selected;
+                }
             } else {
-                searchingType = selected;
+                if (!searchingType.equals(selected)) {
+                    remotePageNumber = 1;
+                    searchingType = selected;
+                }
             }
             for (int i = 0, len = tAdapter.getItemCount(); i < len; i++) {
                 Dictionary d = tAdapter.get(i);

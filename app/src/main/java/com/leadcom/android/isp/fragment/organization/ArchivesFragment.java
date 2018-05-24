@@ -234,7 +234,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
                     displayNothing(mAdapter.getItemCount() < 1);
                 }
             }
-        }).list(mQueryId, remotePageNumber);
+        }).list(mQueryId, remotePageNumber, "");
     }
 
     private void initializeAdapter() {
