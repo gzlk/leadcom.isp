@@ -27,6 +27,7 @@ public class UserExtra extends Model {
             @Override
             public boolean shouldSkipField(FieldAttributes f) {
                 return f.getName().equals("id") ||
+                        f.getName().startsWith("_") ||
                         f.getName().startsWith("is") ||
                         f.getName().startsWith("local") ||
                         f.getName().contains("accessToken");

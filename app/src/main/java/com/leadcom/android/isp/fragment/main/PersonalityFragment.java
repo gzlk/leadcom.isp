@@ -193,7 +193,11 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     // 同步我的基本信息
                     //syncMineInformation();
-                    fetchingRemoteUserInfo();
+                    if (null != user && !isEmpty(user.getId())) {
+                        refreshUser(user);
+                    } else {
+                        fetchingRemoteUserInfo();
+                    }
                     resetUserInformation(type, value);
                 }
                 displayLoading(false);
@@ -201,7 +205,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         }).update(type, value);
     }
 
-    private void refreshUser(User user){
+    private void refreshUser(User user) {
         if (isSelf) {
             // 随时更新我的信息
             Cache.cache().setCurrentUser(user);
@@ -340,7 +344,11 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(User user, boolean success, String message) {
                 super.onResponse(user, success, message);
                 if (success) {
-                    fetchingRemoteUserInfo();
+                    if (null != user && !isEmpty(user.getId())) {
+                        refreshUser(user);
+                    } else {
+                        fetchingRemoteUserInfo();
+                    }
                     resetUserInformation(UserRequest.UPDATE_SIGNATURE, intro);
                     resetUserInformation(UserRequest.UPDATE_NAME, name);
                 }
@@ -693,7 +701,11 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                         mAdapter.remove(deleteIndex);
                         deleteIndex = 0;
                     }
-                    fetchingRemoteUserInfo();
+                    if (null != user && !isEmpty(user.getId())) {
+                        refreshUser(user);
+                    } else {
+                        fetchingRemoteUserInfo();
+                    }
                 }
             }
         }).update(Cache.cache().me.getExtra());

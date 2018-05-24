@@ -5,6 +5,7 @@ import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
@@ -100,6 +101,7 @@ public class UserRequest extends Request<User> {
         // {password,headPhoto,name,phone,email,idNum,birthday,company,position,isAuth,sex,accessToken}
         JSONObject object = new JSONObject();
         try {
+            object.put("_id", Cache.cache().userId);
             switch (type) {
                 case UPDATE_BIRTHDAY:
                     object.put("birthday", value);
@@ -152,7 +154,8 @@ public class UserRequest extends Request<User> {
         JSONObject object = new JSONObject();
         try {
             object.put("name", name)
-                    .put("signature", intro);
+                    .put("signature", intro)
+                    .put("_id", Cache.cache().userId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -163,7 +166,8 @@ public class UserRequest extends Request<User> {
         directlySave = false;
         JSONObject object = new JSONObject();
         try {
-            object.put("extra", new JSONArray(UserExtra.toJson(extras)));
+            object.put("extra", new JSONArray(UserExtra.toJson(extras)))
+                    .put("_id", Cache.cache().userId);
         } catch (Exception e) {
             e.printStackTrace();
         }
