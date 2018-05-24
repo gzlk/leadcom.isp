@@ -62,8 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/ui_base_dimen_simple_item_height"
-        android:descendantFocusability="blocksDescendants"
-        android:orientation="vertical">
+        android:descendantFocusability="blocksDescendants">
 
         <WebView
             android:id="@+id/ui_holder_view_archive_details_content"
@@ -76,8 +75,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:focusable="true"
             android:gravity="center"
             android:orientation="horizontal">
 

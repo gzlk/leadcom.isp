@@ -320,10 +320,41 @@ public class ArchiveRequest extends Request<Archive> {
         if (null == groupIdList || groupIdList.size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_details_push_no_group);
         } else {
-            String json = Json.gson().toJson(groupIdList);
-            String params = format("%s?groDocId=%s&groupIdList=%s", group(PUSH), groupDocId, json);
-            httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+            JSONObject object = new JSONObject();
+            try {
+                object.put("groDocId", groupDocId)
+                        .put("groupId", new JSONArray(groupIdList));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            httpRequest(getRequest(BoolArchive.class, group(PUSH), object.toString(), HttpMethods.Post));
         }
+    }
+
+    /**
+     * 推荐档案到首页
+     */
+    public void recommend(String archiveId) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("docId", archiveId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(BoolArchive.class, group("/recommend/do"), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 取消档案的首页推荐
+     */
+    public void unRecommend(String archiveId) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("docId", archiveId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        httpRequest(getRequest(BoolArchive.class, group("/recommend/undo"), object.toString(), HttpMethods.Post));
     }
 
     /**

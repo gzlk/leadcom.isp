@@ -54,7 +54,7 @@ public class Additional extends Model {
      * 档案是否已经推荐到首页
      */
     public boolean isRecommend() {
-        return recommend == RecommendArchive.RecommendStatus.RECOMMENDED;
+        return recommend == Archive.RecommendType.RECOMMENDED;
     }
 
     public boolean isVisible() {

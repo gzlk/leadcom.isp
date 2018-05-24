@@ -201,6 +201,20 @@ public class Archive extends Additional {
     }
 
     /**
+     * 档案推荐状态
+     */
+    public interface RecommendType {
+        /**
+         * 未推荐
+         */
+        int UN_RECOMMEND = 0;
+        /**
+         * 已推荐
+         */
+        int RECOMMENDED = 1;
+    }
+
+    /**
      * 档案内容类型
      */
     public interface ArchiveContentType {

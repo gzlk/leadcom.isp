@@ -25,7 +25,6 @@ import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
-import com.leadcom.android.isp.api.archive.RecommendArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -59,7 +58,6 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveInfo;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.archive.Comment;
-import com.leadcom.android.isp.model.archive.RecommendArchive;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.common.ShareInfo;
@@ -892,7 +890,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 //                        }
 //                    }
                 } else {
-                    unRecommendArchive(archive.getRcmdId());
+                    unRecommendArchive();
                 }
             }
         } else {
@@ -903,38 +901,37 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     // 推荐档案
     private void recommendArchive(Archive archive) {
         final int index = mAdapter.indexOf(archive);
-        int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-        RecommendArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<RecommendArchive>() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(RecommendArchive archive, boolean success, String message) {
+            public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
                     Archive doc = (Archive) mAdapter.get(index);
-                    doc.setRecommend(RecommendArchive.RecommendStatus.RECOMMENDED);
+                    doc.setRecommend(Archive.RecommendType.RECOMMENDED);
                     mAdapter.notifyItemChanged(index);
                     prepareShareDialogElement(doc);
                     ToastHelper.make().showMsg(message);
                 }
             }
-        }).recommend(type, archive.getGroupId(), mQueryId, archive.getUserId());
+        }).recommend(mQueryId);
     }
 
     // 取消推荐档案
-    private void unRecommendArchive(String recommendId) {
-        RecommendArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<RecommendArchive>() {
+    private void unRecommendArchive() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
-            public void onResponse(RecommendArchive archive, boolean success, String message) {
+            public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
                     Archive doc = (Archive) mAdapter.get(mQueryId);
-                    doc.setRecommend(RecommendArchive.RecommendStatus.UN_RECOMMEND);
+                    doc.setRecommend(Archive.RecommendType.UN_RECOMMEND);
                     mAdapter.notifyItemChanged(0);
                     prepareShareDialogElement(doc);
                     ToastHelper.make().showMsg(message);
                 }
                 displayLoading(false);
             }
-        }).unRecommend(recommendId);
+        }).unRecommend(mQueryId);
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
@@ -1002,7 +999,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     if (!isPublic) {
                         // 如果是设为私密，则一同撤销组织档案的推荐状态
                         if (isGroup) {
-                            doc.setRecommend(RecommendArchive.RecommendStatus.UN_RECOMMEND);
+                            doc.setRecommend(Archive.RecommendType.UN_RECOMMEND);
                         }
                     }
                     prepareShareDialogElement(doc);
