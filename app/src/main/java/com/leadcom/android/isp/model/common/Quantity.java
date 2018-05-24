@@ -15,54 +15,54 @@ import com.leadcom.android.isp.model.Model;
  */
 public class Quantity extends Model {
     // 关联组织数量
-    private int conGroupNum;
+    private long conGroupNum;
     // 文档数量
-    private int docNum;
+    private long docNum;
     // 成员数量
-    private int memberNum;
+    private long memberNum;
     // 小组数量
-    private int squadNum;
+    private long squadNum;
     // 所属组织id
     private String groupId;
 
     // 收藏数量
-    private int colNum;
+    private long colNum;
     // 用户数量
-    private int userNum;
+    private long userNum;
     // 动态数量
-    private int mmtNum;
+    private long mmtNum;
     // 所属用户id
     private String userId;
 
-    public int getConGroupNum() {
+    public long getConGroupNum() {
         return conGroupNum;
     }
 
-    public void setConGroupNum(int conGroupNum) {
+    public void setConGroupNum(long conGroupNum) {
         this.conGroupNum = conGroupNum;
     }
 
-    public int getDocNum() {
+    public long getDocNum() {
         return docNum;
     }
 
-    public void setDocNum(int docNum) {
+    public void setDocNum(long docNum) {
         this.docNum = docNum;
     }
 
-    public int getMemberNum() {
+    public long getMemberNum() {
         return memberNum;
     }
 
-    public void setMemberNum(int memberNum) {
+    public void setMemberNum(long memberNum) {
         this.memberNum = memberNum;
     }
 
-    public int getSquadNum() {
+    public long getSquadNum() {
         return squadNum;
     }
 
-    public void setSquadNum(int squadNum) {
+    public void setSquadNum(long squadNum) {
         this.squadNum = squadNum;
     }
 
@@ -74,27 +74,27 @@ public class Quantity extends Model {
         this.groupId = groupId;
     }
 
-    public int getColNum() {
+    public long getColNum() {
         return colNum;
     }
 
-    public void setColNum(int colNum) {
+    public void setColNum(long colNum) {
         this.colNum = colNum;
     }
 
-    public int getUserNum() {
+    public long getUserNum() {
         return userNum;
     }
 
-    public void setUserNum(int userNum) {
+    public void setUserNum(long userNum) {
         this.userNum = userNum;
     }
 
-    public int getMmtNum() {
+    public long getMmtNum() {
         return mmtNum;
     }
 
-    public void setMmtNum(int mmtNum) {
+    public void setMmtNum(long mmtNum) {
         this.mmtNum = mmtNum;
     }
 

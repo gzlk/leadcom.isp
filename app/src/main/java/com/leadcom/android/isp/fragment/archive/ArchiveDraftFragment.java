@@ -162,9 +162,9 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(View view, int index) {
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_draft_layout:
-                    finish();
                     Archive draft = (Archive) mAdapter.get(index);
                     ArchiveDetailsWebViewFragment.open(ArchiveDraftFragment.this, draft, true);
+                    finish();
                     break;
                 case R.id.ui_tool_view_archive_draft_selector:
                     Model selected = mAdapter.get(index);

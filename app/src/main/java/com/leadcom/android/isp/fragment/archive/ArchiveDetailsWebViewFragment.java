@@ -551,18 +551,18 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         // 档案创建者可以删除评论
         deletable = enableShareDelete;
         mAdapter.update(archive);
-        for (Attachment attachment : archive.getImage()) {
-            mAdapter.update(attachment);
-        }
-        for (Attachment attachment : archive.getVideo()) {
-            mAdapter.update(attachment);
-        }
-        for (Attachment attachment : archive.getOffice()) {
-            mAdapter.update(attachment);
-        }
-        for (Attachment attachment : archive.getAttach()) {
-            mAdapter.update(attachment);
-        }
+//        for (Attachment attachment : archive.getImage()) {
+//            mAdapter.update(attachment);
+//        }
+//        for (Attachment attachment : archive.getVideo()) {
+//            mAdapter.update(attachment);
+//        }
+//        for (Attachment attachment : archive.getOffice()) {
+//            mAdapter.update(attachment);
+//        }
+//        for (Attachment attachment : archive.getAttach()) {
+//            mAdapter.update(attachment);
+//        }
         //if (!isDraft) {
         // 草稿也可以有评论和赞什么的
         //displayAdditional(archive);
