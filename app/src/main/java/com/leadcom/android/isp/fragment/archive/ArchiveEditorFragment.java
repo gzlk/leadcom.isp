@@ -1452,20 +1452,27 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     warningShareDraftTo(SubMember.getMemberNames(members), SubMember.getUserIds(members));
                 } else {
                     String names = "";
+                    String old = participantHolder.getValue();
+                    List<String> oNames = null;
+                    if (!isEmpty(old)) {
+                        oNames = Arrays.asList(old.split("、"));
+                    }
+                    if (null != oNames) {
+                        for (String name : oNames) {
+                            names += (isEmpty(names) ? "" : "、") + name;
+                        }
+                    }
                     if (null != members && members.size() > 0) {
                         for (SubMember member : members) {
-                            names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                            if (null == oNames || !oNames.contains(member.getUserName())) {
+                                names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                            }
                         }
                     }
                     mArchive.setParticipant(names);
                     if (null != participantHolder) {
                         participantHolder.showContent(format(templateItems[3], names));
                     }
-//                    participantText.setValue(names);
-//                    getDraftShareInfo();
-//                    if (!isEmpty(names)) {
-//                        participantText.focusEnd();
-//                    }
                 }
                 break;
             case REQUEST_GROUP:
