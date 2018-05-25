@@ -85,7 +85,7 @@ public class PushMsgRequest extends Request<PushMessage> {
      */
     public void delete(String msgId) {
         directlySave = false;
-        executeHttpRequest(getRequest(BoolPush.class, url(DELETE), getIdObject(msgId).toString(), HttpMethods.Get));
+        executeHttpRequest(getRequest(BoolPush.class, url(DELETE), getIdObject(msgId).toString(), HttpMethods.Post));
     }
 
     private JSONObject getIdObject(String msgId) {
