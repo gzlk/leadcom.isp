@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/ui_main_tool_bar_padding_layout"
         android:layout_alignTop="@+id/ui_main_tool_bar_padding_layout"
+        android:alpha="0"
         android:animateLayoutChanges="true"
         android:background="@color/textColorLight"
         android:orientation="vertical" />

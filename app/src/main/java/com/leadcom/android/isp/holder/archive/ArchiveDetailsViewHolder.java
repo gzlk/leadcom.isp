@@ -2,8 +2,8 @@ package com.leadcom.android.isp.holder.archive;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -93,16 +93,15 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
                 super.onPageFinished(view, url);
             }
         });
-        if (Build.VERSION.SDK_INT >= 23) {
-            contentView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    if (null != onScrollChangedListener) {
-                        onScrollChangedListener.onScroll(scrollX, scrollY, oldScrollX, oldScrollY);
-                    }
+        contentView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                if (null != titleListener) {
+                    titleListener.onReceivedTitle(title);
                 }
-            });
-        }
+                super.onReceivedTitle(view, title);
+            }
+        });
         margin = getDimension(R.dimen.ui_static_dp_5);
         resetCoverSize();
         publicToggle.addOnToggleChangedListener(new ToggleButton.OnToggleChangedListener() {
@@ -223,13 +222,13 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         }
     }
 
-    private OnScrollChangedListener onScrollChangedListener;
+    private OnReceivedTitleListener titleListener;
 
-    public void setOnScrollChangedListener(OnScrollChangedListener l) {
-        onScrollChangedListener = l;
+    public void setOnReceivedTitleListener(OnReceivedTitleListener l) {
+        titleListener = l;
     }
 
-    public interface OnScrollChangedListener {
-        void onScroll(int scrollX, int scrollY, int oldScrollX, int oldScrollY);
+    public interface OnReceivedTitleListener {
+        void onReceivedTitle(String title);
     }
 }

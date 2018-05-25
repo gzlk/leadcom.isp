@@ -62,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/ui_base_dimen_simple_item_height"
-        android:descendantFocusability="blocksDescendants">
+        android:descendantFocusability="afterDescendants">
 
         <WebView
             android:id="@+id/ui_holder_view_archive_details_content"

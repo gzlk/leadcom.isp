@@ -247,6 +247,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private CustomTextView rightIcon;
     @ViewId(R.id.ui_ui_custom_title_right_text)
     private TextView rightText;
+    @ViewId(R.id.ui_main_archive_details_title_text)
+    private TextView titleText;
 
     @ViewId(R.id.ui_tool_view_archive_additional_comment_number)
     private TextView commentNumber;
@@ -639,11 +641,25 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             //setCustomTitle(R.string.ui_text_archive_details_fragment_title);
             mAdapter = new DetailsAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.addOnScrollListener(scrollListener);
 
             displayArchive();
             //loadingArchive();
         }
     }
+
+    private int mDistance = 0;
+    private static final int MAX_ALPHA = 255;
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            mDistance += dy;
+            float percentage = mDistance * 1.0f / MAX_ALPHA;
+            titleBackground.setAlpha(percentage);
+            titleText.setAlpha(percentage);
+        }
+    };
 
     @Override
     public void onActivityResult(int requestCode, Intent data) {
@@ -1107,10 +1123,11 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         }
     }
 
-    private ArchiveDetailsViewHolder.OnScrollChangedListener scrollChangedListener = new ArchiveDetailsViewHolder.OnScrollChangedListener() {
+    private ArchiveDetailsViewHolder.OnReceivedTitleListener receivedTitleListener = new ArchiveDetailsViewHolder.OnReceivedTitleListener() {
         @Override
-        public void onScroll(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-            //log(format("scrollX: %d, scrollY: %d, oldScrollX: %d, oldScrollY: %d", scrollX, scrollY, oldScrollX, oldScrollY));
+        public void onReceivedTitle(String title) {
+            titleText.setText(title);
+            setCustomTitle(title);
         }
     };
 
@@ -1127,7 +1144,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                         detailsViewHolder.setIsManager(enableShareDelete);
                         detailsViewHolder.setIsCollected(isCollected);
                         detailsViewHolder.setIsDraft(isDraft);
-                        detailsViewHolder.setOnScrollChangedListener(scrollChangedListener);
+                        detailsViewHolder.setOnReceivedTitleListener(receivedTitleListener);
                     }
                     return detailsViewHolder;
                 case VT_COMMENT:
