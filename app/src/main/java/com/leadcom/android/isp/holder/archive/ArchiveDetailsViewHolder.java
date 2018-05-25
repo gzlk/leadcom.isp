@@ -3,6 +3,7 @@ package com.leadcom.android.isp.holder.archive;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -19,6 +20,7 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.archive.Archive;
@@ -100,6 +102,17 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
                     titleListener.onReceivedTitle(title);
                 }
                 super.onReceivedTitle(view, title);
+            }
+
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                if (message.contains("未找到")) {
+                    ToastHelper.make().showMsg(message);
+                    fragment().finish();
+                    result.confirm();
+                    return true;
+                }
+                return super.onJsAlert(view, url, message, result);
             }
         });
         margin = getDimension(R.dimen.ui_static_dp_5);
