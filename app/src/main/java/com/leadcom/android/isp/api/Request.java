@@ -145,7 +145,7 @@ public abstract class Request<T> {
     /**
      * 发起网络请求
      */
-    protected void httpRequest(JsonRequest request) {
+    protected void executeHttpRequest(JsonRequest request) {
         http.executeAsync(request);
     }
 

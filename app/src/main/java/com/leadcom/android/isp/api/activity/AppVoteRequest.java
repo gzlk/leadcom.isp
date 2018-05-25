@@ -98,7 +98,7 @@ public class AppVoteRequest extends Request<AppVote> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleVote.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleVote.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -106,7 +106,7 @@ public class AppVoteRequest extends Request<AppVote> {
      */
     public void delete(String voteId) {
         // id=""
-        httpRequest(getRequest(SingleVote.class, format("%s?id=%s", url(DELETE), voteId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleVote.class, format("%s?id=%s", url(DELETE), voteId), "", HttpMethods.Get));
     }
 
     /**
@@ -140,7 +140,7 @@ public class AppVoteRequest extends Request<AppVote> {
      */
     public void find(String voteId, int ope, int pageNumber) {
         // id="",ope="",pageSize="",pageNum=""
-        httpRequest(getRequest(SingleVote.class, format("%s?id=%s&ope=%d&pageNumber=%d", url(FIND), voteId, ope, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleVote.class, format("%s?id=%s&ope=%d&pageNumber=%d", url(FIND), voteId, ope, pageNumber), "", HttpMethods.Get));
     }
 
     /**
@@ -165,7 +165,7 @@ public class AppVoteRequest extends Request<AppVote> {
      */
     public void list(String activityId, int ope, int pageNumber) {
         // actId,ope,pageSize,pageNumber
-        httpRequest(getRequest(MultipleVote.class, format("%s?actId=%s&ope=%d&pageNumber=%d", url(LIST), activityId, ope, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleVote.class, format("%s?actId=%s&ope=%d&pageNumber=%d", url(LIST), activityId, ope, pageNumber), "", HttpMethods.Get));
     }
 
 
@@ -191,7 +191,7 @@ public class AppVoteRequest extends Request<AppVote> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleVote.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleVote.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -208,7 +208,7 @@ public class AppVoteRequest extends Request<AppVote> {
      */
     public void findTeamVote(String voteId, int ope, int pageNumber) {
         // id="",ope="",pageSize="",pageNum=""
-        httpRequest(getRequest(SingleVote.class, format("%s%s?commVoteId=%s&ope=%d&pageNumber=%d", TEAM, FIND, voteId, ope, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleVote.class, format("%s%s?commVoteId=%s&ope=%d&pageNumber=%d", TEAM, FIND, voteId, ope, pageNumber), "", HttpMethods.Get));
     }
 
     /**
@@ -219,7 +219,7 @@ public class AppVoteRequest extends Request<AppVote> {
      * @param pageNumber 页码
      */
     public void listTeamVotes(String tid, int ope, int pageNumber) {
-        httpRequest(getRequest(MultipleVote.class, format("%s%s?tid=%s&ope=%d&pageNumber=%d", TEAM, LIST, tid, ope, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleVote.class, format("%s%s?tid=%s&ope=%d&pageNumber=%d", TEAM, LIST, tid, ope, pageNumber), "", HttpMethods.Get));
     }
 
     /**
@@ -227,7 +227,7 @@ public class AppVoteRequest extends Request<AppVote> {
      */
     public void deleteTeamVote(String voteId) {
         // id=""
-        httpRequest(getRequest(SingleVote.class, format("%s%s?commVoteId=%s", TEAM, DELETE, voteId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleVote.class, format("%s%s?commVoteId=%s", TEAM, DELETE, voteId), "", HttpMethods.Get));
     }
 
 }

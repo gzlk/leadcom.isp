@@ -77,7 +77,7 @@ public class ActLabelRequest extends Request<Label> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleLabel.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleLabel.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -85,20 +85,20 @@ public class ActLabelRequest extends Request<Label> {
      */
     public void list(@NonNull String activityId) {
         // actId=""
-        httpRequest(getRequest(MultipleLabel.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleLabel.class, format("%s?actId=%s", url(LIST), activityId), "", HttpMethods.Get));
     }
 
     /**
      * 获取服务器上的热门标签
      */
     public void getTopLabels(int topSet) {
-        httpRequest(getRequest(ListQueryLabel.class, format("%s?top=%d", "/ontolog/getLabelTop", topSet), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListQueryLabel.class, format("%s?top=%d", "/ontolog/getLabelTop", topSet), "", HttpMethods.Get));
     }
 
     /**
      * 查询个人常用标签
      */
     public void getUserLabels(int topSet) {
-        httpRequest(getRequest(ListQueryLabel.class, format("%s?top=%d", "/user/userLabel/top", topSet), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListQueryLabel.class, format("%s?top=%d", "/user/userLabel/top", topSet), "", HttpMethods.Get));
     }
 }

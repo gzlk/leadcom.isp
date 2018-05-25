@@ -140,7 +140,7 @@ public class CommentRequest extends Request<Comment> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(type == Comment.Type.MOMENT ? SingleComment.class : StringComment.class, url(type, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(type == Comment.Type.MOMENT ? SingleComment.class : StringComment.class, url(type, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -152,7 +152,7 @@ public class CommentRequest extends Request<Comment> {
         // momentId,momentCmtId
         if (type == Comment.Type.MOMENT) {
             String params = format("%s=%s&%s=%s", getArchiveId(type), archiveId, getCommentId(type), commentId);
-            httpRequest(getRequest(SingleComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
+            executeHttpRequest(getRequest(SingleComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
         } else {
             JSONObject object = new JSONObject();
             try {
@@ -160,7 +160,7 @@ public class CommentRequest extends Request<Comment> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            httpRequest(getRequest(BoolComment.class, url(type, DELETE), object.toString(), HttpMethods.Post));
+            executeHttpRequest(getRequest(BoolComment.class, url(type, DELETE), object.toString(), HttpMethods.Post));
         }
     }
 
@@ -171,7 +171,7 @@ public class CommentRequest extends Request<Comment> {
         // userDocId,pageSize,pageNumber
         // groDocId
         // momentId
-        httpRequest(getRequest(MultiComment.class,
+        executeHttpRequest(getRequest(MultiComment.class,
                 format("%s?%s=%s&pageNumber=%d", url(type, LIST), getArchiveId(type), archiveId, pageNumber), "", HttpMethods.Get));
     }
 }

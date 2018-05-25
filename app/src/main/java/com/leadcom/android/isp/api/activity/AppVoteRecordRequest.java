@@ -6,7 +6,6 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.activity.vote.AppVoteRecord;
 import com.litesuits.http.request.param.HttpMethods;
-import com.netease.nim.uikit.business.contact.core.item.ItemTypes;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,7 +70,7 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleVoteRecord.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleVoteRecord.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -85,7 +84,7 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleVoteRecord.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleVoteRecord.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
 
@@ -100,7 +99,7 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleVoteRecord.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleVoteRecord.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -115,7 +114,7 @@ public class AppVoteRecordRequest extends Request<AppVoteRecord> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleVoteRecord.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleVoteRecord.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
     }
 
 }

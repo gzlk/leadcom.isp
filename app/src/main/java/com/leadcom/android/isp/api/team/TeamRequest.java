@@ -66,14 +66,14 @@ public class TeamRequest extends Request<TalkTeam> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleTeam.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleTeam.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
      * 结束一个群聊
      */
     public void end(String tid) {
-        httpRequest(getRequest(SingleTeam.class, url(format("/end?tid=%s", tid)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleTeam.class, url(format("/end?tid=%s", tid)), "", HttpMethods.Get));
     }
 
     /**
@@ -92,6 +92,6 @@ public class TeamRequest extends Request<TalkTeam> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleTeam.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleTeam.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 }

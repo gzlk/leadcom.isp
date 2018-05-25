@@ -54,7 +54,7 @@ public class QuantityRequest extends Request<Quantity> {
      */
     public void findUser(String userId) {
         directlySave = false;
-        httpRequest(getRequest(SingleRequest.class, "/user/userCount/find?userId=" + userId, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleRequest.class, "/user/userCount/find?userId=" + userId, "", HttpMethods.Get));
     }
 
     /**
@@ -62,6 +62,6 @@ public class QuantityRequest extends Request<Quantity> {
      */
     public void findGroup(String groupId) {
         directlySave = false;
-        httpRequest(getRequest(SingleRequest.class, format("/group/groCount/find?groupId=%s", groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleRequest.class, format("/group/groCount/find?groupId=%s", groupId), "", HttpMethods.Get));
     }
 }

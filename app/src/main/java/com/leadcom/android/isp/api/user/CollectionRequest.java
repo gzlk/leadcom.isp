@@ -107,7 +107,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     public void add(Collection collection, Position position) {
@@ -129,7 +129,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     public void add(String content) {
@@ -171,7 +171,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -179,7 +179,7 @@ public class CollectionRequest extends Request<Collection> {
      */
     public void delete(String collectionId) {
         // colId
-        httpRequest(getRequest(BoolCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BoolCollection.class, format("%s?colId=%s", url(DELETE), collectionId), "", HttpMethods.Get));
     }
 
     /**
@@ -195,7 +195,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleCollection.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleCollection.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -203,7 +203,7 @@ public class CollectionRequest extends Request<Collection> {
      */
     public void find(String collectionId) {
         // colId
-        httpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(FIND), collectionId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleCollection.class, format("%s?colId=%s", url(FIND), collectionId), "", HttpMethods.Get));
     }
 
     /**
@@ -228,7 +228,7 @@ public class CollectionRequest extends Request<Collection> {
      */
     public void list(int type, int ope, int pageNumber) {
         String param = format("%s?%sope=%d&pageNumber=%d", url(LIST), format((type <= 0 ? "" : "type=%d&"), type), ope, pageNumber);
-        httpRequest(getRequest(MultipleCollection.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleCollection.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -237,6 +237,6 @@ public class CollectionRequest extends Request<Collection> {
     public void search(String info) {
         // info,accessToken
         String params = format("%s?info=%s", url(SEARCH), info);
-        httpRequest(getRequest(MultipleCollection.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleCollection.class, params, "", HttpMethods.Get));
     }
 }

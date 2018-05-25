@@ -65,20 +65,20 @@ public class UserMsgRequest extends Request<UserMessage> {
      */
     public void list(int pageNumber, int sourceType) {
         String params = format("%s?%spageNumber=%d", url(LIST), (sourceType > 0 ? format("sourceType=%d&", sourceType) : ""), pageNumber);
-        httpRequest(getRequest(MultipleMsg.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleMsg.class, params, "", HttpMethods.Get));
     }
 
     /**
      * 删除某条消息
      */
     public void delete(String msgId) {
-        httpRequest(getRequest(SingleMsg.class, format("%s?userInfoId=%s", url(DELETE), msgId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMsg.class, format("%s?userInfoId=%s", url(DELETE), msgId), "", HttpMethods.Get));
     }
 
     /**
      * 情况消息
      */
     public void clear() {
-        httpRequest(getRequest(SingleMsg.class, format("%sByUser", url(DELETE)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMsg.class, format("%sByUser", url(DELETE)), "", HttpMethods.Get));
     }
 }

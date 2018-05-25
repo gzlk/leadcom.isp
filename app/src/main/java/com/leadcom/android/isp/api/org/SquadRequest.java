@@ -69,11 +69,11 @@ public class SquadRequest extends Request<Squad> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleSquad.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleSquad.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     public void delete(String squadId) {
-        httpRequest(getRequest(SingleSquad.class, format("%s?squadId=%s", url(DELETE), squadId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleSquad.class, format("%s?squadId=%s", url(DELETE), squadId), "", HttpMethods.Get));
     }
 
     public void update(String squadId, String squadName, String introduction) {
@@ -87,25 +87,25 @@ public class SquadRequest extends Request<Squad> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleSquad.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleSquad.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public void find(String squadId) {
-        httpRequest(getRequest(SingleSquad.class, format("%s?squadId=%s", url(FIND), squadId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleSquad.class, format("%s?squadId=%s", url(FIND), squadId), "", HttpMethods.Get));
     }
 
     /**
      * 查询指定组织的小组列表
      */
     public void list(String groupId, int pageNumber) {
-        httpRequest(getRequest(MultipleSquad.class, format("%s?pageNumber=%d&groupId=%s&pageSize=500", url(LIST), pageNumber, groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleSquad.class, format("%s?pageNumber=%d&groupId=%s&pageSize=500", url(LIST), pageNumber, groupId), "", HttpMethods.Get));
     }
 
     /**
      * 在组织中搜索小组名称
      */
     public void search(String groupId, String squadName, int pageNumber) {
-        httpRequest(getRequest(MultipleSquad.class, format("%s?groupId=%s&pageNumber=%d&info=%s", url(SEARCH), groupId, pageNumber, squadName), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleSquad.class, format("%s?groupId=%s&pageNumber=%d&info=%s", url(SEARCH), groupId, pageNumber, squadName), "", HttpMethods.Get));
     }
 
 }

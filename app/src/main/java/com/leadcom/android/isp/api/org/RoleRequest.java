@@ -69,13 +69,13 @@ public class RoleRequest extends Request<Role> {
      * 查询单个角色信息
      */
     public void find(String roleId) {
-        httpRequest(getRequest(SingleRole.class, format("%s?groRoleId=%s", url(FIND), roleId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleRole.class, format("%s?groRoleId=%s", url(FIND), roleId), "", HttpMethods.Get));
     }
 
     /**
      * 列出所有角色信息
      */
     public void list() {
-        httpRequest(getRequest(ListRole.class, url(LIST), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListRole.class, url(LIST), "", HttpMethods.Get));
     }
 }

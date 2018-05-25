@@ -117,7 +117,7 @@ public class MomentRequest extends Request<Moment> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     public void add(Moment moment) {
@@ -142,7 +142,7 @@ public class MomentRequest extends Request<Moment> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleMoment.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -158,7 +158,7 @@ public class MomentRequest extends Request<Moment> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleMoment.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleMoment.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     private static final String QB_USER_ID = "userId";
@@ -169,7 +169,7 @@ public class MomentRequest extends Request<Moment> {
         if (pageNumber >= 0) {
             url += format("&pageNumber=%d&pageSize=50", pageNumber);
         }
-        httpRequest(getRequest(resultType, url, "", methods));
+        executeHttpRequest(getRequest(resultType, url, "", methods));
     }
 
     /**
@@ -184,7 +184,7 @@ public class MomentRequest extends Request<Moment> {
      */
     public void listFront(int pageNumber) {
         String param = format("%s/front?pageNumber=%d", url(LIST), pageNumber);
-        httpRequest(getRequest(MultiMoment.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultiMoment.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -206,6 +206,6 @@ public class MomentRequest extends Request<Moment> {
      */
     public void groupList(int pageNumber) {
         String params = format("%s?pageNumber=%d", url(GROUPS), pageNumber);
-        httpRequest(getRequest(MultiMoment.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultiMoment.class, params, "", HttpMethods.Get));
     }
 }

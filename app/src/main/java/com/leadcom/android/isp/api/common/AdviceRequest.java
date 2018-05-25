@@ -57,6 +57,6 @@ public class AdviceRequest extends Request<Advice> {
 
     public void add(String content) {
         directlySave = false;
-        httpRequest(getRequest(SingleAdvice.class, format("%s?content=%s", url(ADD), content), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleAdvice.class, format("%s?content=%s", url(ADD), content), "", HttpMethods.Get));
     }
 }

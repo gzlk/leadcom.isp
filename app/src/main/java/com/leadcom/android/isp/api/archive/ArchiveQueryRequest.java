@@ -85,6 +85,6 @@ public class ArchiveQueryRequest extends Request<ArchiveQuery> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleArchive.class, url(type, FIND), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleArchive.class, url(type, FIND), object.toString(), HttpMethods.Post));
     }
 }

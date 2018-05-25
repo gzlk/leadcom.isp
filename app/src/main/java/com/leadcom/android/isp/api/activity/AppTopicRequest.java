@@ -75,7 +75,7 @@ public class AppTopicRequest extends Request<AppTopic> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleTopic.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleTopic.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     public void update(String topicId, String topicTitle) {
@@ -86,7 +86,7 @@ public class AppTopicRequest extends Request<AppTopic> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleTopic.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleTopic.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public void update(String topicId, ArrayList<Attachment> attachments) {
@@ -97,7 +97,7 @@ public class AppTopicRequest extends Request<AppTopic> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleTopic.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleTopic.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public void update(AppTopic topic) {
@@ -110,7 +110,7 @@ public class AppTopicRequest extends Request<AppTopic> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleTopic.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleTopic.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -118,7 +118,7 @@ public class AppTopicRequest extends Request<AppTopic> {
      */
     public void delete(String topicId) {
         // id=""
-        httpRequest(getRequest(SingleTopic.class, format("%s?id=%s", url(DELETE), topicId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleTopic.class, format("%s?id=%s", url(DELETE), topicId), "", HttpMethods.Get));
     }
 
     /**
@@ -126,13 +126,13 @@ public class AppTopicRequest extends Request<AppTopic> {
      */
     public void find(String topicId) {
         // ope:操作类型(1.仅查询活动议题,2.查询活动议题和所有活动议题成员)
-        httpRequest(getRequest(SingleTopic.class, format("%s?id=%s&ope=2", url(FIND), topicId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleTopic.class, format("%s?id=%s&ope=2", url(FIND), topicId), "", HttpMethods.Get));
     }
 
     /**
      * 查询活动议题列表
      */
     public void list(String activityId, int pageNumber) {
-        httpRequest(getRequest(MultipleTopic.class, format("%s?actId=%s&pageNumber=%d&pageSize=%d", url(LIST), activityId, pageNumber, MAX_PAGE_SIZE), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleTopic.class, format("%s?actId=%s&pageNumber=%d&pageSize=%d", url(LIST), activityId, pageNumber, MAX_PAGE_SIZE), "", HttpMethods.Get));
     }
 }

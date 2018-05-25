@@ -76,7 +76,7 @@ public class ActArchiveRequest extends Request<ActArchive> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleActivityArchive.class, url(CALLBACK), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleActivityArchive.class, url(CALLBACK), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -97,7 +97,7 @@ public class ActArchiveRequest extends Request<ActArchive> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleActivityArchive.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleActivityArchive.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -110,7 +110,7 @@ public class ActArchiveRequest extends Request<ActArchive> {
     public void list(String activityId, int attachmentType, int pageNumber) {
         // actId,type
         String param = format("actId=%s%s&pageNumber=%d", activityId, (0 == attachmentType ? "" : format("&type=%d", attachmentType)), pageNumber);
-        httpRequest(getRequest(MultipleActivityArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleActivityArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
 
     /**
@@ -124,6 +124,6 @@ public class ActArchiveRequest extends Request<ActArchive> {
     public void search(String activityId, String info, int attachmentType) {
         // actId,info,type
         String param = format("actId=%s&info=%s%s", activityId, info, (0 == attachmentType ? "" : format("&type=%d", attachmentType)));
-        httpRequest(getRequest(MultipleActivityArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleActivityArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
 }

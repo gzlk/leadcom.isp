@@ -54,6 +54,6 @@ public class PermissionRequest extends Request<RelateGroup> {
      */
     public void list() {
         directlySave = false;
-        httpRequest(getRequest(ListPermission.class, url(LIST), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListPermission.class, url(LIST), "", HttpMethods.Get));
     }
 }

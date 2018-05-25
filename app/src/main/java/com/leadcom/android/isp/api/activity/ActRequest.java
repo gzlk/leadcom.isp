@@ -11,7 +11,6 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
-import com.leadcom.android.isp.model.activity.Label;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
@@ -149,7 +148,7 @@ public class ActRequest extends Request<Activity> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleActivity.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleActivity.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -183,7 +182,7 @@ public class ActRequest extends Request<Activity> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -198,7 +197,7 @@ public class ActRequest extends Request<Activity> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public static final int TYPE_TITLE = 1;
@@ -229,7 +228,7 @@ public class ActRequest extends Request<Activity> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleActivity.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -237,7 +236,7 @@ public class ActRequest extends Request<Activity> {
      */
     public void delete(@NonNull String activityId) {
         // id=""
-        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(DELETE), activityId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(DELETE), activityId), "", HttpMethods.Get));
     }
 
     /**
@@ -245,7 +244,7 @@ public class ActRequest extends Request<Activity> {
      */
     public void exit(@NonNull String activityId) {
         // id="",accessToken=""
-        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(EXIT), activityId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleActivity.class, format("%s?id=%s", url(EXIT), activityId), "", HttpMethods.Get));
     }
 
     private void findInCache(String activityId) {
@@ -261,7 +260,7 @@ public class ActRequest extends Request<Activity> {
     public static final int ACT_OPE_MEMBERS = 2;
 
     public void findFromRemote(String activityId, int ope) {
-        httpRequest(getRequest(SingleActivity.class, format("%s?id=%s&ope=%d", url(FIND), activityId, ope), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleActivity.class, format("%s?id=%s&ope=%d", url(FIND), activityId, ope), "", HttpMethods.Get));
     }
 
     /**
@@ -289,7 +288,7 @@ public class ActRequest extends Request<Activity> {
      * 通过网络异步查询tid
      */
     public void findTid(String tid) {
-        httpRequest(getRequest(SingleActivity.class, format("%s/tid?tid=%s", url(FIND), tid), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleActivity.class, format("%s/tid?tid=%s", url(FIND), tid), "", HttpMethods.Get));
     }
 
     /**
@@ -321,7 +320,7 @@ public class ActRequest extends Request<Activity> {
 
     private void listFromRemote(String groupId) {
         String params = format("groupId=%s", groupId);
-        httpRequest(getRequest(MultipleActivity.class, format("%s?%s", url(LIST), params), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleActivity.class, format("%s?%s", url(LIST), params), "", HttpMethods.Get));
     }
 
     /**
@@ -349,7 +348,7 @@ public class ActRequest extends Request<Activity> {
         // groupId,ope,info,pageSize,pageNumber,[groupIds]
         String json = Utils.listToString(groupIds);
         String param = format("%s?groupId=%s&ope=%d&info=%s&pageNumber=%d&groupIds=%s", url(LIST), groupId, ope, info, pageNumber, json);
-        httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -362,7 +361,7 @@ public class ActRequest extends Request<Activity> {
         // groupId,pageSize,pageNumber,[groupIds]
         String json = Utils.listToString(groupIds);
         String param = format("%s/front?groupId=%s&pageNumber=%d&groupIds=%s", url(LIST), groupId, pageNumber, json);
-        httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -370,7 +369,7 @@ public class ActRequest extends Request<Activity> {
      */
     public void listPublic(int pageNumber) {
         String param = format("%s/public?groupId=%s&pageNumber=%d", url(LIST), pageNumber);
-        httpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleActivity.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -378,7 +377,7 @@ public class ActRequest extends Request<Activity> {
      */
     public void end(@NonNull String activityId) {
         String params = format("id=%s", activityId);
-        httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(END), params), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleActivity.class, format("%s?%s", url(END), params), "", HttpMethods.Get));
     }
 
     /**
@@ -386,13 +385,13 @@ public class ActRequest extends Request<Activity> {
      */
     public void isJoinPublicAct(String activityId) {
         String params = format("actId=%s", activityId);
-        httpRequest(getRequest(SingleActivity.class, format("%s?%s", url(IS_JOINED), params), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleActivity.class, format("%s?%s", url(IS_JOINED), params), "", HttpMethods.Get));
     }
 
     /**
      * 查询所有公开的活动列表
      */
     public void allOpenActivities(int pageNumber) {
-        httpRequest(getRequest(MultipleActivity.class, format("%s/allOpenActivities?pageNumber=%d", url(LIST), pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleActivity.class, format("%s/allOpenActivities?pageNumber=%d", url(LIST), pageNumber), "", HttpMethods.Get));
     }
 }

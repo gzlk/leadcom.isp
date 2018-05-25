@@ -73,7 +73,7 @@ public class AppTopicMemberRequest extends Request<Member> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleMember.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleMember.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -81,7 +81,7 @@ public class AppTopicMemberRequest extends Request<Member> {
      */
     public void delete(String topicId, String userId) {
         // actTopicId,userId
-        httpRequest(getRequest(SingleMember.class, format("%s?actTopicId=%s&userId=%s", url(DELETE), topicId, userId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, format("%s?actTopicId=%s&userId=%s", url(DELETE), topicId, userId), "", HttpMethods.Get));
     }
 
     /**
@@ -89,14 +89,14 @@ public class AppTopicMemberRequest extends Request<Member> {
      */
     public void exit(String topicId) {
         // actTopicId
-        httpRequest(getRequest(SingleMember.class, format("%s?actTopicId=%s", url(EXIT), topicId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, format("%s?actTopicId=%s", url(EXIT), topicId), "", HttpMethods.Get));
     }
 
     /**
      * 查询活动议题成员
      */
     public void find(String memberId) {
-        httpRequest(getRequest(SingleMember.class, format("%s?id=%s", url(FIND), memberId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, format("%s?id=%s", url(FIND), memberId), "", HttpMethods.Get));
     }
 
     /**
@@ -104,6 +104,6 @@ public class AppTopicMemberRequest extends Request<Member> {
      */
     public void list(String topicId, int pageNumber) {
         // actTopicId,pageSize,pageNumber
-        httpRequest(getRequest(MultipleMember.class, format("%s?actTopicId=%s&pageNumber=%d&pageSize=%d", url(LIST), topicId, pageNumber, MAX_PAGE_SIZE), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleMember.class, format("%s?actTopicId=%s&pageNumber=%d&pageSize=%d", url(LIST), topicId, pageNumber, MAX_PAGE_SIZE), "", HttpMethods.Get));
     }
 }

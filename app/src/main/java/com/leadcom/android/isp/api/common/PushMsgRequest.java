@@ -80,27 +80,27 @@ public class PushMsgRequest extends Request<NimMessage> {
      * 拉取推送消息列表
      */
     public void list() {
-        httpRequest(getRequest(MultiplePush.class, url(LIST), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultiplePush.class, url(LIST), "", HttpMethods.Get));
     }
 
     /**
      * 更改已读状态
      */
     public void update(String uuid) {
-        httpRequest(getRequest(SingleQuery.class, url(format("%s?uuid=%s", UPDATE, uuid)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleQuery.class, url(format("%s?uuid=%s", UPDATE, uuid)), "", HttpMethods.Get));
     }
 
     /**
      * 删除指定的推送消息
      */
     public void delete(String uuid) {
-        httpRequest(getRequest(SingleQuery.class, url(format("%s?uuid=%s", DELETE, uuid)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleQuery.class, url(format("%s?uuid=%s", DELETE, uuid)), "", HttpMethods.Get));
     }
 
     /**
      * 清空用户的推送消息
      */
     public void clearByUser() {
-        httpRequest(getRequest(SingleQuery.class, url("/deleteByUser"), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleQuery.class, url("/deleteByUser"), "", HttpMethods.Get));
     }
 }

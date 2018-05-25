@@ -53,6 +53,6 @@ public class SimpleOrgRequest extends Request<SimpleOutput> {
     public void listAllMember(String groupId) {
         directlySave = false;
         String params = format("/group/groMember/listAllMember?groupId=%s", groupId);
-        httpRequest(getRequest(SingleRequest.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleRequest.class, params, "", HttpMethods.Get));
     }
 }

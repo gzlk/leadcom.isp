@@ -101,7 +101,7 @@ public class AppSigningRequest extends Request<AppSigning> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleSigning.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleSigning.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -109,7 +109,7 @@ public class AppSigningRequest extends Request<AppSigning> {
      */
     public void delete(String signingId) {
         //id=""
-        httpRequest(getRequest(SingleSigning.class, format("%s?id=%s", url(DELETE), signingId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleSigning.class, format("%s?id=%s", url(DELETE), signingId), "", HttpMethods.Get));
     }
 
     /**
@@ -142,7 +142,7 @@ public class AppSigningRequest extends Request<AppSigning> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleSigning.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleSigning.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -167,7 +167,7 @@ public class AppSigningRequest extends Request<AppSigning> {
         if (option >= FIND_RECORD) {
             option = FIND_RECORD;
         }
-        httpRequest(getRequest(SingleSigning.class, format("%s?id=%s&ope=%d", url(FIND), signId, option), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleSigning.class, format("%s?id=%s&ope=%d", url(FIND), signId, option), "", HttpMethods.Get));
     }
 
     /**
@@ -175,7 +175,7 @@ public class AppSigningRequest extends Request<AppSigning> {
      */
     public void list(@NonNull String activityId, int pageNumber) {
         // actId,pageSize,pageNumber
-        httpRequest(getRequest(MultipleSigning.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleSigning.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
     }
 
 
@@ -199,14 +199,14 @@ public class AppSigningRequest extends Request<AppSigning> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleSigning.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleSigning.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
      * 列取群聊签到条目
      */
     public void listTeamSinging(String tid, int pageNumber) {
-        httpRequest(getRequest(MultipleSigning.class, format("%s%s?tid=%s&pageNumber=%d", TEAM, LIST, tid, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleSigning.class, format("%s%s?tid=%s&pageNumber=%d", TEAM, LIST, tid, pageNumber), "", HttpMethods.Get));
     }
 
     /**
@@ -221,13 +221,13 @@ public class AppSigningRequest extends Request<AppSigning> {
         if (option >= FIND_RECORD) {
             option = FIND_RECORD;
         }
-        httpRequest(getRequest(SingleSigning.class, format("%s%s?commSignInId=%s&ope=%d", TEAM, FIND, signId, option), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleSigning.class, format("%s%s?commSignInId=%s&ope=%d", TEAM, FIND, signId, option), "", HttpMethods.Get));
     }
 
     /**
      * 删除群聊签到条目
      */
     public void deleteTeamSigning(String signingId) {
-        httpRequest(getRequest(SingleSigning.class, format("%s%s?commSignInId=%s", TEAM, DELETE, signingId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleSigning.class, format("%s%s?commSignInId=%s", TEAM, DELETE, signingId), "", HttpMethods.Get));
     }
 }

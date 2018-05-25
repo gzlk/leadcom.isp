@@ -83,7 +83,7 @@ public class PrivacyRequest extends Request<Privacy> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SinglePrivacy.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SinglePrivacy.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -91,7 +91,7 @@ public class PrivacyRequest extends Request<Privacy> {
      */
     public void list() {
         // accessToken:""
-        httpRequest(getRequest(MultiplePrivacy.class, url(LIST), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultiplePrivacy.class, url(LIST), "", HttpMethods.Get));
     }
 
     /**

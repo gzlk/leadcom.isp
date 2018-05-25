@@ -57,20 +57,20 @@ public class ConcernRequest extends Request<Concern> {
      * 添加关注
      */
     public void add(String groupId, String concernedGroupId) {
-        httpRequest(getRequest(SingleConcern.class, format("%s?groupId=%s&conGroupId=%s", url(ADD), groupId, concernedGroupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleConcern.class, format("%s?groupId=%s&conGroupId=%s", url(ADD), groupId, concernedGroupId), "", HttpMethods.Get));
     }
 
     /**
      * 取消关注
      */
     public void delete(String groupId, String concernedGroupId) {
-        httpRequest(getRequest(SingleConcern.class, format("%s?groupId=%s&conGroupId=%s", url(DELETE), groupId, concernedGroupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleConcern.class, format("%s?groupId=%s&conGroupId=%s", url(DELETE), groupId, concernedGroupId), "", HttpMethods.Get));
     }
 
     /**
      * 列出指定组织可以关注的组织列表
      */
     public void list(String groupId, int pageNumber, String searchingText) {
-        httpRequest(getRequest(MultiConcern.class, format("%s?groupId=%s&pageNumber=%d&pageSize=999&info=%s", url(LIST), groupId, pageNumber, searchingText), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultiConcern.class, format("%s?groupId=%s&pageNumber=%d&pageSize=999&info=%s", url(LIST), groupId, pageNumber, searchingText), "", HttpMethods.Get));
     }
 }

@@ -53,6 +53,6 @@ public class PublicMomentRequest extends Request<MomentPublic> {
      * 拉取指定组织内的说说列表
      */
     public void list(String groupId, int pageNumber) {
-        httpRequest(getRequest(MultiplePublicMoment.class, format("%s?groupId=%s&pageNumber=%d&pageSize=50", url(LIST), groupId, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultiplePublicMoment.class, format("%s?groupId=%s&pageNumber=%d&pageSize=50", url(LIST), groupId, pageNumber), "", HttpMethods.Get));
     }
 }

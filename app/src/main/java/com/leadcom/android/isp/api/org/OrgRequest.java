@@ -132,7 +132,7 @@ public class OrgRequest extends Request<Organization> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleGroup.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleGroup.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -162,7 +162,7 @@ public class OrgRequest extends Request<Organization> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public static final int TYPE_NAME = 1;
@@ -191,21 +191,21 @@ public class OrgRequest extends Request<Organization> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
      * 删除组织
      */
     public void delete(String groupId) {
-        httpRequest(getRequest(SingleGroup.class, format("%s?groupId=%s", url(DELETE), groupId), "", HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleGroup.class, format("%s?groupId=%s", url(DELETE), groupId), "", HttpMethods.Post));
     }
 
     /**
      * 查找组织的详细信息
      */
     public void find(String groupId) {
-        httpRequest(getRequest(SingleGroup.class, format("%s?groupId=%s", url(FIND), groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleGroup.class, format("%s?groupId=%s", url(FIND), groupId), "", HttpMethods.Get));
     }
 
     /**
@@ -225,7 +225,7 @@ public class OrgRequest extends Request<Organization> {
     public void list(int ope) {
         // accessToken,pageSize,pageNumber
         isFetchingJoinedGroups = ope == GROUP_LIST_OPE_JOINED;
-        httpRequest(getRequest(MultipleGroup.class, format("%s?ope=%d&pageNumber=1&pageSize=999", url(LIST), ope), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleGroup.class, format("%s?ope=%d&pageNumber=1&pageSize=999", url(LIST), ope), "", HttpMethods.Get));
     }
 
     /**
@@ -233,7 +233,7 @@ public class OrgRequest extends Request<Organization> {
      */
     public void searchAll(String groupName, int pageNumber) {
         // info,pageSize,pageNumber
-        httpRequest(getRequest(MultipleGroup.class, format("%s?pageNumber=%d&info=%s", url(SEARCH_ALL), pageNumber, groupName), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleGroup.class, format("%s?pageNumber=%d&info=%s", url(SEARCH_ALL), pageNumber, groupName), "", HttpMethods.Get));
     }
 
     /**
@@ -241,7 +241,7 @@ public class OrgRequest extends Request<Organization> {
      */
     public void search(String groupName, int pageNumber) {
         // info,accessToken,pageSize,pageNumber
-        httpRequest(getRequest(MultipleGroup.class,
+        executeHttpRequest(getRequest(MultipleGroup.class,
                 format("%s?pageNumber=%d&info=%s", url(SEARCH), pageNumber, groupName),
                 "", HttpMethods.Get));
     }
@@ -250,21 +250,21 @@ public class OrgRequest extends Request<Organization> {
      * 查询上级组织，返回单个组织
      */
     public void findUpper(String groupId) {
-        httpRequest(getRequest(SingleGroup.class, format("%s?upId=%s", url(FIND_UPPER), groupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleGroup.class, format("%s?upId=%s", url(FIND_UPPER), groupId), "", HttpMethods.Get));
     }
 
     /**
      * 返回感兴趣的组织列表（不包括当前组织和被关注的组织）(2017-06-26 21:34新增)
      */
     public void listInteresting(String groupId, int pageNumber) {
-        httpRequest(getRequest(MultipleGroup.class, format("%s?groupId=%s&pageNumber=%d", url("/listInterest"), groupId, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleGroup.class, format("%s?groupId=%s&pageNumber=%d", url("/listInterest"), groupId, pageNumber), "", HttpMethods.Get));
     }
 
     /**
      * 返回关注的组织列表
      */
     public void listConcerned(String groupId, int pageNumber) {
-        httpRequest(getRequest(MultipleGroup.class, format("%s?groupId=%s&pageNumber=%d", url("/listInterest"), groupId, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleGroup.class, format("%s?groupId=%s&pageNumber=%d", url("/listInterest"), groupId, pageNumber), "", HttpMethods.Get));
     }
 
     /**
@@ -291,6 +291,6 @@ public class OrgRequest extends Request<Organization> {
         // groupId,conGroupId,type
         String url = url("/concern");
         String param = format("%s?groupId=%s&conGroupId=%s&type=%d", url, groupId, concernGroupId, type);
-        httpRequest(getRequest(SingleGroup.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleGroup.class, param, "", HttpMethods.Get));
     }
 }

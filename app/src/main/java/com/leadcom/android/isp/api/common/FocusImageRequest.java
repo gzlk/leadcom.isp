@@ -52,6 +52,6 @@ public class FocusImageRequest extends Request<FocusImage> {
     public void all() {
         // 不保存
         directlySave = false;
-        httpRequest(getRequest(MultiImage.class, "/operate/focusImage/list/all", "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultiImage.class, "/operate/focusImage/list/all", "", HttpMethods.Get));
     }
 }

@@ -166,7 +166,7 @@ public class MemberRequest extends Request<Member> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleMember.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleMember.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -175,7 +175,7 @@ public class MemberRequest extends Request<Member> {
     public void groupMemberDelete(String memberId) {
         // memberId,groupId
         String param = format("%s?memberId=%s", url(Member.Type.GROUP, DELETE), memberId);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -183,7 +183,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void squadMemberDelete(String memberId) {
         String param = format("%s?memberId=%s", url(Member.Type.SQUAD, DELETE), memberId);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -196,14 +196,14 @@ public class MemberRequest extends Request<Member> {
      */
     public void list(int type, String id, int pageNumber) {
         String param = format("%s?%s=%s&pageNumber=%d", url(type, LIST), getOrgId(type), id, pageNumber);
-        httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
      * 查询单个成员的详细信息
      */
     public void find(int type, String memberId) {
-        httpRequest(getRequest(SingleMember.class, format("%s?%s=%s", url(type, FIND), getMemberId(type), memberId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, format("%s?%s=%s", url(type, FIND), getMemberId(type), memberId), "", HttpMethods.Get));
     }
 
     /**
@@ -216,7 +216,7 @@ public class MemberRequest extends Request<Member> {
     public void find(int type, String orgId, String userId) {
         String action = type == Member.Type.SQUAD ? "/squAndUserId" : "/groAndUserId";
         String url = format("%s%s?%s=%s&userId=%s", url(type, FIND), action, getOrgId(type), orgId, userId);
-        httpRequest(getRequest(SingleMember.class, url, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, url, "", HttpMethods.Get));
     }
 
     /**
@@ -224,7 +224,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void search(int type, String id, String memberName, int pageNumber) {
         String param = format("%s?%s=%s&info=%s&pageNumber=%d", url(type, SEARCH), getOrgId(type), id, memberName, pageNumber);
-        httpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -232,7 +232,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void joinPublicActivity(String activityId) {
         String param = format("%s?actId=%s", url(Member.Type.ACTIVITY, "/joinPublicAct"), activityId);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -240,7 +240,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void activityKickOut(String activityId, String userId) {
         String param = format("%s?actId=%s&userId=%s", url(Member.Type.ACTIVITY, DELETE), activityId, userId);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -248,7 +248,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void activityExit(String activityId) {
         String param = format("%s?id=%s", url(Member.Type.ACTIVITY, "/exit"), activityId);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -275,7 +275,7 @@ public class MemberRequest extends Request<Member> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleMember.class, url(Member.Type.SQUAD, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleMember.class, url(Member.Type.SQUAD, ADD), object.toString(), HttpMethods.Post));
     }
 
 
@@ -283,7 +283,7 @@ public class MemberRequest extends Request<Member> {
      * 拉取我的联系人列表，全部已关注的组织成员
      */
     public void listAllGroup() {
-        httpRequest(getRequest(ListQueryMember.class, format("/user/user/list/allGroup", url(LIST)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListQueryMember.class, format("/user/user/list/allGroup", url(LIST)), "", HttpMethods.Get));
     }
 
     /**
@@ -299,7 +299,7 @@ public class MemberRequest extends Request<Member> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleMember.class, url(Member.Type.TEAM, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleMember.class, url(Member.Type.TEAM, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -307,7 +307,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void removeTeamMember(String tid, String userId) {
         String param = format("%s?tid=%s&userId=%s", url(Member.Type.TEAM, DELETE), tid, userId);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -315,7 +315,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void exitTeam(String tid) {
         String param = format("%s?tid=%s", url(Member.Type.TEAM, EXIT), tid);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -323,6 +323,6 @@ public class MemberRequest extends Request<Member> {
      */
     public void grantManager(String tid, String userId) {
         String param = format("%s/manager?tid=%s&userId=%s", url(Member.Type.TEAM, UPDATE), tid, userId);
-        httpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
     }
 }

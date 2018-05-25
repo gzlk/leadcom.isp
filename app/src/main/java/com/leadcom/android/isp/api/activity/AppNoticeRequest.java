@@ -99,14 +99,14 @@ public class AppNoticeRequest extends Request<AppNotice> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleNotice.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleNotice.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
      * 删除一个通知
      */
     public void delete(String noticeId) {
-        httpRequest(getRequest(SingleNotice.class, format("%s?id=%s", url(DELETE), noticeId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleNotice.class, format("%s?id=%s", url(DELETE), noticeId), "", HttpMethods.Get));
     }
 
     /**
@@ -114,7 +114,7 @@ public class AppNoticeRequest extends Request<AppNotice> {
      */
     public void find(String noticeId) {
         // id=""
-        httpRequest(getRequest(SingleNotice.class, format("%s?id=%s", url(FIND), noticeId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleNotice.class, format("%s?id=%s", url(FIND), noticeId), "", HttpMethods.Get));
     }
 
     /**
@@ -122,7 +122,7 @@ public class AppNoticeRequest extends Request<AppNotice> {
      */
     public void findByTid(String tid) {
         // tid
-        httpRequest(getRequest(SingleNotice.class, format("%s?tid=%s", "", tid), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleNotice.class, format("%s?tid=%s", "", tid), "", HttpMethods.Get));
     }
 
     /**
@@ -130,7 +130,7 @@ public class AppNoticeRequest extends Request<AppNotice> {
      */
     public void list(String activityId, int pageNumber) {
         // actId,pageSize,pageNumber
-        httpRequest(getRequest(MultipleNotice.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleNotice.class, format("%s?actId=%s&pageNumber=%d", url(LIST), activityId, pageNumber), "", HttpMethods.Get));
     }
 
     /**
@@ -146,27 +146,27 @@ public class AppNoticeRequest extends Request<AppNotice> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s", ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s", ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
      * 列取群聊的通知列表
      */
     public void listTeamNotice(String tid, int pageNumber) {
-        httpRequest(getRequest(MultipleNotice.class, format("/communication/commNotice%s?tid=%s&pageNumber=%d", LIST, tid, pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleNotice.class, format("/communication/commNotice%s?tid=%s&pageNumber=%d", LIST, tid, pageNumber), "", HttpMethods.Get));
     }
 
     /**
      * 查找指定通知的详细内容
      */
     public void findTeamNotice(String noticeId) {
-        httpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s?commNoticeId=%s", FIND, noticeId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s?commNoticeId=%s", FIND, noticeId), "", HttpMethods.Get));
     }
 
     /**
      * 删除指定通知
      */
     public void deleteTeamNotice(String noticeId) {
-        httpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s?commNoticeId=%s", DELETE, noticeId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleNotice.class, format("/communication/commNotice%s?commNoticeId=%s", DELETE, noticeId), "", HttpMethods.Get));
     }
 }

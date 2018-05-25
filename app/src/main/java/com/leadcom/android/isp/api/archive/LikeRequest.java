@@ -102,7 +102,7 @@ public class LikeRequest extends Request<ArchiveLike> {
             e.printStackTrace();
         }
         String action = type == Comment.Type.MOMENT ? url(type, ADD) : (url(type) + "/do");
-        httpRequest(getRequest(type == Comment.Type.MOMENT ? SingleLike.class : StringLike.class, action, object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(type == Comment.Type.MOMENT ? SingleLike.class : StringLike.class, action, object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -113,7 +113,7 @@ public class LikeRequest extends Request<ArchiveLike> {
     public void delete(int type, String archiveId) {
         if (type == Comment.Type.MOMENT) {
             String params = format("%s=%s", CommentRequest.getArchiveId(type), archiveId);
-            httpRequest(getRequest(SingleLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
+            executeHttpRequest(getRequest(SingleLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
         } else {
             JSONObject object = new JSONObject();
             try {
@@ -121,7 +121,7 @@ public class LikeRequest extends Request<ArchiveLike> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            httpRequest(getRequest(BoolLike.class, url(type) + "/undo", object.toString(), HttpMethods.Post));
+            executeHttpRequest(getRequest(BoolLike.class, url(type) + "/undo", object.toString(), HttpMethods.Post));
         }
     }
 
@@ -134,7 +134,7 @@ public class LikeRequest extends Request<ArchiveLike> {
         // momentId
         // userDocId
         // groDocId
-        httpRequest(getRequest(MultiLike.class,
+        executeHttpRequest(getRequest(MultiLike.class,
                 format("%s?%s=%s&pageNumber=%d&pageSize=9999", url(type, LIST), CommentRequest.getArchiveId(type), archiveId, pageNumber), "", HttpMethods.Get));
     }
 
@@ -147,7 +147,7 @@ public class LikeRequest extends Request<ArchiveLike> {
         // momentId,accessToken
         // userDocId,accessToken
         // groDocId,accessToken
-        httpRequest(getRequest(BoolLike.class,
+        executeHttpRequest(getRequest(BoolLike.class,
                 format("%s?%s=%s",
                         url(type, "/isExist"),
                         CommentRequest.getArchiveId(type),

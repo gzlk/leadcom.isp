@@ -53,6 +53,6 @@ public class DictionaryRequest extends Request<Dictionary> {
      */
     public void list(String typeCode) {
         String params = format("/system/dictionary/getDictionaryList?typeCode=%s", typeCode);
-        httpRequest(getRequest(ListDictionary.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListDictionary.class, params, "", HttpMethods.Get));
     }
 }

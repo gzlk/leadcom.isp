@@ -67,7 +67,7 @@ public class ShareRequest extends Request<ShareInfo> {
     public void getShareInfo(String archiveId, int contentType, int archiveType) {
         directlySave = false;
         String params = format("%s?id=%s&contentType=%d&docType=%d", url("/getShareInfo"), archiveId, contentType, archiveType);
-        httpRequest(getRequest(SingleShare.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleShare.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -95,6 +95,6 @@ public class ShareRequest extends Request<ShareInfo> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleShare.class, url("/getDraftShareInfo"), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleShare.class, url("/getDraftShareInfo"), object.toString(), HttpMethods.Post));
     }
 }

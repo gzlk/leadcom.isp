@@ -51,6 +51,6 @@ public class AppMinutesRequest extends Request<String> {
     public void summary(String groupId, String activityId) {
         directlySave = false;
         // groupId,activityId
-        httpRequest(getRequest(SingleMinutes.class, format("%s?groupId=%s&activityId=%s", url("/summary"), groupId, activityId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleMinutes.class, format("%s?groupId=%s&activityId=%s", url("/summary"), groupId, activityId), "", HttpMethods.Get));
     }
 }

@@ -357,7 +357,7 @@ public abstract class BaseDownloadingUploadingSupportFragment extends BaseTransp
 //                hideHorizontalProgress();
 //            }
 //        });
-//        httpRequest(fileRequest);
+//        executeHttpRequest(fileRequest);
     }
 
     /**

@@ -11,7 +11,6 @@ import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -178,7 +177,7 @@ public class ArchiveRequest extends Request<Archive> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleArchive.class, url(isIndividual ? Archive.Type.USER : Archive.Type.GROUP, UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleArchive.class, url(isIndividual ? Archive.Type.USER : Archive.Type.GROUP, UPDATE), object.toString(), HttpMethods.Post));
     }
 
     private String getArchiveId(int type) {
@@ -204,7 +203,7 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(BoolArchive.class, url(type, DELETE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BoolArchive.class, url(type, DELETE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -220,7 +219,7 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleArchive.class, url(type, FIND), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleArchive.class, url(type, FIND), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -231,7 +230,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void findShare(String archiveId, int archiveType) {
         String params = format("/system/share/findDoc?docId=%s&docType=%d", archiveId, archiveType);
-        httpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -240,7 +239,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param info 档案的标题
      */
     public void search(String userId, int pageNumber, String info) {
-        httpRequest(getRequest(MultipleArchive.class, format("%s?userId=%s&pageNumber=%d&info=%s", url(SEARCH), userId, pageNumber, info), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleArchive.class, format("%s?userId=%s&pageNumber=%d&info=%s", url(SEARCH), userId, pageNumber, info), "", HttpMethods.Get));
     }
 
     /**
@@ -263,7 +262,7 @@ public class ArchiveRequest extends Request<Archive> {
         if (!isEmpty(searchTitle)) {
             params = format("%s&title=%s", params, searchTitle);
         }
-        httpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -274,7 +273,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void list(int pageNumber, String userId) {
         String param = format("pageNumber=%d&userId=%s", pageNumber, userId);
-        httpRequest(getRequest(ListArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListArchive.class, format("%s?%s", url(LIST), param), "", HttpMethods.Get));
     }
 
     /**
@@ -286,14 +285,14 @@ public class ArchiveRequest extends Request<Archive> {
     public void list(String organizationId, int pageNumber, String searchTitle) {
         String param = format("?groupId=%s&pageNumber=%d%s", organizationId, pageNumber,
                 (isEmpty(searchTitle) ? "" : (format("&title=%s", searchTitle))));
-        httpRequest(getRequest(ListArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
     }
 
     /**
      * 首页 - 头条列表
      */
     public void listHomeHeadline() {
-        httpRequest(getRequest(ListArchive.class, "/index/focusImage", "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListArchive.class, "/index/focusImage", "", HttpMethods.Get));
     }
 
     /**
@@ -302,7 +301,7 @@ public class ArchiveRequest extends Request<Archive> {
     public void listHomeRecommend(int pageNumber, String searchTitle) {
         String params = format("/index/recommend?pageNumber=%d%s", pageNumber,
                 (isEmpty(searchTitle) ? "" : format("&title=%s", searchTitle)));
-        httpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -310,24 +309,24 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void listHomeFollowed(int pageNumber) {
         String params = format("/index/attention?pageNumber=%d", pageNumber);
-        httpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
      * 推送组织档案
      */
-    public void push(ArrayList<String> groupIdList, String groupDocId) {
+    public void push(ArrayList<String> groupIdList, String archiveId) {
         if (null == groupIdList || groupIdList.size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_details_push_no_group);
         } else {
             JSONObject object = new JSONObject();
             try {
-                object.put("groDocId", groupDocId)
-                        .put("groupId", new JSONArray(groupIdList));
+                object.put("docId", archiveId)
+                        .put("groupIds", new JSONArray(groupIdList));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            httpRequest(getRequest(BoolArchive.class, group(PUSH), object.toString(), HttpMethods.Post));
+            executeHttpRequest(getRequest(BoolArchive.class, group(PUSH), object.toString(), HttpMethods.Post));
         }
     }
 
@@ -341,7 +340,7 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(BoolArchive.class, group("/recommend/do"), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BoolArchive.class, group("/recommend/do"), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -354,7 +353,7 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(BoolArchive.class, group("/recommend/undo"), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BoolArchive.class, group("/recommend/undo"), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -388,10 +387,10 @@ public class ArchiveRequest extends Request<Archive> {
         }
         if (isEmpty(archive.getId())) {
             // 没有id是新建草稿
-            httpRequest(getRequest(SingleArchive.class, draft(ADD), object.toString(), HttpMethods.Post));
+            executeHttpRequest(getRequest(SingleArchive.class, draft(ADD), object.toString(), HttpMethods.Post));
         } else {
             // 有id是更新草稿
-            httpRequest(getRequest(SingleArchive.class, draft(UPDATE), object.toString(), HttpMethods.Post));
+            executeHttpRequest(getRequest(SingleArchive.class, draft(UPDATE), object.toString(), HttpMethods.Post));
         }
     }
 
@@ -436,7 +435,7 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleArchive.class, (archive.getOwnType() == Archive.Type.USER ? url(ADD) : group(ADD)), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleArchive.class, (archive.getOwnType() == Archive.Type.USER ? url(ADD) : group(ADD)), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -444,7 +443,7 @@ public class ArchiveRequest extends Request<Archive> {
      */
     public void listDraft(int pageNumber) {
         String params = format("%s?pageNumber=%d&pageSize=99", draft(SELECT), pageNumber);
-        httpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListArchive.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -457,7 +456,7 @@ public class ArchiveRequest extends Request<Archive> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(BoolArchive.class, draft(DELETE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BoolArchive.class, draft(DELETE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -474,7 +473,7 @@ public class ArchiveRequest extends Request<Archive> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            httpRequest(getRequest(BoolArchive.class, draft(SHARE), object.toString(), HttpMethods.Post));
+            executeHttpRequest(getRequest(BoolArchive.class, draft(SHARE), object.toString(), HttpMethods.Post));
         }
     }
 }

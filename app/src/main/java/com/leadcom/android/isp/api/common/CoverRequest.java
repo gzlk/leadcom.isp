@@ -3,7 +3,6 @@ package com.leadcom.android.isp.api.common;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.query.ListQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.model.common.CoverTemplate;
 import com.litesuits.http.request.param.HttpMethods;
@@ -51,6 +50,6 @@ public class CoverRequest extends Request<CoverTemplate> {
     }
 
     public void list(int pageNumber) {
-        httpRequest(getRequest(ListCover.class, format("%s?pageNumber=%d&pageSize=99", url(LIST), pageNumber), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(ListCover.class, format("%s?pageNumber=%d&pageSize=99", url(LIST), pageNumber), "", HttpMethods.Get));
     }
 }

@@ -56,6 +56,6 @@ public class UpdateRequest extends Request<SystemUpdate> {
      */
     public void getClientVersion() {
         directlySave = false;
-        httpRequest(getRequest(SingleUpdate.class, VERSION, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleUpdate.class, VERSION, "", HttpMethods.Get));
     }
 }

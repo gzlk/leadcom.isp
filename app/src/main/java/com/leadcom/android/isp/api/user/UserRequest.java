@@ -143,7 +143,7 @@ public class UserRequest extends Request<User> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -159,7 +159,7 @@ public class UserRequest extends Request<User> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public void update(ArrayList<UserExtra> extras) {
@@ -171,7 +171,7 @@ public class UserRequest extends Request<User> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     private void findInCache(String userId) {
@@ -186,7 +186,7 @@ public class UserRequest extends Request<User> {
     }
 
     private void findFromRemote(String userId) {
-        httpRequest(getRequest(SingleUser.class, format("%s?userId=%s", url(FIND), userId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleUser.class, format("%s?userId=%s", url(FIND), userId), "", HttpMethods.Get));
     }
 
     /**
@@ -225,7 +225,7 @@ public class UserRequest extends Request<User> {
         List<User> users = dao.query(builder);
         if (null == users || users.size() < 1) {
             String params = format("?pageNumber=%d&loginId=%s&name=%s&phone=%s", pageNumber, loginId, name, phone);
-            httpRequest(getRequest(MultipleUser.class, format("%s%s", url(LIST), params), "", HttpMethods.Get));
+            executeHttpRequest(getRequest(MultipleUser.class, format("%s%s", url(LIST), params), "", HttpMethods.Get));
         } else {
             if (null != onMultipleRequestListener) {
                 int pages = count / PAGE_SIZE + (count % PAGE_SIZE > 0 ? 1 : 0);

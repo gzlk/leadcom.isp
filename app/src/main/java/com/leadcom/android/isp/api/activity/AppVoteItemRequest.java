@@ -67,6 +67,6 @@ public class AppVoteItemRequest extends Request<AppVoteItem> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleVoteItem.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleVoteItem.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 }

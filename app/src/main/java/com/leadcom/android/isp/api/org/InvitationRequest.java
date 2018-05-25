@@ -93,7 +93,7 @@ public class InvitationRequest extends Request<Invitation> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_GROUP, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_GROUP, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -109,7 +109,7 @@ public class InvitationRequest extends Request<Invitation> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_GROUP_REG, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_GROUP_REG, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -146,7 +146,7 @@ public class InvitationRequest extends Request<Invitation> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_SQUAD, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_SQUAD, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -172,7 +172,7 @@ public class InvitationRequest extends Request<Invitation> {
     // 改成了params传值方式
     private void handle(String path, int ope, String uuid, String message) {
         String params = format("%s%s?uuid=%s&ope=%d%s", path, HANDLE, uuid, ope, (isEmpty(message) ? "" : format("", message)));
-        httpRequest(getRequest(SingleInvite.class, params, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleInvite.class, params, "", HttpMethods.Get));
     }
 
     /**
@@ -187,7 +187,7 @@ public class InvitationRequest extends Request<Invitation> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        httpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_ACTIVITY, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleInvite.class, url(INVITE_INTO_ACTIVITY, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -213,7 +213,7 @@ public class InvitationRequest extends Request<Invitation> {
             throw new IllegalArgumentException("cannot support handle ope value: " + ope);
         }
         String param = format("%s?tid=%s&ope=%d%s", url(INVITE_INTO_ACTIVITY, "/handle"), tid, ope, (isEmpty(msg) ? "" : format("&msg=%s", msg)));
-        httpRequest(getRequest(SingleInvite.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleInvite.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -224,7 +224,7 @@ public class InvitationRequest extends Request<Invitation> {
     public void activityInviteNotHandled(String groupId, int pageNumber, ArrayList<String> groupIds) {
         String json = Utils.listToString(groupIds);
         String param = format("%s?groupId=%s&pageNumber=%d&pageSize=100", url(INVITE_INTO_ACTIVITY, "/list/notHandle"), groupId, pageNumber);
-        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -233,7 +233,7 @@ public class InvitationRequest extends Request<Invitation> {
      */
     public void activityInviteList(String activityId, int pageNumber) {
         String param = format("%s?actId=%s&pageNumber=%d&pageSize=100", url(INVITE_INTO_ACTIVITY, "/list/actId"), activityId, pageNumber);
-        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -244,6 +244,6 @@ public class InvitationRequest extends Request<Invitation> {
     @Deprecated
     public void activityInviteNotApproved(String groupId, int pageNumber) {
         String param = format("%s?groupId=%s&pageNumber=%d", url(INVITE_INTO_ACTIVITY, "/list/notApprove"), groupId, pageNumber);
-        httpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleInvite.class, param, "", HttpMethods.Get));
     }
 }

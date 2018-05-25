@@ -54,6 +54,6 @@ public class FullTextQueryRequest extends Request<FullTextQuery> {
      */
     public void search(String keyword) {
         directlySave = false;
-        httpRequest(getRequest(SingleFullTextQuery.class, format("%s?keyword=%s", url(SEARCH), keyword), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleFullTextQuery.class, format("%s?keyword=%s", url(SEARCH), keyword), "", HttpMethods.Get));
     }
 }

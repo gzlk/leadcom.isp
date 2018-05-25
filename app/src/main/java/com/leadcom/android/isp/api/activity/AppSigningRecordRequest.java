@@ -91,7 +91,7 @@ public class AppSigningRecordRequest extends Request<AppSignRecord> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleRecord.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleRecord.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -112,7 +112,7 @@ public class AppSigningRecordRequest extends Request<AppSignRecord> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleRecord.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleRecord.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -120,7 +120,7 @@ public class AppSigningRecordRequest extends Request<AppSignRecord> {
      */
     public void find(@NonNull String signRecordId) {
         // id=""
-        httpRequest(getRequest(SingleRecord.class, format("%s?id=%s", url(FIND), signRecordId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(SingleRecord.class, format("%s?id=%s", url(FIND), signRecordId), "", HttpMethods.Get));
     }
 
     /**
@@ -128,7 +128,7 @@ public class AppSigningRecordRequest extends Request<AppSignRecord> {
      */
     public void list(@NonNull String signId) {
         // setupId=""
-        httpRequest(getRequest(MultipleRecord.class, format("%s?setupId=%s", url(LIST), signId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleRecord.class, format("%s?setupId=%s", url(LIST), signId), "", HttpMethods.Get));
     }
 
 
@@ -152,7 +152,7 @@ public class AppSigningRecordRequest extends Request<AppSignRecord> {
             e.printStackTrace();
         }
 
-        httpRequest(getRequest(SingleRecord.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleRecord.class, format("%s%s", TEAM, ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -160,6 +160,6 @@ public class AppSigningRecordRequest extends Request<AppSignRecord> {
      */
     public void listTeamSignRecord(@NonNull String signId) {
         // setupId=""
-        httpRequest(getRequest(MultipleRecord.class, format("%s%s?signInId=%s", TEAM, LIST, signId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(MultipleRecord.class, format("%s%s?signInId=%s", TEAM, LIST, signId), "", HttpMethods.Get));
     }
 }
