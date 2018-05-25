@@ -23,6 +23,7 @@ import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.home.SystemMessageViewHolder;
+import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.common.PushMessage;
@@ -92,6 +93,12 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        NimApplication.addNotificationChangeCallback(callback);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLoadingComplete(true);
@@ -102,6 +109,20 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
         rightIconView.setVisibility(isInMainPage ? View.GONE : View.VISIBLE);
         rightTextView.setVisibility(isInMainPage ? View.VISIBLE : View.GONE);
     }
+
+    @Override
+    public void onDestroy() {
+        NimApplication.removeNotificationChangeCallback(callback);
+        super.onDestroy();
+    }
+
+    private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
+        @Override
+        public void onChanged() {
+            // 重新拉取推送消息列表
+            onSwipeRefreshing();
+        }
+    };
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -258,6 +279,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                         showDetailsPage(pushMessage);
                     }
                     App.app().setUnreadCount(App.app().getUnreadCount() - 1);
+                    NimApplication.dispatchCallbacks();
                 }
             }
         }).find(msgId);
