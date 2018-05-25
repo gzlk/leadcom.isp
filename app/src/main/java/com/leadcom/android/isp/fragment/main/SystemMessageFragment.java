@@ -11,7 +11,6 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -215,16 +214,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
                 stopRefreshing();
-                App.app().setUnreadCount(unreadNum);
-                updateUnreadFlag();
             }
         }).list("");
-    }
-
-    private void updateUnreadFlag() {
-        if (Activity() instanceof MainActivity) {
-            ((MainActivity) Activity()).showUnreadFlag();
-        }
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

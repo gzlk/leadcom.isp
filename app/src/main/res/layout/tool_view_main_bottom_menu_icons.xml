@@ -31,11 +31,14 @@
 
         <com.hlk.hlklib.lib.view.CorneredView
             android:id="@+id/ui_tool_main_bottom_icon_unread"
-            android:layout_width="@dimen/ui_base_dimen_margin_padding"
-            android:layout_height="@dimen/ui_base_dimen_margin_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/ui_base_unread_flag_size_with_text"
             android:layout_marginStart="-5dp"
             android:layout_toEndOf="@+id/ui_tool_main_bottom_icon_2"
             android:gravity="center"
+            android:minWidth="@dimen/ui_base_unread_flag_size_with_text"
+            android:paddingEnd="@dimen/ui_static_dp_2"
+            android:paddingStart="@dimen/ui_static_dp_2"
             android:visibility="gone"
             app:cv_active_border="@android:color/white"
             app:cv_background="@color/colorUnreadFlag"
@@ -50,8 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColorLight"
-                android:textSize="@dimen/ui_base_text_size_tiny"
-                android:visibility="gone" />
+                android:textSize="@dimen/ui_base_text_size_tiny" />
 
         </com.hlk.hlklib.lib.view.CorneredView>
 

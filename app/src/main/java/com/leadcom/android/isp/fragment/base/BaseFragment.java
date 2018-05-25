@@ -720,8 +720,8 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 未读消息数量
      */
-    public String formatUnread(int num) {
-        return format("%s", (num >= 99 ? "99" : (num <= 0 ? "" : num)));
+    public static String formatUnread(int num) {
+        return format("%s", (num > 99 ? "99+" : (num <= 0 ? "" : num)));
     }
 
     /**

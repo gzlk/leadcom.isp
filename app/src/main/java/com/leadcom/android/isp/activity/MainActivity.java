@@ -224,13 +224,13 @@ public class MainActivity extends TitleActivity {
      */
     public void showUnreadFlag() {
 //        checkUnreadTotalCountIgnoreMutex();
-        showUnreadFlag(0);
+        showUnreadFlag(App.app().getUnreadCount());
     }
 
     private void showUnreadFlag(int num) {
         if (null != icon2Unread) {
-            icon2Unread.setVisibility(App.app().getUnreadCount() > 0 ? View.VISIBLE : View.GONE);
-            //icon2UnreadNum.setText(formatUnread(num));
+            icon2Unread.setVisibility(num > 0 ? View.VISIBLE : View.GONE);
+            icon2UnreadNum.setText(BaseFragment.formatUnread(num));
         }
 //        if (null != icon4Unread) {
 //            int size = NimMessage.getUnRead();
