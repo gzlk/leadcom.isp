@@ -2,15 +2,10 @@ package com.leadcom.android.isp.model.common;
 
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.lib.Json;
-import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.organization.Organization;
-import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Table;
 
 /**
- * <b>功能描述：</b><br />
+ * <b>功能描述：</b>推送消息<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
  * <b>创建时间：</b>2018/05/22 09:49 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
@@ -19,21 +14,74 @@ import com.litesuits.orm.db.annotation.Table;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(PushMessage.Field.TABLE)
 public class PushMessage extends Model {
-
-    public interface Field {
-        String TABLE = "pushMessage";
-        String MessageCode = "msgCode";
-    }
 
     public static PushMessage fromJson(String json) {
         return Json.gson().fromJson(isEmpty(json) ? "{}" : json, new TypeToken<PushMessage>() {
         }.getType());
     }
 
-    public static void save(PushMessage msg) {
-        new Dao<>(PushMessage.class).save(msg);
+    public static class Extra {
+
+        public static Extra fromJson(String json) {
+            return Json.gson().fromJson(isEmpty(json) ? "{}" : json, new TypeToken<Extra>() {
+            }.getType());
+        }
+
+        private String msgId;
+        private String docId;
+        private int docType;
+        private String docUserId;
+        private String groupId;
+        private String messageCode;
+
+        public String getMsgId() {
+            return msgId;
+        }
+
+        public void setMsgId(String msgId) {
+            this.msgId = msgId;
+        }
+
+        public String getDocId() {
+            return docId;
+        }
+
+        public void setDocId(String docId) {
+            this.docId = docId;
+        }
+
+        public int getDocType() {
+            return docType;
+        }
+
+        public void setDocType(int docType) {
+            this.docType = docType;
+        }
+
+        public String getDocUserId() {
+            return docUserId;
+        }
+
+        public void setDocUserId(String docUserId) {
+            this.docUserId = docUserId;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getMessageCode() {
+            return messageCode;
+        }
+
+        public void setMessageCode(String messageCode) {
+            this.messageCode = messageCode;
+        }
     }
 
     /**
@@ -62,59 +110,45 @@ public class PushMessage extends Model {
         String GROUP_ATTENTION = "GROUP_ATTENTION_CODE";
     }
 
-    @Column(Archive.Field.ArchiveId)
-    private String docId;
-    @Column(Archive.Field.ArchiveType)
-    private int docType;
-    @Column(Archive.Field.UserArchiveId)
-    private String docUserId;
-    @Column(Organization.Field.GroupId)
-    private String groupId;
-    @Column(Field.MessageCode)
-    private String messageCode;
-    @Column(Archive.Field.Title)
-    private String title;
-    @Column(Archive.Field.Content)
-    private String content;
+    private String userId, userName, headPhoto, templateCode, title, content, createDate;
+    private int status;
+    private Extra extras;
 
-    public String getDocId() {
-        return docId;
+    @Override
+    public boolean isRead() {
+        return status > 0;
     }
 
-    public void setDocId(String docId) {
-        this.docId = docId;
+    public String getUserId() {
+        return userId;
     }
 
-    public int getDocType() {
-        return docType;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setDocType(int docType) {
-        this.docType = docType;
+    public String getUserName() {
+        return userName;
     }
 
-    public String getDocUserId() {
-        return docUserId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setDocUserId(String docUserId) {
-        this.docUserId = docUserId;
+    public String getHeadPhoto() {
+        return headPhoto;
     }
 
-    public String getGroupId() {
-        return groupId;
+    public void setHeadPhoto(String headPhoto) {
+        this.headPhoto = headPhoto;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
+    public String getTemplateCode() {
+        return templateCode;
     }
 
-    public String getMessageCode() {
-        return messageCode;
-    }
-
-    public void setMessageCode(String messageCode) {
-        this.messageCode = messageCode;
+    public void setTemplateCode(String templateCode) {
+        this.templateCode = templateCode;
     }
 
     public String getTitle() {
@@ -131,5 +165,29 @@ public class PushMessage extends Model {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public Extra getExtras() {
+        return extras;
+    }
+
+    public void setExtras(Extra extras) {
+        this.extras = extras;
     }
 }

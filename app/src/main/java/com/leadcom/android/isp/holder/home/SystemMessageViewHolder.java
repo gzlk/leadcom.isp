@@ -9,7 +9,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
+import com.leadcom.android.isp.model.common.PushMessage;
 
 /**
  * <b>功能描述：</b>系统消息<br />
@@ -38,36 +38,18 @@ public class SystemMessageViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
-    public void showContent(NimMessage msg) {
-        titleView.setText(getTitle(msg));
-        descView.setText(msg.getMsgContent());
-        String time = fragment().formatTimeAgo(msg.getSendDate());
+    public void showContent(PushMessage msg) {
+        titleView.setText(msg.getTitle());
+        descView.setText(msg.getContent());
+        String time = fragment().formatTimeAgo(msg.getCreateDate());
         timeView.setText(time);
         unreadView.setVisibility(msg.isRead() ? View.GONE : View.VISIBLE);
     }
 
-    private String getTitle(NimMessage msg) {
-        if (isEmpty(msg.getMsgTitle())) {
-            return NimMessage.getMsgType(msg.getMsgType());
-        }
-        return msg.getMsgTitle();
-    }
-
     @Click({R.id.ui_holder_view_system_message_container, R.id.ui_tool_view_contact_button2})
     private void elementClick(View view) {
-        switch (view.getId()) {
-            case R.id.ui_holder_view_system_message_container:
-                // 打开查看详情
-                if (null != mOnViewHolderClickListener) {
-                    mOnViewHolderClickListener.onClick(getAdapterPosition());
-                }
-                break;
-            case R.id.ui_tool_view_contact_button2:
-                // 删除
-                if (null != mOnHandlerBoundDataListener) {
-                    mOnHandlerBoundDataListener.onHandlerBoundData(SystemMessageViewHolder.this);
-                }
-                break;
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
     }
 }

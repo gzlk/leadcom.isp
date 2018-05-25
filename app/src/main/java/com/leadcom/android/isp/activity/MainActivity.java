@@ -18,6 +18,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.common.UpdateRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.InvitationRequest;
@@ -42,6 +43,7 @@ import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.model.common.Message;
+import com.leadcom.android.isp.model.common.PushMessage;
 import com.leadcom.android.isp.model.common.SystemUpdate;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.nim.model.notification.NimMessage;
@@ -199,9 +201,23 @@ public class MainActivity extends TitleActivity {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            showUnreadFlag(0);
+            fetchingUnreadCount();
         }
     };
+
+    private void fetchingUnreadCount() {
+        PushMsgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<PushMessage>() {
+            @Override
+            public void onResponse(PushMessage pushMessage, boolean success, String message) {
+                super.onResponse(pushMessage, success, message);
+                if (success) {
+                    int count = Integer.valueOf(pushMessage.getId());
+                    App.app().setUnreadCount(count);
+                    showUnreadFlag();
+                }
+            }
+        }).unreadCount("");
+    }
 
     /**
      * 显示有未读消息的标记

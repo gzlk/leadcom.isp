@@ -3,12 +3,15 @@ package com.leadcom.android.isp.api.common;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.query.ListQuery;
+import com.leadcom.android.isp.api.query.BoolQuery;
+import com.leadcom.android.isp.api.query.NumericQuery;
+import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
+import com.leadcom.android.isp.model.common.PushMessage;
 import com.litesuits.http.request.param.HttpMethods;
 
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * <b>功能描述：</b>系统推送消息<br />
@@ -20,16 +23,22 @@ import java.util.List;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class PushMsgRequest extends Request<NimMessage> {
+public class PushMsgRequest extends Request<PushMessage> {
 
     public static PushMsgRequest request() {
         return new PushMsgRequest();
     }
 
-    private static class SinglePush extends SingleQuery<NimMessage> {
+    private static class SinglePush extends SingleQuery<PushMessage> {
     }
 
-    private static class MultiplePush extends ListQuery<NimMessage> {
+    private static class BoolPush extends BoolQuery<PushMessage> {
+    }
+
+    private static class PagePush extends PageQuery<PushMessage> {
+    }
+
+    private static class NumericPush extends NumericQuery<PushMessage> {
     }
 
     @Override
@@ -38,69 +47,80 @@ public class PushMsgRequest extends Request<NimMessage> {
     }
 
     @Override
-    protected Class<NimMessage> getType() {
-        return NimMessage.class;
+    protected Class<PushMessage> getType() {
+        return PushMessage.class;
     }
 
     @Override
-    public PushMsgRequest setOnSingleRequestListener(OnSingleRequestListener<NimMessage> listener) {
+    public PushMsgRequest setOnSingleRequestListener(OnSingleRequestListener<PushMessage> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public PushMsgRequest setOnMultipleRequestListener(OnMultipleRequestListener<NimMessage> listListener) {
+    public PushMsgRequest setOnMultipleRequestListener(OnMultipleRequestListener<PushMessage> listListener) {
         onMultipleRequestListener = listListener;
         return this;
-    }
-
-    @Override
-    protected void save(NimMessage msg) {
-        if (null != msg) {
-            msg.setId(msg.getUuid());
-            if (0 == msg.getType()) {
-                msg.setType(msg.getMsgType());
-            }
-        }
-        super.save(msg);
-    }
-
-    @Override
-    protected void save(List<NimMessage> list) {
-        for (NimMessage msg : list) {
-            msg.setId(msg.getUuid());
-            if (0 == msg.getType()) {
-                msg.setType(msg.getMsgType());
-            }
-        }
-        super.save(list);
     }
 
     /**
      * 拉取推送消息列表
      */
-    public void list() {
-        executeHttpRequest(getRequest(MultiplePush.class, url(LIST), "", HttpMethods.Get));
+    public void list(String templateCode) {
+        directlySave = false;
+        String param = url(LIST) + (isEmpty(templateCode) ? "" : format("?templateCode=%s", templateCode));
+        executeHttpRequest(getRequest(PagePush.class, param, "", HttpMethods.Get));
     }
 
     /**
-     * 更改已读状态
+     * 查看消息，同时置为已读
      */
-    public void update(String uuid) {
-        executeHttpRequest(getRequest(SingleQuery.class, url(format("%s?uuid=%s", UPDATE, uuid)), "", HttpMethods.Get));
+    public void find(String msgId) {
+        directlySave = false;
+        executeHttpRequest(getRequest(SinglePush.class, url(FIND), getIdObject(msgId).toString(), HttpMethods.Post));
     }
 
     /**
      * 删除指定的推送消息
      */
-    public void delete(String uuid) {
-        executeHttpRequest(getRequest(SingleQuery.class, url(format("%s?uuid=%s", DELETE, uuid)), "", HttpMethods.Get));
+    public void delete(String msgId) {
+        directlySave = false;
+        executeHttpRequest(getRequest(BoolPush.class, url(DELETE), getIdObject(msgId).toString(), HttpMethods.Get));
+    }
+
+    private JSONObject getIdObject(String msgId) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("id", msgId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return object;
+    }
+
+    private JSONObject getTemplateObject(String templateCode) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("templateCode", checkNull(templateCode));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return object;
     }
 
     /**
-     * 清空用户的推送消息
+     * 查询未读消息数量(可以指定某个类别的消息)
      */
-    public void clearByUser() {
-        executeHttpRequest(getRequest(SingleQuery.class, url("/deleteByUser"), "", HttpMethods.Get));
+    public void unreadCount(String templateCode) {
+        directlySave = false;
+        executeHttpRequest(getRequest(NumericPush.class, url("/unreadMessageCount"), getTemplateObject(templateCode).toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 清空用户的推送消息(templateCode传空值时清空所有消息)
+     */
+    public void clean(String templateCode) {
+        directlySave = false;
+        executeHttpRequest(getRequest(BoolPush.class, url(CLEAN), getTemplateObject(templateCode).toString(), HttpMethods.Post));
     }
 }

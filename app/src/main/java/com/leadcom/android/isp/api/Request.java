@@ -5,6 +5,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.ListQuery;
+import com.leadcom.android.isp.api.query.NumericQuery;
 import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
@@ -91,6 +92,10 @@ public abstract class Request<T> {
      * 分享
      */
     protected static final String SHARE = "/share";
+    /**
+     * 清空
+     */
+    protected static final String CLEAN = "/clean";
 
     protected static final int MAX_PAGE_SIZE = 1000;
     protected static final String SUMMARY = format("abstrSize=%d&abstrRow=%d", 100, 5);
@@ -256,6 +261,11 @@ public abstract class Request<T> {
                         StringQuery<T> stringQuery = (StringQuery<T>) data;
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.onResponse(newInstance(stringQuery.getData()), stringQuery.success(), data.getMsg());
+                        }
+                    } else if (data instanceof NumericQuery) {
+                        NumericQuery<T> query = (NumericQuery<T>) data;
+                        if (null != onSingleRequestListener) {
+                            onSingleRequestListener.onResponse(newInstance(String.valueOf(query.getData())), query.success(), query.getMsg());
                         }
                     }
                 } else {
