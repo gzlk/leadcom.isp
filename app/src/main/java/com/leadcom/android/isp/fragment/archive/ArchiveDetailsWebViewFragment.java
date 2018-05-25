@@ -314,7 +314,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
         setSupportLoadingMore(true);
-        loadingArchive();
+        //loadingArchive();
     }
 
     @Override
@@ -492,6 +492,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                         finish();
                     } else {
                         archive.resetInfo(info);
+                        mArchive.resetInfo(info);
                         //archive.resetAdditional(archive.getAddition());
                         //displayArchive(archive);
                         prepareShareDialogElement(archive);
@@ -950,7 +951,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     doc.setRecommend(Archive.RecommendType.RECOMMENDED);
                     mAdapter.notifyItemChanged(index);
                     prepareShareDialogElement(doc);
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_recommend_ok);
                 }
             }
         }).recommend(mQueryId);
@@ -967,7 +968,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     doc.setRecommend(Archive.RecommendType.UN_RECOMMEND);
                     mAdapter.notifyItemChanged(0);
                     prepareShareDialogElement(doc);
-                    ToastHelper.make().showMsg(message);
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_recommended_ok);
                 }
                 displayLoading(false);
             }

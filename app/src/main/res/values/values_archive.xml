@@ -142,7 +142,9 @@
     <string name="ui_text_archive_details_uncollecting">取消档案收藏&#8230;</string>
     <string name="ui_text_archive_details_push_no_group">无效的推送：被推送的组织为空</string>
     <string name="ui_text_archive_details_recommend">推荐到首页，让更多的人看见</string>
+    <string name="ui_text_archive_details_recommend_ok">本篇已推荐到树脉首页，美好的篇章应该让更多的人铭记！</string>
     <string name="ui_text_archive_details_recommended">确定要撤掉本档案的推荐吗？</string>
+    <string name="ui_text_archive_details_recommended_ok">已从树脉首页推荐中撤下本篇内容</string>
 
     <string name="ui_text_archive_details_editor_setting_time_title">发生时间</string>
     <string name="ui_text_archive_details_editor_setting_site_title">发生地点</string>
