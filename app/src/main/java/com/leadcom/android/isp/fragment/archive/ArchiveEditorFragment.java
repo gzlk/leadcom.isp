@@ -517,6 +517,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
                 return;
             }
+            if (isEmpty(mArchive.getProperty())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_property_null);
+                return;
+            }
+            if (isEmpty(mArchive.getCategory())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_category_null);
+                return;
+            }
         } else {
             mArchive.setOwnType(Archive.Type.USER);
             // 个人档案需要清空组织id
