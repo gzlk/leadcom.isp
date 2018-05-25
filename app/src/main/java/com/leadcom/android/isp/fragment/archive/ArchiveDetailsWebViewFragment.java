@@ -474,8 +474,32 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             ArchiveEditorFragment.open(ArchiveDetailsWebViewFragment.this, mQueryId, type);
             finish();
         } else {
-            fetchingShareInfo();
+            loadingArchiveInfo();
         }
+    }
+
+    private void loadingArchiveInfo() {
+        ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
+            @Override
+            public void onResponse(ArchiveQuery archiveQuery, boolean success, String message) {
+                super.onResponse(archiveQuery, success, message);
+                if (success) {
+                    ArchiveInfo info = archiveQuery.getAdditionResult();
+                    boolean isUser = null == archiveQuery.getGroDoc();
+                    Archive archive = isDraft ? archiveQuery.getDocDraft() : isUser ? archiveQuery.getUserDoc() : archiveQuery.getGroDoc();
+                    if (null == archive) {
+                        ToastHelper.make().showMsg(R.string.ui_text_archive_details_invalid_archive);
+                        finish();
+                    } else {
+                        archive.resetInfo(info);
+                        //archive.resetAdditional(archive.getAddition());
+                        //displayArchive(archive);
+                        prepareShareDialogElement(archive);
+                        fetchingShareInfo();
+                    }
+                }
+            }
+        }).find(isDraft ? Archive.Type.DRAFT : archiveType, mQueryId);
     }
 
     private void loadingArchive() {
@@ -500,7 +524,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                         } else {
                             archive.resetInfo(info);
                             archive.resetAdditional(archive.getAddition());
-                            displayArchive(archive);
+                            prepareShareDialogElement(archive);
                         }
                         onLoadingCommentComplete(true, isUser ? archiveQuery.getUserDocComment() : archiveQuery.getGroDocCmtList());
                     }
@@ -508,7 +532,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     isLoadingComplete(true);
                 }
 
-            }).find(archiveType, mQueryId);
+            }).find(isDraft ? Archive.Type.DRAFT : archiveType, mQueryId);
         }
     }
 
@@ -547,9 +571,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         if (!isCollected) {
             Collectable.resetArchiveCollectionParams(archive);
         }
-        prepareShareDialogElement(archive);
-        // 档案创建者可以删除评论
-        deletable = enableShareDelete;
+        //prepareShareDialogElement(archive);
         mAdapter.update(archive);
 //        for (Attachment attachment : archive.getImage()) {
 //            mAdapter.update(attachment);
@@ -601,6 +623,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             enableShareRecommend = archive.isPublic() && !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
             enableShareRecommended = archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
         }
+        // 档案创建者可以删除评论
+        deletable = enableShareDelete;
     }
 
     private int getAdditionalPosition(Archive archive) {
