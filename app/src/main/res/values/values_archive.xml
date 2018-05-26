@@ -87,6 +87,12 @@
         <item>参与者：|%s|输入或选择参与人(如A、B)|||0|2</item>
         <item>记录人：|%s|活动记录人|||0</item>
     </string-array>
+    <string-array name="ui_text_archive_types">
+        <item>提案报道</item>
+        <item>提案报道</item>
+        <item>上传文件</item>
+        <item>活动档案</item>
+    </string-array>
     <string name="ui_text_archive_creator_editor_template_topic_hint">1、\n2、\n3、\n</string>
     <string name="ui_text_archive_creator_editor_template_minute">纪要</string>
     <string name="ui_text_archive_creator_editor_template_clear_images">您确定要清空这些选中的图片吗？</string>

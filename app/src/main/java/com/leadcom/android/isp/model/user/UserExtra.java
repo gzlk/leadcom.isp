@@ -23,23 +23,25 @@ import java.util.ArrayList;
 public class UserExtra extends Model {
 
     public static String toJson(ArrayList<UserExtra> list) {
-        return Json.gson(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes f) {
-                return f.getName().equals("id") ||
-                        f.getName().startsWith("_") ||
-                        f.getName().startsWith("is") ||
-                        f.getName().startsWith("local") ||
-                        f.getName().contains("accessToken");
-            }
-
-            @Override
-            public boolean shouldSkipClass(Class<?> aClass) {
-                return false;
-            }
-        }).toJson(list, new TypeToken<ArrayList<UserExtra>>() {
+        return Json.gson(strategy).toJson(list, new TypeToken<ArrayList<UserExtra>>() {
         }.getType());
     }
+
+    private static ExclusionStrategy strategy = new ExclusionStrategy() {
+        @Override
+        public boolean shouldSkipField(FieldAttributes f) {
+            return f.getName().equals("id") ||
+                    f.getName().startsWith("_") ||
+                    f.getName().startsWith("is") ||
+                    f.getName().startsWith("local") ||
+                    f.getName().contains("accessToken");
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> clazz) {
+            return false;
+        }
+    };
 
     public UserExtra() {
         show = ShownType.SHOWN;

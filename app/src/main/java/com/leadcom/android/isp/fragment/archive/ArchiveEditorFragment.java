@@ -111,18 +111,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private static final int UP_VIDEO = 3;
     private static final int UP_ATTACH = 4;
     private static final int UP_TEMPLATE = 5;
-    /**
-     * 图文方式
-     */
-    private static final int TYPE_MULTIMEDIA = 1;
-    /**
-     * 附件方式
-     */
-    private static final int TYPE_ATTACHMENT = 2;
-    /**
-     * 模板档案
-     */
-    private static final int TYPE_TEMPLATE = 3;
+
     private static boolean editorFocused = false;
 
     public static ArchiveEditorFragment newInstance(Bundle bundle) {
@@ -134,11 +123,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private static int getType(String type) {
         switch (type) {
             case ATTACHABLE:
-                return TYPE_ATTACHMENT;
+                return Archive.ArchiveType.ATTACHMENT;
             case MULTIMEDIA:
-                return TYPE_MULTIMEDIA;
+                return Archive.ArchiveType.MULTIMEDIA;
             default:
-                return TYPE_TEMPLATE;
+                return Archive.ArchiveType.TEMPLATE;
         }
     }
 
@@ -163,7 +152,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         uploadType = bundle.getInt(PARAM_UPLOAD_TYPE, UP_NOTHING);
-        editorType = bundle.getInt(PARAM_EDITOR_TYPE, TYPE_MULTIMEDIA);
+        editorType = bundle.getInt(PARAM_EDITOR_TYPE, Archive.ArchiveType.MULTIMEDIA);
         isPasteContent = bundle.getBoolean(PARAM_PASTE_CONTENT, false);
         String json = bundle.getString(PARAM_JSON, Model.EMPTY_JSON);
         if (!isEmpty(json)) {
@@ -188,6 +177,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 默认草稿作者为当前登录用户
         mArchive.setUserId(Cache.cache().userId);
         mArchive.setUserName(Cache.cache().userName);
+        // 档案模板设置为图文或附件
+        mArchive.setDocType(editorType);
         // 默认草稿的创建日期为当前日期
         mArchive.setCreateDate(Utils.format(getString(R.string.ui_base_text_date_time_format), Utils.timestamp()));
         // 默认草稿的发生日期
@@ -205,7 +196,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected boolean checkStillEditing() {
-        if (editorType == TYPE_ATTACHMENT || isEmpty(mArchive.getGroupId())) {
+        if (mArchive.isAttachmentArchive() || isEmpty(mArchive.getGroupId())) {
             // 附件方式需要检测是否真要放弃
             String title = titleView.getValue();
             String content = Utils.clearContentHtml(mArchive.getContent());
@@ -278,7 +269,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 默认图文编辑方式
      */
-    private int editorType = TYPE_MULTIMEDIA;
+    private int editorType = Archive.ArchiveType.MULTIMEDIA;
     /**
      * 是否是组织档案，默认个人档案
      */
@@ -328,27 +319,30 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             toolbarTopLine.setVisibility(View.VISIBLE);
         }
         //mEditor.focusEditor();
-        // 如果不是传入的服务器草稿id则判断本地是否有草稿
+        // 如果不是传入的服务器草稿id则判断是否有草稿
         if (isEmpty(mQueryId)) {
             // 图文模式下检索是否有未提交的草稿
-            if (editorType == TYPE_MULTIMEDIA) {
+            if (editorType != Archive.ArchiveType.ATTACHMENT) {
                 fetchingDraft();
             }
         } else {
             fetchingSingleDraft();
         }
-        attachmentView.setVisibility(editorType == TYPE_ATTACHMENT ? View.VISIBLE : View.GONE);
-        multimediaControlView.setVisibility(editorType == TYPE_MULTIMEDIA ? View.VISIBLE : View.GONE);
-        multimediaView.setVisibility(editorType == TYPE_TEMPLATE ? View.GONE : View.VISIBLE);
-        templateView.setVisibility(editorType == TYPE_TEMPLATE ? View.VISIBLE : View.GONE);
-        if (editorType == TYPE_TEMPLATE) {
-            isGroupArchive = true;
-            isUserArchive = false;
-        }
-
+        resetEditorLayout();
         attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
         aAdapter = new AttachmentAdapter();
         attachmentRecyclerView.setAdapter(aAdapter);
+    }
+
+    private void resetEditorLayout() {
+        attachmentView.setVisibility(mArchive.isAttachmentArchive() ? View.VISIBLE : View.GONE);
+        multimediaControlView.setVisibility(mArchive.isMultimediaArchive() ? View.VISIBLE : View.GONE);
+        multimediaView.setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
+        templateView.setVisibility(mArchive.isTemplateArchive() ? View.VISIBLE : View.GONE);
+        if (mArchive.isTemplateArchive()) {
+            isGroupArchive = true;
+            isUserArchive = false;
+        }
     }
 
     private void fetchingSingleDraft() {
@@ -358,17 +352,34 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(archive, success, message);
                 if (success && null != archive) {
                     mArchive = archive.getDocDraft();
-                    isGroupArchive = !isEmpty(mArchive.getGroupId());
-                    isUserArchive = !isGroupArchive;
-                    titleView.setValue(mArchive.getTitle());
-                    mArchive.resetImageStyle();
-                    mEditor.setHtml(mArchive.getContent());
+                    restoreArchiveToEdit();
                 } else {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_not_exists);
                     finish();
                 }
             }
         }).find(Archive.Type.DRAFT, mQueryId);
+    }
+
+    private void restoreArchiveToEdit() {
+        isGroupArchive = !isEmpty(mArchive.getGroupId());
+        isUserArchive = !isGroupArchive;
+        if (mArchive.isAttachmentArchive() || mArchive.isTemplateArchive()) {
+            isUserArchive = false;
+        }
+        titleView.setValue(mArchive.getTitle());
+        if (mArchive.isMultimediaArchive()) {
+            mArchive.resetImageStyle();
+            mEditor.setHtml(mArchive.getContent());
+        } else if (mArchive.isTemplateArchive()) {
+            initializeTemplate();
+            timeHolder.showContent(format(templateItems[0], formatDate(mArchive.getHappenDate())));
+            addressHolder.showContent(format(templateItems[1], mArchive.getSite()));
+            participantHolder.showContent(format(templateItems[2], mArchive.getParticipant()));
+            authorHolder.showContent(format(templateItems[3], mArchive.getUserName()));
+            topicContent.setValue(mArchive.getTopic());
+            minuteContent.setValue(mArchive.getResolution());
+        }
     }
 
     private void fetchingDraft() {
@@ -389,17 +400,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void warningSingleDraft(final Archive draft) {
         final String json = Archive.toJson(draft);
-        final String id = draft.getId();
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
                 // 继续编辑则直接停留在本页面
                 mArchive = Archive.fromJson(json);
-                isGroupArchive = !isEmpty(mArchive.getGroupId());
-                isUserArchive = !isGroupArchive;
-                titleView.setValue(mArchive.getTitle());
-                mArchive.resetImageStyle();
-                mEditor.setHtml(mArchive.getContent());
+                restoreArchiveToEdit();
                 return true;
             }
         }).setOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
@@ -426,6 +432,169 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_COVER:
+                mArchive.setCover(getResultedData(data));
+                if (null != coverView) {
+                    Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
+                        }
+                    }, 2000);
+                }
+                updateArchive(ArchiveRequest.TYPE_COVER);
+                break;
+            case REQUEST_VIDEO:
+                // 视频选择返回了
+                String videoPath = getGalleryResultedPath(data);
+                videoUrl.setValue(videoPath);
+                showFileSize(true, videoPath, videoSize);
+                break;
+            case REQUEST_MUSIC:
+                // 音乐文件选择返回了
+                String musicPath = getGalleryResultedPath(data);
+                musicUrl.setValue(musicPath);
+                showFileSize(false, musicPath, musicSize);
+                break;
+            case REQUEST_SECURITY:
+                String json = getResultedData(data);
+                Seclusion seclusion = PrivacyFragment.getSeclusion(json);
+                mArchive.setAuthPublic(seclusion.getStatus());
+                //mArchive.setAuthGro(seclusion.getGroupIds());
+                //mArchive.setAuthUser(seclusion.getUserIds());
+                //mArchive.setAuthUserName(seclusion.getUserNames());
+                if (null != publicText) {
+                    publicText.setText(PrivacyFragment.getPrivacy(seclusion));
+                }
+                updateArchive(ArchiveRequest.TYPE_AUTH);
+                break;
+            case REQUEST_LABEL:
+                String labelJson = getResultedData(data);
+                ArrayList<String> list = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
+                }.getType());
+                if (null != list) {
+                    mArchive.getLabel().clear();
+                    mArchive.getLabel().addAll(list);
+                }
+                if (null != labelText) {
+                    labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
+                }
+                updateArchive(ArchiveRequest.TYPE_LABEL);
+                break;
+            case REQUEST_ATTACHMENT:
+
+                break;
+            case REQUEST_DRAFT:
+                // 草稿选择完毕
+                String draftJson = getResultedData(data);
+                mArchive = Archive.fromJson(StringHelper.replaceJson(draftJson, true));
+                restoreArchiveToEdit();
+                break;
+            case REQUEST_SELECT:
+                // 档案参与人选择完毕
+                ArrayList<SubMember> members = SubMember.fromJson(getResultedData(data));
+                String names = "";
+                String old = participantHolder.getValue();
+                List<String> oNames = null;
+                if (!isEmpty(old)) {
+                    oNames = Arrays.asList(old.split("、"));
+                }
+                if (null != oNames) {
+                    for (String name : oNames) {
+                        names += (isEmpty(names) ? "" : "、") + name;
+                    }
+                }
+                if (null != members && members.size() > 0) {
+                    for (SubMember member : members) {
+                        if (null == oNames || !oNames.contains(member.getUserName())) {
+                            names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                        }
+                    }
+                }
+                mArchive.setParticipant(names);
+                if (null != participantHolder) {
+                    participantHolder.showContent(format(templateItems[2], names));
+                }
+                break;
+            case REQUEST_MEMBER:
+                ArrayList<SubMember> subMembers = SubMember.fromJson(getResultedData(data));
+                warningShareDraftTo(SubMember.getMemberNames(subMembers), SubMember.getUserIds(subMembers));
+                break;
+            case REQUEST_GROUP:
+                ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
+                if (null != groups && groups.size() > 0) {
+                    // 设置组织id
+                    mArchive.setGroupId(groups.get(0).getGroupId());
+                    // 设置类别为组织档案
+                    //mArchive.setType(Archive.Type.GROUP);
+                    if (null != groupNameText) {
+                        groupNameText.setText(Html.fromHtml(groups.get(0).getGroupName()));
+                    }
+                }
+                break;
+            case REQUEST_SQUAD:
+                // 选择了小组
+                String string = getResultedData(data);
+                if (!isEmpty(string)) {
+                    Squad squad = Squad.fromJson(string);
+                    if (null != squad && !isEmpty(squad.getId())) {
+                        mArchive.setBranch(squad.getName());
+                        branchText.setText(squad.getName());
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, data);
+    }
+
+    @Override
+    public void onStop() {
+        if (!mArchive.isAttachmentArchive() && isGroupArchive) {
+            // 图文的组织档案才保存草稿
+            saveDraft();
+        }
+        super.onStop();
+    }
+
+    private void saveDraft() {
+        mArchive.setTitle(titleView.getValue());
+        if (null != siteText) {
+            mArchive.setSite(siteText.getValue());
+            mArchive.setSource(creatorText.getValue());
+            // 保存可能手动输入添加的参与人
+            mArchive.setParticipant(participantText.getValue());
+        }
+        if (mArchive.isTemplateArchive()) {
+            resetTemplateArchive(false);
+        }
+        // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
+        if (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent())) {
+            if (isPasteContent && mArchive.isContentPasteFromOtherPlatform()) {
+                // 如果是粘贴过来的内容，则清理里面所有非树脉自有的img标签
+                mArchive.clearPastedContentImages();
+            }
+            savingDraft();
+        }
+    }
+
+    private void savingDraft() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    if (null != archive && !isEmpty(archive.getId())) {
+                        mArchive = archive;
+                    }
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
+                }
+            }
+        }).addDraft(mArchive);
+    }
+
+    @Override
     public int getLayout() {
         return R.layout.fragment_archive_creator_richeditor;
     }
@@ -442,11 +611,59 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 openSettingDialog();
             }
         });
-        if (editorType == TYPE_TEMPLATE) {
+        if (mArchive.isTemplateArchive()) {
             isGroupArchive = true;
             initializeTemplate();
         }
         //resetRightIcons();
+    }
+
+    /**
+     * 设置活动档案的必须内容
+     */
+    private boolean resetTemplateArchive(boolean returnAble) {
+        mArchive.setOwnType(Archive.Type.GROUP);
+        // 设置模板档案的各个属性值
+        if (returnAble) {
+            if (mArchive.getHappenDate().equals(Model.DFT_DATE)) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_happen_date_null);
+                return false;
+            }
+        }
+        mArchive.setSite(addressHolder.getValue());
+        if (returnAble) {
+            if (isEmpty(mArchive.getSite())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_site_null);
+                return false;
+            }
+        }
+        mArchive.setTopic(topicContent.getValue());
+        if (returnAble) {
+            if (isEmpty(mArchive.getTopic())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_topic_null);
+                return false;
+            }
+        }
+        mArchive.setResolution(minuteContent.getValue());
+        if (returnAble) {
+            if (isEmpty(mArchive.getResolution())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_minute_null);
+                return false;
+            }
+        }
+//            if (isEmpty(mArchive.getBranch())) {
+//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_branch_null);
+//                return false;
+//            }
+        if (isEmpty(mArchive.getProperty())) {
+            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
+            return false;
+        }
+        if (isEmpty(mArchive.getCategory())) {
+            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
+            return false;
+        }
+        return true;
     }
 
     private void tryCreateArchive() {
@@ -456,13 +673,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         mArchive.setTitle(title);
-        if (editorType != TYPE_TEMPLATE) {
+        if (!mArchive.isTemplateArchive()) {
             if (isEmpty(mArchive.getContent())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
                 return;
             }
         }
-        if (editorType == TYPE_MULTIMEDIA) {
+        if (mArchive.isMultimediaArchive()) {
             // 图文模式下需要检测
             if (isEmpty(mArchive.getCover())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_null);
@@ -473,44 +690,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     ToastHelper.make().showMsg(getString(R.string.ui_text_archive_creator_editor_create_cover_invalid, ext));
                 }
             }
-        } else if (editorType == TYPE_TEMPLATE) {
-            mArchive.setOwnType(Archive.Type.GROUP);
-            // 设置模板档案的各个属性值
-            if (mArchive.getHappenDate().equals(Model.DFT_DATE)) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_happen_date_null);
-                return;
-            }
-            mArchive.setSite(addressHolder.getValue());
-            if (isEmpty(mArchive.getSite())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_site_null);
-                return;
-            }
-            mArchive.setTopic(topicContent.getValue());
-            if (isEmpty(mArchive.getTopic())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_topic_null);
-                return;
-            }
-            mArchive.setResolution(minuteContent.getValue());
-            if (isEmpty(mArchive.getResolution())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_minute_null);
-                return;
-            }
-//            if (isEmpty(mArchive.getBranch())) {
-//                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_branch_null);
-//                return;
-//            }
-            if (isEmpty(mArchive.getProperty())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
-                return;
-            }
-            if (isEmpty(mArchive.getCategory())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
+        } else if (mArchive.isTemplateArchive()) {
+            if (!resetTemplateArchive(true)) {
                 return;
             }
         }
-        // 档案模板设置为图文或附件
-        mArchive.setDocType(editorType == TYPE_MULTIMEDIA ? Archive.ArchiveType.MULTIMEDIA :
-                (editorType == TYPE_ATTACHMENT ? Archive.ArchiveType.ATTACHMENT : Archive.ArchiveType.TEMPLATE));
         if (isGroupArchive) {
             mArchive.setOwnType(Archive.Type.GROUP);
             if (isEmpty(mArchive.getGroupId())) {
@@ -535,13 +719,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_label_null);
             return;
         }
-        String author = editorType == TYPE_TEMPLATE ? authorHolder.getValue() : creatorText.getValue();
+        String author = mArchive.isTemplateArchive() ? authorHolder.getValue() : creatorText.getValue();
         if (isEmpty(author)) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_author_null);
             return;
         }
         mArchive.setSource(author);
-        if (editorType == TYPE_TEMPLATE) {
+        if (mArchive.isTemplateArchive()) {
             // 如果选择了图片，则压缩图片然后上传
             if (waitingFroCompressImages.size() > 0) {
                 // 不需要显示上传进度
@@ -635,48 +819,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive);
         }
         resultSucceededActivity();
-    }
-
-    @Override
-    public void onStop() {
-        if (editorType == TYPE_MULTIMEDIA && isGroupArchive) {
-            // 图文的组织档案才保存草稿
-            saveDraft();
-        }
-        super.onStop();
-    }
-
-    private void saveDraft() {
-        mArchive.setTitle(titleView.getValue());
-        if (null != siteText) {
-            mArchive.setSite(siteText.getValue());
-            mArchive.setSource(creatorText.getValue());
-            // 保存可能手动输入添加的参与人
-            mArchive.setParticipant(participantText.getValue());
-        }
-        // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
-        if (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent())) {
-            if (isPasteContent && mArchive.isContentPasteFromOtherPlatform()) {
-                // 如果是粘贴过来的内容，则清理里面所有非树脉自有的img标签
-                mArchive.clearPastedContentImages();
-            }
-            savingDraft();
-        }
-    }
-
-    private void savingDraft() {
-        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
-            @Override
-            public void onResponse(Archive archive, boolean success, String message) {
-                super.onResponse(archive, success, message);
-                if (success) {
-                    if (null != archive && !isEmpty(archive.getId())) {
-                        mArchive = archive;
-                    }
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
-                }
-            }
-        }).addDraft(mArchive);
     }
 
     @Override
@@ -793,7 +935,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     happenDate.setText(mArchive.getHappenDate().substring(0, 10));
                 }
 
-                if (editorType == TYPE_ATTACHMENT) {
+                if (mArchive.isAttachmentArchive()) {
                     isGroupArchive = true;
                     isUserArchive = false;
                 }
@@ -810,8 +952,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     resetGroupInfo(mArchive.getGroupId());
                 }
 
-                archiveTypeUser.setVisibility(editorType == TYPE_ATTACHMENT ? View.GONE : View.VISIBLE);
-                if (editorType == TYPE_ATTACHMENT) {
+                archiveTypeUser.setVisibility(mArchive.isAttachmentArchive() ? View.GONE : View.VISIBLE);
+                if (mArchive.isAttachmentArchive()) {
                     shareDraftButton.setVisibility(View.GONE);
                 }
                 resetGroupArchiveOrUser();
@@ -884,7 +1026,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         break;
                     case R.id.ui_popup_rich_editor_setting_type_group:
                         // 选择新建组织档案，只有图文模式下才可以组织、个人之间互相转换，附件模式下不可以
-                        if (editorType == TYPE_MULTIMEDIA) {
+                        if (mArchive.isMultimediaArchive()) {
                             isGroupArchive = !isGroupArchive;
                             if (!isGroupArchive && !isUserArchive) {
                                 // 如果不是选择组织文档，且也不是个人文档，则默认选中个人文档
@@ -936,13 +1078,20 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     case R.id.ui_popup_rich_editor_setting_share_draft:
                         if (!isEmpty(mArchive.getGroupId())) {
                             // 组织档案才能分享草稿
-                            mArchive.setTitle(titleView.getValue());
-                            if (isEmpty(mArchive.getTitle())) {
-                                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_title_invalid);
-                            } else if (isEmpty(mArchive.getContent())) {
-                                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
-                            } else {
-                                GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
+                            if (mArchive.isMultimediaArchive()) {
+                                mArchive.setTitle(titleView.getValue());
+                                if (isEmpty(mArchive.getTitle())) {
+                                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_title_invalid);
+                                } else if (isEmpty(mArchive.getContent())) {
+                                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
+                                } else {
+                                    GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
+                                }
+                            } else if (mArchive.isTemplateArchive()) {
+                                if (resetTemplateArchive(true)) {
+                                    // 活动档案分享时选择要分享的人
+                                    GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
+                                }
                             }
                             //getDraftShareInfo();
                         } else {
@@ -1020,7 +1169,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void openMemberPicker() {
-        GroupContactPickFragment.open(this, "", true, false, "[]");
+        GroupContactPickFragment.open(this, REQUEST_SELECT, "", true, false, "[]");
     }
 
     private void openDateTimePicker() {
@@ -1028,8 +1177,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         DateTimeHelper.helper().setOnDateTimePickListener(new DateTimeHelper.OnDateTimePickListener() {
             @Override
             public void onPicked(Date date) {
-                mArchive.setHappenDate(Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date));
-                String time = mArchive.getHappenDate().substring(0, 10);
+                String fullTime = Utils.format(StringHelper.getString(R.string.ui_base_text_date_time_format), date);
+                mArchive.setHappenDate(fullTime);
+                String time = formatDate(fullTime);
                 if (null != happenDate) {
                     happenDate.setText(time);
                 }
@@ -1037,7 +1187,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     timeHolder.showContent(format(templateItems[0], time));
                 }
             }
-        }).show(ArchiveEditorFragment.this, true, true, true, editorType != TYPE_TEMPLATE, mArchive.getHappenDate());
+        }).show(ArchiveEditorFragment.this, true, true, true, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
     }
 
     /**
@@ -1076,15 +1226,15 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 个人档案需要选择标签
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(isUserArchive ? View.VISIBLE : View.GONE);
         // 模板档案不需要组织、个人选择
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(editorType == TYPE_TEMPLATE ? View.GONE : View.VISIBLE);
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         // 模板档案不需要有封面
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(editorType == TYPE_TEMPLATE ? View.GONE : View.VISIBLE);
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         // 模板档案不需要来源
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_source).setVisibility(editorType == TYPE_TEMPLATE ? View.GONE : View.VISIBLE);
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_source).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         // 模板档案需要显示支部选择器
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(editorType == TYPE_TEMPLATE ? View.VISIBLE : View.GONE);
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker).setVisibility(mArchive.isTemplateArchive() ? View.VISIBLE : View.GONE);
         // 个人档案不需要分享草稿
-        if (editorType != TYPE_ATTACHMENT) {
+        if (!mArchive.isAttachmentArchive()) {
             settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft).setVisibility(isGroupArchive ? View.VISIBLE : View.GONE);
         }
     }
@@ -1164,7 +1314,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
-            if (editorType == TYPE_TEMPLATE) {
+            if (mArchive.isTemplateArchive()) {
                 resetImages(selected);
             } else {
                 if (null != selected && selected.size() > 0) {
@@ -1388,126 +1538,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return true;
             }
         }).setPopupType(DialogHelper.FADE).show();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_COVER:
-                mArchive.setCover(getResultedData(data));
-                if (null != coverView) {
-                    Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
-                        }
-                    }, 2000);
-                }
-                updateArchive(ArchiveRequest.TYPE_COVER);
-                break;
-            case REQUEST_VIDEO:
-                // 视频选择返回了
-                String videoPath = getGalleryResultedPath(data);
-                videoUrl.setValue(videoPath);
-                showFileSize(true, videoPath, videoSize);
-                break;
-            case REQUEST_MUSIC:
-                // 音乐文件选择返回了
-                String musicPath = getGalleryResultedPath(data);
-                musicUrl.setValue(musicPath);
-                showFileSize(false, musicPath, musicSize);
-                break;
-            case REQUEST_SECURITY:
-                String json = getResultedData(data);
-                Seclusion seclusion = PrivacyFragment.getSeclusion(json);
-                mArchive.setAuthPublic(seclusion.getStatus());
-                //mArchive.setAuthGro(seclusion.getGroupIds());
-                //mArchive.setAuthUser(seclusion.getUserIds());
-                //mArchive.setAuthUserName(seclusion.getUserNames());
-                if (null != publicText) {
-                    publicText.setText(PrivacyFragment.getPrivacy(seclusion));
-                }
-                updateArchive(ArchiveRequest.TYPE_AUTH);
-                break;
-            case REQUEST_LABEL:
-                String labelJson = getResultedData(data);
-                ArrayList<String> list = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
-                }.getType());
-                if (null != list) {
-                    mArchive.getLabel().clear();
-                    mArchive.getLabel().addAll(list);
-                }
-                if (null != labelText) {
-                    labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
-                }
-                updateArchive(ArchiveRequest.TYPE_LABEL);
-                break;
-            case REQUEST_ATTACHMENT:
-
-                break;
-            case REQUEST_DRAFT:
-                // 草稿选择完毕
-                String draftJson = getResultedData(data);
-                mArchive = Archive.fromJson(StringHelper.replaceJson(draftJson, true));
-                isGroupArchive = !isEmpty(mArchive.getGroupId());
-                titleView.setValue(mArchive.getTitle());
-                mArchive.resetImageStyle();
-                mEditor.setHtml(mArchive.getContent());
-                break;
-            case REQUEST_MEMBER:
-                ArrayList<SubMember> members = SubMember.fromJson(getResultedData(data));
-                if (editorType != TYPE_TEMPLATE) {
-                    warningShareDraftTo(SubMember.getMemberNames(members), SubMember.getUserIds(members));
-                } else {
-                    String names = "";
-                    String old = participantHolder.getValue();
-                    List<String> oNames = null;
-                    if (!isEmpty(old)) {
-                        oNames = Arrays.asList(old.split("、"));
-                    }
-                    if (null != oNames) {
-                        for (String name : oNames) {
-                            names += (isEmpty(names) ? "" : "、") + name;
-                        }
-                    }
-                    if (null != members && members.size() > 0) {
-                        for (SubMember member : members) {
-                            if (null == oNames || !oNames.contains(member.getUserName())) {
-                                names += (isEmpty(names) ? "" : "、") + member.getUserName();
-                            }
-                        }
-                    }
-                    mArchive.setParticipant(names);
-                    if (null != participantHolder) {
-                        participantHolder.showContent(format(templateItems[3], names));
-                    }
-                }
-                break;
-            case REQUEST_GROUP:
-                ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
-                if (null != groups && groups.size() > 0) {
-                    // 设置组织id
-                    mArchive.setGroupId(groups.get(0).getGroupId());
-                    // 设置类别为组织档案
-                    //mArchive.setType(Archive.Type.GROUP);
-                    if (null != groupNameText) {
-                        groupNameText.setText(Html.fromHtml(groups.get(0).getGroupName()));
-                    }
-                }
-                break;
-            case REQUEST_SQUAD:
-                // 选择了小组
-                String string = getResultedData(data);
-                if (!isEmpty(string)) {
-                    Squad squad = Squad.fromJson(string);
-                    if (null != squad && !isEmpty(squad.getId())) {
-                        mArchive.setBranch(squad.getName());
-                        branchText.setText(squad.getName());
-                    }
-                }
-                break;
-        }
-        super.onActivityResult(requestCode, data);
     }
 
     private void warningShareDraftTo(String names, final ArrayList<String> userIds) {

@@ -363,6 +363,7 @@ public class ArchiveRequest extends Request<Archive> {
         JSONObject object = new JSONObject();
         try {
             object.put("title", archive.getTitle())// 必要字段
+                    .put("docType", archive.getDocType())// 必要字段
                     .put("cover", checkNull(archive.getCover()))
                     .put("authPublic", archive.getAuthPublic())// 必要字段
                     .put("content", archive.getContent())
@@ -373,12 +374,17 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
                     .put("source", archive.getSource())
                     .put("groupId", checkNull(archive.getGroupId()))
+                    .put("groupName", archive.getGroupName())
                     // 组织档案需要增加以下参数
                     .put("site", checkNull(archive.getSite()))
                     .put("property", checkNull(archive.getProperty()))
                     .put("category", checkNull(archive.getCategory()))
                     .put("participant", checkNull(archive.getParticipant()))
-                    .put("happenDate", archive.getHappenDate());
+                    .put("happenDate", archive.getHappenDate())
+                    // 模板档案需要增加一下参数
+                    .put("topic", archive.getTopic())
+                    .put("resolution", archive.getResolution())
+                    .put("branch", archive.getBranch());
             if (!isEmpty(archive.getId())) {
                 object.put("_id", archive.getId());
             }

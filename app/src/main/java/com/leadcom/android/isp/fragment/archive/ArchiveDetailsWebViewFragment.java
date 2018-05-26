@@ -23,6 +23,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.archive.ArchivePermissionRequest;
 import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
@@ -58,6 +59,7 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveInfo;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.archive.Comment;
+import com.leadcom.android.isp.model.common.ArchivePermission;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.common.ShareInfo;
@@ -470,12 +472,31 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         view.startAnimation(App.clickAnimation());
         if (isDraft) {
             Archive archive = (Archive) mAdapter.get(mQueryId);
-            String type = archive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE : ArchiveEditorFragment.MULTIMEDIA;
+            String type = archive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE :
+                    (archive.isMultimediaArchive() ? ArchiveEditorFragment.MULTIMEDIA : ArchiveEditorFragment.TEMPLATE);
             ArchiveEditorFragment.open(ArchiveDetailsWebViewFragment.this, mQueryId, type);
             finish();
         } else {
-            loadingArchiveInfo();
+            loadingArchivePermission();
         }
+    }
+
+    private void loadingArchivePermission() {
+        ArchivePermissionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchivePermission>() {
+            @Override
+            public void onResponse(ArchivePermission data, boolean success, String message) {
+                super.onResponse(data, success, message);
+                if (success) {
+                    enableShareDelete = data.isDeletable();
+                    enableShareForward = data.isFlowable();
+                    enableShareRecommend = data.isRecommendable() && !data.isRecommended();
+                    enableShareRecommended = data.isRecommendable() && data.isRecommended();
+                    // 档案创建者可以删除评论
+                    deletable = enableShareDelete;
+                    fetchingShareInfo();
+                }
+            }
+        }).permission(mQueryId);
     }
 
     private void loadingArchiveInfo() {

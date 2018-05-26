@@ -363,13 +363,6 @@ public class Archive extends Additional {
         return Cache.cache().userId.equals(userId);
     }
 
-    /**
-     * 是否是附件类型的档案
-     */
-    public boolean isAttachmentArchive() {
-        return getImage().size() > 0 || getVideo().size() > 0 || getOffice().size() > 0 || getAttach().size() > 0;
-    }
-
     // 档案基本信息 **********************************************************************************
     //档案封面
     @Column(Field.Cover)
@@ -481,6 +474,27 @@ public class Archive extends Additional {
 
     public void setDocType(int docType) {
         this.docType = docType;
+    }
+
+    /**
+     * 是否图文模板档案
+     */
+    public boolean isMultimediaArchive() {
+        return docType <= ArchiveType.MULTIMEDIA;
+    }
+
+    /**
+     * 是否附件模板档案
+     */
+    public boolean isAttachmentArchive() {
+        return docType == ArchiveType.ATTACHMENT;
+    }
+
+    /**
+     * 是否活动模板档案
+     */
+    public boolean isTemplateArchive() {
+        return docType == ArchiveType.TEMPLATE;
     }
 
     public int getOwnType() {

@@ -49,7 +49,7 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         return ocp;
     }
 
-    public static void open(BaseFragment fragment, String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
+    private static Bundle getBundle(String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
         Bundle bundle = new Bundle();
         // 组织的id
         bundle.putString(PARAM_QUERY_ID, groupId);
@@ -59,7 +59,16 @@ public class GroupContactPickFragment extends BaseOrganizationFragment {
         bundle.putBoolean(PARAM_SINGLE_PICK, singlePick);
         // 已选中的成员列表
         bundle.putString(PARAM_JSON, jsonExitMembers);
-        fragment.openActivity(GroupContactPickFragment.class.getName(), bundle, REQUEST_MEMBER, true, false);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
+        open(fragment, REQUEST_MEMBER, groupId, lockExist, singlePick, jsonExitMembers);
+    }
+
+    public static void open(BaseFragment fragment, int request, String groupId, boolean lockExist, boolean singlePick, String jsonExitMembers) {
+        Bundle bundle = getBundle(groupId, lockExist, singlePick, jsonExitMembers);
+        fragment.openActivity(GroupContactPickFragment.class.getName(), bundle, request, true, false);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.leadcom.android.isp.api.user;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.query.ListQuery;
+import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -24,7 +24,7 @@ public class PermissionRequest extends Request<RelateGroup> {
         return new PermissionRequest();
     }
 
-    private static class ListPermission extends ListQuery<RelateGroup> {
+    private static class PagePermission extends PageQuery<RelateGroup> {
     }
 
     @Override
@@ -54,6 +54,6 @@ public class PermissionRequest extends Request<RelateGroup> {
      */
     public void list() {
         directlySave = false;
-        executeHttpRequest(getRequest(ListPermission.class, url(LIST), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(PagePermission.class, url(LIST), "", HttpMethods.Get));
     }
 }

@@ -39,6 +39,8 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_tool_view_archive_draft_selector)
     private CustomTextView selectorView;
 
+    private String[] archiveTypes;
+
     public ArchiveDraftViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
@@ -48,6 +50,7 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
                 rootLayout.performClick();
             }
         });
+        archiveTypes = StringHelper.getStringArray(R.array.ui_text_archive_types);
     }
 
     public void showContent(Archive archive) {
@@ -55,11 +58,7 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
         titleView.setText(archive.getTitle());
         timeView.setText(StringHelper.getString(R.string.ui_text_archive_creator_editor_create_draft_time, fragment().formatTimeAgo(archive.getCreateDate())));
         selectorView.setTextColor(getColor(archive.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
-        if (!isEmpty(archive.getGroupId())) {
-            groupView.setText("组织档案");
-        } else {
-            groupView.setText("个人档案");
-        }
+        groupView.setText(archiveTypes[archive.getDocType()]);
     }
 
     @Click({R.id.ui_tool_view_archive_draft_layout, R.id.ui_tool_view_archive_draft_selector, R.id.ui_tool_view_archive_draft_delete})
