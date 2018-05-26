@@ -254,8 +254,9 @@ public abstract class Request<T> {
                         }
                     } else if (data instanceof BoolQuery) {
                         BoolQuery<T> boolQuery = (BoolQuery<T>) data;
+                        boolean hasData = response.getRawString().contains("data");
                         if (null != onSingleRequestListener) {
-                            onSingleRequestListener.onResponse(null, boolQuery.getData(), data.getMsg());
+                            onSingleRequestListener.onResponse(null, hasData ? boolQuery.getData() : data.success(), data.getMsg());
                         }
                     } else if (data instanceof StringQuery) {
                         StringQuery<T> stringQuery = (StringQuery<T>) data;
@@ -266,6 +267,13 @@ public abstract class Request<T> {
                         NumericQuery<T> query = (NumericQuery<T>) data;
                         if (null != onSingleRequestListener) {
                             onSingleRequestListener.onResponse(newInstance(String.valueOf(query.getData())), query.success(), query.getMsg());
+                        }
+                    } else {
+                        if (null != onSingleRequestListener) {
+                            onSingleRequestListener.onResponse(null, data.success(), data.getMsg());
+                        }
+                        if (null != onMultipleRequestListener) {
+                            onMultipleRequestListener.onResponse(null, data.success(), 0, 0, 0, 1);
                         }
                     }
                 } else {

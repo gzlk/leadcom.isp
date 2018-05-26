@@ -8,6 +8,7 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
+import com.leadcom.android.isp.api.query.StringQuery;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.publishable.Collectable;
 import com.leadcom.android.isp.model.archive.ArchiveSource;
@@ -48,6 +49,9 @@ public class CollectionRequest extends Request<Collection> {
     private static class MultipleCollection extends PaginationQuery<Collection> {
     }
 
+    private static class StringCollection extends StringQuery<Collection> {
+    }
+
     private static final String COL = "/user/userCol";
 
     @Override
@@ -72,44 +76,6 @@ public class CollectionRequest extends Request<Collection> {
         return this;
     }
 
-    /**
-     * 添加个人收藏
-     *
-     * @param type             收藏类型，参考 {@link Collection.Type}(1.文本,2.文档,3.图片,4.视频,5.附件,6.音频,7.位置,11.个人档案,12.组织档案,13.个人动态)
-     * @param content          收藏内容(文本或文件的URL,type=11/12/13时不传该参数)
-     * @param creatorId        原作者用户ID
-     * @param creatorName      原作者用户名称
-     * @param creatorHeadPhoto 原作者用户头像
-     * @param sourceType       收藏来源的类型(1.个人档案,2.组织档案,3.个人动态,4.活动聊天,5.议题聊天)
-     * @param sourceId         收藏来源的ID(个人档案:个人档案ID,组织档案:组织档案ID,个人动态:个人动态ID,活动聊天:活动ID,议题聊天:议题ID)
-     * @param sourceTitle      收藏来源的标题(title字段，个人动态不传)
-     * @param label            标签
-     * @see Collection.Type
-     * @see ArchiveSource
-     */
-    public void add(int type, String content, @NonNull String creatorId, String creatorName, String creatorHeadPhoto,
-                    int sourceType, String sourceId, String sourceTitle, ArrayList<String> label, Position position) {
-        // {type,content,creatorId,creatorName,creatorHeadPhoto,sourceType,sourceId,sourceTitle,[label],{position}}
-
-        JSONObject object = new JSONObject();
-        try {
-            object.put("type", type)
-                    .put("content", checkNull(content))
-                    .put("creatorId", checkNull(creatorId))
-                    .put("creatorName", checkNull(creatorName))
-                    .put("creatorHeadPhoto", checkNull(creatorHeadPhoto))
-                    .put("sourceType", sourceType)
-                    .put("sourceId", sourceId)
-                    .put("sourceTitle", checkNull(sourceTitle))
-                    .put("label", new JSONArray(null == label ? new ArrayList() : label))
-                    .put("position", new JSONObject(Position.toJson(position)));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        executeHttpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
-    }
-
     public void add(Collection collection, Position position) {
         // {type,content,creatorId,creatorName,creatorHeadPhoto,sourceType,sourceId,sourceTitle,[label],{position}}
 
@@ -129,7 +95,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(StringCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     public void add(String content) {
@@ -171,7 +137,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(StringCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**

@@ -729,15 +729,16 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     }
 
     private void removeCollect() {
+        final String colId = mAdapter.get(selectedMoment).getId();
         CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
             @Override
             public void onResponse(Collection collection, boolean success, String message) {
                 super.onResponse(collection, success, message);
                 if (success) {
-                    mAdapter.remove(selectedMoment);
+                    mAdapter.remove(colId);
                 }
             }
-        }).delete(mAdapter.get(selectedMoment).getId());
+        }).delete(colId);
     }
 
     @Override
