@@ -362,6 +362,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void restoreArchiveToEdit() {
+        resetEditorLayout();
         isGroupArchive = !isEmpty(mArchive.getGroupId());
         isUserArchive = !isGroupArchive;
         if (mArchive.isAttachmentArchive() || mArchive.isTemplateArchive()) {
@@ -655,13 +656,17 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 //                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_branch_null);
 //                return false;
 //            }
-        if (isEmpty(mArchive.getProperty())) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
-            return false;
+        if (returnAble) {
+            if (isEmpty(mArchive.getProperty())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_property_null);
+                return false;
+            }
         }
-        if (isEmpty(mArchive.getCategory())) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
-            return false;
+        if (returnAble) {
+            if (isEmpty(mArchive.getCategory())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_category_null);
+                return false;
+            }
         }
         return true;
     }
@@ -751,7 +756,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mArchive.setContent(html);
                 log("HTML: " + text);
                 int len = text.length() - lastEditorContentLength;
-                if (isLongClickEditor && len > 200) {
+                if (isLongClickEditor && len > 300) {
                     // 标记是复制来的内容
                     isPasteContent = true;
                     // 恢复长按监控
