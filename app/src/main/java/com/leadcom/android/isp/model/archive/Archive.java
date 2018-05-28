@@ -597,6 +597,9 @@ public class Archive extends Additional {
     }
 
     public String getContent() {
+        if (!isEmpty(content) && content.contains("pre")) {
+            resetPreToDiv();
+        }
         return content;
     }
 
@@ -650,6 +653,19 @@ public class Archive extends Additional {
                 if (!image.contains("style=\"width: 100%;\"")) {
                     content = content.replace(image, image.replace("<img", "<img style=\"width: 100%;\""));
                 }
+            }
+        }
+    }
+
+    /**
+     * 重置pre为div
+     */
+    private void resetPreToDiv() {
+        if (!isEmpty(content)) {
+            Matcher matcher = Pattern.compile("<pre[^>]*?>[\\s\\S]*?</pre>", Pattern.CASE_INSENSITIVE).matcher(content);
+            while (matcher.find()) {
+                String pre = matcher.group(0);
+                content = content.replace(pre, pre.replace("pre", "div"));
             }
         }
     }

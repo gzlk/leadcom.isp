@@ -352,6 +352,7 @@ public class Utils {
     private static final String regEx_class = "class=\"[^\"]*\"";
     private static final String regEx_htmlAll = "</?[^>]+>";//剔出<html>的标签
     private static final String regEx_blank = "<a>\\s*|\t|\r|\n</a>";//去除字符串中的空格,回车,换行符,制表符
+    private static final String regEx_pre = "<pre[^>]*?>[\\s\\S]*?</pre>";
 
     /**
      * 清除所有 html 标签(在显示档案摘要或内容时)
@@ -398,6 +399,7 @@ public class Utils {
         if (StringHelper.isEmpty(htmlString, true)) {
             htmlString = "";
         }
+
 //        htmlString = htmlString.replaceAll(regEx_htmlAll, "").replaceAll(regEx_others, "");
         Pattern p_script = Pattern.compile(regEx_script, Pattern.CASE_INSENSITIVE);
         Matcher m_script = p_script.matcher(htmlString);
