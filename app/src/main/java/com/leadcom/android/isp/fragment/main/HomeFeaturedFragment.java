@@ -28,6 +28,7 @@ import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.PriorityPlace;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -325,11 +326,14 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
     }
 
     private void removeArchives() {
-        int size = mAdapter.getItemCount();
-        while (size > 1) {
-            mAdapter.remove(size - 1);
-            size = mAdapter.getItemCount();
+        Iterator<Model> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (!model.equals(mHeadLine)) {
+                iterator.remove();
+            }
         }
+        mAdapter.notifyDataSetChanged();
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {

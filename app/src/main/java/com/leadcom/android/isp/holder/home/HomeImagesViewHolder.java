@@ -131,14 +131,20 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
                 params.rightMargin = dotPadding;
                 dot.setLayoutParams(params);
             }
+        } else {
+            indicator.removeAllViews();
+            dots.clear();
+            archives.clear();
+            images.clear();
         }
         mAdapter.notifyDataSetChanged();
         if (archives.size() > 0) {
             container.setVisibility(View.VISIBLE);
-            viewPager.setCurrentItem(archives.size() > 1 ? 1 : 0, false);
-            if (archives.size() == 1) {
-                onPageSelected(0);
-            }
+            int initIndex = archives.size() > 1 ? 1 : 0;
+            viewPager.setCurrentItem(initIndex, false);
+            //if (archives.size() == 1) {
+            onPageSelected(initIndex);
+            //}
         } else {
             container.setVisibility(View.GONE);
         }
