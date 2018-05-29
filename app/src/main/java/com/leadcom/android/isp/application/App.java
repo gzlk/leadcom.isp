@@ -196,6 +196,7 @@ public class App extends NimApplication {
             Cache.cache().restoreCached();
         }
         if (!isEmpty(Cache.cache().userId)) {
+            Bugly.setUserId(this, Cache.cache().userPhone);
             Cache.cache().restoreGroups();
             // 初始化个性化数据库
             initializeLiteOrm(Cache.cache().userId);

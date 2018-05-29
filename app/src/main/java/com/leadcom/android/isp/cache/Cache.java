@@ -16,6 +16,7 @@ import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.nim.session.NimSessionHelper;
+import com.tencent.bugly.Bugly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,7 @@ public class Cache {
             PreferenceHelper.save(get(R.string.pf_last_login_user_token, R.string.pf_last_login_user_token_beta), accessToken);
             PreferenceHelper.save(get(R.string.pf_last_login_user_nim_token, R.string.pf_last_login_user_nim_token_beta), nimToken);
             PreferenceHelper.save(get(R.string.pf_last_login_user_account, R.string.pf_last_login_user_account_beta), userPhone);
+            Bugly.setUserId(App.app(), Cache.cache().userPhone);
         }
     }
 
