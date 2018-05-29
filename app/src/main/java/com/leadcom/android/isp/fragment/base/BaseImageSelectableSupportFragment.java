@@ -587,12 +587,12 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                 // 剪切照片时只能选择1张
                 maxSelectable = 1;
             }
-            Album.album(this).requestCode(REQUEST_GALLERY)
+            Album.album(this)
                     .toolBarColor(getColor(R.color.colorPrimary))
                     .statusBarColor(getColor(R.color.colorPrimary))
                     .title(getString(R.string.ui_base_text_choose_image, getMaxSelectable()))
                     .checkedList(isSupportCompress ? waitingFroCompressImages : getWaitingForUploadFiles())
-                    .selectCount(getMaxSelectable()).columnCount(3).camera(true).start();
+                    .selectCount(getMaxSelectable()).columnCount(3).camera(true).start(REQUEST_GALLERY);
         } else {
             Intent imageIntent = new Intent();
             imageIntent.setType("image/*");
@@ -607,12 +607,11 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
     protected void startGalleryPreview(int position) {
         if (chooseImageByAlbum()) {
             Album.gallery(this).checkFunction(true)
-                    .requestCode(REQUEST_PREVIEW)
                     .checkedList(isSupportCompress ? waitingFroCompressImages : getWaitingForUploadFiles())
                     .toolBarColor(getColor(R.color.colorPrimary))
                     .statusBarColor(getColor(R.color.colorPrimary))
                     .currentPosition(position)
-                    .start();
+                    .start(REQUEST_PREVIEW);
         }
     }
 
@@ -632,15 +631,19 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
      * 打开系统相机拍照并获取返回的数据
      */
     protected void startCameraForResult() {
-        if (chooseImageByAlbum()) {
-            Album.camera(this).requestCode(REQUEST_CAMERA).start();
+        if (!App.app().hasCameraFeature()) {
+            ToastHelper.make().showMsg(R.string.ui_text_permission_camera_feature);
+            return;
+        }
+        if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            tryGrantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, GRANT_STORAGE, StringHelper.getString(R.string.ui_text_permission_storage_request), StringHelper.getString(R.string.ui_text_permission_storage_denied));
         } else {
-            if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                tryGrantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, GRANT_STORAGE, StringHelper.getString(R.string.ui_text_permission_storage_request), StringHelper.getString(R.string.ui_text_permission_storage_denied));
-            } else {
-                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    if (!hasPermission(Manifest.permission.CAMERA)) {
-                        tryGrantPermission(Manifest.permission.CAMERA, GRANT_CAMERA, StringHelper.getString(R.string.ui_text_permission_camera_request), StringHelper.getString(R.string.ui_text_permission_camera_denied));
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                if (!hasPermission(Manifest.permission.CAMERA)) {
+                    tryGrantPermission(Manifest.permission.CAMERA, GRANT_CAMERA, StringHelper.getString(R.string.ui_text_permission_camera_request), StringHelper.getString(R.string.ui_text_permission_camera_denied));
+                } else {
+                    if (chooseImageByAlbum()) {
+                        Album.camera(this).start(REQUEST_CAMERA);
                     } else {
                         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                         File picture = createImageFile();
@@ -654,10 +657,10 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
                             ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_cannot_create_image_in_dcim);
                         }
                     }
-                } else {
-                    // 没有SD卡
-                    ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_no_sdcard_exists);
                 }
+            } else {
+                // 没有SD卡
+                ToastHelper.make(Activity()).showMsg(R.string.ui_base_text_no_sdcard_exists);
             }
         }
     }

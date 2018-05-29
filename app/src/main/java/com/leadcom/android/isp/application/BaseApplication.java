@@ -90,6 +90,14 @@ public class BaseApplication extends Application {
     }
 
     /**
+     * 是否有相机
+     */
+    public boolean hasCameraFeature() {
+        PackageManager packageManager = getPackageManager();
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+    /**
      * 获取当前手机的制造商
      */
     public String manufacturer() {
