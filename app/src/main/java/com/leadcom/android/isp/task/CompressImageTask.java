@@ -71,8 +71,9 @@ public final class CompressImageTask extends AsyncedTask<String, Integer, Intege
             File f = new File(image);
             if (f.exists()) {
                 String ext = Attachment.getExtension(image);
-                if (!StringHelper.isEmpty(ext, true) && ext.equals("gif")) {
-                    // gif 不要压缩
+                assert ext != null;
+                if (!StringHelper.isEmpty(ext, true) && (ext.contains("gif") || ext.contains("webp"))) {
+                    // gif 不要压缩，webp 也不需要压缩
                     this.compressed.add(image);
                 } else {
                     BitmapFactory.Options options = ImageCompress.getBitmapOptions(image);
