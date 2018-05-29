@@ -18,7 +18,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnHttpListener;
 import com.leadcom.android.isp.model.Dao;
-import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.query.FullTextQuery;
 import com.litesuits.http.LiteHttp;
@@ -29,7 +28,6 @@ import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 import com.netease.nim.uikit.common.util.sys.ReflectionUtil;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -176,7 +174,11 @@ public abstract class Request<T> {
         }
         if (!relogin && null != t) {
             initializeDao();
-            dao.save(t);
+            try {
+                dao.save(t);
+            } catch (Exception ignore) {
+                ignore.printStackTrace();
+            }
         }
     }
 
@@ -187,7 +189,11 @@ public abstract class Request<T> {
         }
         if (!relogin && null != list && list.size() > 0) {
             initializeDao();
-            dao.save(list);
+            try {
+                dao.save(list);
+            } catch (Exception ignore) {
+                ignore.printStackTrace();
+            }
         }
     }
 

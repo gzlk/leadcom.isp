@@ -381,6 +381,9 @@ public class GroupFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onFetchingJoinedRemoteOrganizationsComplete(List<Organization> list) {
+        if (null == gAdapter) {
+            initGroupsAdapter();
+        }
         if (null != list) {
             for (Organization group : list) {
                 group.setSelectable(true);
@@ -414,15 +417,21 @@ public class GroupFragment extends BaseOrganizationFragment {
     private void initializeGroupsAdapter() {
         if (null == gAdapter) {
             setNothingText(R.string.ui_organization_structure_no_group_exist);
-            gAdapter = new GroupAdapter();
-            groupList.setLayoutManager(new CustomLinearLayoutManager(groupList.getContext()));
-            groupList.setAdapter(gAdapter);
+            initGroupsAdapter();
             Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     onSwipeRefreshing();
                 }
             });
+        }
+    }
+
+    private void initGroupsAdapter() {
+        if (null == gAdapter) {
+            gAdapter = new GroupAdapter();
+            groupList.setLayoutManager(new CustomLinearLayoutManager(groupList.getContext()));
+            groupList.setAdapter(gAdapter);
         }
     }
 

@@ -803,7 +803,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             } else if (model instanceof UserExtra) {
                 UserExtra extra = (UserExtra) model;
                 return (extra.isDeletable() && isSelf) ? VT_DELETABLE : VT_CLICK;
-            } else if (model.getId().equals("-")) {
+            } else if (null != model && model.getId().equals("-")) {
                 return VT_LINE;
             }
             return VT_CLICK;

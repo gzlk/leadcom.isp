@@ -282,7 +282,7 @@ public class NimApplication extends BaseActivityManagedApplication {
         nimVibrate = vibrate;
         PreferenceHelper.save(StringHelper.getString(get(R.string.pf_last_login_user_sound, R.string.pf_last_login_user_sound_beta), Cache.cache().userId), (sound ? "1" : "0"));
         PreferenceHelper.save(StringHelper.getString(get(R.string.pf_last_login_user_vibrate, R.string.pf_last_login_user_vibrate_beta), Cache.cache().userId), (vibrate ? "1" : "0"));
-        NIMClient.updateStatusBarNotificationConfig(getNotificationConfig());
+        //NIMClient.updateStatusBarNotificationConfig(getNotificationConfig());
     }
 
     private void handleUserOnlineStatus() {

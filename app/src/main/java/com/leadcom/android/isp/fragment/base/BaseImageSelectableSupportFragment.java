@@ -289,7 +289,8 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         if (isSupportCompress) {
             adjustWannaToImageSize();
             if (waitingFroCompressImages.size() < 1) {
-                throw new IllegalArgumentException("no image(s) is waiting for compress");
+                //throw new IllegalArgumentException("no image(s) is waiting for compress");
+                ToastHelper.make().showMsg(R.string.ui_base_text_image_no_selected);
             } else {
                 new CompressImageTask()
                         .setDebuggable(true)
