@@ -100,6 +100,7 @@
     <string name="ui_text_archive_creator_editor_template_site_null">请提供活动档案的地点</string>
     <string name="ui_text_archive_creator_editor_template_topic_null">请提供活动档案的议题内容</string>
     <string name="ui_text_archive_creator_editor_template_minute_null">请提供活动档案的纪要内容</string>
+    <string name="ui_text_archive_creator_editor_template_participant_null">请填写活动档案的参与人</string>
     <string name="ui_text_archive_creator_editor_template_branch_null">请提供活动档案所属支部</string>
     <string name="ui_text_archive_creator_editor_template_property_null">请提供活动档案属性</string>
     <string name="ui_text_archive_creator_editor_template_category_null">请提供活动档案类型</string>

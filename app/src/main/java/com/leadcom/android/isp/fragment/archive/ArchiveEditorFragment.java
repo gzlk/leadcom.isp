@@ -652,6 +652,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return false;
             }
         }
+        if (returnAble) {
+            if (isEmpty(mArchive.getParticipant())) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_participant_null);
+                return false;
+            }
+        }
 //            if (isEmpty(mArchive.getBranch())) {
 //                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_branch_null);
 //                return false;

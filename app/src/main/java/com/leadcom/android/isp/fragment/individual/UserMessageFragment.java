@@ -200,7 +200,8 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                                 ToastHelper.make().showMsg(R.string.ui_individual_message_group_archive_deleted);
                                 return;
                             }
-                            ArchiveDetailsWebViewFragment.open(UserMessageFragment.this, "", type, msg.getSourceId(), false, msg.getUserId());
+                            Archive archive = type == Archive.Type.USER ? msg.getUserDoc() : msg.getGroDoc();
+                            ArchiveDetailsWebViewFragment.open(UserMessageFragment.this, archive);
                             break;
                     }
                     break;

@@ -95,6 +95,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_INNER_OPEN = "adwvf_inner_open";
     private static final String PARAM_GROUP_ID = "adwvf_group_id";
     private static final String PARAM_AUTHOR_ID = "adwvf_author_id";
+    private static final String PARAM_COVER_URL = "adwvf_cover_url";
     private static boolean deletable = false;
     private static boolean isCollected = false;
 
@@ -104,7 +105,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         return adwvf;
     }
 
-    private static Bundle getBundle(String archiveId, String groupId, int archiveType, boolean innerOpen, boolean isDraft, String authorId) {
+    private static Bundle getBundle(String archiveId, String groupId, String coverUrl, int archiveType, boolean innerOpen, boolean isDraft, String authorId) {
         Bundle bundle = new Bundle();
         // 档案id
         bundle.putString(PARAM_QUERY_ID, archiveId);
@@ -118,6 +119,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
         bundle.putBoolean(PARAM_DRAFT, isDraft);
         // 档案作者id
         bundle.putString(PARAM_AUTHOR_ID, authorId);
+        // 档案封面
+        bundle.putString(PARAM_COVER_URL, coverUrl);
         return bundle;
     }
 
@@ -132,7 +135,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
-        open(fragment, archive.getGroupId(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
+        open(fragment, archive.getGroupId(), archive.getCover(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
                 (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false, archive.getUserId());
         //int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
         //Bundle bundle = getBundle(archive.getId(), type, true);
@@ -142,7 +145,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive, boolean isDraft) {
-        open(fragment, archive.getGroupId(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
+        open(fragment, archive.getGroupId(), archive.getCover(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
                 (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft, archive.getUserId());
     }
 
@@ -168,15 +171,15 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 //        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
 //    }
 
-    public static void open(Context context, String groupId, String archiveId, int archiveType, boolean isDraft, boolean innerOpen, String authorId) {
+    public static void open(Context context, String groupId, String cover, String archiveId, int archiveType, boolean isDraft, boolean innerOpen, String authorId) {
         //InnerWebViewFragment.open(context, title, getUrl(archiveId, archiveType, isDraft));
         BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(),
-                getBundle(archiveId, groupId, archiveType, innerOpen, isDraft, authorId), false, false);
+                getBundle(archiveId, groupId, cover, archiveType, innerOpen, isDraft, authorId), false, false);
     }
 
-    public static void open(BaseFragment fragment, String groupId, int archiveType, String archiveId, boolean isDraft, String authorId) {
+    public static void open(BaseFragment fragment, String groupId, String cover, int archiveType, String archiveId, boolean isDraft, String authorId) {
         fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(),
-                getBundle(archiveId, groupId, archiveType, true, isDraft, authorId), false, false);
+                getBundle(archiveId, groupId, cover, archiveType, true, isDraft, authorId), false, false);
         //InnerWebViewFragment.open(fragment, title, getUrl(archiveId, archiveType, isDraft));
     }
 
@@ -879,6 +882,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     super.onResponse(shareInfo, success, message);
                     if (success && null != shareInfo) {
                         mShareInfo = shareInfo;
+                        //mShareInfo.setTargetPath(ArchiveDetailsViewHolder.getUrl(mQueryId, archiveType, isDraft, true));
                         openShareDialog();
                     }
                 }

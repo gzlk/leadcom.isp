@@ -160,12 +160,12 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         coverView.setLayoutParams(params);
     }
 
-    private static String getUrl(String archiveId, int archiveType, boolean isDraft) {
+    public static String getUrl(String archiveId, int archiveType, boolean isDraft, boolean forShare) {
         // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
         // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
         return StringHelper.format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&accesstoken=%s",
                 (Cache.isReleasable() ? "https://www.chacx.cn" : "http://113.108.144.2:8038"),
-                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, Cache.cache().accessToken);
+                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, (forShare ? "" : Cache.cache().accessToken));
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -182,7 +182,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
             contentView.getSettings().setDomStorageEnabled(true);
             contentView.getSettings().setJavaScriptEnabled(true);
 
-            String url = getUrl(archive.getId(), archive.getOwnType(), isDraft);
+            String url = getUrl(archive.getId(), archive.getOwnType(), isDraft, false);
             log(url);
             contentView.loadUrl(url);
             return;
