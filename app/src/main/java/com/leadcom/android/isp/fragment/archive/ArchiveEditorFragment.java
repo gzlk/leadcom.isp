@@ -459,18 +459,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 musicUrl.setValue(musicPath);
                 showFileSize(false, musicPath, musicSize);
                 break;
-            case REQUEST_SECURITY:
-                String json = getResultedData(data);
-                Seclusion seclusion = PrivacyFragment.getSeclusion(json);
-                mArchive.setAuthPublic(seclusion.getStatus());
-                //mArchive.setAuthGro(seclusion.getGroupIds());
-                //mArchive.setAuthUser(seclusion.getUserIds());
-                //mArchive.setAuthUserName(seclusion.getUserNames());
-                if (null != publicText) {
-                    publicText.setText(PrivacyFragment.getPrivacy(seclusion));
-                }
-                updateArchive(ArchiveRequest.TYPE_AUTH);
-                break;
             case REQUEST_LABEL:
                 String labelJson = getResultedData(data);
                 ArrayList<String> list = Json.gson().fromJson(labelJson, new TypeToken<ArrayList<String>>() {
@@ -919,7 +907,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 //seclusion.setUserNames(mArchive.getAuthUserName());
                 // 这一步一定要在最后设置，否则状态会被重置
                 seclusion.setStatus(mArchive.getAuthPublic());
-                publicText.setText(PrivacyFragment.getPrivacy(seclusion));
+                publicText.setText(Seclusion.getPrivacy(seclusion));
 
                 siteText.setValue(mArchive.getSite());
                 siteText.focusEnd();
@@ -1072,7 +1060,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         openMemberPicker();
                         break;
                     case R.id.ui_popup_rich_editor_setting_public:
-                        openSecuritySetting();
                         break;
                     case R.id.ui_popup_rich_editor_setting_public_public:
                         mArchive.setAuthPublic(Seclusion.Type.Public);
@@ -1151,25 +1138,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     }
                 }
             };
-
-            private void openSecuritySetting() {
-                Seclusion seclusion = PrivacyFragment.getSeclusion("");
-                seclusion.setStatus(mArchive.getAuthPublic());
-                //if (mArchive.getAuthPublic() == Seclusion.Type.Specify) {
-                //    seclusion.setUserIds(mArchive.getAuthUser());
-                //} else if (mArchive.getAuthPublic() == Seclusion.Type.Group) {
-                //    seclusion.setGroupIds(mArchive.getAuthGro());
-                //}
-                String json = PrivacyFragment.getSeclusion(seclusion);
-                // 隐私设置
-                if (!isGroupArchive) {
-                    // 个人隐私设置
-                    PrivacyFragment.open(ArchiveEditorFragment.this, StringHelper.replaceJson(json, false), true);
-                } else {
-                    // 组织档案隐私设置
-                    PrivacyFragment.open(ArchiveEditorFragment.this, StringHelper.replaceJson(json, false), false);
-                }
-            }
 
             private void openLabelPicker() {
                 String json = Json.gson().toJson(mArchive.getLabel());

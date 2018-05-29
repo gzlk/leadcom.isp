@@ -16,7 +16,6 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.holder.archive.ArchiveManagementViewHolder;
 import com.leadcom.android.isp.holder.common.ClickableSearchViewHolder;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.leadcom.android.isp.holder.home.HomeImagesViewHolder;
@@ -398,7 +397,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
 
     private class RecommendedAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_HEADER = 0, VT_ARCHIVE = 1, VT_EDITOR = 2;
+        private static final int VT_HEADER = 0, VT_ARCHIVE = 1;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -410,15 +409,11 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                         //homeImagesViewHolder.addImages(headline);
                     }
                     return homeImagesViewHolder;
-                case VT_ARCHIVE:
+                default:
                     ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, HomeFeaturedFragment.this);
                     ahrvh.addOnViewHolderClickListener(onViewHolderClickListener);
                     ahrvh.setOnViewHolderElementClickListener(elementClickListener);
                     return ahrvh;
-                default:
-                    ArchiveManagementViewHolder ahvh = new ArchiveManagementViewHolder(itemView, HomeFeaturedFragment.this);
-                    ahvh.addOnViewHolderClickListener(onViewHolderClickListener);
-                    return ahvh;
             }
         }
 
@@ -428,11 +423,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             if (model.getId().equals("headline")) {
                 return VT_HEADER;
             }
-            if (model instanceof Archive) {
-                return VT_ARCHIVE;
-            } else {
-                return VT_EDITOR;
-            }
+            return VT_ARCHIVE;
         }
 
         @Override
@@ -441,23 +432,14 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 case VT_HEADER:
                     // 轮播图
                     return R.layout.holder_view_home_images;
-                case VT_ARCHIVE:
-                    return R.layout.holder_view_archive_home_feature;
                 default:
-                    // 档案
-                    return R.layout.holder_view_archive_management;
+                    return R.layout.holder_view_archive_home_feature;
             }
         }
 
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
-            if (holder instanceof ArchiveManagementViewHolder) {
-                if (item instanceof Archive) {
-                    ((ArchiveManagementViewHolder) holder).showContent((Archive) item, "");
-                } else if (item instanceof PriorityPlace) {
-                    ((ArchiveManagementViewHolder) holder).showContent((PriorityPlace) item);
-                }
-            } else if (holder instanceof ArchiveHomeRecommendedViewHolder) {
+            if (holder instanceof ArchiveHomeRecommendedViewHolder) {
                 ((ArchiveHomeRecommendedViewHolder) holder).showContent((Archive) item);
             }
         }

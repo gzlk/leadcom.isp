@@ -1,8 +1,11 @@
 package com.leadcom.android.isp.model.common;
 
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>隐私选项内容<br />
@@ -36,6 +39,36 @@ public class Seclusion extends Model {
          * 指定部分人可查看
          */
         int Specify = 3;
+    }
+
+    private static String getSecurityNames(List<String> list) {
+        if (null == list || list.size() < 1) {
+            return "";
+        }
+        String ret = "";
+        for (String string : list) {
+            ret += (isEmpty(ret) ? "" : ",") + string;
+        }
+        return ret;
+    }
+
+    public static String getPrivacy(Seclusion seclusion) {
+        String names = getSecurityNames(seclusion.getUserNames());
+        switch (seclusion.getStatus()) {
+            case Seclusion.Type.Private:
+                // 只能自己可见
+                return StringHelper.getString(R.string.ui_base_text_private);
+            case Seclusion.Type.Public:
+                // 对所有人公开
+                return StringHelper.getString(R.string.ui_base_text_public);
+            case Seclusion.Type.Group:
+                // 组织内公开
+                return StringHelper.getString(R.string.ui_security_force_to_group);
+            case Seclusion.Type.Specify:
+                // 对指定人公开
+                return StringHelper.getString(R.string.ui_security_force_to_user, names);
+        }
+        return StringHelper.getString(R.string.ui_security_fragment_title);
     }
 
     public Seclusion() {

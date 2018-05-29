@@ -882,7 +882,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     super.onResponse(shareInfo, success, message);
                     if (success && null != shareInfo) {
                         mShareInfo = shareInfo;
-                        //mShareInfo.setTargetPath(ArchiveDetailsViewHolder.getUrl(mQueryId, archiveType, isDraft, true));
+                        mShareInfo.setTargetPath(ArchiveDetailsViewHolder.getUrl(mQueryId, archiveType, isDraft, true));
                         openShareDialog();
                     }
                 }
