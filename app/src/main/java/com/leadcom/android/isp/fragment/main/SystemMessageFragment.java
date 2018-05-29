@@ -229,6 +229,9 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 if (remotePageNumber <= 1) {
                     mAdapter.clear();
                 }
+                int count = null == list ? 0 : list.size();
+                remotePageNumber += count < pageSize ? 0 : 1;
+                isLoadingComplete(count < pageSize);
                 if (success) {
                     mAdapter.update(list);
                 }
@@ -236,7 +239,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 displayNothing(mAdapter.getItemCount() < 1);
                 stopRefreshing();
             }
-        }).list("");
+        }).list("", remotePageNumber);
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {

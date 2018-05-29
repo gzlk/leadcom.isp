@@ -66,9 +66,9 @@ public class PushMsgRequest extends Request<PushMessage> {
     /**
      * 拉取推送消息列表
      */
-    public void list(String templateCode) {
+    public void list(String templateCode, int pageNumber) {
         directlySave = false;
-        String param = url(LIST) + (isEmpty(templateCode) ? "" : format("?templateCode=%s", templateCode));
+        String param = url(LIST) + (isEmpty(templateCode) ? "" : format("?pageNumber=%d&templateCode=%s", pageNumber, templateCode));
         executeHttpRequest(getRequest(PagePush.class, param, "", HttpMethods.Get));
     }
 
