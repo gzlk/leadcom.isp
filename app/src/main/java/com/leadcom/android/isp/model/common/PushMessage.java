@@ -33,6 +33,7 @@ public class PushMessage extends Model {
         private int docType;
         private String docUserId;
         private String groupId;
+        private String userMmtId;
         private String messageCode;
 
         public String getMsgId() {
@@ -75,6 +76,14 @@ public class PushMessage extends Model {
             this.groupId = groupId;
         }
 
+        public String getUserMmtId() {
+            return userMmtId;
+        }
+
+        public void setUserMmtId(String userMmtId) {
+            this.userMmtId = userMmtId;
+        }
+
         public String getMessageCode() {
             return messageCode;
         }
@@ -92,6 +101,10 @@ public class PushMessage extends Model {
          * 用户档案被评论
          */
         String USER_DOC_COMMENT = "USERDOC_COMMENT_CODE";
+        /**
+         * 用户动态被评论
+         */
+        String USER_MMT_COMMENT = "USERMMT_COMMENT_CODE";
         /**
          * 组织档案被评论
          */

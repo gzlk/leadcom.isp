@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.individual.moment;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.view.View;
 
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
@@ -77,6 +79,10 @@ public class MomentDetailsFragment extends BaseMomentFragment {
 
     public static void open(BaseFragment fragment, String momentId) {
         fragment.openActivity(MomentDetailsFragment.class.getName(), getBundle(momentId), REQUEST_DELETE, true, false);
+    }
+
+    public static void open(Context context, String momentId) {
+        BaseActivity.openActivity(context, MomentDetailsFragment.class.getName(), getBundle(momentId), REQUEST_DELETE, true, false);
     }
 
     private static boolean deletable = false;
