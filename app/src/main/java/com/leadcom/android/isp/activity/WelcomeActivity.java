@@ -14,8 +14,10 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.model.archive.Archive;
 
 /**
  * <b>功能描述：</b>网易云消息处理Activity<br />
@@ -193,13 +195,21 @@ public class WelcomeActivity extends BaseActivity {
                         if (null != uri) {
                             String path = uri.getPath();
                             String id = uri.getQueryParameter("id");
-                            String type = uri.getQueryParameter("type");
-                            int tp = StringHelper.isEmpty(type, true) ? 2 : Integer.valueOf(type);
-                            if (StringHelper.isEmpty(type, true)) {
-                                log("传入的参数错误：type = null");
-                            }
                             if (path.contains("archive")) {
-                                openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
+                                String type = uri.getQueryParameter("type");
+                                if (StringHelper.isEmpty(type, true)) {
+                                    log("传入的参数错误：type = null");
+                                }
+                                // 默认组织档案
+                                int tp = StringHelper.isEmpty(type, true) ? Archive.Type.GROUP : Integer.valueOf(type);
+                                String groupId = uri.getQueryParameter("groupid");
+                                if (StringHelper.isEmpty(groupId, true)) {
+                                    groupId = "";
+                                }
+                                String authorId = uri.getQueryParameter("authorid");
+                                ArchiveDetailsWebViewFragment.open(this, groupId, "", id, tp, false, true, authorId);
+                            } else if (path.contains("user")) {
+                                PersonalityFragment.open(this, id);
                             }
                             finish();
                         } else {
