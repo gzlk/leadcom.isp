@@ -100,7 +100,6 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        isLoadingComplete(true);
         int color = getColor(Cache.sdk >= 23 ? R.color.textColor : R.color.textColorLight);
         rightTextView.setTextColor(color);
         rightIconView.setTextColor(color);
@@ -155,6 +154,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     protected void onSwipeRefreshing() {
         remotePageNumber = 1;
+        setSupportLoadingMore(true);
         fetchingPushMessages();
     }
 
@@ -232,7 +232,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 remotePageNumber += count < pageSize ? 0 : 1;
                 isLoadingComplete(count < pageSize);
                 if (success && null != list) {
-                    mAdapter.update(list);
+                    mAdapter.update(list, false);
                 }
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() < 1);
