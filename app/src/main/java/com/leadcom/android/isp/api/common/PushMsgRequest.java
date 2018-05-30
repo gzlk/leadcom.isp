@@ -68,7 +68,7 @@ public class PushMsgRequest extends Request<PushMessage> {
      */
     public void list(String templateCode, int pageNumber) {
         directlySave = false;
-        String param = url(LIST) + (isEmpty(templateCode) ? "" : format("?pageNumber=%d&templateCode=%s", pageNumber, templateCode));
+        String param = format("%s?pageNumber=%d%s", url(LIST), pageNumber, (isEmpty(templateCode) ? "" : format("&templateCode=%s", pageNumber, templateCode)));
         executeHttpRequest(getRequest(PagePush.class, param, "", HttpMethods.Get));
     }
 
