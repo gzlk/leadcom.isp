@@ -93,7 +93,7 @@ public class SquadPickerFragment extends BaseOrganizationFragment {
     @Override
     protected void onFetchingRemoteSquadsComplete(List<Squad> list) {
         if (null != list) {
-            mAdapter.update(list);
+            mAdapter.update(list, true);
         }
         displayLoading(false);
         displayNothing(mAdapter.getItemCount() < 1);

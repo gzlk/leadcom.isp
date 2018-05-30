@@ -115,8 +115,7 @@ public class App extends BaseActivityManagedApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        JPushInterface.setDebugMode(true);
-        JPushInterface.init(this);
+        initOrResumeJPush();
         Bugly.init(getApplicationContext(), StringHelper.getString(R.string.tencent_app_id_bugly), !Cache.isReleasable());
         //initializeX5();
         //initializeNim();
@@ -125,6 +124,15 @@ public class App extends BaseActivityManagedApplication {
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();
             initializeDatabase();
+        }
+    }
+
+    private void initOrResumeJPush() {
+        if (JPushInterface.isPushStopped(this)) {
+            JPushInterface.resumePush(this);
+        } else {
+            JPushInterface.setDebugMode(true);
+            JPushInterface.init(this);
         }
     }
 
@@ -215,6 +223,7 @@ public class App extends BaseActivityManagedApplication {
         if (!isEmpty(Cache.cache().userId)) {
             JPushInterface.setAlias(App.app(), 0, Cache.cache().userId);
         }
+        initOrResumeJPush();
     }
 
     private Dao<User> userDao;
@@ -241,6 +250,7 @@ public class App extends BaseActivityManagedApplication {
         Cache.cache().clear();
         // 同时退出网易云
         //NIMClient.getService(AuthService.class).logout();
+        JPushInterface.stopPush(this);
         super.logout();
     }
 

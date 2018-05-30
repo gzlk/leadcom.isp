@@ -263,7 +263,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
 
     @Override
     public void update(List<T> list) {
-        update(list, true);
+        update(list, false);
     }
 
     @Override
