@@ -212,21 +212,15 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
             @Override
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (remotePageNumber <= 1) {
+                    mAdapter.clear();
+                }
                 int size = null == list ? 0 : list.size();
                 isLoadingComplete(size < pageSize);
-                if (success) {
-                    if (remotePageNumber <= 1) {
-                        mAdapter.clear();
-                    }
-                    if (null != list) {
-                        if (null != mAdapter) {
-                            // 覆盖方式重置list
-                            mAdapter.update(list, remotePageNumber <= 1);
-                        }
-                        if (list.size() >= pageSize) {
-                            remotePageNumber++;
-                        }
-                    }
+                remotePageNumber += size >= pageSize ? 1 : 0;
+                if (success && null != list) {
+                    // 覆盖方式重置list
+                    mAdapter.update(list, remotePageNumber <= 1);
                 }
                 displayLoading(false);
                 stopRefreshing();

@@ -108,7 +108,7 @@ public class DictionaryHelper {
             public void onResponse(List<Dictionary> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 loadingView.setVisibility(View.GONE);
-                if (success) {
+                if (success && null != list) {
                     for (Dictionary dictionary : list) {
                         if (dictionary.getName().equals(selected)) {
                             dictionary.setSelected(true);

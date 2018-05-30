@@ -232,7 +232,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 int count = null == list ? 0 : list.size();
                 remotePageNumber += count < pageSize ? 0 : 1;
                 isLoadingComplete(count < pageSize);
-                if (success) {
+                if (success && null != list) {
                     mAdapter.update(list);
                 }
                 displayLoading(false);
