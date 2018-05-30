@@ -203,7 +203,7 @@ public class WelcomeActivity extends BaseActivity {
                                 // 默认组织档案
                                 int tp = StringHelper.isEmpty(type, true) ? Archive.Type.GROUP : Integer.valueOf(type);
                                 String groupId = uri.getQueryParameter("groupid");
-                                if (StringHelper.isEmpty(groupId, true)) {
+                                if (StringHelper.isEmpty(groupId, true) || groupId.contains("undefined")) {
                                     groupId = "";
                                 }
                                 String authorId = uri.getQueryParameter("authorid");
