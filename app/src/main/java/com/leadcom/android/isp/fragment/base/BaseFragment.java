@@ -16,7 +16,6 @@ import com.leadcom.android.isp.activity.ContainerActivity;
 import com.leadcom.android.isp.activity.LoginActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.activity.ActivityShareListFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.helper.ClipboardHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -662,7 +661,6 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
     protected void shareToApp() {
         // 打开群聊列表选择要分享到的群聊
-        ActivityShareListFragment.open(this, mShareInfo);
     }
 
     protected void shareToQQ() {

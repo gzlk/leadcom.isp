@@ -43,7 +43,7 @@ import cn.jpush.android.api.JPushInterface;
  * <b>修改备注：</b><br />
  */
 
-public class App extends NimApplication {
+public class App extends BaseActivityManagedApplication {
 
     private static App instance;
 

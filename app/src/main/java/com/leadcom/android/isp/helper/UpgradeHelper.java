@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.listener.OnTaskCompleteListener;
 import com.leadcom.android.isp.listener.OnTaskFailureListener;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 
 import java.io.File;
 

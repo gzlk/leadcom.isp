@@ -37,7 +37,6 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.home.GroupHeaderViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
-import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -47,7 +46,6 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,24 +125,12 @@ public class GroupFragment extends BaseOrganizationFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isFirst = true;
-        App.addNimMessageEvent(nimMessageEvent);
     }
 
     @Override
     public void onDestroy() {
-        App.removeNimMessageEvent(nimMessageEvent);
         super.onDestroy();
     }
-
-    private OnNimMessageEvent nimMessageEvent = new OnNimMessageEvent() {
-        @Override
-        public void onMessageEvent(NimMessage message) {
-            // 如果是组织相关的推送，则重新拉取组织列表
-            if (null != message && message.isGroupMsg()) {
-                fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
-            }
-        }
-    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

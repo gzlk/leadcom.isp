@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,9 +20,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.common.UpdateRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
@@ -41,21 +38,13 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
+import com.leadcom.android.isp.lib.permission.MPermission;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionDenied;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionGranted;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAgain;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
-import com.leadcom.android.isp.model.common.Message;
 import com.leadcom.android.isp.model.common.PushMessage;
 import com.leadcom.android.isp.model.common.SystemUpdate;
-import com.leadcom.android.isp.model.organization.Invitation;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
-import com.leadcom.android.isp.nim.session.NimSessionHelper;
-import com.netease.nim.uikit.support.permission.MPermission;
-import com.netease.nim.uikit.support.permission.annotation.OnMPermissionDenied;
-import com.netease.nim.uikit.support.permission.annotation.OnMPermissionGranted;
-import com.netease.nim.uikit.support.permission.annotation.OnMPermissionNeverAskAgain;
-import com.netease.nimlib.sdk.NimIntent;
-import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
-import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -244,7 +233,7 @@ public class MainActivity extends TitleActivity {
         //supportTransparentStatusBar = true;
         //isToolbarSupported = false;
         super.onCreate(savedInstanceState);
-        NimApplication.addNotificationChangeCallback(callback);
+        App.addNotificationChangeCallback(callback);
         showToolbar(false);
         if (null != toolbarLine) {
             toolbarLine.setVisibility(View.GONE);
@@ -255,9 +244,8 @@ public class MainActivity extends TitleActivity {
             setIntent(new Intent());
         }
 
-        parseIntent();
         setDisplayPage();
-        NimApplication.dispatchCallbacks();
+        App.dispatchCallbacks();
         checkClientVersion();
         if (!Cache.isReleasable()) {
             ToastHelper.make().showMsg(R.string.ui_text_main_inner_test_toast);
@@ -588,7 +576,6 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
-        parseIntent();
     }
 
     @Override
@@ -600,7 +587,7 @@ public class MainActivity extends TitleActivity {
     @Override
     protected void onDestroy() {
         innerOpen = false;
-        NimApplication.removeNotificationChangeCallback(callback);
+        App.removeNotificationChangeCallback(callback);
         super.onDestroy();
     }
 
@@ -644,297 +631,5 @@ public class MainActivity extends TitleActivity {
                 return true;
             }
         }, null);
-    }
-
-    private void parseIntent() {
-        Intent intent = getIntent();
-        if (null != intent) {
-            if (intent.hasExtra(NimIntent.EXTRA_NOTIFY_CONTENT)) {
-                // 点击通知栏传过来的消息
-                IMMessage message = (IMMessage) getIntent().getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
-                switch (message.getSessionType()) {
-                    case P2P:
-                        // 点对点聊天
-                        NimSessionHelper.startP2PSession(this, message.getSessionId());
-                        break;
-                    case Team:
-                        // 群聊
-                        NimSessionHelper.startTeamSession(this, message.getSessionId());
-                        break;
-                }
-                if (message.getMsgType() == MsgTypeEnum.custom) {
-                    MsgAttachment attachment = message.getAttachment();
-                    if (attachment instanceof NimMessage) {
-                        NimMessage nim = (NimMessage) attachment;
-                        handleNimMessageDetails(this, nim);
-                    }
-                }
-            } else if (intent.hasExtra(EXTRA_NOTIFICATION)) {
-                // 自定义系统通知
-                NimMessage msg = (NimMessage) intent.getSerializableExtra(EXTRA_NOTIFICATION);
-                handleNimMessageDetails(this, msg);
-            }
-        }
-    }
-
-    public static void handleNimMessageDetails(final AppCompatActivity activity, final NimMessage msg) {
-        String yes = "", no = "";
-        switch (msg.getMsgType()) {
-            case NimMessage.Type.GROUP_JOIN:
-                yes = StringHelper.getString(R.string.ui_base_text_ok);
-                no = StringHelper.getString(R.string.ui_base_text_reject);
-                break;
-            case NimMessage.Type.GROUP_JOIN_APPROVE:
-                // 组织管理者同意，申请方只有一个按钮“知道了”
-                yes = StringHelper.getString(R.string.ui_base_text_i_known);
-                break;
-            case NimMessage.Type.GROUP_JOIN_DISAPPROVE:
-                // 组织管理者不同意，申请方都只有一个按钮“好吧”
-                yes = StringHelper.getString(R.string.ui_base_text_ok_ba);
-                break;
-            case NimMessage.Type.GROUP_INVITE:
-                // 受邀者出现的对话框是“好”,“不用了”
-                if (msg.isHandled()) {
-                    GroupFragment.open(activity, msg.getGroupId());
-                } else {
-                    yes = StringHelper.getString(R.string.ui_base_text_ok);
-                    no = StringHelper.getString(R.string.ui_base_text_no_need);
-                }
-                break;
-            case NimMessage.Type.GROUP_INVITE_AGREE:
-            case NimMessage.Type.GROUP_INVITE_DISAGREE:
-                // 新成员同意或不同意邀请，邀请方都只有一个按钮“知道了”
-                yes = StringHelper.getString(R.string.ui_base_text_i_known);
-                break;
-            case NimMessage.Type.SQUAD_INVITE:
-                // 受邀者出现的对话框是“好”,“不用了”
-                yes = StringHelper.getString(R.string.ui_base_text_ok);
-                no = StringHelper.getString(R.string.ui_base_text_no_need);
-                break;
-            case NimMessage.Type.SQUAD_INVITE_AGREE:
-            case NimMessage.Type.SQUAD_INVITE_DISAGREE:
-                // 新成员同意或不同意邀请，邀请方都只有一个按钮“知道了”
-                yes = StringHelper.getString(R.string.ui_base_text_i_known);
-                break;
-            case NimMessage.Type.ACTIVITY_INVITE:
-                break;
-            case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
-                // 系统通知，只提醒就可以了
-                yes = StringHelper.getString(R.string.ui_base_text_i_known);
-                break;
-            case NimMessage.Type.SQUAD_INVITE_ALERT:
-//                if (msg.isHandled()) {
-//                    if (msg.isHandleState()) {
-//                        // 直接打开小组成员
-//                        //openActivity(activity, ContactFragment.class.getName(),
-//                        //        StringHelper.format("%d,,%s", ContactFragment.TYPE_SQUAD, msg.getGroupId()), true, false);
-//                    }
-//                } else {
-                // 提醒加入小组
-                yes = StringHelper.getString(R.string.ui_base_text_i_known);
-//                }
-                break;
-            case NimMessage.Type.TOPIC_INVITE:
-                if (msg.isHandled()) {
-                    NimSessionHelper.startTeamSession(activity, msg.getTid());
-                } else {
-                    yes = StringHelper.getString(R.string.ui_base_text_have_a_look);
-                    no = StringHelper.getString(R.string.ui_base_text_i_known);
-                }
-                break;
-            default:
-                yes = StringHelper.getString(R.string.ui_base_text_i_known);
-                break;
-        }
-        if (!StringHelper.isEmpty(yes)) {
-            SimpleDialogHelper.init(activity).show(msg.getMsgContent(), yes, no, new DialogHelper.OnDialogConfirmListener() {
-                @Override
-                public boolean onConfirm() {
-                    switch (msg.getMsgType()) {
-                        case NimMessage.Type.GROUP_JOIN:
-                            // 通过别人的入群申请
-                            joinIntoGroupPassed(msg);
-                            break;
-                        case NimMessage.Type.GROUP_INVITE:
-                            // 通过别人的入群邀请
-                            inviteToGroupPassed(msg);
-                            break;
-                        case NimMessage.Type.SQUAD_INVITE:
-                            // 通过别人的邀请加入组织
-                            inviteToSquadPassed(msg);
-                            break;
-                        case NimMessage.Type.ACTIVITY_INVITE:
-                            break;
-                        case NimMessage.Type.ACTIVITY_ALERT_SELECTED:
-                            // 系统通知的话，点击按钮设置已读标记
-                            saveMessage(msg, true, true);
-                            break;
-                        case NimMessage.Type.SQUAD_INVITE_ALERT:
-                            saveMessage(msg, true, true);
-                            //openActivity(activity, ContactFragment.class.getName(),
-                            //        StringHelper.format("%d,,%s", ContactFragment.TYPE_SQUAD, msg.getGroupId()), true, false);
-                            break;
-                        case NimMessage.Type.TOPIC_INVITE:
-                        case NimMessage.Type.ACTIVITY_NOTIFY:
-                            saveMessage(msg, true, true);
-                            NimSessionHelper.startTeamSession(activity, msg.getTid());
-                            break;
-                        //case NimMessage.Type.TALK_TEAM_DISMISS:
-                        case NimMessage.Type.TALK_TEAM_MEMBER_JOIN:
-                        case NimMessage.Type.TALK_TEAM_MEMBER_QUIT:
-                            //case NimMessage.Type.TALK_TEAM_MEMBER_REMOVE:
-                            saveMessage(msg, true, true);
-                            NimSessionHelper.startTeamSession(activity, msg.getTid());
-                            break;
-                        default:
-                            saveMessage(msg, true, true);
-                            if (msg.isArchiveMsg()) {
-                                if (msg.getMsgType() == Message.Type.ARCHIVE_SHARE_DRAFT) {
-                                    //ArchiveDetailsWebViewFragment.open(activity, msg.getGroupId(), msg.getDocId(), Archive.ArchiveType.MULTIMEDIA, true);
-                                } else {
-                                    //ArchiveDetailsWebViewFragment.open(activity, msg.getDocId(), Archive.Type.GROUP, true);
-                                }
-                            }
-                            break;
-                    }
-                    if (msg.isGroupMsg()) {
-                        // 组织邀请等信息，需要通知app内所有已打开的页面刷新
-                        NimApplication.dispatchEvents(msg);
-                    }
-                    return true;
-                }
-            }, new DialogHelper.OnDialogCancelListener() {
-                @Override
-                public void onCancel() {
-                    switch (msg.getMsgType()) {
-                        case NimMessage.Type.GROUP_JOIN:
-                            // 拒绝别人的入群申请
-                            joinIntoGroupDenied(msg);
-                            break;
-                        case NimMessage.Type.GROUP_INVITE:
-                            // 拒绝别人的入群邀请
-                            inviteToGroupDenied(msg);
-                            break;
-                        case NimMessage.Type.SQUAD_INVITE:
-                            // 拒绝别人加入组织的邀请
-                            inviteToSquadDenied(msg);
-                            break;
-                        case NimMessage.Type.TOPIC_INVITE:
-                            saveMessage(msg, true, true);
-                            break;
-                    }
-                }
-            });
-        }
-    }
-
-    private static void saveMessage(NimMessage msg, boolean handled, boolean state) {
-        // 已处理
-        msg.setStatus(Message.Status.HANDLED);
-        NimMessage.save(msg);
-        NimMessage.resetStatus(msg.getTid());
-        NimApplication.dispatchCallbacks();
-    }
-
-    /**
-     * 处理申请入群的审批操作
-     */
-    private static void joinIntoGroupPassed(final NimMessage msg) {
-        throw new IllegalArgumentException("Cannot support join into group now.");
-//        GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
-//            @Override
-//            public void onResponse(JoinGroup joinGroup, boolean success, String message) {
-//                super.onResponse(joinGroup, success, message);
-//                if (success) {
-//                    // 处理成功之后保存当前消息状态
-//                    saveMessage(msg, true, true);
-//                }
-//            }
-//        }).approveJoin(msg.getUuid(), "");
-    }
-
-    /**
-     * 处理申请入群的拒绝操作
-     */
-    private static void joinIntoGroupDenied(final NimMessage msg) {
-        throw new IllegalArgumentException("Cannot support join into group now.");
-//        GroupJoinRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<JoinGroup>() {
-//            @Override
-//            public void onResponse(JoinGroup joinGroup, boolean success, String message) {
-//                super.onResponse(joinGroup, success, message);
-//                if (success) {
-//                    // 处理成功之后保存当前消息状态
-//                    saveMessage(msg, true, false);
-//                }
-//            }
-//        }).rejectJoin(msg.getUuid(), "");
-    }
-
-    /**
-     * 处理受邀入群的审批操作
-     */
-    private static void inviteToGroupPassed(final NimMessage msg) {
-        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
-            @Override
-            public void onResponse(Invitation invitation, boolean success, String message) {
-                super.onResponse(invitation, success, message);
-                if (success) {
-                    // 处理成功之后保存当前消息状态
-                    saveMessage(msg, true, true);
-                }
-            }
-        }).agreeInviteToGroup(msg.getUuid(), "");
-    }
-
-    /**
-     * 处理受邀入群的拒绝操作
-     */
-    private static void inviteToGroupDenied(final NimMessage msg) {
-        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
-            @Override
-            public void onResponse(Invitation invitation, boolean success, String message) {
-                super.onResponse(invitation, success, message);
-                if (success) {
-                    // 处理成功之后保存当前消息状态
-                    saveMessage(msg, true, false);
-                }
-            }
-        }).disagreeInviteToGroup(msg.getUuid(), "");
-    }
-
-    /**
-     * 接受邀请加入小组
-     */
-    private static void inviteToSquadPassed(final NimMessage msg) {
-        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
-            @Override
-            public void onResponse(Invitation invitation, boolean success, String message) {
-                super.onResponse(invitation, success, message);
-                if (success) {
-                    // 处理成功之后保存当前消息状态
-                    saveMessage(msg, true, true);
-                }
-            }
-        }).agreeInviteToSquad(msg.getUuid(), "");
-    }
-
-    /**
-     * 拒绝加入小组
-     */
-    private static void inviteToSquadDenied(final NimMessage msg) {
-        InvitationRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Invitation>() {
-            @Override
-            public void onResponse(Invitation invitation, boolean success, String message) {
-                super.onResponse(invitation, success, message);
-                if (success) {
-                    // 处理成功之后保存当前消息状态
-                    saveMessage(msg, true, false);
-                }
-            }
-        }).disagreeInviteToSquad(msg.getUuid(), "");
-    }
-
-    private void registerUpgradeListener() {
-        //PgyUpdateManager.register(this, "leadcom_provider_file");
     }
 }

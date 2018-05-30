@@ -36,6 +36,7 @@ import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
@@ -68,8 +69,6 @@ import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.user.Collection;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
-import com.netease.nim.uikit.api.NimUIKit;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -716,7 +715,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             finish();
             // 需要跳转到会话页面并且关闭档案详情页
             String teamId = getResultedData(data);
-            NimUIKit.startTeamSession(Activity(), teamId);
+            //NimUIKit.startTeamSession(Activity(), teamId);
         } else if (requestCode == REQUEST_GROUP) {
             ArrayList<RelateGroup> groups = RelateGroup.from(getResultedData(data));
             // 转发到指定的组织

@@ -4,7 +4,7 @@
     android:id="@+id/ui_holder_view_individual_moment_like_name_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@android:color/white"
     android:orientation="horizontal">
 
     <View

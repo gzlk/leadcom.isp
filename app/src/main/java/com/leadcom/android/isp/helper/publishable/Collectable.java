@@ -4,9 +4,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.model.user.Moment;
-import com.netease.nim.uikit.api.NimUIKit;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 
 /**
  * <b>功能描述：</b>收藏相关参数设定<br />
@@ -39,14 +36,5 @@ public class Collectable {
         creatorId = moment.getUserId();
         creatorName = moment.getUserName();
         creatorHeader = moment.getHeadPhoto();
-    }
-
-    public static void resetSessionCollectionParams(IMMessage message) {
-        UserInfo user = NimUIKit.getUserInfoProvider().getUserInfo(message.getFromAccount());
-        if (null != user) {
-            creatorId = user.getAccount();
-            creatorName = user.getName();
-            creatorHeader = user.getAvatar();
-        }
     }
 }

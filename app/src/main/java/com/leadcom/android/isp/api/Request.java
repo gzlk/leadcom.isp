@@ -12,6 +12,7 @@ import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.api.query.StringQuery;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.etc.ReflectionUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -26,7 +27,6 @@ import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.content.JsonBody;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
-import com.netease.nim.uikit.common.util.sys.ReflectionUtil;
 
 import java.lang.reflect.Type;
 import java.util.List;

@@ -8,8 +8,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.netease.nim.uikit.api.NimUIKit;
-
 import java.io.File;
 
 public class InstallUtil {
@@ -100,7 +98,7 @@ public class InstallUtil {
      * 安装apk文件
      */
     public static void installApk(String filepath) {
-        NimUIKit.getContext().startActivity(getInstallApkIntent(filepath));
+        //NimUIKit.getContext().startActivity(getInstallApkIntent(filepath));
     }
 
     /**

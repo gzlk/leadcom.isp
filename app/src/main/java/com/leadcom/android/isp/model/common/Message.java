@@ -4,7 +4,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
 import com.litesuits.orm.db.annotation.Column;
 
 /**
@@ -18,15 +17,6 @@ import com.litesuits.orm.db.annotation.Column;
  * <b>修改备注：</b><br />
  */
 public class Message extends Model {
-
-    @Override
-    public boolean equals(Object object) {
-        return null != object && (getClass() == object.getClass()) && (object instanceof NimMessage) && equals((NimMessage) object);
-    }
-
-    public boolean equals(NimMessage msg) {
-        return null != msg && !isEmpty(msg.getId()) && msg.getId().equals(getId());
-    }
 
     public interface Field {
         String FromUserId = "fromUserId";

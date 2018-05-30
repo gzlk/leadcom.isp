@@ -32,7 +32,6 @@ import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.query.FullTextQuery;
 import com.leadcom.android.isp.model.user.SimpleUser;
-import com.leadcom.android.isp.nim.session.NimSessionHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -261,8 +260,6 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
             } else if (model instanceof Archive) {
                 Archive archive = (Archive) model;
                 ArchiveDetailsWebViewFragment.open(FullTextQueryFragment.this, archive);
-            } else if (model instanceof Activity) {
-                NimSessionHelper.startTeamSession(Activity(), ((Activity) model).getTid());
             }
         }
     };

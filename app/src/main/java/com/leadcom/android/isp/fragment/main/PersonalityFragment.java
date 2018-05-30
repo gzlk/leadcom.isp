@@ -21,7 +21,6 @@ import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -49,7 +48,6 @@ import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
-import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
@@ -112,7 +110,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         super.onCreate(savedInstanceState);
         isSelf = isEmpty(mQueryId) || mQueryId.equals(Cache.cache().userId);
         if (isSelf) {
-            NimApplication.addNotificationChangeCallback(callback);
+            App.addNotificationChangeCallback(callback);
         }
     }
 
@@ -129,7 +127,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onDestroy() {
         if (isSelf) {
-            NimApplication.removeNotificationChangeCallback(callback);
+            App.removeNotificationChangeCallback(callback);
         }
         super.onDestroy();
     }
@@ -149,7 +147,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             // 文件上传完毕后的回调处理
             setOnFileUploadingListener(mOnFileUploadingListener);
             // 查找未读的推送通知
-            NimApplication.dispatchCallbacks();
+            App.dispatchCallbacks();
         } else {
             //chatToUser.setVisibility(View.VISIBLE);
             paddingLayout.setVisibility(View.GONE);
@@ -372,7 +370,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 SettingFragment.open(PersonalityFragment.this);
                 break;
             case R.id.ui_user_information_chat_to_user:
-                NimSessionHelper.startP2PSession(Activity(), mQueryId);
+                //NimSessionHelper.startP2PSession(Activity(), mQueryId);
                 break;
             case R.id.ui_user_information_self_define:
                 selectedIndex = 0;

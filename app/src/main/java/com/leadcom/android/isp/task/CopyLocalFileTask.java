@@ -8,12 +8,11 @@ import com.hlk.hlklib.tasks.AsyncedTask;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
+import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnTaskCompleteListener;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
-import com.netease.nim.uikit.common.util.C;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,7 +93,7 @@ public class CopyLocalFileTask extends AsyncedTask<String, Integer, Boolean> {
                 //App.app().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
                 //App.app().sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, uri));
                 ContentValues values = new ContentValues(2);
-                values.put(MediaStore.Images.Media.MIME_TYPE, C.MimeType.MIME_JPEG);
+                values.put(MediaStore.Images.Media.MIME_TYPE, "jpg");
                 values.put(MediaStore.Images.Media.DATA, targetPath);
                 App.app().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 ToastHelper.make().showMsg(R.string.ui_base_text_downloading_image_completed);

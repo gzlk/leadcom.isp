@@ -1591,7 +1591,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         try {
             startActivityForResult(mIntent, request);
         } catch (ActivityNotFoundException e) {
-            ToastHelper.make().showMsg(com.netease.nim.uikit.R.string.gallery_invalid);
+            ToastHelper.make().showMsg("您的手机没有相册应用");
         }
     }
 

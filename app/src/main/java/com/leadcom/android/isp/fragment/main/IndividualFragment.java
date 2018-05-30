@@ -14,6 +14,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.VideoPlayerActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -22,7 +23,6 @@ import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.api.user.MomentRequest;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
@@ -37,6 +37,7 @@ import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
+import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
@@ -52,7 +53,6 @@ import com.leadcom.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentHomeCameraViewHolder;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
-import com.leadcom.android.isp.listener.OnNimMessageEvent;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
@@ -62,9 +62,6 @@ import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.model.user.Moment;
-import com.leadcom.android.isp.nim.activity.VideoPlayerActivity;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
-import com.leadcom.android.isp.nim.model.notification.NimMessage;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -115,7 +112,6 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NimApplication.addNimMessageEvent(messageEvent);
         nothingMore = Model.getNoMore();
     }
 
@@ -150,24 +146,9 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     @Override
     public void onDestroy() {
-        NimApplication.removeNimMessageEvent(messageEvent);
         UserId = "";
         super.onDestroy();
     }
-
-    private OnNimMessageEvent messageEvent = new OnNimMessageEvent() {
-        @Override
-        public void onMessageEvent(NimMessage message) {
-            if (!message.isSavable()) {
-                // 尝试初始化adapter并拉取信息
-                if (null == mAdapter) {
-                    initializeAdapter();
-                } else {
-                    performRefresh();
-                }
-            }
-        }
-    };
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {

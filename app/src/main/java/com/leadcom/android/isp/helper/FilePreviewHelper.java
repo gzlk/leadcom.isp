@@ -1,4 +1,4 @@
-package com.leadcom.android.isp.nim.file;
+package com.leadcom.android.isp.helper;
 
 import android.app.Activity;
 import android.app.Service;
@@ -14,6 +14,7 @@ import android.webkit.MimeTypeMap;
 
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.VideoPlayerActivity;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
@@ -23,25 +24,21 @@ import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.InnerWebViewFragment;
 import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
 import com.leadcom.android.isp.fragment.common.PdfViewerFragment;
-import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.common.Attachment;
-import com.leadcom.android.isp.nim.activity.VideoPlayerActivity;
 
 import java.io.File;
 import java.util.Locale;
 
 /**
- * <b>功能描述：</b>文件预览<br />
+ * <b>功能描述：</b><br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
- * <b>创建时间：</b>2017/06/14 14:03 <br />
+ * <b>创建时间：</b>2018/05/30 14:37 <br />
  * <b>作者邮箱：</b>xiang.l.g@gmail.com <br />
  * <b>最新版本：</b>Version: 1.0.0 <br />
- * <b>修改时间：</b>2017/06/14 14:03 <br />
+ * <b>修改时间：</b>2018/05/30 14:37 <br />
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-
 public class FilePreviewHelper {
 
     private static final String NIM = "netease.com";

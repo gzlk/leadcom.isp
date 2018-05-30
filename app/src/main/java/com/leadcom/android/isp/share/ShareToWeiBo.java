@@ -10,10 +10,10 @@ import android.os.Bundle;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.MultiImageObject;

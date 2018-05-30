@@ -28,8 +28,6 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.wasabeef.glide.transformations.gpu.GPUFilterTransformation;
-
 /**
  * <b>功能描述：</b>首页会议中的图片轮播<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />

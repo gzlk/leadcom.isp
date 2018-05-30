@@ -20,11 +20,6 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CleanableEditText;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CorneredButton;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.StatusCode;
-import com.netease.nimlib.sdk.auth.AuthService;
-import com.netease.nimlib.sdk.auth.LoginInfo;
 
 /**
  * <b>功能描述：</b>登录页面<br />
@@ -87,31 +82,6 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
             // 尝试获取相关基本的运行时权限
             grantStoragePermission();
         }
-    }
-
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
-    private void doLogin() {
-        LoginInfo info = App.app().loginInfo();
-        NIMClient.getService(AuthService.class).login(info).setCallback(new RequestCallback<LoginInfo>() {
-            @Override
-            public void onSuccess(LoginInfo loginInfo) {
-                ToastHelper.make().showMsg(R.string.ui_text_sing_nim_success);
-                // 打开主页面
-                finish(true);
-            }
-
-            @Override
-            public void onFailed(int i) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_text_sign_nim_failed, i));
-                needToReLogin();
-            }
-
-            @Override
-            public void onException(Throwable throwable) {
-                ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_text_sing_nim_exception, throwable.getMessage()));
-                needToReLogin();
-            }
-        });
     }
 
     @Override

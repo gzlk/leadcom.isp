@@ -28,13 +28,13 @@ import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
@@ -377,16 +377,14 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
                 // 动图
                 ImageView imageView = new ImageView(App.app());
                 container.addView(imageView);
-                Glide.with(ImageViewerFragment.this)
-                        .load(image).into(imageView);
+                Glide.with(ImageViewerFragment.this).load(image).into(imageView);
                 imageView.setOnClickListener(imageViewClickListener);
                 return imageView;
             }
             final SubsamplingScaleImageView ssiv = new SubsamplingScaleImageView(App.app());
             container.addView(ssiv);
             ssiv.setOnClickListener(imageViewClickListener);
-            Glide.with(ImageViewerFragment.this)
-                    .load(images.get(position)).downloadOnly(new SimpleTarget<File>() {
+            Glide.with(ImageViewerFragment.this).downloadOnly().load(image).into(new SimpleTarget<File>() {
                 @Override
                 public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                     ssiv.setImage(ImageSource.uri(FilePreviewHelper.getUriFromFile(resource.getAbsolutePath())));

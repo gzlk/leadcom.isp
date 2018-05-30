@@ -6,22 +6,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CorneredButton;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.NimIntent;
-import com.netease.nimlib.sdk.StatusCode;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
-
-import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>网易云消息处理Activity<br />
@@ -130,9 +124,7 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     private void toLogin() {
-
-        StatusCode code = NIMClient.getStatus();
-        if (code.shouldReLogin() || code.wontAutoLogin() || Cache.cache().isNeedSync()) {
+        if (Cache.cache().isNeedSync()) {
             // 登录信息已过期则需要重新登录
             LoginActivity.start(WelcomeActivity.this);
             finish();
@@ -194,37 +186,31 @@ public class WelcomeActivity extends BaseActivity {
         } else {
             Intent intent = getIntent();
             if (null != intent) {
-                ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
-                if (null == messages) {
-                    String action = intent.getAction();
-                    if (!StringHelper.isEmpty(action)) {
-                        if (action.equals(Intent.ACTION_VIEW)) {
-                            Uri uri = intent.getData();
-                            if (null != uri) {
-                                String path = uri.getPath();
-                                String id = uri.getQueryParameter("id");
-                                String type = uri.getQueryParameter("type");
-                                int tp = StringHelper.isEmpty(type, true) ? 2 : Integer.valueOf(type);
-                                if (StringHelper.isEmpty(type, true)) {
-                                    log("传入的参数错误：type = null");
-                                }
-                                if (path.contains("archive")) {
-                                    openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
-                                }
-                                finish();
-                            } else {
-                                toLogin();
+                String action = intent.getAction();
+                if (!StringHelper.isEmpty(action)) {
+                    if (action.equals(Intent.ACTION_VIEW)) {
+                        Uri uri = intent.getData();
+                        if (null != uri) {
+                            String path = uri.getPath();
+                            String id = uri.getQueryParameter("id");
+                            String type = uri.getQueryParameter("type");
+                            int tp = StringHelper.isEmpty(type, true) ? 2 : Integer.valueOf(type);
+                            if (StringHelper.isEmpty(type, true)) {
+                                log("传入的参数错误：type = null");
                             }
+                            if (path.contains("archive")) {
+                                openActivity(this, ArchiveDetailsWebViewFragment.class.getName(), StringHelper.format("%s,%d", id, (tp > 0 ? tp - 1 : tp)), true, false);
+                            }
+                            finish();
                         } else {
-                            switchToMain();
+                            toLogin();
                         }
                     } else {
-                        // 如果消息为空则打开登录页面，同步用户信息后登录
-                        toLogin();
+                        switchToMain();
                     }
                 } else {
-                    // 针对发过来的消息打开首页并按照intent内容提示用户
-                    switchToMain(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
+                    // 如果消息为空则打开登录页面，同步用户信息后登录
+                    toLogin();
                 }
             } else {
                 //switchToMain();

@@ -16,7 +16,6 @@ import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.application.NimApplication;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -95,7 +94,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NimApplication.addNotificationChangeCallback(callback);
+        App.addNotificationChangeCallback(callback);
     }
 
     @Override
@@ -112,7 +111,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onDestroy() {
-        NimApplication.removeNotificationChangeCallback(callback);
+        App.removeNotificationChangeCallback(callback);
         super.onDestroy();
     }
 
@@ -211,7 +210,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
             public void onResponse(PushMessage pushMessage, boolean success, String message) {
                 super.onResponse(pushMessage, success, message);
                 if (success) {
-                    NimApplication.dispatchCallbacks();
+                    App.dispatchCallbacks();
                     mAdapter.clear();
                 }
                 displayNothing(mAdapter.getItemCount() < 1);
@@ -282,7 +281,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                         showDetailsPage(pushMessage);
                     }
                     App.app().setUnreadCount(App.app().getUnreadCount() - 1);
-                    NimApplication.dispatchCallbacks();
+                    App.dispatchCallbacks();
                 }
             }
         }).find(msgId);
@@ -306,7 +305,7 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(nimMessage, success, message);
                 if (success) {
                     mAdapter.remove(msgId);
-                    NimApplication.dispatchCallbacks();
+                    App.dispatchCallbacks();
                 }
             }
         }).delete(msgId);

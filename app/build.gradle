@@ -153,7 +153,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // NIM 相关
-    implementation project(path: ':uikit')
+    //implementation project(path: ':uikit')
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 

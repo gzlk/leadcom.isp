@@ -15,7 +15,6 @@ import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.user.User;
-import com.leadcom.android.isp.nim.session.NimSessionHelper;
 import com.tencent.bugly.Bugly;
 
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class Cache {
             nimToken = me.getPassword();
             userName = me.getName();
             accessToken = me.getAccessToken();
-            NimSessionHelper.setAccount(userId);
+            //NimSessionHelper.setAccount(userId);
             userPhone = me.getPhone();
             // 保存网易云登录的账户和令牌
             PreferenceHelper.save(get(R.string.pf_last_login_user_id, R.string.pf_last_login_user_id_beta), userId);

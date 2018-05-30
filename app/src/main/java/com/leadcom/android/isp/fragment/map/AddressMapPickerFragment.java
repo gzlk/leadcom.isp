@@ -4,16 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.common.Address;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.netease.nim.uikit.api.model.location.LocationProvider;
 
 /**
  * <b>功能描述：</b>百度地图地址定位页面<br />
@@ -49,7 +47,7 @@ public class AddressMapPickerFragment extends MapHandleableFragment {
         fragment.openActivity(AddressMapPickerFragment.class.getName(), getBundle(reduce, addressJson), REQUEST_ADDRESS, true, false);
     }
 
-    public static LocationProvider.Callback callback;
+    //public static LocationProvider.Callback callback;
 
     private static final String PARAM_REDUCE = "ampf_reduce";
 
@@ -141,9 +139,9 @@ public class AddressMapPickerFragment extends MapHandleableFragment {
                 }
             });
         } else {
-            if (null != callback) {
-                callback.onSuccess(address.getLongitude(), address.getLatitude(), address.getAddress());
-            }
+            //if (null != callback) {
+            //    callback.onSuccess(address.getLongitude(), address.getLatitude(), address.getAddress());
+            //}
             resultData(Address.toJson(address));
         }
     }
@@ -151,7 +149,7 @@ public class AddressMapPickerFragment extends MapHandleableFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        callback = null;
+        //callback = null;
     }
 
     @Override

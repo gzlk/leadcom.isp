@@ -8,11 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.leadcom.android.isp.etc.ReflectionUtil;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.listener.RecycleAdapter;
-import com.leadcom.android.isp.model.Model;
-import com.netease.nim.uikit.common.util.sys.ReflectionUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;

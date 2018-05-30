@@ -24,6 +24,7 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
@@ -35,7 +36,6 @@ import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.user.Moment;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.task.CopyLocalFileTask;
 
@@ -391,8 +391,7 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 // 动图
                 ImageView imageView = new ImageView(App.app());
                 container.addView(imageView);
-                Glide.with(MomentImagesFragment.this)
-                        .load(image).into(imageView);
+                Glide.with(MomentImagesFragment.this).load(image).into(imageView);
                 return imageView;
             }
             final SubsamplingScaleImageView ssiv = new SubsamplingScaleImageView(App.app());

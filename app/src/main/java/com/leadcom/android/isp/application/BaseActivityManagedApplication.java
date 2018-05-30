@@ -3,11 +3,18 @@ package com.leadcom.android.isp.application;
 import android.app.Activity;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.PressAgainToExit;
+import com.leadcom.android.isp.helper.PreferenceHelper;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 /**
  * <b>功能描述：</b><br />
@@ -85,6 +92,85 @@ public class BaseActivityManagedApplication extends OrmApplication {
         }
     }
 
+    private static int get(int res, int resBeta) {
+        return Cache.isReleasable() ? resBeta : res;
+    }
+
+    /**
+     * Nim 声音、震动开关
+     */
+    public static boolean nimSound = false, nimVibrate = false;
+
+    /**
+     * 读取本地设置的消息通知方式
+     */
+    public static void readNimMessageNotify(String account) {
+        if (isEmpty(account)) {
+            nimSound = true;
+            nimVibrate = true;
+            return;
+        }
+        String sound = PreferenceHelper.get(StringHelper.getString(get(R.string.pf_last_login_user_sound, R.string.pf_last_login_user_sound_beta), account), "");
+        String vibrate = PreferenceHelper.get(StringHelper.getString(get(R.string.pf_last_login_user_vibrate, R.string.pf_last_login_user_vibrate_beta), account), "");
+        nimSound = isEmpty(sound) || sound.equals("1");
+        nimVibrate = isEmpty(vibrate) || vibrate.equals("1");
+    }
+
+    /**
+     * 重置 Nim 消息通知方式
+     */
+    public static void resetNimMessageNotify(boolean sound, boolean vibrate) {
+        nimSound = sound;
+        nimVibrate = vibrate;
+        PreferenceHelper.save(StringHelper.getString(get(R.string.pf_last_login_user_sound, R.string.pf_last_login_user_sound_beta), Cache.cache().userId), (sound ? "1" : "0"));
+        PreferenceHelper.save(StringHelper.getString(get(R.string.pf_last_login_user_vibrate, R.string.pf_last_login_user_vibrate_beta), Cache.cache().userId), (vibrate ? "1" : "0"));
+        //NIMClient.updateStatusBarNotificationConfig(getNotificationConfig());
+    }
+
+    private static int unreadCount = 0;
+
+    /**
+     * 获取未读推送消息数量
+     */
+    public int getUnreadCount() {
+        return unreadCount;
+    }
+
+    /**
+     * 重设未读推送消息数量
+     */
+    public synchronized void setUnreadCount(int count) {
+        unreadCount = count;
+        if (unreadCount <= 0) {
+            unreadCount = 0;
+        }
+        resetBadgeNumber();
+    }
+
+    protected static void resetBadgeNumber() {
+        //int size = NIMClient.getService(MsgService.class).getTotalUnreadCount() + unreadCount;
+        ShortcutBadger.applyCount(App.app(), unreadCount);
+    }
+
+    private static ArrayList<NotificationChangeHandleCallback> callbacks = new ArrayList<>();
+
+    public static void addNotificationChangeCallback(NotificationChangeHandleCallback callback) {
+        if (!callbacks.contains(callback)) {
+            callbacks.add(callback);
+        }
+    }
+
+    public static void removeNotificationChangeCallback(NotificationChangeHandleCallback callback) {
+        callbacks.remove(callback);
+    }
+
+    public static void dispatchCallbacks() {
+        for (int i = callbacks.size() - 1; i >= 0; i--) {
+            callbacks.get(i).onChanged();
+        }
+        resetBadgeNumber();
+    }
+
     private PressAgainToExit mPressAgainToExit = new PressAgainToExit();
 
     /**
@@ -109,6 +195,8 @@ public class BaseActivityManagedApplication extends OrmApplication {
         // 关闭数据库
         closeOrm();
         exitDirectly();
+        // 退出后桌面提醒清零
+        ShortcutBadger.applyCount(this, 0);
     }
 
     /**

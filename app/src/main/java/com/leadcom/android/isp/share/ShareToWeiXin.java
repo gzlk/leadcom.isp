@@ -9,9 +9,9 @@ import android.net.Uri;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
-import com.leadcom.android.isp.nim.file.FilePreviewHelper;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;

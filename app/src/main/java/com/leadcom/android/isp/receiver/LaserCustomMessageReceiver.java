@@ -8,7 +8,7 @@ import android.os.Bundle;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.application.NimApplication;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
@@ -86,7 +86,7 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
             public void onResponse(PushMessage pushMessage, boolean success, String message) {
                 super.onResponse(pushMessage, success, message);
                 if (success) {
-                    NimApplication.dispatchCallbacks();
+                    App.dispatchCallbacks();
                     switchUI(context, extra);
                 }
             }
@@ -109,7 +109,7 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
                 // 自定义消息不会展示在通知栏，完全要开发者写代码去处理
             } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(action)) {
                 log("收到了通知");
-                NimApplication.dispatchCallbacks();
+                App.dispatchCallbacks();
                 //parseBundle(bundle);
                 // 在这里可以做些统计，或者做些其他工作
             } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(action)) {
