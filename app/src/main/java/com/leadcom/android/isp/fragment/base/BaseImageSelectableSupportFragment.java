@@ -120,6 +120,7 @@ public abstract class BaseImageSelectableSupportFragment extends BaseDownloading
         String string = bundle.getString(KEY_CHOOSED_IMAGES, "[]");
         waitingFroCompressImages = Json.gson().fromJson(string, new TypeToken<List<String>>() {
         }.getType());
+        adjustWannaToImageSize();
     }
 
     @Override

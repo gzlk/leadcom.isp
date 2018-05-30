@@ -117,30 +117,15 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="sensorLandscape" />
 
-        <!--群聊历史记录查看页面-->
-        <activity
-            android:name=".nim.activity.SessionHistoryActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-
-        <!--历史记录搜索页面-->
-        <activity
-            android:name=".nim.searching.SearchingHistoryActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateUnspecified" />
-
-        <!--历史记录锚点显示页面-->
-        <activity
-            android:name=".nim.searching.DisplayMessageActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-
-        <activity
-            android:name=".nim.activity.VideoPlayerActivity"
-            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize" />
+        <!--草稿发布的service-->
+        <service
+            android:name=".service.DraftService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.leadcom.android.isp.service.DRAFT" />
+            </intent-filter>
+        </service>
         <!--第三方相册-->
         <activity
             android:name="com.yanzhenjie.album.AlbumActivity"

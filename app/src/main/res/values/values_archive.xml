@@ -96,6 +96,7 @@
     <string name="ui_text_archive_creator_editor_template_topic_hint">1、\n2、\n3、\n</string>
     <string name="ui_text_archive_creator_editor_template_minute">纪要</string>
     <string name="ui_text_archive_creator_editor_template_clear_images">您确定要清空这些选中的图片吗？</string>
+    <string name="ui_text_archive_creator_editor_template_remove_uploaded_image">本图片已上传，您确定要删除吗？</string>
     <string name="ui_text_archive_creator_editor_template_happen_date_null">请提供活动档案的发生时间</string>
     <string name="ui_text_archive_creator_editor_template_site_null">请提供活动档案的地点</string>
     <string name="ui_text_archive_creator_editor_template_topic_null">请提供活动档案的议题内容</string>

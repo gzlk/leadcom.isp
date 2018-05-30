@@ -1,8 +1,10 @@
 package com.leadcom.android.isp.fragment.archive;
 
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
@@ -73,11 +75,13 @@ import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.organization.SubMember;
+import com.leadcom.android.isp.service.DraftService;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import jp.wasabeef.richeditor.RichEditor;
@@ -278,12 +282,30 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 是否是粘贴了内容
      */
-    private boolean isPasteContent = false;
+    private boolean isPasteContent = false, isShareDraft = false;
+
+    private DraftSavingReceiver draftSavingReceiver;
+
+    private void registerDraftSavingReceiver() {
+        if (null == draftSavingReceiver) {
+            draftSavingReceiver = new DraftSavingReceiver();
+        }
+        IntentFilter intent = new IntentFilter();
+        intent.addAction(DraftService.ACTION_DRAFT);
+        Activity().registerReceiver(draftSavingReceiver, intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        Activity().unregisterReceiver(draftSavingReceiver);
+        super.onDestroy();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         editorFocused = false;
         super.onActivityCreated(savedInstanceState);
+        registerDraftSavingReceiver();
         mEditor.setPadding(10, 10, 10, 10);
         mEditor.setBackgroundColor(Color.WHITE);
         mEditor.setPlaceholder(StringHelper.getString(R.string.ui_text_archive_creator_content_hint));
@@ -339,10 +361,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         multimediaControlView.setVisibility(mArchive.isMultimediaArchive() ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         templateView.setVisibility(mArchive.isTemplateArchive() ? View.VISIBLE : View.GONE);
-        if (mArchive.isTemplateArchive()) {
-            isGroupArchive = true;
-            isUserArchive = false;
-        }
     }
 
     private void fetchingSingleDraft() {
@@ -373,6 +391,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             mArchive.resetImageStyle();
             mEditor.setHtml(mArchive.getContent());
         } else if (mArchive.isTemplateArchive()) {
+            isGroupArchive = true;
+            isUserArchive = false;
+            maxSelectable = 8;
             initializeTemplate();
             timeHolder.showContent(format(templateItems[0], formatDate(mArchive.getHappenDate())));
             addressHolder.showContent(format(templateItems[1], mArchive.getSite()));
@@ -380,6 +401,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             authorHolder.showContent(format(templateItems[3], mArchive.getUserName()));
             topicContent.setValue(mArchive.getTopic());
             minuteContent.setValue(mArchive.getResolution());
+            if (mArchive.getImage().size() > 0) {
+                resetAttachmentImages(mArchive.getImage());
+            }
         }
     }
 
@@ -557,6 +581,15 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         if (mArchive.isTemplateArchive()) {
             resetTemplateArchive(false);
+            // 保留用户选择了的图片
+            if (waitingFroCompressImages.size() > 0) {
+                for (String image : waitingFroCompressImages) {
+                    Attachment attachment = new Attachment(image);
+                    if (!mArchive.getImage().contains(attachment)) {
+                        mArchive.getImage().add(attachment);
+                    }
+                }
+            }
         }
         // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
         if (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent())) {
@@ -564,23 +597,33 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 // 如果是粘贴过来的内容，则清理里面所有非树脉自有的img标签
                 mArchive.clearPastedContentImages();
             }
-            savingDraft();
+            DraftService.start(mArchive, mCompressedImageWidth, mCompressedImageHeight);
         }
     }
 
-    private void savingDraft() {
-        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
-            @Override
-            public void onResponse(Archive archive, boolean success, String message) {
-                super.onResponse(archive, success, message);
-                if (success) {
-                    if (null != archive && !isEmpty(archive.getId())) {
-                        mArchive = archive;
+    private class DraftSavingReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (null != intent) {
+                String action = intent.getAction();
+                log(action);
+                assert action != null;
+                if (action.equals(DraftService.ACTION_DRAFT)) {
+                    try {
+                        Archive archive = (Archive) intent.getSerializableExtra(DraftService.TAG_ARCHIVE);
+                        if (null != archive && !isEmpty(archive.getId())) {
+                            mArchive = archive;
+                            if (mArchive.getImage().size() > 0) {
+                                resetAttachmentImages(mArchive.getImage());
+                            }
+                        }
+                        log(Archive.toJson(archive));
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
                 }
             }
-        }).addDraft(mArchive);
+        }
     }
 
     @Override
@@ -641,6 +684,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         if (returnAble) {
+            mArchive.setParticipant(participantHolder.getValue());
             if (isEmpty(mArchive.getParticipant())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_template_participant_null);
                 return false;
@@ -725,18 +769,24 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         mArchive.setSource(author);
         if (mArchive.isTemplateArchive()) {
-            // 如果选择了图片，则压缩图片然后上传
-            if (waitingFroCompressImages.size() > 0) {
-                // 不需要显示上传进度
-                needShowUploading = true;
-                uploadType = UP_TEMPLATE;
-                compressImage();
-            } else {
+            if (!tryUploadingTemplateImages()) {
                 createArchive();
             }
         } else {
             mEditor.getMarkdown();
         }
+    }
+
+    private boolean tryUploadingTemplateImages() {
+        // 如果选择了图片，则压缩图片然后上传
+        if (waitingFroCompressImages.size() > 0) {
+            // 不需要显示上传进度
+            needShowUploading = true;
+            uploadType = UP_TEMPLATE;
+            compressImage();
+            return true;
+        }
+        return false;
     }
 
     private int lastEditorContentLength = 0;
@@ -1083,10 +1133,15 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                                 } else if (isEmpty(mArchive.getContent())) {
                                     ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
                                 } else {
+                                    isShareDraft = true;
                                     GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
                                 }
                             } else if (mArchive.isTemplateArchive()) {
                                 if (resetTemplateArchive(true)) {
+                                    // 分享活动草稿
+                                    isShareDraft = true;
+                                    // 如果选择了图片，则压缩图片然后上传
+                                    tryUploadingTemplateImages();
                                     // 活动档案分享时选择要分享的人
                                     GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
                                 }
@@ -1294,7 +1349,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
             if (mArchive.isTemplateArchive()) {
-                resetImages(selected);
+                resetImages(selected, false);
             } else {
                 if (null != selected && selected.size() > 0) {
                     imageUrl.setValue(selected.get(0));
@@ -1374,8 +1429,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     if (null != uploaded) {
                         mArchive.getImage().addAll(uploaded);
                     }
-                    // 模板档案上传图片完毕之后尝试发布档案
-                    createArchive();
+                    // 不是分享活动草稿时，直接创建活动档案
+                    if (!isShareDraft) {
+                        // 模板档案上传图片完毕之后尝试发布档案
+                        createArchive();
+                    }
                     break;
             }
             // 上传完毕，设置上传方式为nothing
@@ -1537,7 +1595,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
                     finish();
-                    //ArchiveDetailsWebViewFragment.openDraft(ArchiveEditorFragment.this, mArchive.getId(), Archive.Type.DRAFT);
                     ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive, true);
                 }
             }
@@ -1990,7 +2047,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             templateRecyclerView.addItemDecoration(new SpacesItemDecoration());
             imageAdapter = new ImageAdapter();
             templateRecyclerView.setAdapter(imageAdapter);
-            resetImages(waitingFroCompressImages);
+            resetImages(waitingFroCompressImages, true);
         }
         if (null == timeHolder) {
             timeHolder = new SimpleClickableViewHolder(timeView, this);
@@ -2031,18 +2088,31 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onConfirm() {
                 waitingFroCompressImages.clear();
-                resetImages(waitingFroCompressImages);
+                resetImages(waitingFroCompressImages, true);
                 return true;
             }
         }).setTitleText(R.string.ui_text_archive_creator_editor_template_clear_images).setConfirmText(R.string.ui_base_text_confirm).show();
     }
 
-    private void resetImages(ArrayList<String> images) {
+    private void resetAttachmentImages(ArrayList<Attachment> images) {
         imageAdapter.clear();
+        for (Attachment attachment : images) {
+            Model model = new Model();
+            model.setId(attachment.getUrl());
+            imageAdapter.add(model);
+        }
+        appendAttacher();
+    }
+
+    private void resetImages(ArrayList<String> images, boolean replaceable) {
+        if (replaceable) {
+            imageAdapter.clear();
+        }
+        imageAdapter.remove(appender());
         for (String string : images) {
             Model model = new Model();
             model.setId(string);
-            imageAdapter.add(model);
+            imageAdapter.update(model);
         }
         appendAttacher();
     }
@@ -2087,11 +2157,38 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onDeleteClick(String url) {
             waitingFroCompressImages.remove(url);
-            imageAdapter.remove(url);
-            appendAttacher();
+            if (Utils.isUrl(url)) {
+                warningUploadedImageRemove(url);
+            } else {
+                imageAdapter.remove(url);
+                appendAttacher();
+            }
         }
     };
 
+    private void removeImageFromArchive(String url) {
+        if (mArchive.getImage().size() > 0) {
+            Iterator<Attachment> iterator = mArchive.getImage().iterator();
+            while (iterator.hasNext()) {
+                Attachment attachment = iterator.next();
+                if (attachment.getUrl().equals(url)) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    private void warningUploadedImageRemove(final String url) {
+        DeleteDialogHelper.helper().init(this).setTitleText(R.string.ui_text_archive_creator_editor_template_remove_uploaded_image).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                imageAdapter.remove(url);
+                removeImageFromArchive(url);
+                appendAttacher();
+                return true;
+            }
+        }).show();
+    }
 
     private class SpacesItemDecoration extends RecyclerView.ItemDecoration {
 
