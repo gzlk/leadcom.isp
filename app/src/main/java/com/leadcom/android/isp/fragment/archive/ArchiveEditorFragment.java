@@ -568,7 +568,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onStop() {
-        if (!mArchive.isAttachmentArchive() && isGroupArchive) {
+        if (!mArchive.isAttachmentArchive()) {
             // 图文的组织档案才保存草稿
             saveDraft();
         }
