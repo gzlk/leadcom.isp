@@ -19,7 +19,6 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
-import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.application.App;
@@ -448,15 +447,12 @@ public class GroupFragment extends BaseOrganizationFragment {
         if (isEmpty(dAdapter.get(0).getId()) || !isEmpty(mQueryId) || !dAdapter.get(0).getId().equals(group.getId())) {
             mQueryId = "";
             dAdapter.replace(group, 0);
-            if (null == group.getCalculate()) {
-                fetchingQuantity(group.getId());
-            } else {
-                resetQuantity(group.getCalculate());
-            }
+            resetQuantity(group.getCalculate());
         }
     }
 
     private void resetQuantity(Quantity quantity) {
+        if (null == quantity) return;
         for (int i = 1, len = dAdapter.getItemCount(); i < len; i++) {
             SimpleClickableItem item = (SimpleClickableItem) dAdapter.get(i);
             int index = item.getIndex();
@@ -477,18 +473,6 @@ public class GroupFragment extends BaseOrganizationFragment {
             item.reset();
             dAdapter.update(item);
         }
-    }
-
-    private void fetchingQuantity(String groupId) {
-        QuantityRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Quantity>() {
-            @Override
-            public void onResponse(Quantity quantity, boolean success, String message) {
-                super.onResponse(quantity, success, message);
-                if (success && null != quantity) {
-                    resetQuantity(quantity);
-                }
-            }
-        }).findGroup(groupId);
     }
 
     private class GroupAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Organization> {
