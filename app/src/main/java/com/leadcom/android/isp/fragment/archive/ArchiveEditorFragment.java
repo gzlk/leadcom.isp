@@ -361,6 +361,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         multimediaControlView.setVisibility(mArchive.isMultimediaArchive() ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         templateView.setVisibility(mArchive.isTemplateArchive() ? View.VISIBLE : View.GONE);
+        if (mArchive.isTemplateArchive()) {
+            isGroupArchive = true;
+            isUserArchive = false;
+        }
     }
 
     private void fetchingSingleDraft() {
