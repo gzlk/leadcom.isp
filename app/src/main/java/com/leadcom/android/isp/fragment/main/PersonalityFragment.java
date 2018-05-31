@@ -17,7 +17,6 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
-import com.leadcom.android.isp.api.common.QuantityRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.application.App;
@@ -447,11 +446,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.add(item);
             }
         }
-        if (isSelf) {
-            fetchingQuantity();
-        } else {
-            fetchingRemoteUserInfo();
-        }
+        fetchingRemoteUserInfo();
     }
 
     private void resetQuantity(Quantity quantity) {
@@ -476,19 +471,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.update(item);
             }
         }
-    }
-
-    private void fetchingQuantity() {
-        QuantityRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Quantity>() {
-            @Override
-            public void onResponse(Quantity quantity, boolean success, String message) {
-                super.onResponse(quantity, success, message);
-                if (success && null != quantity) {
-                    resetQuantity(quantity);
-                }
-                fetchingRemoteUserInfo();
-            }
-        }).findUser(isSelf ? Cache.cache().userId : mQueryId);
     }
 
     private void initializeAdapter() {
