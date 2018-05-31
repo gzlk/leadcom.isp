@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ui_organization_top_channel_1">小组</string>
+    <string name="ui_organization_top_channel_1">分支</string>
     <string name="ui_organization_top_channel_2">成员</string>
     <string name="ui_organization_top_channel_3">档案</string>
     <string name="ui_organization_top_channel_4">推荐</string>
@@ -10,7 +10,7 @@
         <item>1|您已关注的组织(%d个)||1</item>
         <item>2|可能感兴趣的组织：||1</item>
         <item>3|||</item>
-        <item>4|下属小组(%d个)||0</item>
+        <item>4|下属分支(%d个)||0</item>
         <item>5|||</item>
     </string-array>
     <string name="ui_organization_structure_no_group_exist">您没有加入任何组织</string>
@@ -77,26 +77,26 @@
     <string name="ui_group_header_minmeng_flag">&#xe68d;&#xe68e;&#xe693;&#xe694;&#xe697;&#xe699;</string>
     <string name="ui_group_archive_fragment_title">组织档案</string>
     <string name="ui_group_member_fragment_title">组织成员</string>
-    <string name="ui_group_squad_fragment_title">下属小组</string>
-    <string name="ui_group_squad_member_fragment_title">小组成员</string>
+    <string name="ui_group_squad_fragment_title">下属分支</string>
+    <string name="ui_group_squad_member_fragment_title">分支成员</string>
     <string name="ui_group_squad_member_fragment_title_string" formatted="false">【%s】全体成员</string>
-    <string name="ui_group_squad_nothing">组织还没有小组，您来添加第一个吧</string>
+    <string name="ui_group_squad_nothing">组织还没有分支，您来添加第一个吧</string>
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
 
     <string name="ui_organization_squad_add_title">名称：</string>
-    <string name="ui_organization_squad_add_hint">小组名称(10个字以内)</string>
-    <string name="ui_organization_squad_add_name_invalid">小组名称不符合要求</string>
+    <string name="ui_organization_squad_add_hint">分支名称(10个字以内)</string>
+    <string name="ui_organization_squad_add_name_invalid">分支名称不符合要求</string>
     <string name="ui_organization_squad_add_introduction_hint">简介(50个字以内)</string>
-    <string name="ui_organization_squad_add_introduction_invalid">小组简介不符合要求</string>
-    <string name="ui_organization_squad_add_text">增加下属小组</string>
+    <string name="ui_organization_squad_add_introduction_invalid">分支简介不符合要求</string>
+    <string name="ui_organization_squad_add_text">增加下属分支</string>
     <string name="ui_organization_squad_not_member" formatted="false">
-        <![CDATA[您还不是<font color="#3cbaff">%s</font>的小组成员。<br/>现在要加入吗？]]>
+        <![CDATA[您还不是分支<font color="#3cbaff">%s</font>的成员。<br/>现在要加入吗？]]>
     </string>
     <string name="ui_organization_squad_delete_warning" formatted="false">
-        <![CDATA[删除小组<font color="#3cbaff">%s</font>后会解散对应的群体会话，确定继续？]]>
+        <![CDATA[删除分支<font color="#3cbaff">%s</font>后会解散对应的群体会话，确定继续？]]>
     </string>
 
-    <string name="ui_organization_squad_contact_loading_squads">正在加载小组列表&#8230;</string>
+    <string name="ui_organization_squad_contact_loading_squads">正在加载分支列表&#8230;</string>
 
     <string name="ui_squad_contact_menu_1">组织通讯录</string>
     <string name="ui_squad_contact_menu_2">手机通讯录</string>
@@ -108,12 +108,12 @@
     <string name="ui_organization_contact_transfer_manager">转让管理权</string>
     <string name="ui_organization_contact_set_archive_manager">设为档案管理员</string>
     <string name="ui_organization_contact_unset_archive_manager">撤销档案管理员</string>
-    <string name="ui_organization_contact_squad_no_member">小组目前没有更多成员</string>
+    <string name="ui_organization_contact_squad_no_member">分支目前没有更多成员</string>
     <string name="ui_organization_contact_remove_member" formatted="false">
         <![CDATA[您确定要踢出<font color="#3cbaff">%s</font>吗？]]>
     </string>
     <string name="ui_organization_contact_removing">正在移除成员，请稍后&#8230;</string>
-    <string name="ui_organization_contact_removing_squad_member">正在移除小组成员，请稍后&#8230;</string>
+    <string name="ui_organization_contact_removing_squad_member">正在移除分支成员，请稍后&#8230;</string>
     <string name="ui_organization_contact_set_to_archive_manager">正在设置档案管理员，请稍候&#8230;</string>
     <string name="ui_organization_contact_unset_to_archive_manager">正在撤销档案管理员，请稍候&#8230;</string>
     <string name="ui_organization_contact_set_to_manager" formatted="false">
@@ -137,7 +137,7 @@
     <string name="ui_organization_contact_picker_cannot_unpick_exists">锁定状态的成员不能在这里取消</string>
     <string name="ui_organization_contact_loading_text">正在加载成员列表，请稍候&#8230;</string>
     <string name="ui_organization_contact_picker_nothing_picked">
-        <![CDATA[<b>您没有选中任何人员</b><br/><br/>您确定要使用一个空白记录吗？<br/><br/>PS: 在<font color="#db7763">展开</font>的<font color="#3cbaff">组织或小组</font>列表里可以进行<font color="#3cbaff">点选或全选</font>，收起来的成员列表不会记录其选择状态。]]>
+        <![CDATA[<b>您没有选中任何人员</b><br/><br/>您确定要使用一个空白记录吗？<br/><br/>PS: 在<font color="#db7763">展开</font>的<font color="#3cbaff">组织或分支</font>列表里可以进行<font color="#3cbaff">点选或全选</font>，收起来的成员列表不会记录其选择状态。]]>
     </string>
     <string name="ui_organization_contact_picker_resulted" formatted="false">选中%d人，去重复后保留%d人</string>
 
