@@ -278,7 +278,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
      * 是否是组织档案，默认个人档案
      */
     private boolean isGroupArchive = false, isUserArchive = true;
-    private boolean isLongClickEditor = false;
+    private boolean isLongClickEditor = false, isOpenOther = false;
     /**
      * 是否是粘贴了内容
      */
@@ -563,12 +563,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 break;
         }
+        isOpenOther = false;
         super.onActivityResult(requestCode, data);
     }
 
     @Override
     public void onStop() {
-        if (!mArchive.isAttachmentArchive()) {
+        if (!mArchive.isAttachmentArchive() && !isOpenOther) {
             // 图文的组织档案才保存草稿
             saveDraft();
         }
@@ -854,13 +855,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                             createSuccess();
                         }
                     } else {
-                        //ArchiveDraft.delete(mArchive.getId());
                         mArchive = archive;
                         createSuccess();
-                        //mArchive = archive;
-                        //resetRightIcons();
-                        //mEditor.setInputEnabled(false);
-                        //openSettingDialog();
                     }
                 }
             }
@@ -869,6 +865,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void createSuccess() {
         if (null != mArchive && !isEmpty(mArchive.getId())) {
+            isOpenOther = true;
             ArchiveDetailsFragment.open(ArchiveEditorFragment.this, mArchive);
         }
         resultSucceededActivity();
@@ -1064,6 +1061,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                             ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_notime);
                         } else {
                             // 选择封面，到封面拾取器
+                            isOpenOther = true;
                             CoverPickFragment.open(ArchiveEditorFragment.this, true, mArchive.getCover(), 1, 1);
                         }
                         break;
@@ -1090,12 +1088,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         }
                         break;
                     case R.id.ui_popup_rich_editor_setting_group_picker:
+                        isOpenOther = true;
                         GroupPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false);
                         break;
                     case R.id.ui_popup_rich_editor_setting_branch_picker:
                         if (isEmpty(mArchive.getGroupId())) {
                             ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
                         } else {
+                            isOpenOther = true;
                             SquadPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), mArchive.getBranch());
                         }
                         break;
@@ -1138,6 +1138,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                                     ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
                                 } else {
                                     isShareDraft = true;
+                                    isOpenOther = true;
                                     GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
                                 }
                             } else if (mArchive.isTemplateArchive()) {
@@ -1146,6 +1147,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                                     isShareDraft = true;
                                     // 如果选择了图片，则压缩图片然后上传
                                     tryUploadingTemplateImages();
+                                    isOpenOther = true;
                                     // 活动档案分享时选择要分享的人
                                     GroupContactPickFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), false, false, Model.EMPTY_ARRAY);
                                 }
@@ -1201,12 +1203,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             private void openLabelPicker() {
                 String json = Json.gson().toJson(mArchive.getLabel());
                 String string = replaceJson(json, false);
+                isOpenOther = true;
                 LabelPickFragment.open(ArchiveEditorFragment.this, "", "", LabelPickFragment.TYPE_ARCHIVE, string);
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
 
     private void openMemberPicker() {
+        isOpenOther = true;
         GroupContactPickFragment.open(this, REQUEST_SELECT, "", true, false, "[]");
     }
 
@@ -1307,6 +1311,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             public boolean onClick(View view) {
                 switch (view.getId()) {
                     case R.id.ui_popup_rich_editor_image_navigate:
+                        isOpenOther = true;
                         openImageSelector(true);
                         // 图片选择时，不需要关闭对话框，返回之后还要上传
                         return false;
@@ -1650,6 +1655,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             mIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
         try {
+            isOpenOther = true;
             startActivityForResult(mIntent, request);
         } catch (ActivityNotFoundException e) {
             ToastHelper.make().showMsg("您的手机没有相册应用");
@@ -2013,7 +2019,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 mEditor.setHeading(6);
                 break;
             case R.id.ui_archive_creator_rich_editor_template_images_clear:
-                if (waitingFroCompressImages.size() > 0) {
+                if (null != imageAdapter && imageAdapter.getItemCount() > 1) {
                     warningClearSelectedImages();
                 }
                 break;
@@ -2091,11 +2097,30 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                waitingFroCompressImages.clear();
-                resetImages(waitingFroCompressImages, true);
+                clearTemplateImages();
                 return true;
             }
         }).setTitleText(R.string.ui_text_archive_creator_editor_template_clear_images).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
+
+    private void clearTemplateImages() {
+        // 清除待上传列表
+        if (waitingFroCompressImages.size() > 0) {
+            for (String image : waitingFroCompressImages) {
+                imageAdapter.remove(image);
+                removeImageFromArchive(image);
+            }
+        }
+        // 清除档案原有的已上传列表
+        if (mArchive.getImage().size() > 0) {
+            Iterator<Attachment> iterator = mArchive.getImage().iterator();
+            while (iterator.hasNext()) {
+                Attachment attachment = iterator.next();
+                imageAdapter.remove(attachment.getUrl());
+                iterator.remove();
+            }
+        }
+        resetImages(waitingFroCompressImages, true);
     }
 
     private void resetAttachmentImages(ArrayList<Attachment> images) {
