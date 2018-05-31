@@ -12,7 +12,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -279,7 +279,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                     ToastHelper.make().showMsg("docId is null");
                 } else {
                     // 打开档案详情页
-                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive);
+                    ArchiveDetailsFragment.open(HomeFeaturedFragment.this, archive);
                 }
             } else {
                 ToastHelper.make().showMsg("无效的推荐内容");
@@ -342,7 +342,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
-                ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, arc);
+                ArchiveDetailsFragment.open(HomeFeaturedFragment.this, arc);
             } else if (model instanceof PriorityPlace) {
                 // 编辑推荐
                 PriorityPlace place = (PriorityPlace) model;
@@ -369,7 +369,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 收藏或取消收藏
                     selectedIndex = index;
-                    ArchiveDetailsWebViewFragment.open(HomeFeaturedFragment.this, archive);
+                    ArchiveDetailsFragment.open(HomeFeaturedFragment.this, archive);
                     //collect(doc);
                     break;
             }

@@ -165,7 +165,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
             switch (view.getId()) {
                 case R.id.ui_tool_view_archive_draft_layout:
                     Archive draft = (Archive) mAdapter.get(index);
-                    ArchiveDetailsWebViewFragment.open(ArchiveDraftFragment.this, draft, true);
+                    ArchiveDetailsFragment.open(ArchiveDraftFragment.this, draft, true);
                     finish();
                     break;
                 case R.id.ui_tool_view_archive_draft_selector:

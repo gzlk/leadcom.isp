@@ -10,7 +10,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
@@ -201,7 +201,7 @@ public class UserMessageFragment extends BaseSwipeRefreshSupportFragment {
                                 return;
                             }
                             Archive archive = type == Archive.Type.USER ? msg.getUserDoc() : msg.getGroDoc();
-                            ArchiveDetailsWebViewFragment.open(UserMessageFragment.this, archive);
+                            ArchiveDetailsFragment.open(UserMessageFragment.this, archive);
                             break;
                     }
                     break;

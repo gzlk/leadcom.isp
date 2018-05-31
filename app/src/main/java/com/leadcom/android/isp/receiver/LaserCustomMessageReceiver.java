@@ -10,7 +10,7 @@ import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.SysInfoUtil;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -59,15 +59,15 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
                 break;
             case PushMessage.MsgCode.GROUP_DOC_COMMENT:
             case PushMessage.MsgCode.GROUP_DOC_TRANSPORT:
-                ArchiveDetailsWebViewFragment.open(context, extra.getGroupId(), "", extra.getDocId(),
+                ArchiveDetailsFragment.open(context, extra.getGroupId(), "", extra.getDocId(),
                         Archive.Type.GROUP, false, isAppForeground, extra.getDocUserId());
                 break;
             case PushMessage.MsgCode.USER_DOC_COMMENT:
-                ArchiveDetailsWebViewFragment.open(context, extra.getGroupId(), "", extra.getDocId(),
+                ArchiveDetailsFragment.open(context, extra.getGroupId(), "", extra.getDocId(),
                         Archive.Type.USER, false, isAppForeground, extra.getDocUserId());
                 break;
             case PushMessage.MsgCode.GROUP_DOC_SHARE:
-                ArchiveDetailsWebViewFragment.open(context, extra.getGroupId(), "", extra.getDocId(),
+                ArchiveDetailsFragment.open(context, extra.getGroupId(), "", extra.getDocId(),
                         Archive.Type.GROUP, true, isAppForeground, extra.getDocUserId());
                 break;
             case PushMessage.MsgCode.USER_MMT_COMMENT:

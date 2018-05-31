@@ -25,7 +25,7 @@ import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -499,7 +499,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 break;
             case Collection.Type.GROUP_ARCHIVE:
             case Collection.Type.USER_ARCHIVE:
-                ArchiveDetailsWebViewFragment.open(this, collection);
+                ArchiveDetailsFragment.open(this, collection);
                 break;
             case Collection.Type.ATTACHMENT:
             case Collection.Type.ARCHIVE:
@@ -603,7 +603,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_like_layout:
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 个人档案评论
-                    ArchiveDetailsWebViewFragment.open(IndividualFragment.this, (Archive) mAdapter.get(index));
+                    ArchiveDetailsFragment.open(IndividualFragment.this, (Archive) mAdapter.get(index));
                     break;
 //                case R.id.ui_tool_view_archive_additional_like_layout:
 //                    // 个人档案点赞
@@ -900,7 +900,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     private void archiveClick(Archive archive) {
         if (null != archive) {
-            ArchiveDetailsWebViewFragment.open(IndividualFragment.this, archive);
+            ArchiveDetailsFragment.open(IndividualFragment.this, archive);
         }
     }
 

@@ -9,7 +9,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -145,7 +145,7 @@ public class IndividualArchivesFragment extends BaseSwipeRefreshSupportFragment 
         public void onClick(int index) {
             // 打开档案详情页
             Archive archive = mAdapter.get(index);
-            ArchiveDetailsWebViewFragment.open(IndividualArchivesFragment.this, archive);
+            ArchiveDetailsFragment.open(IndividualArchivesFragment.this, archive);
         }
     };
 

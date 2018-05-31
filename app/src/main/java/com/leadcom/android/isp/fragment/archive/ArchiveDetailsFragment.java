@@ -85,7 +85,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
+public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
     private static final String PARAM_CMT_INDEX = "adwvf_archive_cmt_index";
@@ -98,8 +98,8 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     private static boolean deletable = false;
     private static boolean isCollected = false;
 
-    public static ArchiveDetailsWebViewFragment newInstance(Bundle bundle) {
-        ArchiveDetailsWebViewFragment adwvf = new ArchiveDetailsWebViewFragment();
+    public static ArchiveDetailsFragment newInstance(Bundle bundle) {
+        ArchiveDetailsFragment adwvf = new ArchiveDetailsFragment();
         adwvf.setArguments(bundle);
         return adwvf;
     }
@@ -136,10 +136,6 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
     public static void open(BaseFragment fragment, Archive archive) {
         open(fragment, archive.getGroupId(), archive.getCover(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
                 (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false, archive.getUserId());
-        //int type = isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
-        //Bundle bundle = getBundle(archive.getId(), type, true);
-        //bundle.putSerializable(PARAM_ARCHIVE, archive);
-        //fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
     }
 
     // 打开详情页并指定一个档案，收藏时用
@@ -148,38 +144,14 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                 (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft, archive.getUserId());
     }
 
-//    public static void open(BaseFragment fragment, String archiveId, int archiveType) {
-//        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(),
-//                getBundle(archiveId, archiveType, true), REQUEST_DELETE, true, false);
-//    }
-
-//    public static void openDraft(BaseFragment fragment, String archiveId, int archiveType) {
-//        Bundle bundle = getBundle(archiveId, archiveType, true);
-//        bundle.putBoolean(PARAM_DRAFT, true);
-//        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
-//    }
-
-//    public static void open(Context context, String archiveId, int archiveType, boolean innerOpen) {
-//        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(),
-//                getBundle(archiveId, archiveType, innerOpen), REQUEST_DELETE, true, false);
-//    }
-
-//    public static void openDraft(Context context, String archiveId, int archiveType, boolean innerOpen) {
-//        Bundle bundle = getBundle(archiveId, archiveType, innerOpen);
-//        bundle.putBoolean(PARAM_DRAFT, true);
-//        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(), bundle, REQUEST_DELETE, true, false);
-//    }
-
     public static void open(Context context, String groupId, String cover, String archiveId, int archiveType, boolean isDraft, boolean innerOpen, String authorId) {
-        //InnerWebViewFragment.open(context, title, getUrl(archiveId, archiveType, isDraft));
-        BaseActivity.openActivity(context, ArchiveDetailsWebViewFragment.class.getName(),
+        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(),
                 getBundle(archiveId, groupId, cover, archiveType, innerOpen, isDraft, authorId), false, false);
     }
 
     public static void open(BaseFragment fragment, String groupId, String cover, int archiveType, String archiveId, boolean isDraft, String authorId) {
-        fragment.openActivity(ArchiveDetailsWebViewFragment.class.getName(),
+        fragment.openActivity(ArchiveDetailsFragment.class.getName(),
                 getBundle(archiveId, groupId, cover, archiveType, true, isDraft, authorId), false, false);
-        //InnerWebViewFragment.open(fragment, title, getUrl(archiveId, archiveType, isDraft));
     }
 
     @Override
@@ -464,7 +436,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 //                //openEditSelector();
 //                Archive archive = (Archive) mAdapter.get(mQueryId);
 //                String type = archive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE : ArchiveEditorFragment.MULTIMEDIA;
-//                ArchiveEditorFragment.open(ArchiveDetailsWebViewFragment.this, mQueryId, type);
+//                ArchiveEditorFragment.open(ArchiveDetailsFragment.this, mQueryId, type);
 //                finish();
 //            }
 //        });
@@ -476,7 +448,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             Archive archive = (Archive) mAdapter.get(mQueryId);
             String type = archive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE :
                     (archive.isMultimediaArchive() ? ArchiveEditorFragment.MULTIMEDIA : ArchiveEditorFragment.TEMPLATE);
-            ArchiveEditorFragment.open(ArchiveDetailsWebViewFragment.this, mQueryId, type);
+            ArchiveEditorFragment.open(ArchiveDetailsFragment.this, mQueryId, type);
             finish();
         } else {
             loadingArchivePermission();
@@ -850,7 +822,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
 
         @Override
         public GroupInterestViewHolder onCreateViewHolder(View itemView, int viewType) {
-            GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+            GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ArchiveDetailsFragment.this);
             holder.setSelectable(true);
             holder.addOnViewHolderClickListener(clickListener);
             return holder;
@@ -1004,7 +976,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             switch (view.getId()) {
                 case R.id.ui_holder_view_archive_details_comment_header:
                     // 点击了评论里的头像
-                    App.openUserInfo(ArchiveDetailsWebViewFragment.this, ((Comment) mAdapter.get(index)).getUserId());
+                    App.openUserInfo(ArchiveDetailsFragment.this, ((Comment) mAdapter.get(index)).getUserId());
                     break;
                 case R.id.ui_holder_view_archive_details_comment_layout:
                     if (!isCollected) {
@@ -1187,7 +1159,7 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
             switch (viewType) {
                 case VT_ARCHIVE:
                     if (null == detailsViewHolder) {
-                        detailsViewHolder = new ArchiveDetailsViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                        detailsViewHolder = new ArchiveDetailsViewHolder(itemView, ArchiveDetailsFragment.this);
                         detailsViewHolder.setOnViewHolderElementClickListener(elementClickListener);
                         detailsViewHolder.setIsManager(enableShareDelete);
                         detailsViewHolder.setIsCollected(isCollected);
@@ -1196,21 +1168,21 @@ public class ArchiveDetailsWebViewFragment extends BaseCmtLikeColFragment {
                     }
                     return detailsViewHolder;
                 case VT_COMMENT:
-                    ArchiveDetailsCommentViewHolder adcvh = new ArchiveDetailsCommentViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                    ArchiveDetailsCommentViewHolder adcvh = new ArchiveDetailsCommentViewHolder(itemView, ArchiveDetailsFragment.this);
                     adcvh.setDeletable(deletable);
                     adcvh.setOnViewHolderElementClickListener(elementClickListener);
                     return adcvh;
                 case VT_ATTACHMENT:
-                    ArchiveAttachmentViewHolder aavh = new ArchiveAttachmentViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                    ArchiveAttachmentViewHolder aavh = new ArchiveAttachmentViewHolder(itemView, ArchiveDetailsFragment.this);
                     aavh.setOnViewHolderElementClickListener(elementClickListener);
                     return aavh;
                 case VT_ADDITIONAL:
-                    ArchiveDetailsAdditionalViewHolder adavh = new ArchiveDetailsAdditionalViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                    ArchiveDetailsAdditionalViewHolder adavh = new ArchiveDetailsAdditionalViewHolder(itemView, ArchiveDetailsFragment.this);
                     adavh.setOnViewHolderElementClickListener(elementClickListener);
                     adavh.setIsDraft(isDraft);
                     return adavh;
                 default:
-                    return new NothingMoreViewHolder(itemView, ArchiveDetailsWebViewFragment.this);
+                    return new NothingMoreViewHolder(itemView, ArchiveDetailsFragment.this);
             }
         }
 

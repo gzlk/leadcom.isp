@@ -13,7 +13,7 @@ import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.SysInfoUtil;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -207,7 +207,7 @@ public class WelcomeActivity extends BaseActivity {
                                     groupId = "";
                                 }
                                 String authorId = uri.getQueryParameter("authorid");
-                                ArchiveDetailsWebViewFragment.open(this, groupId, "", id, tp, false, true, authorId);
+                                ArchiveDetailsFragment.open(this, groupId, "", id, tp, false, true, authorId);
                             } else if (path.contains("user")) {
                                 PersonalityFragment.open(this, id);
                             }

@@ -2,6 +2,7 @@ package com.leadcom.android.isp.holder.archive;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.view.View;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
@@ -70,31 +71,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         contentView.getSettings().setDefaultTextEncodingName("UTF-8");
-        contentView.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return true;
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                loadingView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                loadingView.setVisibility(View.GONE);
-                super.onPageFinished(view, url);
-            }
-        });
+        contentView.getSettings().setJavaScriptEnabled(true);
         contentView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onReceivedTitle(WebView view, String title) {
@@ -113,6 +90,34 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
                     return true;
                 }
                 return super.onJsAlert(view, url, message, result);
+            }
+        });
+        contentView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if (Build.VERSION.SDK_INT >= 21) {
+                    view.loadUrl(request.getUrl().toString());
+                }
+                return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                loadingView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                loadingView.setVisibility(View.GONE);
+                super.onPageFinished(view, url);
             }
         });
         margin = getDimension(R.dimen.ui_static_dp_5);

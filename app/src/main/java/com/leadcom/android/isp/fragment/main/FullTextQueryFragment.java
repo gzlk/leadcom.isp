@@ -15,7 +15,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.common.FullTextQueryRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -259,7 +259,7 @@ public class FullTextQueryFragment extends BaseSwipeRefreshSupportFragment {
                 GroupFragment.open(FullTextQueryFragment.this, model.getId());
             } else if (model instanceof Archive) {
                 Archive archive = (Archive) model;
-                ArchiveDetailsWebViewFragment.open(FullTextQueryFragment.this, archive);
+                ArchiveDetailsFragment.open(FullTextQueryFragment.this, archive);
             }
         }
     };

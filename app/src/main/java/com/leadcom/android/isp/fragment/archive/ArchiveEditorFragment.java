@@ -441,7 +441,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public void onCancel() {
                 // 打开到草稿详情页查看评论，无论是个人档案草稿还是组织档案草稿都是组织档案
-                ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, draft, true);
+                ArchiveDetailsFragment.open(ArchiveEditorFragment.this, draft, true);
                 finish();
             }
         }).setTitleText(R.string.ui_text_archive_creator_editor_create_draft_1)
@@ -869,7 +869,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void createSuccess() {
         if (null != mArchive && !isEmpty(mArchive.getId())) {
-            ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive);
+            ArchiveDetailsFragment.open(ArchiveEditorFragment.this, mArchive);
         }
         resultSucceededActivity();
     }
@@ -1599,7 +1599,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
                     finish();
-                    ArchiveDetailsWebViewFragment.open(ArchiveEditorFragment.this, mArchive, true);
+                    ArchiveDetailsFragment.open(ArchiveEditorFragment.this, mArchive, true);
                 }
             }
         }).shareDraft(mArchive.getId(), userIds);

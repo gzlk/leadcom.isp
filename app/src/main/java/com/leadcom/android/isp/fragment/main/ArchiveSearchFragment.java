@@ -23,7 +23,7 @@ import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.DictionaryRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -717,7 +717,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             if (model instanceof Archive) {
                 // 到档案详情
                 Archive arc = (Archive) model;
-                ArchiveDetailsWebViewFragment.open(ArchiveSearchFragment.this, arc);
+                ArchiveDetailsFragment.open(ArchiveSearchFragment.this, arc);
             }
         }
     };

@@ -13,7 +13,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.fragment.archive.ArchiveDetailsWebViewFragment;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -248,7 +248,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
         @Override
         public void onClick(int index) {
             // 打开组织档案详情，一个webview框架
-            ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index));
+            ArchiveDetailsFragment.open(ArchivesFragment.this, mAdapter.get(index));
         }
     };
 
@@ -264,7 +264,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_archive_additional_like_layout:
                 case R.id.ui_tool_view_archive_additional_collection_layout:
                     // 个人档案评论
-                    ArchiveDetailsWebViewFragment.open(ArchivesFragment.this, mAdapter.get(index));
+                    ArchiveDetailsFragment.open(ArchivesFragment.this, mAdapter.get(index));
                     break;
 //                case R.id.ui_tool_view_archive_additional_like_layout:
 //                    // 个人档案点赞
