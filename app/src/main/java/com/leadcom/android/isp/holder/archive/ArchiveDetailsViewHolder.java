@@ -84,7 +84,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
 
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-                if (message.contains("未找到")) {
+                if (message.contains("未找到") || message.contains("删除")) {
                     ToastHelper.make().showMsg(message);
                     fragment().finish();
                     result.confirm();

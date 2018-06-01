@@ -172,8 +172,7 @@ public class GroupFragment extends BaseOrganizationFragment {
 
         @Override
         public void onUploadingComplete(ArrayList<Attachment> uploaded) {
-            Organization group = (Organization) dAdapter.get(0);
-            final String groupId = group.getId(), url = uploaded.get(0).getUrl();
+            final String groupId = dAdapter.get(0).getId(), url = uploaded.get(0).getUrl();
             if (hasOperation(groupId, GRPOperation.GROUP_PROPERTY)) {
                 // 重新检查一遍更改权限之后更改组织的logo
                 OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {

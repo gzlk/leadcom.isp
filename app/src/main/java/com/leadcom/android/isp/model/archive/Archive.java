@@ -165,7 +165,11 @@ public class Archive extends Additional {
         /**
          * 自定义的草稿
          */
-        int DRAFT = 3;
+        int DRAFT = 4;
+        /**
+         * 组织和个人都有
+         */
+        int ALL = 3;
     }
 
     /**
@@ -463,6 +467,10 @@ public class Archive extends Additional {
     // 水印
     @Column(Field.Watermark)
     private String watermark;
+
+    // 分享到的用户id列表
+    @Column(Field.ToUserId)
+    private ArrayList<String> shareUserIds;
 
     public boolean isPublic() {
         return authPublic == Seclusion.Type.Public;
@@ -883,5 +891,16 @@ public class Archive extends Additional {
 
     public void setWatermark(String watermark) {
         this.watermark = watermark;
+    }
+
+    public ArrayList<String> getShareUserIds() {
+        if (null == shareUserIds) {
+            shareUserIds = new ArrayList<>();
+        }
+        return shareUserIds;
+    }
+
+    public void setShareUserIds(ArrayList<String> shareUserIds) {
+        this.shareUserIds = shareUserIds;
     }
 }

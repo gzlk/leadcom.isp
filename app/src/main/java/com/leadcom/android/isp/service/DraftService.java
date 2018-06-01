@@ -152,7 +152,7 @@ public class DraftService extends Service {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_draft_saved);
                 }
             }
-        }).addDraft(archive);
+        }).save(archive, true, false);
     }
 
     private void broadcasting(Archive archive) {

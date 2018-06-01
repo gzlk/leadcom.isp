@@ -356,54 +356,7 @@ public class ArchiveRequest extends Request<Archive> {
         executeHttpRequest(getRequest(BoolArchive.class, group("/recommend/undo"), object.toString(), HttpMethods.Post));
     }
 
-    /**
-     * 添加组织档案草稿
-     */
-    public void addDraft(Archive archive) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("title", archive.getTitle())// 必要字段
-                    .put("docType", archive.getDocType())// 必要字段
-                    .put("cover", checkNull(archive.getCover()))
-                    .put("authPublic", archive.getAuthPublic())// 必要字段
-                    .put("content", archive.getContent())
-                    .put("label", new JSONArray(archive.getLabel()))
-                    .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
-                    .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
-                    .put("video", new JSONArray(Attachment.getJson(archive.getVideo())))
-                    .put("attach", new JSONArray(Attachment.getJson(archive.getAttach())))
-                    .put("source", archive.getSource())
-                    .put("groupId", checkNull(archive.getGroupId()))
-                    .put("groupName", archive.getGroupName())
-                    // 组织档案需要增加以下参数
-                    .put("site", checkNull(archive.getSite()))
-                    .put("property", checkNull(archive.getProperty()))
-                    .put("category", checkNull(archive.getCategory()))
-                    .put("participant", checkNull(archive.getParticipant()))
-                    .put("happenDate", archive.getHappenDate())
-                    // 模板档案需要增加一下参数
-                    .put("topic", archive.getTopic())
-                    .put("resolution", archive.getResolution())
-                    .put("branch", archive.getBranch());
-            if (!isEmpty(archive.getId())) {
-                object.put("_id", archive.getId());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (isEmpty(archive.getId())) {
-            // 没有id是新建草稿
-            executeHttpRequest(getRequest(SingleArchive.class, draft(ADD), object.toString(), HttpMethods.Post));
-        } else {
-            // 有id是更新草稿
-            executeHttpRequest(getRequest(SingleArchive.class, draft(UPDATE), object.toString(), HttpMethods.Post));
-        }
-    }
-
-    /**
-     * 添加正式档案
-     */
-    public void addFormal(Archive archive) {
+    public void save(Archive archive, boolean isDraft, boolean shareDraft) {
         boolean isIndividual = isEmpty(archive.getGroupId(), true);
         JSONObject object = new JSONObject();
         try {
@@ -412,7 +365,6 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("docType", archive.getDocType())// 必要字段
                     .put("authPublic", archive.getAuthPublic())// 必要字段
                     .put("content", archive.getContent())
-                    //.put("markdown", archive.getMarkdown())
                     .put("label", new JSONArray(archive.getLabel()))
                     .put("office", new JSONArray(Attachment.getJson(archive.getOffice())))
                     .put("image", new JSONArray(Attachment.getJson(archive.getImage())))
@@ -435,13 +387,18 @@ public class ArchiveRequest extends Request<Archive> {
                         .put("participant", checkNull(archive.getParticipant()))
                         .put("happenDate", archive.getHappenDate());
             }
+            if (shareDraft) {
+                // 如果是分享草稿，则需要添加这个字段
+                object.put("shareUserIds", new JSONArray(archive.getShareUserIds()));
+            }
             if (!isEmpty(archive.getId())) {
                 object.put("_id", archive.getId());
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        executeHttpRequest(getRequest(SingleArchive.class, (archive.getOwnType() == Archive.Type.USER ? url(ADD) : group(ADD)), object.toString(), HttpMethods.Post));
+        String param = format("/archive/save?formalType=%d&ownType=%d", (shareDraft ? 1 : isDraft ? 0 : 2), archive.getOwnType());
+        executeHttpRequest(getRequest(SingleArchive.class, param, object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -463,23 +420,5 @@ public class ArchiveRequest extends Request<Archive> {
             e.printStackTrace();
         }
         executeHttpRequest(getRequest(BoolArchive.class, draft(DELETE), object.toString(), HttpMethods.Post));
-    }
-
-    /**
-     * 分享草稿档案到指定用户
-     */
-    public void shareDraft(String archiveId, ArrayList<String> userIds) {
-        if (null == userIds || userIds.size() <= 0) {
-            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_no_member);
-        } else {
-            JSONObject object = new JSONObject();
-            try {
-                object.put("docId", archiveId);
-                object.put("shareUserIds", new JSONArray(userIds));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            executeHttpRequest(getRequest(BoolArchive.class, draft(SHARE), object.toString(), HttpMethods.Post));
-        }
     }
 }

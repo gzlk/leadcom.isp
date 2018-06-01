@@ -39,11 +39,11 @@ import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
-import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
-import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.common.CoverPickFragment;
+import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
+import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
@@ -52,7 +52,6 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DateTimeHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.DictionaryHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
@@ -68,7 +67,6 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Label;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
-import com.leadcom.android.isp.model.archive.Dictionary;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.common.ShareInfo;
@@ -477,7 +475,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     }, 2000);
                 }
-                updateArchive(ArchiveRequest.TYPE_COVER);
                 break;
             case REQUEST_VIDEO:
                 // 视频选择返回了
@@ -502,7 +499,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (null != labelText) {
                     labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
                 }
-                updateArchive(ArchiveRequest.TYPE_LABEL);
                 break;
             case REQUEST_CATEGORY:
                 mArchive.setCategory(getResultedData(data));
@@ -762,7 +758,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             }
         }
         if (isGroupArchive) {
-            mArchive.setOwnType(Archive.Type.GROUP);
+            if (isUserArchive) {
+                mArchive.setOwnType(Archive.Type.ALL);
+            } else {
+                mArchive.setOwnType(Archive.Type.GROUP);
+            }
             if (isEmpty(mArchive.getGroupId())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
                 return;
@@ -861,24 +861,26 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(archive, success, message);
                 if (success) {
                     // 提交成功，判断是否需要再提交个人档案
-                    if (isGroupArchive) {
-                        // 去掉组织档案需求
-                        isGroupArchive = false;
-                        if (isUserArchive) {
-                            mArchive.setId("");
-                            // 如果选择了还要存为个人档案，则还要再调用一次
-                            tryCreateArchive();
-                        } else {
-                            mArchive = archive;
-                            createSuccess();
-                        }
-                    } else {
-                        mArchive = archive;
-                        createSuccess();
-                    }
+                    mArchive = archive;
+                    createSuccess();
+//                    if (isGroupArchive) {
+//                        // 去掉组织档案需求
+//                        isGroupArchive = false;
+//                        if (isUserArchive) {
+//                            mArchive.setId("");
+//                            // 如果选择了还要存为个人档案，则还要再调用一次
+//                            tryCreateArchive();
+//                        } else {
+//                            mArchive = archive;
+//                            createSuccess();
+//                        }
+//                    } else {
+//                        mArchive = archive;
+//                        createSuccess();
+//                    }
                 }
             }
-        }).addFormal(mArchive);
+        }).save(mArchive, false, false);
     }
 
     private void createSuccess() {
@@ -1115,10 +1117,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         break;
                     case R.id.ui_popup_rich_editor_setting_property:
                         // 档案性质
+                        isOpenOther = true;
                         LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_PROPERTY, mArchive.getProperty());
                         break;
                     case R.id.ui_popup_rich_editor_setting_category:
                         // 档案类型
+                        isOpenOther = true;
                         LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_CATEGORY, mArchive.getCategory());
                         break;
                     case R.id.ui_popup_rich_editor_setting_participant:
@@ -1239,26 +1243,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
             }
         }).show(ArchiveEditorFragment.this, true, true, true, !mArchive.isTemplateArchive(), mArchive.getHappenDate());
-    }
-
-    /**
-     * 获取草稿档案的分享内容
-     */
-    private void getDraftShareInfo() {
-        if (null == mShareInfo) {
-            ShareRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ShareInfo>() {
-                @Override
-                public void onResponse(ShareInfo info, boolean success, String message) {
-                    super.onResponse(info, success, message);
-                    if (success && null != info) {
-                        mShareInfo = info;
-                        openShareDialog();
-                    }
-                }
-            }).getDraftShareInfo(mArchive, isEmpty(mArchive.getGroupId()) ? 3 : 4);
-        } else {
-            openShareDialog();
-        }
     }
 
     /**
@@ -1606,32 +1590,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void shareDraftTo(ArrayList<String> userIds) {
+        mArchive.getShareUserIds().clear();
+        mArchive.getShareUserIds().addAll(userIds);
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
             public void onResponse(Archive archive, boolean success, String message) {
                 super.onResponse(archive, success, message);
                 if (success) {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_share_draft);
-                    finish();
+                    isOpenOther = true;
+                    if (null != archive) {
+                        mArchive = archive;
+                    }
                     ArchiveDetailsFragment.open(ArchiveEditorFragment.this, mArchive, true);
+                    finish();
                 }
             }
-        }).shareDraft(mArchive.getId(), userIds);
-    }
-
-    private void updateArchive(int type) {
-//        if (isEmpty(mArchive.getId()) || isEmpty(mQueryId)) {
-//            return;
-//        }
-//        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
-//            @Override
-//            public void onResponse(Archive archive, boolean success, String message) {
-//                super.onResponse(archive, success, message);
-//                if (!success) {
-//                    ToastHelper.make().showMsg(message);
-//                }
-//            }
-//        }).update(mArchive, type);
+        }).save(mArchive, true, true);
     }
 
     private void showFileSize(boolean video, String path, TextView view) {
