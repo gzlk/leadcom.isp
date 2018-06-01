@@ -377,6 +377,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             if (isFirst) {
                 isFirst = false;
                 if (!isSingle) {
+                    // 如果是首页里的组织页面，则初始化组织列表的位置
                     initializeGroupsPosition();
                 }
                 // 初始化第一个组织
@@ -385,8 +386,8 @@ public class GroupFragment extends BaseOrganizationFragment {
                         onGroupChange(gAdapter.get(0));
                     }
                 }
-            } else if (!isEmpty(mQueryId)) {
-                onGroupChange(gAdapter.get(mQueryId));
+            } else {
+                onGroupChange(!isEmpty(mQueryId) ? gAdapter.get(mQueryId) : gAdapter.get(0));
             }
         }
         displayNothing(gAdapter.getItemCount() <= 0);
@@ -446,8 +447,8 @@ public class GroupFragment extends BaseOrganizationFragment {
         if (isEmpty(dAdapter.get(0).getId()) || !isEmpty(mQueryId) || !dAdapter.get(0).getId().equals(group.getId())) {
             mQueryId = "";
             dAdapter.replace(group, 0);
-            resetQuantity(group.getCalculate());
         }
+        resetQuantity(group.getCalculate());
     }
 
     private void resetQuantity(Quantity quantity) {

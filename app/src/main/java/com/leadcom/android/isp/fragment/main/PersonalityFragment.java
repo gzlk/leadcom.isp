@@ -65,21 +65,29 @@ import java.util.Iterator;
 
 public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static PersonalityFragment newInstance(String params) {
+    private static final String PARAM_OPENED = "pf_opened";
+
+    public static PersonalityFragment newInstance(Bundle bundle) {
         PersonalityFragment pf = new PersonalityFragment();
-        Bundle bundle = new Bundle();
-        // 传过来的用户id
-        bundle.putString(PARAM_QUERY_ID, params);
         pf.setArguments(bundle);
         return pf;
     }
 
+    private static Bundle getBundle(String userId) {
+        Bundle bundle = new Bundle();
+        // 用户id
+        bundle.putString(PARAM_QUERY_ID, userId);
+        // 是打开的个人属性页
+        bundle.putBoolean(PARAM_OPENED, true);
+        return bundle;
+    }
+
     public static void open(Context context, String userId) {
-        BaseActivity.openActivity(context, PersonalityFragment.class.getName(), userId, true, false);
+        BaseActivity.openActivity(context, PersonalityFragment.class.getName(), getBundle(userId), true, false);
     }
 
     public static void open(BaseFragment fragment, String userId) {
-        fragment.openActivity(PersonalityFragment.class.getName(), userId, true, false);
+        fragment.openActivity(PersonalityFragment.class.getName(), getBundle(userId), true, false);
     }
 
     @ViewId(R.id.ui_main_tool_bar_background)
@@ -102,7 +110,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private String[] items;
 
     private static int selectedIndex = 0, deleteIndex = 0;
-    private boolean isSelf;
+    private boolean isSelf, isOpened;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,10 +140,24 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        isOpened = bundle.getBoolean(PARAM_OPENED, false);
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_OPENED, isOpened);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (isSelf) {
             //tryPaddingContent(paddingLayout, false);
+            // 首页中的个人页面才允许下拉刷新，其他不允许刷新
+            enableSwipe(!isOpened);
 
             // 头像选择是需要剪切的
             isChooseImageForCrop = true;
@@ -222,6 +244,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 if (success && null != user) {
                     refreshUser(user);
                 }
+                stopRefreshing();
+                isLoadingComplete(true);
             }
         }).find(isSelf ? Cache.cache().userId : mQueryId, true);
     }
@@ -284,12 +308,12 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-
+        fetchingRemoteUserInfo();
     }
 
     @Override
     protected void onLoadingMore() {
-
+        isLoadingComplete(true);
     }
 
     @Override
@@ -398,7 +422,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         } else {
             //mAdapter.replace(user, 0);
         }
-        if (!isSelf) {
+        if (isOpened) {
             setCustomTitle(user.getName());
         }
         clearExtras();
