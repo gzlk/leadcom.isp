@@ -81,7 +81,7 @@ public class MomentCommentHeaderViewHolder extends BaseViewHolder {
         }
         nameView.setText(Html.fromHtml(text));
         timeView.setText(fragment().formatTimeAgo(comment.getCreateDate()));
-        contentView.setText(EmojiUtility.getEmojiString(contentView.getContext(), comment.getContent(), true));
+        contentView.setText(EmojiUtility.getEmojiString(contentView.getContext(), comment.getContent() + " ", true));
         // 我发布的评论可以删除
         deleteView.setVisibility(showDelete ? View.VISIBLE : (comment.isMine() ? View.VISIBLE : View.GONE));
     }

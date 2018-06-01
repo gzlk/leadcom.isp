@@ -214,7 +214,7 @@ public abstract class BaseCmtLikeColFragment extends BaseChatInputSupportFragmen
                 displayLoading(false);
                 onCommentComplete(success, comment, model);
             }
-        }).comment(content + " ", toUserId);
+        }).comment(content, toUserId);
     }
 
     /**
