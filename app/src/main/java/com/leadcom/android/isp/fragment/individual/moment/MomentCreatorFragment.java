@@ -313,8 +313,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             Seclusion seclusion = PrivacyFragment.getSeclusion(privacy);
-            String json = PrivacyFragment.getSeclusion(seclusion);
-            PrivacyFragment.open(MomentCreatorFragment.this, StringHelper.replaceJson(json, false), true);
+            PrivacyFragment.open(MomentCreatorFragment.this, seclusion, true);
             //openActivity(UserPrivacyFragment.class.getName(), json, REQUEST_SECURITY, true, false);
             //ToastHelper.make(Activity()).showMsg("隐私设置");
         }

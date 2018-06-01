@@ -39,13 +39,11 @@ import java.util.List;
 
 public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static PrivacyFragment newInstance(String params) {
+    private static final String PARAM_INDIVIDUAL = "pf_individual";
+    private static final String PARAM_SECLUSION = "pf_seclusion";
+
+    public static PrivacyFragment newInstance(Bundle bundle) {
         PrivacyFragment ssf = new PrivacyFragment();
-        String[] strings = splitParameters(params);
-        Bundle bundle = new Bundle();
-        isIndividual = Boolean.valueOf(strings[0]);
-        // 已选中的隐私项目
-        bundle.putString(PARAM_QUERY_ID, StringHelper.replaceJson(strings[1], true));
         ssf.setArguments(bundle);
         return ssf;
     }
@@ -53,23 +51,40 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 设置隐私
      */
-    public static void open(BaseFragment fragment, String json, boolean individual) {
-        fragment.openActivity(PrivacyFragment.class.getName(), format("%s,%s", individual, json), REQUEST_SECURITY, true, false);
+    public static void open(BaseFragment fragment, Seclusion seclusion, boolean individual) {
+        Bundle bundle = new Bundle();
+        // 是否个人隐私设置
+        bundle.putBoolean(PARAM_INDIVIDUAL, individual);
+        // 当前已选中的隐私项
+        bundle.putSerializable(PARAM_SECLUSION, seclusion);
+        fragment.openActivity(PrivacyFragment.class.getName(), bundle, REQUEST_SECURITY, true, false);
     }
 
-    private static boolean isIndividual = false;
+    private boolean isIndividual = false;
+    private Seclusion selected;
     private String[] items;
     private SecurityAdapter mAdapter;
 
     @Override
-    protected void onDelayRefreshComplete(@DelayType int type) {
-
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        isIndividual = bundle.getBoolean(PARAM_INDIVIDUAL, true);
+        selected = (Seclusion) bundle.getSerializable(PARAM_SECLUSION);
+        if (null == selected) {
+            selected = getSeclusion("");
+        }
     }
 
     @Override
-    public void onDestroy() {
-        isIndividual = false;
-        super.onDestroy();
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putBoolean(PARAM_INDIVIDUAL, isIndividual);
+        bundle.putSerializable(PARAM_SECLUSION, selected);
+    }
+
+    @Override
+    protected void onDelayRefreshComplete(@DelayType int type) {
+
     }
 
     @Override
@@ -141,8 +156,7 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resultPrivacy() {
-        Seclusion seclusion = getSeclusion(mQueryId);
-        int status = seclusion.getStatus();
+        int status = selected.getStatus();
         for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
             Model model = mAdapter.get(i);
             if (model.isSelected()) {
@@ -151,38 +165,38 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
                     status = security.getIndex();
                     if (security.getIndex() == Seclusion.Type.Public) {
                         // 如果是对组织公开，则直接跳出循环
-                        seclusion.setUserIds(null);
-                        seclusion.setUserNames(null);
-                        seclusion.setGroupIds(null);
-                        seclusion.setGroupNames(null);
+                        selected.setUserIds(null);
+                        selected.setUserNames(null);
+                        selected.setGroupIds(null);
+                        selected.setGroupNames(null);
                         break;
                     }
                 } else if (model instanceof Organization) {
                     Organization org = (Organization) model;
-                    if (null == seclusion.getGroupIds()) {
-                        seclusion.setGroupIds(new ArrayList<String>());
-                        seclusion.setGroupNames(new ArrayList<String>());
+                    if (null == selected.getGroupIds()) {
+                        selected.setGroupIds(new ArrayList<String>());
+                        selected.setGroupNames(new ArrayList<String>());
                     }
-                    if (!seclusion.getGroupIds().contains(org.getId())) {
-                        seclusion.getGroupIds().add(org.getId());
-                        seclusion.getGroupNames().add(org.getName());
+                    if (!selected.getGroupIds().contains(org.getId())) {
+                        selected.getGroupIds().add(org.getId());
+                        selected.getGroupNames().add(org.getName());
                     }
                 } else if (model instanceof Member) {
                     Member member = (Member) model;
-                    if (null == seclusion.getUserIds()) {
-                        seclusion.setUserIds(new ArrayList<String>());
-                        seclusion.setUserNames(new ArrayList<String>());
+                    if (null == selected.getUserIds()) {
+                        selected.setUserIds(new ArrayList<String>());
+                        selected.setUserNames(new ArrayList<String>());
                     }
-                    if (!seclusion.getUserIds().contains(member.getUserId())) {
-                        seclusion.getUserIds().add(member.getUserId());
-                        seclusion.getUserNames().add(member.getUserName());
+                    if (!selected.getUserIds().contains(member.getUserId())) {
+                        selected.getUserIds().add(member.getUserId());
+                        selected.getUserNames().add(member.getUserName());
                     }
                 }
             }
         }
-        seclusion.setStatus(status);
+        selected.setStatus(status);
         // 如果用户对象数量大于0则可以清空组织列表，此时只是对选中的组织公开
-        resultData(getSeclusion(seclusion));
+        resultData(getSeclusion(selected));
     }
 
     @Override
@@ -219,11 +233,10 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
 
     private void resetSecurityItems() {
         securities.clear();
-        Seclusion seclusion = PrivacyFragment.getSeclusion(mQueryId);
         for (String string : items) {
             Security security = new Security(string);
             // 设置传过来的默认选择项
-            security.setSelected(security.getIndex() == seclusion.getStatus());
+            security.setSelected(security.getIndex() == selected.getStatus());
             securities.add(security);
         }
     }
@@ -286,10 +299,10 @@ public class PrivacyFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.notifyItemChanged(i);
             }
         }
-        if (selected.getIndex() > 2) {
-            // 增加其他选项
-            resetGroupSelections(selected);
-        }
+        //if (selected.getIndex() > 2) {
+        //    // 增加其他选项
+        //    resetGroupSelections(selected);
+        //}
     }
 
     // 重置组织列表
