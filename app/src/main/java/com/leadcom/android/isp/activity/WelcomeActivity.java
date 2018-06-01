@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.organization.Concern;
 
 /**
  * <b>功能描述：</b>网易云消息处理Activity<br />
@@ -41,6 +43,12 @@ public class WelcomeActivity extends BaseActivity {
     private CorneredButton button;
 
     private String guided = "";
+
+    public static void open(Context context, String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -17,6 +17,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.ToggleButton;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.WelcomeActivity;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -94,16 +95,28 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         });
         contentView.setWebViewClient(new WebViewClient() {
 
+            private boolean checkSchema(String url) {
+                if (url.startsWith("leadcom://")) {
+                    WelcomeActivity.open(getContext(), url);
+                    return true;
+                }
+                return false;
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
+                if (!checkSchema(url)) {
+                    view.loadUrl(url);
+                }
                 return true;
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 if (Build.VERSION.SDK_INT >= 21) {
-                    view.loadUrl(request.getUrl().toString());
+                    if (!checkSchema(request.getUrl().toString())) {
+                        view.loadUrl(request.getUrl().toString());
+                    }
                 }
                 return true;
             }
