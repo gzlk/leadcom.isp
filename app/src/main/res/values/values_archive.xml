@@ -106,6 +106,15 @@
     <string name="ui_text_archive_creator_editor_template_property_null">请提供活动档案属性</string>
     <string name="ui_text_archive_creator_editor_template_category_null">请提供活动档案类型</string>
 
+    <string name="ui_archive_label_picker_fragment_title">活动类型</string>
+    <string name="ui_archive_label_picker_hotest">热门标签</string>
+    <string name="ui_archive_label_picker_picked_max" formatted="false">您最多只能同时选择%d个%s</string>
+    <string name="ui_archive_label_picker_create_title" formatted="false">自定义%s</string>
+    <string name="ui_archive_label_picker_create_hint" formatted="false">%s(10个字以内)</string>
+    <string name="ui_archive_label_picker_create_invalid_name" formatted="false">无效的%s</string>
+    <string name="ui_archive_label_picker_self_define">自定义</string>
+    <string name="ui_archive_label_picker_self_defined">+自定义</string>
+
     <string name="ui_text_archive_list_fragment_title">个人档案</string>
 
     <string name="ui_text_archive_details_fragment_title">档案详细内容</string>

@@ -12,7 +12,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.DictionaryRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.holder.activity.ActivityLabelViewHolder;
+import com.leadcom.android.isp.holder.common.LabelViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.archive.Dictionary;
 
@@ -144,11 +144,11 @@ public class DictionaryHelper {
         }
     };
 
-    private class DictionaryAdapter extends RecyclerViewAdapter<ActivityLabelViewHolder, Dictionary> {
+    private class DictionaryAdapter extends RecyclerViewAdapter<LabelViewHolder, Dictionary> {
 
         @Override
-        public ActivityLabelViewHolder onCreateViewHolder(View itemView, int viewType) {
-            ActivityLabelViewHolder holder = new ActivityLabelViewHolder(itemView, fragment);
+        public LabelViewHolder onCreateViewHolder(View itemView, int viewType) {
+            LabelViewHolder holder = new LabelViewHolder(itemView, fragment);
             holder.addOnViewHolderClickListener(onViewHolderClickListener);
             return holder;
         }
@@ -168,7 +168,7 @@ public class DictionaryHelper {
         }
 
         @Override
-        public void onBindHolderOfView(ActivityLabelViewHolder holder, int position, @Nullable Dictionary item) {
+        public void onBindHolderOfView(LabelViewHolder holder, int position, @Nullable Dictionary item) {
             holder.showContent(item);
             resizeWidth(holder.itemView, position);
         }

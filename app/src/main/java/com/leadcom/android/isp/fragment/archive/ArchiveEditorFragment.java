@@ -504,6 +504,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 }
                 updateArchive(ArchiveRequest.TYPE_LABEL);
                 break;
+            case REQUEST_CATEGORY:
+                mArchive.setCategory(getResultedData(data));
+                resetCategory();
+                break;
+            case REQUEST_PROPERTY:
+                mArchive.setProperty(getResultedData(data));
+                resetProperty();
+                break;
             case REQUEST_ATTACHMENT:
 
                 break;
@@ -973,16 +981,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 siteText.setValue(mArchive.getSite());
                 siteText.focusEnd();
 
-                if (isEmpty(mArchive.getProperty())) {
-                    propertyText.setText(R.string.ui_text_archive_details_editor_setting_property_title);
-                } else {
-                    propertyText.setText(mArchive.getProperty());
-                }
-                if (isEmpty(mArchive.getCategory())) {
-                    categoryText.setText(R.string.ui_text_archive_details_editor_setting_category_title);
-                } else {
-                    categoryText.setText(mArchive.getCategory());
-                }
+                resetProperty();
+                resetCategory();
+
                 if (isEmpty(mArchive.getParticipant())) {
                     participantText.setValue("");
                 } else {
@@ -1114,11 +1115,11 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         break;
                     case R.id.ui_popup_rich_editor_setting_property:
                         // 档案性质
-                        DictionaryHelper.helper(ArchiveEditorFragment.this).setOnDictionarySelectedListener(selectedListener).showDialog(Dictionary.Type.ARCHIVE_NATURE, mArchive.getProperty());
+                        LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_PROPERTY, mArchive.getProperty());
                         break;
                     case R.id.ui_popup_rich_editor_setting_category:
                         // 档案类型
-                        DictionaryHelper.helper(ArchiveEditorFragment.this).setOnDictionarySelectedListener(selectedListener).showDialog(Dictionary.Type.ARCHIVE_TYPE, mArchive.getCategory());
+                        LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_CATEGORY, mArchive.getCategory());
                         break;
                     case R.id.ui_popup_rich_editor_setting_participant:
                         openMemberPicker();
@@ -1194,29 +1195,27 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 privateIcon.setTextColor(getColor(!isPublic ? R.color.colorPrimary : R.color.textColorHintLight));
             }
 
-            private DictionaryHelper.OnDictionarySelectedListener selectedListener = new DictionaryHelper.OnDictionarySelectedListener() {
-                @Override
-                public void onSelected(String selectedType, String selectedName) {
-                    switch (selectedType) {
-                        case Dictionary.Type.ARCHIVE_NATURE:
-                            mArchive.setProperty(selectedName);
-                            propertyText.setText(selectedName);
-                            break;
-                        case Dictionary.Type.ARCHIVE_TYPE:
-                            mArchive.setCategory(selectedName);
-                            categoryText.setText(selectedName);
-                            break;
-                    }
-                }
-            };
-
             private void openLabelPicker() {
-                String json = Json.gson().toJson(mArchive.getLabel());
-                String string = replaceJson(json, false);
                 isOpenOther = true;
-                LabelPickFragment.open(ArchiveEditorFragment.this, "", "", LabelPickFragment.TYPE_ARCHIVE, string);
+                LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_LABEL, mArchive.getLabel());
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
+    }
+
+    private void resetProperty() {
+        if (isEmpty(mArchive.getProperty())) {
+            propertyText.setText(R.string.ui_text_archive_details_editor_setting_property_title);
+        } else {
+            propertyText.setText(mArchive.getProperty());
+        }
+    }
+
+    private void resetCategory() {
+        if (isEmpty(mArchive.getCategory())) {
+            categoryText.setText(R.string.ui_text_archive_details_editor_setting_category_title);
+        } else {
+            categoryText.setText(mArchive.getCategory());
+        }
     }
 
     private void openMemberPicker() {

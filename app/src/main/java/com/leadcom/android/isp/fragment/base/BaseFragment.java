@@ -374,6 +374,14 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      */
     public static final int REQUEST_SQUAD = ACTIVITY_BASE_REQUEST + 25;
     /**
+     * 档案性质选择
+     */
+    public static final int REQUEST_PROPERTY = ACTIVITY_BASE_REQUEST + 26;
+    /**
+     * 档案类型选择
+     */
+    public static final int REQUEST_CATEGORY = ACTIVITY_BASE_REQUEST + 27;
+    /**
      * 感兴趣
      */
     protected static final int REQUEST_INTEREST = ACTIVITY_BASE_REQUEST + 100;

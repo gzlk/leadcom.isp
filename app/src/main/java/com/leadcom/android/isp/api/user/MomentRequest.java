@@ -98,8 +98,7 @@ public class MomentRequest extends Request<Moment> {
         JSONObject object = new JSONObject();
         try {
             int type = Moment.Type.TEXT;
-            object.put("location", checkNull(location))
-                    .put("fileIds", checkNull(fileIds));
+            object.put("location", checkNull(location));
             if (!isEmpty(content)) {
                 object.put("content", checkNull(content));
             }

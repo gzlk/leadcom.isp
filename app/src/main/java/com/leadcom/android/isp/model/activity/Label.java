@@ -86,12 +86,6 @@ public class Label extends Model {
     //名称
     @Column(Model.Field.Name)
     private String name;
-    //组织id
-    @Column(Organization.Field.GroupId)
-    private String groupId;
-    //活动id
-    @Column(Activity.Field.ActivityId)
-    private String actId;
     //是否本地保存的标签
     @Column(Activity.Field.IsLocalStorage)
     private boolean isLocal;
@@ -105,22 +99,6 @@ public class Label extends Model {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getActId() {
-        return actId;
-    }
-
-    public void setActId(String actId) {
-        this.actId = actId;
     }
 
     public int getSignaNum() {

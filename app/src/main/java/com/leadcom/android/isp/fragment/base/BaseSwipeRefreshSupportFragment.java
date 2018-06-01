@@ -209,8 +209,10 @@ public abstract class BaseSwipeRefreshSupportFragment extends BaseDelayRefreshSu
                 // 获取最后一个完全显示 Item 的 position
                 if (lm instanceof StaggeredGridLayoutManager) {
                     lastVisibleItem = ((StaggeredGridLayoutManager) lm).findLastCompletelyVisibleItemPositions(null)[0];
-                } else {
+                } else if (lm instanceof LinearLayoutManager) {
                     lastVisibleItem = ((LinearLayoutManager) lm).findLastCompletelyVisibleItemPosition();
+                } else {
+                    lastVisibleItem = ((FlexboxLayoutManager) lm).findLastCompletelyVisibleItemPosition();
                 }
 
                 // 判断是否滚动到底部，并且不在加载状态

@@ -2,8 +2,10 @@ package com.leadcom.android.isp.model.archive;
 
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.List;
 
@@ -35,6 +37,13 @@ public class Dictionary extends Model {
         return new Dao<>(Dictionary.class).query(Archive.Field.TypeCode, typeCode);
     }
 
+    public static List<Dictionary> getLocal(String typeCode) {
+        QueryBuilder<Dictionary> builder = new QueryBuilder<>(Dictionary.class);
+        builder.whereEquals(Archive.Field.TypeCode, typeCode).whereAppendAnd()
+                .whereEquals(Activity.Field.IsLocalStorage, true);
+        return new Dao<>(Dictionary.class).query(builder);
+    }
+
     /**
      * 获取全部本地缓存的类别
      */
@@ -54,6 +63,8 @@ public class Dictionary extends Model {
          * 档案类型
          */
         String ARCHIVE_TYPE = "archiveType";
+        String NAME_NATURE = "档案性质";
+        String NAME_TYPE = "档案类型";
     }
 
     @Column(Model.Field.Name)
@@ -68,6 +79,9 @@ public class Dictionary extends Model {
     private String parentId;
     @Column(Archive.Field.TypeCode)
     private String typeCode;
+    //是否本地保存的标签
+    @Column(Activity.Field.IsLocalStorage)
+    private boolean isLocal;
 
     public String getName() {
         return name;
@@ -115,5 +129,13 @@ public class Dictionary extends Model {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(boolean local) {
+        isLocal = local;
     }
 }

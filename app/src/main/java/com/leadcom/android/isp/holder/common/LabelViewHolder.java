@@ -1,4 +1,4 @@
-package com.leadcom.android.isp.holder.activity;
+package com.leadcom.android.isp.holder.common;
 
 import android.view.View;
 import android.widget.TextView;
@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Label;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -25,7 +26,7 @@ import com.leadcom.android.isp.model.archive.Dictionary;
  * <b>修改备注：</b><br />
  */
 
-public class ActivityLabelViewHolder extends BaseViewHolder {
+public class LabelViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_activity_label_container)
     private CorneredView containerView;
@@ -33,16 +34,27 @@ public class ActivityLabelViewHolder extends BaseViewHolder {
     private TextView textView;
     @ViewId(R.id.ui_holder_view_activity_label_selected)
     private CornerTagView tagView;
+    @ViewId(R.id.ui_holder_view_activity_label_self)
+    private View selfDefined;
 
-    public ActivityLabelViewHolder(View itemView, BaseFragment fragment) {
+    public LabelViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+    }
+
+    public void showContent(Model model) {
+        if (model instanceof Label) {
+            showContent((Label) model);
+        } else if (model instanceof Dictionary) {
+            showContent((Dictionary) model);
+        }
     }
 
     public void showContent(Label label) {
         textView.setText(label.getName());
         containerView.setNormalColor(getColor(label.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         tagView.setVisibility(label.isSelected() ? View.VISIBLE : View.GONE);
+        selfDefined.setVisibility(label.isLocal() ? View.VISIBLE : View.GONE);
         //itemView.setTranslationZ(label.isSelected() ? getDimension(R.dimen.ui_base_translationZ_small) : 0);
     }
 
@@ -50,6 +62,7 @@ public class ActivityLabelViewHolder extends BaseViewHolder {
         textView.setText(dictionary.getName());
         containerView.setNormalColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         tagView.setVisibility(dictionary.isSelected() ? View.VISIBLE : View.GONE);
+        selfDefined.setVisibility(dictionary.isLocal() ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_holder_view_activity_label_container})
