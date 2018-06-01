@@ -39,6 +39,7 @@ import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
+import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
@@ -357,6 +358,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void resetEditorLayout() {
+        if (null == mArchive) {
+            createNewDraftArchive();
+        }
         attachmentView.setVisibility(mArchive.isAttachmentArchive() ? View.VISIBLE : View.GONE);
         multimediaControlView.setVisibility(mArchive.isMultimediaArchive() ? View.VISIBLE : View.GONE);
         multimediaView.setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
@@ -565,6 +569,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         isOpenOther = false;
         super.onActivityResult(requestCode, data);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isOpenOther = false;
     }
 
     @Override
@@ -2167,6 +2177,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onClick(int index) {
             maxSelectable = 8;
+            isOpenOther = true;
             // 需要重新再选择图片
             startGalleryForResult();
         }
@@ -2176,8 +2187,15 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private ImageDisplayer.OnImageClickListener imagePreviewClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
         public void onImageClick(ImageDisplayer displayer, String url) {
-            // 相册预览
-            startGalleryPreview(waitingFroCompressImages.indexOf(url));
+            isOpenOther = true;
+            if (Utils.isUrl(url)) {
+                ImageViewerFragment.isCollected = true;
+                // 如果是以上传了的图片则调用imageViewer预览
+                ImageViewerFragment.open(ArchiveEditorFragment.this, url);
+            } else {
+                // 相册预览
+                startGalleryPreview(waitingFroCompressImages.indexOf(url));
+            }
         }
     };
 
