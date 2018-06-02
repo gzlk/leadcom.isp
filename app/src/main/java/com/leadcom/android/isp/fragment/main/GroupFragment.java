@@ -386,7 +386,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                         onGroupChange(gAdapter.get(0));
                     }
                 }
-            } else {
+            } else if (gAdapter.getItemCount() > 0) {
                 onGroupChange(!isEmpty(mQueryId) ? gAdapter.get(mQueryId) : gAdapter.get(0));
             }
         }
@@ -531,6 +531,9 @@ public class GroupFragment extends BaseOrganizationFragment {
 
         @Override
         public void onClick(View view, int index) {
+            if (gAdapter.getItemCount() <= 0) {
+                return;
+            }
             switch (view.getId()) {
                 case R.id.ui_holder_view_simple_clickable:
                     Role role = Cache.cache().getGroupRole(dAdapter.get(0).getId());
