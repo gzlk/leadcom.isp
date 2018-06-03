@@ -9,7 +9,7 @@
     <string name="ui_base_text_welcome_button">立即进入</string>
     <string name="ui_base_text_loading">请稍候&#8230;</string>
     <string name="ui_base_text_nothing">没有更多内容</string>
-    <string name="ui_base_text_nothing_more">后面没有了</string>
+    <string name="ui_base_text_nothing_more">这里已经到底了</string>
     <string name="ui_base_text_nothing_more_id">no_more_any_things</string>
     <string name="ui_base_text_input_hint">请输入内容</string>
     <string name="ui_base_text_still_editing">
