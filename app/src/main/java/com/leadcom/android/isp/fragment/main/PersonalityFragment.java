@@ -293,7 +293,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return !isSelf;
+        return isOpened;
     }
 
     @Override
