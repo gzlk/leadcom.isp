@@ -357,6 +357,11 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     public void save(Archive archive, boolean isDraft, boolean shareDraft) {
+        String content = archive.getContent();
+        if (!isEmpty(content) && content.contains("<video ")) {
+            content = content.replace("<video ", "<video style=\"width: 100%; max-width: 100%;\" ");
+            archive.setContent(content);
+        }
         boolean isIndividual = isEmpty(archive.getGroupId(), true);
         JSONObject object = new JSONObject();
         try {

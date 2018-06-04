@@ -24,7 +24,6 @@ import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchivePermissionRequest;
-import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -57,8 +56,6 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Additional;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.archive.ArchiveInfo;
-import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.ArchivePermission;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -467,69 +464,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     enableShareRecommended = data.isRecommendable() && data.isRecommended();
                     // 档案创建者可以删除评论
                     deletable = enableShareDelete;
+                    mArchive.setRecommend(data.isRecommended() ? Archive.RecommendType.RECOMMENDED : Archive.RecommendType.UN_RECOMMEND);
                     fetchingShareInfo();
                 }
             }
         }).permission(mQueryId);
-    }
-
-    private void loadingArchiveInfo() {
-        ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
-            @Override
-            public void onResponse(ArchiveQuery archiveQuery, boolean success, String message) {
-                super.onResponse(archiveQuery, success, message);
-                if (success) {
-                    ArchiveInfo info = archiveQuery.getAdditionResult();
-                    boolean isUser = null == archiveQuery.getGroDoc();
-                    Archive archive = isDraft ? archiveQuery.getDocDraft() : isUser ? archiveQuery.getUserDoc() : archiveQuery.getGroDoc();
-                    if (null == archive) {
-                        ToastHelper.make().showMsg(R.string.ui_text_archive_details_invalid_archive);
-                        finish();
-                    } else {
-                        archive.resetInfo(info);
-                        mArchive.resetInfo(info);
-                        //archive.resetAdditional(archive.getAddition());
-                        //displayArchive(archive);
-                        prepareShareDialogElement(archive);
-                        fetchingShareInfo();
-                    }
-                }
-            }
-        }).find(isDraft ? Archive.Type.DRAFT : archiveType, mQueryId);
-    }
-
-    private void loadingArchive() {
-        if (null != mArchive && !isEmpty(mArchive.getId())) {
-            displayArchive(mArchive);
-        } else {
-            setLoadingText(R.string.ui_text_archive_details_loading);
-            displayLoading(true);
-            ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
-                @Override
-                public void onResponse(ArchiveQuery archiveQuery, boolean success, String message) {
-                    super.onResponse(archiveQuery, success, message);
-                    displayLoading(false);
-                    if (success && null != archiveQuery) {
-                        mAdapter.remove(nothingMore);
-                        ArchiveInfo info = archiveQuery.getAdditionResult();
-                        boolean isUser = null == archiveQuery.getGroDoc();
-                        Archive archive = isDraft ? archiveQuery.getDocDraft() : isUser ? archiveQuery.getUserDoc() : archiveQuery.getGroDoc();
-                        if (null == archive) {
-                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_invalid_archive);
-                            finish();
-                        } else {
-                            archive.resetInfo(info);
-                            archive.resetAdditional(archive.getAddition());
-                            prepareShareDialogElement(archive);
-                        }
-                        onLoadingCommentComplete(true, isUser ? archiveQuery.getUserDocComment() : archiveQuery.getGroDocCmtList());
-                    }
-                    stopRefreshing();
-                    isLoadingComplete(true);
-                }
-
-            }).find(isDraft ? Archive.Type.DRAFT : archiveType, mQueryId);
-        }
     }
 
     /**

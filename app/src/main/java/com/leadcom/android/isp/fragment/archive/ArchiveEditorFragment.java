@@ -347,6 +347,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         } else {
             fetchingSingleDraft();
         }
+        if (Cache.cache().userId.equals("592ade752f573530e45ab66e")) {
+            mVideoIcon.setVisibility(View.VISIBLE);
+            mAudioIcon.setVisibility(View.VISIBLE);
+        }
         resetEditorLayout();
         attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
         aAdapter = new AttachmentAdapter();
