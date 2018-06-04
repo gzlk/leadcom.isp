@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.api;
 
+import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.LoginActivity;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -12,6 +13,7 @@ import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.api.query.StringQuery;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.etc.NetworkUtil;
 import com.leadcom.android.isp.etc.ReflectionUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.LogHelper;
@@ -149,7 +151,11 @@ public abstract class Request<T> {
      * 发起网络请求
      */
     protected void executeHttpRequest(JsonRequest request) {
-        http.executeAsync(request);
+        if (NetworkUtil.isNetAvailable(App.app())) {
+            http.executeAsync(request);
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_base_text_network_invalid);
+        }
     }
 
     private boolean relogin = false;

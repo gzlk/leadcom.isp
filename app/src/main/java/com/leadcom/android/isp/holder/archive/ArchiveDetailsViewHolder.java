@@ -7,6 +7,7 @@ import android.view.View;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
@@ -16,6 +17,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.ToggleButton;
+import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.WelcomeActivity;
 import com.leadcom.android.isp.cache.Cache;
@@ -73,6 +75,9 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
         contentView.getSettings().setDefaultTextEncodingName("UTF-8");
         contentView.getSettings().setJavaScriptEnabled(true);
+        if (Build.VERSION.SDK_INT >= 21) {
+            contentView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         contentView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onReceivedTitle(WebView view, String title) {
