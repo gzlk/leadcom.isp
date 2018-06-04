@@ -374,7 +374,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     mAdapter.add(nothingMore);
                 }
             }
-        }).list(Collection.Type.NONE, CollectionRequest.OPE_MONTH, remotePageNumber);
+        }).list(Collection.Type.NONE, CollectionRequest.OPE_NONE, remotePageNumber);
     }
 
     private void adjustRemotePages(int fetchedCount, int pageSize, int userInfoNum, String lastHeader) {

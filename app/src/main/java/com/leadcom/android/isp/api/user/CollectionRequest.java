@@ -1,7 +1,5 @@
 package com.leadcom.android.isp.api.user;
 
-import android.support.annotation.NonNull;
-
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -11,7 +9,6 @@ import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.api.query.StringQuery;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.publishable.Collectable;
-import com.leadcom.android.isp.model.archive.ArchiveSource;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.model.user.Position;
@@ -173,6 +170,10 @@ public class CollectionRequest extends Request<Collection> {
     }
 
     /**
+     * 不设定时间期限
+     */
+    public static final int OPE_NONE = 0;
+    /**
      * 查询最近一周的收藏
      */
     public static final int OPE_WEEK = 1;
@@ -193,7 +194,13 @@ public class CollectionRequest extends Request<Collection> {
      * @param pageNumber 页码
      */
     public void list(int type, int ope, int pageNumber) {
-        String param = format("%s?%sope=%d&pageNumber=%d", url(LIST), format((type <= 0 ? "" : "type=%d&"), type), ope, pageNumber);
+        String param = format("%s?pageNumber=%d", url(LIST), pageNumber);
+        if (type > 0) {
+            param = format("%s&%s", param, format("type=%d", type));
+        }
+        if (ope > 0) {
+            param = format("%s&%s", param, format("ope=%d", ope));
+        }
         executeHttpRequest(getRequest(MultipleCollection.class, param, "", HttpMethods.Get));
     }
 
