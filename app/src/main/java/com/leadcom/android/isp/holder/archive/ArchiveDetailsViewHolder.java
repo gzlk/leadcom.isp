@@ -22,6 +22,7 @@ import com.leadcom.android.isp.activity.WelcomeActivity;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -94,6 +95,11 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
                     fragment().finish();
                     result.confirm();
                     return true;
+                } else if (Utils.isUrl(message)) {
+                    // 打开图片浏览器
+                    ImageViewerFragment.open(fragment(), message);
+                    result.confirm();
+                    return true;
                 }
                 return super.onJsAlert(view, url, message, result);
             }
@@ -136,6 +142,19 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
             public void onPageFinished(WebView view, String url) {
                 loadingView.setVisibility(View.GONE);
                 super.onPageFinished(view, url);
+                setImageClick(view);
+            }
+
+            private void setImageClick(WebView view) {
+                String jsCode = "javascript:(function() {" +
+                        "   var imgs = document.getElementsByTagName(\"img\");" +
+                        "   for(var i = 0; i < imgs.length; i++) {" +
+                        "       imgs[i].onclick = function() {" +
+                        "           alert(this.src);" +
+                        "       }" +
+                        "   }" +
+                        "})()";
+                view.loadUrl(jsCode);
             }
         });
         margin = getDimension(R.dimen.ui_static_dp_5);
