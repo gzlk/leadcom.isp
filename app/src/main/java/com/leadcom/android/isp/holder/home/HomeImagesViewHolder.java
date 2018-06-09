@@ -232,7 +232,7 @@ public class HomeImagesViewHolder extends BaseViewHolder implements ViewPager.On
                     cover = archive.getImage().get(0).getUrl();
                 } else {
                     // 没有图片设置为档案的id
-                    cover = archive.getId();
+                    cover = "drawable://" + R.mipmap.img_image_loading_fail;
                 }
             }
             displayer.displayImage(cover, imageWidth, imageHeight, false, false);

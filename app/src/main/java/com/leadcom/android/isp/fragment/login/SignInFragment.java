@@ -189,7 +189,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                     needToReLogin();
                 }
             }
-        }).signIn(account, password, "");
+        }).signIn(account, password);
     }
 
     private void checkNimStatus() {

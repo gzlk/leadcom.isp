@@ -97,6 +97,6 @@ public class SignUpFragment extends BaseVerifyFragment {
                     finishToSignIn();
                 }
             }
-        }).signUp(verifyPhone, "", password, name);
+        }).signUp(verifyPhone, password, name);
     }
 }

@@ -94,6 +94,6 @@ public class ResetPasswordFragment extends BaseVerifyFragment {
                     finishButton.setEnabled(true);
                 }
             }
-        }).resetPassword("", verifyPhone, pwd);
+        }).resetPassword(verifyPhone, pwd);
     }
 }

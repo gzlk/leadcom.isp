@@ -65,12 +65,11 @@ public class SystemRequest extends Request<User> {
     /**
      * 注册新号码
      */
-    public void signUp(String phone, String loginId, String password, String name) {
+    public void signUp(String phone, String password, String name) {
 
         JSONObject object = new JSONObject();
         try {
             object.put("phone", phone)
-                    .put("loginId", checkNull(loginId))
                     .put("password", checkNull(password))
                     .put("name", checkNull(name));
         } catch (JSONException e) {
@@ -83,11 +82,10 @@ public class SystemRequest extends Request<User> {
     /**
      * 登录
      */
-    public void signIn(String phone, String password, String loginId) {
+    public void signIn(String phone, String password) {
         JSONObject object = new JSONObject();
         try {
             object.put("phone", phone)
-                    .put("loginId", checkNull(loginId))
                     .put("password", checkNull(password));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -127,12 +125,11 @@ public class SystemRequest extends Request<User> {
      * 登陆前重置密码<br/>
      * 不再需要传captcha，上一步已经验证了(2017/06/30 12:00)
      */
-    public void resetPassword(String loginId, @NonNull String phone, @NonNull String password) {
+    public void resetPassword(@NonNull String phone, @NonNull String password) {
         // {loginId:"",password:"",phone:"",captcha:""}
         JSONObject object = new JSONObject();
         try {
             object.put("phone", phone)
-                    .put("loginId", checkNull(loginId))
                     .put("password", password);
         } catch (JSONException e) {
             e.printStackTrace();
