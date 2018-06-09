@@ -11,8 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bigkoo.pickerview.TimePickerView;
+import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.CustomListener;
+import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.TimePickerView;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -185,7 +187,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeTimePickerView() {
         if (null == timePickerView) {
-            timePickerView = new TimePickerView.Builder(Activity(), new TimePickerView.OnTimeSelectListener() {
+            timePickerView = new TimePickerBuilder(Activity(), new OnTimeSelectListener() {
                 @Override
                 public void onTimeSelect(Date date, View v) {
                     String dd = Utils.format("yyyy-MM", date);
@@ -234,7 +236,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             }).setType(new boolean[]{true, true, false, false, false, false})
                     .setDecorView(timePickerContainer)
                     .setOutSideCancelable(false).setDividerColor(getColor(R.color.textColorHint))
-                    .setContentSize(getFontDimension(R.dimen.ui_base_text_size))
+                    .setContentTextSize(getFontDimension(R.dimen.ui_base_text_size))
                     .isCenterLabel(false)
                     .build();
         }

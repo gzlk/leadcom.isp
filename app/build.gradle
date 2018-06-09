@@ -158,7 +158,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // 网络框架改为 Square 的 retrofit，逐步淘汰 litehttp
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    //implementation 'com.squareup.retrofit2:retrofit:2.4.0'
 
     // richeditor
     implementation(name: 'richeditor-release', ext: 'aar')
@@ -189,9 +189,9 @@ dependencies {
     api "com.android.support:palette-v7:${rootProject.ext.supportSdkVersion}"
     api "com.android.support:support-v4:${rootProject.ext.supportSdkVersion}"
     api "com.android.support:exifinterface:${rootProject.ext.supportSdkVersion}"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     // Google自动换行的layout
     implementation 'com.google.android:flexbox:1.0.0'
     // 二维码 zxing 项目
@@ -218,34 +218,6 @@ dependencies {
 
     // 点击效果
     implementation 'com.github.traex.rippleeffect:library:1.3'
-    // apache poi office 套件
-    /**
-     * Component	Application type	    Maven artifactId	Notes
-     POIFS	        OLE2 Filesystem	        poi	                Required to work with OLE2 / POIFS based files
-     HPSF	        OLE2 Property Sets	    poi
-     HSSF	        Excel XLS       	    poi	                For HSSF only, if common SS is needed see below
-     HSLF	        PowerPoint PPT  	    poi-scratchpad
-     HWPF	        Word DOC        	    poi-scratchpad
-     HDGF	        Visio VSD       	    poi-scratchpad
-     HPBF	        Publisher PUB   	    poi-scratchpad
-     HSMF	        Outlook MSG     	    poi-scratchpad
-     HWMF	        WMF drawings    	    poi-scratchpad
-     OpenXML4J	    OOXML           	    poi-ooxml           plus either poi-ooxml-schemas or ooxml-schemas and ooxml-security
-     XSSF	        Excel XLSX      	    poi-ooxml
-     XSLF	        PowerPoint PPTX 	    poi-ooxml
-     XWPF	        Word DOCX       	    poi-ooxml
-     XDGF	        Visio VSDX      	    poi-ooxml
-     Common SL  	PowerPoint PPT and PPTX	poi-scratchpad and poi-ooxml
-     Common SS  	Excel XLS and XLSX  	poi-ooxml	        WorkbookFactory and friends all require poi-ooxml, not just core poi
-     * */
-    // 分析依赖项
-    // gradlew -q app:dependencies
-    // https://mvnrepository.com/artifact/org.apache.poi/poi
-    //implementation group: 'org.apache.poi', name: 'poi', version: '3.17'
-    // https://mvnrepository.com/artifact/org.apache.poi/poi-scratchpad
-    //implementation group: 'org.apache.poi', name: 'poi-scratchpad', version: '3.17'
-    // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    //implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 
     // 高德地图
     // 2D地图
@@ -253,7 +225,7 @@ dependencies {
     // 搜索
     implementation 'com.amap.api:search:6.1.0'
     // 定位
-    implementation 'com.amap.api:location:3.8.0'
+    implementation 'com.amap.api:location:4.0.1'
 
     // 桌面提醒
     implementation 'me.leolin:ShortcutBadger:1.1.21'
@@ -261,34 +233,28 @@ dependencies {
     implementation 'me.everything:overscroll-decor-android:1.0.4'
 
     // pdf阅读器
-    implementation 'com.github.barteksc:android-pdf-viewer:2.6.1'
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
     // 视频播放器
     implementation 'com.afollestad:easyvideoplayer:0.3.0'
-
-    // 滑动删除
-    //implementation "com.daimajia.swipelayout:library:1.2.0@aar"
-    // 动画集合
-    implementation 'com.daimajia.easing:library:2.1@aar'
-    implementation 'com.daimajia.androidanimations:library:2.3@aar'
 
     // 文件管理器
     implementation(name: 'filepicker-release', ext: 'aar')
     // TinyPinyin核心包，约80KB
     implementation 'com.github.promeg:tinypinyin:2.0.3'
     // 时间选择器
-    implementation 'com.contrarywind:Android-PickerView:3.2.7'
+    implementation 'com.contrarywind:Android-PickerView:4.1.4'
     // 圆形progressbar
     implementation 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
     // 图片加载器
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     // 扁平图片
-    implementation 'com.makeramen:roundedimageview:2.2.1'
+    implementation 'com.makeramen:roundedimageview:2.3.0'
     // 相册
     implementation 'com.yanzhenjie:album:1.0.7'
     // 图片剪切
     implementation 'com.yanzhenjie:durban:1.0.1'
     // 横向、圆形progressbar
-    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.1'
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
     // 圆形progressbar
     implementation 'com.daimajia.numberprogressbar:library:1.2@aar'
 
