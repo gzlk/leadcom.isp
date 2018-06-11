@@ -165,6 +165,10 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
                         "           alert(this.src);" +
                         "       }" +
                         "   }" +
+                        "   var videos = document.getElementsByTagName(\"video\");" +
+                        "   for(var i = 0; i < videos.length; i++) {" +
+                        "       videos[i].setAttribute(\"style\", \"width: 100%;\");" +
+                        "   }" +
                         "})()";
                 view.loadUrl(jsCode);
             }
