@@ -3,7 +3,9 @@ package com.leadcom.android.isp.holder.archive;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Environment;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -19,15 +21,25 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.ToggleButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.WelcomeActivity;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.etc.NetworkUtil;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
+import com.leadcom.android.isp.helper.DownloadingHelper;
+import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.listener.OnTaskCompleteListener;
+import com.leadcom.android.isp.listener.OnTaskFailureListener;
 import com.leadcom.android.isp.model.archive.Archive;
+
+import java.io.File;
 
 /**
  * <b>功能描述：</b><br />
@@ -70,7 +82,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
     private int width, height, margin;
     private boolean isManager = false, isDraft = false;
 
-    public ArchiveDetailsViewHolder(View itemView, BaseFragment fragment) {
+    public ArchiveDetailsViewHolder(View itemView, final BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
         WebSettings settings = contentView.getSettings();
@@ -155,6 +167,66 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
                         "   }" +
                         "})()";
                 view.loadUrl(jsCode);
+            }
+        });
+        contentView.setDownloadListener(new DownloadListener() {
+
+            private String local, extension, name, url;
+
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                if (!NetworkUtil.isNetAvailable(App.app())) {
+                    ToastHelper.make().showMsg(R.string.ui_base_text_network_invalid);
+                    return;
+                }
+                String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+                if (!downloadPath.endsWith("/")) {
+                    downloadPath += "/";
+                }
+                this.url = url;
+                name = url.substring(url.lastIndexOf('/') + 1);
+                local = downloadPath + name;
+                extension = isEmpty(mimetype) ? name.substring(name.lastIndexOf('.') + 1) : mimetype;
+                File file = new File(local);
+                boolean exists = file.exists();
+                log(format("download file, url: %s, local: %s, extension: %s, exists: %s", url, local, extension, exists));
+                if (exists) {
+                    FilePreviewHelper.previewFile(fragment().Activity(), local, name, extension);
+                    return;
+                }
+                if (!NetworkUtil.isWifi(App.app())) {
+                    // 如果不是wifi环境则提醒用户需要消耗流量下载
+                    warningDownload();
+                } else {
+                    tryDownload();
+                }
+            }
+
+            private void warningDownload() {
+                DeleteDialogHelper.helper().init(fragment()).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+                    @Override
+                    public boolean onConfirm() {
+                        tryDownload();
+                        return true;
+                    }
+                }).setTitleText(R.string.ui_base_text_network_not_wifi).setConfirmText(R.string.ui_base_text_confirm).show();
+            }
+
+            private void tryDownload() {
+                DownloadingHelper.helper().init(fragment().Activity()).setShowNotification(true).setOnTaskFailureListener(new OnTaskFailureListener() {
+                    @Override
+                    public void onFailure() {
+                        ToastHelper.make().showMsg(R.string.ui_system_updating_failure);
+                    }
+                }).setOnTaskCompleteListener(new OnTaskCompleteListener() {
+                    @Override
+                    public void onComplete() {
+                        //String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+                        //ToastHelper.make().showMsg(format("已下载到%s", downloadPath));
+                        log(format("downloaded, url: %s, local: %s, ext: %s, name: %s", url, local, extension, name));
+                        FilePreviewHelper.previewFile(fragment().Activity(), local, name, extension);
+                    }
+                }).download(url, local, extension, "", "");
             }
         });
         margin = getDimension(R.dimen.ui_static_dp_5);

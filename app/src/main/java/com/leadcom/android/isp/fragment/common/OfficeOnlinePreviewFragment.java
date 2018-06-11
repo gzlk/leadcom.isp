@@ -114,6 +114,10 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
                     String localReal = local + "." + mExtension;
                     File file = new File(localReal);
                     needDown = !file.exists();
+                } else if (mQueryId.charAt(0) == '/') {
+                    // 如果是本地文件，则直接预览
+                    local = mQueryId;
+                    needDown = false;
                 } else {
                     // 非网易云文件，直接尝试下载
                     needDown = true;
@@ -250,12 +254,15 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
             } else {
                 resetCollectEvent();
             }
-            localReal = local + "." + mExtension;
-            File target = new File(localReal);
-            if (!target.exists()) {
-                // 重命名
-                File source = new File(local);
-                source.renameTo(target);
+            localReal = local;
+            if (!isEmpty(mExtension) && !localReal.contains(mExtension)) {
+                localReal += "." + mExtension;
+                File target = new File(localReal);
+                if (!target.exists()) {
+                    // 重命名
+                    File source = new File(local);
+                    source.renameTo(target);
+                }
             }
 
             if (Attachment.isWord(mExtension)) {

@@ -34,7 +34,8 @@
     <string name="ui_base_text_downloading_image_completed">已下载到本地相册</string>
     <string name="ui_base_text_downloading_file_completed">已下载到本地</string>
     <string name="ui_base_text_file_ext_not_valid">无法识别文件(扩展名为空)，尝试用文本方式打开</string>
-    <string name="ui_base_text_network_invalid">网络可用，请检查后重试</string>
+    <string name="ui_base_text_network_invalid">网络不可用，请检查后重试</string>
+    <string name="ui_base_text_network_not_wifi">下载附件需要消耗一定的网络流量，建议您在wifi网络下下载查看附件，您确定要继续下载该附件吗？</string>
     <string name="ui_base_text_network_canceled" formatted="false">网络操作已取消: (%d)</string>
     <string name="ui_base_text_network_failed" formatted="false">网络不给力(%d)，请重试</string>
 
