@@ -15,14 +15,11 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
-import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.common.PushMsgRequest;
-import com.leadcom.android.isp.api.common.UpdateRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
-import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
@@ -36,15 +33,12 @@ import com.leadcom.android.isp.fragment.main.SystemMessageFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.lib.permission.MPermission;
 import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionDenied;
 import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionGranted;
 import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAgain;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.model.common.PushMessage;
-import com.leadcom.android.isp.model.common.SystemUpdate;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -246,7 +240,7 @@ public class MainActivity extends TitleActivity {
 
         setDisplayPage();
         App.dispatchCallbacks();
-        checkClientVersion();
+        UpgradeHelper.helper(this).checkVersion();
         if (!Cache.isReleasable()) {
             ToastHelper.make().showMsg(R.string.ui_text_main_inner_test_toast);
         }
@@ -589,47 +583,5 @@ public class MainActivity extends TitleActivity {
         innerOpen = false;
         App.removeNotificationChangeCallback(callback);
         super.onDestroy();
-    }
-
-    /**
-     * 检测服务器上的最新客户端版本并提示用户更新
-     */
-    private void checkClientVersion() {
-        UpdateRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<SystemUpdate>() {
-            @Override
-            public void onResponse(SystemUpdate systemUpdate, boolean success, String message) {
-                super.onResponse(systemUpdate, success, message);
-                if (success) {
-                    String ver = systemUpdate.getVersion();
-                    //warningUpdatable("http://file.ws.126.net/3g/client/netease_newsreader_android.apk","2.0.1");
-                    if (!StringHelper.isEmpty(ver) && ver.compareTo(BuildConfig.VERSION_NAME) > 0) {
-                        String url = systemUpdate.getResourceURI();
-                        if (StringHelper.isEmpty(url) || !Utils.isUrl(url)) {
-                            SimpleDialogHelper.init(MainActivity.this).show(R.string.ui_system_updatable_url_invalid);
-                        } else {
-                            warningUpdatable(url, ver, systemUpdate.getForceUpdate());
-                        }
-                    }
-                }
-            }
-        }).getClientVersion();
-    }
-
-    private void warningUpdatable(final String url, final String version, String forceVersion) {
-        String thisVersion = App.app().version();
-        boolean isForce = thisVersion.compareTo(forceVersion) < 0;
-        String text = StringHelper.getString(R.string.ui_system_updatable, StringHelper.getString(R.string.app_name_default), version, (isForce ? getString(R.string.ui_system_updatable_force) : ""));
-        SimpleDialogHelper.init(this).show(text, getString(isForce ? R.string.ui_base_text_upgrade_now : R.string.ui_base_text_upgrade), (isForce ? "" : getString(R.string.ui_base_text_no_need)), new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                // 打开下载对话框，并开始下载（下载对话框可以隐藏）
-                //showUpgradeDownloadingDialog();
-                String app = getString(R.string.app_name_default);
-                String title = getString(R.string.ui_system_updating_title, app);
-                String description = getString(R.string.ui_system_updating_description);
-                UpgradeHelper.helper(MainActivity.this, version).startDownload(url, title, description);
-                return true;
-            }
-        }, null);
     }
 }
