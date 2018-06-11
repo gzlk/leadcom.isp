@@ -3,11 +3,10 @@ package com.leadcom.android.isp.api.org;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
-import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.litesuits.http.request.param.HttpMethods;
-
 
 /**
  * <b>功能描述：</b>关注组织相关的api<br />
@@ -25,10 +24,10 @@ public class ConcernRequest extends Request<Concern> {
         return new ConcernRequest();
     }
 
-    private static class SingleConcern extends SingleQuery<Concern> {
+    private static class MultiConcern extends PaginationQuery<Concern> {
     }
 
-    private static class MultiConcern extends PaginationQuery<Concern> {
+    private static class BooleanConcern extends BoolQuery<Concern> {
     }
 
     @Override
@@ -57,14 +56,14 @@ public class ConcernRequest extends Request<Concern> {
      * 添加关注
      */
     public void add(String groupId, String concernedGroupId) {
-        executeHttpRequest(getRequest(SingleConcern.class, format("%s?groupId=%s&conGroupId=%s", url(ADD), groupId, concernedGroupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BooleanConcern.class, format("%s?groupId=%s&conGroupId=%s", url(ADD), groupId, concernedGroupId), "", HttpMethods.Get));
     }
 
     /**
      * 取消关注
      */
     public void delete(String groupId, String concernedGroupId) {
-        executeHttpRequest(getRequest(SingleConcern.class, format("%s?groupId=%s&conGroupId=%s", url(DELETE), groupId, concernedGroupId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BooleanConcern.class, format("%s?groupId=%s&conGroupId=%s", url(DELETE), groupId, concernedGroupId), "", HttpMethods.Get));
     }
 
     /**
