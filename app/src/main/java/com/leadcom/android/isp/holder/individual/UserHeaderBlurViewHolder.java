@@ -83,15 +83,11 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
     public void showContent(User user) {
         nameTextView.setText(isEmpty(user.getName()) ? StringHelper.getString(R.string.ui_text_user_information_name_empty) : user.getName());
         editIconView.setVisibility(user.isMySelf() ? View.VISIBLE : View.INVISIBLE);
-        String header = user.getHeadPhoto();
-        if (isEmpty(header) || header.length() < 20) {
-            header = "drawable://" + R.drawable.img_default_user_header;
-        }
-        userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
+        final String header = user.getHeadPhoto();
+        userHeader.displayImage(getDefaultHeader(header), getDimension(R.dimen.ui_static_dp_60), false, false);
         userHeader.setTag(R.id.hlklib_ids_custom_view_click_tag, header);
         additionalTextView.setText(isEmpty(user.getSignature()) ? StringHelper.getString(R.string.ui_text_user_information_signature_empty) : Html.fromHtml(user.getSignature()));
         if (!isEmpty(header)) {
-            final String head = header;
             fragment().Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -100,7 +96,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                     bHeight = root.getMeasuredHeight();
                     params.height = bHeight;
                     headerBackground.setLayoutParams(params);
-                    String blur = getBlurImage(head);
+                    String blur = getBlurImage(header);
                     if (!isEmpty(blur)) {
                         clearHandler();
                         //changeColor(header);
@@ -119,12 +115,16 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
         fragment().Handler().postDelayed(runnable, 3000);
     }
 
+    private String getDefaultHeader(String header) {
+        return isEmpty(header) ? ("drawable://" + R.drawable.img_default_user_header) : header;
+    }
+
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
             Object object = userHeader.getTag(R.id.hlklib_ids_custom_view_click_tag);
             String header = null == object ? "" : (String) object;
-            userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
+            userHeader.displayImage(getDefaultHeader(header), getDimension(R.dimen.ui_static_dp_60), false, false);
             String blur = getBlurImage(header);
             if (!isEmpty(blur)) {
                 clearHandler();
