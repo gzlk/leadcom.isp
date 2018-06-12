@@ -469,6 +469,9 @@ public class GroupFragment extends BaseOrganizationFragment {
                 case 4:
                     item.setSource(format(items[index - 1], quantity.getConGroupNum()));
                     break;
+                case 5:
+                    item.setSource(format(items[index - 1], quantity.getConMeNum()));
+                    break;
             }
             item.reset();
             dAdapter.update(item);

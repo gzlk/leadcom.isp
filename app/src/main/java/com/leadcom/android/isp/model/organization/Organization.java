@@ -103,6 +103,7 @@ public class Organization extends Model {
     private Member groMember;      // 当前登录者在组织里的角色
     @Column(Field.Concerned)
     private boolean concerned;     // 是否是我关注的组织
+    private int concernTo;          // 关注方式 1.我关注的组织，2.关注我的组织
     @Column(Field.ShortName)
     private String shortName;                  //组织简称
 
@@ -226,6 +227,14 @@ public class Organization extends Model {
 
     public void setConcerned(boolean concerned) {
         this.concerned = concerned;
+    }
+
+    public int getConcernTo() {
+        return concernTo;
+    }
+
+    public void setConcernTo(int concernTo) {
+        this.concernTo = concernTo;
     }
 
     public ArrayList<Concern> getConGroup() {

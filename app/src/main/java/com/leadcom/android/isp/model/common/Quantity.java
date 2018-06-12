@@ -16,6 +16,8 @@ import com.leadcom.android.isp.model.Model;
 public class Quantity extends Model {
     // 关联组织数量
     private long conGroupNum;
+    // 关注我的数量
+    private long conMeNum;
     // 文档数量
     private long docNum;
     // 成员数量
@@ -40,6 +42,14 @@ public class Quantity extends Model {
 
     public void setConGroupNum(long conGroupNum) {
         this.conGroupNum = conGroupNum;
+    }
+
+    public long getConMeNum() {
+        return conMeNum;
+    }
+
+    public void setConMeNum(long conMeNum) {
+        this.conMeNum = conMeNum;
     }
 
     public long getDocNum() {
