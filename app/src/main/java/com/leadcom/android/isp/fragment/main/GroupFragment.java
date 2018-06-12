@@ -534,7 +534,7 @@ public class GroupFragment extends BaseOrganizationFragment {
 
         @Override
         public void onClick(View view, int index) {
-            if (gAdapter.getItemCount() <= 0) {
+            if (null == gAdapter || gAdapter.getItemCount() <= 0) {
                 return;
             }
             switch (view.getId()) {
