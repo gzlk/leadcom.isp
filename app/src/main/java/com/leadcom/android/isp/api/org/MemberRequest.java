@@ -3,6 +3,7 @@ package com.leadcom.android.isp.api.org;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.ListQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
@@ -41,6 +42,9 @@ public class MemberRequest extends Request<Member> {
     }
 
     private static class ListQueryMember extends ListQuery<Member> {
+    }
+
+    private static class BooleanMember extends BoolQuery<Member> {
     }
 
     // 成员
@@ -166,7 +170,7 @@ public class MemberRequest extends Request<Member> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleMember.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BooleanMember.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -175,7 +179,7 @@ public class MemberRequest extends Request<Member> {
     public void groupMemberDelete(String memberId) {
         // memberId,groupId
         String param = format("%s?memberId=%s", url(Member.Type.GROUP, DELETE), memberId);
-        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BooleanMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -183,7 +187,7 @@ public class MemberRequest extends Request<Member> {
      */
     public void squadMemberDelete(String memberId) {
         String param = format("%s?memberId=%s", url(Member.Type.SQUAD, DELETE), memberId);
-        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BooleanMember.class, param, "", HttpMethods.Get));
     }
 
     /**
@@ -228,30 +232,6 @@ public class MemberRequest extends Request<Member> {
     }
 
     /**
-     * 加入公开的活动
-     */
-    public void joinPublicActivity(String activityId) {
-        String param = format("%s?actId=%s", url(Member.Type.ACTIVITY, "/joinPublicAct"), activityId);
-        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
-    }
-
-    /**
-     * 活动中踢人
-     */
-    public void activityKickOut(String activityId, String userId) {
-        String param = format("%s?actId=%s&userId=%s", url(Member.Type.ACTIVITY, DELETE), activityId, userId);
-        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
-    }
-
-    /**
-     * 成员退出活动
-     */
-    public void activityExit(String activityId) {
-        String param = format("%s?id=%s", url(Member.Type.ACTIVITY, "/exit"), activityId);
-        executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
-    }
-
-    /**
      * 从组织里添加小组成员且不需要对方同意或拒绝(2017-06-26 21:34新增)
      */
     public void addToSquadFromGroup(String userId, String squadId) {
@@ -275,7 +255,7 @@ public class MemberRequest extends Request<Member> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleMember.class, url(Member.Type.SQUAD, ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BooleanMember.class, url(Member.Type.SQUAD, ADD), object.toString(), HttpMethods.Post));
     }
 
 

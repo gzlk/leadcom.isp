@@ -83,11 +83,15 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
     public void showContent(User user) {
         nameTextView.setText(isEmpty(user.getName()) ? StringHelper.getString(R.string.ui_text_user_information_name_empty) : user.getName());
         editIconView.setVisibility(user.isMySelf() ? View.VISIBLE : View.INVISIBLE);
-        final String header = user.getHeadPhoto();
-        userHeader.displayImage(isEmpty(header) ? "drawable://" + R.drawable.img_default_user_header : header, getDimension(R.dimen.ui_static_dp_60), false, false);
+        String header = user.getHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        userHeader.displayImage(header, getDimension(R.dimen.ui_static_dp_60), false, false);
         userHeader.setTag(R.id.hlklib_ids_custom_view_click_tag, header);
         additionalTextView.setText(isEmpty(user.getSignature()) ? StringHelper.getString(R.string.ui_text_user_information_signature_empty) : Html.fromHtml(user.getSignature()));
         if (!isEmpty(header)) {
+            final String head = header;
             fragment().Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -96,7 +100,7 @@ public class UserHeaderBlurViewHolder extends BaseViewHolder {
                     bHeight = root.getMeasuredHeight();
                     params.height = bHeight;
                     headerBackground.setLayoutParams(params);
-                    String blur = getBlurImage(header);
+                    String blur = getBlurImage(head);
                     if (!isEmpty(blur)) {
                         clearHandler();
                         //changeColor(header);

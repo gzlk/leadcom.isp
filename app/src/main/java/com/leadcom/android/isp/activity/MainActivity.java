@@ -25,7 +25,6 @@ import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
-import com.leadcom.android.isp.fragment.main.FullTextQueryFragment;
 import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.fragment.main.HomeFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
@@ -321,7 +320,6 @@ public class MainActivity extends TitleActivity {
                 break;
             case R.id.ui_ui_custom_title_left_container:
                 // 搜索
-                FullTextQueryFragment.open(this);
                 break;
         }
     }

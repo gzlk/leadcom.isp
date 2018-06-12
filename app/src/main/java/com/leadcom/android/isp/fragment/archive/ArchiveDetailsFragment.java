@@ -184,7 +184,6 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         INTERNAL_SHAREABLE = false;
-        webView = (WebView) mRootView;
         WebSettings settings = webView.getSettings();
         settings.setDefaultTextEncodingName("UTF-8");
         settings.setJavaScriptEnabled(true);
