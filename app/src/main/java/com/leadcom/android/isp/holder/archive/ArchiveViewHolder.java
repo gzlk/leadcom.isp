@@ -77,7 +77,11 @@ public class ArchiveViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Archive archive) {
-        userHead.displayImage(archive.getHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
+        String header = archive.getHeadPhoto();
+        if (isEmpty(header) || header.length() < 20) {
+            header = "drawable://" + R.drawable.img_default_user_header;
+        }
+        userHead.displayImage(header, getDimension(R.dimen.ui_base_user_header_image_size_small), false, false);
         userName.setText(archive.getUserName());
         createTime.setText(fragment().formatDate(archive.getCreateDate()));
         documentTitle.setText(Html.fromHtml(archive.getTitle()));

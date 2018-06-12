@@ -108,8 +108,13 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
                     result.confirm();
                     return true;
                 } else if (Utils.isUrl(message)) {
-                    // 打开图片浏览器
-                    ImageViewerFragment.open(fragment(), message);
+                    if (!message.contains("images/dz1.png") && !message.contains("images/dz6.png")
+                            && !message.contains("images/sc1.png") && !message.contains("images/sc4.png")
+                            && !message.contains("images/xx3.png")
+                            &&!message.contains("images/fj.png")) {
+                        // 打开图片浏览器
+                        ImageViewerFragment.open(fragment(), message);
+                    }
                     result.confirm();
                     return true;
                 }
