@@ -12,14 +12,13 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
-import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.archive.Archive;
-import com.leadcom.android.isp.model.organization.Concern;
 
 /**
  * <b>功能描述：</b>网易云消息处理Activity<br />
@@ -217,7 +216,7 @@ public class WelcomeActivity extends BaseActivity {
                                 String authorId = uri.getQueryParameter("authorid");
                                 ArchiveDetailsFragment.open(this, groupId, "", id, tp, false, true, authorId);
                             } else if (path.contains("user")) {
-                                PersonalityFragment.open(this, id);
+                                App.openUserInfo(this, id);
                             }
                             finish();
                         } else {

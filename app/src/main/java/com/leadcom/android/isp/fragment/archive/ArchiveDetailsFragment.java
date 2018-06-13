@@ -545,7 +545,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     log(format("downloaded, url: %s, local: %s, ext: %s, name: %s", url, local, extension, name));
                     FilePreviewHelper.previewFile(Activity(), local, name, extension);
                 }
-            }).download(url, local, extension, "", "");
+            }).setRemoveNotificationWhenComplete(true).download(url, local, extension, "", "");
         }
     }
 
