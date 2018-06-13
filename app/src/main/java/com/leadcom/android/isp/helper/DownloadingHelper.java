@@ -41,6 +41,7 @@ public class DownloadingHelper {
 
     private Context context;
     private boolean showNotification = true;
+    private boolean removeNotificationWhenComplete = false;
     private DownloadManager downloadManager;
     private DownloadingReceiver receiver;
     private OnTaskCompleteListener completeListener;
@@ -59,6 +60,14 @@ public class DownloadingHelper {
      */
     public DownloadingHelper setOnTaskFailureListener(OnTaskFailureListener l) {
         failureListener = l;
+        return this;
+    }
+
+    /**
+     * 设置是否在下载成功之后删除通知栏
+     */
+    public DownloadingHelper setRemoveNotificationWhenComplete(boolean remove) {
+        removeNotificationWhenComplete = remove;
         return this;
     }
 
@@ -141,8 +150,16 @@ public class DownloadingHelper {
                 mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
             }
             request.setMimeType(mimeType);
-            //在下载过程中通知栏会一直显示该下载的Notification，在下载完成后该Notification会继续显示，直到用户点击该Notification或者消除该Notification
-            request.setNotificationVisibility(showNotification ? DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED : DownloadManager.Request.VISIBILITY_HIDDEN);
+            // 在下载过程中通知栏会一直显示该下载的Notification，在下载完成后该Notification会继续显示，直到用户点击该Notification或者消除该Notification
+            int visibility = DownloadManager.Request.VISIBILITY_HIDDEN;
+            if (showNotification) {
+                if (removeNotificationWhenComplete) {
+                    visibility = DownloadManager.Request.VISIBILITY_VISIBLE;
+                } else {
+                    visibility = DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED;
+                }
+            }
+            request.setNotificationVisibility(visibility);
             // 可能无法创建Download文件夹，如无sdcard情况，系统会默认将路径设置为/data/data/com.android.providers.downloads/cache/xxx.apk
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 request.setDestinationUri(Uri.parse("file://" + local));
