@@ -19,7 +19,6 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.common.FilePreviewX5Fragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.InnerWebViewFragment;
 import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
@@ -69,17 +68,8 @@ public class FilePreviewHelper {
             if (ImageCompress.isImage(ext)) {
                 previewImage(activity, path);
                 return;
-            } else if (!ext.equals("apk") && App.app().isX5Usable()) {
-                // 如果疼熏文件浏览内核可用，则直接用疼熏内核，否则用POI打开文件
-                boolean minutes = !StringHelper.isEmpty(fileName) && fileName.equals(StringHelper.getString(R.string.ui_nim_action_minutes));
-                FilePreviewX5Fragment.open(activity, BaseFragment.REQUEST_CHANGE, path, fileName, ext, minutes);
-                return;
-            }
-            if (ext.equals("pdf")) {
+            } else if (ext.equals("pdf")) {
                 previewPdf(activity, path, fileName);
-                return;
-            } else if (ImageCompress.isImage(ext)) {
-                previewImage(activity, path);
                 return;
             } else if (Attachment.isOffice(ext)) {
                 previewOnlineOffice(activity, path, fileName, ext);
@@ -89,7 +79,6 @@ public class FilePreviewHelper {
                 return;
             } else if (isNimFile(path) && extension.contains("txt")) {
                 // 文本文件的在线预览方式
-                //BaseActivity.openActivity(context, InnerWebViewFragment.class.getName(), StringHelper.format("%s,%s", path, fileName), true, false);
                 previewOnline(activity, path, fileName);
                 return;
             }

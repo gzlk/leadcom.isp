@@ -29,7 +29,6 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.common.FilePreviewX5Fragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
 import com.leadcom.android.isp.fragment.individual.CollectionDetailsFragment;
@@ -640,7 +639,6 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     attachment.setUrl(attCol.getContent());
                     attachment.resetInformation();
                     OfficeOnlinePreviewFragment.isCollected = true;
-                    FilePreviewX5Fragment.isCollected = true;
                     FilePreviewHelper.previewFile(Activity(), attachment.getUrl(), attachment.getName(), attachment.getExt());
                     break;
                 case R.id.ui_tool_view_collection_content_image:

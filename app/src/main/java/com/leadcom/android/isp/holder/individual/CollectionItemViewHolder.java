@@ -148,7 +148,11 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     private void showCollection(Collection col) {
         switch (col.getType()) {
             case Collection.Type.TEXT:
-                textContent.setText(EmojiUtility.getEmojiString(textContent.getContext(), col.getContent(), true));
+                String content = col.getContent();
+                if (isEmpty(content)) {
+                    content = "[空白内容]";
+                }
+                textContent.setText(EmojiUtility.getEmojiString(textContent.getContext(), content, true));
                 textContent.makeExpandable();
                 break;
             case Collection.Type.IMAGE:

@@ -10,18 +10,15 @@ import com.hlk.hlklib.lib.view.CorneredButton;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.apache.poi.FileUtils;
-import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
-import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.view.SuperFileView2;
 
 import java.io.File;
@@ -247,15 +244,15 @@ public class FilePreviewX5Fragment extends BaseDownloadingUploadingSupportFragme
     }
 
     private void tryCollectOffice() {
-        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
-            @Override
-            public void onResponse(Collection collection, boolean success, String message) {
-                super.onResponse(collection, success, message);
-                if (success) {
-                    ToastHelper.make().showMsg(message);
-                }
-            }
-        }).add(mQueryId);
+//        CollectionRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Collection>() {
+//            @Override
+//            public void onResponse(Collection collection, boolean success, String message) {
+//                super.onResponse(collection, success, message);
+//                if (success) {
+//                    ToastHelper.make().showMsg(message);
+//                }
+//            }
+//        }).add(mQueryId);
     }
 
     private void tryCopy() {
