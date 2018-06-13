@@ -26,6 +26,7 @@ import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseDownloadingUploadingSupportFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
@@ -165,6 +166,8 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
     }
 
     private void showMoreDialog() {
+        String url = images.get(selectedIndex);
+        boolean isUrl = Utils.isUrl(url);
         MomentMoreHelper.helper().init(this).setOnButtonClickListener(new MomentMoreHelper.OnButtonClickListener() {
             @Override
             public boolean onClick(View view) {
@@ -173,9 +176,9 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
             }
         }).showPrivacy(false)
                 .showShare(true)
-                .showSave(true)
+                .showSave(isUrl)// 互联网图片才可以保存
                 .showDelete(false)
-                .showFavorite(!isCollected)
+                .showFavorite(!isCollected || isUrl)
                 .show();
     }
 

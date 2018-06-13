@@ -94,15 +94,17 @@ public class PdfViewerFragment extends BaseDownloadingUploadingSupportFragment {
             firstEnter = false;
             loadingPdf();
         }
-        setRightIcon(R.string.ui_icon_more);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                if (Utils.isUrl(localReal) || Utils.isLocalPath(localReal)) {
-                    showDialog();
+        if (Utils.isUrl(localReal)) {
+            setRightIcon(R.string.ui_icon_more);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    if (Utils.isUrl(localReal) || Utils.isLocalPath(localReal)) {
+                        showDialog();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private View dialogView;

@@ -155,7 +155,14 @@ public class OfficeOnlinePreviewFragment extends BaseWebViewFragment {
     }
 
     private void resetCollectEvent() {
-        if (isCollected) return;
+        if (isCollected) {
+            // 收藏的附件，不需要分享相关逻辑
+            return;
+        }
+        if (!Utils.isUrl(mQueryId)) {
+            // 预览的本地文件，不需要分享相关的逻辑
+            return;
+        }
         setRightIcon(R.string.ui_icon_more);
         //setRightText(R.string.ui_base_text_favorite);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
