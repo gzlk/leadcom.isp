@@ -179,9 +179,11 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
                     paths.add(App.app().getCachePath(App.CAMERA_DIR));
                     paths.add(App.app().getCachePath(App.THUMB_DIR));
                     paths.add(App.app().getCachePath(App.CROPPED_DIR));
+                    paths.add(App.app().getCachePath(App.IMAGE_UIL));
                     break;
                 case 2:
-                    // 清理视频缓存
+                    // 清理音视频缓存
+                    paths.add(App.app().getCachePath(App.VOICE_DIR));
                     paths.add(App.app().getCachePath(App.VIDEO_DIR));
                     break;
                 case 3:
