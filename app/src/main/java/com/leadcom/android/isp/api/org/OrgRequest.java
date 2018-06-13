@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.api.org;
 
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
@@ -37,6 +38,9 @@ public class OrgRequest extends Request<Organization> {
     }
 
     private static class MultipleGroup extends PaginationQuery<Organization> {
+    }
+
+    private static class BooleanGroup extends BoolQuery<Organization> {
     }
 
     private static final String ORG = "/group/group";
@@ -151,18 +155,18 @@ public class OrgRequest extends Request<Organization> {
             if (!isEmpty(groupLogo)) {
                 object.put("logo", checkNull(groupLogo));
             }
-            if (!isEmpty(introduction)) {
-                object.put("intro", checkNull(introduction));
-            }
             if (!isEmpty(groupName)) {
                 // 更改组织名称
                 object.put("name", checkNull(groupName));
+                object.put("intro", checkNull(introduction));
+            } else if (!isEmpty(introduction)) {
+                object.put("intro", checkNull(introduction));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BooleanGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public static final int TYPE_NAME = 1;
@@ -178,27 +182,27 @@ public class OrgRequest extends Request<Organization> {
             object.put("_id", groupId);
             switch (type) {
                 case TYPE_INTRO:
-                    object.put("name", checkNull(value));
+                    object.put("intro", checkNull(value));
                     break;
                 case TYPE_LOGO:
                     object.put("logo", checkNull(value));
                     break;
                 case TYPE_NAME:
-                    object.put("intro", checkNull(value));
+                    object.put("name", checkNull(value));
                     break;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BooleanGroup.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
      * 删除组织
      */
     public void delete(String groupId) {
-        executeHttpRequest(getRequest(SingleGroup.class, format("%s?groupId=%s", url(DELETE), groupId), "", HttpMethods.Post));
+        executeHttpRequest(getRequest(BooleanGroup.class, format("%s?groupId=%s", url(DELETE), groupId), "", HttpMethods.Post));
     }
 
     /**

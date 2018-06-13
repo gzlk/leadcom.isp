@@ -85,6 +85,9 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
         name = bundle.getString(PARAM_NAME, "");
         logo = bundle.getString(PARAM_LOGO, "");
         intro = bundle.getString(PARAM_INTRO, "");
+        if (isEmpty(intro, true)) {
+            intro = "";
+        }
     }
 
     @Override
@@ -161,11 +164,12 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
     private void createOrganization() {
         intro = descView.getValue();
         String name = nameHolder.getValue();
+        String logo = "";
         if (getUploadedFiles().size() > 0) {
             logo = getUploadedFiles().get(0).getUrl();
         }
         if (!isEmpty(mQueryId)) {
-            updateOrganization(name.equals(this.name) ? "" : name, logo, intro);
+            updateOrganization((name.equals(this.name) ? "" : name), (logo.equals(this.logo) ? "" : logo), intro);
             return;
         }
         OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
@@ -186,7 +190,7 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
     }
 
     private void updateOrganization(String name, String logo, String intro) {
-        OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
+        OrgRequest request = OrgRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Organization>() {
             @Override
             public void onResponse(Organization organization, boolean success, String message) {
                 super.onResponse(organization, success, message);
@@ -199,7 +203,12 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
                     });
                 }
             }
-        }).update(mQueryId, name, logo, intro);
+        });
+        if (isEmpty(name) && isEmpty(logo)) {
+            request.update(mQueryId, OrgRequest.TYPE_INTRO, intro);
+        } else {
+            request.update(mQueryId, name, logo, intro);
+        }
     }
 
     @Override
