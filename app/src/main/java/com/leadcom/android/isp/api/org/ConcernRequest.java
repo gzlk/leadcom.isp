@@ -67,9 +67,29 @@ public class ConcernRequest extends Request<Concern> {
     }
 
     /**
+     * 查询全部？
+     */
+    public static final int CONCERN_NONE = 0;
+    /**
+     * 查询我关注的组织
+     */
+    public static final int CONCERN_TO = 1;
+    /**
+     * 查询关注我的组织
+     */
+    public static final int CONCERN_FROM = 2;
+
+    /**
      * 列出指定组织可以关注的组织列表
      */
-    public void list(String groupId, int pageNumber, String searchingText) {
-        executeHttpRequest(getRequest(MultiConcern.class, format("%s?groupId=%s&pageNumber=%d&pageSize=999&info=%s", url(LIST), groupId, pageNumber, searchingText), "", HttpMethods.Get));
+    public void list(String groupId, int concernType, int pageNumber, String searchingText) {
+        String param = format("%s?groupId=%s&pageNumber=%d&pageSize=999", url(LIST), groupId, pageNumber);
+        if (concernType > CONCERN_NONE) {
+            param = format("%s&concernTo=%d", param, concernType);
+        }
+        if (!isEmpty(searchingText)) {
+            param = format("%s&info=%s", param, searchingText);
+        }
+        executeHttpRequest(getRequest(MultiConcern.class, param, "", HttpMethods.Get));
     }
 }

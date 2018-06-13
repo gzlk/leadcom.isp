@@ -77,12 +77,12 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         }
         coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_35), false, false);
         String name = organization.getName();
-        if (organization instanceof Concern) {
-            Concern concern = (Concern) organization;
-            if (concern.getType() > 0) {
-                name += format("(%s)", Concern.getTypeString(concern.getType()));
-            }
-        }
+//        if (organization instanceof Concern) {
+//            Concern concern = (Concern) organization;
+//            if (concern.getType() > 0) {
+//                name += format("(%s)", Concern.getTypeString(concern.getType()));
+//            }
+//        }
         nameView.setText(Html.fromHtml(name));
         buttonView.setText(organization.isConcerned() ? R.string.ui_organization_interesting_concerned : R.string.ui_organization_interesting_concern);
         buttonView.setNormalColor(getColor(organization.isConcerned() ? R.color.color_3eb135 : R.color.colorPrimary));

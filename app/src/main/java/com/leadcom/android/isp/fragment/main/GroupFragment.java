@@ -20,6 +20,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
@@ -586,18 +587,10 @@ public class GroupFragment extends BaseOrganizationFragment {
                 ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;
             case 4:
-                // 上下级
-//                ArrayList<Concern> concerns = group.getConGroup();
-//                if (null != concerns) {
-//                    for (Concern concern : concerns) {
-//                        concern.setConcernType(getConcerned(concern.getConGroup(), group.getId()));
-//                    }
-//                }
-//                String json = Json.gson().toJson(concerns, new TypeToken<ArrayList<Concern>>() {
-//                }.getType());
+            case 5:
                 //if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
                 // 每个人都可以打开查看关注的组织列表？
-                ConcernedOrganizationFragment.open(this, group.getId());
+                ConcernedOrganizationFragment.open(this, group.getId(), (index == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
                 //}
                 break;
         }

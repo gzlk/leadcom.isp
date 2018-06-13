@@ -15,7 +15,6 @@ import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
@@ -43,6 +42,7 @@ import java.util.List;
 public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_UPPER = "cof_upper";
+    private static final String PARAM_TYPE = "cof_concern_type";
 
     public static ConcernedOrganizationFragment newInstance(Bundle bundle) {
         ConcernedOrganizationFragment cof = new ConcernedOrganizationFragment();
@@ -50,15 +50,17 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         return cof;
     }
 
-    public static void open(BaseFragment fragment, String groupId) {
+    public static void open(BaseFragment fragment, String groupId, int concernType) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
+        bundle.putInt(PARAM_TYPE, concernType);
         fragment.openActivity(ConcernedOrganizationFragment.class.getName(), bundle, REQUEST_CONCERNED, true, false);
     }
 
     private ArrayList<Concern> concerns = new ArrayList<>();
     private ConcernedAdapter mAdapter;
 
+    private int mConcernType = ConcernRequest.CONCERN_TO;
     @ViewId(R.id.ui_main_archive_search_functions)
     private View functionView;
     @ViewId(R.id.ui_holder_view_searchable_container)
@@ -72,8 +74,8 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         functionView.setVisibility(View.GONE);
         enableSwipe(false);
         isLoadingComplete(true);
-        // 没有权限关注或取关时，不显示搜索框
-        if (!hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION)) {
+        // 查看的是被关注列表时不显示搜索框；查看的是已关注列表且没有权限关注或取关时，不显示搜索框
+        if (mConcernType == ConcernRequest.CONCERN_FROM || !hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION)) {
             searchableView.setVisibility(View.GONE);
         }
         InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchableView, this);
@@ -91,6 +93,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         super.getParamsFromBundle(bundle);
         searchingText = bundle.getString(PARAM_SEARCHED, "");
         isUpper = bundle.getBoolean(PARAM_UPPER, false);
+        mConcernType = bundle.getInt(PARAM_TYPE, ConcernRequest.CONCERN_TO);
     }
 
     @Override
@@ -98,6 +101,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_SEARCHED, searchingText);
         bundle.putBoolean(PARAM_UPPER, isUpper);
+        bundle.putInt(PARAM_TYPE, mConcernType);
     }
 
     @Override
@@ -142,7 +146,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
 
     private void initializeAdapter() {
         if (null == mAdapter) {
-            setCustomTitle(R.string.ui_organization_concerned_fragment_title);
+            setCustomTitle(mConcernType == ConcernRequest.CONCERN_TO ? R.string.ui_organization_concerned_fragment_title : R.string.ui_organization_concerned_from_fragment_title);
             mAdapter = new ConcernedAdapter();
             mRecyclerView.setAdapter(mAdapter);
             fetchingConcernableGroups();
@@ -160,12 +164,12 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
                 }
                 searching();
             }
-        }).list(mQueryId, remotePageNumber, searchingText);
+        }).list(mQueryId, mConcernType, remotePageNumber, searchingText);
     }
 
     private void searching() {
         mAdapter.clear();
-        setNothingText(isEmpty(searchingText) ? R.string.ui_organization_concerned_nothing : R.string.ui_organization_concerned_search_nothing);
+        setNothingText(isEmpty(searchingText) ? (mConcernType == ConcernRequest.CONCERN_TO ? R.string.ui_organization_concerned_nothing : R.string.ui_organization_concerned_from_nothing) : R.string.ui_organization_concerned_search_nothing);
         // 是否有权限关注或取消关注
         boolean able = hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION);
         for (Concern concern : concerns) {
@@ -352,7 +356,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         public GroupInterestViewHolder onCreateViewHolder(View itemView, int viewType) {
             GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ConcernedOrganizationFragment.this);
             holder.setOnViewHolderElementClickListener(elementClickListener);
-            holder.setButtonShown(hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION));
+            holder.setButtonShown(mConcernType == ConcernRequest.CONCERN_TO && hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION));
             return holder;
         }
 

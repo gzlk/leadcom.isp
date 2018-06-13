@@ -633,6 +633,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             }
 
             private void showConcernedGroups() {
+                // 查询关注我的组织列表并推送
                 ConcernRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Concern>() {
                     @Override
                     public void onResponse(List<Concern> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -641,7 +642,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                             cAdapter.update(list);
                         }
                     }
-                }).list(mArchive.getGroupId(), 1, "");
+                }).list(mArchive.getGroupId(), ConcernRequest.CONCERN_FROM, 1, "");
             }
 
             @Override
