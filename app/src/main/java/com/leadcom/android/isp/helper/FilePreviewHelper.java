@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -23,6 +24,8 @@ import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.InnerWebViewFragment;
 import com.leadcom.android.isp.fragment.common.OfficeOnlinePreviewFragment;
 import com.leadcom.android.isp.fragment.common.PdfViewerFragment;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 
 import java.io.File;
@@ -147,8 +150,15 @@ public class FilePreviewHelper {
             context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
-            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_nim_attachment_open_failure));
+            warningPreviewFileFail(context, extension);
         }
+    }
+
+    private static void warningPreviewFileFail(Context context, String extension) {
+        DeleteDialogHelper.helper().init((AppCompatActivity) context)
+                .setLayout(R.layout.popup_dialog_rich_editor_paste)
+                .setCancelText(R.string.ui_base_text_known)
+                .setTitleText(StringHelper.getString(R.string.ui_nim_attachment_open_failure, extension)).show();
     }
 
     private static final String fileProvider = StringHelper.format("%s.fileProvider", BuildConfig.APPLICATION_ID);
