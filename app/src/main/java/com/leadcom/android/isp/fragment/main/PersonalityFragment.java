@@ -656,6 +656,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                     selfDialogTitle.setText(R.string.ui_text_user_property_self_defined_dialog_title);
                     toggleHolder.showContent(getString(R.string.ui_text_user_property_self_defined_shown, UserExtra.ShownType.HIDE));
                     selfPropertyName.setValue("");
+                    selfPropertyName.setEnabled(true);
                     selfPropertyValue.setValue("");
                     selfShown.setVisibility(View.VISIBLE);
                 }
