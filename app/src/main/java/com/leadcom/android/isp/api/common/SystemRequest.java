@@ -102,7 +102,7 @@ public class SystemRequest extends Request<User> {
      */
     public void getCaptcha(String phone, boolean resetPassword) {
         String url = StringHelper.format("%s%s?phone=%s", CAPTCHA, (resetPassword ? "ResetPwd" : "Regist"), phone);
-        executeHttpRequest(getRequest(Register.class, url, "", HttpMethods.Post));
+        executeHttpRequest(getRequest(Register.class, url, "", HttpMethods.Get));
     }
 
     /**
@@ -143,7 +143,7 @@ public class SystemRequest extends Request<User> {
      */
     public void getCaptchaToResetPhone(String phone) {
         String param = format("/system/getCaptchaToResetPhone?phone=%s", phone);
-        executeHttpRequest(getRequest(Register.class, param, "", HttpMethods.Post));
+        executeHttpRequest(getRequest(Register.class, param, "", HttpMethods.Get));
     }
 
     /**
