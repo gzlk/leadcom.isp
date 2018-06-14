@@ -74,7 +74,7 @@
         <item>1|全体成员|%d|1|0xe674</item>
         <item>2|下属分支|%d|1|0xe696</item>
         <item>3|组织档案|%d|1|0xe670</item>
-        <item>4|关注的组织|%d|1|0xe678</item>
+        <item>4|关注|%d|1|0xe678</item>
         <item>5|被关注|%d|1|0xe678</item>
     </string-array>
     <string name="ui_group_header_minmeng_flag">&#xe68d;&#xe68e;&#xe693;&#xe694;&#xe697;&#xe699;</string>

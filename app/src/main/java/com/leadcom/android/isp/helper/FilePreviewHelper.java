@@ -77,7 +77,7 @@ public class FilePreviewHelper {
             } else if (ImageCompress.isVideo(ext)) {
                 previewVideo(activity, path, fileName, extension);
                 return;
-            } else if (isNimFile(path) && extension.contains("txt")) {
+            } else if (extension.contains("txt")) {
                 // 文本文件的在线预览方式
                 previewOnline(activity, path, fileName);
                 return;

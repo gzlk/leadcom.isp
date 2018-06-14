@@ -215,6 +215,23 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Override
+    protected void warningStillInEditing() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                finish();
+                return true;
+            }
+        }).setOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                isOpenOther = true;
+                finish();
+            }
+        }).setTitleText(R.string.ui_text_archive_creator_still_edit).setCancelText(R.string.ui_base_text_abandon).setConfirmText(R.string.ui_text_archive_creator_save_draft).show();
+    }
+
+    @Override
     protected void onSwipeRefreshing() {
 
     }

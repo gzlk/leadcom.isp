@@ -40,6 +40,8 @@
     <string name="ui_text_archive_creator_editor_attachment_icon">http://120.25.124.199:8008/group1/M00/00/17/cErYIVnkBRiAOy1aAAAJiqCeKro218.png</string>
     <string name="ui_text_archive_creator_title_hint">请输入题名</string>
     <string name="ui_text_archive_creator_content_hint">请输入正文</string>
+    <string name="ui_text_archive_creator_still_edit">档案内容尚未保存，存为草稿您可以在稍后继续编辑本档案。确定要放弃保存吗？</string>
+    <string name="ui_text_archive_creator_save_draft">存为草稿</string>
     <string name="ui_text_archive_creator_editor_attachment_uploading">上传中&#8230;</string>
     <string name="ui_text_archive_creator_editor_attachment_uploading_failed">上传失败，条件允许的话请更换其他上传方式</string>
     <string name="ui_text_archive_creator_editor_image_select_dialog_title">插入图片</string>

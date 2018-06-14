@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 
@@ -32,6 +33,9 @@ public class InnerWebViewFragment extends BaseWebViewFragment {
     private static Bundle getBundle(String title, String url) {
         Bundle bundle = new Bundle();
         // url地址
+        if (!Utils.isUrl(url) && !url.contains("file://")) {
+            url = "file://" + url;
+        }
         bundle.putString(PARAM_QUERY_ID, url);
         // 标题
         bundle.putString(PARAM_TITLE, title);
