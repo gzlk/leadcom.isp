@@ -487,12 +487,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             case REQUEST_COVER:
                 mArchive.setCover(getResultedData(data));
                 if (null != coverView) {
-                    Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
-                        }
-                    }, 2000);
+                    coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
                 }
                 break;
             case REQUEST_VIDEO:

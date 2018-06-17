@@ -389,8 +389,10 @@ public class ArchiveRequest extends Request<Archive> {
                         .put("site", checkNull(archive.getSite()))
                         .put("property", checkNull(archive.getProperty()))
                         .put("category", checkNull(archive.getCategory()))
-                        .put("participant", checkNull(archive.getParticipant()))
-                        .put("happenDate", archive.getHappenDate());
+                        .put("participant", checkNull(archive.getParticipant()));
+                if (archive.isTemplateArchive()) {
+                    object.put("happenDate", archive.getHappenDate());
+                }
             }
             if (shareDraft) {
                 // 如果是分享草稿，则需要添加这个字段
