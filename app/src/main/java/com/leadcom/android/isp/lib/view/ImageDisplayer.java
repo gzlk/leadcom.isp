@@ -3,7 +3,10 @@ package com.leadcom.android.isp.lib.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -13,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.lib.view.CustomTextView;
@@ -48,6 +52,7 @@ public class ImageDisplayer extends RelativeLayout {
 
     public ImageDisplayer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        loadingFailedTimes = 0;
         initialize(context, attrs, defStyleAttr);
     }
 
@@ -95,7 +100,9 @@ public class ImageDisplayer extends RelativeLayout {
     }
 
     private int srcDrawable = 0, scaleType;
-    private boolean  isShowHeader;
+    // 加载错误的次数
+    private int loadingFailedTimes = 0;
+    private boolean isShowHeader;
     private RoundedImageView imageView;
     private CircleProgressBar progressBar;
     private CorneredView selectContainer, deleteContainer;
@@ -135,6 +142,35 @@ public class ImageDisplayer extends RelativeLayout {
             imageView.setImageResource(R.drawable.img_default_user_header);
             //imageView.setImageResource(R.mipmap.img_image_loading_fail);
         }
+    }
+
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        //begin boilerplate code that allows parent classes to save state
+        Parcelable superState = super.onSaveInstanceState();
+
+        SavedState ss = new SavedState(superState);
+        //end
+
+        ss.failedTimes = loadingFailedTimes;
+
+        return ss;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        //begin boilerplate code so parent classes can restore state
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+        //end
+
+        loadingFailedTimes = ss.failedTimes;
     }
 
     @Override
@@ -290,6 +326,15 @@ public class ImageDisplayer extends RelativeLayout {
         @Override
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
             progressBar.setVisibility(View.GONE);
+            loadingFailedTimes++;
+            if (loadingFailedTimes <= 5) {
+                FailReason.FailType type = failReason.getType();
+                LogHelper.log("ImageDisplayer", StringHelper.format("loading failed(%s) %d times for url: %s, 3 seconds later to reload.", type, loadingFailedTimes, imageUri));
+                if (type == FailReason.FailType.IO_ERROR || type == FailReason.FailType.NETWORK_DENIED) {
+                    // 加载失败后，间隔3s再次加载一次图片
+                    postDelayed(runnable, 3000);
+                }
+            }
         }
 
         @Override
@@ -301,6 +346,13 @@ public class ImageDisplayer extends RelativeLayout {
         public void onLoadingCancelled(String imageUri, View view) {
             progressBar.setVisibility(View.GONE);
         }
+
+        private Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                displayImage2();
+            }
+        };
     };
 
     private ImageLoadingProgressListener mImageLoadingProgressListener = new ImageLoadingProgressListener() {
@@ -310,7 +362,6 @@ public class ImageDisplayer extends RelativeLayout {
             progressBar.setProgress(current / total);
         }
     };
-
 
     /**
      * 正常显示方式
@@ -416,5 +467,35 @@ public class ImageDisplayer extends RelativeLayout {
      */
     public interface OnDeleteClickListener {
         void onDeleteClick(String url);
+    }
+
+    static class SavedState extends BaseSavedState {
+
+        int failedTimes;
+
+        public SavedState(Parcel source) {
+            super(source);
+            failedTimes = source.readInt();
+        }
+
+        public SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(failedTimes);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
     }
 }
