@@ -40,7 +40,9 @@ public class SquadViewHolder extends BaseViewHolder {
     }
 
     public void showEdit(boolean shown) {
-        editButton.setVisibility(shown ? View.VISIBLE : View.GONE);
+        if (null != editButton) {
+            editButton.setVisibility(shown ? View.VISIBLE : View.GONE);
+        }
     }
 
     public void showContent(Squad squad, String searchingText) {
