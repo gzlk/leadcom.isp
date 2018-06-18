@@ -10,6 +10,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <include layout="@layout/tool_view_list_item_editable_button" />
+
         <include layout="@layout/tool_view_list_item_deletable_button" />
 
     </LinearLayout>

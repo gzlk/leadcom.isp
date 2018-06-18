@@ -92,6 +92,7 @@
     <string name="ui_organization_squad_add_introduction_hint">简介(50个字以内)</string>
     <string name="ui_organization_squad_add_introduction_invalid">分支简介不符合要求</string>
     <string name="ui_organization_squad_add_text">增加下属分支</string>
+    <string name="ui_organization_squad_edit_text">修改分支名称</string>
     <string name="ui_organization_squad_not_member" formatted="false">
         <![CDATA[您还不是分支<font color="#3cbaff">%s</font>的成员。<br/>现在要加入吗？]]>
     </string>

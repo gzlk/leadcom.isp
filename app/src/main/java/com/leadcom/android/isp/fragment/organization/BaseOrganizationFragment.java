@@ -154,6 +154,25 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
     }
 
     /**
+     * 编辑小组的名字
+     */
+    protected void editSquad(String squadId, String squadName, String squadIntroduction) {
+        SquadRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Squad>() {
+            @Override
+            public void onResponse(Squad squad, boolean success, String message) {
+                super.onResponse(squad, success, message);
+                onEditSquadComplete(success, message);
+            }
+        }).update(squadId, squadName, squadIntroduction);
+    }
+
+    /**
+     * 更改小组名称返回了
+     */
+    protected void onEditSquadComplete(boolean success, String message) {
+    }
+
+    /**
      * 查询指定的小组详情
      */
     protected void fetchingRemoteSquad(final String squadId) {

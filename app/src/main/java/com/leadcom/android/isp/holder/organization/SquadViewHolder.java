@@ -31,10 +31,16 @@ public class SquadViewHolder extends BaseViewHolder {
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_squad_members)
     private TextView numberView;
+    @ViewId(R.id.ui_tool_view_contact_button_edit)
+    private View editButton;
 
     public SquadViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
+    }
+
+    public void showEdit(boolean shown) {
+        editButton.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     public void showContent(Squad squad, String searchingText) {
@@ -48,7 +54,7 @@ public class SquadViewHolder extends BaseViewHolder {
         numberView.setText(format("%d人", squad.isSelectable() ? Integer.valueOf(squad.getAccessToken()) : squad.getMemberNum()));
     }
 
-    @Click({R.id.ui_holder_view_group_squad_container, R.id.ui_tool_view_contact_button2})
+    @Click({R.id.ui_holder_view_group_squad_container, R.id.ui_tool_view_contact_button_edit, R.id.ui_tool_view_contact_button2})
     private void viewClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

@@ -3,6 +3,7 @@ package com.leadcom.android.isp.fragment.organization;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
@@ -182,6 +183,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
     }
 
     private View dialogView;
+    private TextView titleText;
     private ClearEditText titleView, introView;
 
     private void openSquadAddDialog() {
@@ -192,13 +194,21 @@ public class SquadsFragment extends BaseOrganizationFragment {
                     dialogView = View.inflate(Activity(), R.layout.popup_dialog_squad_add, null);
                     titleView = dialogView.findViewById(R.id.ui_popup_squad_add_input);
                     introView = dialogView.findViewById(R.id.ui_popup_squad_add_introduction);
+                    titleText = dialogView.findViewById(R.id.ui_popup_squad_add_title);
                 }
                 return dialogView;
             }
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
-
+                if (dialIndex >= 0) {
+                    Squad squad = (Squad) mAdapter.get(dialIndex);
+                    titleView.setValue(squad.getName());
+                    titleView.focusEnd();
+                    titleText.setText(R.string.ui_organization_squad_edit_text);
+                } else {
+                    titleText.setText(R.string.ui_organization_squad_add_text);
+                }
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
@@ -209,11 +219,16 @@ public class SquadsFragment extends BaseOrganizationFragment {
                     return false;
                 }
                 String intro = introView.getValue();
-                addNewSquadToOrganization(mQueryId, name, intro);
+                if (dialIndex >= 0) {
+                    Squad squad = (Squad) mAdapter.get(dialIndex);
+                    editSquad(squad.getId(), name, intro);
+                } else {
+                    addNewSquadToOrganization(mQueryId, name, intro);
+                }
                 Utils.hidingInputBoard(titleView);
                 return true;
             }
-        }).setConfirmText(R.string.ui_base_text_add).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+        }).setConfirmText(dialIndex >= 0 ? R.string.ui_base_text_change : R.string.ui_base_text_add).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
     }
 
     @Override
@@ -224,6 +239,14 @@ public class SquadsFragment extends BaseOrganizationFragment {
         titleView.setValue("");
         introView.setValue("");
         fetchingRemoteSquads(mQueryId);
+    }
+
+    @Override
+    protected void onEditSquadComplete(boolean success, String message) {
+        dialIndex = -1;
+        if (success) {
+            fetchingRemoteSquads(mQueryId);
+        }
     }
 
     private OnViewHolderClickListener onViewHolderClickListener = new OnViewHolderClickListener() {
@@ -255,6 +278,11 @@ public class SquadsFragment extends BaseOrganizationFragment {
                     // 删除小组
                     dialIndex = index;
                     warningDeleteSquad(squad.getId(), squad.getName());
+                    break;
+                case R.id.ui_tool_view_contact_button_edit:
+                    // 编辑小组的名称
+                    dialIndex = index;
+                    openSquadAddDialog();
                     break;
             }
         }
@@ -384,6 +412,8 @@ public class SquadsFragment extends BaseOrganizationFragment {
                 case VT_SQUAD:
                     SquadViewHolder svh = new SquadViewHolder(itemView, SquadsFragment.this);
                     svh.setOnViewHolderElementClickListener(elementClickListener);
+                    // 有修改小组资料的权限时，才能编辑小组名称
+                    svh.showEdit(hasOperation(GRPOperation.SQUAD_PROPERTY));
                     return svh;
                 case VT_MEMBER:
                     ContactViewHolder cvh = new ContactViewHolder(itemView, SquadsFragment.this);

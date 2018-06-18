@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.api.org;
 
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
@@ -32,6 +33,9 @@ public class SquadRequest extends Request<Squad> {
     }
 
     private static class MultipleSquad extends PaginationQuery<Squad> {
+    }
+
+    private static class BooleanSquad extends BoolQuery<Squad> {
     }
 
     private static final String SQUAD = "/group/groSquad";
@@ -87,7 +91,7 @@ public class SquadRequest extends Request<Squad> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleSquad.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BooleanSquad.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     public void find(String squadId) {
