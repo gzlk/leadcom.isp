@@ -13,7 +13,9 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.helper.publishable.Collectable;
@@ -22,7 +24,6 @@ import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentCommentHeaderViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentPraiseViewHolder;
-import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnKeyboardChangeListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -440,10 +441,17 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         }
     };
 
-    private OnHandleBoundDataListener<Model> boundDataListener = new OnHandleBoundDataListener<Model>() {
+    private MomentDetailsViewHolder.OnImageClickListener imageClickListener = new MomentDetailsViewHolder.OnImageClickListener() {
         @Override
-        public Model onHandlerBoundData(BaseViewHolder holder) {
-            return mAdapter.get(holder.getAdapterPosition());
+        public void onClick(View view, String url, int index) {
+            int i = mMoment.getImage().indexOf(url);
+            if (i >= 0) {
+                // 到大图预览页
+                ImageViewerFragment.isCollected = isCollected;
+                ImageViewerFragment.open(MomentDetailsFragment.this, i, mMoment.getImage());
+            } else {
+                ToastHelper.make().showMsg(R.string.ui_text_moment_details_image_index_invalid);
+            }
         }
     };
 
@@ -519,7 +527,7 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 case VT_MOMENT:
                     MomentDetailsViewHolder holder = new MomentDetailsViewHolder(itemView, MomentDetailsFragment.this);
                     holder.setOnViewHolderElementClickListener(elementClickListener);
-                    holder.addOnHandlerBoundDataListener(boundDataListener);
+                    holder.setOnImageClickListener(imageClickListener);
                     holder.isShowLike(false);
                     holder.setCollected(isCollected);
                     return holder;

@@ -51,7 +51,6 @@ import com.leadcom.android.isp.holder.individual.MomentCommentTextViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentDetailsViewHolder;
 import com.leadcom.android.isp.holder.individual.MomentHomeCameraViewHolder;
 import com.leadcom.android.isp.lib.Json;
-import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
@@ -877,10 +876,22 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         }
     }
 
-    private OnHandleBoundDataListener<Model> momentBoundDataListener = new OnHandleBoundDataListener<Model>() {
+    private MomentDetailsViewHolder.OnImageClickListener imageClickListener = new MomentDetailsViewHolder.OnImageClickListener() {
         @Override
-        public Model onHandlerBoundData(BaseViewHolder holder) {
-            return mAdapter.get(holder.getAdapterPosition());
+        public void onClick(View view, String url, int index) {
+            if (index >= 0) {
+                Model model = mAdapter.get(index);
+                if (model instanceof Moment) {
+                    Moment moment = (Moment) model;
+                    int i = moment.getImage().indexOf(url);
+                    if (i >= 0) {
+                        // 到说说图片详情页
+                        MomentImagesFragment.open(IndividualFragment.this, moment.getId(), i);
+                    } else {
+                        ToastHelper.make().showMsg(R.string.ui_text_moment_details_image_index_invalid);
+                    }
+                }
+            }
         }
     };
 
@@ -957,7 +968,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case VT_MOMENT:
                     MomentDetailsViewHolder mdvh = new MomentDetailsViewHolder(itemView, fragment);
                     mdvh.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
-                    mdvh.addOnHandlerBoundDataListener(momentBoundDataListener);
+                    mdvh.setOnImageClickListener(imageClickListener);
                     mdvh.setToDetails(true);
                     mdvh.isShowLike(true);
                     return mdvh;

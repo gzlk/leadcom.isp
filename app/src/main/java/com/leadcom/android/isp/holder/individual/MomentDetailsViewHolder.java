@@ -5,18 +5,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
-import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
-import com.leadcom.android.isp.fragment.individual.moment.MomentImagesFragment;
-import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.lib.view.ExpandableTextView;
-import com.leadcom.android.isp.lib.view.ImageDisplayer;
-import com.leadcom.android.isp.model.user.Moment;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.lib.view.ExpandableTextView;
+import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.model.user.Moment;
 
 /**
  * <b>功能描述：</b>说说的详情<br />
@@ -70,23 +68,11 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         imageLine2 = new ImageLineViewHolder(images2, fragment);
         imageLine3 = new ImageLineViewHolder(images3, fragment);
 
-        ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
+        final ImageDisplayer.OnImageClickListener onImageClickListener = new ImageDisplayer.OnImageClickListener() {
             @Override
             public void onImageClick(ImageDisplayer displayer, String url) {
-                if (null != mOnHandlerBoundDataListener) {
-                    Object object = mOnHandlerBoundDataListener.onHandlerBoundData(MomentDetailsViewHolder.this);
-                    if (null != object && object instanceof Moment) {
-                        Moment moment = (Moment) object;
-                        int index = moment.getImage().indexOf(url);
-                        if (isToDetails) {
-                            // 到说说图片详情页
-                            MomentImagesFragment.isCollected = isCollected;
-                            MomentImagesFragment.open(fragment(), moment.getId(), index);
-                        } else {
-                            ImageViewerFragment.isCollected = isCollected;
-                            ImageViewerFragment.open(fragment(), index, moment.getImage());
-                        }
-                    }
+                if (null != imageClickListener) {
+                    imageClickListener.onClick(displayer, url, getAdapterPosition());
                 }
             }
         };
@@ -189,5 +175,18 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
         }
+    }
+
+    private OnImageClickListener imageClickListener;
+
+    /**
+     * 设置动态中图片点击处理事件
+     */
+    public void setOnImageClickListener(OnImageClickListener l) {
+        imageClickListener = l;
+    }
+
+    public interface OnImageClickListener {
+        void onClick(View view, String url, int index);
     }
 }
