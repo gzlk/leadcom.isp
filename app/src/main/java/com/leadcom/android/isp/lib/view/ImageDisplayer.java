@@ -327,7 +327,7 @@ public class ImageDisplayer extends RelativeLayout {
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
             progressBar.setVisibility(View.GONE);
             loadingFailedTimes++;
-            if (loadingFailedTimes <= 5) {
+            if (loadingFailedTimes <= 10) {
                 FailReason.FailType type = failReason.getType();
                 LogHelper.log("ImageDisplayer", StringHelper.format("loading failed(%s) %d times for url: %s, 3 seconds later to reload.", type, loadingFailedTimes, imageUri));
                 if (type == FailReason.FailType.IO_ERROR || type == FailReason.FailType.NETWORK_DENIED) {

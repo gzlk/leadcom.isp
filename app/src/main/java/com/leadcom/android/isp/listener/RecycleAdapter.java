@@ -117,6 +117,11 @@ public interface RecycleAdapter<T> {
      */
     void sort();
 
+    /**
+     * 交换两个节点的位置
+     */
+    void swap(int i, int j);
+
     Iterator<T> iterator();
 
     /**

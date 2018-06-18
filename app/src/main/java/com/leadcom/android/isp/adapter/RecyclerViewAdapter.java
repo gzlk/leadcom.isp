@@ -306,6 +306,15 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     @Override
+    public void swap(int i, int j) {
+        // instead of using a raw type here, it's possible to capture
+        // the wildcard but it will require a call to a supplementary
+        // private method
+        final List<T> l = innerList;
+        l.set(i, l.set(j, l.get(i)));
+    }
+
+    @Override
     public void sort() {
         Collections.sort(innerList, new Comparator<T>() {
             @Override

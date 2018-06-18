@@ -6,20 +6,23 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.gson.reflect.TypeToken;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.MomentRequest;
-import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.PrivacyFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
@@ -34,10 +37,9 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.HLKLocation;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.user.Moment;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.view.ClearEditText;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <b>功能描述：</b>个人 - 添加新的动态<br />
@@ -58,6 +60,8 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     // UI
     @ViewId(R.id.ui_moment_new_text_content)
     private ClearEditText momentContent;
+    @ViewId(R.id.ui_moment_new_drag_flag)
+    private View dragFlag;
 
     private SimpleClickableViewHolder privacyHolder;
     private String[] textItems;
@@ -86,6 +90,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         layoutType = TYPE_GRID;
+        gridSpanCount = 3;
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -155,13 +160,15 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void tryAddMoment() {
-        if (StringHelper.isEmpty(momentContent.getValue())) {
-            ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
-            return;
-        }
-        Utils.hidingInputBoard(momentContent);
+//        if (StringHelper.isEmpty(momentContent.getValue())) {
+//            ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
+//            return;
+//        }
+//        Utils.hidingInputBoard(momentContent);
         //if (getWaitingForUploadFiles().size() > 0) {
         if (waitingFroCompressImages.size() > 0) {
+            // 重置用户设定的顺序
+            retreatList();
             // 如果选择了的图片大于1张，则需要压缩图片并且上传
             compressImage();
             //uploadFiles();
@@ -258,11 +265,105 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.addItemDecoration(new SpacesItemDecoration());
             mAdapter = new ImageAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            //1.创建item helper
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+            //2.绑定到recyclerview上面去
+            itemTouchHelper.attachToRecyclerView(mRecyclerView);
+            //3.在ItemHelper的接口回调中过滤开启长按拖动，拓展其他操作
             // 初始化时为空白
             //resetImages(getWaitingForUploadFiles());
             resetImages(waitingFroCompressImages);
         }
     }
+
+    private ItemTouchHelper.Callback callback = new ItemTouchHelper.Callback() {
+
+        /**
+         * 官方文档的说明如下：
+         * o control which actions user can take on each view, you should override getMovementFlags(RecyclerView, ViewHolder)
+         * and return appropriate set of direction flags. (LEFT, RIGHT, START, END, UP, DOWN).
+         * 返回我们要监控的方向，上下左右，我们做的是上下拖动，要返回都是UP和DOWN
+         * 关键坑爹的是下面方法返回值只有1个，也就是说只能监控一个方向。
+         * 不过点入到源码里面有惊喜。源码标记方向如下：
+         *  public static final int UP = 1     0001
+         *  public static final int DOWN = 1 << 1; （位运算：值其实就是2）0010
+         *  public static final int LEFT = 1 << 2   左 值是3
+         *  public static final int RIGHT = 1 << 3  右 值是8
+         */
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            // 如果想支持滑动(删除)操作, swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END
+            int swipeFlags = 0;
+            int dragFlags = 0;
+            if (mAdapter.getItemCount() <= 2 || mAdapter.get(viewHolder.getAdapterPosition()).getId().equals("+")) {
+                // 如果是 + 号，则不需要挪动
+                return makeMovementFlags(dragFlags, swipeFlags);
+            }
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager instanceof GridLayoutManager || manager instanceof StaggeredGridLayoutManager || manager instanceof FlexboxLayoutManager) {
+                dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+            } else {
+                dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            }
+            return makeMovementFlags(dragFlags, swipeFlags);
+        }
+
+        /**
+         * 官方文档的说明如下
+         * If user drags an item, ItemTouchHelper will call onMove(recyclerView, dragged, target). Upon receiving this callback,
+         * you should move the item from the old position (dragged.getAdapterPosition()) to new position (target.getAdapterPosition())
+         * in your adapter and also call notifyItemMoved(int, int).
+         * 拖动某个item的回调，在return前要更新item位置，调用notifyItemMoved（draggedPosition，targetPosition）
+         * viewHolde: 正在拖动item
+         * target：要拖到的目标
+         * @return true 表示消费事件
+         */
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            int pos1 = viewHolder.getAdapterPosition(), pos2 = target.getAdapterPosition();
+            if (mAdapter.get(pos2).getId().equals("+")) {
+                // 如果是 + 号，则不需要排序
+                return false;
+            }
+            // 直接按照文档来操作啊，这文档写得太给力了,简直完美！
+            mAdapter.notifyItemMoved(pos1, pos2);
+            // 注意这里有个坑的，itemView 都移动了，对应的数据也要移动
+            mAdapter.swap(pos1, pos2);
+            log(format("swap %d to %d", pos1, pos2));
+            return true;
+        }
+
+        /**
+         * 谷歌官方文档说明如下：
+         * 这个看了一下主要是做左右拖动的回调
+         * When a View is swiped, ItemTouchHelper animates it until it goes out of bounds, then calls onSwiped(ViewHolder, int).
+         * At this point, you should update your adapter (e.g. remove the item) and call related Adapter#notify event.
+         */
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+        }
+
+        /**
+         * 官方文档如下：返回true 当前tiem可以被拖动到目标位置后，直接”落“在target上，其他的上面的item跟着“落”，
+         * 所以要重写这个方法，不然只是拖动的tiem在动，target tiem不动，静止的
+         * Return true if the current ViewHolder can be dropped over the the target ViewHolder.
+         */
+        @Override
+        public boolean canDropOver(RecyclerView recyclerView, RecyclerView.ViewHolder current, RecyclerView.ViewHolder target) {
+            return true;
+        }
+
+        /**
+         * 官方文档说明如下：
+         * Returns whether ItemTouchHelper should start a drag and drop operation if an item is long pressed.
+         * 是否开启长按 拖动
+         */
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return true;
+        }
+    };
 
     private void resetImages(ArrayList<String> images) {
         mAdapter.clear();
@@ -272,6 +373,17 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter.add(model);
         }
         appendAttacher();
+    }
+
+    private void retreatList() {
+        waitingFroCompressImages.clear();
+        Iterator<Model> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (!model.getId().equals("+")) {
+                waitingFroCompressImages.add(model.getId());
+            }
+        }
     }
 
     private Model appender;
@@ -288,6 +400,7 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         if (mAdapter.getItemCount() < getMaxSelectable()) {
             mAdapter.add(appender());
         }
+        dragFlag.setVisibility(mAdapter.getItemCount() >= 3 ? View.VISIBLE : View.GONE);
     }
 
     // 相册选择返回了

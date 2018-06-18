@@ -128,8 +128,10 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         }
         authorHeader.displayImage(header, imageSize, false, false);
         authorName.setText(moment.getUserName());
-        momentContent.setText(EmojiUtility.getEmojiString(momentContent.getContext(), moment.getContent(), true));
-        momentContent.makeExpandable();
+        if (!isEmpty(moment.getContent())) {
+            momentContent.setText(EmojiUtility.getEmojiString(momentContent.getContext(), moment.getContent(), true));
+            momentContent.makeExpandable();
+        }
         momentContent.setVisibility(isEmpty(moment.getContent()) ? View.GONE : View.VISIBLE);
         timeView.setText(fragment().formatTimeAgo(moment.getCreateDate()));
 

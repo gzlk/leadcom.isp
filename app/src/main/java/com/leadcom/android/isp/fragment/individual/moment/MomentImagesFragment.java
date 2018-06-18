@@ -177,8 +177,12 @@ public class MomentImagesFragment extends BaseMomentFragment {
                 changedPosition(selected);
             }
             setCustomTitle(formatDate(mMoment.getCreateDate(), R.string.ui_base_text_date_time_format_chs_hhmm));
-            detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), mMoment.getContent(), true));
-            detailContentTextView.makeExpandable();
+            boolean empty = isEmpty(mMoment.getContent());
+            detailContentTextView.setVisibility(empty ? View.GONE : View.VISIBLE);
+            if (!empty) {
+                detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), mMoment.getContent(), true));
+                detailContentTextView.makeExpandable();
+            }
             resetPraiseStatus();
         }
     }
