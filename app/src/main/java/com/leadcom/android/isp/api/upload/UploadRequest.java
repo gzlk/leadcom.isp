@@ -104,7 +104,7 @@ public class UploadRequest extends Request<Upload> {
                                 Upload upload = new Upload(obj);
                                 total += upload.getFileSize();
                                 list.add(upload);
-                                log.append(format("upload %s(%s) to %s", upload.getOrgName(), Utils.formatSize(upload.getFileSize()), upload.getFilePath())).append("\r");
+                                log.append(format("\nupload %s(%s) to %s", upload.getOrgName(), Utils.formatSize(upload.getFileSize()), upload.getFilePath())).append("\r");
                             }
                             log(log.toString());
                         }

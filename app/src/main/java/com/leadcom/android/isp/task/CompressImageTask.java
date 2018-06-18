@@ -74,11 +74,13 @@ public final class CompressImageTask extends AsyncedTask<String, Integer, Intege
                 assert ext != null;
                 if (!StringHelper.isEmpty(ext, true) && (ext.contains("gif") || ext.contains("webp"))) {
                     // gif 不要压缩，webp 也不需要压缩
+                    log("not need compress: " + image);
                     this.compressed.add(image);
                 } else {
                     BitmapFactory.Options options = ImageCompress.getBitmapOptions(image);
                     if (null != options && options.outHeight > options.outWidth * 1.5) {
                         // 如果图片的原始高度大于宽度的1.5倍，则可以判定为长图，不需要压缩
+                        log("not need compress: " + image);
                         this.compressed.add(image);
                     } else {
                         String compressed = compressImage(image, to, toWidth, toHeight);
@@ -86,6 +88,7 @@ public final class CompressImageTask extends AsyncedTask<String, Integer, Intege
                             ret = 3;
                         }
                         // 压缩失败的图片也要加入列表，只是路径为空
+                        log("compressed: " + image);
                         this.compressed.add(compressed);
                     }
                 }
