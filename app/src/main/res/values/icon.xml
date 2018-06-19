@@ -136,6 +136,7 @@
     <string name="ui_icon_rich_editor_redo_solid">&#xe69c;</string>
     <string name="ui_icon_rich_editor_font">&#xe692;</string>
     <string name="ui_icon_rich_editor_image">&#xe65b;</string>
+    <string name="ui_icon_rich_editor_multi_image">&#xe68c;</string>
     <string name="ui_icon_rich_editor_link">&#xe62a;</string>
     <string name="ui_icon_rich_editor_movie">&#xe686;</string>
     <string name="ui_icon_rich_editor_music">&#xe641;</string>

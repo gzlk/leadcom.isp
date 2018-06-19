@@ -606,9 +606,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void saveDraft() {
         mArchive.setTitle(titleView.getValue());
-        if (isEmpty(mArchive.getTitle())) {
-            mArchive.setTitle(StringHelper.getString(R.string.ui_text_archive_creator_editor_title_blank));
-        }
         if (null != siteText) {
             mArchive.setSite(siteText.getValue());
             mArchive.setSource(creatorText.getValue());
@@ -629,6 +626,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         // 草稿标题可以为空、内容也可以为空，但两者不能同时为空
         if (!isEmpty(mArchive.getTitle()) || !isEmpty(mArchive.getContent())) {
+            if (isEmpty(mArchive.getTitle())) {
+                mArchive.setTitle(StringHelper.getString(R.string.ui_text_archive_creator_editor_title_blank));
+            }
             if (isPasteContent && mArchive.isContentPasteFromOtherPlatform()) {
                 // 如果是粘贴过来的内容，则清理里面所有非树脉自有的img标签
                 mArchive.clearPastedContentImages();
@@ -1371,7 +1371,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 resetImages(selected, false);
             } else {
                 if (null != selected && selected.size() > 0) {
-                    imageUrl.setValue(selected.get(0));
+                    if (selected.size() == 1) {
+                        imageUrl.setValue(selected.get(0));
+                    } else {
+                        // 上传多张图片并且放到编辑器中
+                        uploadType = UP_IMAGE;
+                        showUploading(true);
+                        compressImage();
+                    }
                 } else {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_image_selected_nothing);
                 }
@@ -1401,11 +1408,13 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             switch (uploadType) {
                 case UP_IMAGE:
                     // 图片上传完毕，插入图片
-                    String url = uploaded.get(0).getUrl();
-                    // 如果上传完毕的是图片，则插入图片
-                    if (ImageCompress.isImage(Attachment.getExtension(url))) {
-                        insertImage(url, imageAlt.getValue());
-                        //mArchive.getImage().add(uploaded.get(0));
+                    for (Attachment attachment : uploaded) {
+                        String url = attachment.getUrl();
+                        // 如果上传完毕的是图片，则插入图片
+                        if (ImageCompress.isImage(Attachment.getExtension(url))) {
+                            insertImage(url, null == imageAlt ? "" : imageAlt.getValue());
+                            //mArchive.getImage().add(uploaded.get(0));
+                        }
                     }
                     break;
                 case UP_MUSIC:
@@ -1909,6 +1918,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             R.id.ui_archive_creator_action_audio, R.id.ui_archive_creator_action_quote,
             R.id.ui_archive_creator_action_link, R.id.ui_archive_creator_action_ordered_list,
             R.id.ui_archive_creator_action_unordered_list, R.id.ui_tool_attachment_button,
+            R.id.ui_archive_creator_action_multi_image,
             // 以下为字体格式设置
             R.id.ui_archive_creator_action_bold, R.id.ui_archive_creator_action_italic,
             R.id.ui_archive_creator_action_underline, R.id.ui_archive_creator_action_strike_through,
@@ -1934,6 +1944,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 // 单张图片最大可以选取1张
                 maxSelectable = 1;
                 openImageDialog();
+                break;
+            case R.id.ui_archive_creator_action_multi_image:
+                maxSelectable = 9;
+                isOpenOther = true;
+                waitingFroCompressImages.clear();
+                // 需要重新再选择图片
+
+                startGalleryForResult();
                 break;
             case R.id.ui_archive_creator_action_font:
                 fontStyleLayout.setVisibility(fontStyleLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
