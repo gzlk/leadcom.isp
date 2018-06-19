@@ -606,6 +606,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void saveDraft() {
         mArchive.setTitle(titleView.getValue());
+        if (isEmpty(mArchive.getTitle())) {
+            mArchive.setTitle(StringHelper.getString(R.string.ui_text_archive_creator_editor_title_blank));
+        }
         if (null != siteText) {
             mArchive.setSite(siteText.getValue());
             mArchive.setSource(creatorText.getValue());

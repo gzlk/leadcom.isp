@@ -79,6 +79,7 @@
     <string name="ui_text_archive_creator_editor_attachment_dialog_desc">选择您要添加的附件</string>
     <string name="ui_text_archive_creator_editor_attachment_dialog_confirm_text">上传附件</string>
 
+    <string name="ui_text_archive_creator_editor_title_blank">[无标题]</string>
     <string name="ui_text_archive_creator_editor_title_invalid">档案题名不能为空</string>
     <string name="ui_text_archive_creator_editor_title_empty"><![CDATA[<font color="#dbdcdc">请输入档案题名</font>]]></string>
     <string name="ui_text_archive_creator_editor_content_invalid">档案内容不能为空</string>
