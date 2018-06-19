@@ -2,6 +2,7 @@ package com.leadcom.android.isp.fragment.common;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,7 +15,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -39,6 +44,7 @@ import com.leadcom.android.isp.model.user.Collection;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
+import com.leadcom.android.isp.share.Shareable;
 import com.leadcom.android.isp.task.CopyLocalFileTask;
 
 import java.io.File;
@@ -371,11 +377,32 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
             return view == object;
         }
 
+        private RequestListener<Drawable> listener = new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                displayLoading(false);
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                displayLoading(false);
+                return false;
+            }
+        };
+
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             String image = images.get(position);
             String ext = Attachment.getExtension(image);
+            assert ext != null;
+            String local = Shareable.getLocalPath(image);
+            if (!isEmpty(local)) {
+                // 获取ImageLoader下载了的本地图片大图
+                image = local;
+            }
+            displayLoading(true);
             if (!isEmpty(ext) && ext.equals("gif")) {
                 // 动图
                 ImageView imageView = new ImageView(App.app());
@@ -390,6 +417,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
             Glide.with(ImageViewerFragment.this).downloadOnly().load(image).into(new SimpleTarget<File>() {
                 @Override
                 public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                    displayLoading(false);
                     ssiv.setImage(ImageSource.uri(FilePreviewHelper.getUriFromFile(resource.getAbsolutePath())));
                 }
             });
