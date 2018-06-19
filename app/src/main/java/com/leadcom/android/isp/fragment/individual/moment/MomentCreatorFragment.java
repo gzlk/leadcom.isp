@@ -23,13 +23,13 @@ import com.leadcom.android.isp.fragment.archive.PrivacyFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttacherItemViewHolder;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
 import com.leadcom.android.isp.holder.individual.ImageViewHolder;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
-import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
@@ -160,19 +160,20 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void tryAddMoment() {
-//        if (StringHelper.isEmpty(momentContent.getValue())) {
-//            ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
-//            return;
-//        }
 //        Utils.hidingInputBoard(momentContent);
         //if (getWaitingForUploadFiles().size() > 0) {
         if (waitingFroCompressImages.size() > 0) {
+            // 有图片时，可以不必填写动态内容
             // 重置用户设定的顺序
             retreatList();
             // 如果选择了的图片大于1张，则需要压缩图片并且上传
             compressImage();
             //uploadFiles();
         } else {
+            if (StringHelper.isEmpty(momentContent.getValue())) {
+                ToastHelper.make().showMsg(R.string.ui_text_new_moment_content_cannot_blank);
+                return;
+            }
             addMoment(null, "");
         }
     }
@@ -452,13 +453,6 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
         }
     };
 
-    private OnHandleBoundDataListener<Model> handlerBoundDataListener = new OnHandleBoundDataListener<Model>() {
-        @Override
-        public Model onHandlerBoundData(BaseViewHolder holder) {
-            return mAdapter.get(holder.getAdapterPosition());
-        }
-    };
-
     // 照片预览点击
     private ImageDisplayer.OnImageClickListener imagePreviewClickListener = new ImageDisplayer.OnImageClickListener() {
         @Override
@@ -515,8 +509,6 @@ public class MomentCreatorFragment extends BaseSwipeRefreshSupportFragment {
                 ImageViewHolder ivh = (ImageViewHolder) holder;
                 ivh.addOnDeleteClickListener(imageDeleteClickListener);
                 ivh.addOnImageClickListener(imagePreviewClickListener);
-                // 这里是要尝试删除选择的文件
-                ivh.addOnHandlerBoundDataListener(handlerBoundDataListener);
                 ivh.setImageSize(width, height);
                 ivh.showContent(item.getId());
             }
