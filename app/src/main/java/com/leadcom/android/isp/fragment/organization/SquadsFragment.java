@@ -345,13 +345,13 @@ public class SquadsFragment extends BaseOrganizationFragment {
         }
     }
 
-    private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
-        @Override
-        public void onDial(int index) {
-            dialIndex = index;
-            requestPhoneCallPermission();
-        }
-    };
+//    private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
+//        @Override
+//        public void onDial(int index) {
+//            dialIndex = index;
+//            requestPhoneCallPermission();
+//        }
+//    };
 
     @Override
     public void permissionGranted(String[] permissions, int requestCode) {
@@ -418,7 +418,6 @@ public class SquadsFragment extends BaseOrganizationFragment {
                 case VT_MEMBER:
                     ContactViewHolder cvh = new ContactViewHolder(itemView, SquadsFragment.this);
                     cvh.addOnViewHolderClickListener(onViewHolderClickListener);
-                    cvh.setOnPhoneDialListener(onPhoneDialListener);
                     return cvh;
             }
             return null;

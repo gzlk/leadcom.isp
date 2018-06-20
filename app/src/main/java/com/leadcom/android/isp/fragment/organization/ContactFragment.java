@@ -635,13 +635,13 @@ public class ContactFragment extends BaseOrganizationFragment {
         }
     }
 
-    private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
-        @Override
-        public void onDial(int index) {
-            dialIndex = index;
-            requestPhoneCallPermission();
-        }
-    };
+//    private ContactViewHolder.OnPhoneDialListener onPhoneDialListener = new ContactViewHolder.OnPhoneDialListener() {
+//        @Override
+//        public void onDial(int index) {
+//            dialIndex = index;
+//            requestPhoneCallPermission();
+//        }
+//    };
 
     @Override
     public void permissionGranted(String[] permissions, int requestCode) {
@@ -698,7 +698,7 @@ public class ContactFragment extends BaseOrganizationFragment {
             // 设置档案管理员
             holder.setOnSetArchiveManagerListener(archiveManagerListener);
             // 点击拨号
-            holder.setOnPhoneDialListener(onPhoneDialListener);
+            //holder.setOnPhoneDialListener(onPhoneDialListener);
             //holder.setPhoneVisible(showType != TYPE_MINE);
             return holder;
         }

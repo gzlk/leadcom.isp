@@ -75,6 +75,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                android:gravity="center_vertical|end"
                 android:orientation="horizontal">
 
                 <TextView
@@ -86,7 +87,8 @@
                     android:maxLength="@integer/integer_phone_number_length"
                     android:singleLine="true"
                     android:textColor="@color/textColorHintDark"
-                    android:textSize="@dimen/ui_base_text_size_small" />
+                    android:textSize="@dimen/ui_base_text_size_small"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/ui_holder_view_contact_myself"
