@@ -1236,76 +1236,72 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     // 插入图片的对话框
-    private View imageDialogView;
-    private ClearEditText imageAlt, imageUrl;
-
-    private void openImageDialog() {
-        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
-            @Override
-            public View onInitializeView() {
-                if (null == imageDialogView) {
-                    imageDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_image, null);
-                    imageAlt = imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_alt);
-                    imageUrl = imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_url);
-                }
-                return imageDialogView;
-            }
-
-            @Override
-            public void onBindData(View dialogView, DialogHelper helper) {
-
-            }
-        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-            @Override
-            public int[] clickEventHandleIds() {
-                return new int[]{R.id.ui_popup_rich_editor_image_navigate};
-            }
-
-            @Override
-            public boolean onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.ui_popup_rich_editor_image_navigate:
-                        isOpenOther = true;
-                        openImageSelector(true);
-                        // 图片选择时，不需要关闭对话框，返回之后还要上传
-                        return false;
-                }
-                return true;
-            }
-        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
-            @Override
-            public void onDismiss() {
-                log("image dialog dismissed");
-                mImageIcon.setTextColor(getColor(R.color.textColorHint));
-            }
-        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-            @Override
-            public boolean onConfirm() {
-                String url = imageUrl.getValue();
-                if (!isEmpty(url)) {
-                    if (Utils.isUrl(url)) {
-                        // 如果是粘贴的网络地址，则直接插入图片
-                        insertImage(url, imageAlt.getValue());
-                    } else {
-                        // 压缩并上传图片，然后插入
-                        uploadType = UP_IMAGE;
-                        showUploading(true);
-                        compressImage();
-                    }
-                } else {
-                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_image_select_url_error);
-                }
-                return true;
-            }
-        }).setPopupType(DialogHelper.FADE).show();
-    }
+//    private View imageDialogView;
+//    private ClearEditText imageAlt, imageUrl;
+//
+//    private void openImageDialog() {
+//        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+//            @Override
+//            public View onInitializeView() {
+//                if (null == imageDialogView) {
+//                    imageDialogView = View.inflate(Activity(), R.layout.popup_dialog_rich_editor_image, null);
+//                    imageAlt = imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_alt);
+//                    imageUrl = imageDialogView.findViewById(R.id.ui_popup_rich_editor_image_url);
+//                }
+//                return imageDialogView;
+//            }
+//
+//            @Override
+//            public void onBindData(View dialogView, DialogHelper helper) {
+//
+//            }
+//        }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
+//            @Override
+//            public int[] clickEventHandleIds() {
+//                return new int[]{R.id.ui_popup_rich_editor_image_navigate};
+//            }
+//
+//            @Override
+//            public boolean onClick(View view) {
+//                switch (view.getId()) {
+//                    case R.id.ui_popup_rich_editor_image_navigate:
+//                        isOpenOther = true;
+//                        openImageSelector(true);
+//                        // 图片选择时，不需要关闭对话框，返回之后还要上传
+//                        return false;
+//                }
+//                return true;
+//            }
+//        }).addOnDialogDismissListener(new DialogHelper.OnDialogDismissListener() {
+//            @Override
+//            public void onDismiss() {
+//                log("image dialog dismissed");
+//                mImageIcon.setTextColor(getColor(R.color.textColorHint));
+//            }
+//        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+//            @Override
+//            public boolean onConfirm() {
+//                String url = imageUrl.getValue();
+//                if (!isEmpty(url)) {
+//                    if (Utils.isUrl(url)) {
+//                        // 如果是粘贴的网络地址，则直接插入图片
+//                        insertImage(url, imageAlt.getValue());
+//                    } else {
+//                        // 压缩并上传图片，然后插入
+//                        uploadType = UP_IMAGE;
+//                        showUploading(true);
+//                        compressImage();
+//                    }
+//                } else {
+//                    ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_image_select_url_error);
+//                }
+//                return true;
+//            }
+//        }).setPopupType(DialogHelper.FADE).show();
+//    }
 
     private void insertImage(String url, String alt) {
         mEditor.insertImage(url, alt);
-        if (null != imageUrl) {
-            imageUrl.setValue("");
-            imageAlt.setValue("");
-        }
     }
 
     private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {
@@ -1315,14 +1311,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 resetImages(selected, false);
             } else {
                 if (null != selected && selected.size() > 0) {
-                    if (selected.size() == 1) {
-                        imageUrl.setValue(selected.get(0));
-                    } else {
-                        // 上传多张图片并且放到编辑器中
-                        uploadType = UP_IMAGE;
-                        showUploading(true);
-                        compressImage();
-                    }
+                    // 上传多张图片并且放到编辑器中
+                    uploadType = UP_IMAGE;
+                    showUploading(true);
+                    compressImage();
                 } else {
                     ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_image_selected_nothing);
                 }
@@ -1356,7 +1348,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         String url = attachment.getUrl();
                         // 如果上传完毕的是图片，则插入图片
                         if (ImageCompress.isImage(Attachment.getExtension(url))) {
-                            insertImage(url, null == imageAlt ? "" : imageAlt.getValue());
+                            insertImage(url, "");
                             //mArchive.getImage().add(uploaded.get(0));
                         }
                     }
@@ -1887,11 +1879,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 tryFocusEditor();
                 // 单张图片最大可以选取1张
                 maxSelectable = 1;
-                openImageDialog();
+                //openImageDialog();
                 break;
             case R.id.ui_archive_creator_action_multi_image:
                 maxSelectable = 9;
                 isOpenOther = true;
+                tryFocusEditor();
                 waitingFroCompressImages.clear();
                 // 需要重新再选择图片
 
