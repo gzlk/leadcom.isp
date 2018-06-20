@@ -54,7 +54,12 @@ public class ArchiveDraftViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Archive archive) {
-        coverView.displayImage(archive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size), false, false);
+        String cover = archive.getCover();
+        if (isEmpty(cover) && archive.getImage().size() > 0) {
+            cover = archive.getImage().get(0).getUrl();
+        }
+        coverView.displayImage(cover, getDimension(R.dimen.ui_base_user_header_image_size), false, false);
+        coverView.setVisibility(isEmpty(cover) ? View.GONE : View.VISIBLE);
         titleView.setText(archive.getTitle());
         timeView.setText(StringHelper.getString(R.string.ui_text_archive_creator_editor_create_draft_time, fragment().formatTimeAgo(archive.getCreateDate())));
         selectorView.setTextColor(getColor(archive.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));

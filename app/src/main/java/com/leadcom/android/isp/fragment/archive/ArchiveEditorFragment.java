@@ -40,7 +40,6 @@ import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
-import com.leadcom.android.isp.fragment.common.CoverPickFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.LabelPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
@@ -485,10 +484,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     public void onActivityResult(int requestCode, Intent data) {
         switch (requestCode) {
             case REQUEST_COVER:
-                mArchive.setCover(getResultedData(data));
-                if (null != coverView) {
-                    coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
-                }
                 break;
             case REQUEST_VIDEO:
                 // 视频选择返回了
@@ -758,18 +753,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return;
             }
         }
-        if (mArchive.isMultimediaArchive()) {
-            // 图文模式下需要检测
-            if (isEmpty(mArchive.getCover())) {
-                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_null);
-                return;
-            } else {
-                String ext = Attachment.getExtension(mArchive.getCover());
-                if (!ImageCompress.isImage(ext)) {
-                    ToastHelper.make().showMsg(getString(R.string.ui_text_archive_creator_editor_create_cover_invalid, ext));
-                }
-            }
-        } else if (mArchive.isTemplateArchive()) {
+        if (mArchive.isTemplateArchive()) {
             if (!resetTemplateArchive(true)) {
                 return;
             }
@@ -880,21 +864,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     // 提交成功，判断是否需要再提交个人档案
                     mArchive = archive;
                     createSuccess();
-//                    if (isGroupArchive) {
-//                        // 去掉组织档案需求
-//                        isGroupArchive = false;
-//                        if (isUserArchive) {
-//                            mArchive.setId("");
-//                            // 如果选择了还要存为个人档案，则还要再调用一次
-//                            tryCreateArchive();
-//                        } else {
-//                            mArchive = archive;
-//                            createSuccess();
-//                        }
-//                    } else {
-//                        mArchive = archive;
-//                        createSuccess();
-//                    }
                 }
             }
         }).save(mArchive, false, false);
@@ -919,7 +888,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private View settingDialogView;
-    private ImageDisplayer coverView;
     private TextView titleText, publicText, labelText, createTime, happenDate, propertyText, categoryText, groupNameText,
             branchText;
     private CustomTextView userIcon, groupIcon, publicIcon, privateIcon;
@@ -940,7 +908,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     labelText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label_text);
                     creatorText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_creator);
                     createTime = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_create_time);
-                    coverView = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover_image);
                     propertyText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property_text);
                     categoryText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category_text);
                     participantText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_participant_text);
@@ -954,18 +921,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     privateIcon = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_public_private_icon);
                     shareDraftButton = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share_draft);
                     branchText = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_branch_picker_text);
-                    //archiveTypeGroup = settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type_group);
-                    // 根据个人档案和组织档案显示某些元素
-//                    if (isEmpty(mQueryId)) {
-//                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(View.GONE);
-//                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_site).setVisibility(View.GONE);
-//                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_property).setVisibility(View.GONE);
-//                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_category).setVisibility(View.GONE);
-//                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_participant).setVisibility(View.GONE);
-//                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_share).setVisibility(View.GONE);
-//                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_label).setVisibility(View.VISIBLE);
-//                        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_createtime).setVisibility(View.VISIBLE);
-//                    }
                 }
                 return settingDialogView;
             }
@@ -987,7 +942,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                     text = Utils.formatDateOfNow("yyyy.MM.dd");
                 }
                 createTime.setText(text);
-                coverView.displayImage(mArchive.getCover(), getDimension(R.dimen.ui_base_user_header_image_size_big), false, false);
                 labelText.setText(Label.getLabelDesc(mArchive.getLabel()));
                 Seclusion seclusion = new Seclusion();
                 //seclusion.setGroupIds(mArchive.getAuthGro());
@@ -1065,7 +1019,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public int[] clickEventHandleIds() {
                 return new int[]{
-                        R.id.ui_popup_rich_editor_setting_cover,
                         R.id.ui_popup_rich_editor_setting_type_user,
                         R.id.ui_popup_rich_editor_setting_type_group,
                         R.id.ui_popup_rich_editor_setting_group_picker,
@@ -1086,15 +1039,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             @Override
             public boolean onClick(View view) {
                 switch (view.getId()) {
-                    case R.id.ui_popup_rich_editor_setting_cover:
-                        if (uploadType != UP_NOTHING) {
-                            ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_cover_notime);
-                        } else {
-                            // 选择封面，到封面拾取器
-                            isOpenOther = true;
-                            CoverPickFragment.open(ArchiveEditorFragment.this, true, mArchive.getCover(), 1, 1);
-                        }
-                        break;
                     case R.id.ui_popup_rich_editor_setting_type_user:
                         // 是否选中个人档案标签
                         isUserArchive = !isUserArchive;
@@ -1280,7 +1224,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 模板档案不需要组织、个人选择
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_type).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         // 模板档案不需要有封面
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
+        //settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_cover).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         // 模板档案不需要来源
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_source).setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
         // 模板档案需要显示支部选择器
@@ -2314,6 +2258,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof ImageViewHolder) {
+                assert item != null;
                 ((ImageViewHolder) holder).showContent(item.getId());
             }
         }

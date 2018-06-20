@@ -314,7 +314,7 @@ public class ArchiveDetailsViewHolder extends BaseViewHolder {
         timeView.setText(fragment().formatDate(archive.getCreateDate(), R.string.ui_base_text_date_time_format));
         String source = (isEmpty(archive.getSource()) || archive.getSource().equals(archive.getUserName())) ? "" : StringHelper.getString(R.string.ui_text_archive_details_source_text, archive.getSource());
         authorView.setText(StringHelper.getString(R.string.ui_text_archive_details_author_text, archive.getUserName(), source));
-        String cover = archive.getCover();
+//        String cover = archive.getCover();
 //        if (isEmpty(cover)) {
 //            Random random = new Random(10);
 //            cover = "drawable://" + (random.nextInt() % 2 == 0 ? R.drawable.img_activity_cover_1 : R.drawable.img_activity_cover_2);

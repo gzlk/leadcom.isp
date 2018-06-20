@@ -136,6 +136,9 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
             timeView.setText(fragment().formatTimeAgo(archive.getCreateDate()));
         }
         String cover = archive.getCover();
+        if (isEmpty(cover) && archive.getImage().size() > 0) {
+            cover = archive.getImage().get(0).getUrl();
+        }
         coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_80), false, false);
         coverView.setVisibility(isEmpty(cover) || cover.length() < 10 ? View.GONE : View.VISIBLE);
         String text = archive.getTitle();
