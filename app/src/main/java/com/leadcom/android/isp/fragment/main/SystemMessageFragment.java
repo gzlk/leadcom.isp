@@ -45,6 +45,7 @@ import java.util.List;
 public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_IS_IN_MAIN = "smf_is_in_main";
+    private static final String PARAM_IS_REFRESHABLE = "smf_is_refreshable";
 
     public static SystemMessageFragment newInstance(Bundle bundle) {
         SystemMessageFragment smf = new SystemMessageFragment();
@@ -78,17 +79,20 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     private TextView rightTextView;
     private MessageAdapter mAdapter;
     private boolean isInMainPage = false;
+    private boolean isRefreshable = true;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         isInMainPage = bundle.getBoolean(PARAM_IS_IN_MAIN, false);
+        isRefreshable = bundle.getBoolean(PARAM_IS_REFRESHABLE, true);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_IS_IN_MAIN, isInMainPage);
+        bundle.putBoolean(PARAM_IS_REFRESHABLE, isRefreshable);
     }
 
     @Override
@@ -117,8 +121,12 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
     private NotificationChangeHandleCallback callback = new NotificationChangeHandleCallback() {
         @Override
         public void onChanged() {
-            // 重新拉取推送消息列表
-            onSwipeRefreshing();
+            if (isRefreshable) {
+                // 重新拉取推送消息列表
+                onSwipeRefreshing();
+            } else {
+                isRefreshable = true;
+            }
         }
     };
 
@@ -281,6 +289,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                         showDetailsPage(pushMessage);
                     }
                     App.app().setUnreadCount(App.app().getUnreadCount() - 1);
+                    // 下一次 dispatch 不需要刷新消息列表
+                    isRefreshable = false;
                     App.dispatchCallbacks();
                 }
             }
@@ -305,6 +315,8 @@ public class SystemMessageFragment extends BaseSwipeRefreshSupportFragment {
                 super.onResponse(nimMessage, success, message);
                 if (success) {
                     mAdapter.remove(msgId);
+                    // 下一次 dispatch 不需要刷新消息列表
+                    isRefreshable = false;
                     App.dispatchCallbacks();
                 }
             }
