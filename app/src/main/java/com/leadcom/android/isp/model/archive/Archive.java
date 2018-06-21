@@ -764,7 +764,7 @@ public class Archive extends Additional {
     public ArrayList<Attachment> getOffice() {
         if (null == office) {
             office = new ArrayList<>();
-            getLocalAttachments();
+            //getLocalAttachments();
         }
         return office;
     }
@@ -793,7 +793,7 @@ public class Archive extends Additional {
     public ArrayList<Attachment> getImage() {
         if (null == image) {
             image = new ArrayList<>();
-            getLocalAttachments();
+            //getLocalAttachments();
         }
         return image;
     }
@@ -805,7 +805,7 @@ public class Archive extends Additional {
     public ArrayList<Attachment> getVideo() {
         if (null == video) {
             video = new ArrayList<>();
-            getLocalAttachments();
+            //getLocalAttachments();
         }
         return video;
     }
@@ -817,7 +817,7 @@ public class Archive extends Additional {
     public ArrayList<Attachment> getAttach() {
         if (null == attach) {
             attach = new ArrayList<>();
-            getLocalAttachments();
+            //getLocalAttachments();
         }
         return attach;
     }

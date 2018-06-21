@@ -29,6 +29,7 @@ import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.activity.WelcomeActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchivePermissionRequest;
+import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -58,7 +59,9 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.common.ArchivePermission;
+import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
@@ -367,6 +370,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         String url = getUrl(archive.getId(), archive.getOwnType(), isDraft, false);
         log(url);
         webView.loadUrl(url);
+        loadingArchiveDetails();
     }
 
     private void displayArchive() {
@@ -385,6 +389,24 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
             displayArchive(mArchive);
         }
+    }
+
+    private void loadingArchiveDetails() {
+        ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
+            @Override
+            public void onResponse(ArchiveQuery archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success && null != archive) {
+                    if (null != archive.getGroDoc()) {
+                        mArchive = archive.getGroDoc();
+                    } else if (null != archive.getUserDoc()) {
+                        mArchive = archive.getUserDoc();
+                    } else if (null != archive.getDocDraft()) {
+                        mArchive = archive.getDocDraft();
+                    }
+                }
+            }
+        }).find(archiveType, mQueryId);
     }
 
     private void prepareShareDialogElement(Archive archive) {
@@ -492,6 +514,31 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private class DetailsDownloadListener implements DownloadListener {
         private String local, extension, name, url;
 
+        // 通过下载链接获取附件的文件名
+        private String getAttachmentName(String url) {
+            for (Attachment attachment : mArchive.getImage()) {
+                if (url.equals(attachment.getUrl())) {
+                    return attachment.getName();
+                }
+            }
+            for (Attachment attachment : mArchive.getVideo()) {
+                if (url.equals(attachment.getUrl())) {
+                    return attachment.getName();
+                }
+            }
+            for (Attachment attachment : mArchive.getOffice()) {
+                if (url.equals(attachment.getUrl())) {
+                    return attachment.getName();
+                }
+            }
+            for (Attachment attachment : mArchive.getAttach()) {
+                if (url.equals(attachment.getUrl())) {
+                    return attachment.getName();
+                }
+            }
+            return null;
+        }
+
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
             if (!NetworkUtil.isNetAvailable(App.app())) {
@@ -503,7 +550,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 downloadPath += "/";
             }
             this.url = url;
-            name = url.substring(url.lastIndexOf('/') + 1);
+            name = getAttachmentName(url);
+            if (isEmpty(name)) {
+                name = url.substring(url.lastIndexOf('/') + 1);
+            }
             local = downloadPath + name;
             extension = isEmpty(mimetype) ? name.substring(name.lastIndexOf('.') + 1) : mimetype;
             File file = new File(local);
