@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.leadcom.android.isp.lib.view.labelview.LabelView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_main_alpha_label_flag"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:backgroundColor="@android:color/transparent"
+    app:textTitle="@string/ui_text_main_inner_test_text"
+    app:textTitleColor="@color/textColorHintLight"
+    app:textTitleSize="@dimen/ui_base_text_size_tiny">
+
+</com.leadcom.android.isp.lib.view.labelview.LabelView>

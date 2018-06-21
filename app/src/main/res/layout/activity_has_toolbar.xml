@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
+        android:clipChildren="false"
         android:fitsSystemWindows="true"
         app:elevation="0dp">
 
@@ -18,6 +19,15 @@
             android:id="@+id/activity_app_bar_layout_line"
             layout="@layout/tool_view_half_line_horizontal" />
     </android.support.design.widget.AppBarLayout>
+
+    <com.leadcom.android.isp.lib.view.labelview.LabelView
+        android:id="@+id/ui_main_alpha_label_flag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundColor="@android:color/transparent"
+        app:textTitle="@string/ui_text_main_inner_test_text"
+        app:textTitleColor="@color/textColorHintLight"
+        app:textTitleSize="@dimen/ui_base_text_size_tiny" />
 
     <include layout="@layout/activity_frame_content" />
 

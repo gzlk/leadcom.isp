@@ -47,6 +47,7 @@ public final class LabelViewHelper {
 
     private Paint mBgTrianglePaint;
     private int mBgTriangleColor;
+    private int mBgTriangleBackground;
 
     private float mTopPadding;
     private float mBottomPadding;
@@ -63,19 +64,16 @@ public final class LabelViewHelper {
 
     public LabelViewHelper(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LabelView);
-        mTopPadding = typedArray.getDimension(R.styleable.LabelView_labelTopPadding,
-                context.getResources().getDimensionPixelSize(R.dimen.default_label_top_padding));
+        mTopPadding = typedArray.getDimension(R.styleable.LabelView_labelTopPadding, context.getResources().getDimensionPixelSize(R.dimen.default_label_top_padding));
         mCenterPadding = typedArray.getDimension(R.styleable.LabelView_labelCenterPadding, 0);
-        mBottomPadding = typedArray.getDimension(R.styleable.LabelView_labelBottomPadding,
-                context.getResources().getDimensionPixelSize(R.dimen.default_label_bottom_padding));
+        mBottomPadding = typedArray.getDimension(R.styleable.LabelView_labelBottomPadding, context.getResources().getDimensionPixelSize(R.dimen.default_label_bottom_padding));
         mTopDistance = typedArray.getDimension(R.styleable.LabelView_labelTopDistance, 0);
         mBgTriangleColor = typedArray.getColor(R.styleable.LabelView_backgroundColor, Color.BLUE);
+        mBgTriangleBackground = typedArray.getResourceId(R.styleable.LabelView_backgroundResources, 0);
         mTextTitleColor = typedArray.getColor(R.styleable.LabelView_textTitleColor, Color.WHITE);
         mTextContentColor = typedArray.getColor(R.styleable.LabelView_textContentColor, Color.WHITE);
-        mTextTitleSize = typedArray.getDimension(R.styleable.LabelView_textTitleSize,
-                context.getResources().getDimensionPixelSize(R.dimen.default_label_title_size));
-        mTextContentSize = typedArray.getDimension(R.styleable.LabelView_textContentSize,
-                context.getResources().getDimensionPixelSize(R.dimen.default_label_content_size));
+        mTextTitleSize = typedArray.getDimension(R.styleable.LabelView_textTitleSize, context.getResources().getDimensionPixelSize(R.dimen.default_label_title_size));
+        mTextContentSize = typedArray.getDimension(R.styleable.LabelView_textContentSize, context.getResources().getDimensionPixelSize(R.dimen.default_label_content_size));
         mTextTitle = typedArray.getString(R.styleable.LabelView_textTitle);
         mTextContent = typedArray.getString(R.styleable.LabelView_textContent);
         mTextTitleStyle = typedArray.getInt(R.styleable.LabelView_textTitleStyle, STYLE_NORMAL);
@@ -93,11 +91,11 @@ public final class LabelViewHelper {
         }
 
         canvas.save();
-        if (mRouteDegrees == ROTATE_LEFT){
+        if (mRouteDegrees == ROTATE_LEFT) {
             canvas.translate(-mBgTriangleWidth / 2, 0);
             canvas.rotate(mRouteDegrees, mBgTriangleWidth / 2, 0);
-        }else if (mRouteDegrees == ROTATE_RIGHT){
-            int rotateViewWH= (int) (mBgTriangleHeight * Math.sqrt(2));
+        } else if (mRouteDegrees == ROTATE_RIGHT) {
+            int rotateViewWH = (int) (mBgTriangleHeight * Math.sqrt(2));
             canvas.translate(view.getMeasuredWidth() - rotateViewWH, -mBgTriangleHeight);
             canvas.rotate(mRouteDegrees, 0, mBgTriangleHeight);
         }
@@ -142,7 +140,7 @@ public final class LabelViewHelper {
     }
 
     public void setTextTitle(String title) {
-        mTextTitle =title;
+        mTextTitle = title;
         resetAllMeasureSize();
     }
 
