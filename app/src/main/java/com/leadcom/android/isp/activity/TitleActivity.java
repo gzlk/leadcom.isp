@@ -41,6 +41,8 @@ public class TitleActivity extends BaseActivity {
     public Toolbar mToolbar;
     @ViewId(R.id.activity_app_bar_layout_line)
     public View toolbarLine;
+    @ViewId(R.id.ui_main_alpha_label_flag)
+    public View alphaView;
 
     @ViewId(R.id.ui_ui_custom_title_left_container)
     public LinearLayout mLeftContainer;
@@ -106,6 +108,9 @@ public class TitleActivity extends BaseActivity {
         if (isToolbarSupported) {
             ViewUtility.bind(this);
             resetColor();
+        }
+        if (null != alphaView) {
+            alphaView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
         }
     }
 

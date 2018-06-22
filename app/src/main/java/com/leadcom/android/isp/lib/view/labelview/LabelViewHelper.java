@@ -28,6 +28,8 @@ public final class LabelViewHelper {
 
     private static final int ROTATE_LEFT = -45;
     private static final int ROTATE_RIGHT = 45;
+    private static final int ROTATE_LEFT_BOTTOM = -135;
+    private static final int ROTATE_RIGHT_BOTTOM = 135;
 
     private static final int STYLE_NORMAL = 0;
     private static final int STYLE_ITALIC = 1;
@@ -54,7 +56,7 @@ public final class LabelViewHelper {
     private float mCenterPadding;
     private float mTopDistance;
 
-    private float mRouteDegrees;
+    private int mRouteDegrees;
 
     private String mTextTitle;
     private String mTextContent;
@@ -91,13 +93,20 @@ public final class LabelViewHelper {
         }
 
         canvas.save();
-        if (mRouteDegrees == ROTATE_LEFT) {
-            canvas.translate(-mBgTriangleWidth / 2, 0);
-            canvas.rotate(mRouteDegrees, mBgTriangleWidth / 2, 0);
-        } else if (mRouteDegrees == ROTATE_RIGHT) {
-            int rotateViewWH = (int) (mBgTriangleHeight * Math.sqrt(2));
-            canvas.translate(view.getMeasuredWidth() - rotateViewWH, -mBgTriangleHeight);
-            canvas.rotate(mRouteDegrees, 0, mBgTriangleHeight);
+        switch (mRouteDegrees) {
+            case ROTATE_LEFT:
+                canvas.translate(-mBgTriangleWidth / 2, 0);
+                canvas.rotate(mRouteDegrees, mBgTriangleWidth / 2, 0);
+                break;
+            case ROTATE_RIGHT:
+                int rotateViewWH = (int) (mBgTriangleHeight * Math.sqrt(2));
+                canvas.translate(view.getMeasuredWidth() - rotateViewWH, -mBgTriangleHeight);
+                canvas.rotate(mRouteDegrees, 0, mBgTriangleHeight);
+                break;
+            case ROTATE_LEFT_BOTTOM:
+                canvas.translate(-mBgTriangleWidth / 2, 0);
+                canvas.rotate(-mRouteDegrees, mBgTriangleWidth / 2, 0);
+                break;
         }
 
         Path path = new Path();

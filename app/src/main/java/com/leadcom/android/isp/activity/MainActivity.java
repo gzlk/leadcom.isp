@@ -115,6 +115,8 @@ public class MainActivity extends TitleActivity {
         super.saveParametersToBundle(bundle);
     }
 
+    @ViewId(R.id.ui_main_alpha_label_flag)
+    private View alphaView;
     @ViewId(R.id.ui_tool_main_bottom_icon_1)
     private CustomTextView iconView1;
     @ViewId(R.id.ui_tool_main_bottom_icon_2)
@@ -242,6 +244,9 @@ public class MainActivity extends TitleActivity {
         UpgradeHelper.helper(this).checkVersion();
         if (!Cache.isReleasable()) {
             ToastHelper.make().showMsg(R.string.ui_text_main_inner_test_toast);
+        }
+        if (null != alphaView) {
+            alphaView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -498,6 +503,11 @@ public class MainActivity extends TitleActivity {
         transaction.show(fragment);
         transaction.commitAllowingStateLoss();
         //setTranslucentStatus(tag.equals(TAG_MINE));
+        if (null != alphaView) {
+            if (!Cache.isReleasable()) {
+                alphaView.setVisibility(tag.equals(TAG_MINE) ? View.GONE : View.VISIBLE);
+            }
+        }
     }
 
     private void setDisplayPage() {

@@ -4,9 +4,10 @@
     android:id="@+id/ui_main_alpha_label_flag"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:alpha="0.7"
     app:backgroundColor="@android:color/transparent"
     app:textTitle="@string/ui_text_main_inner_test_text"
-    app:textTitleColor="@color/textColorHintLight"
+    app:textTitleColor="@color/colorPrimary"
     app:textTitleSize="@dimen/ui_base_text_size_tiny">
 
 </com.leadcom.android.isp.lib.view.labelview.LabelView>

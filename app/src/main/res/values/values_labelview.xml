@@ -38,6 +38,8 @@
         <attr name="direction">
             <enum name="leftTop" value="-45" />
             <enum name="rightTop" value="45" />
+            <enum name="leftBottom" value="45" />
+            <enum name="rightBottom" value="-45" />
         </attr>
     </declare-styleable>
 </resources>
