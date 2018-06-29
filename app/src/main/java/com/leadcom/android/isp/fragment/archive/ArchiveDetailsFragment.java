@@ -279,7 +279,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private void deleteDocument() {
-        setLoadingText(R.string.ui_text_document_details_deleting_document);
+        //setLoadingText(R.string.ui_text_document_details_deleting_document);
         displayLoading(true);
         ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
             @Override
@@ -484,12 +484,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            //loadingView.setVisibility(View.VISIBLE);
+            displayLoading(true);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            //loadingView.setVisibility(View.GONE);
+            displayLoading(false);
             super.onPageFinished(view, url);
             setImageClick(view);
         }

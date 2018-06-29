@@ -49,6 +49,7 @@ public class ContainerActivity extends TitleActivity {
             // 需要处理返回按键事件时，必定是需要用户输入的
             isInputSupported = true;
         }
+        log(format("%s for %s", getClass().getSimpleName(), mClass));
     }
 
     @Override

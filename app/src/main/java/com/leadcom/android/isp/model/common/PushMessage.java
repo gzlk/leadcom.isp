@@ -102,13 +102,25 @@ public class PushMessage extends Model {
          */
         String USER_DOC_COMMENT = "USERDOC_COMMENT_CODE";
         /**
+         * 用户档案被赞
+         */
+        String USER_DOC_LIKE = "USERDOC_LIKE_CODE";
+        /**
          * 用户动态被评论
          */
         String USER_MMT_COMMENT = "USERMMT_COMMENT_CODE";
         /**
+         * 用户动态被赞
+         */
+        String USER_MMT_LIKE = "USERMMT_LIKE_CODE";
+        /**
          * 组织档案被评论
          */
         String GROUP_DOC_COMMENT = "GRODOC_COMMENT_CODE";
+        /**
+         * 组织档案被赞
+         */
+        String GROUP_DOC_LIKE = "GRODOC_LIKE_CODE";
         /**
          * 组织档案推送
          */

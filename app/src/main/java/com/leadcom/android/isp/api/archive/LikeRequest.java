@@ -113,7 +113,7 @@ public class LikeRequest extends Request<ArchiveLike> {
     public void delete(int type, String archiveId) {
         if (type == Comment.Type.MOMENT) {
             String params = format("%s=%s", CommentRequest.getArchiveId(type), archiveId);
-            executeHttpRequest(getRequest(SingleLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
+            executeHttpRequest(getRequest(BoolLike.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
         } else {
             JSONObject object = new JSONObject();
             try {
