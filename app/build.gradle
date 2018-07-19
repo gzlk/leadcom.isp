@@ -130,6 +130,7 @@ android {
         compileTask -> compileTask.dependsOn(nativeLibsToJar)
     }
 }
+
 repositories {
     mavenCentral()
     maven() {
@@ -144,10 +145,12 @@ repositories {
         dirs 'libs'
     }
 }
-configurations.all {
-    resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
-    resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
-}
+
+//configurations.all {
+//    resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
+//    resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
+//}
+
 dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -200,7 +203,7 @@ dependencies {
     //implementation 'com.google.zxing:core:3.3.1'
     //implementation 'com.google.zxing:android-core:3.3.0'
     implementation('com.github.hsiangleekwok:hlklib:1.0.6.3-SNAPSHOT') {
-        changing = true;
+//        changing = true;
     }
 
     // 激光推送

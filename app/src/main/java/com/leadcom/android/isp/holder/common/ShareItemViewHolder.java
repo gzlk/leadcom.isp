@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.holder.common;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
@@ -29,6 +30,8 @@ public class ShareItemViewHolder extends BaseViewHolder {
     private CorneredView backgroundView;
     @ViewId(R.id.ui_holder_view_share_item_icon)
     private CustomTextView iconView;
+    @ViewId(R.id.ui_holder_view_share_item_cancel)
+    private View iconText;
     @ViewId(R.id.ui_holder_view_share_item_text)
     private TextView textView;
 
@@ -37,9 +40,21 @@ public class ShareItemViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
-    public void showContent(ShareItem item){
-        backgroundView.setNormalColor(item.getIconBackground());
+    public ShareItemViewHolder setSize(int width) {
+        ViewGroup.LayoutParams params = itemView.getLayoutParams();
+        params.width = width;
+        itemView.setLayoutParams(params);
+        return this;
+    }
+
+    public void showContent(ShareItem item) {
+        backgroundView.setBackground(item.getIconBackground());
+        backgroundView.setActiveBackground(item.getIconBackground());
+        int len = item.getIcon().length();
+        iconText.setVisibility(len > 1 ? View.VISIBLE : View.GONE);
+        iconView.setVisibility(len <= 1 ? View.VISIBLE : View.GONE);
         iconView.setText(item.getIcon());
+        iconView.setTextColor(item.getIconColor());
         textView.setText(item.getText());
     }
 

@@ -4,18 +4,25 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.etc.Utility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.ContainerActivity;
 import com.leadcom.android.isp.activity.LoginActivity;
 import com.leadcom.android.isp.activity.MainActivity;
+import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.helper.ClipboardHelper;
@@ -24,7 +31,11 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.TooltipHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.holder.common.ShareItemViewHolder;
+import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.lib.Json;
+import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.common.ShareItem;
@@ -554,8 +565,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     protected boolean INTERNAL_SHAREABLE = true;
     // 分享
     private View shareDialog;
-    private ViewPager sharePager;
-    private ArrayList<ShareItem> shareItems = new ArrayList<>();
+    private LinearLayout shareItemsLayer;
+    private RecyclerView shareItemsView;
+    private ShareItemsAdapter sAdapter;
     protected ShareInfo mShareInfo;
     private DialogHelper shareDialogHelper;
     /**
@@ -574,114 +586,139 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                 @Override
                 public View onInitializeView() {
                     if (null == shareDialog) {
-                        shareDialog = View.inflate(Activity(), R.layout.popup_dialog_shares, null);
-                        sharePager = shareDialog.findViewById(R.id.ui_tool_view_pager);
+                        shareDialog = View.inflate(Activity(), R.layout.popup_dialog_share_items, null);
+                        shareItemsLayer = shareDialog.findViewById(R.id.ui_popup_share_items);
+                        shareItemsView = shareDialog.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
+                        shareItemsView.setLayoutManager(new FlexboxLayoutManager(shareItemsView.getContext(), FlexDirection.ROW, FlexWrap.WRAP));
+                    }
+                    if (null == sAdapter) {
+                        sAdapter = new ShareItemsAdapter();
+                        shareItemsView.setAdapter(sAdapter);
                     }
                     return shareDialog;
                 }
 
                 @Override
                 public void onBindData(View dialogView, DialogHelper helper) {
-                    shareItems.clear();
+                    sAdapter.clear();
+                    int count = 0;
                     for (ShareItem item : ShareItem.items) {
                         if (item.visible()) {
-                            shareItems.add(item);
+                            sAdapter.add(item);
+                            count++;
                         } else {
-                            if (item.deletable() && enableShareDelete) {
-                                shareItems.add(item);
-                            }
-                            if (item.forwardable() && enableShareForward) {
-                                shareItems.add(item);
-                            }
-                            if (item.recommendable() && enableShareRecommend) {
-                                shareItems.add(item);
-                            }
-                            if (item.unrecommendable() && enableShareRecommended) {
-                                shareItems.add(item);
+                            if ((item.deletable() && enableShareDelete) || (item.forwardable() && enableShareForward) ||
+                                    (item.recommendable() && enableShareRecommend) || (item.unrecommendable() && enableShareRecommended)) {
+                                sAdapter.add(item);
+                                count++;
                             }
                         }
+                        if (count % 4 == 0) {
+                            Model model = new Model();
+                            model.setId(format("line%d", count / 4));
+                            sAdapter.add(model);
+                        }
                     }
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_app).setVisibility(INTERNAL_SHAREABLE ? View.VISIBLE : View.GONE);
-
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_delete).setVisibility(enableShareDelete ? View.VISIBLE : View.GONE);
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_delete_blank).setVisibility(enableShareDelete ? View.GONE : View.VISIBLE);
-
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_forward).setVisibility(enableShareForward ? View.VISIBLE : View.GONE);
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_forward_blank).setVisibility(enableShareDelete && enableShareForward ? View.GONE : View.VISIBLE);
-
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_recommend).setVisibility(enableShareRecommend ? View.VISIBLE : View.GONE);
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_recommend_blank).setVisibility(enableShareRecommend || enableShareRecommended ? View.GONE : View.VISIBLE);
-
-                    shareDialog.findViewById(R.id.ui_dialog_share_to_recommended).setVisibility(enableShareRecommended ? View.VISIBLE : View.GONE);
-                    boolean showLine2 = enableShareDelete || enableShareForward || enableShareRecommend || enableShareRecommended;
-                    shareDialog.findViewById(R.id.ui_dialog_share_bottom_buttons).setVisibility(showLine2 ? View.VISIBLE : View.GONE);
-                    shareDialog.findViewById(R.id.ui_dialog_share_bottom_divider).setVisibility(showLine2 ? View.VISIBLE : View.GONE);
-                }
-            }).addOnEventHandlerListener(new DialogHelper.OnEventHandlerListener() {
-                @Override
-                public int[] clickEventHandleIds() {
-                    return new int[]{
-                            R.id.ui_dialog_share_to_background,
-                            R.id.ui_dialog_share_to_app,
-                            R.id.ui_dialog_share_to_qq,
-                            R.id.ui_dialog_share_to_qzone,
-                            R.id.ui_dialog_share_to_wx_chat,
-                            R.id.ui_dialog_share_to_wx_moment,
-                            R.id.ui_dialog_share_to_weibo,
-                            R.id.ui_dialog_share_to_link,
-                            R.id.ui_dialog_share_to_delete,
-                            R.id.ui_dialog_share_to_forward,
-                            R.id.ui_dialog_share_to_recommend,
-                            R.id.ui_dialog_share_to_recommended
-                    };
-                }
-
-                @Override
-                public boolean onClick(View view) {
-                    //view.startAnimation(App.clickAnimation());
-                    switch (view.getId()) {
-                        case R.id.ui_dialog_share_to_background:
-                            break;
-                        case R.id.ui_dialog_share_to_app:
-                            // App内部分享
-                            shareToApp();
-                            break;
-                        case R.id.ui_dialog_share_to_qq:
-                            shareToQQ();
-                            break;
-                        case R.id.ui_dialog_share_to_qzone:
-                            shareToQZone();
-                            break;
-                        case R.id.ui_dialog_share_to_wx_chat:
-                            shareToWeiXinSession();
-                            break;
-                        case R.id.ui_dialog_share_to_wx_moment:
-                            shareToWeiXinTimeline();
-                            break;
-                        case R.id.ui_dialog_share_to_weibo:
-                            shareToWeiBo();
-                            break;
-                        case R.id.ui_dialog_share_to_link:
-                            shareToLink();
-                            break;
-                        case R.id.ui_dialog_share_to_delete:
-                            shareToDelete();
-                            break;
-                        case R.id.ui_dialog_share_to_forward:
-                            shareToForward();
-                            break;
-                        case R.id.ui_dialog_share_to_recommend:
-                            shareToRecommend();
-                            break;
-                        case R.id.ui_dialog_share_to_recommended:
-                            shareToRecommended();
-                            break;
+                    if (count / 4 > 1) {
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) shareItemsLayer.getLayoutParams();
+                        params.height = getDimension(R.dimen.ui_static_dp_220);
+                        shareItemsLayer.setLayoutParams(params);
+                    } else {
+                        shareItemsLayer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     }
-                    return true;
                 }
             }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_BOTTOM);
         }
         shareDialogHelper.show();
+    }
+
+    private OnViewHolderClickListener shareItemClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            ShareItem item = (ShareItem) sAdapter.get(index);
+            switch (item.getIndex()) {
+                case 0:
+                    shareToWeiXinSession();
+                    break;
+                case 1:
+                    shareToWeiXinTimeline();
+                    break;
+                case 2:
+                    shareToQQ();
+                    break;
+                case 3:
+                    shareToQZone();
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    shareToDelete();
+                    break;
+                case 6:
+                    shareToForward();
+                    break;
+                case 7:
+                    shareToRecommend();
+                    break;
+                case 8:
+                    shareToRecommended();
+                    break;
+                case 9:
+                    break;
+                case 10:
+                    break;
+                case 11:
+                    break;
+                case 12:
+                    break;
+            }
+            shareDialogHelper.dismiss();
+        }
+    };
+
+    private class ShareItemsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
+        private static final int VT_ITEM = 0, VT_LINE = 1;
+        private int width;
+
+        @Override
+        public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
+            gotSize();
+            if (viewType == VT_ITEM) {
+                ShareItemViewHolder sivh = new ShareItemViewHolder(itemView, BaseFragment.this);
+                sivh.addOnViewHolderClickListener(shareItemClickListener);
+                return sivh.setSize(width);
+            }
+            return new TextViewHolder(itemView, BaseFragment.this);
+        }
+
+        private void gotSize() {
+            if (width <= 0) {
+                int w = getScreenWidth() - (getDimension(R.dimen.ui_base_dimen_margin_padding) * 2);
+                width = w / 4;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return (get(position) instanceof ShareItem) ? VT_ITEM : VT_LINE;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return viewType == VT_ITEM ? R.layout.holder_view_share_item : R.layout.tool_view_half_line_horizontal;
+        }
+
+        @Override
+        public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
+            if (holder instanceof ShareItemViewHolder) {
+                ((ShareItemViewHolder) holder).showContent((ShareItem) item);
+            }
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return 0;
+        }
     }
 
     /**
