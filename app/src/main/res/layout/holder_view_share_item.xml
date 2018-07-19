@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ui_holder_view_share_item_layer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/ui_base_dimen_margin_padding"
+    android:paddingTop="@dimen/ui_base_dimen_margin_padding">
+
+    <com.hlk.hlklib.lib.view.CorneredView
+        android:id="@+id/ui_holder_view_share_item_icon_bg"
+        android:layout_width="@dimen/ui_base_share_button_size"
+        android:layout_height="@dimen/ui_base_share_button_size"
+        android:elevation="@dimen/ui_base_translationZ"
+        android:gravity="center"
+        app:cv_background="@color/color_3eb135"
+        app:cv_background_active="@color/color_1f6b41"
+        app:cv_background_type="fill"
+        app:cv_border_size="@dimen/ui_static_dp_zero"
+        app:cv_corner_size="@dimen/ui_static_dp_55">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_share_item_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/ui_base_share_dialog_button_icon_margin"
+            android:text="@string/ui_icon_share_wx_chat"
+            android:textColor="@color/color_f7f7f7"
+            android:textSize="@dimen/ui_base_share_dialog_icon_text_size" />
+
+    </com.hlk.hlklib.lib.view.CorneredView>
+
+    <TextView
+        android:id="@+id/ui_holder_view_share_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ui_static_dp_3"
+        android:text="@string/ui_base_share_dialog_to_wx_chat"
+        android:textSize="@dimen/ui_base_text_size_small" />
+</LinearLayout>

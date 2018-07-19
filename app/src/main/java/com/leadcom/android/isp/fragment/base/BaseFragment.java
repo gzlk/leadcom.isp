@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
@@ -26,6 +27,7 @@ import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.ShareInfo;
+import com.leadcom.android.isp.model.common.ShareItem;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
@@ -552,29 +554,53 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     protected boolean INTERNAL_SHAREABLE = true;
     // 分享
     private View shareDialog;
+    private ViewPager sharePager;
+    private ArrayList<ShareItem> shareItems = new ArrayList<>();
     protected ShareInfo mShareInfo;
     private DialogHelper shareDialogHelper;
     /**
      * 是否允许删除档案、转发档案、推荐档案到首页、取消首页档案的推荐
      */
-    protected boolean enableShareDelete = false, enableShareForward = false, enableShareRecommend = false, enableShareRecommended = false;
+    protected boolean enableShareDelete = false, enableShareForward = false, enableShareRecommend = false, enableShareRecommended = false,
+            enableAward = false, enableAwarded = false, enableClassify = false, enableReplay = false;
 
     /**
      * 打开分享选择对话框
      */
     protected void openShareDialog() {
+        ShareItem.init();
         if (null == shareDialogHelper) {
             shareDialogHelper = DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
                 @Override
                 public View onInitializeView() {
                     if (null == shareDialog) {
-                        shareDialog = View.inflate(Activity(), R.layout.popup_dialog_share, null);
+                        shareDialog = View.inflate(Activity(), R.layout.popup_dialog_shares, null);
+                        sharePager = shareDialog.findViewById(R.id.ui_tool_view_pager);
                     }
                     return shareDialog;
                 }
 
                 @Override
                 public void onBindData(View dialogView, DialogHelper helper) {
+                    shareItems.clear();
+                    for (ShareItem item : ShareItem.items) {
+                        if (item.visible()) {
+                            shareItems.add(item);
+                        } else {
+                            if (item.deletable() && enableShareDelete) {
+                                shareItems.add(item);
+                            }
+                            if (item.forwardable() && enableShareForward) {
+                                shareItems.add(item);
+                            }
+                            if (item.recommendable() && enableShareRecommend) {
+                                shareItems.add(item);
+                            }
+                            if (item.unrecommendable() && enableShareRecommended) {
+                                shareItems.add(item);
+                            }
+                        }
+                    }
                     shareDialog.findViewById(R.id.ui_dialog_share_to_app).setVisibility(INTERNAL_SHAREABLE ? View.VISIBLE : View.GONE);
 
                     shareDialog.findViewById(R.id.ui_dialog_share_to_delete).setVisibility(enableShareDelete ? View.VISIBLE : View.GONE);
