@@ -50,6 +50,8 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
     private TextView titleView;
     @ViewId(R.id.ui_holder_view_archive_home_recommend_content)
     private TextView contentView;
+    @ViewId(R.id.ui_holder_view_archive_home_recommend_award)
+    private View awardView;
     // 附加信息
     @ViewId(R.id.ui_holder_view_archive_home_recommend_additional)
     private TextView additionalText;
@@ -153,6 +155,8 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
             text = "";
         }
         groupView.setText(StringHelper.getString(R.string.ui_text_home_archive_recommend_group_name, Html.fromHtml(text)));
+        // 是否获奖
+        awardView.setVisibility(archive.getAwardable() > 0 ? View.VISIBLE : View.GONE);
         // 去掉所有html标签
         text = isEmpty(archive.getContent()) ? archive.getAbstrContent() : archive.getContent();
         contentView.setVisibility(isEmpty(text) ? View.GONE : View.VISIBLE);

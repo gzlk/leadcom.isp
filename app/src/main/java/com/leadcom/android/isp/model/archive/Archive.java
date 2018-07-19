@@ -458,6 +458,9 @@ public class Archive extends Additional {
     @Column(Field.Category)
     private String category;
 
+    // 是否获奖档案
+    private int awardable;
+
 
     // 排序
     @Column(Field.Sort)
@@ -875,6 +878,14 @@ public class Archive extends Additional {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public int getAwardable() {
+        return awardable;
+    }
+
+    public void setAwardable(int awardable) {
+        this.awardable = awardable;
     }
 
     public String getParticipant() {
