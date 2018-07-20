@@ -76,6 +76,8 @@
         <item>3|组织档案|%d|1|0xe670</item>
         <item>4|关注|%d|1|0xe678</item>
         <item>5|被关注|%d|1|0xe678</item>
+        <item>6|本组织成员资料统计|%d|1|0xe6a1</item>
+        <item>7|资料授权管理和查看|%d|1|0xe6de</item>
     </string-array>
     <string name="ui_group_header_minmeng_flag">&#xe68d;&#xe68e;&#xe693;&#xe694;&#xe697;&#xe699;</string>
     <string name="ui_group_archive_fragment_title">组织档案</string>
