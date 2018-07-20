@@ -613,10 +613,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                                 count++;
                             }
                         }
-                        if (count % 4 == 0) {
+                        if (sAdapter.getItemCount() > 1 && count % 4 == 1) {
                             Model model = new Model();
                             model.setId(format("line%d", count / 4));
-                            sAdapter.add(model);
+                            sAdapter.add(model, sAdapter.getItemCount() - 1);
                         }
                     }
                     if (count / 4 > 1) {

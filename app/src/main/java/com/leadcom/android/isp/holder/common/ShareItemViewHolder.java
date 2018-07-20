@@ -49,7 +49,7 @@ public class ShareItemViewHolder extends BaseViewHolder {
 
     public void showContent(ShareItem item) {
         backgroundView.setBackground(item.getIconBackground());
-        backgroundView.setActiveBackground(item.getIconBackground());
+        backgroundView.setActiveBackground(item.getIconActiveBackground());
         int len = item.getIcon().length();
         iconText.setVisibility(len > 1 ? View.VISIBLE : View.GONE);
         iconView.setVisibility(len <= 1 ? View.VISIBLE : View.GONE);

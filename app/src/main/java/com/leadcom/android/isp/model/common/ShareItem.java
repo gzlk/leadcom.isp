@@ -44,7 +44,7 @@ public class ShareItem extends Model {
     // 图标颜色
     private int iconColor;
     // 图标背景色
-    private int iconBackground;
+    private int iconBackground, iconActiveBackground;
     // 文字
     private String text;
 
@@ -56,7 +56,8 @@ public class ShareItem extends Model {
         icon = strings[2];
         iconColor = Color.parseColor(strings[3]);
         iconBackground = Color.parseColor(strings[4]);
-        text = strings[5];
+        iconActiveBackground = Color.parseColor(strings[5]);
+        text = strings[6];
     }
 
     public int getIndex() {
@@ -97,6 +98,14 @@ public class ShareItem extends Model {
 
     public void setIconBackground(int iconBackground) {
         this.iconBackground = iconBackground;
+    }
+
+    public int getIconActiveBackground() {
+        return iconActiveBackground;
+    }
+
+    public void setIconActiveBackground(int iconActiveBackground) {
+        this.iconActiveBackground = iconActiveBackground;
     }
 
     public String getText() {

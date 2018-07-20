@@ -13,7 +13,7 @@
     <string name="ui_text_home_activity_nothing">暂时没有更多活动了</string>
     <string name="ui_text_home_archive_loading">正在加载推荐的档案&#8230;</string>
     <string name="ui_text_home_archive_nothing">暂时没有更多档案了</string>
-    <string name="ui_text_home_archive_additional" formatted="false">评论 %d 　喜欢 %d 　收藏 %d</string>
+    <string name="ui_text_home_archive_additional" formatted="false">阅读 %d 　评论 %d 　喜欢 %d 　收藏 %d</string>
 
     <string name="ui_text_home_inner_web_view_invalid_url">无效的url路径</string>
     <string name="ui_text_home_archive_content_empty">该档案的内容是空的</string>
