@@ -165,6 +165,10 @@
     <string name="ui_text_archive_details_recommend_ok">本篇已推荐到树脉首页，美好的篇章应该让更多的人铭记！</string>
     <string name="ui_text_archive_details_recommended">确定要撤掉本档案的推荐吗？</string>
     <string name="ui_text_archive_details_recommended_ok">已从树脉首页推荐中撤下本篇内容</string>
+    <string name="ui_text_archive_details_award">给获奖作品添加一个大大的标记</string>
+    <string name="ui_text_archive_details_award_ok">已给档案添加了获奖标记</string>
+    <string name="ui_text_archive_details_awarded">确定要撤消本档案的获奖标记吗？</string>
+    <string name="ui_text_archive_details_awarded_ok">已撤销档案的获奖</string>
     <string-array name="ui_text_archive_details_popup_items">
         <item>0|1|&#xe659;|#f7f7f7|#3eb135|#1f6b41|微信</item>
         <item>1|1|&#xe61f;|#f7f7f7|#425f78|#333333|朋友圈</item>

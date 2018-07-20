@@ -664,12 +664,16 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                     shareToRecommended();
                     break;
                 case 9:
+                    shareToAward();
                     break;
                 case 10:
+                    shareToAwarded();
                     break;
                 case 11:
+                    shareToClassify();
                     break;
                 case 12:
+                    shareToReply();
                     break;
             }
             shareDialogHelper.dismiss();
@@ -784,6 +788,30 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 取消首页已推荐的档案
      */
     protected void shareToRecommended() {
+    }
+
+    /**
+     * 设置档案获奖
+     */
+    protected void shareToAward() {
+    }
+
+    /**
+     * 取消档案获奖
+     */
+    protected void shareToAwarded() {
+    }
+
+    /**
+     * 档案归类
+     */
+    protected void shareToClassify() {
+    }
+
+    /**
+     * 档案回复
+     */
+    protected void shareToReply() {
     }
 
     /**

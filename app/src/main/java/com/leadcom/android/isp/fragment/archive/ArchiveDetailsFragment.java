@@ -421,6 +421,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             enableShareForward = hasOperation(GRPOperation.ARCHIVE_FORWARD);
             enableShareRecommend = archive.isPublic() && !archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
             enableShareRecommended = archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
+
         }
     }
 
@@ -875,5 +876,75 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 displayLoading(false);
             }
         }).unRecommend(mQueryId);
+    }
+
+    @Override
+    protected void shareToAward() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                tryAwardArchive();
+                return true;
+            }
+        }).setTitleText(R.string.ui_text_archive_details_award).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
+
+    @Override
+    protected void shareToAwarded() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                tryAwardArchive();
+                return true;
+            }
+        }).setTitleText(R.string.ui_text_archive_details_awarded).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
+
+    private void tryAwardArchive() {
+        if (null != mArchive) {
+            if (isEmpty(mArchive.getId()) || mArchive.getId().equals("null")) {
+                ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_id_null);
+            } else {
+                // 没有推荐则推荐，有推荐则取消推荐
+                if (!mArchive.awarded()) {
+                    // 设置获奖标记
+                    awardArchive();
+                } else {
+                    unAwardArchive();
+                }
+            }
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_archive_recommend_archive_null);
+        }
+    }
+
+    private void awardArchive() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    mArchive.setAwardable(Archive.AwardType.AWARDED);
+                    prepareShareDialogElement(mArchive);
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_award_ok);
+                }
+                displayLoading(false);
+            }
+        }).award(mQueryId);
+    }
+
+    private void unAwardArchive() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    mArchive.setAwardable(Archive.AwardType.NONE);
+                    prepareShareDialogElement(mArchive);
+                    ToastHelper.make().showMsg(R.string.ui_text_archive_details_awarded_ok);
+                }
+                displayLoading(false);
+            }
+        }).unaward(mQueryId);
     }
 }

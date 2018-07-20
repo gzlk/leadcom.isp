@@ -196,14 +196,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param archiveId 档案id
      */
     public void delete(int type, @NonNull String archiveId) {
-        // 调用网络数据
-        JSONObject object = new JSONObject();
-        try {
-            object.put("docId", archiveId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        executeHttpRequest(getRequest(BoolArchive.class, url(type, DELETE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BoolArchive.class, url(type, DELETE), getDocId(archiveId).toString(), HttpMethods.Post));
     }
 
     /**
@@ -212,14 +205,7 @@ public class ArchiveRequest extends Request<Archive> {
      * @param archiveId 档案id
      */
     public void find(int type, @NonNull String archiveId) {
-        // 调用网络数据
-        JSONObject object = new JSONObject();
-        try {
-            object.put("docId", archiveId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        executeHttpRequest(getRequest(SingleArchive.class, url(type, FIND), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleArchive.class, url(type, FIND), getDocId(archiveId).toString(), HttpMethods.Post));
     }
 
     /**
@@ -319,10 +305,9 @@ public class ArchiveRequest extends Request<Archive> {
         if (null == groupIdList || groupIdList.size() < 1) {
             ToastHelper.make().showMsg(R.string.ui_text_archive_details_push_no_group);
         } else {
-            JSONObject object = new JSONObject();
+            JSONObject object = getDocId(archiveId);
             try {
-                object.put("docId", archiveId)
-                        .put("groupIds", new JSONArray(groupIdList));
+                object.put("groupIds", new JSONArray(groupIdList));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -334,26 +319,38 @@ public class ArchiveRequest extends Request<Archive> {
      * 推荐档案到首页
      */
     public void recommend(String archiveId) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("docId", archiveId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        executeHttpRequest(getRequest(BoolArchive.class, group("/recommend/do"), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BoolArchive.class, group("/recommend/do"), getDocId(archiveId).toString(), HttpMethods.Post));
     }
 
     /**
      * 取消档案的首页推荐
      */
     public void unRecommend(String archiveId) {
+        executeHttpRequest(getRequest(BoolArchive.class, group("/recommend/undo"), getDocId(archiveId).toString(), HttpMethods.Post));
+    }
+
+    private JSONObject getDocId(String archiveId) {
         JSONObject object = new JSONObject();
         try {
             object.put("docId", archiveId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        executeHttpRequest(getRequest(BoolArchive.class, group("/recommend/undo"), object.toString(), HttpMethods.Post));
+        return object;
+    }
+
+    /**
+     * 设置档案获奖
+     */
+    public void award(String archiveId) {
+        executeHttpRequest(getRequest(BoolArchive.class, group("/award/do"), getDocId(archiveId).toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 设置档案获奖
+     */
+    public void unaward(String archiveId) {
+        executeHttpRequest(getRequest(BoolArchive.class, group("/award/undo"), getDocId(archiveId).toString(), HttpMethods.Post));
     }
 
     public void save(Archive archive, boolean isDraft, boolean shareDraft) {
