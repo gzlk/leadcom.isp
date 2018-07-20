@@ -205,6 +205,20 @@ public class Archive extends Additional {
     }
 
     /**
+     * 获奖情况
+     */
+    public interface AwardType {
+        /**
+         * 获奖作品
+         */
+        int AWARDED = 1;
+        /**
+         * 未获奖
+         */
+        int NONE = 0;
+    }
+
+    /**
      * 档案推荐状态
      */
     public interface RecommendType {
@@ -886,6 +900,10 @@ public class Archive extends Additional {
 
     public void setAwardable(int awardable) {
         this.awardable = awardable;
+    }
+
+    public boolean awarded() {
+        return awardable == AwardType.AWARDED;
     }
 
     public String getParticipant() {

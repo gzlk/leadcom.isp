@@ -156,14 +156,14 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         }
         groupView.setText(StringHelper.getString(R.string.ui_text_home_archive_recommend_group_name, Html.fromHtml(text)));
         // 是否获奖
-        awardView.setVisibility(archive.getAwardable() > 0 ? View.VISIBLE : View.GONE);
+        awardView.setVisibility(archive.awarded() ? View.VISIBLE : View.GONE);
         // 去掉所有html标签
         text = isEmpty(archive.getContent()) ? archive.getAbstrContent() : archive.getContent();
         contentView.setVisibility(isEmpty(text) ? View.GONE : View.VISIBLE);
         contentView.setText(isEmpty(text) ? "" : Html.fromHtml(Utils.clearHtml(text)));
         // 显示新版赞、收藏等内容
         Additional add = archive.getAddition();
-        text = StringHelper.getString(R.string.ui_text_home_archive_additional, add.getCmtNum(), add.getLikeNum(), add.getColNum());
+        text = StringHelper.getString(R.string.ui_text_home_archive_additional, add.getReadNum(), add.getCmtNum(), add.getLikeNum(), add.getColNum());
         additionalText.setText(text);
         commentsView.setText(String.valueOf(archive.getCmtNum()));
 

@@ -16,10 +16,16 @@ import com.leadcom.android.isp.model.Model;
 public class ArchivePermission extends Model {
 
     private String docId;
+    /*是否已推荐**/
     private boolean recommended;
+    /*是否可以推荐**/
     private boolean recommendable;
+    /*是否可以删除**/
     private boolean deletable;
+    /*是否可以转发**/
     private boolean flowable;
+    /*是否拥有公开档案的权限**/
+    private boolean authorized;
 
     public String getDocId() {
         return docId;
@@ -59,5 +65,13 @@ public class ArchivePermission extends Model {
 
     public void setFlowable(boolean flowable) {
         this.flowable = flowable;
+    }
+
+    public boolean isAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(boolean authorized) {
+        this.authorized = authorized;
     }
 }
