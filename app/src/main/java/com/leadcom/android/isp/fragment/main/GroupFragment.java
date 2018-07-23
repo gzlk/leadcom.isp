@@ -115,6 +115,8 @@ public class GroupFragment extends BaseOrganizationFragment {
     private LinearLayout groupListBg;
     @ViewId(R.id.ui_main_group_mine_list)
     private RecyclerView groupList;
+    @ViewId(R.id.ui_main_group_self_define)
+    private View selfDefine;
 
     private GroupAdapter gAdapter;
     private DetailsAdapter dAdapter;
@@ -146,6 +148,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         createView.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         titleAllow.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         groupsBkg.setVisibility(isSingle ? View.GONE : View.VISIBLE);
+        selfDefine.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         // 头像选择是需要剪切的
         isChooseImageForCrop = true;
         // 头像是需要压缩的

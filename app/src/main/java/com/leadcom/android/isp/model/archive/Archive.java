@@ -188,6 +188,10 @@ public class Archive extends Additional {
          * 模板档案
          */
         int TEMPLATE = 3;
+        /**
+         * 意见和建议
+         */
+        int SUGGEST = 4;
     }
 
     /**
