@@ -808,6 +808,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     @Override
+    protected void shareToReply() {
+        ArchiveReplyFragment.open(this, mQueryId, mArchive.getTitle(), mArchive.getGroupName(), mArchive.getCreateDate(), mArchive.getContent());
+    }
+
+    @Override
     protected void shareToRecommend() {
         DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override

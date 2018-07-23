@@ -214,6 +214,18 @@
     <string name="ui_text_archive_details_push_user_names_title">手动添加参与人</string>
     <string name="ui_text_archive_details_push_user_names_hint">请以顿号(、)隔开多个人名</string>
 
+    <string-array name="ui_text_archive_reply_items">
+        <item>0|收件人：|%s|0</item>
+        <item>主题：|回复 %s|档案回复主题|||0</item>
+    </string-array>
+    <string name="ui_text_archive_reply_source_sender">发件人：%s</string>
+    <string name="ui_text_archive_reply_source_title">标题：%s</string>
+    <string name="ui_text_archive_reply_source_time">时间：%s</string>
+    <string name="ui_text_archive_reply_content_hint">请输入回复内容</string>
+    <string name="ui_text_archive_reply_title_blank">回复的标题不能为空</string>
+    <string name="ui_text_archive_reply_content_blank">回复的内容不能为空</string>
+    <string name="ui_text_archive_reply_success">您的回复已发送</string>
+
     <string name="ui_text_archive_searching_selector_1">时间</string>
     <string name="ui_text_archive_searching_selector_2">性质</string>
     <string name="ui_text_archive_searching_selector_3">类型</string>

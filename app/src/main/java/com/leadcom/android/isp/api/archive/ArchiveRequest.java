@@ -353,6 +353,20 @@ public class ArchiveRequest extends Request<Archive> {
         executeHttpRequest(getRequest(BoolArchive.class, group("/award/undo"), getDocId(archiveId).toString(), HttpMethods.Post));
     }
 
+    /**
+     * 回复档案
+     */
+    public void reply(String archiveId, String title, String content) {
+        JSONObject object = getDocId(archiveId);
+        try {
+            object.put("title", title)
+                    .put("content", content);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        executeHttpRequest(getRequest(SingleArchive.class, group("/reply"), object.toString(), HttpMethods.Post));
+    }
+
     public void save(Archive archive, boolean isDraft, boolean shareDraft) {
         String content = archive.getContent();
         if (!isEmpty(content) && content.contains("<video ")) {

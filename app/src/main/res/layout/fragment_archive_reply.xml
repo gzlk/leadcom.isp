@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+        android:paddingStart="@dimen/ui_base_dimen_margin_padding">
+
+        <include
+            android:id="@+id/ui_archive_reply_recipient"
+            layout="@layout/holder_view_simple_clickable_gravity_left" />
+
+        <include
+            android:id="@+id/ui_archive_reply_subject"
+            layout="@layout/holder_view_simple_inputable" />
+
+        <com.hlk.hlklib.lib.view.CorneredEditText
+            android:id="@+id/ui_archive_reply_content"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/ui_static_dp_5"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+            android:gravity="start|top"
+            android:hint="@string/ui_text_archive_reply_content_hint"
+            android:padding="@dimen/ui_static_dp_5"
+            app:cet_active_border="@color/colorBorderActive"
+            app:cet_border_size="@dimen/ui_base_border_size_normal"
+            app:cet_corner_size="@dimen/ui_base_dimen_margin_padding"
+            app:cet_normal_border="@color/textColorHintLight" />
+    </LinearLayout>
+
+    <include layout="@layout/tool_view_half_line_horizontal" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ui_archive_reply_source_origin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                android:textColor="@color/textColorHintDark" />
+
+            <TextView
+                android:id="@+id/ui_archive_reply_source_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                android:textColor="@color/textColorHintDark" />
+
+            <TextView
+                android:id="@+id/ui_archive_reply_source_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                android:textColor="@color/textColorHintDark" />
+
+            <TextView
+                android:id="@+id/ui_archive_reply_source_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                android:textColor="@color/textColorHintDark" />
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

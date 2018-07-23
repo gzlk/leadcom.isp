@@ -489,6 +489,10 @@ public class Archive extends Additional {
     @Column(Field.ToUserId)
     private ArrayList<String> shareUserIds;
 
+    private String fromGroupId;
+    private String fromGroupName;
+    private ArrayList<Suggest> suggest;
+
     public boolean isPublic() {
         return authPublic == Seclusion.Type.Public;
     }
@@ -931,5 +935,32 @@ public class Archive extends Additional {
 
     public void setShareUserIds(ArrayList<String> shareUserIds) {
         this.shareUserIds = shareUserIds;
+    }
+
+    public String getFromGroupId() {
+        return fromGroupId;
+    }
+
+    public void setFromGroupId(String fromGroupId) {
+        this.fromGroupId = fromGroupId;
+    }
+
+    public String getFromGroupName() {
+        return fromGroupName;
+    }
+
+    public void setFromGroupName(String fromGroupName) {
+        this.fromGroupName = fromGroupName;
+    }
+
+    public ArrayList<Suggest> getSuggest() {
+        if (null == suggest) {
+            suggest = new ArrayList<>();
+        }
+        return suggest;
+    }
+
+    public void setSuggest(ArrayList<Suggest> suggest) {
+        this.suggest = suggest;
     }
 }
