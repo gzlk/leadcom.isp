@@ -7,6 +7,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.common.SimpleClickableViewHolder;
+import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.user.UserExtra;
 
@@ -36,6 +37,13 @@ public class GroupDetailsViewHolder extends SimpleClickableViewHolder {
         Integer i = Integer.decode(item.getIcon());
         valueIcon.setText(String.valueOf((char) i.intValue()));
         valueIcon.setVisibility(View.VISIBLE);
+    }
+
+    public void showContent(Classify classify) {
+        valueIcon.setText(R.string.ui_icon_favorite_oval);
+        valueIcon.setVisibility(View.VISIBLE);
+        titleTextView.setText(classify.getName());
+        valueTextView.setText("");
     }
 
     public void showContent(UserExtra extra, boolean isSelf) {

@@ -15,15 +15,19 @@ import android.widget.TextView;
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.ClearEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
+import com.leadcom.android.isp.api.archive.ClassifyRequest;
+import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
@@ -33,6 +37,9 @@ import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.SquadsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.home.GroupHeaderViewHolder;
@@ -40,14 +47,17 @@ import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
+import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.view.SwipeItemLayout;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -64,6 +74,7 @@ import java.util.List;
 public class GroupFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_SINGLE = "gf_single";
+    private static final String PARAM_SELECTED = "gf_selected";
     private static boolean isFirst = true;
 
     public static GroupFragment newInstance(Bundle bundle) {
@@ -91,12 +102,14 @@ public class GroupFragment extends BaseOrganizationFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         isSingle = bundle.getBoolean(PARAM_SINGLE, false);
+        selectedIndex = bundle.getInt(PARAM_SELECTED, -1);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_SINGLE, isSingle);
+        bundle.putInt(PARAM_SELECTED, selectedIndex);
     }
 
     @ViewId(R.id.ui_main_tool_bar_container)
@@ -122,6 +135,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     private DetailsAdapter dAdapter;
     private String[] items;
     private boolean isSingle = false;
+    private int selectedIndex = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -148,7 +162,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         createView.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         titleAllow.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         groupsBkg.setVisibility(isSingle ? View.GONE : View.VISIBLE);
-        selfDefine.setVisibility(isSingle ? View.GONE : View.VISIBLE);
+        //selfDefine.setVisibility(isSingle ? View.GONE : View.VISIBLE);
         // 头像选择是需要剪切的
         isChooseImageForCrop = true;
         // 头像是需要压缩的
@@ -268,7 +282,8 @@ public class GroupFragment extends BaseOrganizationFragment {
     }
 
     @Click({R.id.ui_main_group_title_container, R.id.ui_main_group_mine_background,
-            R.id.ui_main_group_create, R.id.ui_ui_custom_title_left_container})
+            R.id.ui_main_group_create, R.id.ui_ui_custom_title_left_container,
+            R.id.ui_main_group_self_define})
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_main_group_title_container:
@@ -285,7 +300,60 @@ public class GroupFragment extends BaseOrganizationFragment {
             case R.id.ui_ui_custom_title_left_container:
                 finish();
                 break;
+            case R.id.ui_main_group_self_define:
+                // 自定义栏目创建对话框
+                openSelfDefineDialog();
+                break;
         }
+    }
+
+    private View dialogView;
+    private TextView titleText;
+    private ClearEditText titleView;
+
+    private void openSelfDefineDialog() {
+        DialogHelper.init(Activity()).addOnDialogInitializeListener(new DialogHelper.OnDialogInitializeListener() {
+            @Override
+            public View onInitializeView() {
+                if (null == dialogView) {
+                    dialogView = View.inflate(Activity(), R.layout.popup_dialog_squad_add, null);
+                    titleView = dialogView.findViewById(R.id.ui_popup_squad_add_input);
+                    titleText = dialogView.findViewById(R.id.ui_popup_squad_add_title);
+                    titleText.setText(R.string.ui_group_details_self_define);
+                    titleView.setTextHint(R.string.ui_group_details_self_define_hint);
+                }
+                return dialogView;
+            }
+
+            @Override
+            public void onBindData(View dialogView, DialogHelper helper) {
+
+            }
+        }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                String name = titleView.getValue();
+                if (isEmpty(name)) {
+                    ToastHelper.make().showMsg(R.string.ui_group_details_self_define_name_blank);
+                    return false;
+                }
+                addClassify(name);
+                Utils.hidingInputBoard(titleView);
+                return true;
+            }
+        }).setConfirmText(selectedIndex >= 7 ? R.string.ui_base_text_change : R.string.ui_base_text_confirm).setPopupType(DialogHelper.SLID_IN_BOTTOM).show();
+    }
+
+    private void addClassify(String name) {
+        ClassifyRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Classify>() {
+            @Override
+            public void onResponse(Classify classify, boolean success, String message) {
+                super.onResponse(classify, success, message);
+                if (success) {
+                    dAdapter.add(classify);
+                }
+            }
+        }).add(dAdapter.get(0).getId(), name, 0);
     }
 
     private void initializeGroupsPosition() {
@@ -453,6 +521,57 @@ public class GroupFragment extends BaseOrganizationFragment {
             dAdapter.replace(group, 0);
         }
         resetQuantity(group.getCalculate());
+        // 是否有查看成员资料统计权限
+        SimpleClickableItem item = new SimpleClickableItem(items[5]);
+        if (hasOperation(group.getId(), GRPOperation.MEMBER_COUNT)) {
+            dAdapter.update(item);
+            if (isSingle) {
+                dAdapter.remove(item);
+            }
+        } else {
+            dAdapter.remove(item);
+        }
+        // 是否有授权管理权限
+        item = new SimpleClickableItem(items[6]);
+        if (hasOperation(group.getId(), GRPOperation.GROUP_PERMISSION)) {
+            dAdapter.update(item);
+            if (isSingle) {
+                dAdapter.remove(item);
+            }
+        } else {
+            dAdapter.remove(item);
+        }
+        removeClassify();
+        loadGroupSelfDefined();
+        if (isSingle) {
+            return;
+        }
+        selfDefine.setVisibility(hasOperation(group.getId(), GRPOperation.GROUP_DEFINE) ? View.VISIBLE : View.GONE);
+    }
+
+    private void removeClassify() {
+        Iterator<Model> iterator = dAdapter.iterator();
+        while (iterator.hasNext()) {
+            Model model = iterator.next();
+            if (model instanceof Classify) {
+                iterator.remove();
+            }
+        }
+        dAdapter.notifyDataSetChanged();
+    }
+
+    private void loadGroupSelfDefined() {
+        ClassifyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Classify>() {
+            @Override
+            public void onResponse(List<Classify> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list) {
+                    for (Classify classify : list) {
+                        dAdapter.add(classify);
+                    }
+                }
+            }
+        }).list(dAdapter.get(0).getId());
     }
 
     private void resetQuantity(Quantity quantity) {
@@ -514,10 +633,14 @@ public class GroupFragment extends BaseOrganizationFragment {
         }
         if (null == dAdapter) {
             dAdapter = new DetailsAdapter();
+            mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(dAdapter);
 
             dAdapter.add(new Organization());
             for (String string : items) {
+                if (string.contains("6|") || string.contains("7|")) {
+                    continue;
+                }
                 SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
                 dAdapter.add(item);
             }
@@ -570,9 +693,38 @@ public class GroupFragment extends BaseOrganizationFragment {
                         UserIntroductionFragment.open(GroupFragment.this, group);
                     }
                     break;
+                case R.id.ui_tool_view_contact_button2:
+                    // 删除自定义栏目
+                    selectedIndex = index;
+                    warningDeleteSelfDefine();
+                    break;
             }
         }
     };
+
+    private void warningDeleteSelfDefine() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                deleteSelfDefine();
+                return true;
+            }
+        }).setTitleText(R.string.ui_group_details_self_define_delete).setConfirmText(R.string.ui_base_text_delete).show();
+    }
+
+    private void deleteSelfDefine() {
+        Classify classify = (Classify) dAdapter.get(selectedIndex);
+        ClassifyRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Classify>() {
+            @Override
+            public void onResponse(Classify classify, boolean success, String message) {
+                super.onResponse(classify, success, message);
+                if (success) {
+                    dAdapter.remove(selectedIndex);
+                    selectedIndex = -1;
+                }
+            }
+        }).delete(classify.getId());
+    }
 
     private void handleItemClick(int index) {
         Organization group = (Organization) dAdapter.get(0);
@@ -596,6 +748,12 @@ public class GroupFragment extends BaseOrganizationFragment {
                 ConcernedOrganizationFragment.open(this, group.getId(), (index == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
                 //}
                 break;
+            case 6:
+                // 成员资料统计
+                break;
+            case 7:
+                // 授权管理
+                break;
         }
     }
 
@@ -604,7 +762,7 @@ public class GroupFragment extends BaseOrganizationFragment {
      */
     private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_HEAD = 0, VT_DETAILS = 1;
+        private static final int VT_HEAD = 0, VT_DETAILS = 1, VT_CLASSIFY = 2;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -620,13 +778,22 @@ public class GroupFragment extends BaseOrganizationFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == VT_HEAD ? R.layout.holder_view_group_header : R.layout.holder_view_group_details;
+            switch (viewType) {
+                case VT_HEAD:
+                    return R.layout.holder_view_group_header;
+                case VT_DETAILS:
+                    return R.layout.holder_view_group_details;
+                case VT_CLASSIFY:
+                    return R.layout.holder_view_group_details_deletable;
+                default:
+                    return R.layout.holder_view_group_details_deletable;
+            }
         }
 
         @Override
         public int getItemViewType(int position) {
             Model model = get(position);
-            return model instanceof Organization ? VT_HEAD : VT_DETAILS;
+            return model instanceof Organization ? VT_HEAD : (model instanceof Classify ? VT_CLASSIFY : VT_DETAILS);
         }
 
         @Override
@@ -634,7 +801,11 @@ public class GroupFragment extends BaseOrganizationFragment {
             if (holder instanceof GroupHeaderViewHolder) {
                 ((GroupHeaderViewHolder) holder).showContent((Organization) item);
             } else if (holder instanceof GroupDetailsViewHolder) {
-                ((GroupDetailsViewHolder) holder).showContent((SimpleClickableItem) item);
+                if (item instanceof Classify) {
+                    ((GroupDetailsViewHolder) holder).showContent((Classify) item);
+                } else {
+                    ((GroupDetailsViewHolder) holder).showContent((SimpleClickableItem) item);
+                }
             }
         }
 
