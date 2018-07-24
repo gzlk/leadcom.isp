@@ -608,7 +608,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                             count++;
                         } else {
                             if ((item.deletable() && enableShareDelete) || (item.forwardable() && enableShareForward) ||
-                                    (item.recommendable() && enableShareRecommend) || (item.unrecommendable() && enableShareRecommended)) {
+                                    (item.recommendable() && enableShareRecommend) || (item.unrecommendable() && enableShareRecommended) ||
+                                    (item.awardable() && enableAward) || (item.unawardable() && enableAwarded) ||
+                                    (item.classfiyable() && enableClassify) || (item.repliable() && enableReplay)) {
                                 sAdapter.add(item);
                                 count++;
                             }

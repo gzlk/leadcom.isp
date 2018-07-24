@@ -135,4 +135,20 @@ public class ShareItem extends Model {
     public boolean unrecommendable() {
         return index == 8;
     }
+
+    public boolean awardable() {
+        return index == 9;
+    }
+
+    public boolean unawardable() {
+        return index == 10;
+    }
+
+    public boolean classfiyable() {
+        return index == 11;
+    }
+
+    public boolean repliable() {
+        return index == 12;
+    }
 }

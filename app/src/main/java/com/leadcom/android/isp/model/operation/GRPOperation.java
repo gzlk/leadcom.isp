@@ -24,6 +24,14 @@ public interface GRPOperation {
      * 关联组织（关注或关联上级组织）
      */
     String GROUP_ASSOCIATION = "ROLE_79fdb066842a481a87abdf596bf9553c";
+    /**
+     * 资料授权
+     */
+    String GROUP_PERMISSION = "ROLE_9e3c5656702941eb82b6e0073c11a136";
+    /**
+     * 自定义栏目
+     */
+    String GROUP_DEFINE = "ROLE_801d4f3691c0471886a9fa804530e0de";
 
     /* ***********************************************************
        组织成员相关权限
@@ -40,6 +48,14 @@ public interface GRPOperation {
      * 修改成员角色
      */
     String MEMBER_ROLE = "ROLE_c2b23baf60144b14b40783bf9d9c411f";
+    /**
+     * 修改成员资料
+     */
+    String MEMBER_EDIT = "ROLE_28452e71f43a4e26a1a2cd5dba468cda";
+    /**
+     * 查看成员资料统计信息
+     */
+    String MEMBER_COUNT = "ROLE_df944ab35a214d64adbdb35fc035374c";
 
     /* ***********************************************************
        档案管理相关
@@ -56,6 +72,18 @@ public interface GRPOperation {
      * 删除档案
      */
     String ARCHIVE_DELETE = "ROLE_9fc02c46d90d47a2a97f9894e17d403a";
+    /**
+     * 回复档案
+     */
+    String ARCHIVE_REPLY = "ROLE_ffd0f6b0c37146dca5618a151f7e7baf";
+    /**
+     * 档案归类
+     */
+    String ARCHIVE_CLASSIFY = "ROLE_aab579680ae3490a8a353be3ed106824";
+    /**
+     * 档案获奖设置
+     */
+    String ARCHIVE_AWARD = "ROLE_76394a06a2aa478f962d040f36688f86";
 
     /* ***********************************************************
        组织小组相关

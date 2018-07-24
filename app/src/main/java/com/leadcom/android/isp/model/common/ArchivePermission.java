@@ -16,16 +16,42 @@ import com.leadcom.android.isp.model.Model;
 public class ArchivePermission extends Model {
 
     private String docId;
-    /*是否已推荐**/
+    /**
+     * 是否已推荐
+     */
     private boolean recommended;
-    /*是否可以推荐**/
+    /**
+     * 是否可以推荐
+     */
     private boolean recommendable;
-    /*是否可以删除**/
+    /**
+     * 是否可以删除
+     */
     private boolean deletable;
-    /*是否可以转发**/
+    /**
+     * 是否可以转发
+     */
     private boolean flowable;
-    /*是否拥有公开档案的权限**/
+    /**
+     * 是否拥有公开档案的权限
+     */
     private boolean authorized;
+    /**
+     * 是否有档案获奖权限
+     */
+    private boolean awardable;
+    /**
+     * 是否已经设置了获奖选项
+     */
+    private boolean awarded;
+    /**
+     * 是否有档案归类权限
+     */
+    private boolean classifiable;
+    /**
+     * 是否有档案回复权限
+     */
+    private boolean repliable;
 
     public String getDocId() {
         return docId;
@@ -73,5 +99,37 @@ public class ArchivePermission extends Model {
 
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
+    }
+
+    public boolean isAwardable() {
+        return awardable;
+    }
+
+    public void setAwardable(boolean awardable) {
+        this.awardable = awardable;
+    }
+
+    public boolean isAwarded() {
+        return awarded;
+    }
+
+    public void setAwarded(boolean awarded) {
+        this.awarded = awarded;
+    }
+
+    public boolean isClassifiable() {
+        return classifiable;
+    }
+
+    public void setClassifiable(boolean classifiable) {
+        this.classifiable = classifiable;
+    }
+
+    public boolean isRepliable() {
+        return repliable;
+    }
+
+    public void setRepliable(boolean repliable) {
+        this.repliable = repliable;
     }
 }

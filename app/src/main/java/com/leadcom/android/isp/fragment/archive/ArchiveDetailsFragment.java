@@ -328,6 +328,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     enableShareRecommend = data.isRecommendable() && !data.isRecommended();
                     enableShareRecommended = data.isRecommendable() && data.isRecommended();
                     mArchive.setRecommend(data.isRecommended() ? Archive.RecommendType.RECOMMENDED : Archive.RecommendType.UN_RECOMMEND);
+                    mArchive.setAwardable(data.isAwarded() ? Archive.AwardType.AWARDED : Archive.AwardType.NONE);
+                    enableAward = data.isAwardable() && !data.isAwarded();
+                    enableAwarded = data.isAwardable() && data.isAwarded();
+                    enableReplay = data.isRepliable();
+                    enableClassify = data.isClassifiable();
                     fetchingShareInfo();
                 }
             }
