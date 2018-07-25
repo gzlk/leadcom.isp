@@ -211,8 +211,13 @@
     <string name="ui_text_archive_details_public_group">已设为公开，可以推荐到首页</string>
     <string name="ui_text_archive_details_publicable">档案已设为私密</string>
     <string name="ui_text_archive_details_push_dialog_title">转发到：</string>
+    <string name="ui_text_archive_details_push_dialog_nothing">本组织没有其他关注者</string>
     <string name="ui_text_archive_details_push_user_names_title">手动添加参与人</string>
     <string name="ui_text_archive_details_push_user_names_hint">请以顿号(、)隔开多个人名</string>
+
+    <string name="ui_text_archive_details_push_dialog_title_classify">档案归类到：</string>
+    <string name="ui_text_archive_details_classify_success" formatted="false">档案已归类到“%s”</string>
+    <string name="ui_text_archive_details_classify_nothing">本组织暂时没有设置归类栏目</string>
 
     <string-array name="ui_text_archive_reply_items">
         <item>0|收件人：|%s|0</item>

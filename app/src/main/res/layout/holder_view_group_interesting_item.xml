@@ -23,6 +23,12 @@
             app:id_image_src="@drawable/img_default_user_header"
             app:id_image_type="oval" />
 
+        <View
+            android:id="@+id/ui_holder_view_group_interest_left_blank"
+            android:layout_width="@dimen/ui_static_dp_20"
+            android:layout_height="@dimen/ui_static_dp_15"
+            android:visibility="gone" />
+
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_holder_view_group_interest_select"
             android:layout_width="wrap_content"
@@ -67,6 +73,16 @@
             app:background_type="fill"
             app:corner_size="@dimen/ui_static_dp_15"
             app:normal_color="@color/colorPrimary" />
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:id="@+id/ui_holder_view_group_interest_right_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:text="@string/ui_icon_right"
+            android:textColor="@color/textColorHintLight"
+            android:textSize="@dimen/ui_base_text_size_big"
+            android:visibility="gone" />
     </LinearLayout>
 
     <View

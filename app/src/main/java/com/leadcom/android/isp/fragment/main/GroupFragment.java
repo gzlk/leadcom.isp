@@ -327,7 +327,7 @@ public class GroupFragment extends BaseOrganizationFragment {
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
-
+                titleView.setValue("");
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
@@ -577,6 +577,9 @@ public class GroupFragment extends BaseOrganizationFragment {
     private void resetQuantity(Quantity quantity) {
         if (null == quantity) return;
         for (int i = 1, len = dAdapter.getItemCount(); i < len; i++) {
+            if (!(dAdapter.get(i) instanceof SimpleClickableItem)) {
+                continue;
+            }
             SimpleClickableItem item = (SimpleClickableItem) dAdapter.get(i);
             int index = item.getIndex();
             switch (index) {

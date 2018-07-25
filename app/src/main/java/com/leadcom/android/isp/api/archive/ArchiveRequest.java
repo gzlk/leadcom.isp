@@ -13,6 +13,7 @@ import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.archive.ArchivePushTarget;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -21,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -313,6 +315,33 @@ public class ArchiveRequest extends Request<Archive> {
             }
             executeHttpRequest(getRequest(BoolArchive.class, group(PUSH), object.toString(), HttpMethods.Post));
         }
+    }
+
+    public void push(String archiveId, ArrayList<ArchivePushTarget> targets) {
+        if (null == targets || targets.size() < 1) {
+            ToastHelper.make().showMsg(R.string.ui_text_archive_details_push_no_group);
+        } else {
+            JSONObject object = getDocId(archiveId);
+            try {
+                object.put("targetGroups", new JSONArray(ArchivePushTarget.toJson(targets)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            executeHttpRequest(getRequest(BoolArchive.class, group(PUSH), object.toString(), HttpMethods.Post));
+        }
+    }
+
+    /**
+     * 档案分类
+     */
+    public void classify(String archiveId, String classifyId) {
+        JSONObject object = getDocId(archiveId);
+        try {
+            object.put("docClassifyId", classifyId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        executeHttpRequest(getRequest(BoolArchive.class, group("/classify"), object.toString(), HttpMethods.Post));
     }
 
     /**

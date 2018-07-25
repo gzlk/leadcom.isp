@@ -16,13 +16,14 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/ui_dialog_archive_push_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/ui_base_dimen_margin_padding"
             android:text="@string/ui_text_archive_details_push_dialog_title"
             android:textStyle="bold" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -31,7 +32,10 @@
 
             <include layout="@layout/tool_view_recycler_view_warp_content" />
 
-        </LinearLayout>
+            <include layout="@layout/tool_view_loading" />
+
+            <include layout="@layout/tool_view_nothing" />
+        </RelativeLayout>
 
         <com.hlk.hlklib.lib.view.CorneredButton
             android:id="@+id/ui_dialog_button_confirm"

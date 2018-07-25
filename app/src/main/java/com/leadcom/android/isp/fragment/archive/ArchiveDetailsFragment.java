@@ -31,6 +31,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchivePermissionRequest;
 import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
+import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -59,7 +60,9 @@ import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
+import com.leadcom.android.isp.model.archive.ArchivePushTarget;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
+import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.common.ArchivePermission;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
@@ -94,6 +97,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_GROUP_ID = "adwvf_group_id";
     private static final String PARAM_AUTHOR_ID = "adwvf_author_id";
     private static final String PARAM_COVER_URL = "adwvf_cover_url";
+    private static final String PARAM_CLASSIFY_TYPE = "adwvf_classify_type";
     private static boolean isCollected = false;
 
     public static ArchiveDetailsFragment newInstance(Bundle bundle) {
@@ -169,6 +173,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         innerOpen = bundle.getBoolean(PARAM_INNER_OPEN, false);
         groupId = bundle.getString(PARAM_GROUP_ID, "");
         authorId = bundle.getString(PARAM_AUTHOR_ID, "");
+        pushingType = bundle.getInt(PARAM_CLASSIFY_TYPE, 0);
     }
 
     @Override
@@ -180,6 +185,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
         bundle.putString(PARAM_GROUP_ID, groupId);
         bundle.putString(PARAM_AUTHOR_ID, authorId);
+        bundle.putInt(PARAM_CLASSIFY_TYPE, pushingType);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -221,6 +227,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private int archiveType;
     private boolean isDraft;
     private String groupId, authorId;
+    private int pushingType = 0;
+    /**
+     * 分类到别的组织或当前组织的栏目
+     */
+    private static final int PUSH_GROUPS = 1, PUSH_CLASSIFY = 2;
     /**
      * 标记是否是app内部打开的详情页
      */
@@ -670,7 +681,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private View pushDialog;
+    private TextView pushTitleText, nothingText;
     private RecyclerView concerned;
+    private View nothingView;
     private ConcernAdapter cAdapter;
 
     private void openPushDialog() {
@@ -679,46 +692,128 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             public View onInitializeView() {
                 if (null == pushDialog) {
                     pushDialog = View.inflate(Activity(), R.layout.popup_dialog_archive_push, null);
+                    pushTitleText = pushDialog.findViewById(R.id.ui_dialog_archive_push_title);
+                    nothingView = pushDialog.findViewById(R.id.ui_tool_nothing_container);
+                    nothingText = pushDialog.findViewById(R.id.ui_tool_nothing_text);
                     concerned = pushDialog.findViewById(R.id.ui_tool_swipe_refreshable_recycler_view);
                     concerned.setLayoutManager(new CustomLinearLayoutManager(concerned.getContext()));
                     cAdapter = new ConcernAdapter();
                     concerned.setAdapter(cAdapter);
-                    showConcernedGroups();
                 }
                 return pushDialog;
             }
 
             private void showConcernedGroups() {
                 // 查询关注我的组织列表并推送
+                nothingText.setText(R.string.ui_text_archive_details_push_dialog_nothing);
                 ConcernRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Concern>() {
                     @Override
                     public void onResponse(List<Concern> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                         super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                         if (success && null != list) {
-                            cAdapter.update(list);
+                            for (Concern concern : list) {
+                                concern.setId(concern.getGroupId());
+                                cAdapter.add(concern);
+                            }
                         }
+                        nothingView.setVisibility(null == list || list.size() <= 0 ? View.VISIBLE : View.GONE);
                     }
-                }).list(mArchive.getGroupId(), ConcernRequest.CONCERN_FROM, 1, "");
+                }).listTransfer(mArchive.getGroupId());
+            }
+
+            private void showSelfDefined() {
+                nothingText.setText(R.string.ui_text_archive_details_classify_nothing);
+                ClassifyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Classify>() {
+                    @Override
+                    public void onResponse(List<Classify> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                        super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                        if (success && null != list) {
+                            for (Classify classify : list) {
+                                cAdapter.add(classify);
+                            }
+                        }
+                        nothingView.setVisibility(null == list || list.size() <= 0 ? View.VISIBLE : View.GONE);
+                    }
+                }).list(mArchive.getGroupId());
             }
 
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
+                cAdapter.clear();
+                switch (pushingType) {
+                    case PUSH_GROUPS:
+                        pushTitleText.setText(R.string.ui_text_archive_details_push_dialog_title);
+                        showConcernedGroups();
+                        break;
+                    case PUSH_CLASSIFY:
+                        pushTitleText.setText(R.string.ui_text_archive_details_push_dialog_title_classify);
+                        showSelfDefined();
+                        break;
+                }
             }
         }).addOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
             @Override
             public boolean onConfirm() {
-                ArrayList<String> groupIds = new ArrayList<>();
-                Iterator<Concern> iterator = cAdapter.iterator();
-                while (iterator.hasNext()) {
-                    Concern concern = iterator.next();
-                    if (concern.isSelected()) {
-                        groupIds.add(concern.getId());
-                    }
+//                ArrayList<String> groupIds = new ArrayList<>();
+//                Iterator<Concern> iterator = cAdapter.iterator();
+//                while (iterator.hasNext()) {
+//                    Concern concern = iterator.next();
+//                    if (concern.isSelected()) {
+//                        groupIds.add(concern.getId());
+//                    }
+//                }
+//                tryPushArchive(groupIds);
+                switch (pushingType) {
+                    case PUSH_GROUPS:
+                        preparePushGroups();
+                        break;
+                    case PUSH_CLASSIFY:
+                        prepareClassify();
+                        break;
                 }
-                tryPushArchive(groupIds);
                 return true;
             }
-        }).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
+
+            private void preparePushGroups() {
+                ArrayList<ArchivePushTarget> targets = new ArrayList<>();
+                Iterator<Model> iterator = cAdapter.iterator();
+                while (iterator.hasNext()) {
+                    Model model = iterator.next();
+                    if (model.isSelected()) {
+                        if (model instanceof Concern) {
+                            Concern concern = (Concern) model;
+                            ArchivePushTarget target = new ArchivePushTarget();
+                            target.setTargertGroupId(concern.getGroupId());
+                            if (concern.getDocClassifyList().size() > 0) {
+                                for (Classify classify : concern.getDocClassifyList()) {
+                                    if (classify.isSelected()) {
+                                        target.setDocClassifyId(classify.getId());
+                                    }
+                                }
+                            }
+                            targets.add(target);
+                        }
+                    }
+                }
+                pushArchive(targets);
+            }
+
+            private void prepareClassify() {
+                Iterator<Model> iterator = cAdapter.iterator();
+                String classifyId = "", classifyName = "";
+                while (iterator.hasNext()) {
+                    Classify classify = (Classify) iterator.next();
+                    if (classify.isSelected()) {
+                        classifyId = classify.getId();
+                        classifyName = classify.getName();
+                        break;
+                    }
+                }
+                if (!isEmpty(classifyId)) {
+                    classifyArchive(classifyId, classifyName);
+                }
+            }
+        }).setConfirmText(pushingType == PUSH_GROUPS ? R.string.ui_base_text_forward : R.string.ui_base_text_classify).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
 
     private void tryPushArchive(ArrayList<String> groupIds) {
@@ -733,12 +828,65 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }).push(groupIds, mQueryId);
     }
 
+    private void pushArchive(ArrayList<ArchivePushTarget> targets) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(message);
+                }
+            }
+        }).push(mQueryId, targets);
+    }
+
+    private void classifyArchive(String classifyId, final String classifyName) {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(getString(R.string.ui_text_archive_details_classify_success, classifyName));
+                }
+            }
+        }).classify(mQueryId, classifyId);
+    }
+
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            Concern concern = cAdapter.get(index);
-            concern.setSelected(!concern.isSelected());
-            cAdapter.update(concern);
+            Model model = cAdapter.get(index);
+            model.setSelected(!model.isSelected());
+            cAdapter.update(model);
+            if (model instanceof Concern) {
+                Concern concern = (Concern) model;
+                int cnt = 0;
+                boolean selected = concern.isSelected();
+                for (Classify classify : concern.getDocClassifyList()) {
+                    if (selected) {
+                        cnt++;
+                        cAdapter.add(classify, cnt + index);
+                    } else {
+                        cAdapter.remove(classify);
+                    }
+                }
+            } else if (model instanceof Classify) {
+                Classify classify = (Classify) model;
+                Iterator<Model> iterator = cAdapter.iterator();
+                while (iterator.hasNext()) {
+                    Model m = iterator.next();
+                    if (m instanceof Classify) {
+                        Classify clazz = (Classify) m;
+                        if (clazz.getGroupId().equals(classify.getGroupId())) {
+                            // 同一个组织里的
+                            if (!clazz.getId().equals(classify.getId()) && clazz.isSelected()) {
+                                clazz.setSelected(false);
+                                cAdapter.update(clazz);
+                            }
+                        }
+                    }
+                }
+            }
         }
     };
 
@@ -752,7 +900,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     }
 
-    private class ConcernAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Concern> {
+    private class ConcernAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Model> {
 
         @Override
         public GroupInterestViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -768,12 +916,16 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }
 
         @Override
-        public void onBindHolderOfView(GroupInterestViewHolder holder, int position, @Nullable Concern item) {
-            holder.showContent(item);
+        public void onBindHolderOfView(GroupInterestViewHolder holder, int position, @Nullable Model item) {
+            if (item instanceof Concern) {
+                holder.showContent((Concern) item);
+            } else if (item instanceof Classify) {
+                holder.showContent((Classify) item);
+            }
         }
 
         @Override
-        protected int comparator(Concern item1, Concern item2) {
+        protected int comparator(Model item1, Model item2) {
             return 0;
         }
     }
@@ -809,6 +961,13 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected void shareToForward() {
+        pushingType = PUSH_GROUPS;
+        openPushDialog();
+    }
+
+    @Override
+    protected void shareToClassify() {
+        pushingType = PUSH_CLASSIFY;
         openPushDialog();
     }
 

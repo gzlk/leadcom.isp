@@ -2,6 +2,9 @@ package com.leadcom.android.isp.model.organization;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.model.archive.Classify;
+
+import java.util.ArrayList;
 
 /**
  * <b>功能描述：</b>关注的组织<br />
@@ -43,6 +46,9 @@ public class Concern extends Organization {
 
     // 关注类型:1.上级组织 2.下级组织 3.友好组织
     private int type;
+    private String groupId;
+    private String groupName;
+    private ArrayList<Classify> docClassifyList;
 
     public int getType() {
         return type;
@@ -50,6 +56,33 @@ public class Concern extends Organization {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public ArrayList<Classify> getDocClassifyList() {
+        if (null == docClassifyList) {
+            docClassifyList = new ArrayList<>();
+        }
+        return docClassifyList;
+    }
+
+    public void setDocClassifyList(ArrayList<Classify> docClassifyList) {
+        this.docClassifyList = docClassifyList;
     }
 
     /**

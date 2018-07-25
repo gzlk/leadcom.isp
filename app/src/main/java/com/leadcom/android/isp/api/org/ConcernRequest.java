@@ -4,6 +4,7 @@ import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.BoolQuery;
+import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.litesuits.http.request.param.HttpMethods;
@@ -28,6 +29,9 @@ public class ConcernRequest extends Request<Concern> {
     }
 
     private static class BooleanConcern extends BoolQuery<Concern> {
+    }
+
+    private static class PageConcern extends PageQuery<Concern> {
     }
 
     @Override
@@ -91,5 +95,12 @@ public class ConcernRequest extends Request<Concern> {
             param = format("%s&info=%s", param, searchingText);
         }
         executeHttpRequest(getRequest(MultiConcern.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 查询关注了本组织的组织列表以及其下的自定义栏目列表
+     */
+    public void listTransfer(String groupId) {
+        executeHttpRequest(getRequest(PageConcern.class, url(LIST) + "/transfer?groupId=" + groupId, "", HttpMethods.Get));
     }
 }

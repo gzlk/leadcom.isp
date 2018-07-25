@@ -10,6 +10,7 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.hlk.hlklib.lib.inject.Click;
@@ -41,6 +42,10 @@ public class GroupInterestViewHolder extends BaseViewHolder {
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_interest_button)
     private CorneredButton buttonView;
+    @ViewId(R.id.ui_holder_view_group_interest_right_icon)
+    private CustomTextView rightIcon;
+    @ViewId(R.id.ui_holder_view_group_interest_left_blank)
+    private View leftBlank;
 
     private boolean selectable = false, showButton = true;
 
@@ -123,6 +128,30 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         buttonView.setVisibility(showButton ? View.VISIBLE : View.GONE);
         buttonView.setText(concern.isConcerned() ? R.string.ui_organization_interesting_concerned : R.string.ui_organization_interesting_concern);
         buttonView.setNormalColor(getColor(concern.isConcerned() ? R.color.color_3eb135 : R.color.colorPrimary));
+    }
+
+    public void showContent(Concern concern) {
+        coverView.setVisibility(View.GONE);
+        buttonView.setVisibility(View.GONE);
+        selector.setVisibility(View.VISIBLE);
+        selector.setText(R.string.ui_icon_select_solid);
+        selector.setTextColor(getColor(concern.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        leftBlank.setVisibility(View.GONE);
+        nameView.setText(concern.getGroupName());
+        rightIcon.setVisibility(concern.getDocClassifyList().size() > 0 ? View.VISIBLE : View.GONE);
+        rightIcon.animate().rotation(concern.isSelected() ? 90 : 0).setDuration(fragment().duration()).start();
+    }
+
+    public void showContent(Classify classify) {
+        coverView.setVisibility(View.GONE);
+        buttonView.setVisibility(View.GONE);
+        leftBlank.setVisibility(View.VISIBLE);
+        selector.setVisibility(View.VISIBLE);
+        boolean selected = classify.isSelected();
+        selector.setText(selected ? R.string.ui_icon_select_solid : R.string.ui_icon_radio_unselected);
+        selector.setTextColor(getColor(selected ? R.color.colorPrimary : R.color.textColorHintLight));
+        nameView.setText(classify.getName());
+        rightIcon.setVisibility(View.GONE);
     }
 
     @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button})
