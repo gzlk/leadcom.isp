@@ -787,7 +787,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                             if (concern.getDocClassifyList().size() > 0) {
                                 for (Classify classify : concern.getDocClassifyList()) {
                                     if (classify.isSelected()) {
-                                        target.setDocClassifyId(classify.getId());
+                                        if (!classify.getId().contains("classify")) {
+                                            target.setDocClassifyId(classify.getId());
+                                        }
                                     }
                                 }
                             }
@@ -856,15 +858,18 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         @Override
         public void onClick(int index) {
             Model model = cAdapter.get(index);
-            model.setSelected(!model.isSelected());
-            cAdapter.update(model);
             if (model instanceof Concern) {
                 Concern concern = (Concern) model;
+                concern.setSelectable(!concern.isSelectable());
                 int cnt = 0;
-                boolean selected = concern.isSelected();
+                boolean selected = concern.isSelectable();
                 for (Classify classify : concern.getDocClassifyList()) {
                     if (selected) {
                         cnt++;
+                        if (isEmpty(classify.getId())) {
+                            classify.setId(concern.getId() + "classify");
+                            //classify.setSelected(true);
+                        }
                         cAdapter.add(classify, cnt + index);
                     } else {
                         cAdapter.remove(classify);
@@ -872,6 +877,20 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
             } else if (model instanceof Classify) {
                 Classify classify = (Classify) model;
+                classify.setSelected(!classify.isSelected());
+                cAdapter.update(classify);
+                Model upper = cAdapter.get(classify.getGroupId());
+                if (null != upper) {
+                    Concern concern = (Concern) upper;
+                    boolean hasSelected = false;
+                    for (Classify clazz : concern.getDocClassifyList()) {
+                        if (clazz.isSelected()) {
+                            hasSelected = true;
+                        }
+                    }
+                    concern.setSelected(hasSelected);
+                    cAdapter.update(concern);
+                }
                 Iterator<Model> iterator = cAdapter.iterator();
                 while (iterator.hasNext()) {
                     Model m = iterator.next();

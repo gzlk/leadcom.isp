@@ -139,7 +139,7 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         leftBlank.setVisibility(View.GONE);
         nameView.setText(concern.getGroupName());
         rightIcon.setVisibility(concern.getDocClassifyList().size() > 0 ? View.VISIBLE : View.GONE);
-        rightIcon.animate().rotation(concern.isSelected() ? 90 : 0).setDuration(fragment().duration()).start();
+        rightIcon.animate().rotation(concern.isSelectable() ? 90 : 0).setDuration(fragment().duration()).start();
     }
 
     public void showContent(Classify classify) {
