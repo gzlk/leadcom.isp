@@ -827,7 +827,7 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 将yyyy-MM-dd HH:mm:ss的时间格式化成yyyy年mm月dd日
      */
     public String formatDate(String date) {
-        return format(date, R.string.ui_base_text_date_format_chs);
+        return formatDate(date, R.string.ui_base_text_date_format_chs);
     }
 
     /**

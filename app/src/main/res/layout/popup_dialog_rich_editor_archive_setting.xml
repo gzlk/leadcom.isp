@@ -93,48 +93,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ui_popup_rich_editor_setting_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
-                    android:background="@drawable/ui_background_clickable"
-                    android:orientation="vertical"
-                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
-                    android:paddingStart="@dimen/ui_static_dp_zero"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ui_text_archive_details_editor_setting_time_title"
-                        android:textColor="@color/textColorHint"
-                        android:textSize="@dimen/ui_base_text_size_small" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
-                        android:orientation="horizontal"
-                        android:paddingTop="@dimen/ui_static_dp_5">
-
-                        <TextView
-                            android:id="@+id/ui_popup_rich_editor_setting_time_text"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/ui_text_archive_details_editor_setting_time_title" />
-
-                        <com.hlk.hlklib.lib.view.CustomTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/ui_icon_right" />
-                    </LinearLayout>
-
-                    <include layout="@layout/tool_view_half_line_horizontal" />
-
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/ui_popup_rich_editor_setting_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -406,6 +364,48 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/ui_text_archive_details_editor_setting_category_title" />
+
+                        <com.hlk.hlklib.lib.view.CustomTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_icon_right" />
+                    </LinearLayout>
+
+                    <include layout="@layout/tool_view_half_line_horizontal" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ui_popup_rich_editor_setting_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                    android:background="@drawable/ui_background_clickable"
+                    android:orientation="vertical"
+                    android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                    android:paddingStart="@dimen/ui_static_dp_zero"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_text_archive_details_editor_setting_time_title"
+                        android:textColor="@color/textColorHint"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ui_dimen_archive_details_editor_setting_item_vertical_padding"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/ui_static_dp_5">
+
+                        <TextView
+                            android:id="@+id/ui_popup_rich_editor_setting_time_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/ui_text_archive_details_editor_setting_time_title" />
 
                         <com.hlk.hlklib.lib.view.CustomTextView
                             android:layout_width="wrap_content"

@@ -768,6 +768,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_null);
                 return;
             }
+            if (isEmpty(mArchive.getHappenDate()) || mArchive.getHappenDate().equals(Model.DFT_DATE)) {
+                ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_happen_date_null);
+                return;
+            }
             if (isEmpty(mArchive.getProperty())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_create_group_property_null);
                 return;
@@ -1213,6 +1217,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         userIcon.setTextColor(getColor(isUserArchive ? R.color.colorPrimary : R.color.textColorHintLight));
         groupIcon.setTextColor(getColor(isGroupArchive ? R.color.colorPrimary : R.color.textColorHintLight));
         int groupVisibility = isGroupArchive ? View.VISIBLE : View.GONE;
+        // 组织档案需要发生时间
+        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(groupVisibility);
         // 组织档案需要选择组织
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker).setVisibility(groupVisibility);
         // 组织档案需要设置档案的性质

@@ -33,6 +33,7 @@
     <string name="ui_text_archive_creator_editor_create_group_null">组织档案需要选择所属的组织</string>
     <string name="ui_text_archive_creator_editor_create_group_property_null">请提供组织档案属性</string>
     <string name="ui_text_archive_creator_editor_create_group_category_null">请提供组织档案类型</string>
+    <string name="ui_text_archive_creator_editor_create_happen_date_null">请提供组织档案的发生时间</string>
     <string name="ui_text_archive_creator_editor_create_label_null">请给新建的档案打上标签</string>
     <string name="ui_text_archive_creator_editor_create_author_null">请提供档案的来源或作者信息</string>
     <string name="ui_text_archive_creator_editor_create_time">创建时间</string>
