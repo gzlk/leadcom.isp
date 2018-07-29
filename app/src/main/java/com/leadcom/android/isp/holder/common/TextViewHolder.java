@@ -73,7 +73,7 @@ public class TextViewHolder extends BaseViewHolder {
 
     public void showContent(String string) {
         if (!StringHelper.isEmpty(string)) {
-            text.setText(string);
+            text.setText(Html.fromHtml(string));
             container.setBackgroundColor(Color.TRANSPARENT);
         }
     }

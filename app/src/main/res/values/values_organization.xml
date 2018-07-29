@@ -210,4 +210,18 @@
     <string name="ui_archive_recommend_archive_content_too_short">该档案字数少于70个字符，不适合推荐，请重新选择符合推荐的档案</string>
     <string name="ui_archive_recommend_belong_group" formatted="false">所属：%s</string>
 
+    <string name="ui_group_authorize_fragment_title">资料授权管理和查看</string>
+    <string name="ui_group_authorize_authorized">已收到授权</string>
+    <string name="ui_group_authorize_authorized_nothing">
+        <![CDATA[<font color="#3cbaff" style="font-weight: lighter;">nothing没有收到过任何授权</font>]]>
+    </string>
+    <string name="ui_group_authorize_authorizing">授权和待授权</string>
+    <string name="ui_group_authorize_warning">注：您需要先关注某个组织才能给予其授权</string>
+    <string name="ui_group_authorize_title_authorizing">
+        <![CDATA[是否<font color="#3eb135">授权</font><font color="#3cbaff">%s</font>查看本组织的成员统计数据？]]>
+    </string>
+    <string name="ui_group_authorize_title_authorized">
+        <![CDATA[是否<font color="#df4d69">禁止</font><font color="#3cbaff">%s</font>查看本组织的成员统计数据？]]>
+    </string>
+
 </resources>

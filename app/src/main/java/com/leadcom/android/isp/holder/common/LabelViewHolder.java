@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.holder.common;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CornerTagView;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.leadcom.android.isp.model.archive.Dictionary;
+import com.leadcom.android.isp.model.organization.Concern;
 
 /**
  * <b>功能描述：</b>活动标签<br />
@@ -63,6 +65,13 @@ public class LabelViewHolder extends BaseViewHolder {
         containerView.setNormalColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         tagView.setVisibility(dictionary.isSelected() ? View.VISIBLE : View.GONE);
         selfDefined.setVisibility(dictionary.isLocal() ? View.VISIBLE : View.GONE);
+    }
+
+    public void showContent(Concern concern){
+        textView.setText(concern.getGroupName());
+        tagView.setVisibility(View.GONE);
+        containerView.setNormalColor(Color.WHITE);
+        containerView.setActiveColor(Color.WHITE);
     }
 
     @Click({R.id.ui_holder_view_activity_label_container})

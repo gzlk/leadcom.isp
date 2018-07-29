@@ -48,6 +48,8 @@ public class Concern extends Organization {
     private int type;
     private String groupId;
     private String groupName;
+    private int authorized;
+    private String allowGroupId, allowGroupName, targerResource;
     private ArrayList<Classify> docClassifyList;
 
     public int getType() {
@@ -72,6 +74,42 @@ public class Concern extends Organization {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public boolean isAuthorized() {
+        return authorized == AuthorizeType.AUTHORIZED;
+    }
+
+    public int getAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(int authorized) {
+        this.authorized = authorized;
+    }
+
+    public String getAllowGroupId() {
+        return allowGroupId;
+    }
+
+    public void setAllowGroupId(String allowGroupId) {
+        this.allowGroupId = allowGroupId;
+    }
+
+    public String getAllowGroupName() {
+        return allowGroupName;
+    }
+
+    public void setAllowGroupName(String allowGroupName) {
+        this.allowGroupName = allowGroupName;
+    }
+
+    public String getTargerResource() {
+        return targerResource;
+    }
+
+    public void setTargerResource(String targerResource) {
+        this.targerResource = targerResource;
     }
 
     public ArrayList<Classify> getDocClassifyList() {

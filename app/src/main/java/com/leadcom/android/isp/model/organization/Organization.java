@@ -65,6 +65,20 @@ public class Organization extends Model {
         String GroupRoleId = "groupRoleId";
     }
 
+    /**
+     * 组织资料授权状态
+     */
+    public interface AuthorizeType {
+        /**
+         * 已授权
+         */
+        int AUTHORIZED = 1;
+        /**
+         * 未授权
+         */
+        int NONE = 0;
+    }
+
     public static Organization get(String id) {
         return new Dao<>(Organization.class).query(id);
     }

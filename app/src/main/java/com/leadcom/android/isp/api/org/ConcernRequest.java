@@ -6,8 +6,12 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
+import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.litesuits.http.request.param.HttpMethods;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * <b>功能描述：</b>关注组织相关的api<br />
@@ -23,6 +27,9 @@ public class ConcernRequest extends Request<Concern> {
 
     public static ConcernRequest request() {
         return new ConcernRequest();
+    }
+
+    private static class SingleConcern extends SingleQuery<Concern> {
     }
 
     private static class MultiConcern extends PaginationQuery<Concern> {
@@ -102,5 +109,40 @@ public class ConcernRequest extends Request<Concern> {
      */
     public void listTransfer(String groupId) {
         executeHttpRequest(getRequest(PageConcern.class, url(LIST) + "/transfer?groupId=" + groupId, "", HttpMethods.Get));
+    }
+
+    /**
+     * 列举被允许的组织列表
+     */
+    public void listAuthorized(String groupId) {
+        executeHttpRequest(getRequest(PageConcern.class, "/group/groResourceAuthorize/list/allow?groupId=" + groupId, "", HttpMethods.Get));
+    }
+
+    /**
+     * 列举待授权的组织列表
+     */
+    public void listAuthorizing(String groupId) {
+        executeHttpRequest(getRequest(PageConcern.class, "/group/groResourceAuthorize/list?groupId=" + groupId, "", HttpMethods.Get));
+    }
+
+    /**
+     * 给指定组织添加授权
+     */
+    public void addAuthorize(String groupId, String targetGroupId) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("groupId", groupId)
+                    .put("allowGroupId", targetGroupId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        executeHttpRequest(getRequest(SingleConcern.class, "/group/groResourceAuthorize/add", object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 取消组织的授权
+     */
+    public void removeAuthorize(String authorizeId) {
+        executeHttpRequest(getRequest(BooleanConcern.class, "/group/groResourceAuthorize" + DELETE + "?id=" + authorizeId, "", HttpMethods.Get));
     }
 }

@@ -154,6 +154,18 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         rightIcon.setVisibility(View.GONE);
     }
 
+    public void showContent(Concern concern, boolean authorized) {
+        coverView.setVisibility(View.GONE);
+        selector.setVisibility(View.GONE);
+        nameView.setText(concern.getGroupName());
+        rightIcon.setVisibility(View.GONE);
+        buttonView.setNormalColor(getColor(R.color.textColorLight));
+        buttonView.setText(concern.isAuthorized() ? R.string.ui_base_text_authorized : R.string.ui_base_text_authorizing);
+        buttonView.setTextColor(getColor(concern.isAuthorized() ? R.color.colorPrimary : R.color.textColor));
+        buttonView.setBackgroundType(CorneredButton.BORDER);
+        buttonView.setNormalColor(getColor(concern.isAuthorized() ? R.color.colorPrimary : R.color.textColor));
+    }
+
     @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button})
     private void elementClick(View view) {
         if (null != mOnViewHolderElementClickListener) {

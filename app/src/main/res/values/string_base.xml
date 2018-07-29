@@ -159,6 +159,8 @@
     <string name="ui_base_text_upgrade_now">立即更新</string>
     <string name="ui_base_text_play_online">在线播放</string>
     <string name="ui_base_text_classify">归类</string>
+    <string name="ui_base_text_authorized">已授权</string>
+    <string name="ui_base_text_authorizing">授权</string>
 
     <string name="ui_base_text_not_read">未读</string>
     <string name="ui_base_text_has_read">已读</string>
