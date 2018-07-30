@@ -192,9 +192,11 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-            // 授权或取消授权
-            selectedIndex = index;
-            warningAuthorize();
+            if (view.getId() == R.id.ui_holder_view_group_interest_button) {
+                // 授权或取消授权
+                selectedIndex = index;
+                warningAuthorize();
+            }
         }
     };
 
@@ -310,7 +312,8 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
                     ((TextViewHolder) holder).showContent(id.replace("nothing", ""));
                 } else {
                     int string = Integer.valueOf(item.getId());
-                    ((TextViewHolder) holder).showContent(StringHelper.getString(string));
+                    String text = "<b>" + StringHelper.getString(string) + "</b>";
+                    ((TextViewHolder) holder).showContent(text);
                 }
             } else if (holder instanceof GroupInterestViewHolder) {
                 ((GroupInterestViewHolder) holder).showContent((Concern) item, true);

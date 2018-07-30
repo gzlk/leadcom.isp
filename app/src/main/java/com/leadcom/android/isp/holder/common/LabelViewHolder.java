@@ -16,6 +16,7 @@ import com.hlk.hlklib.lib.view.CornerTagView;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.leadcom.android.isp.model.archive.Dictionary;
 import com.leadcom.android.isp.model.organization.Concern;
+import com.leadcom.android.isp.model.organization.MemberNature;
 
 /**
  * <b>功能描述：</b>活动标签<br />
@@ -67,11 +68,22 @@ public class LabelViewHolder extends BaseViewHolder {
         selfDefined.setVisibility(dictionary.isLocal() ? View.VISIBLE : View.GONE);
     }
 
-    public void showContent(Concern concern){
+    public void showContent(Concern concern) {
         textView.setText(concern.getGroupName());
         tagView.setVisibility(View.GONE);
         containerView.setNormalColor(Color.WHITE);
         containerView.setActiveColor(Color.WHITE);
+    }
+
+    public void showContent(MemberNature nature, boolean choose) {
+        textView.setText(format("%s%s", nature.getName(), (choose ? "" : (format("(%d)", nature.getMemberNum())))));
+        tagView.setVisibility(View.GONE);
+        if (choose) {
+            containerView.setNormalColor(getColor(nature.isSelected() ? R.color.colorPrimary : R.color.textColorLight));
+            tagView.setVisibility(nature.isSelected() ? View.VISIBLE : View.GONE);
+        } else {
+            containerView.setNormalColor(Color.WHITE);
+        }
     }
 
     @Click({R.id.ui_holder_view_activity_label_container})

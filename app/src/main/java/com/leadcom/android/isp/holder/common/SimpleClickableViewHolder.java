@@ -151,7 +151,7 @@ public class SimpleClickableViewHolder extends BaseViewHolder {
             // 没有title则value的文字大小变成正常大小
             valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size));
         }
-        if (value.length() > 2 && value.charAt(0) == '0' && value.charAt(1) == 'x') {
+        if (!isEmpty(value) && value.length() > 2 && value.charAt(0) == '0' && value.charAt(1) == 'x') {
             valueTextView.setText(null);
             Integer i = Integer.decode(value);
             if (null != valueIcon) {

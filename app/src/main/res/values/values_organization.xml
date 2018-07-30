@@ -224,4 +224,8 @@
         <![CDATA[是否<font color="#df4d69">禁止</font><font color="#3cbaff">%s</font>查看本组织的成员统计数据？]]>
     </string>
 
+    <string name="ui_group_member_nature_more">更多成员信息</string>
+    <string name="ui_group_member_nature_count_fragment_title">组织成员统计</string>
+    <string name="ui_group_member_nature_count_fragment_title1">更多成员属性</string>
+    <string name="ui_group_member_nature_more_nothing_to_update">没有什么可以更新的内容</string>
 </resources>

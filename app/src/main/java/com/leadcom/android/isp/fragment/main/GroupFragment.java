@@ -36,6 +36,7 @@ import com.leadcom.android.isp.fragment.organization.ConcernedOrganizationFragme
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
+import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.fragment.organization.SquadsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -754,6 +755,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 6:
                 // 成员资料统计
+                MemberNatureMainFragment.open(this, group.getId(), false, "");
                 break;
             case 7:
                 // 授权管理

@@ -21,6 +21,7 @@ import com.leadcom.android.isp.api.org.RoleRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
@@ -550,7 +551,9 @@ public class ContactFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 点击打开用户属性页
-            App.openUserInfo(ContactFragment.this, mAdapter.get(index).getUserId());
+            Member member = mAdapter.get(index);
+            PersonalityFragment.GROUP_ID = member.getGroupId();
+            App.openUserInfo(ContactFragment.this, member.getUserId());
         }
     };
 

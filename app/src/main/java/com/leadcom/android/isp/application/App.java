@@ -72,15 +72,15 @@ public class App extends BaseActivityManagedApplication {
     }
 
     public static void openUserInfo(Context context, String userId) {
-        if (!Cache.cache().userId.equals(userId)) {
+        //if (!Cache.cache().userId.equals(userId)) {
             PersonalityFragment.open(context, userId);
-        }
+        //}
     }
 
     public static void openUserInfo(BaseFragment fragment, String userId) {
-        if (!Cache.cache().userId.equals(userId)) {
+        //if (!Cache.cache().userId.equals(userId)) {
             PersonalityFragment.open(fragment, userId);
-        }
+        //}
     }
 
     private static final int MAX_FAILED_TIME = 10;

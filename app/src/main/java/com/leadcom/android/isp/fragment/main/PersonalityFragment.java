@@ -29,6 +29,7 @@ import com.leadcom.android.isp.fragment.individual.UserNameEditFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentListFragment;
 import com.leadcom.android.isp.fragment.login.CodeVerifyFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
+import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
@@ -66,6 +67,7 @@ import java.util.Iterator;
 public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_OPENED = "pf_opened";
+    public static String GROUP_ID = "";
 
     public static PersonalityFragment newInstance(Bundle bundle) {
         PersonalityFragment pf = new PersonalityFragment();
@@ -106,6 +108,8 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     private CorneredButton chatToUser;
     @ViewId(R.id.ui_user_information_self_define)
     private View selfDefineView;
+    @ViewId(R.id.ui_user_information_more_define)
+    private View moreDefineView;
     private PersonalityAdapter mAdapter;
     private String[] items;
 
@@ -136,6 +140,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         if (isSelf) {
             App.removeNotificationChangeCallback(callback);
         }
+        GROUP_ID = "";
         super.onDestroy();
     }
 
@@ -169,6 +174,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             setOnFileUploadingListener(mOnFileUploadingListener);
             // 查找未读的推送通知
             App.dispatchCallbacks();
+            if (!isEmpty(GROUP_ID)) {
+                selfDefineView.setVisibility(View.GONE);
+                moreDefineView.setVisibility(View.VISIBLE);
+            }
         } else {
             //chatToUser.setVisibility(View.VISIBLE);
             paddingLayout.setVisibility(View.GONE);
@@ -176,6 +185,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             toolbarBackground.setVisibility(View.GONE);
             rightIcon.setVisibility(View.GONE);
             selfDefineView.setVisibility(View.GONE);
+            moreDefineView.setVisibility(View.VISIBLE);
             titleText.setVisibility(View.GONE);
         }
     }
@@ -380,6 +390,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     @Click({R.id.ui_main_personality_title_left_icon_container,
             R.id.ui_main_personality_title_right_icon,
             R.id.ui_user_information_chat_to_user,
+            R.id.ui_user_information_more_define,
             R.id.ui_user_information_self_define})
     private void viewClick(View view) {
         switch (view.getId()) {
@@ -398,6 +409,10 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             case R.id.ui_user_information_self_define:
                 selectedIndex = 0;
                 openSelfDefineDialog();
+                break;
+            case R.id.ui_user_information_more_define:
+                // 组织成员的更多介绍
+                MemberNatureMainFragment.open(this, GROUP_ID, true, mQueryId);
                 break;
         }
     }
