@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ui_holder_view_archive_home_recommend_layout"
     android:layout_width="match_parent"
@@ -9,11 +9,21 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ui_holder_view_archive_home_recommend_content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="@dimen/ui_base_dimen_margin_padding">
+
+        <com.leadcom.android.isp.lib.view.ImageDisplayer
+            android:id="@+id/ui_holder_view_archive_home_recommend_author_header"
+            android:layout_width="@dimen/ui_base_user_header_image_size_small"
+            android:layout_height="@dimen/ui_base_user_header_image_size_small"
+            android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+            android:visibility="gone"
+            app:id_image_src="@drawable/img_default_user_header"
+            app:id_image_type="oval"
+            app:id_show_header="true" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -37,7 +47,6 @@
                     android:textColor="@color/textColorHint" />
 
                 <com.hlk.hlklib.lib.view.CustomTextView
-                    android:id="@+id/ui_holder_view_archive_home_recommend_award"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
@@ -53,7 +62,7 @@
 
             <TextView
                 android:id="@+id/ui_holder_view_archive_home_recommend_title"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/ui_static_dp_5"
                 android:layout_marginTop="@dimen/ui_static_dp_5"
@@ -103,8 +112,9 @@
 
         <com.leadcom.android.isp.lib.view.ImageDisplayer
             android:id="@+id/ui_holder_view_archive_home_recommend_cover"
-            android:layout_width="@dimen/ui_static_dp_80"
-            android:layout_height="@dimen/ui_static_dp_80"
+            android:layout_width="@dimen/ui_static_dp_70"
+            android:layout_height="@dimen/ui_static_dp_70"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
             app:id_image_scale_type="centerCrop"
             app:id_image_src="@mipmap/img_image_default"
@@ -112,5 +122,33 @@
 
     </LinearLayout>
 
-    <include layout="@layout/tool_view_half_line_horizontal" />
-</LinearLayout>
+    <View
+        android:id="@+id/ui_holder_view_archive_home_recommend_content_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:layout_below="@+id/ui_holder_view_archive_home_recommend_content_layout"
+        android:background="@color/textColorHintLightLight" />
+
+    <LinearLayout
+        android:id="@+id/ui_holder_view_archive_home_recommend_award"
+        android:layout_width="@dimen/ui_static_dp_60"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="-25dp"
+        android:layout_marginTop="-16dp"
+        android:background="#f3f3f5"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/ui_static_dp_3"
+        android:paddingTop="@dimen/ui_static_dp_20"
+        android:rotation="45">
+
+        <com.hlk.hlklib.lib.view.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:rotation="-45"
+            android:text="@string/ui_icon_award"
+            android:textColor="@color/colorBorderActive" />
+    </LinearLayout>
+
+</RelativeLayout>

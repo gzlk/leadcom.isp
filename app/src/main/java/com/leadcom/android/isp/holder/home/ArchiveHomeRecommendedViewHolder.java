@@ -40,6 +40,8 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
     private View headerView;
     @ViewId(R.id.ui_tool_view_document_user_header_image)
     private ImageDisplayer authorHeader;
+    @ViewId(R.id.ui_holder_view_archive_home_recommend_author_header)
+    private ImageDisplayer authorHeader1;
     @ViewId(R.id.ui_tool_view_document_user_header_name)
     private TextView authorName;
     @ViewId(R.id.ui_tool_view_document_user_header_time)
@@ -88,7 +90,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
                 }
             }
         });
-        authorHeader.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
+        authorHeader1.addOnImageClickListener(new ImageDisplayer.OnImageClickListener() {
             @Override
             public void onImageClick(ImageDisplayer displayer, String url) {
                 if (null != mOnViewHolderElementClickListener) {
@@ -108,10 +110,12 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         coverView.setLayoutParams(params);
     }
 
-    public void setHeaderShaoable(boolean shown) {
+    public void setHeaderShowable(boolean shown) {
         showHeader = shown;
+        authorHeader.setVisibility(View.GONE);
         groupView.setVisibility(shown ? View.GONE : View.VISIBLE);
         headerView.setVisibility(shown ? View.VISIBLE : View.GONE);
+        authorHeader1.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     public void showContent(RecommendArchive archive) {
@@ -133,7 +137,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
             if (isEmpty(header) || header.length() < 20) {
                 header = "drawable://" + R.drawable.img_default_user_header;
             }
-            authorHeader.displayImage(header, headerSize, false, false);
+            authorHeader1.displayImage(header, headerSize, false, false);
             authorName.setText(archive.getUserName());
             timeView.setText(fragment().formatTimeAgo(archive.getCreateDate()));
         }
@@ -141,7 +145,7 @@ public class ArchiveHomeRecommendedViewHolder extends BaseViewHolder {
         if (isEmpty(cover) && archive.getImage().size() > 0) {
             cover = archive.getImage().get(0).getUrl();
         }
-        coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_80), false, false);
+        coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_70), false, false);
         coverView.setVisibility(isEmpty(cover) || cover.length() < 10 ? View.GONE : View.VISIBLE);
         String text = archive.getTitle();
         if (!isEmpty(text)) {

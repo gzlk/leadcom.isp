@@ -12,6 +12,7 @@
         android:id="@+id/ui_tool_view_document_user_header_image"
         android:layout_width="@dimen/ui_base_user_header_image_size_small"
         android:layout_height="@dimen/ui_base_user_header_image_size_small"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
         app:id_image_src="@drawable/img_default_user_header"
         app:id_image_type="oval"
         app:id_show_header="true" />
@@ -19,7 +20,6 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
