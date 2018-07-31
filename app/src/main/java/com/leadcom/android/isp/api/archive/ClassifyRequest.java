@@ -77,7 +77,14 @@ public class ClassifyRequest extends Request<Classify> {
         executeHttpRequest(getRequest(BooleanClassify.class, url(DELETE) + "?id=" + classifyId, "", HttpMethods.Get));
     }
 
+    /**
+     * 查找组织的自定义分类列表
+     */
     public void list(String groupId) {
         executeHttpRequest(getRequest(PageClassify.class, url(LIST) + "/groupId?groupId=" + groupId, "", HttpMethods.Get));
+    }
+
+    public void list(String groupId, String parentId) {
+        executeHttpRequest(getRequest(PageClassify.class, url(LIST) + "?groupId=" + groupId, "", HttpMethods.Get));
     }
 }

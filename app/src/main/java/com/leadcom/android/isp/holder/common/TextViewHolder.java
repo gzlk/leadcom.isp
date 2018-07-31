@@ -75,6 +75,8 @@ public class TextViewHolder extends BaseViewHolder {
         if (!StringHelper.isEmpty(string)) {
             text.setText(Html.fromHtml(string));
             container.setBackgroundColor(Color.TRANSPARENT);
+        } else {
+            text.setText(null);
         }
     }
 

@@ -176,6 +176,10 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
                             mAdapter.add(model);
                         }
                     }
+                    // 加入最后一条padding
+                    Model last = new Model();
+                    last.setId("last");
+                    mAdapter.add(last);
                 }
                 displayLoading(false);
                 stopRefreshing();
@@ -250,12 +254,13 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
 
     private class NatureAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_TITLE = 0, VT_CONTENT = 1, VT_LINE = 2, VT_INPUT = 3;
+        private static final int VT_TITLE = 0, VT_CONTENT = 1, VT_LINE = 2, VT_INPUT = 3, VT_LAST = 4;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             switch (viewType) {
                 case VT_TITLE:
+                case VT_LAST:
                     TextViewHolder holder = new TextViewHolder(itemView, MemberNatureFragment.this);
                     holder.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
                     holder.showBottomLine(false);
@@ -279,6 +284,7 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
         public int itemLayout(int viewType) {
             switch (viewType) {
                 case VT_TITLE:
+                case VT_LAST:
                     return R.layout.holder_view_text_olny;
                 case VT_CONTENT:
                     return R.layout.holder_view_activity_label;
@@ -295,6 +301,8 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
             Model model = get(position);
             if (model.getId().contains("line"))
                 return VT_LINE;
+            if (model.getId().contains("last"))
+                return VT_LAST;
             if (model instanceof MemberClassify)
                 return VT_TITLE;
 
@@ -305,10 +313,13 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
         @Override
         public void onBindHolderOfView(BaseViewHolder holder, int position, @Nullable Model item) {
             if (holder instanceof TextViewHolder) {
-                MemberClassify classify = (MemberClassify) item;
-                assert classify != null;
-                String text = "<b>" + classify.getName() + "</b>";
-                ((TextViewHolder) holder).showContent(text);
+                if (item instanceof MemberClassify) {
+                    MemberClassify classify = (MemberClassify) item;
+                    String text = "<b>" + classify.getName() + "</b>";
+                    ((TextViewHolder) holder).showContent(text);
+                } else {
+                    ((TextViewHolder) holder).showContent("");
+                }
             } else if (holder instanceof LabelViewHolder) {
                 ((LabelViewHolder) holder).showContent((MemberNature) item, mChoose);
             } else if (holder instanceof SimpleClickableViewHolder) {
