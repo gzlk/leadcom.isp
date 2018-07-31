@@ -260,7 +260,8 @@ public class SquadsFragment extends BaseOrganizationFragment {
                 Squad squad = (Squad) model;
                 ContactFragment.open(SquadsFragment.this, squad.getGroupId(), squad.getId());
             } else if (model instanceof Member) {
-                App.openUserInfo(SquadsFragment.this, ((Member) model).getUserId());
+                Member member = (Member) model;
+                App.openUserInfo(SquadsFragment.this, member.getUserId(), member.getGroupId());
             }
         }
     };

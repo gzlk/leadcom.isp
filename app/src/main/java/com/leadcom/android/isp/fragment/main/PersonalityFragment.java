@@ -46,6 +46,8 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Quantity;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.operation.GRPOperation;
+import com.leadcom.android.isp.model.organization.Role;
 import com.leadcom.android.isp.model.user.User;
 import com.leadcom.android.isp.model.user.UserExtra;
 import com.leadcom.android.isp.view.SwipeItemLayout;
@@ -67,7 +69,7 @@ import java.util.Iterator;
 public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_OPENED = "pf_opened";
-    public static String GROUP_ID = "";
+    private static final String PARAM_GROUP_ID = "pf_group_id";
 
     public static PersonalityFragment newInstance(Bundle bundle) {
         PersonalityFragment pf = new PersonalityFragment();
@@ -75,21 +77,23 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         return pf;
     }
 
-    private static Bundle getBundle(String userId) {
+    private static Bundle getBundle(String userId, String groupId) {
         Bundle bundle = new Bundle();
         // 用户id
         bundle.putString(PARAM_QUERY_ID, userId);
+        // 用户所在的组织
+        bundle.putString(PARAM_GROUP_ID, groupId);
         // 是打开的个人属性页
         bundle.putBoolean(PARAM_OPENED, true);
         return bundle;
     }
 
-    public static void open(Context context, String userId) {
-        BaseActivity.openActivity(context, PersonalityFragment.class.getName(), getBundle(userId), true, false);
+    public static void open(Context context, String userId, String groupId) {
+        BaseActivity.openActivity(context, PersonalityFragment.class.getName(), getBundle(userId, groupId), true, false);
     }
 
-    public static void open(BaseFragment fragment, String userId) {
-        fragment.openActivity(PersonalityFragment.class.getName(), getBundle(userId), true, false);
+    public static void open(BaseFragment fragment, String userId, String groupId) {
+        fragment.openActivity(PersonalityFragment.class.getName(), getBundle(userId, groupId), true, false);
     }
 
     @ViewId(R.id.ui_main_tool_bar_background)
@@ -115,6 +119,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
 
     private static int selectedIndex = 0, deleteIndex = 0;
     private boolean isSelf, isOpened;
+    private String mGroupId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,7 +145,6 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
         if (isSelf) {
             App.removeNotificationChangeCallback(callback);
         }
-        GROUP_ID = "";
         super.onDestroy();
     }
 
@@ -148,12 +152,19 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         isOpened = bundle.getBoolean(PARAM_OPENED, false);
+        mGroupId = bundle.getString(PARAM_GROUP_ID, "");
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_OPENED, isOpened);
+        bundle.putString(PARAM_GROUP_ID, mGroupId);
+    }
+
+    private boolean hasOperation(String groupId, String operation) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.hasOperation(operation);
     }
 
     @Override
@@ -174,9 +185,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             setOnFileUploadingListener(mOnFileUploadingListener);
             // 查找未读的推送通知
             App.dispatchCallbacks();
-            if (!isEmpty(GROUP_ID)) {
+            if (!isEmpty(mGroupId)) {
                 selfDefineView.setVisibility(View.GONE);
-                moreDefineView.setVisibility(View.VISIBLE);
+                showMoreDefineView();
             }
         } else {
             //chatToUser.setVisibility(View.VISIBLE);
@@ -185,8 +196,14 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             toolbarBackground.setVisibility(View.GONE);
             rightIcon.setVisibility(View.GONE);
             selfDefineView.setVisibility(View.GONE);
-            moreDefineView.setVisibility(View.VISIBLE);
+            showMoreDefineView();
             titleText.setVisibility(View.GONE);
+        }
+    }
+
+    private void showMoreDefineView() {
+        if (hasOperation(mGroupId, GRPOperation.MEMBER_NATURE_EDIT)) {
+            moreDefineView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -412,7 +429,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case R.id.ui_user_information_more_define:
                 // 组织成员的更多介绍
-                MemberNatureMainFragment.open(this, GROUP_ID, true, mQueryId);
+                MemberNatureMainFragment.open(this, mGroupId, true, mQueryId);
                 break;
         }
     }

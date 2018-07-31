@@ -51,11 +51,11 @@ public interface GRPOperation {
     /**
      * 修改成员资料
      */
-    String MEMBER_EDIT = "ROLE_28452e71f43a4e26a1a2cd5dba468cda";
+    String MEMBER_NATURE_EDIT = "ROLE_28452e71f43a4e26a1a2cd5dba468cda";
     /**
      * 查看成员资料统计信息
      */
-    String MEMBER_COUNT = "ROLE_df944ab35a214d64adbdb35fc035374c";
+    String MEMBER_NATURE_COUNT = "ROLE_df944ab35a214d64adbdb35fc035374c";
 
     /* ***********************************************************
        档案管理相关

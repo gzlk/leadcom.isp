@@ -71,15 +71,19 @@ public class App extends BaseActivityManagedApplication {
         return AnimationUtils.loadAnimation(app(), R.anim.item_click);
     }
 
-    public static void openUserInfo(Context context, String userId) {
+    public static void openUserInfo(Context context, String userId, String groupId) {
         //if (!Cache.cache().userId.equals(userId)) {
-            PersonalityFragment.open(context, userId);
+        PersonalityFragment.open(context, userId, groupId);
         //}
     }
 
     public static void openUserInfo(BaseFragment fragment, String userId) {
+        openUserInfo(fragment, userId, "");
+    }
+
+    public static void openUserInfo(BaseFragment fragment, String userId, String groupId) {
         //if (!Cache.cache().userId.equals(userId)) {
-            PersonalityFragment.open(fragment, userId);
+        PersonalityFragment.open(fragment, userId, groupId);
         //}
     }
 
