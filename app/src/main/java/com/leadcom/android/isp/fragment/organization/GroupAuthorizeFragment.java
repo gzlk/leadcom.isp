@@ -20,6 +20,7 @@ import com.leadcom.android.isp.holder.common.LabelViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
+import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.organization.Concern;
@@ -244,6 +245,16 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Concern concern = (Concern) mAdapter.get(index);
+            if (!isEmpty(concern.getAllowGroupId())) {
+                MemberNatureMainFragment.open(GroupAuthorizeFragment.this, concern.getGroupId(), concern.getGroupName(), false, "");
+            }
+        }
+    };
+
     private class AuthorizeAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
         private static final int VT_TITLE = 0, VT_AUTHORIZED = 1, VT_LINE = 2, VT_WARNING = 3, VT_AUTHORIZING = 4;
 
@@ -256,7 +267,9 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
                     holder.showBottomLine(false);
                     return holder;
                 case VT_AUTHORIZED:
-                    return new LabelViewHolder(itemView, GroupAuthorizeFragment.this);
+                    LabelViewHolder lvh = new LabelViewHolder(itemView, GroupAuthorizeFragment.this);
+                    lvh.addOnViewHolderClickListener(clickListener);
+                    return lvh;
                 case VT_AUTHORIZING:
                     GroupInterestViewHolder givh = new GroupInterestViewHolder(itemView, GroupAuthorizeFragment.this);
                     givh.setOnViewHolderElementClickListener(elementClickListener);

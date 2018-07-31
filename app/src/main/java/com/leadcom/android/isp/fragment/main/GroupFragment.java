@@ -755,7 +755,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 6:
                 // 成员资料统计
-                MemberNatureMainFragment.open(this, group.getId(), false, "");
+                MemberNatureMainFragment.open(this, group.getId(), group.getName(), false, "");
                 break;
             case 7:
                 // 授权管理

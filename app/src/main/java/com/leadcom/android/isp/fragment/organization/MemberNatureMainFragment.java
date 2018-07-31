@@ -12,6 +12,7 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.NatureRequest;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.organization.MemberClassify;
@@ -35,6 +36,7 @@ public class MemberNatureMainFragment extends BaseViewPagerSupportFragment {
 
     private static final String PARAM_CHOOSE = "mnmf_choose";
     private static final String PARAM_USER_ID = "mnf_user_id";
+    private static final String PARAM_GROUP_NAME = "mnf_group_name";
 
     public static MemberNatureMainFragment newInstance(Bundle bundle) {
         MemberNatureMainFragment mncf = new MemberNatureMainFragment();
@@ -42,11 +44,12 @@ public class MemberNatureMainFragment extends BaseViewPagerSupportFragment {
         return mncf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, boolean choose, String userId) {
+    public static void open(BaseFragment fragment, String groupId, String groupName, boolean choose, String userId) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putBoolean(PARAM_CHOOSE, choose);
         bundle.putString(PARAM_USER_ID, userId);
+        bundle.putString(PARAM_GROUP_NAME, groupName);
         fragment.openActivity(MemberNatureMainFragment.class.getName(), bundle, true, false);
     }
 
@@ -54,13 +57,14 @@ public class MemberNatureMainFragment extends BaseViewPagerSupportFragment {
     private LinearLayout indicator;
     private ArrayList<CustomTextView> dots = new ArrayList<>();
     private boolean forChoose;
-    private String mUserId;
+    private String mUserId, mGroupName;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         forChoose = bundle.getBoolean(PARAM_CHOOSE, false);
         mUserId = bundle.getString(PARAM_USER_ID, "");
+        mGroupName = bundle.getString(PARAM_GROUP_NAME, "");
     }
 
     @Override
@@ -68,12 +72,18 @@ public class MemberNatureMainFragment extends BaseViewPagerSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putBoolean(PARAM_CHOOSE, forChoose);
         bundle.putString(PARAM_USER_ID, mUserId);
+        bundle.putString(PARAM_GROUP_NAME, mGroupName);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setCustomTitle(forChoose ? R.string.ui_group_member_nature_count_fragment_title1 : R.string.ui_group_member_nature_count_fragment_title);
+        if (forChoose) {
+            setCustomTitle(R.string.ui_group_member_nature_count_fragment_title1);
+        } else {
+            String title = isEmpty(mGroupName) ? "" : format("(%s)", mGroupName);
+            setCustomTitle(StringHelper.getString(R.string.ui_group_member_nature_count_fragment_title, title));
+        }
         if (forChoose) {
             setRightText(R.string.ui_base_text_complete);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
@@ -114,6 +124,9 @@ public class MemberNatureMainFragment extends BaseViewPagerSupportFragment {
                     super.onResponse(memberClassify, success, message);
                     if (success) {
                         ToastHelper.make().showMsg(R.string.ui_group_member_nature_more_updated);
+                        for (BaseFragment fragment : mFragments) {
+                            ((MemberNatureFragment) fragment).onSwipeRefreshing();
+                        }
                     }
                 }
             }).updateUserNatures(mQueryId, mUserId, natures);

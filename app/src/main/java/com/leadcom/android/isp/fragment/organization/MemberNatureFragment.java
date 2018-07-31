@@ -148,8 +148,6 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void loadingNatures() {
-        setLoadingText(R.string.ui_group_member_nature_more_loading);
-        displayLoading(true);
         NatureRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<MemberClassify>() {
             @Override
             public void onResponse(List<MemberClassify> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -160,26 +158,26 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
                         if (isEmpty(classify.getId())) {
                             classify.setId(classify.getName());
                         }
-                        mAdapter.add(classify);
+                        mAdapter.update(classify);
                         for (MemberNature nature : classify.getAppUserNatureTemplateList()) {
                             if (isEmpty(nature.getId())) {
                                 nature.setId(nature.getName());
                             }
                             nature.setSelected(nature.isChoose());
                             nature.setParentId(classify.getId());
-                            mAdapter.add(nature);
+                            mAdapter.update(nature);
                         }
                         if (!mChoose) {
                             count++;
                             Model model = new Model();
                             model.setId(format("line%d", count));
-                            mAdapter.add(model);
+                            mAdapter.update(model);
                         }
                     }
                     // 加入最后一条padding
                     Model last = new Model();
                     last.setId("last");
-                    mAdapter.add(last);
+                    mAdapter.update(last);
                 }
                 displayLoading(false);
                 stopRefreshing();
@@ -189,8 +187,10 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
+            setLoadingText(R.string.ui_group_member_nature_more_loading);
             mAdapter = new NatureAdapter();
             mRecyclerView.setAdapter(mAdapter);
+            displayLoading(true);
             loadingNatures();
         }
     }

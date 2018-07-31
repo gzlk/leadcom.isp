@@ -429,7 +429,7 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
                 break;
             case R.id.ui_user_information_more_define:
                 // 组织成员的更多介绍
-                MemberNatureMainFragment.open(this, mGroupId, true, mQueryId);
+                MemberNatureMainFragment.open(this, mGroupId, "", true, mQueryId);
                 break;
         }
     }
