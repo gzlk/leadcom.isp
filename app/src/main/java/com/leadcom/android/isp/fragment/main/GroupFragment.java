@@ -525,7 +525,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         resetQuantity(group.getCalculate());
         // 是否有查看成员资料统计权限
         SimpleClickableItem item = new SimpleClickableItem(items[5]);
-        if (hasOperation(group.getId(), GRPOperation.MEMBER_COUNT)) {
+        if (hasOperation(group.getId(), GRPOperation.MEMBER_NATURE_COUNT)) {
             dAdapter.update(item);
             if (isSingle) {
                 dAdapter.remove(item);

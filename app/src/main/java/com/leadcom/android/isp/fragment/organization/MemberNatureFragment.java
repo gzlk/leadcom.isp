@@ -148,6 +148,8 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void loadingNatures() {
+        setLoadingText(R.string.ui_group_member_nature_more_loading);
+        displayLoading(true);
         NatureRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<MemberClassify>() {
             @Override
             public void onResponse(List<MemberClassify> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -175,6 +177,7 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     }
                 }
+                displayLoading(false);
                 stopRefreshing();
             }
         }).listBy(mQueryId, mUserId, mType);
@@ -191,11 +194,19 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            if (!mChoose) return;
             Model model = mAdapter.get(index);
             if (model instanceof MemberNature) {
                 MemberNature nature = (MemberNature) model;
-                nature.setSelected(!nature.isSelected());
+                if (!mChoose) {
+                    // 如果不是用户属性修改，则打开对应属性的用户列表
+                    NatureMemberListFragment.open(MemberNatureFragment.this, mQueryId, nature);
+                    return;
+                }
+                if (nature.isSelected()) {
+                    // 选中之后不能取消选中
+                    return;
+                }
+                nature.setSelected(true);
                 nature.setChoose(nature.isSelected());
                 mAdapter.update(nature);
                 Iterator<Model> iterator = mAdapter.iterator();
@@ -206,6 +217,7 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
                         for (MemberNature na : classify.getAppUserNatureTemplateList()) {
                             if (na.isSelected() && !na.getId().equals(nature.getId())) {
                                 na.setSelected(false);
+                                na.setChoose(false);
                                 mAdapter.update(na);
                             }
                         }
@@ -250,9 +262,7 @@ public class MemberNatureFragment extends BaseSwipeRefreshSupportFragment {
                     return holder;
                 case VT_CONTENT:
                     LabelViewHolder lvh = new LabelViewHolder(itemView, MemberNatureFragment.this);
-                    if (mChoose) {
-                        lvh.addOnViewHolderClickListener(clickListener);
-                    }
+                    lvh.addOnViewHolderClickListener(clickListener);
                     return lvh;
                 case VT_LINE:
                     return new NothingMoreViewHolder(itemView, MemberNatureFragment.this);

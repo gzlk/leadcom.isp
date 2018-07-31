@@ -5,6 +5,7 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.ListQuery;
+import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.organization.Member;
@@ -39,6 +40,9 @@ public class MemberRequest extends Request<Member> {
     }
 
     private static class MultipleMember extends PaginationQuery<Member> {
+    }
+
+    private static class PageMember extends PageQuery<Member> {
     }
 
     private static class ListQueryMember extends ListQuery<Member> {
@@ -304,5 +308,13 @@ public class MemberRequest extends Request<Member> {
     public void grantManager(String tid, String userId) {
         String param = format("%s/manager?tid=%s&userId=%s", url(Member.Type.TEAM, UPDATE), tid, userId);
         executeHttpRequest(getRequest(SingleMember.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 列出组织中指定属性的用户列表
+     */
+    public void listByMemberNature(String groupId, String natureId, String type) {
+        String param = format("%s%s?groupId=%s&templateId=%s", "/user/appUserNature/list/", type, groupId, natureId);
+        executeHttpRequest(getRequest(PageMember.class, param, "", HttpMethods.Get));
     }
 }

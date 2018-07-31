@@ -3,6 +3,7 @@ package com.leadcom.android.isp.api.org;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.PageQuery;
 import com.leadcom.android.isp.model.organization.MemberClassify;
 import com.leadcom.android.isp.model.organization.MemberNature;
@@ -33,6 +34,9 @@ public class NatureRequest extends Request<MemberClassify> {
     }
 
     private static class PageNature extends PageQuery<MemberClassify> {
+    }
+
+    private static class BooleanNature extends BoolQuery<MemberClassify> {
     }
 
     @Override
@@ -78,6 +82,6 @@ public class NatureRequest extends Request<MemberClassify> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        executeHttpRequest(getRequest(PageNature.class, "/user/appUserNature/add", object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BooleanNature.class, "/user/appUserNature/add", object.toString(), HttpMethods.Post));
     }
 }

@@ -113,7 +113,7 @@ public class MemberNatureMainFragment extends BaseViewPagerSupportFragment {
                 public void onResponse(MemberClassify memberClassify, boolean success, String message) {
                     super.onResponse(memberClassify, success, message);
                     if (success) {
-
+                        ToastHelper.make().showMsg(R.string.ui_group_member_nature_more_updated);
                     }
                 }
             }).updateUserNatures(mQueryId, mUserId, natures);
