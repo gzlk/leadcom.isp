@@ -514,7 +514,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 resetCategory();
                 break;
             case REQUEST_PROPERTY:
-                mArchive.setProperty(getResultedData(data));
+                String res = getResultedData(data);
+                String[] properties = res.split(",");
+                mArchive.setDocClassifyId(properties[0]);
+                mArchive.setProperty(properties[1]);
                 resetProperty();
                 break;
             case REQUEST_ATTACHMENT:
@@ -1082,13 +1085,17 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         break;
                     case R.id.ui_popup_rich_editor_setting_property:
                         // 档案性质
-                        isOpenOther = true;
-                        LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_PROPERTY, mArchive.getProperty());
+                        if (isEmpty(mArchive.getGroupId())) {
+                            ToastHelper.make().showMsg(R.string.ui_text_archive_details_editor_setting_group_empty);
+                        } else {
+                            isOpenOther = true;
+                            LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_PROPERTY, mArchive.getGroupId(), mArchive.getDocClassifyId());
+                        }
                         break;
                     case R.id.ui_popup_rich_editor_setting_category:
                         // 档案类型
                         isOpenOther = true;
-                        LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_CATEGORY, mArchive.getCategory());
+                        LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_CATEGORY, mArchive.getGroupId(), mArchive.getCategory());
                         break;
                     case R.id.ui_popup_rich_editor_setting_participant:
                         openMemberPicker();
@@ -1166,7 +1173,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
             private void openLabelPicker() {
                 isOpenOther = true;
-                LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_LABEL, mArchive.getLabel());
+                LabelPickFragment.open(ArchiveEditorFragment.this, LabelPickFragment.TYPE_LABEL, mArchive.getGroupId(), mArchive.getLabel());
             }
         }).setAdjustScreenWidth(true).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
@@ -1218,7 +1225,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         groupIcon.setTextColor(getColor(isGroupArchive ? R.color.colorPrimary : R.color.textColorHintLight));
         int groupVisibility = isGroupArchive ? View.VISIBLE : View.GONE;
         // 组织档案需要发生时间
-        settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(groupVisibility);
+        if (!mArchive.isTemplateArchive()) {
+            settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_time).setVisibility(groupVisibility);
+        }
         // 组织档案需要选择组织
         settingDialogView.findViewById(R.id.ui_popup_rich_editor_setting_group_picker).setVisibility(groupVisibility);
         // 组织档案需要设置档案的性质

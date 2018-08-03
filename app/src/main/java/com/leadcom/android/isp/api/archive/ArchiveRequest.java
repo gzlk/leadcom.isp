@@ -242,7 +242,7 @@ public class ArchiveRequest extends Request<Archive> {
             params = format("%s&createDate=%s", params, createDate);
         }
         if (!isEmpty(property)) {
-            params = format("%s&property=%s", params, property);
+            params = format("%s&docClassifyId=%s", params, property);
         }
         if (!isEmpty(category)) {
             params = format("%s&category=%s", params, category);
@@ -270,9 +270,14 @@ public class ArchiveRequest extends Request<Archive> {
      * @param organizationId 组织id
      * @param pageNumber     页码
      */
-    public void list(String organizationId, int pageNumber, String searchTitle) {
-        String param = format("?groupId=%s&pageNumber=%d%s", organizationId, pageNumber,
-                (isEmpty(searchTitle) ? "" : (format("&title=%s", searchTitle))));
+    public void list(String organizationId, int pageNumber, String searchTitle, String classifyId) {
+        String param = format("?groupId=%s&pageNumber=%d", organizationId, pageNumber);
+        if (!isEmpty(classifyId)) {
+            param = format("%s&docClassifyId=%s", param, classifyId);
+        }
+        if (!isEmpty(searchTitle)) {
+            param = format("%s&title=%s", param, searchTitle);
+        }
         executeHttpRequest(getRequest(ListArchive.class, format("%s%s", group(LIST), param), "", HttpMethods.Get));
     }
 

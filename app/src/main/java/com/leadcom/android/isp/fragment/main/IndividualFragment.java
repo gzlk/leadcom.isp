@@ -981,7 +981,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                     ArchiveHomeRecommendedViewHolder holder = new ArchiveHomeRecommendedViewHolder(itemView, fragment);
                     holder.addOnViewHolderClickListener(onViewHolderClickListener);
                     holder.setOnViewHolderElementClickListener(onViewHolderElementClickListener);
-                    holder.setHeaderShaoable(true);
+                    holder.setHeaderShowable(true);
                     return holder;
                 case VT_COLLECTION:
                     CollectionItemViewHolder civh = new CollectionItemViewHolder(itemView, fragment);

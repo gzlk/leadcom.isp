@@ -13,6 +13,7 @@ import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.activity.ActLabelRequest;
+import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.archive.DictionaryRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.etc.Utils;
@@ -29,9 +30,11 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.activity.Label;
+import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.archive.Dictionary;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -50,6 +53,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_SELECTED = "lpf_selected";
     private static final String PARAM_LABEL_TYPE = "lpf_label_type";
     private static final String PARAM_MAX = "lpf_max_selectable";
+    private static final String PARAM_GROUP_ID = "lpf_group_id";
 
     /**
      * 档案性质
@@ -75,12 +79,14 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
      *
      * @param fragment 实现打开的host
      * @param type     类型1=档案性质；2=档案类型；3=档案标签
+     * @param groupId  组织id
      * @param selected 已选中的项目
      */
-    public static void open(BaseFragment fragment, int type, ArrayList<String> selected) {
+    public static void open(BaseFragment fragment, int type, String groupId, ArrayList<String> selected) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, String.valueOf(type));
         bundle.putInt(PARAM_MAX, type == TYPE_LABEL ? 2 : 1);
+        bundle.putString(PARAM_GROUP_ID, groupId);
         bundle.putStringArrayList(PARAM_SELECTED, selected);
         fragment.openActivity(LabelPickFragment.class.getName(), bundle, request(type), true, false);
     }
@@ -96,12 +102,12 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
-    public static void open(BaseFragment fragment, int type, String selected) {
+    public static void open(BaseFragment fragment, int type, String groupId, String selected) {
         ArrayList<String> select = new ArrayList<>();
         if (!isEmpty(selected)) {
             select.add(selected);
         }
-        open(fragment, type, select);
+        open(fragment, type, groupId, select);
     }
 
     @Override
@@ -121,6 +127,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         mType = Integer.valueOf(mQueryId);
         // 默认只可选中一个
         mMaxSelectable = bundle.getInt(PARAM_MAX, 1);
+        mGroupId = bundle.getString(PARAM_GROUP_ID, "");
     }
 
     @Override
@@ -128,12 +135,14 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_LABEL_TYPE, mType);
         bundle.putInt(PARAM_MAX, mMaxSelectable);
+        bundle.putString(PARAM_GROUP_ID, mGroupId);
         bundle.putStringArrayList(PARAM_SELECTED, labelNames);
     }
 
     private ArrayList<String> labelNames;
     private LabelAdapter mAdapter;
-    private int mType, mMaxSelectable;
+    private int mType, mMaxSelectable, fetchingIndex;
+    private String mGroupId = "";
 
     @Override
     protected void onDelayRefreshComplete(@DelayType int type) {
@@ -189,9 +198,14 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
             String name = "";
             for (int i = 0, size = mAdapter.getItemCount(); i < size; i++) {
                 Model model = mAdapter.get(i);
-                if (model.isSelected() && model instanceof Dictionary) {
-                    Dictionary dictionary = (Dictionary) model;
-                    name = dictionary.getName();
+                if (model.isSelected()) {
+                    if (model instanceof Dictionary) {
+                        Dictionary dictionary = (Dictionary) model;
+                        name = dictionary.getName();
+                    } else if (model instanceof Classify) {
+                        Classify classify = (Classify) model;
+                        name = classify.getId() + "," + classify.getName();
+                    }
                 }
             }
             if (!isEmpty(name)) {
@@ -237,8 +251,11 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     private void fetching() {
         switch (mType) {
             case TYPE_CATEGORY:
-            case TYPE_PROPERTY:
                 loadingDictionary();
+                break;
+            case TYPE_PROPERTY:
+                // 拉取顶层档案属性列表
+                loadingClassify("");
                 break;
             case TYPE_LABEL:
                 loadingTopestLabels();
@@ -258,6 +275,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         }).getTopLabels(30);
     }
 
+    // 获取档案类型
     private void loadingDictionary() {
         DictionaryRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Dictionary>() {
             @Override
@@ -280,6 +298,48 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         }).list(mType == TYPE_CATEGORY ? Dictionary.Type.ARCHIVE_TYPE : Dictionary.Type.ARCHIVE_NATURE);
     }
 
+    private ArrayList<String> topClassify = new ArrayList<>();
+
+    private void loadingClassify(final String classifyId) {
+        ClassifyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Classify>() {
+            @Override
+            public void onResponse(List<Classify> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list) {
+                    if (isEmpty(classifyId)) {
+                        topClassify.clear();
+                    } else {
+                        fetchingIndex++;
+                    }
+
+                    int index = isEmpty(classifyId) ? -1 : mAdapter.indexOf(mAdapter.get(classifyId));
+
+                    int count = 0;
+                    for (Classify classify : list) {
+                        classify.set_id(classify.getId());
+                        classify.setSelected(labelNames.contains(classify.getId()));
+                        if (isEmpty(classifyId)) {
+                            topClassify.add(classify.getId());
+                        }
+                        if (mAdapter.indexOf(classify) >= 0) {
+                            mAdapter.update(classify);
+                        } else {
+                            mAdapter.add(classify, count + (classify.getParentId() > 0 ? (index + 1) : 0));
+                        }
+                        count++;
+                    }
+                    if (isEmpty(classifyId) || fetchingIndex < topClassify.size()) {
+                        if (isEmpty(classifyId)) {
+                            fetchingIndex = 0;
+                        }
+                        Classify fetch = (Classify) mAdapter.get(topClassify.get(fetchingIndex));
+                        loadingClassify(fetch.getId());
+                    }
+                }
+            }
+        }).list(mGroupId, classifyId);
+    }
+
     private void updateList(List<Label> list) {
         if (null != list) {
             for (Label label : list) {
@@ -295,16 +355,19 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void setTestData() {
-        mAdapter.add(new Model() {{
-            setId(mType == TYPE_LABEL ? StringHelper.getString(R.string.ui_archive_label_picker_hotest) : fetchingTitle());
-        }});
-        mAdapter.add(new Model() {{
-            setId(StringHelper.getString(R.string.ui_archive_label_picker_create_title, ""));
-        }});
-        mAdapter.add(new Label() {{
-            setId("0");
-            setName(StringHelper.getString(R.string.ui_archive_label_picker_self_defined));
-        }});
+        if (mType != TYPE_PROPERTY) {
+            mAdapter.add(new Model() {{
+                setId(mType == TYPE_LABEL ? StringHelper.getString(R.string.ui_archive_label_picker_hotest) : fetchingTitle());
+            }});
+
+            mAdapter.add(new Model() {{
+                setId(StringHelper.getString(R.string.ui_archive_label_picker_create_title, ""));
+            }});
+            mAdapter.add(new Label() {{
+                setId("0");
+                setName(StringHelper.getString(R.string.ui_archive_label_picker_self_defined));
+            }});
+        }
     }
 
     private void readLocalLabels() {
@@ -418,6 +481,8 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 label.setName(name);
                 Label.save(label);
                 mAdapter.add(label);
+            } else if (mType == TYPE_PROPERTY) {
+                selfDefineClassify(name);
             } else {
                 Dictionary dictionary = new Dictionary();
                 dictionary.setId(String.valueOf(Utils.timestamp()));
@@ -430,6 +495,10 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                 mAdapter.add(dictionary);
             }
         }
+    }
+
+    private void selfDefineClassify(String name) {
+
     }
 
     private class LabelAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
@@ -451,15 +520,15 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public boolean isItemNeedFullLine(int position) {
-            Model model = get(position);
-            // 不是label的话，就全行占满
-            return !(model instanceof Label) || !(model instanceof Dictionary);
-        }
-
-        @Override
         public int getItemViewType(int position) {
             Model model = get(position);
+            if (model instanceof Classify) {
+                Classify classify = (Classify) model;
+                // 第一层属于标题
+                if (classify.getParentId() == 0)
+                    return VT_TITLE;
+                return VT_LABEL;
+            }
             return ((model instanceof Label) || (model instanceof Dictionary)) ? VT_LABEL : VT_TITLE;
         }
 
@@ -482,8 +551,12 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
             if (holder instanceof LabelViewHolder) {
                 ((LabelViewHolder) holder).showContent(item);
             } else if (holder instanceof TextViewHolder) {
-                assert item != null;
-                ((TextViewHolder) holder).showContent(item.getId());
+                if (item instanceof Classify) {
+                    ((TextViewHolder) holder).showContent(((Classify) item).getName());
+                } else {
+                    assert item != null;
+                    ((TextViewHolder) holder).showContent(item.getId());
+                }
             }
             //resizeWidth(holder.itemView, position);
         }

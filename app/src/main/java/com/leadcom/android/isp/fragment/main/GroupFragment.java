@@ -744,7 +744,8 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 3:
                 // 组织档案
-                ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
+                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_GROUP, group.getId(), "");
+                //ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;
             case 4:
             case 5:
@@ -754,14 +755,33 @@ public class GroupFragment extends BaseOrganizationFragment {
                 //}
                 break;
             case 6:
-                // 成员资料统计
-                MemberNatureMainFragment.open(this, group.getId(), group.getName(), false, "");
+                if (dAdapter.get(index) instanceof Classify) {
+                    handleClassifyClick(index);
+                } else {
+                    // 成员资料统计
+                    MemberNatureMainFragment.open(this, group.getId(), group.getName(), false, "");
+                }
                 break;
             case 7:
-                // 授权管理
-                GroupAuthorizeFragment.open(this, group.getId());
+                if (dAdapter.get(index) instanceof Classify) {
+                    handleClassifyClick(index);
+                } else {
+                    // 授权管理
+                    GroupAuthorizeFragment.open(this, group.getId());
+                }
+                break;
+            default:
+                if (dAdapter.get(index) instanceof Classify) {
+                    handleClassifyClick(index);
+                }
                 break;
         }
+    }
+
+    private void handleClassifyClick(int index) {
+        Classify classify = (Classify) dAdapter.get(index);
+        Organization group = (Organization) dAdapter.get(0);
+        ArchivesFragment.open(this, group.getId(), group.getName(), classify.getId(), classify.getName());
     }
 
     /**

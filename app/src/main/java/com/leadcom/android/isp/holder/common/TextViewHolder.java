@@ -15,6 +15,7 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.archive.Dictionary;
 
 /**
@@ -85,6 +86,13 @@ public class TextViewHolder extends BaseViewHolder {
         icon.setTextColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         text.setText(dictionary.getName());
         text.setTextColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHint));
+    }
+
+    public void showContent(Classify classify){
+        icon.setVisibility(View.VISIBLE);
+        icon.setTextColor(getColor(classify.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        text.setText(classify.getName());
+        text.setTextColor(getColor(classify.isSelected() ? R.color.colorPrimary : R.color.textColorHint));
     }
 
     /**

@@ -99,6 +99,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private static final String PARAM_COVER_URL = "adwvf_cover_url";
     private static final String PARAM_CLASSIFY_TYPE = "adwvf_classify_type";
     private static boolean isCollected = false;
+    private static String h5 = "";
 
     public static ArchiveDetailsFragment newInstance(Bundle bundle) {
         ArchiveDetailsFragment adwvf = new ArchiveDetailsFragment();
@@ -136,6 +137,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
+        h5 = archive.getH5();
         open(fragment, archive.getGroupId(), archive.getCover(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
                 (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false, archive.getUserId());
     }
@@ -156,7 +158,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 getBundle(archiveId, groupId, cover, archiveType, true, isDraft, authorId), true, false);
     }
 
-    static String getUrl(String archiveId, int archiveType, boolean isDraft, boolean forShare) {
+    private static String getUrl(String archiveId, int archiveType, boolean isDraft, boolean forShare) {
+        if (!isEmpty(h5) && h5.length() > 20) {
+            // http://113.108.144.2:8038/quesinfo.html              ??
+            // http://113.108.144.2:8038/quesinfo.html?id=xxxa      ??
+            return h5 + (h5.contains("?") ? "&" : "?") + "accessToken=" + Cache.cache().accessToken;
+        }
         // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
         // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
         return StringHelper.format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&accesstoken=%s",
@@ -214,6 +221,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     @Override
     public void onDestroy() {
+        h5 = "";
         if (!SysInfoUtil.stackResumed(Activity())) {
             if (!innerOpen) {
                 // 如果不是堆栈恢复的app则打开主页面，否则直接关闭即可

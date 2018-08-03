@@ -14,6 +14,7 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CornerTagView;
 import com.hlk.hlklib.lib.view.CorneredView;
+import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.archive.Dictionary;
 import com.leadcom.android.isp.model.organization.Concern;
 import com.leadcom.android.isp.model.organization.MemberNature;
@@ -50,6 +51,8 @@ public class LabelViewHolder extends BaseViewHolder {
             showContent((Label) model);
         } else if (model instanceof Dictionary) {
             showContent((Dictionary) model);
+        } else if (model instanceof Classify) {
+            showContent((Classify) model);
         }
     }
 
@@ -84,6 +87,12 @@ public class LabelViewHolder extends BaseViewHolder {
         } else {
             containerView.setNormalColor(Color.WHITE);
         }
+    }
+
+    public void showContent(Classify classify) {
+        textView.setText(classify.getName());
+        containerView.setNormalColor(getColor(classify.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        tagView.setVisibility(classify.isSelected() ? View.VISIBLE : View.GONE);
     }
 
     @Click({R.id.ui_holder_view_activity_label_container})

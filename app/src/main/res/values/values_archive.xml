@@ -235,4 +235,6 @@
     <string name="ui_text_archive_searching_selector_1">时间</string>
     <string name="ui_text_archive_searching_selector_2">性质</string>
     <string name="ui_text_archive_searching_selector_3">类型</string>
+    <string name="ui_text_archive_searching_selector_4">属性</string>
+    <string name="ui_text_archive_searching_still_loading">还在努力加载档案，请稍候&#8230;</string>
 </resources>

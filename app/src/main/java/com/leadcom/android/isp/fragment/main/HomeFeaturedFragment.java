@@ -275,7 +275,7 @@ public class HomeFeaturedFragment extends BaseCmtLikeColFragment {
             selectedIndex = -1;
             Archive archive = getArchiveByCover(url);
             if (null != archive) {
-                if (isEmpty(archive.getDocId())) {
+                if (isEmpty(archive.getDocId()) && isEmpty(archive.getH5())) {
                     ToastHelper.make().showMsg("docId is null");
                 } else {
                     // 打开档案详情页

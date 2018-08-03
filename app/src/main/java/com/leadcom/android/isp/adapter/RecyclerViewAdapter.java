@@ -221,6 +221,9 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
             // 如果参数类含有 setId(String val) 方法的话，说明是可以比较的
             for (T item : innerList) {
                 String id = (String) ReflectionUtil.getFieldValue(item, "_id");
+                if (StringHelper.isEmpty(id)) {
+                    id = (String) ReflectionUtil.getFieldValue(item, "id");
+                }
                 if (!StringHelper.isEmpty(id) && id.equals(itemId)) {
                     return item;
                 }

@@ -472,6 +472,8 @@ public class Archive extends Additional {
     // 档案属性
     @Column(Field.Property)
     private String property;
+    // 档案分类ID
+    private String docClassifyId;
     // 档案类型
     @Column(Field.Category)
     private String category;
@@ -479,12 +481,14 @@ public class Archive extends Additional {
     // 是否获奖档案
     private int awardable;
 
-
     // 排序
     @Column(Field.Sort)
     private int sort;
+    // 首页焦点图
     @Column(Field.ShowImage)
     private String showImage;
+    // 首页焦点图"考试"的url地址
+    private String h5;
     // 水印
     @Column(Field.Watermark)
     private String watermark;
@@ -560,6 +564,14 @@ public class Archive extends Additional {
 
     public void setShowImage(String showImage) {
         this.showImage = showImage;
+    }
+
+    public String getH5() {
+        return h5;
+    }
+
+    public void setH5(String h5) {
+        this.h5 = h5;
     }
 
     @Override
@@ -892,6 +904,14 @@ public class Archive extends Additional {
 
     public void setProperty(String property) {
         this.property = property;
+    }
+
+    public String getDocClassifyId() {
+        return docClassifyId;
+    }
+
+    public void setDocClassifyId(String docClassifyId) {
+        this.docClassifyId = docClassifyId;
     }
 
     public String getCategory() {

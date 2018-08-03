@@ -84,7 +84,11 @@ public class ClassifyRequest extends Request<Classify> {
         executeHttpRequest(getRequest(PageClassify.class, url(LIST) + "/groupId?groupId=" + groupId, "", HttpMethods.Get));
     }
 
+    /**
+     * 查找组织的档案分类列表
+     */
     public void list(String groupId, String parentId) {
-        executeHttpRequest(getRequest(PageClassify.class, url(LIST) + "?groupId=" + groupId, "", HttpMethods.Get));
+        String param = format("%s?groupId=%s&parentId=%s", url(LIST), groupId, (isEmpty(parentId) ? "" : parentId));
+        executeHttpRequest(getRequest(PageClassify.class, param, "", HttpMethods.Get));
     }
 }
