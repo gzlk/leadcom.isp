@@ -134,7 +134,11 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
                         if (isEmpty(concern.getId())) {
                             concern.setId(concern.getGroupId());
                         }
-                        mAdapter.add(concern, count);
+                        if (mAdapter.indexOf(concern) >= 0) {
+                            mAdapter.update(concern);
+                        } else {
+                            mAdapter.add(concern, count);
+                        }
                     }
                 }
                 if (!success || null == list || list.size() <= 0) {
@@ -161,7 +165,11 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
                         if (isEmpty(concern.getId())) {
                             concern.setId(concern.getGroupId());
                         }
-                        mAdapter.add(concern, count + index);
+                        if (mAdapter.indexOf(concern) >= 0) {
+                            mAdapter.update(concern);
+                        } else {
+                            mAdapter.add(concern, count + index);
+                        }
                     }
                 }
                 stopRefreshing();
