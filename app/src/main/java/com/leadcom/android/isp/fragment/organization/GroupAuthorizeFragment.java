@@ -130,13 +130,13 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
                 if (success && null != list) {
                     int count = 0;
                     for (Concern concern : list) {
-                        count++;
                         if (isEmpty(concern.getId())) {
                             concern.setId(concern.getGroupId());
                         }
                         if (mAdapter.indexOf(concern) >= 0) {
                             mAdapter.update(concern);
                         } else {
+                            count++;
                             mAdapter.add(concern, count);
                         }
                     }
@@ -161,13 +161,13 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
                     int index = mAdapter.indexOf(mAdapter.get("warning"));
                     int count = 0;
                     for (Concern concern : list) {
-                        count++;
                         if (isEmpty(concern.getId())) {
                             concern.setId(concern.getGroupId());
                         }
                         if (mAdapter.indexOf(concern) >= 0) {
                             mAdapter.update(concern);
                         } else {
+                            count++;
                             mAdapter.add(concern, count + index);
                         }
                     }
