@@ -162,7 +162,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         if (!isEmpty(h5) && h5.length() > 20) {
             // http://113.108.144.2:8038/quesinfo.html              ??
             // http://113.108.144.2:8038/quesinfo.html?id=xxxa      ??
-            return h5 + (h5.contains("?") ? "&" : "?") + "accessToken=" + Cache.cache().accessToken;
+            return h5 + (h5.contains("?") ? "&" : "?") + "accesstoken=" + Cache.cache().accessToken;
         }
         // http://113.108.144.2:8038/html/h5file.html?docid=&doctype=&accesstoken=
         // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
@@ -374,7 +374,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             if (archive.isAuthor()) {
                 resetRightIconEvent();
             }
-        } else if (!isCollected) {
+        } else if (!isCollected && !isEmpty(h5)) {
             // 不是收藏过来的内容
             // 非草稿档案，可以分享等等
             setRightIcon(R.string.ui_icon_more);
