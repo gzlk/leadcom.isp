@@ -604,6 +604,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     private void saveDraft() {
         mArchive.setTitle(titleView.getValue());
+        // docType有时候为0，不知道什么原因，这样修改不知道是否正确
+        if (mArchive.getDocType() < Archive.ArchiveType.MULTIMEDIA) {
+            if (editorType < Archive.ArchiveType.MULTIMEDIA) {
+                mArchive.setDocType(Archive.ArchiveType.MULTIMEDIA);
+            } else {
+                mArchive.setDocType(editorType);
+            }
+        }
         if (null != siteText) {
             mArchive.setSite(siteText.getValue());
             mArchive.setSource(creatorText.getValue());
@@ -750,6 +758,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             return;
         }
         mArchive.setTitle(title);
+        // docType有时候为0，不知道什么原因，这样修改不知道是否正确
+        if (mArchive.getDocType() < Archive.ArchiveType.MULTIMEDIA) {
+            if (editorType < Archive.ArchiveType.MULTIMEDIA) {
+                mArchive.setDocType(Archive.ArchiveType.MULTIMEDIA);
+            } else {
+                mArchive.setDocType(editorType);
+            }
+        }
         if (!mArchive.isTemplateArchive()) {
             if (isEmpty(mArchive.getContent())) {
                 ToastHelper.make().showMsg(R.string.ui_text_archive_creator_editor_content_invalid);
