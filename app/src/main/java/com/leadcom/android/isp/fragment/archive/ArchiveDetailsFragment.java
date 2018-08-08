@@ -374,7 +374,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             if (archive.isAuthor()) {
                 resetRightIconEvent();
             }
-        } else if (!isCollected && !isEmpty(h5)) {
+        } else if (!isCollected && isEmpty(h5)) {
             // 不是收藏过来的内容
             // 非草稿档案，可以分享等等
             setRightIcon(R.string.ui_icon_more);

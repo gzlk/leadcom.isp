@@ -170,13 +170,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
     private void searching() {
         mAdapter.clear();
         setNothingText(isEmpty(searchingText) ? (mConcernType == ConcernRequest.CONCERN_TO ? R.string.ui_organization_concerned_nothing : R.string.ui_organization_concerned_from_nothing) : R.string.ui_organization_concerned_search_nothing);
-        // 是否有权限关注或取消关注
-        boolean able = hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION);
         for (Concern concern : concerns) {
-            if (!able && !concern.isConcerned()) {
-                // 没有关注权限的人只能查看已关注的列表
-                continue;
-            }
             if (!isEmpty(searchingText)) {
                 if (concern.getName().contains(searchingText)) {
                     mAdapter.update(concern);
