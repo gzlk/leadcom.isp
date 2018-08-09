@@ -137,7 +137,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
-        h5 = archive.getH5();
+        if (!isEmpty(archive.getH5()) && archive.getH5().contains("quesinfo.html")) {
+            h5 = archive.getH5();
+        } else {
+            h5 = "";
+        }
         open(fragment, archive.getGroupId(), archive.getCover(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
                 (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false, archive.getUserId());
     }
