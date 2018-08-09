@@ -289,7 +289,7 @@
         <include layout="@layout/tool_view_recycler_view_none_swipe_refreshable" />
     </LinearLayout>
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:id="@+id/ui_archive_creator_rich_editor_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -333,22 +333,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
                     android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
                     android:text="@string/ui_nim_action_issue" />
 
-                <com.hlk.hlklib.lib.view.ClearEditText
+                <com.hlk.hlklib.lib.view.CorneredEditText
                     android:id="@+id/ui_holder_view_simple_inputable_topic"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cet_edit_active_border="@android:color/white"
-                    app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
-                    app:cet_edit_hint="@string/ui_text_archive_creator_editor_template_topic_hint"
-                    app:cet_edit_max_lines="5"
-                    app:cet_edit_maximum_height="@dimen/ui_static_dp_100"
-                    app:cet_edit_minimum_height="@dimen/ui_base_dimen_button_height"
-                    app:cet_edit_normal_border="@android:color/white"
-                    app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding" />
+                    android:gravity="top|start"
+                    android:hint="@string/ui_text_archive_creator_editor_template_topic_hint"
+                    android:maxLines="5"
+                    android:padding="@dimen/ui_base_dimen_margin_padding"
+                    app:cet_active_border="@color/colorBorderActive"
+                    app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
+                    app:cet_normal_border="@color/windowBackground" />
 
             </LinearLayout>
 
@@ -369,22 +369,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_5"
                     android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
                     android:text="@string/ui_text_archive_creator_editor_template_minute" />
 
-                <com.hlk.hlklib.lib.view.ClearEditText
+                <com.hlk.hlklib.lib.view.CorneredEditText
                     android:id="@+id/ui_holder_view_simple_inputable_minute"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cet_edit_active_border="@android:color/white"
-                    app:cet_edit_corner_size="@dimen/ui_base_dimen_button_corner_size"
-                    app:cet_edit_hint="@string/ui_text_archive_creator_editor_template_topic_hint"
-                    app:cet_edit_max_lines="5"
-                    app:cet_edit_maximum_height="@dimen/ui_static_dp_100"
-                    app:cet_edit_minimum_height="@dimen/ui_base_dimen_button_height"
-                    app:cet_edit_normal_border="@android:color/white"
-                    app:cet_edit_padding="@dimen/ui_base_dimen_margin_padding" />
+                    android:gravity="top|start"
+                    android:hint="@string/ui_text_archive_creator_editor_template_topic_hint"
+                    android:maxLines="5"
+                    android:padding="@dimen/ui_base_dimen_margin_padding"
+                    app:cet_active_border="@color/colorBorderActive"
+                    app:cet_corner_size="@dimen/ui_base_dimen_button_corner_size"
+                    app:cet_normal_border="@color/windowBackground" />
 
             </LinearLayout>
 
@@ -430,5 +430,5 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

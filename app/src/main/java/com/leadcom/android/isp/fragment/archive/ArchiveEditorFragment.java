@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.archive;
 
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,6 +28,7 @@ import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.ClearEditText;
+import com.hlk.hlklib.lib.view.CorneredEditText;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
@@ -423,8 +426,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             addressHolder.showContent(format(templateItems[1], mArchive.getSite()));
             participantHolder.showContent(format(templateItems[2], mArchive.getParticipant()));
             authorHolder.showContent(format(templateItems[3], mArchive.getUserName()));
-            topicContent.setValue(mArchive.getTopic());
-            minuteContent.setValue(mArchive.getResolution());
+            topicContent.setText(mArchive.getTopic());
+            minuteContent.setText(mArchive.getResolution());
             if (mArchive.getImage().size() > 0) {
                 resetAttachmentImages(mArchive.getImage());
             }
@@ -2023,9 +2026,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     @ViewId(R.id.ui_archive_creator_rich_editor_author)
     private View authorView;
     @ViewId(R.id.ui_holder_view_simple_inputable_topic)
-    private ClearEditText topicContent;
+    private CorneredEditText topicContent;
     @ViewId(R.id.ui_holder_view_simple_inputable_minute)
-    private ClearEditText minuteContent;
+    private CorneredEditText minuteContent;
     @ViewId(R.id.ui_archive_creator_rich_editor_template_images)
     private RecyclerView templateRecyclerView;
     private SimpleClickableViewHolder timeHolder;
@@ -2034,9 +2037,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private ImageAdapter imageAdapter;
     private String[] templateItems;
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initializeTemplate() {
         if (null == templateItems) {
             templateItems = StringHelper.getStringArray(R.array.ui_text_archive_creator_editor_template_values);
+            topicContent.setOnTouchListener(onTouchListener);
+            minuteContent.setOnTouchListener(onTouchListener);
         }
         if (null == imageAdapter) {
             // 模板档案的图片
@@ -2065,6 +2071,45 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             authorHolder.showContent(format(templateItems[3], Cache.cache().userName));
         }
     }
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            if (view instanceof CorneredEditText) {
+                if (view.canScrollVertically(-1) || view.canScrollVertically(0)) {
+                    view.getParent().requestDisallowInterceptTouchEvent(true);
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        view.getParent().requestDisallowInterceptTouchEvent(false);
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * EditText竖直方向能否够滚动
+         * @param editText  须要推断的EditText
+         * @return true：能够滚动   false：不能够滚动
+         */
+        @SuppressWarnings("unused")
+        private boolean canVerticalScroll(CorneredEditText editText) {
+            //滚动的距离
+            int scrollY = editText.getScrollY();
+            //控件内容的总高度
+            int scrollRange = editText.getLayout().getHeight();
+            //控件实际显示的高度
+            int scrollExtent = editText.getHeight() - editText.getCompoundPaddingTop() - editText.getCompoundPaddingBottom();
+            //控件内容总高度与实际显示高度的差值
+            int scrollDifference = scrollRange - scrollExtent;
+
+            if (scrollDifference == 0) {
+                return false;
+            }
+
+            return (scrollY > 0) || (scrollY < scrollDifference - 1);
+        }
+    };
 
     private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
         @Override
