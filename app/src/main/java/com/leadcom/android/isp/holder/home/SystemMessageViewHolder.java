@@ -40,6 +40,7 @@ public class SystemMessageViewHolder extends BaseViewHolder {
 
     public void showContent(PushMessage msg) {
         titleView.setText(msg.getTitle());
+        titleView.setSelected(true);
         descView.setText(msg.getContent());
         String time = fragment().formatTimeAgo(msg.getCreateDate());
         timeView.setText(time);
