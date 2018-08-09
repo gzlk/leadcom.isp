@@ -28,10 +28,16 @@ public class TextViewHolder extends BaseViewHolder {
 
     @ViewId(R.id.ui_holder_view_text_item_container)
     private CardView container;
+    @ViewId(R.id.ui_holder_view_text_item_pre_selector)
+    private View preSelector;
     @ViewId(R.id.ui_holder_view_text_item_text)
     private TextView text;
     @ViewId(R.id.ui_holder_view_text_item_selector)
     private CustomTextView icon;
+    @ViewId(R.id.ui_holder_view_text_item_last_selector)
+    private View lastSelector;
+    @ViewId(R.id.ui_holder_view_text_item_top_line)
+    private View topLine;
     @ViewId(R.id.ui_holder_view_text_item_bottom_line)
     private View bottomLine;
 
@@ -82,17 +88,32 @@ public class TextViewHolder extends BaseViewHolder {
     }
 
     public void showContent(Dictionary dictionary) {
+        preSelector.setVisibility(View.GONE);
+        lastSelector.setVisibility(View.GONE);
+        topLine.setVisibility(View.GONE);
+        bottomLine.setBackgroundResource(R.color.windowBackground);
         icon.setVisibility(View.VISIBLE);
         icon.setTextColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         text.setText(dictionary.getName());
         text.setTextColor(getColor(dictionary.isSelected() ? R.color.colorPrimary : R.color.textColorHint));
+        CardView.LayoutParams params = (CardView.LayoutParams) bottomLine.getLayoutParams();
+        params.leftMargin = getDimension(R.dimen.ui_base_dimen_margin_padding);
+        params.rightMargin = 0;
     }
 
-    public void showContent(Classify classify){
-        icon.setVisibility(View.VISIBLE);
+    public void showContent(Classify classify) {
+        icon.setVisibility(classify.getParentId() == 0 ? View.GONE : View.VISIBLE);
         icon.setTextColor(getColor(classify.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        preSelector.setVisibility(classify.getParentId() == 0 ? View.VISIBLE : View.GONE);
+        preSelector.setBackgroundResource(classify.getParentId() == 0 && classify.isSelected() ? R.color.colorPrimary : R.color.transparent_00);
         text.setText(classify.getName());
         text.setTextColor(getColor(classify.isSelected() ? R.color.colorPrimary : R.color.textColorHint));
+        lastSelector.setVisibility(classify.getParentId() == 0 ? (classify.isSelected() ? View.GONE : View.VISIBLE) : View.GONE);
+        topLine.setVisibility(classify.getParentId() == 0 ? (classify.isSelected() ? View.VISIBLE : View.GONE) : (getAdapterPosition() == 0 ? View.VISIBLE : View.GONE));
+        bottomLine.setBackgroundResource(classify.getParentId() == 0 ? (classify.isSelected() ? R.color.colorPrimary : R.color.windowBackground) : R.color.windowBackground);
+        CardView.LayoutParams params = (CardView.LayoutParams) bottomLine.getLayoutParams();
+        params.leftMargin = classify.getParentId() == 0 ? getDimension(classify.isSelected() ? R.dimen.ui_static_dp_5 : R.dimen.ui_base_dimen_margin_padding) : 0;
+        params.rightMargin = classify.getParentId() == 0 ? getDimension(classify.isSelected() ? 0 : R.dimen.ui_static_dp_1) : 0;
     }
 
     /**

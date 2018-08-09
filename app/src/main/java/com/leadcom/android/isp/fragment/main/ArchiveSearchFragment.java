@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
@@ -32,6 +31,7 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
@@ -49,7 +49,6 @@ import com.leadcom.android.isp.model.organization.Role;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -68,6 +67,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_TYPE = "param_searching_type";
     private static final String PARAM_TEXT = "param_searching_text";
+    private static final String PARAM_GROUP_NAME = "param_group_name";
 
     public static ArchiveSearchFragment newInstance(Bundle bundle) {
         ArchiveSearchFragment asf = new ArchiveSearchFragment();
@@ -75,21 +75,23 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         return asf;
     }
 
-    public static void open(BaseFragment fragment, int searchType, String searchId, String searchText) {
+    public static void open(BaseFragment fragment, int searchType, String searchGroupId, String searchText, String searchGroupName) {
         Bundle bundle = new Bundle();
         // 搜索方式
         bundle.putInt(PARAM_TYPE, searchType);
         // 传过来的组织id或者用户的id
-        bundle.putString(PARAM_QUERY_ID, searchId);
+        bundle.putString(PARAM_QUERY_ID, searchGroupId);
         // 搜索的文本
         bundle.putString(PARAM_TEXT, searchText);
+        // 传过来的组织名称
+        bundle.putString(PARAM_GROUP_NAME, searchGroupName);
         fragment.openActivity(ArchiveSearchFragment.class.getName(), bundle, true, false);
     }
 
     @ViewId(R.id.ui_holder_view_searchable_container)
     private View searchableView;
     @ViewId(R.id.ui_main_archive_search_content_background)
-    private RelativeLayout selectorBg;
+    private View selectorBg;
     @ViewId(R.id.ui_main_archive_search_functions)
     private LinearLayout functionView;
     @ViewId(R.id.ui_main_archive_search_functions_1_text)
@@ -98,26 +100,23 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     private TextView function2;
     @ViewId(R.id.ui_main_archive_search_functions_3_text)
     private TextView function3;
-    @ViewId(R.id.ui_main_archive_search_functions_4_text)
-    private TextView function4;
     @ViewId(R.id.ui_main_archive_search_functions_1_icon)
     private CustomTextView allow1;
     @ViewId(R.id.ui_main_archive_search_functions_2_icon)
     private CustomTextView allow2;
     @ViewId(R.id.ui_main_archive_search_functions_3_icon)
     private CustomTextView allow3;
-    @ViewId(R.id.ui_main_archive_search_functions_4_icon)
-    private CustomTextView allow4;
-    @ViewId(R.id.ui_main_archive_search_functions_4)
-    private View functionClicker4;
     @ViewId(R.id.ui_main_archive_search_time_picker)
     private FrameLayout timePickerContainer;
     @ViewId(R.id.ui_main_archive_search_type_picker)
-    private RelativeLayout typePickerContainer;
+    private View typePickerContainer;
     @ViewId(R.id.ui_main_archive_search_type_list)
     private RecyclerView typeList;
+    @ViewId(R.id.ui_main_archive_search_subtype_list)
+    private RecyclerView subTypeList;
     private TimePickerView timePickerView;
     private TypeAdapter tAdapter;
+    private SubTypeAdapter sAdapter;
     private ArchiveAdapter mAdapter;
     private ArrayList<Dictionary> dictionaries = new ArrayList<>();
     private ArrayList<Classify> classifies = new ArrayList<>();
@@ -126,7 +125,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 当前选择方式
      */
-    private static final int FUNC_NONE = -1, FUNC_TIME = 0, FUNC_NATURE = 1, FUNC_TYPE = 2, FUNC_NATURE1 = 3;
+    private static final int FUNC_NONE = -1, FUNC_TIME = 0, FUNC_NATURE = 1, FUNC_TYPE = 2;
     private static int selectedFunction = FUNC_NONE;
     /**
      * 搜索对象：首页、组织内部、个人
@@ -138,7 +137,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     private int searchingFunction = SEARCH_HOME;
     private static String searchingYear = "", searchingNature = "", searchingNature1 = "", searchingType = "";
 
-    private String searchingText;
+    private String searchingText, mGroupName;
     private boolean stillLoading = false;
 
     @Override
@@ -146,6 +145,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         super.getParamsFromBundle(bundle);
         searchingFunction = bundle.getInt(PARAM_TYPE, SEARCH_HOME);
         searchingText = bundle.getString(PARAM_TEXT, "");
+        mGroupName = bundle.getString(PARAM_GROUP_NAME, "");
     }
 
     @Override
@@ -153,6 +153,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         super.saveParamsToBundle(bundle);
         bundle.putInt(PARAM_TYPE, searchingFunction);
         bundle.putString(PARAM_TEXT, searchingText);
+        bundle.putString(PARAM_GROUP_NAME, mGroupName);
     }
 
     @Override
@@ -168,7 +169,11 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setCustomTitle(R.string.ui_group_archive_fragment_title);
+        String title = StringHelper.getString(searchingFunction == SEARCH_HOME ? R.string.ui_text_archive_searching_home_title : R.string.ui_group_archive_fragment_title);
+        if (!isEmpty(mGroupName)) {
+            title = format("%s(%s)", title, mGroupName);
+        }
+        setCustomTitle(title);
 
         Role role = Cache.cache().getGroupRole(mQueryId);
         if (null != role) {
@@ -335,7 +340,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Click({R.id.ui_main_archive_search_functions_1, R.id.ui_main_archive_search_functions_2,
-            R.id.ui_main_archive_search_functions_3, R.id.ui_main_archive_search_functions_4,
+            R.id.ui_main_archive_search_functions_3,
             R.id.ui_main_archive_search_content_background})
     private void viewClick(View view) {
         switch (view.getId()) {
@@ -355,6 +360,9 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             case R.id.ui_main_archive_search_functions_2:
                 if (selectedFunction != FUNC_NATURE) {
                     selectedFunction = FUNC_NATURE;
+                    tAdapter.clear();
+                    sAdapter.clear();
+                    resetSelectedFuncNature();
                     showSelector();
                 } else {
                     hideSelector();
@@ -364,15 +372,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             case R.id.ui_main_archive_search_functions_3:
                 if (selectedFunction != FUNC_TYPE) {
                     selectedFunction = FUNC_TYPE;
-                    showSelector();
-                } else {
-                    hideSelector();
-                }
-                resetFunctionStatus();
-                break;
-            case R.id.ui_main_archive_search_functions_4:
-                if (selectedFunction != FUNC_NATURE1) {
-                    selectedFunction = FUNC_NATURE1;
+                    tAdapter.clear();
+                    subTypeList.setVisibility(View.GONE);
                     showSelector();
                 } else {
                     hideSelector();
@@ -471,8 +472,6 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 .setDuration(duration()).start();
         allow3.animate().rotation(shown && selectedFunction == FUNC_TYPE ? -90 : 90)
                 .setDuration(duration()).start();
-        allow4.animate().rotation(shown && selectedFunction == FUNC_NATURE1 ? -90 : 90)
-                .setDuration(duration()).start();
         typePickerContainer.animate()
                 .translationY(shown ? 0 : -typePickerContainer.getMeasuredHeight() * 1.1f)
                 .alpha(shown ? 1.0f : 0.0f).setDuration(duration())
@@ -513,57 +512,67 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
         function3.setTextColor(selectedFunction == FUNC_TYPE ? color1 : color2);
         allow3.setTextColor(selectedFunction == FUNC_TYPE ? color1 : color2);
-
-        function4.setTextColor(selectedFunction == FUNC_NATURE1 ? color1 : color2);
-        allow4.setTextColor(selectedFunction == FUNC_NATURE1 ? color1 : color2);
     }
 
     private void resetTypeList() {
-        tAdapter.clear();
+        switch (selectedFunction) {
+            case FUNC_TYPE:
+                resetFuncType();
+                break;
+            case FUNC_NATURE:
+                resetFuncNature();
+                break;
+        }
+    }
+
+    private void resetFuncType() {
         boolean selectedExists = false;
-        if (selectedFunction == FUNC_TYPE) {
-            selectedExists = false;
-            for (Dictionary dictionary : dictionaries) {
-                if (dictionary.getTypeCode().equals(Dictionary.Type.ARCHIVE_TYPE)) {
-                    if (dictionary.getCode() == 0) {
-                        continue;
-                    }
-                    tAdapter.add(dictionary);
-                    if (dictionary.isSelected()) {
-                        selectedExists = true;
-                    }
+        for (Dictionary dictionary : dictionaries) {
+            if (dictionary.getTypeCode().equals(Dictionary.Type.ARCHIVE_TYPE)) {
+                if (dictionary.getCode() == 0) {
+                    continue;
+                }
+                tAdapter.add(dictionary);
+                if (dictionary.isSelected()) {
+                    selectedExists = true;
                 }
             }
-            none.setSelected(!selectedExists);
-            tAdapter.add(none, 0);
-            if (tAdapter.getItemCount() <= 1) {
-                // 重新拉取
-                fetchingDictionary();
+        }
+        none.setSelected(!selectedExists);
+        tAdapter.add(none, 0);
+        if (tAdapter.getItemCount() <= 1) {
+            // 重新拉取
+            fetchingDictionary();
+        }
+    }
+
+    // 清除已选中的档案性质选项
+    private void resetSelectedFuncNature() {
+        for (Classify classify : classifies) {
+            if (classify.getParentId() == 0 && classify.isSelected()) {
+                classify.setSelected(false);
             }
-        } else if (selectedFunction == FUNC_NATURE1 || selectedFunction == FUNC_NATURE) {
-            selectedExists = false;
-            int parent = Integer.valueOf(isEmpty(searchingNature) ? "0" : searchingNature);
-            for (Classify classify : classifies) {
-                if (selectedFunction == FUNC_NATURE && classify.getParentId() == 0) {
-                    tAdapter.add(classify);
-                    if (classify.isSelected()) {
-                        selectedExists = true;
-                    }
-                } else if (selectedFunction == FUNC_NATURE1 && classify.getParentId() > 0 && classify.getParentId() == parent) {
-                    tAdapter.add(classify);
-                    if (classify.isSelected()) {
-                        selectedExists = true;
-                    }
-                }
+        }
+    }
+
+    private void resetFuncNature() {
+        int parent = Integer.valueOf(isEmpty(searchingNature) ? "0" : searchingNature);
+        if (parent > 0) {
+            sAdapter.clear();
+        }
+
+        for (Classify classify : classifies) {
+            if (classify.getParentId() == 0) {
+                tAdapter.add(classify);
+            } else if (classify.getParentId() > 0 && classify.getParentId() == parent) {
+                sAdapter.add(classify);
             }
-            all.setSelected(!selectedExists);
-            tAdapter.add(all, 0);
-            if (tAdapter.getItemCount() <= 1) {
-                if (selectedFunction == FUNC_NATURE1 && isEmpty(searchingNature)) {
-                    return;
-                }
-                fetchingClassify(searchingNature);
-            }
+        }
+        if (tAdapter.getItemCount() <= 0) {
+            fetchingClassify(searchingNature);
+        }
+        if (!isEmpty(searchingNature) && sAdapter.getItemCount() <= 0) {
+            fetchingClassify(searchingNature);
         }
     }
 
@@ -630,12 +639,6 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         setSelected(true);
     }};
 
-    private Classify all = new Classify() {{
-        setId("none");
-        setName("全部");
-        setSelected(true);
-    }};
-
     private void clearList(int count, int pageSize) {
         displayLoading(false);
         if (remotePageNumber <= 1) {
@@ -647,6 +650,10 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void searchingHomeArchive() {
+        if (isEmpty(searchingText)) {
+            displayLoading(false);
+            return;
+        }
         mAdapter.remove(last());
         if (isStillLoading()) {
             return;
@@ -702,6 +709,10 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void searchingUserArchive() {
+        if (isEmpty(searchingText)) {
+            displayLoading(false);
+            return;
+        }
         if (isStillLoading()) {
             return;
         }
@@ -756,32 +767,23 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             typeList.setLayoutManager(new CustomLinearLayoutManager(typeList.getContext()));
             typeList.setAdapter(tAdapter);
         }
-    }
-
-    private Dictionary getNoLimit() {
-        Iterator<Model> iterator = tAdapter.iterator();
-        while (iterator.hasNext()) {
-            Model model = iterator.next();
-            if (model instanceof Dictionary) {
-                Dictionary dic = (Dictionary) model;
-                if (dic.getCode() == 0) {
-                    return dic;
-                }
-            }
+        if (null == sAdapter) {
+            sAdapter = new SubTypeAdapter();
+            subTypeList.setLayoutManager(new CustomLinearLayoutManager(subTypeList.getContext()));
+            subTypeList.setAdapter(sAdapter);
         }
-        return null;
     }
 
     private OnViewHolderClickListener holderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
             Model model = tAdapter.get(index);
-            if (!model.isSelected()) {
-                model.setSelected(true);
-            }
-            tAdapter.update(model);
             if (model instanceof Dictionary) {
                 Dictionary dic = (Dictionary) model;
+                if (!dic.isSelected()) {
+                    dic.setSelected(true);
+                }
+                tAdapter.update(dic);
                 String selected = dic.getName();
                 if (!searchingType.equals(selected)) {
                     remotePageNumber = 1;
@@ -797,48 +799,37 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                         tAdapter.update(d);
                     }
                 }
-                if (isEmpty(searchingNature) && isEmpty(searchingType)) {
-                    // 如果两个筛选条件都为空，则选中“不限”选项
-                    Dictionary d = getNoLimit();
-                    if (null != d) {
-                        d.setSelected(true);
-                        tAdapter.update(d);
-                    }
-                }
             } else if (model instanceof Classify) {
                 Classify clazz = (Classify) model;
-                if (clazz.getParentId() <= 0 && selectedFunction == FUNC_NATURE) {
+                clazz.setSelected(!clazz.isSelected());
+                if (clazz.getParentId() <= 0) {
+                    tAdapter.update(clazz);
+                    subTypeList.setVisibility(clazz.isSelected() ? View.VISIBLE : View.GONE);
                     searchingNature = clazz.isSelected() ? clazz.getId() : "";
-                    if (searchingNature.contains("none")) {
-                        searchingNature = "";
+                    for (int i = 0, len = tAdapter.getItemCount(); i < len; i++) {
+                        Classify classify = (Classify) tAdapter.get(i);
+                        if (!classify.getId().equals(clazz.getId()) && classify.isSelected()) {
+                            classify.setSelected(false);
+                            tAdapter.update(classify);
+                        }
                     }
-                } else {
-                    searchingNature1 = clazz.isSelected() ? clazz.getId() : "";
-                    if (searchingNature1.contains("none")) {
-                        searchingNature1 = "";
-                    }
-                }
-                for (int i = 0, len = tAdapter.getItemCount(); i < len; i++) {
-                    Classify classify = (Classify) tAdapter.get(i);
-                    if (!classify.getId().equals(model.getId()) && classify.isSelected()) {
-                        classify.setSelected(false);
-                        tAdapter.update(classify);
-                    }
+                    resetFuncNature();
+                    return;
                 }
             }
-            //restoreSearchingResult();
-            remotePageNumber = 1;
-            if (searchingFunction == SEARCH_GROUP) {
-                // 组织搜索可以翻页查询
-                setSupportLoadingMore(true);
-            }
-            if (selectedFunction != FUNC_NATURE) {
-                searchingArchive();
-            } else {
-                functionClicker4.performClick();
-            }
+            loadingArchive();
         }
     };
+
+    private void loadingArchive() {
+        //restoreSearchingResult();
+        remotePageNumber = 1;
+        if (searchingFunction == SEARCH_GROUP) {
+            // 组织搜索可以翻页查询
+            setSupportLoadingMore(true);
+        }
+        searchingArchive();
+    }
 
     private class TypeAdapter extends RecyclerViewAdapter<TextViewHolder, Model> {
         @Override
@@ -846,6 +837,61 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             TextViewHolder tvh = new TextViewHolder(itemView, ArchiveSearchFragment.this);
             tvh.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
             tvh.addOnViewHolderClickListener(holderClickListener);
+            return tvh;
+        }
+
+        @Override
+        public int itemLayout(int viewType) {
+            return R.layout.holder_view_text_olny;
+        }
+
+        @Override
+        public void onBindHolderOfView(TextViewHolder holder, int position, @Nullable Model item) {
+            if (item instanceof Dictionary) {
+                holder.showContent((Dictionary) item);
+            } else if (item instanceof Classify) {
+                holder.showContent((Classify) item);
+            }
+        }
+
+        @Override
+        protected int comparator(Model item1, Model item2) {
+            return 0;
+        }
+    }
+
+    private OnViewHolderClickListener subTypeHolderClickListener = new OnViewHolderClickListener() {
+        @Override
+        public void onClick(int index) {
+            Classify clazz = (Classify) sAdapter.get(index);
+            clazz.setSelected(!clazz.isSelected());
+            sAdapter.update(clazz);
+            searchingNature1 = clazz.isSelected() ? clazz.getId() : "";
+            for (Classify classify : classifies) {
+                if (classify.getParentId() > 0) {
+                    if (classify.getParentId() == clazz.getParentId()) {
+                        // 同一目录下的
+                        if (!classify.getId().equals(clazz.getId()) && classify.isSelected()) {
+                            classify.setSelected(false);
+                            sAdapter.update(classify);
+                        }
+                    } else {
+                        if (classify.isSelected()) {
+                            classify.setSelected(false);
+                        }
+                    }
+                }
+            }
+            loadingArchive();
+        }
+    };
+
+    private class SubTypeAdapter extends RecyclerViewAdapter<TextViewHolder, Model> {
+        @Override
+        public TextViewHolder onCreateViewHolder(View itemView, int viewType) {
+            TextViewHolder tvh = new TextViewHolder(itemView, ArchiveSearchFragment.this);
+            tvh.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+            tvh.addOnViewHolderClickListener(subTypeHolderClickListener);
             return tvh;
         }
 

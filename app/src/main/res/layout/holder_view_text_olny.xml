@@ -8,14 +8,23 @@
     app:cardCornerRadius="@dimen/ui_static_dp_zero"
     app:cardElevation="@dimen/ui_static_dp_zero">
 
+    <View
+        android:id="@+id/ui_holder_view_text_item_pre_selector"
+        android:layout_width="@dimen/ui_static_dp_5"
+        android:layout_height="@dimen/ui_base_dimen_simple_item_height"
+        android:layout_marginEnd="@dimen/ui_base_dimen_margin_padding"
+        android:background="@color/colorPrimary"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/ui_holder_view_text_item_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="3"
-        android:minHeight="@dimen/ui_base_dimen_button_height"
+        android:minHeight="@dimen/ui_base_dimen_simple_item_height"
         android:padding="@dimen/ui_base_dimen_margin_padding"
         android:text="@string/app_name" />
 
@@ -27,7 +36,21 @@
         android:layout_marginEnd="@dimen/ui_static_dp_10"
         android:text="@string/ui_icon_select_line"
         android:textColor="@color/textColorHintLight"
-        android:textSize="@dimen/ui_base_text_size_big"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/ui_holder_view_text_item_last_selector"
+        android:layout_width="@dimen/ui_base_border_size_normal"
+        android:layout_height="@dimen/ui_base_dimen_simple_item_height"
+        android:layout_gravity="end"
+        android:background="@color/colorPrimary"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/ui_holder_view_text_item_top_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_base_border_size_normal"
+        android:background="@color/colorPrimary"
         android:visibility="gone" />
 
     <View
@@ -35,5 +58,5 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/ui_base_border_size_normal"
         android:layout_gravity="bottom"
-        android:background="@color/textColorHintLight" />
+        android:background="@color/windowBackground" />
 </android.support.v7.widget.CardView>

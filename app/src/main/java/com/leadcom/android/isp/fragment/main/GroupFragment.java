@@ -744,7 +744,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 3:
                 // 组织档案
-                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_GROUP, group.getId(), "");
+                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_GROUP, group.getId(), "", group.getName());
                 //ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;
             case 4:

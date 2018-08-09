@@ -19,7 +19,6 @@ import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
-import com.leadcom.android.isp.fragment.main.ArchiveSearchFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
@@ -143,7 +142,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
 
     @Click({R.id.ui_holder_view_searchable_container})
     private void viewClick(View view) {
-        ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_GROUP, mQueryId, "");
+
     }
 
     @Override

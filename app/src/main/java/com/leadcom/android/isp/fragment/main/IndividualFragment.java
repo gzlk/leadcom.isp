@@ -139,7 +139,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
 
     @Click({R.id.ui_holder_view_searchable_container})
     private void viewClick(View view) {
-        ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_USER, Cache.cache().userId, "");
+        ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_USER, Cache.cache().userId, "", "");
     }
 
     @Override
