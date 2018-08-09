@@ -298,7 +298,7 @@ public class Archive extends Additional {
     }
 
     public static Archive fromJson(String json) {
-        if (isEmpty(json)) {
+        if (isEmpty(json) || json.equals(EMPTY_JSON)) {
             return new Archive();
         }
         return Json.gson().fromJson(json, new TypeToken<Archive>() {
