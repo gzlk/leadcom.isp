@@ -130,9 +130,17 @@ public class PushMessage extends Model {
          */
         String GROUP_DOC_SHARE = "GRODOC_SHARE_CODE";
         /**
+         * 组织流转的档案被回复了
+         */
+        String GROUP_DOC_REPLY = "GROUP_REPLY_CODE";
+        /**
          * 组织被关注
          */
         String GROUP_ATTENTION = "GROUP_ATTENTION_CODE";
+        /**
+         * 组织资料授权
+         */
+        String GROUP_AUTHORIZE = "GROUP_AUTHORIZE_CODE";
     }
 
     private String userId, userName, headPhoto, templateCode, title, content, createDate;

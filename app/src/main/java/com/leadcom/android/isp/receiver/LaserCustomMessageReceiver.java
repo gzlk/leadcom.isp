@@ -12,6 +12,7 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
+import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.archive.Archive;
@@ -57,9 +58,13 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
         switch (extra.getMessageCode()) {
             case PushMessage.MsgCode.GROUP_ATTENTION:
                 break;
+            case PushMessage.MsgCode.GROUP_AUTHORIZE:
+                GroupAuthorizeFragment.open(context, extra.getGroupId());
+                break;
             case PushMessage.MsgCode.GROUP_DOC_COMMENT:
             case PushMessage.MsgCode.GROUP_DOC_TRANSPORT:
             case PushMessage.MsgCode.GROUP_DOC_LIKE:
+            case PushMessage.MsgCode.GROUP_DOC_REPLY:
                 ArchiveDetailsFragment.open(context, extra.getGroupId(), "", extra.getDocId(),
                         Archive.Type.GROUP, false, isAppForeground, extra.getDocUserId());
                 break;

@@ -1,11 +1,13 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -48,10 +50,18 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
         return gaf;
     }
 
-    public static void open(BaseFragment fragment, String groupId) {
+    private static Bundle getBundle(String groupId) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
-        fragment.openActivity(GroupAuthorizeFragment.class.getName(), bundle, true, false);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String groupId) {
+        fragment.openActivity(GroupAuthorizeFragment.class.getName(), getBundle(groupId), true, false);
+    }
+
+    public static void open(Context context, String groupId) {
+        BaseActivity.openActivity(context, GroupAuthorizeFragment.class.getName(), getBundle(groupId), true, false);
     }
 
     private static String authorizedId = String.valueOf(R.string.ui_group_authorize_authorized),
