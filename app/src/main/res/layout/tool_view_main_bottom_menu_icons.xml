@@ -6,6 +6,16 @@
     android:orientation="horizontal">
 
     <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_tool_main_bottom_icon_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="@string/ui_icon_pentagon_hollow"
+        android:textColor="@color/textColorHintDark"
+        android:textSize="@dimen/ui_text_size_main_bottom_icon" />
+
+    <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_tool_main_bottom_icon_1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -14,6 +24,11 @@
         android:text="@string/ui_icon_home"
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/ui_text_size_main_bottom_icon" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/ui_static_dp_25"
+        android:layout_weight="1" />
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -58,21 +73,6 @@
         </com.hlk.hlklib.lib.view.CorneredView>
 
     </RelativeLayout>
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="@dimen/ui_static_dp_25"
-        android:layout_weight="1" />
-
-    <com.hlk.hlklib.lib.view.CustomTextView
-        android:id="@+id/ui_tool_main_bottom_icon_3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:text="@string/ui_icon_pentagon_hollow"
-        android:textColor="@color/textColorHintDark"
-        android:textSize="@dimen/ui_text_size_main_bottom_icon" />
 
     <RelativeLayout
         android:layout_width="0dp"

@@ -52,8 +52,6 @@ import com.leadcom.android.isp.model.common.PushMessage;
 
 public class MainActivity extends TitleActivity {
 
-    public static final String EXTRA_NOTIFICATION = "leadcom.extra.notification";
-
     /**
      * app内部打开
      */
@@ -101,11 +99,11 @@ public class MainActivity extends TitleActivity {
     private SystemMessageFragment messageFragment;
     private GroupFragment groupFragment;
     private PersonalityFragment mineFragment;
-    private int showType = SHOW_HOME;
+    private int showType = SHOW_GROUP;
 
     @Override
     protected void getParametersFromBundle(Bundle bundle) {
-        showType = bundle.getInt(PARAM_SELECTED, SHOW_HOME);
+        showType = bundle.getInt(PARAM_SELECTED, SHOW_GROUP);
         super.getParametersFromBundle(bundle);
     }
 
@@ -288,14 +286,14 @@ public class MainActivity extends TitleActivity {
         int id = view.getId();
         switch (id) {
             case R.id.ui_tool_main_bottom_clickable_1:
-                if (showType != SHOW_HOME) {
-                    showType = SHOW_HOME;
+                if (showType != SHOW_GROUP) {
+                    showType = SHOW_GROUP;
                     setDisplayPage();
                 }
                 break;
             case R.id.ui_tool_main_bottom_clickable_2:
-                if (showType != SHOW_MSG) {
-                    showType = SHOW_MSG;
+                if (showType != SHOW_HOME) {
+                    showType = SHOW_HOME;
                     setDisplayPage();
                 }
                 break;
@@ -304,8 +302,8 @@ public class MainActivity extends TitleActivity {
                 ArchiveCreateSelectorFragment.open(this, "");
                 break;
             case R.id.ui_tool_main_bottom_clickable_3:
-                if (showType != SHOW_GROUP) {
-                    showType = SHOW_GROUP;
+                if (showType != SHOW_MSG) {
+                    showType = SHOW_MSG;
                     setDisplayPage();
                 }
                 break;
