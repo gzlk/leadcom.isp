@@ -91,4 +91,11 @@ public class ClassifyRequest extends Request<Classify> {
         String param = format("%s?groupId=%s&parentId=%s", url(LIST), groupId, (isEmpty(parentId) ? "" : parentId));
         executeHttpRequest(getRequest(PageClassify.class, param, "", HttpMethods.Get));
     }
+
+    /**
+     * 查找所有后台固定定义的档案属性
+     */
+    public void listAll() {
+        executeHttpRequest(getRequest(PageClassify.class, url(LIST) + "/all", "", HttpMethods.Get));
+    }
 }

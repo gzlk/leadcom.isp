@@ -2,6 +2,8 @@ package com.leadcom.android.isp.model.archive;
 
 import com.leadcom.android.isp.model.Model;
 
+import java.util.ArrayList;
+
 /**
  * <b>功能描述：</b>档案分类<br />
  * <b>创建作者：</b>Hsiang Leekwok <br />
@@ -13,12 +15,23 @@ import com.leadcom.android.isp.model.Model;
  * <b>修改备注：</b><br />
  */
 public class Classify extends Model {
-    /**父类ID*/
+    /**
+     * 父类ID
+     */
     private long parentId;
-    /**所属组织，考虑到每个组织的档案分类不一样*/
+    /**
+     * 所属组织，考虑到每个组织的档案分类不一样
+     */
     private String groupId;
-    /**分类*/
+    /**
+     * 分类
+     */
     private String name;
+
+    /**
+     * 下级分类
+     */
+    private ArrayList<Classify> docClassifyList;
 
     public long getParentId() {
         return parentId;
@@ -42,5 +55,16 @@ public class Classify extends Model {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ArrayList<Classify> getDocClassifyList() {
+        if (null == docClassifyList) {
+            docClassifyList = new ArrayList<>();
+        }
+        return docClassifyList;
+    }
+
+    public void setDocClassifyList(ArrayList<Classify> docClassifyList) {
+        this.docClassifyList = docClassifyList;
     }
 }
