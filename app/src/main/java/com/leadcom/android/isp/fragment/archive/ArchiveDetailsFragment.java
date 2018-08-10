@@ -29,7 +29,6 @@ import com.leadcom.android.isp.activity.MainActivity;
 import com.leadcom.android.isp.activity.WelcomeActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchivePermissionRequest;
-import com.leadcom.android.isp.api.archive.ArchiveQueryRequest;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.common.ShareRequest;
@@ -61,7 +60,6 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchivePushTarget;
-import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.common.ArchivePermission;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -90,40 +88,17 @@ import java.util.List;
 
 public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
-    private static final String PARAM_DOC_TYPE = "adwvf_archive_type";
     private static final String PARAM_ARCHIVE = "adwvf_archive";
     private static final String PARAM_DRAFT = "adwvf_draft";
     private static final String PARAM_INNER_OPEN = "adwvf_inner_open";
-    private static final String PARAM_GROUP_ID = "adwvf_group_id";
-    private static final String PARAM_AUTHOR_ID = "adwvf_author_id";
-    private static final String PARAM_COVER_URL = "adwvf_cover_url";
     private static final String PARAM_CLASSIFY_TYPE = "adwvf_classify_type";
     private static boolean isCollected = false;
-    private static String h5 = "";
+    private static boolean isLoaded = false;
 
     public static ArchiveDetailsFragment newInstance(Bundle bundle) {
         ArchiveDetailsFragment adwvf = new ArchiveDetailsFragment();
         adwvf.setArguments(bundle);
         return adwvf;
-    }
-
-    private static Bundle getBundle(String archiveId, String groupId, String coverUrl, int archiveType, boolean innerOpen, boolean isDraft, String authorId) {
-        Bundle bundle = new Bundle();
-        // 档案id
-        bundle.putString(PARAM_QUERY_ID, archiveId);
-        // 档案所属的组织id
-        bundle.putString(PARAM_GROUP_ID, groupId);
-        // 档案类型：组织档案或个人档案
-        bundle.putInt(PARAM_DOC_TYPE, archiveType);
-        // 是否app内部打开的详情页
-        bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
-        // 是否是草稿档案
-        bundle.putBoolean(PARAM_DRAFT, isDraft);
-        // 档案作者id
-        bundle.putString(PARAM_AUTHOR_ID, authorId);
-        // 档案封面
-        bundle.putString(PARAM_COVER_URL, coverUrl);
-        return bundle;
     }
 
     public static void open(BaseFragment fragment, Collection collection) {
@@ -137,33 +112,38 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive) {
-        if (!isEmpty(archive.getH5()) && archive.getH5().contains("quesinfo.html")) {
-            h5 = archive.getH5();
-        } else {
-            h5 = "";
-        }
-        open(fragment, archive.getGroupId(), archive.getCover(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
-                (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), false, archive.getUserId());
+        open(fragment, archive, false);
     }
 
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive, boolean isDraft) {
-        open(fragment, archive.getGroupId(), archive.getCover(), (isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP),
-                (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft, archive.getUserId());
-    }
-
-    public static void open(Context context, String groupId, String cover, String archiveId, int archiveType, boolean isDraft, boolean innerOpen, String authorId) {
-        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(),
-                getBundle(archiveId, groupId, cover, archiveType, innerOpen, isDraft, authorId), true, false);
-    }
-
-    private static void open(BaseFragment fragment, String groupId, String cover, int archiveType, String archiveId, boolean isDraft, String authorId) {
+        isLoaded = false;
         fragment.openActivity(ArchiveDetailsFragment.class.getName(),
-                getBundle(archiveId, groupId, cover, archiveType, true, isDraft, authorId), true, false);
+                getBundle(archive, (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft, true),
+                true, false);
     }
 
-    private static String getUrl(String archiveId, int archiveType, boolean isDraft, boolean forShare) {
-        if (!isEmpty(h5) && h5.length() > 20) {
+    public static void open(Context context, String groupId, String archiveId, boolean isDraft, boolean innerOpen, String authorId) {
+        Archive archive = new Archive();
+        archive.setId(archiveId);
+        archive.setGroupId(groupId);
+        archive.setUserId(authorId);
+        isLoaded = false;
+        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(),
+                getBundle(archive, archiveId, isDraft, innerOpen), true, false);
+    }
+
+    private static Bundle getBundle(Archive archive, String archiveId, boolean isDraft, boolean innerOpen) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(PARAM_ARCHIVE, archive);
+        bundle.putString(PARAM_QUERY_ID, archiveId);
+        bundle.putBoolean(PARAM_DRAFT, isDraft);
+        bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
+        return bundle;
+    }
+
+    private static String getUrl(String archiveId, int archiveType, boolean isDraft, String h5) {
+        if (isH5(h5)) {
             // http://113.108.144.2:8038/quesinfo.html              ??
             // http://113.108.144.2:8038/quesinfo.html?id=xxxa      ??
             return h5 + (h5.contains("?") ? "&" : "?") + "accesstoken=" + Cache.cache().accessToken;
@@ -172,30 +152,32 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         // https://www.chacx.cn/html/h5file.html?docid=&doctype=&accesstoken=
         return StringHelper.format("%s/html/h5file.html?docid=%s&owntype=%d&isdraft=%s&accesstoken=%s",
                 (Cache.isReleasable() ? "https://www.chacx.cn" : "http://113.108.144.2:8038"),
-                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, (forShare ? "" : Cache.cache().accessToken));
+                archiveId, (archiveType > 0 ? archiveType : Archive.Type.GROUP), isDraft, Cache.cache().accessToken);
+    }
+
+    private static boolean isH5(String h5) {
+        return !isEmpty(h5) && h5.contains("quesinfo.html");
     }
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        archiveType = bundle.getInt(PARAM_DOC_TYPE, Archive.Type.GROUP);
-        isDraft = bundle.getBoolean(PARAM_DRAFT, false);
         mArchive = (Archive) bundle.getSerializable(PARAM_ARCHIVE);
+        assert mArchive != null;
+        archiveType = isEmpty(mArchive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP;
+        isDraft = bundle.getBoolean(PARAM_DRAFT, false);
         innerOpen = bundle.getBoolean(PARAM_INNER_OPEN, false);
-        groupId = bundle.getString(PARAM_GROUP_ID, "");
-        authorId = bundle.getString(PARAM_AUTHOR_ID, "");
+        groupId = mArchive.getGroupId();
+        authorId = mArchive.getUserId();
         pushingType = bundle.getInt(PARAM_CLASSIFY_TYPE, 0);
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putInt(PARAM_DOC_TYPE, archiveType);
         bundle.putSerializable(PARAM_ARCHIVE, mArchive);
         bundle.putBoolean(PARAM_DRAFT, isDraft);
         bundle.putBoolean(PARAM_INNER_OPEN, innerOpen);
-        bundle.putString(PARAM_GROUP_ID, groupId);
-        bundle.putString(PARAM_AUTHOR_ID, authorId);
         bundle.putInt(PARAM_CLASSIFY_TYPE, pushingType);
     }
 
@@ -225,7 +207,6 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     @Override
     public void onDestroy() {
-        h5 = "";
         if (!SysInfoUtil.stackResumed(Activity())) {
             if (!innerOpen) {
                 // 如果不是堆栈恢复的app则打开主页面，否则直接关闭即可
@@ -378,7 +359,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             if (archive.isAuthor()) {
                 resetRightIconEvent();
             }
-        } else if (!isCollected && isEmpty(h5)) {
+        } else if (!isCollected && !isH5(archive.getH5())) {
             // 不是收藏过来的内容
             // 非草稿档案，可以分享等等
             setRightIcon(R.string.ui_icon_more);
@@ -395,10 +376,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             Collectable.resetArchiveCollectionParams(archive);
         }
 
-        String url = getUrl(archive.getId(), archive.getOwnType(), isDraft, false);
+        String url = getUrl(mQueryId, archive.getOwnType(), isDraft, archive.getH5());
         log(url);
         webView.loadUrl(url);
-        loadingArchiveDetails();
     }
 
     private void displayArchive() {
@@ -416,25 +396,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             mArchive.setUserId(authorId);
 
             displayArchive(mArchive);
+        } else if (!isLoaded) {
+            isLoaded = true;
+            displayArchive(mArchive);
         }
-    }
-
-    private void loadingArchiveDetails() {
-        ArchiveQueryRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<ArchiveQuery>() {
-            @Override
-            public void onResponse(ArchiveQuery archive, boolean success, String message) {
-                super.onResponse(archive, success, message);
-                if (success && null != archive) {
-                    if (null != archive.getGroDoc()) {
-                        mArchive = archive.getGroDoc();
-                    } else if (null != archive.getUserDoc()) {
-                        mArchive = archive.getUserDoc();
-                    } else if (null != archive.getDocDraft()) {
-                        mArchive = archive.getDocDraft();
-                    }
-                }
-            }
-        }).find(archiveType, mQueryId);
     }
 
     private void prepareShareDialogElement(Archive archive) {

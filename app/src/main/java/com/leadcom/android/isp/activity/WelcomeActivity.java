@@ -214,7 +214,7 @@ public class WelcomeActivity extends BaseActivity {
                                     groupId = "";
                                 }
                                 String authorId = uri.getQueryParameter("authorid");
-                                ArchiveDetailsFragment.open(this, groupId, "", id, tp, false, true, authorId);
+                                ArchiveDetailsFragment.open(this, groupId, id, false, true, authorId);
                             } else if (path.contains("user")) {
                                 App.openUserInfo(this, id, "");
                             }
