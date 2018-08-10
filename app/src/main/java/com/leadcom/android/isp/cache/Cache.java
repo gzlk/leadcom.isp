@@ -81,7 +81,7 @@ public class Cache {
         }
     }
 
-    private static int get(int res, int resBeta) {
+    public static int get(int res, int resBeta) {
         return isReleasable() ? resBeta : res;
     }
 

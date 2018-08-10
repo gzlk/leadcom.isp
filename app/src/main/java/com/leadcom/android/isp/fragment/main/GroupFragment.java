@@ -38,6 +38,7 @@ import com.leadcom.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.fragment.organization.SquadsFragment;
+import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
@@ -138,6 +139,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     private String[] items;
     private boolean isSingle = false;
     private int selectedIndex = -1;
+    private String currentGroup = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -173,6 +175,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         addOnImageSelectedListener(albumImageSelectedListener);
         // 文件上传完毕后的回调处理
         setOnFileUploadingListener(mOnFileUploadingListener);
+        currentGroup = PreferenceHelper.get(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), "");
     }
 
     // 相册选择返回了
@@ -455,13 +458,9 @@ public class GroupFragment extends BaseOrganizationFragment {
                     initializeGroupsPosition();
                 }
                 // 初始化第一个组织
-                if (gAdapter.getItemCount() > 0) {
-                    if (isEmpty(mQueryId)) {
-                        onGroupChange(gAdapter.get(0));
-                    }
-                }
-            } else if (gAdapter.getItemCount() > 0) {
-                onGroupChange(!isEmpty(mQueryId) ? gAdapter.get(mQueryId) : gAdapter.get(0));
+                restoreCurrentGroup();
+            } else {
+                restoreCurrentGroup();
             }
         }
         displayNothing(gAdapter.getItemCount() <= 0);
@@ -471,6 +470,25 @@ public class GroupFragment extends BaseOrganizationFragment {
         // 重新拉取我的权限列表
         App.app().fetchPermissions();
         stopRefreshing();
+    }
+
+    private void restoreCurrentGroup() {
+        if (gAdapter.getItemCount() > 0) {
+            if (isEmpty(mQueryId)) {
+                if (isEmpty(currentGroup)) {
+                    onGroupChange(gAdapter.get(0));
+                } else {
+                    Organization group = gAdapter.get(currentGroup);
+                    if (null != group) {
+                        onGroupChange(group);
+                    } else {
+                        onGroupChange(gAdapter.get(0));
+                    }
+                }
+            } else {
+                onGroupChange(gAdapter.get(mQueryId));
+            }
+        }
     }
 
     private void initializeGroupsAdapter() {
@@ -504,6 +522,7 @@ public class GroupFragment extends BaseOrganizationFragment {
 
     private void onGroupChange(Organization group) {
         titleTextView.setText(Html.fromHtml(group.getName()));
+        PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
         if (null != gAdapter) {
             for (int i = 0, len = gAdapter.getItemCount(); i < len; i++) {
                 Organization org = gAdapter.get(i);
