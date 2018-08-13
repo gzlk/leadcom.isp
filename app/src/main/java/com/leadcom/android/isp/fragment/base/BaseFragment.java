@@ -746,7 +746,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
 
     protected void shareToQZone() {
         ArrayList<String> img = new ArrayList<>();
-        img.add(mShareInfo.getImageUrl());
+        if (!isEmpty(mShareInfo.getImageUrl())) {
+            img.add(mShareInfo.getImageUrl());
+        }
         ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), mShareInfo.getTitle(), Utils.clearHtml(mShareInfo.getDescription()), mShareInfo.getTargetPath(), mShareInfo.getImageUrl(), img);
     }
 
