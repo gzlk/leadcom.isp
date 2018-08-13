@@ -66,7 +66,7 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         minmentTag.setVisibility(isMinMeng(organization.getName()) ? View.VISIBLE : View.GONE);
         logoView.displayImage(logo, getDimension(R.dimen.ui_static_dp_60), false, false);
         logo = organization.getIntro();
-        introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo));
+        introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo.replaceAll("\n", "<br/>")));
         Role role = Cache.cache().getGroupRole(organization.getId());
         editIcon.setVisibility((null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) ? View.VISIBLE : View.INVISIBLE);
     }
