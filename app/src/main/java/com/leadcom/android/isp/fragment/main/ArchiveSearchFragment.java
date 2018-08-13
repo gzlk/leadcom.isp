@@ -49,6 +49,7 @@ import com.leadcom.android.isp.model.organization.Role;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -135,7 +136,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
      * 当前搜索方式
      */
     private int searchingFunction = SEARCH_HOME;
-    private static String searchingYear = "", searchingNature = "", searchingNature1 = "", searchingType = "";
+    private String searchingYear = "", searchingNature = "", searchingNature1 = "", searchingType = "";
 
     private String searchingText, mGroupName;
     private boolean stillLoading = false;
@@ -559,20 +560,30 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         int parent = Integer.valueOf(isEmpty(searchingNature) ? "0" : searchingNature);
         if (parent > 0) {
             sAdapter.clear();
+            all.setParentId(parent);
+            sAdapter.add(all);
         }
 
+        boolean hasSelected = false;
         for (Classify classify : classifies) {
             if (classify.getParentId() == 0) {
                 tAdapter.add(classify);
             } else if (classify.getParentId() > 0 && classify.getParentId() == parent) {
+                if (classify.isSelected()) {
+                    hasSelected = true;
+                }
                 sAdapter.add(classify);
             }
         }
-        if (tAdapter.getItemCount() <= 0) {
-            fetchingClassify(searchingNature);
+        if (!hasSelected) {
+            all.setSelected(true);
+            sAdapter.update(all);
         }
-        if (!isEmpty(searchingNature) && sAdapter.getItemCount() <= 0) {
-            fetchingClassify(searchingNature);
+        if (tAdapter.getItemCount() <= 0) {
+            fetchingClassify();
+        }
+        if (!isEmpty(searchingNature) && sAdapter.getItemCount() <= 1) {
+            fetchingClassify();
         }
     }
 
@@ -589,7 +600,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         }).list(Dictionary.Type.ARCHIVE_TYPE);
     }
 
-    private void fetchingClassify(String classifyId) {
+    private void fetchingClassify() {
         ClassifyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Classify>() {
             @Override
             public void onResponse(List<Classify> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -598,12 +609,18 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     for (Classify classify : list) {
                         if (!classifies.contains(classify)) {
                             classifies.add(classify);
+                            for (Classify clazzify : classify.getDocClassifyList()) {
+                                clazzify.setParentId(Long.valueOf(classify.getId()));
+                                if (!classifies.contains(clazzify)) {
+                                    classifies.add(clazzify);
+                                }
+                            }
                         }
                     }
                     resetTypeList();
                 }
             }
-        }).list(mQueryId, classifyId);
+        }).listAll();
     }
 
     private void searchingArchive() {
@@ -634,6 +651,12 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private Dictionary none = new Dictionary() {{
+        setId("none");
+        setName("全部");
+        setSelected(true);
+    }};
+
+    private Classify all = new Classify() {{
         setId("none");
         setName("全部");
         setSelected(true);
@@ -863,30 +886,42 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderClickListener subTypeHolderClickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            Classify clazz = (Classify) sAdapter.get(index);
-            clazz.setSelected(!clazz.isSelected());
-            sAdapter.update(clazz);
+            Classify clazz = sAdapter.get(index);
+            if (!clazz.isSelected()) {
+                clazz.setSelected(true);
+                sAdapter.update(clazz);
+            } else {
+                return;
+            }
             searchingNature1 = clazz.isSelected() ? clazz.getId() : "";
+            if (searchingNature1.contains("none")) {
+                searchingNature1 = "";
+            }
+
+            // 去除所有其他类别的选中状态
             for (Classify classify : classifies) {
                 if (classify.getParentId() > 0) {
-                    if (classify.getParentId() == clazz.getParentId()) {
-                        // 同一目录下的
-                        if (!classify.getId().equals(clazz.getId()) && classify.isSelected()) {
-                            classify.setSelected(false);
-                            sAdapter.update(classify);
-                        }
-                    } else {
+                    if (classify.getParentId() != clazz.getParentId()) {
                         if (classify.isSelected()) {
                             classify.setSelected(false);
                         }
                     }
                 }
             }
+            Iterator<Classify> iterator = sAdapter.iterator();
+            while (iterator.hasNext()) {
+                Classify classify = iterator.next();
+                // 同一目录下的
+                if (!classify.getId().equals(clazz.getId()) && classify.isSelected()) {
+                    classify.setSelected(false);
+                    sAdapter.update(classify);
+                }
+            }
             loadingArchive();
         }
     };
 
-    private class SubTypeAdapter extends RecyclerViewAdapter<TextViewHolder, Model> {
+    private class SubTypeAdapter extends RecyclerViewAdapter<TextViewHolder, Classify> {
         @Override
         public TextViewHolder onCreateViewHolder(View itemView, int viewType) {
             TextViewHolder tvh = new TextViewHolder(itemView, ArchiveSearchFragment.this);
@@ -901,16 +936,12 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         }
 
         @Override
-        public void onBindHolderOfView(TextViewHolder holder, int position, @Nullable Model item) {
-            if (item instanceof Dictionary) {
-                holder.showContent((Dictionary) item);
-            } else if (item instanceof Classify) {
-                holder.showContent((Classify) item);
-            }
+        public void onBindHolderOfView(TextViewHolder holder, int position, @Nullable Classify item) {
+            holder.showContent(item);
         }
 
         @Override
-        protected int comparator(Model item1, Model item2) {
+        protected int comparator(Classify item1, Classify item2) {
             return 0;
         }
     }
