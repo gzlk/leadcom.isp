@@ -208,7 +208,6 @@ public class WelcomeActivity extends BaseActivity {
                                     log("传入的参数错误：type = null");
                                 }
                                 // 默认组织档案
-                                int tp = StringHelper.isEmpty(type, true) ? Archive.Type.GROUP : Integer.valueOf(type);
                                 String groupId = uri.getQueryParameter("groupid");
                                 if (StringHelper.isEmpty(groupId, true) || groupId.contains("undefined")) {
                                     groupId = "";

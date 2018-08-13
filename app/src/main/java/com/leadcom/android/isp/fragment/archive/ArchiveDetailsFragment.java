@@ -118,6 +118,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     // 打开详情页并指定一个档案，收藏时用
     public static void open(BaseFragment fragment, Archive archive, boolean isDraft) {
         isLoaded = false;
+        archive.setOwnType(isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP);
         fragment.openActivity(ArchiveDetailsFragment.class.getName(),
                 getBundle(archive, (!isEmpty(archive.getDocId()) ? archive.getDocId() : archive.getId()), isDraft, true),
                 true, false);
@@ -376,7 +377,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             Collectable.resetArchiveCollectionParams(archive);
         }
 
-        String url = getUrl(mQueryId, archive.getOwnType(), isDraft, archive.getH5());
+        String url = getUrl(mQueryId, mArchive.getOwnType(), isDraft, archive.getH5());
         log(url);
         webView.loadUrl(url);
     }
