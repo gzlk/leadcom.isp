@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.fragment.individual.moment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -130,6 +131,15 @@ public class MomentDetailsFragment extends BaseMomentFragment {
         });
         setInputHint(R.string.ui_text_archive_details_comment_hint);
         inputLayout.setVisibility(isCollected ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_DELETE) {
+            // 动态详情页中动态删除事件
+            resultData(getResultedData(data));
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     @Override

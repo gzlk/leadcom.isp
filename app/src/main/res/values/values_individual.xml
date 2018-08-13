@@ -32,6 +32,8 @@
 
     <string name="ui_text_moment_details_button_privacy">设置为私密</string>
     <string name="ui_text_moment_details_button_public">设置为公开</string>
+    <string name="ui_text_moment_details_privacy_privacy">已设置为私密</string>
+    <string name="ui_text_moment_details_privacy_public">已设置为公开</string>
     <string name="ui_text_moment_details_button_favorite">@string/ui_base_text_favorite</string>
     <string name="ui_text_moment_details_button_favorited">取消收藏</string>
     <string name="ui_text_moment_details_button_save">保存图片</string>

@@ -2,6 +2,7 @@ package com.leadcom.android.isp.api.user;
 
 import android.support.annotation.NonNull;
 
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.Request;
@@ -36,6 +37,9 @@ public class MomentRequest extends Request<Moment> {
     }
 
     private static class SingleMoment extends SingleQuery<Moment> {
+    }
+
+    private static class BoolMoment extends BoolQuery<Moment> {
     }
 
     private static class MultiMoment extends PaginationQuery<Moment> {
@@ -157,7 +161,7 @@ public class MomentRequest extends Request<Moment> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleMoment.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BoolMoment.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     private static final String QB_USER_ID = "userId";
@@ -197,7 +201,7 @@ public class MomentRequest extends Request<Moment> {
      * 删除一条说说，需要POST
      */
     public void delete(@NonNull String momentId) {
-        getRequestBy(url(DELETE), QB_MOMENT, SingleMoment.class, momentId, -1, HttpMethods.Get);
+        getRequestBy(url(DELETE), QB_MOMENT, BoolMoment.class, momentId, -1, HttpMethods.Get);
     }
 
     /**

@@ -103,6 +103,7 @@ public abstract class BaseMomentFragment extends BaseCmtLikeColFragment {
                 displayLoading(false);
                 if (success) {
                     mMoment.setAuthPublic(state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
+                    ToastHelper.make().showMsg(state == Seclusion.Type.Public ? R.string.ui_text_moment_details_privacy_privacy : R.string.ui_text_moment_details_privacy_public);
                 }
             }
         }).update(mQueryId, state == Seclusion.Type.Public ? 2 : Seclusion.Type.Public);
