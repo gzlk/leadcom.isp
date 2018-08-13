@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +62,10 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 空的json数组
      */
     public static final String EMPTY_ARRAY = "[]";
+    // 各种app图标资源
+    public static final String ICON_RECT_1024x1024 = "http://image.py17w.net:8008/group1/M00/00/4B/eBk66ltxeseAPGPqAAgbo9Gnh5g589.png";
+    public static final String ICON_RECT_256x256 = "http://image.py17w.net:8008/group1/M00/00/4B/eBk66ltxfCCABDEZAABzH4SMLsk068.png";
+    public static final String ICON_OVAL_512x512 = "http://image.py17w.net:8008/group1/M00/00/50/cErYIVtxe5KAfvKUAAF1AduIvXE159.png";
     /**
      * fragment的根UI
      */
@@ -748,6 +751,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
         ArrayList<String> img = new ArrayList<>();
         if (!isEmpty(mShareInfo.getImageUrl())) {
             img.add(mShareInfo.getImageUrl());
+        } else {
+            // 如果没有图片，则加入默认的图片
+            img.add(ICON_RECT_256x256);
         }
         ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), mShareInfo.getTitle(), Utils.clearHtml(mShareInfo.getDescription()), mShareInfo.getTargetPath(), mShareInfo.getImageUrl(), img);
     }
