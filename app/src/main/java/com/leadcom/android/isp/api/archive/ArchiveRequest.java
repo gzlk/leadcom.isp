@@ -435,7 +435,9 @@ public class ArchiveRequest extends Request<Archive> {
                         .put("site", checkNull(archive.getSite()))
                         .put("property", checkNull(archive.getProperty()))
                         .put("category", checkNull(archive.getCategory()))
-                        .put("participant", checkNull(archive.getParticipant()));
+                        .put("docClassifyId", checkNull(archive.getDocClassifyId()))
+                        .put("participant", checkNull(archive.getParticipant()))
+                        .put("participantIdList", new JSONArray(archive.getParticipantIdList()));
                 //if (archive.isTemplateArchive()) {
                 //    object.put("happenDate", archive.getHappenDate());
                 //}

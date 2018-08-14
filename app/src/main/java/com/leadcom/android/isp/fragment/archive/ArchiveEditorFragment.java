@@ -551,6 +551,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         if (null == oNames || !oNames.contains(member.getUserName())) {
                             names += (isEmpty(names) ? "" : "、") + member.getUserName();
                         }
+                        if (!mArchive.getParticipantIdList().contains(member.getUserId())) {
+                            mArchive.getParticipantIdList().add(member.getUserId());
+                        }
                     }
                 }
                 mArchive.setParticipant(names);

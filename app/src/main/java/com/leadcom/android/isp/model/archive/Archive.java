@@ -138,6 +138,7 @@ public class Archive extends Additional {
         String Property = "property";
         String Category = "category";
         String Participant = "participant";
+        String Participants = "participants";
         String TypeName = "typeName";
         String Code = "code";
         String Description = "description";
@@ -408,6 +409,9 @@ public class Archive extends Additional {
     // 档案参与人
     @Column(Field.Participant)
     private String participant;
+    // 参与者用户ID列表
+    @Column(Field.Participants)
+    private ArrayList<String> participantIdList;
     //授权公开(0.私密，自己可以看,1.公开，所有人都能查看)，个人档案的属性
     @Column(Field.AuthPublic)
     private int authPublic;
@@ -940,6 +944,17 @@ public class Archive extends Additional {
 
     public void setParticipant(String participant) {
         this.participant = participant;
+    }
+
+    public ArrayList<String> getParticipantIdList() {
+        if (null == participantIdList) {
+            participantIdList = new ArrayList<>();
+        }
+        return participantIdList;
+    }
+
+    public void setParticipantIdList(ArrayList<String> participantIdList) {
+        this.participantIdList = participantIdList;
     }
 
     public String getWatermark() {
