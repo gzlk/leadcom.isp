@@ -713,6 +713,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     private Model allYear = new Model() {{
         setId("year0");
+        setSelected(true);
         setAccessToken("全部");
     }};
     private Model thisYear = new Model() {{
