@@ -92,7 +92,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(StringCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     public void add(String content) {
@@ -134,7 +134,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(StringCollection.class, url(ADD), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(SingleCollection.class, url(ADD), object.toString(), HttpMethods.Post));
     }
 
     /**
@@ -158,7 +158,7 @@ public class CollectionRequest extends Request<Collection> {
             e.printStackTrace();
         }
 
-        executeHttpRequest(getRequest(SingleCollection.class, url(UPDATE), object.toString(), HttpMethods.Post));
+        executeHttpRequest(getRequest(BoolCollection.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
     /**
