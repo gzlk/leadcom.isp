@@ -13,7 +13,6 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
@@ -42,7 +41,9 @@ import java.util.List;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
+public class GroupAuthorizeFragment extends BaseOrganizationFragment {
+
+    private static final String PARAM_GROUP_NAME = "";
 
     public static GroupAuthorizeFragment newInstance(Bundle bundle) {
         GroupAuthorizeFragment gaf = new GroupAuthorizeFragment();
@@ -50,31 +51,45 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
         return gaf;
     }
 
-    private static Bundle getBundle(String groupId) {
+    private static Bundle getBundle(String groupId, String groupName) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
+        bundle.putString(PARAM_GROUP_NAME, groupName);
         return bundle;
     }
 
-    public static void open(BaseFragment fragment, String groupId) {
-        fragment.openActivity(GroupAuthorizeFragment.class.getName(), getBundle(groupId), true, false);
+    public static void open(BaseFragment fragment, String groupId, String groupName) {
+        fragment.openActivity(GroupAuthorizeFragment.class.getName(), getBundle(groupId, groupName), true, false);
     }
 
     public static void open(Context context, String groupId) {
-        BaseActivity.openActivity(context, GroupAuthorizeFragment.class.getName(), getBundle(groupId), true, false);
+        BaseActivity.openActivity(context, GroupAuthorizeFragment.class.getName(), getBundle(groupId, ""), true, false);
     }
 
     private static String authorizedId = String.valueOf(R.string.ui_group_authorize_authorized),
             authorizingId = String.valueOf(R.string.ui_group_authorize_authorizing);
     private AuthorizeAdapter mAdapter;
     private int selectedIndex = -1;
+    private String mGroupName = "";
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        mGroupName = bundle.getString(PARAM_GROUP_NAME, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_GROUP_NAME, mGroupName);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         layoutType = TYPE_FLEX;
         super.onActivityCreated(savedInstanceState);
         isLoadingComplete(true);
-        setCustomTitle(R.string.ui_group_authorize_fragment_title);
+        resetTitle();
     }
 
     @Override
@@ -205,6 +220,24 @@ public class GroupAuthorizeFragment extends BaseSwipeRefreshSupportFragment {
             mAdapter.add(model);
             fetchingAuthorized();
             fetchingAuthorizing();
+            if (isEmpty(mGroupName)) {
+                fetchingRemoteOrganization(mQueryId);
+            }
+        }
+    }
+
+    @Override
+    protected void onFetchingRemoteOrganizationComplete(Organization organization) {
+        if (null != organization) {
+            mGroupName = organization.getName();
+            resetTitle();
+        }
+    }
+
+    private void resetTitle() {
+        String title = StringHelper.getString(R.string.ui_group_authorize_fragment_title);
+        if (!isEmpty(mGroupName)) {
+            setCustomTitle(format("%s(%s)", title, mGroupName));
         }
     }
 

@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -341,7 +342,7 @@ public class TitleActivity extends BaseActivity {
      */
     private void setTitleText(String text) {
         if (null != mTitle) {
-            mTitle.setText(text);
+            mTitle.setText(StringHelper.isEmpty(text) ? "" : EmojiUtility.getEmojiString(this, text, true));
         }
     }
 

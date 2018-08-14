@@ -542,7 +542,7 @@ public class MainActivity extends TitleActivity {
         int color1 = ContextCompat.getColor(this, R.color.textColorHintDark);
         int color2 = ContextCompat.getColor(this, R.color.colorPrimary);
 
-        iconView1.setText(showType == SHOW_HOME ? R.string.ui_icon_home : R.string.ui_icon_home_unselected);
+        //iconView1.setText(showType == SHOW_HOME ? R.string.ui_icon_home : R.string.ui_icon_home_unselected);
         iconView1.setTextColor(showType == SHOW_HOME ? color2 : color1);
         textView1.setTextColor(showType == SHOW_HOME ? color2 : color1);
 

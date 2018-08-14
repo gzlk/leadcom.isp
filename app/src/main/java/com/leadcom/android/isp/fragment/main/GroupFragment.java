@@ -44,6 +44,7 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.holder.home.GroupHeaderViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
@@ -563,6 +564,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             dAdapter.remove(item);
         }
         removeClassify();
+        dAdapter.sort();
         loadGroupSelfDefined();
         if (isSingle) {
             return;
@@ -571,6 +573,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     }
 
     private void removeClassify() {
+        dAdapter.remove(line);
         Iterator<Model> iterator = dAdapter.iterator();
         while (iterator.hasNext()) {
             Model model = iterator.next();
@@ -587,6 +590,9 @@ public class GroupFragment extends BaseOrganizationFragment {
             public void onResponse(List<Classify> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success && null != list) {
+                    if (list.size() > 0) {
+                        dAdapter.add(line);
+                    }
                     for (Classify classify : list) {
                         dAdapter.add(classify);
                     }
@@ -751,8 +757,18 @@ public class GroupFragment extends BaseOrganizationFragment {
     }
 
     private void handleItemClick(int index) {
+        Model model = dAdapter.get(index);
+        if (model instanceof SimpleClickableItem) {
+            handleClickable(index);
+        } else if (model instanceof Classify) {
+            handleClassifyClick(index);
+        }
+    }
+
+    private void handleClickable(int index) {
+        SimpleClickableItem item = (SimpleClickableItem) dAdapter.get(index);
         Organization group = (Organization) dAdapter.get(0);
-        switch (index) {
+        switch (item.getIndex()) {
             case 1:
                 // 组织成员
                 ContactFragment.open(this, group.getId());
@@ -774,25 +790,17 @@ public class GroupFragment extends BaseOrganizationFragment {
                 //}
                 break;
             case 6:
-                if (dAdapter.get(index) instanceof Classify) {
-                    handleClassifyClick(index);
-                } else {
-                    // 成员资料统计
-                    MemberNatureMainFragment.open(this, group.getId(), group.getName(), false, "");
-                }
+                // 成员资料统计
+                MemberNatureMainFragment.open(this, group.getId(), group.getName(), false, "");
                 break;
             case 7:
-                if (dAdapter.get(index) instanceof Classify) {
-                    handleClassifyClick(index);
-                } else {
-                    // 授权管理
-                    GroupAuthorizeFragment.open(this, group.getId());
-                }
+                // 授权管理
+                GroupAuthorizeFragment.open(this, group.getId(), group.getName());
+                break;
+            case 8:
+                // 成员履职统计
                 break;
             default:
-                if (dAdapter.get(index) instanceof Classify) {
-                    handleClassifyClick(index);
-                }
                 break;
         }
     }
@@ -803,12 +811,16 @@ public class GroupFragment extends BaseOrganizationFragment {
         ArchivesFragment.open(this, group.getId(), group.getName(), classify.getId(), classify.getName());
     }
 
+    private Model line = new Model() {{
+        setId("line");
+    }};
+
     /**
      * 组织详细内容
      */
     private class DetailsAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_HEAD = 0, VT_DETAILS = 1, VT_CLASSIFY = 2;
+        private static final int VT_HEAD = 0, VT_DETAILS = 1, VT_CLASSIFY = 2, VT_BIG_LINE = 3;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
@@ -816,6 +828,8 @@ public class GroupFragment extends BaseOrganizationFragment {
                 GroupHeaderViewHolder ghv = new GroupHeaderViewHolder(itemView, GroupFragment.this);
                 ghv.setOnViewHolderElementClickListener(detailsElementClickListener);
                 return ghv;
+            } else if (viewType == VT_BIG_LINE) {
+                return new TextViewHolder(itemView, GroupFragment.this);
             }
             GroupDetailsViewHolder gdv = new GroupDetailsViewHolder(itemView, GroupFragment.this);
             gdv.setOnViewHolderElementClickListener(detailsElementClickListener);
@@ -831,6 +845,8 @@ public class GroupFragment extends BaseOrganizationFragment {
                     return R.layout.holder_view_group_details;
                 case VT_CLASSIFY:
                     return R.layout.holder_view_group_details_deletable;
+                case VT_BIG_LINE:
+                    return R.layout.tool_view_divider_big;
                 default:
                     return R.layout.holder_view_group_details_deletable;
             }
@@ -839,6 +855,9 @@ public class GroupFragment extends BaseOrganizationFragment {
         @Override
         public int getItemViewType(int position) {
             Model model = get(position);
+            if (!isEmpty(model.getId()) && model.getId().contains("line")) {
+                return VT_BIG_LINE;
+            }
             return model instanceof Organization ? VT_HEAD : (model instanceof Classify ? VT_CLASSIFY : VT_DETAILS);
         }
 
@@ -857,6 +876,9 @@ public class GroupFragment extends BaseOrganizationFragment {
 
         @Override
         protected int comparator(Model item1, Model item2) {
+            if (item1 instanceof SimpleClickableItem && item2 instanceof SimpleClickableItem) {
+                return item1.getId().compareTo(item2.getId());
+            }
             return 0;
         }
     }
