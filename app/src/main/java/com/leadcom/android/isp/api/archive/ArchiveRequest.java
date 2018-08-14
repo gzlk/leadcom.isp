@@ -22,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -475,5 +474,27 @@ public class ArchiveRequest extends Request<Archive> {
             e.printStackTrace();
         }
         executeHttpRequest(getRequest(BoolArchive.class, draft(DELETE), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 拉取指定某人的履职记录
+     *
+     * @param ope        1.档案,2.活动
+     * @param groupId    组织id
+     * @param userId     用户id
+     * @param createYear 年份:0.全部,1.今年,2.去年
+     * @param classifyId 档案性质
+     * @param category   档案类型
+     */
+    public void listMemberDuty(int ope, String groupId, String userId, int createYear, String classifyId, String category) {
+        String url = format("/user/appUserRecord/list?groupId=%s&userId=%s&ope=%d", groupId, userId, ope);
+        url = format("%s&createDate=%d", url, createYear);
+        if (!isEmpty(classifyId)) {
+            url = format("%s&docClassifyId=%s", url, classifyId);
+        }
+        if (!isEmpty(category)) {
+            url = format("%s&category=%s", url, category);
+        }
+        executeHttpRequest(getRequest(ListArchive.class, url, "", HttpMethods.Get));
     }
 }

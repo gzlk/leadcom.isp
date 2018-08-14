@@ -24,6 +24,7 @@ import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.archive.DictionaryRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.user.MemberDutyRequest;
 import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
@@ -31,6 +32,7 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
+import com.leadcom.android.isp.fragment.organization.GroupMemberDutyDetailsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -38,13 +40,16 @@ import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.common.NothingMoreViewHolder;
 import com.leadcom.android.isp.holder.common.TextViewHolder;
 import com.leadcom.android.isp.holder.home.ArchiveHomeRecommendedViewHolder;
+import com.leadcom.android.isp.holder.organization.GroupMemberDutyViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.archive.Dictionary;
 import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.model.user.MemberDuty;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -95,12 +100,24 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     private View selectorBg;
     @ViewId(R.id.ui_main_archive_search_functions)
     private LinearLayout functionView;
+    @ViewId(R.id.ui_main_archive_search_functions_0)
+    private LinearLayout functionView0;
+    @ViewId(R.id.ui_main_archive_search_functions_1)
+    private LinearLayout functionView1;
+    @ViewId(R.id.ui_main_archive_search_functions_2)
+    private LinearLayout functionView2;
+    @ViewId(R.id.ui_main_archive_search_functions_3)
+    private LinearLayout functionView3;
+    @ViewId(R.id.ui_main_archive_search_functions_0_text)
+    private TextView function0;
     @ViewId(R.id.ui_main_archive_search_functions_1_text)
     private TextView function1;
     @ViewId(R.id.ui_main_archive_search_functions_2_text)
     private TextView function2;
     @ViewId(R.id.ui_main_archive_search_functions_3_text)
     private TextView function3;
+    @ViewId(R.id.ui_main_archive_search_functions_0_icon)
+    private CustomTextView allow0;
     @ViewId(R.id.ui_main_archive_search_functions_1_icon)
     private CustomTextView allow1;
     @ViewId(R.id.ui_main_archive_search_functions_2_icon)
@@ -126,12 +143,12 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     /**
      * 当前选择方式
      */
-    private static final int FUNC_NONE = -1, FUNC_TIME = 0, FUNC_NATURE = 1, FUNC_TYPE = 2;
+    private static final int FUNC_NONE = -1, FUNC_TIME = 0, FUNC_NATURE = 1, FUNC_TYPE = 2, FUNC_YEAR = 3;
     private static int selectedFunction = FUNC_NONE;
     /**
      * 搜索对象：首页、组织内部、个人
      */
-    public static final int SEARCH_HOME = 0, SEARCH_GROUP = 1, SEARCH_USER = 2;
+    public static final int SEARCH_HOME = 0, SEARCH_GROUP = 1, SEARCH_USER = 2, SEARCH_DUTY = 3;
     /**
      * 当前搜索方式
      */
@@ -164,59 +181,69 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         searchingYear = "";
         searchingNature = "";
         searchingType = "";
-        searchingFunction = SEARCH_HOME;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String title = StringHelper.getString(searchingFunction == SEARCH_HOME ? R.string.ui_text_archive_searching_home_title : R.string.ui_group_archive_fragment_title);
+        String title = StringHelper.getString(searchingFunction == SEARCH_HOME ? R.string.ui_text_archive_searching_home_title : (searchingFunction == SEARCH_DUTY ? R.string.ui_group_member_duty_count_title : R.string.ui_group_archive_fragment_title));
         if (!isEmpty(mGroupName)) {
             title = format("%s(%s)", title, mGroupName);
         }
         setCustomTitle(title);
 
-        Role role = Cache.cache().getGroupRole(mQueryId);
-        if (null != role) {
-            setRightIcon(R.string.ui_icon_comment);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
+        selectedFunction = FUNC_NONE;
+
+        if (searchingFunction != SEARCH_DUTY) {
+            Role role = Cache.cache().getGroupRole(mQueryId);
+            if (null != role) {
+                setRightIcon(R.string.ui_icon_comment);
+                setRightTitleClickListener(new OnTitleButtonClickListener() {
+                    @Override
+                    public void onClick() {
+                        // 用户动态相关的消息
+                        UserMessageFragment.open(ArchiveSearchFragment.this, UserMsgRequest.TYPE_GROUP_ARCHIVE);
+                    }
+                });
+            }
+            //enableSwipe(false);
+            //if (selectedFunction != SEARCH_GROUP) {
+            //    isLoadingComplete(true);
+            //}
+            InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchableView, this);
+            //searchViewHolder.setBackground(getColor(R.color.colorPrimary));
+            searchViewHolder.setOnSearchingListener(new InputableSearchViewHolder.OnSearchingListener() {
                 @Override
-                public void onClick() {
-                    // 用户动态相关的消息
-                    UserMessageFragment.open(ArchiveSearchFragment.this, UserMsgRequest.TYPE_GROUP_ARCHIVE);
+                public void onSearching(String text) {
+                    if (!isEmpty(text)) {
+                        searchingText = text;
+                        remotePageNumber = 1;
+                        if (searchingFunction == SEARCH_GROUP) {
+                            // 组织搜索可以翻页查询
+                            setSupportLoadingMore(true);
+                        }
+                        searchingArchive();
+                    } else {
+                        searchingText = "";
+                    }
                 }
             });
+            if (searchingFunction > SEARCH_HOME) {
+                searchViewHolder.setInputHint(R.string.ui_group_archive_fragment_search_hint);
+            } else {
+                functionView.setVisibility(View.GONE);
+            }
+            initializeTimePickerView();
+        } else {
+            functionView0.setVisibility(View.VISIBLE);
+            functionView1.setVisibility(View.GONE);
+            functionView2.setGravity(Gravity.CENTER);
+            functionView3.setGravity(Gravity.CENTER);
+            searchableView.setVisibility(View.GONE);
+            function2.setText(R.string.ui_text_archive_searching_selector_2_1);
+            function3.setText(R.string.ui_text_archive_searching_selector_3_1);
         }
 
-        selectedFunction = FUNC_NONE;
-        //enableSwipe(false);
-        //if (selectedFunction != SEARCH_GROUP) {
-        //    isLoadingComplete(true);
-        //}
-        InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchableView, this);
-        //searchViewHolder.setBackground(getColor(R.color.colorPrimary));
-        searchViewHolder.setOnSearchingListener(new InputableSearchViewHolder.OnSearchingListener() {
-            @Override
-            public void onSearching(String text) {
-                if (!isEmpty(text)) {
-                    searchingText = text;
-                    remotePageNumber = 1;
-                    if (searchingFunction == SEARCH_GROUP) {
-                        // 组织搜索可以翻页查询
-                        setSupportLoadingMore(true);
-                    }
-                    searchingArchive();
-                } else {
-                    searchingText = "";
-                }
-            }
-        });
-        if (searchingFunction > SEARCH_HOME) {
-            searchViewHolder.setInputHint(R.string.ui_group_archive_fragment_search_hint);
-        } else {
-            functionView.setVisibility(View.GONE);
-        }
-        initializeTimePickerView();
         initializePositions();
     }
 
@@ -290,7 +317,9 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         Handler().post(new Runnable() {
             @Override
             public void run() {
-                timePickerView.show();
+                if (null != timePickerView) {
+                    timePickerView.show();
+                }
                 hideSelector();
                 resetFunctionStatus();
             }
@@ -341,12 +370,24 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     @Click({R.id.ui_main_archive_search_functions_1, R.id.ui_main_archive_search_functions_2,
-            R.id.ui_main_archive_search_functions_3,
+            R.id.ui_main_archive_search_functions_3, R.id.ui_main_archive_search_functions_0,
             R.id.ui_main_archive_search_content_background})
     private void viewClick(View view) {
         switch (view.getId()) {
             case R.id.ui_main_archive_search_content_background:
                 hideSelector();
+                resetFunctionStatus();
+                break;
+            case R.id.ui_main_archive_search_functions_0:
+                // 年份选择
+                if (selectedFunction != FUNC_YEAR) {
+                    selectedFunction = FUNC_YEAR;
+                    tAdapter.clear();
+                    subTypeList.setVisibility(View.GONE);
+                    showSelector();
+                } else {
+                    hideSelector();
+                }
                 resetFunctionStatus();
                 break;
             case R.id.ui_main_archive_search_functions_1:
@@ -363,7 +404,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     selectedFunction = FUNC_NATURE;
                     tAdapter.clear();
                     sAdapter.clear();
-                    resetSelectedFuncNature();
+                    //resetSelectedFuncNature();
                     showSelector();
                 } else {
                     hideSelector();
@@ -394,6 +435,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void hideSelector() {
+        subTypeList.setVisibility(View.GONE);
         showSelectorBackground(false);
         showTimePicker(false);
         showTypePicker(false);
@@ -469,6 +511,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }
 
     private void showTypePicker(final boolean shown) {
+        allow0.animate().rotation(shown && selectedFunction == FUNC_YEAR ? -90 : 90)
+                .setDuration(duration()).start();
         allow2.animate().rotation(shown && selectedFunction == FUNC_NATURE ? -90 : 90)
                 .setDuration(duration()).start();
         allow3.animate().rotation(shown && selectedFunction == FUNC_TYPE ? -90 : 90)
@@ -505,6 +549,10 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     private void resetFunctionStatus() {
         int color1 = getColor(R.color.colorPrimary), color2 = getColor(R.color.textColorHint);
+
+        function0.setTextColor(selectedFunction == FUNC_YEAR ? color1 : color2);
+        allow0.setTextColor(selectedFunction == FUNC_YEAR ? color1 : color2);
+
         function1.setTextColor(selectedFunction == FUNC_TIME ? color1 : color2);
         allow1.setTextColor(selectedFunction == FUNC_TIME ? color1 : color2);
 
@@ -523,7 +571,16 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             case FUNC_NATURE:
                 resetFuncNature();
                 break;
+            case FUNC_YEAR:
+                resetFuncYear();
+                break;
         }
+    }
+
+    private void resetFuncYear() {
+        tAdapter.update(allYear);
+        tAdapter.update(thisYear);
+        tAdapter.update(lastYear);
     }
 
     private void resetFuncType() {
@@ -556,7 +613,16 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    private boolean hasNatureSelected() {
+        for (Classify classify : classifies) {
+            if (classify.getParentId() == 0 && classify.isSelected())
+                return true;
+        }
+        return false;
+    }
+
     private void resetFuncNature() {
+        subTypeList.setVisibility(hasNatureSelected() ? View.VISIBLE : View.GONE);
         int parent = Integer.valueOf(isEmpty(searchingNature) ? "0" : searchingNature);
         if (parent > 0) {
             sAdapter.clear();
@@ -575,10 +641,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 sAdapter.add(classify);
             }
         }
-        if (!hasSelected) {
-            all.setSelected(true);
-            sAdapter.update(all);
-        }
+        all.setSelected(!hasSelected);
+        sAdapter.update(all);
         if (tAdapter.getItemCount() <= 0) {
             fetchingClassify();
         }
@@ -638,17 +702,28 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 // 个人档案搜索
                 searchingUserArchive();
                 break;
+            case SEARCH_DUTY:
+                // 成员履职
+                searchUserDuty();
+                break;
         }
     }
 
-    private Model last;
+    private Model last = Model.getNoMore();
 
-    private Model last() {
-        if (null == last) {
-            last = Model.getNoMore();
-        }
-        return last;
-    }
+    private Model allYear = new Model() {{
+        setId("year0");
+        setAccessToken("全部");
+    }};
+    private Model thisYear = new Model() {{
+        setId("year1");
+        setAccessToken("今年");
+    }};
+
+    private Model lastYear = new Model() {{
+        setId("year2");
+        setAccessToken("去年");
+    }};
 
     private Dictionary none = new Dictionary() {{
         setId("none");
@@ -677,7 +752,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             displayLoading(false);
             return;
         }
-        mAdapter.remove(last());
+        mAdapter.remove(last);
         if (isStillLoading()) {
             return;
         }
@@ -758,14 +833,40 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         }).search(mQueryId, remotePageNumber, searchingText);
     }
 
+    private void searchUserDuty() {
+        if (isStillLoading()) {
+            return;
+        }
+        stillLoading = true;
+        setNothingText(R.string.ui_group_member_duty_count_nothing);
+        displayNothing(false);
+        mAdapter.clear();
+        MemberDutyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<MemberDuty>() {
+            @Override
+            public void onResponse(List<MemberDuty> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                if (success && null != list) {
+                    for (MemberDuty duty : list) {
+                        duty.setId(duty.getUserId());
+                        mAdapter.update(duty);
+                    }
+                }
+                stillLoading = false;
+                stopRefreshing();
+                displayLoading(false);
+                displayNothing(mAdapter.getItemCount() <= 0);
+            }
+        }).list(mQueryId, Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+    }
+
     private void restoreSearchingResult() {
-        mAdapter.remove(last());
+        mAdapter.remove(last);
         for (Archive archive : searched) {
             if (isInMonth(archive) && isNature(archive) && isType(archive)) {
                 mAdapter.update(archive);
             }
         }
-        mAdapter.add(last());
+        mAdapter.add(last);
         if (mAdapter.getItemCount() <= 1) {
             ToastHelper.make().showMsg(R.string.ui_text_home_archive_search_empty);
         }
@@ -839,6 +940,20 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     resetFuncNature();
                     return;
                 }
+            } else if (model.getId().contains("year")) {
+                if (!model.isSelected()) {
+                    model.setSelected(true);
+                    searchingYear = model.getId().replace("year", "");
+                    tAdapter.update(model);
+                }
+                Iterator<Model> iterator = tAdapter.iterator();
+                while (iterator.hasNext()) {
+                    Model m = iterator.next();
+                    if (!m.getId().equals(model.getId()) && m.isSelected()) {
+                        m.setSelected(false);
+                        tAdapter.update(m);
+                    }
+                }
             }
             loadingArchive();
         }
@@ -874,6 +989,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 holder.showContent((Dictionary) item);
             } else if (item instanceof Classify) {
                 holder.showContent((Classify) item);
+            } else {
+                holder.showContent(item);
             }
         }
 
@@ -968,15 +1085,46 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         }
     }
 
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            MemberDuty duty = (MemberDuty) mAdapter.get(index);
+            switch (view.getId()) {
+                case R.id.ui_holder_view_group_member_duty_count_archive:
+                    // 查看用户的档案列表
+                    if (duty.getDocNum() <= 0) {
+                        ToastHelper.make().showMsg(R.string.ui_group_member_duty_count_no_archive);
+                    } else {
+                        GroupMemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ARCHIVE,
+                                duty.getDocNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+                    }
+                    break;
+                case R.id.ui_holder_view_group_member_duty_count_activity:
+                    // 查看用户加入的活动列表
+                    if (duty.getActivityNum() <= 0) {
+                        ToastHelper.make().showMsg(R.string.ui_group_member_duty_count_no_activity);
+                    } else {
+                        GroupMemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ACTIVITY,
+                                duty.getActivityNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
+                    }
+                    break;
+            }
+        }
+    };
+
     private class ArchiveAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
 
-        private static final int VT_LAST = 0, VT_ARCHIVE = 1;
+        private static final int VT_LAST = 0, VT_ARCHIVE = 1, VT_DUTY = 2;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             switch (viewType) {
                 case VT_LAST:
                     return new NothingMoreViewHolder(itemView, ArchiveSearchFragment.this);
+                case VT_DUTY:
+                    GroupMemberDutyViewHolder gmdvh = new GroupMemberDutyViewHolder(itemView, ArchiveSearchFragment.this);
+                    gmdvh.setOnViewHolderElementClickListener(elementClickListener);
+                    return gmdvh;
             }
             ArchiveHomeRecommendedViewHolder ahrvh = new ArchiveHomeRecommendedViewHolder(itemView, ArchiveSearchFragment.this);
             ahrvh.setShowGroup(false);
@@ -987,7 +1135,14 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == VT_LAST ? R.layout.holder_view_nothing_more : R.layout.holder_view_archive_home_feature;
+            switch (viewType) {
+                case VT_ARCHIVE:
+                    return R.layout.holder_view_archive_home_feature;
+                case VT_DUTY:
+                    return R.layout.holder_view_group_member_duty_count;
+                default:
+                    return R.layout.holder_view_nothing_more;
+            }
         }
 
         @Override
@@ -995,6 +1150,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             Model model = get(position);
             if (model instanceof Archive) {
                 return VT_ARCHIVE;
+            } else if (model instanceof MemberDuty) {
+                return VT_DUTY;
             }
             return VT_LAST;
         }
@@ -1004,6 +1161,8 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             if (holder instanceof ArchiveHomeRecommendedViewHolder) {
                 ((ArchiveHomeRecommendedViewHolder) holder).setSearchingText(searchingText);
                 ((ArchiveHomeRecommendedViewHolder) holder).showContent((Archive) item);
+            } else if (holder instanceof GroupMemberDutyViewHolder) {
+                ((GroupMemberDutyViewHolder) holder).showContent((MemberDuty) item);
             }
         }
 

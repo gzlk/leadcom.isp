@@ -219,6 +219,11 @@ public class GroupFragment extends BaseOrganizationFragment {
         return null != role && role.hasOperation(operation);
     }
 
+    private boolean isManager(String groupId) {
+        Role role = Cache.cache().getGroupRole(groupId);
+        return null != role && role.isManager();
+    }
+
     @Override
     protected void onDelayRefreshComplete(int type) {
 
@@ -563,6 +568,16 @@ public class GroupFragment extends BaseOrganizationFragment {
         } else {
             dAdapter.remove(item);
         }
+        // 是否可以查看履职统计数据
+        item = new SimpleClickableItem(items[7]);
+        if (isManager(group.getId())) {
+            dAdapter.update(item);
+            if (isSingle) {
+                dAdapter.remove(item);
+            }
+        } else {
+            dAdapter.remove(item);
+        }
         removeClassify();
         dAdapter.sort();
         loadGroupSelfDefined();
@@ -668,7 +683,7 @@ public class GroupFragment extends BaseOrganizationFragment {
 
             dAdapter.add(new Organization());
             for (String string : items) {
-                if (string.contains("6|") || string.contains("7|")) {
+                if (string.contains("6|") || string.contains("7|") || string.contains("8|")) {
                     continue;
                 }
                 SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
@@ -799,6 +814,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 8:
                 // 成员履职统计
+                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_DUTY, group.getId(), "", group.getName());
                 break;
             default:
                 break;

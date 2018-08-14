@@ -23,18 +23,50 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/ui_main_archive_search_functions_0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|start"
+            android:minHeight="@dimen/ui_base_dimen_button_height"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/ui_main_archive_search_functions_0_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/ui_static_dp_5"
+                android:paddingTop="@dimen/ui_static_dp_5"
+                android:text="@string/ui_text_archive_searching_selector_0" />
+
+            <com.hlk.hlklib.lib.view.CustomTextView
+                android:id="@+id/ui_main_archive_search_functions_0_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/ui_static_dp_3"
+                android:animateLayoutChanges="true"
+                android:rotation="90"
+                android:text="@string/ui_icon_triangle"
+                android:textSize="@dimen/ui_base_text_size_tiny" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ui_main_archive_search_functions_2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical|start"
-            android:minHeight="@dimen/ui_base_dimen_button_height">
+            android:minHeight="@dimen/ui_base_dimen_button_height"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding">
 
             <TextView
                 android:id="@+id/ui_main_archive_search_functions_2_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ui_static_dp_10"
                 android:paddingBottom="@dimen/ui_static_dp_5"
                 android:paddingTop="@dimen/ui_static_dp_5"
                 android:text="@string/ui_text_archive_searching_selector_2" />
@@ -86,7 +118,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical|end"
-            android:minHeight="@dimen/ui_base_dimen_button_height">
+            android:minHeight="@dimen/ui_base_dimen_button_height"
+            android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+            android:paddingStart="@dimen/ui_base_dimen_margin_padding">
 
             <TextView
                 android:id="@+id/ui_main_archive_search_functions_1_text"
@@ -101,7 +135,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/ui_static_dp_10"
                 android:layout_marginStart="@dimen/ui_static_dp_3"
                 android:animateLayoutChanges="true"
                 android:rotation="90"

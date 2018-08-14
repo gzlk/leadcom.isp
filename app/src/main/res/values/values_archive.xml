@@ -233,9 +233,12 @@
     <string name="ui_text_archive_reply_success">您的回复已发送</string>
 
     <string name="ui_text_archive_searching_home_title">档案搜索</string>
+    <string name="ui_text_archive_searching_selector_0">年份</string>
     <string name="ui_text_archive_searching_selector_1">时间</string>
     <string name="ui_text_archive_searching_selector_2">性质</string>
+    <string name="ui_text_archive_searching_selector_2_1">档案</string>
     <string name="ui_text_archive_searching_selector_3">类型</string>
+    <string name="ui_text_archive_searching_selector_3_1">活动</string>
     <string name="ui_text_archive_searching_selector_4">属性</string>
     <string name="ui_text_archive_searching_still_loading">还在努力加载档案，请稍候&#8230;</string>
 </resources>

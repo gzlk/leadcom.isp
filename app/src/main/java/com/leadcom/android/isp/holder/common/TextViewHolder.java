@@ -15,6 +15,7 @@ import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.archive.Dictionary;
 
@@ -114,6 +115,20 @@ public class TextViewHolder extends BaseViewHolder {
         CardView.LayoutParams params = (CardView.LayoutParams) bottomLine.getLayoutParams();
         params.leftMargin = classify.getParentId() == 0 ? getDimension(classify.isSelected() ? R.dimen.ui_static_dp_5 : R.dimen.ui_base_dimen_margin_padding) : 0;
         params.rightMargin = classify.getParentId() == 0 ? getDimension(classify.isSelected() ? 0 : R.dimen.ui_static_dp_1) : 0;
+    }
+
+    public void showContent(Model model) {
+        preSelector.setVisibility(View.GONE);
+        lastSelector.setVisibility(View.GONE);
+        topLine.setVisibility(View.GONE);
+        bottomLine.setBackgroundResource(R.color.windowBackground);
+        icon.setVisibility(View.VISIBLE);
+        icon.setTextColor(getColor(model.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
+        text.setText(model.getAccessToken());
+        text.setTextColor(getColor(model.isSelected() ? R.color.colorPrimary : R.color.textColorHint));
+        CardView.LayoutParams params = (CardView.LayoutParams) bottomLine.getLayoutParams();
+        params.leftMargin = getDimension(R.dimen.ui_base_dimen_margin_padding);
+        params.rightMargin = 0;
     }
 
     /**

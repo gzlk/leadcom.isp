@@ -234,4 +234,11 @@
     <string name="ui_group_member_nature_count_fragment_title1">更多成员属性</string>
     <string name="ui_group_member_nature_more_nothing_to_update">没有什么可以更新的内容</string>
     <string name="ui_group_member_nature_more_updated">组织成员属性更新完毕</string>
+
+    <string name="ui_group_member_duty_count_title">成员履职统计</string>
+    <string name="ui_group_member_duty_count_nothing">暂时没有更多统计数据</string>
+    <string name="ui_group_member_duty_count_no_archive">该成员没有发布过档案</string>
+    <string name="ui_group_member_duty_count_no_activity">该成员没有参加过活动</string>
+
+    <string name="ui_group_member_duty_details_title" formatted="false">%s - %s (%d)</string>
 </resources>
