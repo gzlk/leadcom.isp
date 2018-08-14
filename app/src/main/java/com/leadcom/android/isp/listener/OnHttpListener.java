@@ -62,7 +62,11 @@ public abstract class OnHttpListener<T> extends HttpListener<T> {
     public void onFailure(HttpException e, Response<T> response) {
         super.onFailure(e, response);
         HttpStatus status = response.getHttpStatus();
-        ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_network_failed, (null == status ? -1 : status.getCode())));
+        if (e.getMessage().contains("com.google.gson.JsonSyntaxException")) {
+            ToastHelper.make().showMsg(R.string.ui_base_text_network_failed_api);
+        } else {
+            ToastHelper.make().showMsg(StringHelper.getString(R.string.ui_base_text_network_failed, (null == status ? -1 : status.getCode())));
+        }
         onFailed();
         LogHelper.log("OnHttpListener", e.getMessage());
         if (caughtThrowableCause(e).contains("java.io.EOFException: \\n not found: size=0")) {
