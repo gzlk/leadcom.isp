@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.fragment.organization;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.View;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.activity.BaseActivity;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
@@ -50,11 +52,19 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         return cof;
     }
 
-    public static void open(BaseFragment fragment, String groupId, int concernType) {
+    private static Bundle getBundle(String groupId, int concernType) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putInt(PARAM_TYPE, concernType);
-        fragment.openActivity(ConcernedOrganizationFragment.class.getName(), bundle, REQUEST_CONCERNED, true, false);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String groupId, int concernType) {
+        fragment.openActivity(ConcernedOrganizationFragment.class.getName(), getBundle(groupId, concernType), REQUEST_CONCERNED, true, false);
+    }
+
+    public static void open(Context context, String groupId, int concernType) {
+        BaseActivity.openActivity(context, ConcernedOrganizationFragment.class.getName(), getBundle(groupId, concernType), REQUEST_CONCERNED, true, false);
     }
 
     private ArrayList<Concern> concerns = new ArrayList<>();

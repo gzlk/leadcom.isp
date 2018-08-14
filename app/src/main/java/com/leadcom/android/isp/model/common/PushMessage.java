@@ -138,9 +138,17 @@ public class PushMessage extends Model {
          */
         String GROUP_ATTENTION = "GROUP_ATTENTION_CODE";
         /**
+         * 组织被别的组织取消关注了
+         */
+        String GROUP_ATTENTION_CANCEL = "GROUP_ATTENTION_CANCEL_CODE";
+        /**
          * 组织资料授权
          */
         String GROUP_AUTHORIZE = "GROUP_AUTHORIZE_CODE";
+        /**
+         * 组织被别的组织取消授权了
+         */
+        String GROUP_AUTHORIZE_CANCEL = "GROUP_AUTHORIZE_CANCEL_CODE";
     }
 
     private String userId, userName, headPhoto, templateCode, title, content, createDate;
