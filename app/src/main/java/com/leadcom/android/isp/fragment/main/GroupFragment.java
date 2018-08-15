@@ -254,8 +254,12 @@ public class GroupFragment extends BaseOrganizationFragment {
 
     @Override
     protected void onSwipeRefreshing() {
-        // 拉取我已经加入的组织列表
-        fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
+        if (!isSingle) {
+            // 拉取我已经加入的组织列表
+            fetchingJoinedRemoteOrganizations(OrgRequest.GROUP_LIST_OPE_JOINED);
+        } else {
+            fetchingRemoteOrganization(mQueryId);
+        }
     }
 
     @Override
@@ -580,10 +584,10 @@ public class GroupFragment extends BaseOrganizationFragment {
         }
         removeClassify();
         dAdapter.sort();
-        loadGroupSelfDefined();
         if (isSingle) {
             return;
         }
+        loadGroupSelfDefined();
         selfDefine.setVisibility(hasOperation(group.getId(), GRPOperation.GROUP_DEFINE) ? View.VISIBLE : View.GONE);
     }
 
@@ -700,22 +704,16 @@ public class GroupFragment extends BaseOrganizationFragment {
         if (null != organization) {
             onGroupChange(organization);
         }
+        stopRefreshing();
     }
 
     private OnViewHolderElementClickListener detailsElementClickListener = new OnViewHolderElementClickListener() {
 
         @Override
         public void onClick(View view, int index) {
-            if (null == gAdapter || gAdapter.getItemCount() <= 0) {
-                return;
-            }
             switch (view.getId()) {
                 case R.id.ui_holder_view_simple_clickable:
-                    Role role = Cache.cache().getGroupRole(dAdapter.get(0).getId());
-                    if (null != role) {
-                        // 当前登录用户在这个组织里时才能打开相应的选项内容
-                        handleItemClick(index);
-                    }
+                    handleItemClick(index);
                     break;
                 case R.id.ui_holder_view_group_header_edit_icon:
                 case R.id.ui_holder_view_group_header_container:
@@ -731,11 +729,11 @@ public class GroupFragment extends BaseOrganizationFragment {
                             CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
                         } else {
                             // 查看组织简介
-                            UserIntroductionFragment.open(GroupFragment.this, group);
+                            UserIntroductionFragment.open(GroupFragment.this, group, !isSingle);
                         }
                     } else {
                         // 查看组织简介
-                        UserIntroductionFragment.open(GroupFragment.this, group);
+                        UserIntroductionFragment.open(GroupFragment.this, group, !isSingle);
                     }
                     break;
                 case R.id.ui_tool_view_contact_button2:
@@ -783,6 +781,11 @@ public class GroupFragment extends BaseOrganizationFragment {
     private void handleClickable(int index) {
         SimpleClickableItem item = (SimpleClickableItem) dAdapter.get(index);
         Organization group = (Organization) dAdapter.get(0);
+        boolean hasRole = null != Cache.cache().getGroupRole(group.getId());
+        if (item.getIndex() != 3 && (!hasRole || isSingle)) {
+            // 如果点击的不是组织档案选项，且当前用户不在组织里或者是单独打开的组织属性页，则不需要打开相应的详情页
+            return;
+        }
         switch (item.getIndex()) {
             case 1:
                 // 组织成员
@@ -801,7 +804,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             case 5:
                 //if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
                 // 每个人都可以打开查看关注的组织列表？
-                ConcernedOrganizationFragment.open(this, group.getId(), (index == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
+                ConcernedOrganizationFragment.open(this, group.getId(), group.getName(), (index == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
                 //}
                 break;
             case 6:
@@ -843,6 +846,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             if (viewType == VT_HEAD) {
                 GroupHeaderViewHolder ghv = new GroupHeaderViewHolder(itemView, GroupFragment.this);
                 ghv.setOnViewHolderElementClickListener(detailsElementClickListener);
+                ghv.showEditorIcon(!isSingle);
                 return ghv;
             } else if (viewType == VT_BIG_LINE) {
                 return new TextViewHolder(itemView, GroupFragment.this);

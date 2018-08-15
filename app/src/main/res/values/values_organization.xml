@@ -78,7 +78,7 @@
         <item>5|被关注|%d|1|0xe678</item>
         <item>6|本组织成员资料统计||1|0xe6a1</item>
         <item>7|资料授权管理和查看||1|0xe6de</item>
-        <item>8|成员履职统计||1|0xe6d3</item>
+        <item>8|成员履职统计||1|0xe6ad</item>
     </string-array>
     <string name="ui_group_details_self_define">自定义创建栏目</string>
     <string name="ui_group_details_self_define_hint">栏目名称(最大限10字)</string>

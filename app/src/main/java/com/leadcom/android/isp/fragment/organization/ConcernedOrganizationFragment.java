@@ -16,8 +16,8 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.main.GroupFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
@@ -25,6 +25,7 @@ import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
+import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Role;
 
 import java.util.ArrayList;
@@ -41,9 +42,10 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragment {
+public class ConcernedOrganizationFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_UPPER = "cof_upper";
+    private static final String PARAM_GROUP_NAME = "cof_group_name";
     private static final String PARAM_TYPE = "cof_concern_type";
 
     public static ConcernedOrganizationFragment newInstance(Bundle bundle) {
@@ -52,19 +54,22 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         return cof;
     }
 
-    private static Bundle getBundle(String groupId, int concernType) {
+    private static Bundle getBundle(String groupId, String groupName, int concernType) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
+        bundle.putString(PARAM_GROUP_NAME, groupName);
         bundle.putInt(PARAM_TYPE, concernType);
         return bundle;
     }
 
-    public static void open(BaseFragment fragment, String groupId, int concernType) {
-        fragment.openActivity(ConcernedOrganizationFragment.class.getName(), getBundle(groupId, concernType), REQUEST_CONCERNED, true, false);
+    public static void open(BaseFragment fragment, String groupId, String groupName, int concernType) {
+        fragment.openActivity(ConcernedOrganizationFragment.class.getName(),
+                getBundle(groupId, groupName, concernType), REQUEST_CONCERNED, true, false);
     }
 
-    public static void open(Context context, String groupId, int concernType) {
-        BaseActivity.openActivity(context, ConcernedOrganizationFragment.class.getName(), getBundle(groupId, concernType), REQUEST_CONCERNED, true, false);
+    public static void open(Context context, String groupId, String groupName, int concernType) {
+        BaseActivity.openActivity(context, ConcernedOrganizationFragment.class.getName(),
+                getBundle(groupId, groupName, concernType), REQUEST_CONCERNED, true, false);
     }
 
     private ArrayList<Concern> concerns = new ArrayList<>();
@@ -75,12 +80,13 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
     private View functionView;
     @ViewId(R.id.ui_holder_view_searchable_container)
     private View searchableView;
-    private String searchingText;
+    private String searchingText, mGroupName;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Activity().setResult(Activity.RESULT_OK);
+        resetTitle();
         functionView.setVisibility(View.GONE);
         enableSwipe(false);
         isLoadingComplete(true);
@@ -98,11 +104,20 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         });
     }
 
+    private void resetTitle() {
+        String title = StringHelper.getString(mConcernType == ConcernRequest.CONCERN_TO ? R.string.ui_organization_concerned_fragment_title : R.string.ui_organization_concerned_from_fragment_title);
+        if (!isEmpty(mGroupName)) {
+            title = format("%s %s", mGroupName, title);
+        }
+        setCustomTitle(title);
+    }
+
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
         searchingText = bundle.getString(PARAM_SEARCHED, "");
         isUpper = bundle.getBoolean(PARAM_UPPER, false);
+        mGroupName = bundle.getString(PARAM_GROUP_NAME, "");
         mConcernType = bundle.getInt(PARAM_TYPE, ConcernRequest.CONCERN_TO);
     }
 
@@ -111,6 +126,7 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_SEARCHED, searchingText);
         bundle.putBoolean(PARAM_UPPER, isUpper);
+        bundle.putString(PARAM_GROUP_NAME, mGroupName);
         bundle.putInt(PARAM_TYPE, mConcernType);
     }
 
@@ -156,10 +172,20 @@ public class ConcernedOrganizationFragment extends BaseSwipeRefreshSupportFragme
 
     private void initializeAdapter() {
         if (null == mAdapter) {
-            setCustomTitle(mConcernType == ConcernRequest.CONCERN_TO ? R.string.ui_organization_concerned_fragment_title : R.string.ui_organization_concerned_from_fragment_title);
             mAdapter = new ConcernedAdapter();
             mRecyclerView.setAdapter(mAdapter);
             fetchingConcernableGroups();
+            if (isEmpty(mGroupName)) {
+                fetchingRemoteOrganization(mQueryId);
+            }
+        }
+    }
+
+    @Override
+    protected void onFetchingRemoteOrganizationComplete(Organization organization) {
+        if (null != organization) {
+            mGroupName = organization.getName();
+            resetTitle();
         }
     }
 

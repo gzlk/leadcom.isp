@@ -37,6 +37,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     private static final String PARAM_DATE = "uif_date";
     private static final String PARAM_INTRO = "uif_intro";
     private static final String PARAM_IS_GROUP = "uif_is_group";
+    private static final String PARAM_EDITABLE = "uif_editable";
 
     public static UserIntroductionFragment newInstance(Bundle bundle) {
         UserIntroductionFragment uif = new UserIntroductionFragment();
@@ -45,14 +46,14 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     }
 
     public static void open(BaseFragment fragment, User user) {
-        open(fragment, false, user.getId(), user.getName(), user.getHeadPhoto(), user.getCreateDate(), user.getSignature());
+        open(fragment, false, false, user.getId(), user.getName(), user.getHeadPhoto(), user.getCreateDate(), user.getSignature());
     }
 
-    public static void open(BaseFragment fragment, Organization group) {
-        open(fragment, true, group.getId(), group.getName(), group.getLogo(), group.getCreateDate(), group.getIntro());
+    public static void open(BaseFragment fragment, Organization group, boolean editable) {
+        open(fragment, true, editable, group.getId(), group.getName(), group.getLogo(), group.getCreateDate(), group.getIntro());
     }
 
-    private static void open(BaseFragment fragment, boolean isGroup, String groupId, String name, String header, String date, String intro) {
+    private static void open(BaseFragment fragment, boolean isGroup, boolean editable, String groupId, String name, String header, String date, String intro) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_NAME, name);
         bundle.putString(PARAM_GROUP, groupId);
@@ -60,6 +61,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         bundle.putString(PARAM_DATE, date);
         bundle.putString(PARAM_INTRO, intro);
         bundle.putBoolean(PARAM_IS_GROUP, isGroup);
+        bundle.putBoolean(PARAM_EDITABLE, editable);
         fragment.openActivity(UserIntroductionFragment.class.getName(), bundle, REQUEST_EDIT, true, false);
     }
 
@@ -75,7 +77,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     private TextView introView;
 
     private String name, groupId, header, date, intro;
-    private boolean isGroup;
+    private boolean isGroup, isEditable;
 
     private boolean hasOperation(String groupId, String operation) {
         Role role = Cache.cache().getGroupRole(groupId);
@@ -99,7 +101,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
     }
 
     private void resetTitleEvent() {
-        if ((isGroup && hasOperation(groupId, GRPOperation.GROUP_PROPERTY)) || (!isGroup && Cache.cache().userId.equals(groupId))) {
+        if ((isGroup && isEditable && hasOperation(groupId, GRPOperation.GROUP_PROPERTY)) || (!isGroup && Cache.cache().userId.equals(groupId))) {
             setRightText(R.string.ui_base_text_edit);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
@@ -125,6 +127,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         intro = bundle.getString(PARAM_INTRO, "");
         intro = StringHelper.escapeToHtml(intro);
         isGroup = bundle.getBoolean(PARAM_IS_GROUP, false);
+        isEditable = bundle.getBoolean(PARAM_EDITABLE, false);
     }
 
     @Override
@@ -145,6 +148,7 @@ public class UserIntroductionFragment extends BaseLayoutSupportFragment {
         bundle.putString(PARAM_DATE, date);
         bundle.putString(PARAM_INTRO, intro);
         bundle.putBoolean(PARAM_IS_GROUP, isGroup);
+        bundle.putBoolean(PARAM_EDITABLE, isEditable);
     }
 
     @Override

@@ -59,7 +59,7 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
         switch (extra.getMessageCode()) {
             case PushMessage.MsgCode.GROUP_ATTENTION:
             case PushMessage.MsgCode.GROUP_ATTENTION_CANCEL:
-                ConcernedOrganizationFragment.open(context, extra.getGroupId(), ConcernRequest.CONCERN_FROM);
+                //ConcernedOrganizationFragment.open(context, extra.getGroupId(), "", ConcernRequest.CONCERN_FROM);
                 break;
             case PushMessage.MsgCode.GROUP_AUTHORIZE:
             case PushMessage.MsgCode.GROUP_AUTHORIZE_CANCEL:

@@ -42,6 +42,8 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_group_header_edit_icon)
     private CustomTextView editIcon;
 
+    private boolean showEditorIcon = true;
+
     public GroupHeaderViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
@@ -58,6 +60,10 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         return !isEmpty(name) && Pattern.compile(".*(民盟|民主同盟).*").matcher(name).find();
     }
 
+    public void showEditorIcon(boolean shown) {
+        showEditorIcon = shown;
+    }
+
     public void showContent(Organization organization) {
         String logo = organization.getLogo();
         if (isEmpty(logo)) {
@@ -68,7 +74,7 @@ public class GroupHeaderViewHolder extends BaseViewHolder {
         logo = organization.getIntro();
         introView.setText(isEmpty(logo) ? "" : Html.fromHtml(logo.replaceAll("\n", "<br/>")));
         Role role = Cache.cache().getGroupRole(organization.getId());
-        editIcon.setVisibility((null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) ? View.VISIBLE : View.INVISIBLE);
+        editIcon.setVisibility((showEditorIcon && null != role && role.hasOperation(GRPOperation.GROUP_PROPERTY)) ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Click({R.id.ui_holder_view_group_header_logo, R.id.ui_holder_view_group_header_edit_icon, R.id.ui_holder_view_group_header_container})
