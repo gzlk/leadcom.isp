@@ -219,6 +219,10 @@ public class GroupFragment extends BaseOrganizationFragment {
         return null != role && role.hasOperation(operation);
     }
 
+    private boolean isMember(String groupId) {
+        return null != Cache.cache().getGroupRole(groupId);
+    }
+
     private boolean isManager(String groupId) {
         Role role = Cache.cache().getGroupRole(groupId);
         return null != role && role.isManager();
@@ -574,7 +578,7 @@ public class GroupFragment extends BaseOrganizationFragment {
         }
         // 是否可以查看履职统计数据
         item = new SimpleClickableItem(items[7]);
-        if (isManager(group.getId())) {
+        if (isMember(group.getId())) {
             dAdapter.update(item);
             if (isSingle) {
                 dAdapter.remove(item);
