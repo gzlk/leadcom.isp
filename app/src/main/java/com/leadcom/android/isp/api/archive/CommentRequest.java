@@ -152,7 +152,7 @@ public class CommentRequest extends Request<Comment> {
         // momentId,momentCmtId
         if (type == Comment.Type.MOMENT) {
             String params = format("%s=%s&%s=%s", getArchiveId(type), archiveId, getCommentId(type), commentId);
-            executeHttpRequest(getRequest(SingleComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
+            executeHttpRequest(getRequest(BoolComment.class, format("%s?%s", url(type, DELETE), params), "", HttpMethods.Get));
         } else {
             JSONObject object = new JSONObject();
             try {
