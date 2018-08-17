@@ -579,7 +579,11 @@ public class GroupFragment extends BaseOrganizationFragment {
         // 是否可以查看履职统计数据
         item = new SimpleClickableItem(items[7]);
         if (isMember(group.getId())) {
-            dAdapter.update(item);
+            int in = dAdapter.indexOf(new SimpleClickableItem(items[2]));
+            if (dAdapter.indexOf(item) < 0) {
+                dAdapter.add(item, in + 1);
+            }
+            //dAdapter.update(item);
             if (isSingle) {
                 dAdapter.remove(item);
             }
@@ -587,7 +591,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             dAdapter.remove(item);
         }
         removeClassify();
-        dAdapter.sort();
+        //dAdapter.sort();
         if (isSingle) {
             return;
         }
