@@ -42,6 +42,7 @@ public class SystemMessageViewHolder extends BaseViewHolder {
         titleView.setText(msg.getTitle());
         titleView.setSelected(true);
         descView.setText(msg.getContent());
+        descView.setSelected(true);
         String time = fragment().formatTimeAgo(msg.getCreateDate());
         timeView.setText(time);
         unreadView.setVisibility(msg.isRead() ? View.GONE : View.VISIBLE);
