@@ -108,10 +108,13 @@ public class Member extends Leaguer {
     }
 
     public static String toJson(List<Member> members) {
-        return Json.gson(strategy).toJson(members, new TypeToken<List<Member>>() {
+        return Json.gson().toJson(members, new TypeToken<List<Member>>() {
         }.getType());
     }
 
+    public static ArrayList<Member> fromJsonArray(String array){
+        return Json.gson().fromJson(array,new TypeToken<ArrayList<Member>>(){}.getType());
+    }
     /**
      * 查询指定用户是否在本地缓存中的某个组织或小组里
      */

@@ -258,7 +258,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
                 //model.setSelected(!model.isSelected());
                 //displaySquadMember((Squad) model, index);
                 Squad squad = (Squad) model;
-                ContactFragment.open(SquadsFragment.this, squad.getGroupId(), squad.getId());
+                ContactFragment.open(SquadsFragment.this, squad);
             } else if (model instanceof Member) {
                 Member member = (Member) model;
                 App.openUserInfo(SquadsFragment.this, member.getUserId(), member.getGroupId());
@@ -273,7 +273,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
             switch (view.getId()) {
                 case R.id.ui_holder_view_group_squad_container:
                     // 小组成员列表
-                    ContactFragment.open(SquadsFragment.this, squad.getGroupId(), squad.getId());
+                    ContactFragment.open(SquadsFragment.this, squad);
                     break;
                 case R.id.ui_tool_view_contact_button2:
                     // 删除小组

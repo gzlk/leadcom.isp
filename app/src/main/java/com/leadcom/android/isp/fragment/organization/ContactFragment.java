@@ -31,7 +31,6 @@ import com.leadcom.android.isp.holder.organization.ContactViewHolder;
 import com.leadcom.android.isp.listener.OnHandleBoundDataListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Role;
@@ -62,6 +61,7 @@ public class ContactFragment extends BaseOrganizationFragment {
     private static final String PARAM_CREATOR = "_cf_manager_";
     private static final String PARAM_DIAL_INDEX = "_cf_dial_index";
     private static final String PARAM_OPENABLE = "_cf_openable";
+    private static final String PARAM_SQUAD_OBJECT = "_cf_squad_object";
     /**
      * 没有查询任何数据
      */
@@ -110,9 +110,10 @@ public class ContactFragment extends BaseOrganizationFragment {
     /**
      * 打开具有标题栏的小组成员列表页面
      */
-    public static void open(BaseFragment fragment, String groupId, String squadId) {
-        Bundle bundle = getBundle(TYPE_SQUAD, groupId, squadId);
+    public static void open(BaseFragment fragment, Squad squad) {
+        Bundle bundle = getBundle(TYPE_SQUAD, squad.getGroupId(), squad.getId());
         bundle.putBoolean(PARAM_OPENABLE, true);
+        bundle.putSerializable(PARAM_SQUAD_OBJECT, squad);
         fragment.openActivity(ContactFragment.class.getName(), bundle, true, false);
     }
 
@@ -131,6 +132,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         isCreator = bundle.getBoolean(PARAM_CREATOR, false);
         dialIndex = bundle.getInt(PARAM_DIAL_INDEX, -1);
         isOpenable = bundle.getBoolean(PARAM_OPENABLE, false);
+        mSquad = (Squad) bundle.getSerializable(PARAM_SQUAD_OBJECT);
     }
 
     @Override
@@ -140,6 +142,7 @@ public class ContactFragment extends BaseOrganizationFragment {
         bundle.putBoolean(PARAM_CREATOR, isCreator);
         bundle.putInt(PARAM_DIAL_INDEX, dialIndex);
         bundle.putBoolean(PARAM_OPENABLE, isOpenable);
+        bundle.putSerializable(PARAM_SQUAD_OBJECT, mSquad);
     }
 
     // view
@@ -148,9 +151,10 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     // holder
     private InputableSearchViewHolder inputableSearchViewHolder;
-    private ArrayList<Member> members = new ArrayList<>();
+    private ArrayList<Member> members;
     private ContactAdapter mAdapter;
 
+    private Squad mSquad;
     // 默认显示组织的联系人列表
     private int showType = TYPE_ORG;
     /**
@@ -304,6 +308,9 @@ public class ContactFragment extends BaseOrganizationFragment {
             inputableSearchViewHolder = new InputableSearchViewHolder(searchView, this);
             inputableSearchViewHolder.setOnSearchingListener(searchingListener);
         }
+        if (null == members) {
+            members = new ArrayList<>();
+        }
         initializeAdapter();
     }
 
@@ -340,15 +347,18 @@ public class ContactFragment extends BaseOrganizationFragment {
     }
 
     private void loadingSquad() {
-        Squad squad = new Dao<>(Squad.class).query(mSquadId);
-        if (null == squad) {
+        if (null == mSquad) {
             fetchingRemoteSquad(mSquadId);
         } else {
-            setCustomTitle(StringHelper.getString(R.string.ui_group_squad_member_fragment_title_string, squad.getName()));
-            if (isEmpty(mOrganizationId)) {
-                mOrganizationId = squad.getGroupId();
+            setCustomTitle(StringHelper.getString(R.string.ui_group_squad_member_fragment_title_string, mSquad.getName()));
+            members.clear();
+            members.addAll(mSquad.getGroSquMemberList());
+            if (null == members || members.size() < 1) {
+                fetchingRemoteMembers(mOrganizationId, mSquadId);
+            } else {
+                isLoadingComplete(true);
+                refreshMemberList();
             }
-            fetchingRemoteMembers(mOrganizationId, mSquadId);
         }
     }
 
@@ -406,14 +416,30 @@ public class ContactFragment extends BaseOrganizationFragment {
         if (null != list && list.size() > 0) {
             members.clear();
             members.addAll(list);
-            clearAdapterNotExists();
-            mAdapter.clear();
-            mAdapter.add(members);
-            mAdapter.sort();
+            refreshMemberList();
         }
         displayLoading(false);
         displayNothing(mAdapter.getItemCount() < 1);
         stopRefreshing();
+    }
+
+    private void refreshMemberList() {
+        clearAdapterNotExists();
+        if (showType == TYPE_SQUAD) {
+            // 扫描管理员
+            for (Member member : members) {
+                if (member.getUserId().equals(mSquad.getCreatorId())) {
+                    if (null == member.getGroRole()) {
+                        Role role = new Role();
+                        role.setRolCode(Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
+                        member.setGroRole(role);
+                    }
+                }
+            }
+        }
+        mAdapter.clear();
+        mAdapter.add(members);
+        mAdapter.sort();
     }
 
     private String searchingText = "";
