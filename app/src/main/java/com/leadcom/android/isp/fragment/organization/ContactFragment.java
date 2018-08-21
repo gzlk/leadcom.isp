@@ -763,7 +763,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 holder.showButton2(!isMe && hasOperation(GRPOperation.MEMBER_DELETE) && (null != member && !member.isGroupManager()));
             } else {
                 // 小组成员删除权限
-                holder.showButton2(!isMe && hasOperation(GRPOperation.SQUAD_MEMBER_DELETE));
+                holder.showButton2(!isMe && (hasOperation(GRPOperation.SQUAD_MEMBER_DELETE) || (null != mSquad.getGroRole() && mSquad.getGroRole().hasOperation(GRPOperation.SQUAD_MEMBER_DELETE))));
             }
 
             holder.showContent(member, searchingText);

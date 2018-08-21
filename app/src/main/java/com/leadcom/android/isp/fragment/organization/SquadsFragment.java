@@ -405,12 +405,13 @@ public class SquadsFragment extends BaseOrganizationFragment {
     }
 
     private class SquadAdapter extends RecyclerViewAdapter<BaseViewHolder, Model> {
-        private static final int VT_SQUAD = 0, VT_MEMBER = 1;
+        private static final int VT_SQUAD = 0, VT_MEMBER = 1, VT_DELETABLE = 2;
 
         @Override
         public BaseViewHolder onCreateViewHolder(View itemView, int viewType) {
             switch (viewType) {
                 case VT_SQUAD:
+                case VT_DELETABLE:
                     SquadViewHolder svh = new SquadViewHolder(itemView, SquadsFragment.this);
                     svh.setOnViewHolderElementClickListener(elementClickListener);
                     // 有修改小组资料的权限时，才能编辑小组名称
@@ -426,13 +427,26 @@ public class SquadsFragment extends BaseOrganizationFragment {
 
         @Override
         public int itemLayout(int viewType) {
-            return viewType == VT_MEMBER ? R.layout.tool_view_organization_contact :
-                    (hasOperation(GRPOperation.SQUAD_DELETE) ? R.layout.holder_view_group_squad_deletable : R.layout.holder_view_group_squad);
+            switch (viewType) {
+                case VT_MEMBER:
+                    return R.layout.tool_view_organization_contact;
+                case VT_DELETABLE:
+                    return R.layout.holder_view_group_squad_deletable;
+                default:
+                    return R.layout.holder_view_group_squad;
+            }
         }
 
         @Override
         public int getItemViewType(int position) {
-            return get(position) instanceof Squad ? VT_SQUAD : VT_MEMBER;
+            Model model = get(position);
+            if (model instanceof Squad) {
+                Squad squad = (Squad) model;
+                if (null != squad.getGroRole() && squad.getGroRole().hasOperation(GRPOperation.SQUAD_DELETE)) {
+                    return VT_DELETABLE;
+                } else
+                    return hasOperation(GRPOperation.SQUAD_DELETE) ? VT_DELETABLE : VT_SQUAD;
+            } else return VT_MEMBER;
         }
 
         @Override

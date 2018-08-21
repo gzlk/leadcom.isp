@@ -12,6 +12,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Squad;
 
 /**
@@ -51,6 +52,10 @@ public class SquadViewHolder extends BaseViewHolder {
             name = getSearchingText(name, searchingText);
         } else {
             name = StringHelper.getString(R.string.ui_base_text_no_name_squad);
+        }
+        // 可以编辑小组名称
+        if (null != editButton && editButton.getVisibility() != View.VISIBLE) {
+            showEdit(null != squad.getGroRole() && squad.getGroRole().hasOperation(GRPOperation.SQUAD_PROPERTY));
         }
         nameView.setText(Html.fromHtml(name));
         numberView.setText(format("%d人", squad.isSelectable() ? Integer.valueOf(squad.getAccessToken()) : squad.getMemberNum()));

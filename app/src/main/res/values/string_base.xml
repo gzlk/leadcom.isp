@@ -79,7 +79,7 @@
     <string name="ui_base_text_myself">我</string>
     <string name="ui_base_text_no_name">无名氏</string>
     <string name="ui_base_text_no_name_team">未命名群</string>
-    <string name="ui_base_text_no_name_squad">未命名小组</string>
+    <string name="ui_base_text_no_name_squad">未命名分支</string>
     <string name="ui_base_text_no_name_group">未命名组织</string>
 
     <string name="ui_base_text_sex_male">男</string>
