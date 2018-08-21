@@ -395,8 +395,8 @@ public class ContactFragment extends BaseOrganizationFragment {
     @Override
     protected void onFetchingRemoteSquadComplete(Squad squad) {
         if (null != squad && !StringHelper.isEmpty(squad.getId())) {
-            setCustomTitle(StringHelper.getString(R.string.ui_group_squad_member_fragment_title_string, squad.getName()));
-            fetchingRemoteMembers(squad.getGroupId(), squad.getId());
+            mSquad = squad;
+            loadingSquad();
         }
     }
 
@@ -426,9 +426,9 @@ public class ContactFragment extends BaseOrganizationFragment {
     private void refreshMemberList() {
         clearAdapterNotExists();
         if (showType == TYPE_SQUAD) {
-            // 扫描管理员
+            // 扫描小组管理员
             for (Member member : members) {
-                if (member.getUserId().equals(mSquad.getCreatorId())) {
+                if (null != mSquad && member.getUserId().equals(mSquad.getCreatorId())) {
                     if (null == member.getGroRole()) {
                         Role role = new Role();
                         role.setRolCode(Member.Code.GROUP_ROLE_CODE_SQUAD_MANAGER);
@@ -763,7 +763,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 holder.showButton2(!isMe && hasOperation(GRPOperation.MEMBER_DELETE) && (null != member && !member.isGroupManager()));
             } else {
                 // 小组成员删除权限
-                holder.showButton2(!isMe && (hasOperation(GRPOperation.SQUAD_MEMBER_DELETE) || (null != mSquad.getGroRole() && mSquad.getGroRole().hasOperation(GRPOperation.SQUAD_MEMBER_DELETE))));
+                holder.showButton2(!isMe && (hasOperation(GRPOperation.SQUAD_MEMBER_DELETE) || (null != mSquad && null != mSquad.getGroRole() && mSquad.getGroRole().hasOperation(GRPOperation.SQUAD_MEMBER_DELETE))));
             }
 
             holder.showContent(member, searchingText);
