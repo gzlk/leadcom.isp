@@ -491,16 +491,14 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
         private void setImageClick(WebView view) {
             String jsCode = "javascript:(function() {" +
-                    "   var imgs = document.getElementsByTagName(\"img\");" +
-                    "   for(var i = 0; i < imgs.length; i++) {" +
-                    "       imgs[i].onclick = function() {" +
-                    "           alert(this.src);" +
-                    "       }" +
-                    "   }" +
-                    "   var videos = document.getElementsByTagName(\"video\");" +
-                    "   for(var i = 0; i < videos.length; i++) {" +
-                    "       videos[i].setAttribute(\"style\", \"width: 100%;\");" +
-                    "   }" +
+                    "   $(\"img[src^='http']\").on(\"click\", function() {" +
+                    "       alert($(this).attr(\"src\"));" +
+                    "   }).each(function() {" +
+                    "       $(this).css(\"width\", \"100%\");" +
+                    "   });" +
+                    "   $(\"video\").each(function() {" +
+                    "       $(this).css(\"width\", \"100%\");" +
+                    "   });" +
                     "})()";
             view.loadUrl(jsCode);
         }
