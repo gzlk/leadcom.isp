@@ -16,8 +16,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
@@ -219,7 +221,12 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
 
     @Override
     protected void shareToQQ() {
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "", "", "", images.get(selectedIndex), null);
+        String file = Shareable.getLocalPathGlide(images.get(selectedIndex));
+        if (!isEmpty(file)) {
+            ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "", "", "", file, null);
+        } else {
+            ToastHelper.make().showMsg("分享到QQ失败：无法找到图片");
+        }
     }
 
     @Override
@@ -232,15 +239,21 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
     @Override
     protected void shareToWeiXinSession() {
         ArrayList<String> img = new ArrayList<>();
-        img.add(images.get(selectedIndex));
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, "分享图片t", "分享图片c", img);
+        String file = Shareable.getLocalPathGlide(images.get(selectedIndex));
+        if (!isEmpty(file)) {
+            img.add(file);
+            ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, "分享图片t", "分享图片c", img);
+        }
     }
 
     @Override
     protected void shareToWeiXinTimeline() {
         ArrayList<String> img = new ArrayList<>();
-        img.add(images.get(selectedIndex));
-        ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, "分享图片t", "分享图片c", img);
+        String file = Shareable.getLocalPathGlide(images.get(selectedIndex));
+        if (!isEmpty(file)) {
+            img.add(file);
+            ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, "分享图片t", "分享图片c", img);
+        }
     }
 
     @Override
@@ -408,11 +421,12 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
                 }
             }
             displayLoading(true);
+            RequestOptions options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL);
             if (!isEmpty(ext) && ext.equals("gif")) {
                 // 动图
                 ImageView imageView = new ImageView(App.app());
                 container.addView(imageView);
-                Glide.with(ImageViewerFragment.this).load(image).into(imageView);
+                Glide.with(ImageViewerFragment.this).load(image).apply(options).into(imageView);
                 imageView.setOnClickListener(imageViewClickListener);
                 return imageView;
             }

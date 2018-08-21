@@ -207,7 +207,7 @@ public class ShareToWeiXin extends Shareable {
     }
 
     private static WXMediaMessage getSingleImageObject(String title, String description, String url) {
-        String localPath = getLocalPath(url);
+        String localPath = url.indexOf(0) == '/' ? url : getLocalPath(url);
         Bitmap bitmap = BitmapFactory.decodeFile(localPath);
         WXImageObject object = new WXImageObject(bitmap);
 

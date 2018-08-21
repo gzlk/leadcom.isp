@@ -3,18 +3,28 @@ package com.leadcom.android.isp.share;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.task.AsyncExecutableTask;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <b>功能描述：</b>各类分享的实现方法<br />
@@ -71,6 +81,37 @@ public class Shareable {
             return file.getPath();
         }
         return null;
+    }
+
+    public static String getLocalPathGlide(String imageUrl) {
+        try {
+            return new FetchingGlideFileTask().execute(imageUrl).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static class FetchingGlideFileTask extends AsyncExecutableTask<String, Void, String> {
+
+        @Override
+        protected String doInTask(String... strings) {
+            String url = strings[0];
+
+            try {
+                File file = Glide.with(App.app()).load(url).downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                if (null != file) {
+                    return file.getAbsolutePath();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     private static byte[] getAppIcon() {
