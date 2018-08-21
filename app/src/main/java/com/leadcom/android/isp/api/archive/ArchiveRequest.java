@@ -232,16 +232,20 @@ public class ArchiveRequest extends Request<Archive> {
     /**
      * 搜索组织档案
      *
-     * @param organizationId 组织的id
-     * @param searchTitle    档案的名称
+     * @param groupId     组织的id
+     * @param searchTitle 档案标题
+     * @param createDate  档案创建日期
+     * @param classifyId  档案类别id
+     * @param category    档案类型
+     * @param pageNumber  页码
      */
-    public void search(String organizationId, String searchTitle, String createDate, String property, String category, int pageNumber) {
-        String params = format("%s?groupId=%s&pageNumber=%d", group(LIST), organizationId, pageNumber);
+    public void search(String groupId, String searchTitle, String createDate, String classifyId, String category, int pageNumber) {
+        String params = format("%s?groupId=%s&pageNumber=%d", group(LIST), groupId, pageNumber);
         if (!isEmpty(createDate)) {
             params = format("%s&createDate=%s", params, createDate);
         }
-        if (!isEmpty(property)) {
-            params = format("%s&docClassifyId=%s", params, property);
+        if (!isEmpty(classifyId)) {
+            params = format("%s&docClassifyId=%s", params, classifyId);
         }
         if (!isEmpty(category)) {
             params = format("%s&category=%s", params, category);

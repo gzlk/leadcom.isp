@@ -615,7 +615,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
 
     private boolean hasNatureSelected() {
         for (Classify classify : classifies) {
-            if (classify.getParentId() == 0 && classify.isSelected())
+            if (classify.getParentId() == 0 && classify.isSelected() && !classify.getId().equals("0"))
                 return true;
         }
         return false;
@@ -626,28 +626,20 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         int parent = Integer.valueOf(isEmpty(searchingNature) ? "0" : searchingNature);
         if (parent > 0) {
             sAdapter.clear();
-            all.setParentId(parent);
-            sAdapter.add(all);
         }
 
-        boolean hasSelected = false;
         for (Classify classify : classifies) {
             if (classify.getParentId() == 0) {
                 tAdapter.add(classify);
             } else if (classify.getParentId() > 0 && classify.getParentId() == parent) {
-                if (classify.isSelected()) {
-                    hasSelected = true;
-                }
                 sAdapter.add(classify);
             }
         }
-        all.setSelected(!hasSelected);
-        sAdapter.update(all);
         if (tAdapter.getItemCount() <= 0) {
-            fetchingClassify();
+            fetchingClassify(searchingNature);
         }
-        if (!isEmpty(searchingNature) && sAdapter.getItemCount() <= 1) {
-            fetchingClassify();
+        if (!isEmpty(searchingNature) && !searchingNature.equals("0") && sAdapter.getItemCount() <= 0) {
+            fetchingClassify(searchingNature);
         }
     }
 
@@ -664,27 +656,26 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
         }).list(Dictionary.Type.ARCHIVE_TYPE);
     }
 
-    private void fetchingClassify() {
+    private void fetchingClassify(final String classifyId) {
         ClassifyRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Classify>() {
             @Override
             public void onResponse(List<Classify> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success && null != list) {
                     for (Classify classify : list) {
+                        if (classify.getId().equals("0") && classify.getParentId() == 0) {
+                            // 默认选中顶层类别中的“全部”
+                            classify.setSelected(true);
+                        }
                         if (!classifies.contains(classify)) {
+                            classify.setParentId(isEmpty(classifyId) ? 0 : Long.valueOf(classifyId));
                             classifies.add(classify);
-                            for (Classify clazzify : classify.getDocClassifyList()) {
-                                clazzify.setParentId(Long.valueOf(classify.getId()));
-                                if (!classifies.contains(clazzify)) {
-                                    classifies.add(clazzify);
-                                }
-                            }
                         }
                     }
                     resetTypeList();
                 }
             }
-        }).listAll();
+        }).list(mQueryId, classifyId);
     }
 
     private void searchingArchive() {
@@ -727,12 +718,6 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     }};
 
     private Dictionary none = new Dictionary() {{
-        setId("none");
-        setName("全部");
-        setSelected(true);
-    }};
-
-    private Classify all = new Classify() {{
         setId("none");
         setName("全部");
         setSelected(true);
@@ -852,6 +837,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                         mAdapter.update(duty);
                     }
                 }
+                isLoadingComplete(true);
                 stillLoading = false;
                 stopRefreshing();
                 displayLoading(false);
@@ -863,27 +849,15 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
     private void restoreSearchingResult() {
         mAdapter.remove(last);
         for (Archive archive : searched) {
-            if (isInMonth(archive) && isNature(archive) && isType(archive)) {
-                mAdapter.update(archive);
-            }
+            //if (isInMonth(archive) && isNature(archive) && isType(archive)) {
+            mAdapter.update(archive);
+            //}
         }
         mAdapter.add(last);
         if (mAdapter.getItemCount() <= 1) {
             ToastHelper.make().showMsg(R.string.ui_text_home_archive_search_empty);
         }
         stopRefreshing();
-    }
-
-    private boolean isInMonth(Archive archive) {
-        return isEmpty(searchingYear) || (!isEmpty(archive.getCreateDate()) && archive.getCreateDate().contains(searchingYear));
-    }
-
-    private boolean isNature(Archive archive) {
-        return isEmpty(searchingNature1) || (!isEmpty(archive.getDocClassifyId()) && archive.getDocClassifyId().contains(searchingNature1));
-    }
-
-    private boolean isType(Archive archive) {
-        return isEmpty(searchingType) || (!isEmpty(archive.getCategory()) && archive.getCategory().contains(searchingType));
     }
 
     private void initializeTypeAdapter() {
@@ -896,6 +870,18 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
             sAdapter = new SubTypeAdapter();
             subTypeList.setLayoutManager(new CustomLinearLayoutManager(subTypeList.getContext()));
             subTypeList.setAdapter(sAdapter);
+        }
+    }
+
+    private void clearClassify(String parentId) {
+        long parent = Long.valueOf(parentId);
+        for (Classify classify : classifies) {
+            if (classify.getParentId() > 0 && classify.getParentId() == parent) {
+                classify.setSelected(false);
+                if (sAdapter.indexOf(classify) >= 0) {
+                    sAdapter.update(classify);
+                }
+            }
         }
     }
 
@@ -929,17 +915,28 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 clazz.setSelected(!clazz.isSelected());
                 if (clazz.getParentId() <= 0) {
                     tAdapter.update(clazz);
-                    subTypeList.setVisibility(clazz.isSelected() ? View.VISIBLE : View.GONE);
+                    subTypeList.setVisibility(!clazz.getId().equals("0") && clazz.isSelected() ? View.VISIBLE : View.GONE);
                     searchingNature = clazz.isSelected() ? clazz.getId() : "";
+                    searchingNature1 = searchingNature;
+                    if (!clazz.isSelected() && clazz.getId().equals("0")) {
+                        // “全部”的取消选中不需要再次拉取档案内容
+                        return;
+                    }
                     for (int i = 0, len = tAdapter.getItemCount(); i < len; i++) {
                         Classify classify = (Classify) tAdapter.get(i);
                         if (!classify.getId().equals(clazz.getId()) && classify.isSelected()) {
                             classify.setSelected(false);
                             tAdapter.update(classify);
+                            clearClassify(classify.getId());
                         }
                     }
+                    if (isEmpty(searchingNature)) {
+                        // 取消选择之后重置本类别下级类别的所有选中项
+                        sAdapter.clear();
+                        clearClassify(clazz.getId());
+                    }
                     resetFuncNature();
-                    return;
+                    //return;
                 }
             } else if (model.getId().contains("year")) {
                 if (!model.isSelected()) {
@@ -1012,9 +1009,6 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                 return;
             }
             searchingNature1 = clazz.isSelected() ? clazz.getId() : "";
-            if (searchingNature1.contains("none")) {
-                searchingNature1 = "";
-            }
 
             // 去除所有其他类别的选中状态
             for (Classify classify : classifies) {

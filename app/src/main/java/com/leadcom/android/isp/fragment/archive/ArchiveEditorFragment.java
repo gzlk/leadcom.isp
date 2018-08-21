@@ -520,7 +520,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 String res = getResultedData(data);
                 String[] properties = res.split(",");
                 mArchive.setDocClassifyId(properties[0]);
-                mArchive.setProperty(properties[1]);
+                //mArchive.setProperty(properties[1]);
                 resetProperty();
                 break;
             case REQUEST_ATTACHMENT:

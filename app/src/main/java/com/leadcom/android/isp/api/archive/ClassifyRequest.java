@@ -88,14 +88,7 @@ public class ClassifyRequest extends Request<Classify> {
      * 查找组织的档案分类列表
      */
     public void list(String groupId, String parentId) {
-        String param = format("%s?groupId=%s&parentId=%s", url(LIST), groupId, (isEmpty(parentId) ? "" : parentId));
+        String param = format("%s?groupId=%s&parentId=%s", url(LIST + "/search"), groupId, (isEmpty(parentId) ? "" : parentId));
         executeHttpRequest(getRequest(PageClassify.class, param, "", HttpMethods.Get));
-    }
-
-    /**
-     * 查找所有后台固定定义的档案属性
-     */
-    public void listAll() {
-        executeHttpRequest(getRequest(PageClassify.class, url(LIST) + "/all", "", HttpMethods.Get));
     }
 }
