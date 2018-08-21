@@ -400,7 +400,12 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
             String local = Shareable.getLocalPath(image);
             if (!isEmpty(local)) {
                 // 获取ImageLoader下载了的本地图片大图
-                image = local;
+                assert local != null;
+                File file = new File(local);
+                if (file.exists()) {
+                    // 本地大图文件存在才读取本地大图文件，否则直接下载
+                    image = local;
+                }
             }
             displayLoading(true);
             if (!isEmpty(ext) && ext.equals("gif")) {
