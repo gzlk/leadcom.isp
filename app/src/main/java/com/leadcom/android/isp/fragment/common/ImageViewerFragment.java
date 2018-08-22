@@ -43,6 +43,7 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
+import com.leadcom.android.isp.share.OnGlideFetchingCompleteListener;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiBo;
 import com.leadcom.android.isp.share.ShareToWeiXin;
@@ -219,41 +220,49 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
         }).add(images.get(selectedIndex) + "#.jpg");
     }
 
+    private void tryShareImage(final int shareType) {
+        Shareable.getLocalPathGlide(Activity(), images.get(selectedIndex), new OnGlideFetchingCompleteListener() {
+            @Override
+            public void onComplete(String localPath) {
+                if (!isEmpty(localPath)) {
+                    switch (shareType) {
+                        case Shareable.TO_QQ:
+                            ShareToQQ.shareToQQ(Shareable.TO_QQ, Activity(), "", "", "", localPath, null);
+                            break;
+                        case Shareable.TO_WX_SESSION:
+                        case Shareable.TO_WX_TIMELINE:
+                            ArrayList<String> img = new ArrayList<>();
+                            img.add(localPath);
+                            ShareToWeiXin.shareToWeiXin(Activity(), shareType, "分享图片t", "分享图片c", img);
+                            break;
+                    }
+                } else {
+                    ToastHelper.make().showMsg("分享失败，无法找到图片");
+                }
+            }
+        });
+    }
+
     @Override
     protected void shareToQQ() {
-        String file = Shareable.getLocalPathGlide(images.get(selectedIndex));
-        if (!isEmpty(file)) {
-            ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "", "", "", file, null);
-        } else {
-            ToastHelper.make().showMsg("分享到QQ失败：无法找到图片");
-        }
+        tryShareImage(Shareable.TO_QQ);
     }
 
     @Override
     protected void shareToQZone() {
         ArrayList<String> img = new ArrayList<>();
         img.add(images.get(selectedIndex));
-        ShareToQQ.shareToQQ(ShareToQQ.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title, "分享图片"), "分享图片c", "http://www.baidu.com", "", img);
+        ShareToQQ.shareToQQ(Shareable.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title, "分享图片"), "分享图片c", "http://www.baidu.com", "", img);
     }
 
     @Override
     protected void shareToWeiXinSession() {
-        ArrayList<String> img = new ArrayList<>();
-        String file = Shareable.getLocalPathGlide(images.get(selectedIndex));
-        if (!isEmpty(file)) {
-            img.add(file);
-            ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_SESSION, "分享图片t", "分享图片c", img);
-        }
+        tryShareImage(Shareable.TO_WX_SESSION);
     }
 
     @Override
     protected void shareToWeiXinTimeline() {
-        ArrayList<String> img = new ArrayList<>();
-        String file = Shareable.getLocalPathGlide(images.get(selectedIndex));
-        if (!isEmpty(file)) {
-            img.add(file);
-            ShareToWeiXin.shareToWeiXin(Activity(), ShareToWeiXin.TO_WX_TIMELINE, "分享图片t", "分享图片c", img);
-        }
+        tryShareImage(Shareable.TO_WX_TIMELINE);
     }
 
     @Override

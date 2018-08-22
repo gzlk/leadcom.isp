@@ -1,13 +1,17 @@
 package com.leadcom.android.isp.share;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
@@ -24,6 +28,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.ref.SoftReference;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -83,35 +88,26 @@ public class Shareable {
         return null;
     }
 
-    public static String getLocalPathGlide(String imageUrl) {
-        try {
-            return new FetchingGlideFileTask().execute(imageUrl).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static class FetchingGlideFileTask extends AsyncExecutableTask<String, Void, String> {
-
-        @Override
-        protected String doInTask(String... strings) {
-            String url = strings[0];
-
-            try {
-                File file = Glide.with(App.app()).load(url).downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
-                if (null != file) {
-                    return file.getAbsolutePath();
+    public static void getLocalPathGlide(final Context context, final String imageUrl, final OnGlideFetchingCompleteListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    FutureTarget<File> target = Glide.with(context).downloadOnly().load(imageUrl).submit();
+                    File file = target.get();
+                    if (null != file) {
+                        String path = file.getAbsolutePath();
+                        if (null != listener) {
+                            listener.onComplete(path);
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
             }
-            return null;
-        }
+        }).start();
     }
 
     private static byte[] getAppIcon() {
@@ -119,12 +115,12 @@ public class Shareable {
         return bmpToByteArray(bitmap, true);
     }
 
-    protected static byte[] getThumb(String imageUrl) {
+    static byte[] getThumb(String imageUrl) {
         // url为空时返回app的默认图标
         if (isEmpty(imageUrl)) {
             return getAppIcon();
         }
-        String localPath = getLocalPath(imageUrl);
+        String localPath = imageUrl.charAt(0) == '/' ? imageUrl : getLocalPath(imageUrl);
 
         Bitmap source = null;
         try {

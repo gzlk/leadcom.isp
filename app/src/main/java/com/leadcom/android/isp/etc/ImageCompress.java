@@ -253,7 +253,7 @@ public final class ImageCompress {
      */
     public static Bitmap getVideoThumbnail(String filePath) {
         try {
-            return new VideoThumbnailTask().execute(filePath).get();
+            return new VideoThumbnailTask().exec(filePath).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

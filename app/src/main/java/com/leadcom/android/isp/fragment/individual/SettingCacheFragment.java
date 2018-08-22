@@ -1,6 +1,6 @@
 package com.leadcom.android.isp.fragment.individual;
 
-import android.os.AsyncTask;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 
@@ -76,7 +76,7 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
     @Click({R.id.ui_setting_cache_clear})
     private void viewClick(View view) {
         // 清理全部
-        new RemoveTask().execute(-1);
+        new RemoveTask().exec(-1);
     }
 
     private void initializeHolders() {
@@ -85,28 +85,28 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
             fileHolder.showContent(format(items[1], ""));
             fileHolder.showProgress(true);
             fileHolder.addOnViewHolderClickListener(holderClickListener);
-            new CalculateTask().execute(0);
+            new CalculateTask().exec(0);
         }
         if (null == imageHolder) {
             imageHolder = new SimpleClickableViewHolder(imageView, this);
             imageHolder.showContent(format(items[1], ""));
             imageHolder.showProgress(true);
             imageHolder.addOnViewHolderClickListener(holderClickListener);
-            new CalculateTask().execute(1);
+            new CalculateTask().exec(1);
         }
         if (null == videoHolder) {
             videoHolder = new SimpleClickableViewHolder(videoView, this);
             videoHolder.showContent(format(items[2], ""));
             videoHolder.showProgress(true);
             videoHolder.addOnViewHolderClickListener(holderClickListener);
-            new CalculateTask().execute(2);
+            new CalculateTask().exec(2);
         }
         if (null == otherHolder) {
             otherHolder = new SimpleClickableViewHolder(otherView, this);
             otherHolder.showContent(format(items[3], ""));
             otherHolder.showProgress(true);
             otherHolder.addOnViewHolderClickListener(holderClickListener);
-            new CalculateTask().execute(3);
+            new CalculateTask().exec(3);
         }
     }
 
@@ -139,6 +139,7 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
     };
 
     // 删除目录
+    @SuppressLint("StaticFieldLeak")
     private class RemoveTask extends AsyncExecutableTask<Integer, Integer, Void> {
 
         private int type;
@@ -159,8 +160,8 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
+        protected void doProgress(Integer... values) {
+            super.doProgress(values);
             int value = values[0];
             refresh(value);
         }
@@ -225,13 +226,37 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
         }
     }
 
-    private class CalculateTask extends AsyncTask<Integer, Void, Void> {
+    @SuppressLint("StaticFieldLeak")
+    private class CalculateTask extends AsyncExecutableTask<Integer, Void, Void> {
 
         private int type;
         private long size;
 
         @Override
-        protected Void doInBackground(Integer... integers) {
+        protected void doAfterExecute() {
+            switch (type) {
+                case 0:
+                    fileHolder.showContent(format(items[0], Utils.formatSize(size)));
+                    fileHolder.showProgress(false);
+                    break;
+                case 1:
+                    imageHolder.showContent(format(items[1], Utils.formatSize(size)));
+                    imageHolder.showProgress(false);
+                    break;
+                case 2:
+                    videoHolder.showContent(format(items[2], Utils.formatSize(size)));
+                    videoHolder.showProgress(false);
+                    break;
+                case 3:
+                    otherHolder.showContent(format(items[3], Utils.formatSize(size)));
+                    otherHolder.showProgress(false);
+                    break;
+            }
+            super.doAfterExecute();
+        }
+
+        @Override
+        protected Void doInTask(Integer... integers) {
             type = integers[0];
             switch (type) {
                 case 0:
@@ -253,29 +278,6 @@ public class SettingCacheFragment extends BaseTransparentSupportFragment {
                     break;
             }
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            switch (type) {
-                case 0:
-                    fileHolder.showContent(format(items[0], Utils.formatSize(size)));
-                    fileHolder.showProgress(false);
-                    break;
-                case 1:
-                    imageHolder.showContent(format(items[1], Utils.formatSize(size)));
-                    imageHolder.showProgress(false);
-                    break;
-                case 2:
-                    videoHolder.showContent(format(items[2], Utils.formatSize(size)));
-                    videoHolder.showProgress(false);
-                    break;
-                case 3:
-                    otherHolder.showContent(format(items[3], Utils.formatSize(size)));
-                    otherHolder.showProgress(false);
-                    break;
-            }
         }
     }
 }

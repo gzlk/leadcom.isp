@@ -10,7 +10,7 @@ public abstract class AsyncExecutableTask<Params, Progress, Result> extends Asyn
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Result doInBackground(Params... params) {
+    protected final Result doInBackground(Params... params) {
         try {
             return doInTask(params);
         } catch (Exception ignore) {
@@ -20,20 +20,20 @@ public abstract class AsyncExecutableTask<Params, Progress, Result> extends Asyn
     }
 
     @Override
-    protected void onPreExecute() {
+    protected final void onPreExecute() {
         doBeforeExecute();
         super.onPreExecute();
     }
 
     @Override
-    protected void onPostExecute(Result result) {
+    protected final void onPostExecute(Result result) {
         doAfterExecute();
         super.onPostExecute(result);
     }
 
     @SuppressWarnings({"unchecked", "varargs"})
     @Override
-    protected void onProgressUpdate(Progress... values) {
+    protected final void onProgressUpdate(Progress... values) {
         doProgress(values);
         super.onProgressUpdate(values);
     }
