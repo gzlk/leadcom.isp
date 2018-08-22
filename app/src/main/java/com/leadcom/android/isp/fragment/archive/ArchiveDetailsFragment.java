@@ -493,8 +493,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             String jsCode = "javascript:(function() {" +
                     "   $(\"img[src^='http']\").on(\"click\", function() {" +
                     "       alert($(this).attr(\"src\"));" +
-                    "   }).each(function() {" +
-                    "       $(this).css(\"width\", \"100%\");" +
+                    //"   }).each(function() {" +
+                    //"       $(this).css(\"width\", \"100%\");" +
                     "   });" +
                     "   $(\"video\").each(function() {" +
                     "       $(this).css(\"width\", \"100%\");" +
