@@ -292,8 +292,8 @@ public final class ImageCompress {
         // 与当前屏幕分辨率对比，获取缩放率(根据最小边缩放)
         sampleSize = getSampleSize(false, prepareToWidth, prepareToHeight, options);
 
-        log(String.format(Locale.getDefault(), "try to compress image, %dx%d to %dx%d, scale to 1/%d",
-                options.outWidth, options.outHeight, prepareToWidth, prepareToHeight, sampleSize));
+        log(String.format(Locale.getDefault(), "try to compress image %s, %dx%d to %dx%d, scale to 1/%d",
+                fromPath, options.outWidth, options.outHeight, prepareToWidth, prepareToHeight, sampleSize));
 
         // if (options.outWidth <= BaseFragment.MAX_THUMB_IMAGE_SIZE
         // || options.outHeight <= BaseFragment.MAX_THUMB_IMAGE_SIZE) {

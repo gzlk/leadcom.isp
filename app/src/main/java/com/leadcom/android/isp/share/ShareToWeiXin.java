@@ -12,6 +12,8 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.organization.Concern;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -69,7 +71,7 @@ public class ShareToWeiXin extends Shareable {
         if (regToWX(activityContext)) {
             switch (type) {
                 case TO_WX_SESSION:
-                    shareToWeiXinSession(title, text, images);
+                    shareToWeiXinSession(activityContext, title, text, images);
                     break;
                 case TO_WX_TIMELINE:
                     shareToWeiXinTimeline(activityContext, title, text, images);
@@ -121,14 +123,41 @@ public class ShareToWeiXin extends Shareable {
     /**
      * 分享到会话
      */
-    private static void shareToWeiXinSession(String title, String text, ArrayList<String> images) {
+    private static void shareToWeiXinSession(Context context, String title, String text, ArrayList<String> images) {
         if (images.size() > 0) {
-            // 发送单个图片到聊天对象
-            sendMessage(getSingleImageObject(title, text, images.get(0)), SendMessageToWX.Req.WXSceneSession);
+            if (images.size() > 1) {
+                shareMultipleImageToWeiXinSession(context, images);
+            } else {
+                // 发送单个图片到聊天对象
+                sendMessage(getSingleImageObject(title, text, images.get(0)), SendMessageToWX.Req.WXSceneSession);
+            }
         } else if (!isEmpty(text)) {
             // 文字不为空时发送文字到聊天对象
             sendMessage(getTextObject(title, text), SendMessageToWX.Req.WXSceneSession);
         }
+    }
+
+    private static void shareMultipleImageToWeiXinSession(Context context, ArrayList<String> images) {
+        Intent intent = new Intent();
+        ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
+        intent.setComponent(comp);
+        intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setType("image/jpg");
+        ArrayList<Uri> imageUris = new ArrayList<>();
+        for (String url : images) {
+            String ext = Attachment.getExtension(url);
+            String local = getLocalPath(url);
+            if (!StringHelper.isEmpty(local)) {
+                local = compressSources(local, ext);
+                Uri uri = FilePreviewHelper.getUriFromFile(local);
+                if (null != uri) {
+                    imageUris.add(uri);
+                }
+            }
+        }
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+        context.startActivity(Intent.createChooser(intent, "分享图片"));
     }
 
     /**
@@ -157,19 +186,22 @@ public class ShareToWeiXin extends Shareable {
         ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
         intent.setComponent(comp);
         intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-        intent.setType("image/*");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setType("image/jpg");
         intent.putExtra("Kdescription", title);
         ArrayList<Uri> imageUris = new ArrayList<>();
         for (String url : images) {
             String local = getLocalPath(url);
             if (!StringHelper.isEmpty(local)) {
+                String ext = Attachment.getExtension(url);
+                local = compressSources(local, ext);
                 Uri uri = FilePreviewHelper.getUriFromFile(local);
                 if (null != uri) {
                     imageUris.add(uri);
                 }
             }
         }
-        intent.putExtra(Intent.EXTRA_STREAM, imageUris);
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
         context.startActivity(intent);
     }
 
@@ -208,6 +240,7 @@ public class ShareToWeiXin extends Shareable {
 
     private static WXMediaMessage getSingleImageObject(String title, String description, String url) {
         String localPath = url.charAt(0) == '/' ? url : getLocalPath(url);
+        localPath = compressSources(localPath, "jpg");
         Bitmap bitmap = BitmapFactory.decodeFile(localPath);
         WXImageObject object = new WXImageObject(bitmap);
 

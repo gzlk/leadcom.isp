@@ -31,6 +31,8 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
+import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
 import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.listener.OnTaskCompleteListener;
@@ -41,7 +43,9 @@ import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.user.Moment;
+import com.leadcom.android.isp.share.OnGlideFetchingCompleteListener;
 import com.leadcom.android.isp.share.ShareToQQ;
+import com.leadcom.android.isp.share.ShareToWeiXin;
 import com.leadcom.android.isp.share.Shareable;
 import com.leadcom.android.isp.task.CopyLocalFileTask;
 
@@ -304,9 +308,53 @@ public class MomentImagesFragment extends BaseMomentFragment {
         }
     }
 
+    private void tryShareImage(final int shareType) {
+        Shareable.getLocalPathGlide(Activity(), images.get(selected), new OnGlideFetchingCompleteListener() {
+            @Override
+            public void onComplete(String localPath) {
+                if (!isEmpty(localPath)) {
+                    switch (shareType) {
+                        case Shareable.TO_QQ:
+                            ShareToQQ.shareToQQ(Shareable.TO_QQ, Activity(), "", "", "", localPath, null);
+                            break;
+                        case Shareable.TO_WX_SESSION:
+                        case Shareable.TO_WX_TIMELINE:
+                            ArrayList<String> img = new ArrayList<>();
+                            img.add(localPath);
+                            ShareToWeiXin.shareToWeiXin(Activity(), shareType, "分享图片t", "分享图片c", img);
+                            break;
+                    }
+                } else {
+                    ToastHelper.make().showMsg("分享失败，无法找到图片");
+                }
+            }
+        });
+    }
+
     @Override
     protected void shareToQQ() {
         ShareToQQ.shareToQQ(ShareToQQ.TO_QQ, Activity(), "", "", "", images.get(selected), null);
+    }
+
+    @Override
+    protected void shareToQZone() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(images.get(selected));
+        ShareToQQ.shareToQQ(Shareable.TO_QZONE, Activity(), StringHelper.getString(R.string.ui_base_share_title, "分享图片"), mMoment.getContent(), "http://www.baidu.com", "", img);
+    }
+
+    @Override
+    protected void shareToWeiXinSession() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(images.get(selected));
+        ShareToWeiXin.shareToWeiXin(Activity(), Shareable.TO_WX_SESSION, StringHelper.getString(R.string.ui_base_share_title, "分享图片"), mMoment.getContent(), img);
+    }
+
+    @Override
+    protected void shareToWeiXinTimeline() {
+        ArrayList<String> img = new ArrayList<>();
+        img.add(images.get(selected));
+        ShareToWeiXin.shareToWeiXin(Activity(), Shareable.TO_WX_TIMELINE, StringHelper.getString(R.string.ui_base_share_title, "分享图片"), mMoment.getContent(), img);
     }
 
     private void save() {
@@ -414,7 +462,12 @@ public class MomentImagesFragment extends BaseMomentFragment {
             String local = Shareable.getLocalPath(image);
             if (!isEmpty(local)) {
                 // 获取ImageLoader下载了的本地图片大图
-                image = local;
+                assert local != null;
+                File file = new File(local);
+                if (file.exists()) {
+                    // 本地大图文件存在才读取本地大图文件，否则直接下载
+                    image = local;
+                }
             }
             displayLoading(true);
             if (!isEmpty(ext) && ext.contains("gif")) {

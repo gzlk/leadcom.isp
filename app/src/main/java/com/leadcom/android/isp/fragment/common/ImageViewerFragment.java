@@ -187,7 +187,7 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
                 .showShare(true)
                 .showSave(isUrl)// 互联网图片才可以保存
                 .showDelete(false)
-                .showFavorite(!isCollected || isUrl)
+                .showFavorite(!isCollected)
                 .show();
     }
 

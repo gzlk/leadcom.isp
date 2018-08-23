@@ -3,32 +3,23 @@ package com.leadcom.android.isp.share;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
+import com.hlk.hlklib.etc.Cryptography;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.ImageCompress;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.task.AsyncExecutableTask;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.lang.ref.SoftReference;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -82,7 +73,7 @@ public class Shareable {
 
     public static String getLocalPath(String imageUrl) {
         File file = ImageLoader.getInstance().getDiskCache().get(imageUrl);
-        if (null != file) {
+        if (null != file && file.exists() && file.length() > 100) {
             return file.getPath();
         }
         return null;
@@ -167,6 +158,21 @@ public class Shareable {
         ImageCompress.compressBitmap(localPath, tempThumb, THUMB_WIDTH, THUMB_HEIGHT);
         ImageCompress.PREPARE_COMPRESSED_SIZE = 0;
         return readFile(tempThumb);
+    }
+
+    /**
+     * 压缩原始图片到手机屏幕分辨率大小
+     */
+    protected static String compressSources(String localPath, String ext) {
+        // 压缩原始图片到屏幕分辨率大小
+        String name = Cryptography.md5(localPath);
+        String temp = App.app().getCachePath(App.TEMP_DIR) + name + "." + ext;
+        File file = new File(temp);
+        if (!file.exists() || file.length() < 100) {
+            DisplayMetrics dm = App.app().getResources().getDisplayMetrics();
+            ImageCompress.compressBitmap(localPath, temp, dm.widthPixels, dm.heightPixels);
+        }
+        return temp;
     }
 
     private static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {

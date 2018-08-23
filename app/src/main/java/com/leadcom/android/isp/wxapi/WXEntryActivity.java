@@ -75,7 +75,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 case BaseResp.ErrCode.ERR_COMM:
                     break;
                 case BaseResp.ErrCode.ERR_OK:
-                    res = R.string.ui_base_share_text_share_to_wx_complete;
+                    //res = R.string.ui_base_share_text_share_to_wx_complete;
                     break;
                 case BaseResp.ErrCode.ERR_SENT_FAILED:
                     res = R.string.ui_base_share_text_share_to_wx_sent_failed;

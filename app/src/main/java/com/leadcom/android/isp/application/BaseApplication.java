@@ -210,6 +210,12 @@ public class BaseApplication extends Application {
     }
 
     /**
+     * 获取外置SD卡的路径
+     */
+    private void getSDCardDir() {
+    }
+
+    /**
      * 获取内置SD卡中app私有存储空间
      */
     public String gotCacheDir() {
@@ -250,7 +256,8 @@ public class BaseApplication extends Application {
         if (!file.exists()) {
             file.mkdirs();
         }
-        if (dirs.endsWith(IMAGE_DIR + "/") || dirs.endsWith(HTML_DIR + "/") || dirs.endsWith(CROPPED_DIR + "/") || dirs.endsWith(CAMERA_DIR + "/")) {
+        if (dirs.endsWith(IMAGE_DIR + "/") || dirs.endsWith(HTML_DIR + "/") || dirs.endsWith(CROPPED_DIR + "/") ||
+                dirs.endsWith(CAMERA_DIR + "/") || dirs.endsWith(TEMP_DIR + "/")) {
             // 本地图片文件夹增加 .nomedia
             String path = dirs + NOMEDIA;
             File f = new File(path);
@@ -272,7 +279,7 @@ public class BaseApplication extends Application {
     }
 
     public String getTempLocalPath(String path) {
-        return getCachePath(path) + "/" + getRandomUUID();
+        return getCachePath(path) + getRandomUUID();
     }
 
     /**

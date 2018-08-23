@@ -227,6 +227,7 @@ public class DownloadingHelper {
                         if (taskId > 0) {
                             checkDownloadStatus(taskId);
                         }
+                        context.unregisterReceiver(receiver);
                         break;
                     case DownloadManager.ACTION_NOTIFICATION_CLICKED:
                         // 点击了通知栏
