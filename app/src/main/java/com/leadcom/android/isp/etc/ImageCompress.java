@@ -33,7 +33,7 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 public final class ImageCompress {
 
     // 压缩后的文件大小限制(1M)
-    private static final int MAX_COMPRESSED_SIZE = 1024 * 1024;
+    private static final int MAX_COMPRESSED_SIZE = 900 * 1024;
     /**
      * 想要压缩后的文件的最大尺寸
      */
@@ -77,7 +77,7 @@ public final class ImageCompress {
         int screen = prepareToWidth > prepareToHeight ? (fitMax ? prepareToWidth : prepareToHeight) : (fitMax ? prepareToHeight : prepareToWidth);
         int min = width > height ? (fitMax ? width : height) : (fitMax ? height : width);
         float sampleSize = (1.0f * min) / screen;
-        return sampleSize < 1 ? 1 : (int) sampleSize;
+        return sampleSize < 1 ? 1 : Math.round(sampleSize);
     }
 
     /**
@@ -291,6 +291,9 @@ public final class ImageCompress {
 
         // 与当前屏幕分辨率对比，获取缩放率(根据最小边缩放)
         sampleSize = getSampleSize(false, prepareToWidth, prepareToHeight, options);
+
+        log(String.format(Locale.getDefault(), "try to compress image, %dx%d to %dx%d, scale to 1/%d",
+                options.outWidth, options.outHeight, prepareToWidth, prepareToHeight, sampleSize));
 
         // if (options.outWidth <= BaseFragment.MAX_THUMB_IMAGE_SIZE
         // || options.outHeight <= BaseFragment.MAX_THUMB_IMAGE_SIZE) {
