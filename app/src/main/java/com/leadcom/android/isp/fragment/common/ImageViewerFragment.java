@@ -221,26 +221,37 @@ public class ImageViewerFragment extends BaseDownloadingUploadingSupportFragment
     }
 
     private void tryShareImage(final int shareType) {
-        Shareable.getLocalPathGlide(Activity(), images.get(selectedIndex), new OnGlideFetchingCompleteListener() {
-            @Override
-            public void onComplete(String localPath) {
-                if (!isEmpty(localPath)) {
-                    switch (shareType) {
-                        case Shareable.TO_QQ:
-                            ShareToQQ.shareToQQ(Shareable.TO_QQ, Activity(), "", "", "", localPath, null);
-                            break;
-                        case Shareable.TO_WX_SESSION:
-                        case Shareable.TO_WX_TIMELINE:
-                            ArrayList<String> img = new ArrayList<>();
-                            img.add(localPath);
-                            ShareToWeiXin.shareToWeiXin(Activity(), shareType, "分享图片t", "分享图片c", img);
-                            break;
-                    }
-                } else {
-                    ToastHelper.make().showMsg("分享失败，无法找到图片");
+        String image = images.get(selectedIndex);
+        String local = Shareable.getLocalPath(image);
+        if (!isEmpty(local)) {
+            // 如果UIL本地缓存中存在文件则直接分享，否则通过Glide查找本地缓存文件
+            share(shareType, local);
+        } else {
+            Shareable.getLocalPathGlide(Activity(), image, new OnGlideFetchingCompleteListener() {
+                @Override
+                public void onComplete(String localPath) {
+                    share(shareType, localPath);
                 }
+            });
+        }
+    }
+
+    private void share(int shareType, String localPath) {
+        if (!isEmpty(localPath)) {
+            switch (shareType) {
+                case Shareable.TO_QQ:
+                    ShareToQQ.shareToQQ(Shareable.TO_QQ, Activity(), "", "", "", localPath, null);
+                    break;
+                case Shareable.TO_WX_SESSION:
+                case Shareable.TO_WX_TIMELINE:
+                    ArrayList<String> img = new ArrayList<>();
+                    img.add(localPath);
+                    ShareToWeiXin.shareToWeiXin(Activity(), shareType, "分享图片t", "分享图片c", img);
+                    break;
             }
-        });
+        } else {
+            ToastHelper.make().showMsg("分享失败，无法找到图片");
+        }
     }
 
     @Override

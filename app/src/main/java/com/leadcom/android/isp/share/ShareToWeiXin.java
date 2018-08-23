@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.share;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +47,7 @@ public class ShareToWeiXin extends Shareable {
         TAG = "WXShare";
         wxapi = WXAPIFactory.createWXAPI(context, APP_ID);
         if (wxapi.isWXAppInstalled()) {
-            if (wxapi.isWXAppSupportAPI()) {
+            if (wxapi.getWXAppSupportAPI() >= 0x21020001) {
                 return wxapi.registerApp(APP_ID);
             } else {
                 ToastHelper.make().showMsg(R.string.ui_base_share_text_share_to_wx_not_support_api);
@@ -64,6 +65,10 @@ public class ShareToWeiXin extends Shareable {
      * @param type 类型，支持分享到微信会话、朋友圈、微信收藏三种
      */
     public static void shareToWeiXin(Context activityContext, @ShareType int type, String title, String text, ArrayList<String> images) {
+        if (!hasPermission(activityContext)) {
+            requestPermission((Activity) activityContext);
+            return;
+        }
         if (isEmpty(text) && (null == images || images.size() < 1)) {
             ToastHelper.make().showMsg(R.string.ui_base_share_text_share_blank);
             return;
@@ -125,12 +130,12 @@ public class ShareToWeiXin extends Shareable {
      */
     private static void shareToWeiXinSession(Context context, String title, String text, ArrayList<String> images) {
         if (images.size() > 0) {
-            if (images.size() > 1) {
-                shareMultipleImageToWeiXinSession(context, images);
-            } else {
-                // 发送单个图片到聊天对象
-                sendMessage(getSingleImageObject(title, text, images.get(0)), SendMessageToWX.Req.WXSceneSession);
-            }
+            //if (images.size() > 1) {
+            //    shareMultipleImageToWeiXinSession(context, images);
+            //} else {
+            // 发送单个图片到聊天对象
+            sendMessage(getSingleImageObject(title, text, images.get(0)), SendMessageToWX.Req.WXSceneSession);
+            //}
         } else if (!isEmpty(text)) {
             // 文字不为空时发送文字到聊天对象
             sendMessage(getTextObject(title, text), SendMessageToWX.Req.WXSceneSession);
@@ -150,7 +155,7 @@ public class ShareToWeiXin extends Shareable {
             String local = getLocalPath(url);
             if (!StringHelper.isEmpty(local)) {
                 local = compressSources(local, ext);
-                Uri uri = FilePreviewHelper.getUriFromFile(local);
+                Uri uri = Uri.parse("file://" + local);
                 if (null != uri) {
                     imageUris.add(uri);
                 }
@@ -187,7 +192,7 @@ public class ShareToWeiXin extends Shareable {
         intent.setComponent(comp);
         intent.setAction(Intent.ACTION_SEND_MULTIPLE);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setType("image/jpg");
+        intent.setType("image/*");
         intent.putExtra("Kdescription", title);
         ArrayList<Uri> imageUris = new ArrayList<>();
         for (String url : images) {
@@ -195,7 +200,7 @@ public class ShareToWeiXin extends Shareable {
             if (!StringHelper.isEmpty(local)) {
                 String ext = Attachment.getExtension(url);
                 local = compressSources(local, ext);
-                Uri uri = FilePreviewHelper.getUriFromFile(local);
+                Uri uri = Uri.parse("file://" + local);
                 if (null != uri) {
                     imageUris.add(uri);
                 }

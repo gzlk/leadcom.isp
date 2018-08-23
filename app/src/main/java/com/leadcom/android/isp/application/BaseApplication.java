@@ -8,7 +8,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.support.multidex.MultiDex;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.leadcom.android.isp.BuildConfig;
@@ -19,8 +23,14 @@ import com.hlk.hlklib.etc.Cryptography;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -209,10 +219,83 @@ public class BaseApplication extends Application {
         return path;
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        getSDCardDir();
+        if (Build.VERSION.SDK_INT >= 24) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+        }
+    }
+
+    private String SD_CARD_PATH = "";
+
     /**
      * 获取外置SD卡的路径
      */
-    private void getSDCardDir() {
+    public String getSDCardDir() {
+        if (isEmpty(SD_CARD_PATH)) {
+            if (Build.VERSION.SDK_INT < 23) {
+                initSDCardPathLess23();
+            } else {
+                initSDCardPathBigger23();
+            }
+            if (!isEmpty(SD_CARD_PATH)) {
+                return SD_CARD_PATH;
+            } else {
+                return null;
+                //throw new IllegalArgumentException("no sd card exists?");
+            }
+        } else {
+            return SD_CARD_PATH;
+        }
+    }
+
+    private void initSDCardPathLess23() {
+        Map<String, String> map = System.getenv();
+        Set<String> set = System.getenv().keySet();
+        for (String key : set) {
+            String value = map.get(key);
+            if ("SECONDARY_STORAGE".equals(key)) {
+                if (!TextUtils.isEmpty(value) && value.contains(":")) {
+                    SD_CARD_PATH = value.split(":")[0];
+                } else {
+                    SD_CARD_PATH = value;
+                }
+                log(format("SD_CARD_PATH: %s", value));
+            }
+            if ("EXTERNAL_STORAGE".equals(key)) {
+                log(format("External Storage: %s", value));
+            }
+            if (!TextUtils.isEmpty(SD_CARD_PATH)) {
+                break;
+            }
+        }
+    }
+
+    private void initSDCardPathBigger23() {
+        try {
+            StorageManager mStorageManager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
+            Class<?> storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
+            assert mStorageManager != null;
+            Method getVolumeList = mStorageManager.getClass().getMethod("getVolumeList");
+            Method getPath = storageVolumeClazz.getMethod("getPath");
+            Method isRemovable = storageVolumeClazz.getMethod("isRemovable");
+            Object result = getVolumeList.invoke(mStorageManager);
+            final int length = Array.getLength(result);
+            for (int i = 0; i < length; i++) {
+                Object storageVolumeElement = Array.get(result, i);
+                String path = (String) getPath.invoke(storageVolumeElement);
+                boolean removable = (Boolean) isRemovable.invoke(storageVolumeElement);
+                if (removable) {
+                    SD_CARD_PATH = path;
+                }
+                log("mPath is === " + path + ", isRemoveble == " + removable);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -238,6 +321,20 @@ public class BaseApplication extends Application {
         sb.append(gotExternalCacheDir());
         //}
         //}
+        sb.append("/").append(ROOT_DIR).append("/").append(dir).append("/");
+        if (dir.equals(DB_DIR)) {
+            sb.append(BuildConfig.BUILD_TYPE).append("/");
+        }
+        createDirs(sb.toString());
+        return sb.toString();
+    }
+
+    /**
+     * 在SD卡中获取指定目录路径，末尾包含/
+     */
+    public String getSDCardCachePath(String dir) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getSDCardDir());
         sb.append("/").append(ROOT_DIR).append("/").append(dir).append("/");
         if (dir.equals(DB_DIR)) {
             sb.append(BuildConfig.BUILD_TYPE).append("/");

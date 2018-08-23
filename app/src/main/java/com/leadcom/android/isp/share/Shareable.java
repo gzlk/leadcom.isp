@@ -1,9 +1,17 @@
 package com.leadcom.android.isp.share;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.IntDef;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 
 import com.bumptech.glide.Glide;
@@ -69,6 +77,15 @@ public class Shareable {
 
     protected static String getString(int res) {
         return StringHelper.getString(res);
+    }
+
+    protected static boolean hasPermission(Context context) {
+        return Build.VERSION.SDK_INT < 23 ||
+                ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    protected static void requestPermission(Activity activity) {
+        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
     }
 
     public static String getLocalPath(String imageUrl) {
@@ -163,7 +180,7 @@ public class Shareable {
     /**
      * 压缩原始图片到手机屏幕分辨率大小
      */
-    protected static String compressSources(String localPath, String ext) {
+    static String compressSources(String localPath, String ext) {
         // 压缩原始图片到屏幕分辨率大小
         String name = Cryptography.md5(localPath);
         String temp = App.app().getCachePath(App.TEMP_DIR) + name + "." + ext;
@@ -171,6 +188,11 @@ public class Shareable {
         if (!file.exists() || file.length() < 100) {
             DisplayMetrics dm = App.app().getResources().getDisplayMetrics();
             ImageCompress.compressBitmap(localPath, temp, dm.widthPixels, dm.heightPixels);
+
+            ContentValues values = new ContentValues(2);
+            values.put(MediaStore.Images.Media.MIME_TYPE, "jpg");
+            values.put(MediaStore.Images.Media.DATA, temp);
+            App.app().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         }
         return temp;
     }

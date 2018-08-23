@@ -86,6 +86,10 @@ public class ShareToQQ extends Shareable {
      */
     public static void shareToQQ(@ShareType int type, BaseActivity activity, String title, String summary,
                                  String targetUrl, String imageUrl, ArrayList<String> multiImages) {
+        if (!hasPermission(activity)) {
+            requestPermission(activity);
+            return;
+        }
         initTencent(activity.getApplicationContext());
         if (type == TO_QQ) {
             mTencent.shareToQQ(activity, getBundle(type, title, summary, targetUrl, imageUrl, multiImages), new UiListener(TO_QQ));

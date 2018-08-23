@@ -230,7 +230,7 @@ dependencies {
     // 搜索
     implementation 'com.amap.api:search:6.1.0'
     // 定位
-    implementation 'com.amap.api:location:4.0.1'
+    implementation 'com.amap.api:location:4.2.0'
 
     // 桌面提醒
     implementation 'me.leolin:ShortcutBadger:1.1.21'
