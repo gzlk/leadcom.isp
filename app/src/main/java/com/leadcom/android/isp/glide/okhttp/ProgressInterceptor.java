@@ -23,12 +23,12 @@ public class ProgressInterceptor implements Interceptor {
 
     public static final Map<String, ProgressListener> LISTENER_MAP = new HashMap<>();
 
-    //入注册下载监听
+    // 注册下载监听
     public static void addListener(String url, ProgressListener listener) {
         LISTENER_MAP.put(url, listener);
     }
 
-    //取消注册下载监听
+    // 取消注册下载监听
     public static void removeListener(String url) {
         LISTENER_MAP.remove(url);
     }
@@ -39,7 +39,6 @@ public class ProgressInterceptor implements Interceptor {
         Response response = chain.proceed(request);
         String url = request.url().toString();
         ResponseBody body = response.body();
-        Response newResponse = response.newBuilder().body(new ProgressResponseBody(url, body)).build();
-        return newResponse;
+        return response.newBuilder().body(new ProgressResponseBody(url, body)).build();
     }
 }

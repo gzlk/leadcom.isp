@@ -39,12 +39,12 @@ public class LeadcomGlideModule extends AppGlideModule {
 
     @Override
     public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
-        //添加拦截器到Glide
+        // 添加拦截器到 Glide
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.addInterceptor(new ProgressInterceptor());
         OkHttpClient okHttpClient = builder.build();
 
-        //原来的是  new OkHttpUrlLoader.Factory()；
+        // 原来的是 new OkHttpUrlLoader.Factory()；
         registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(okHttpClient));
     }
 
