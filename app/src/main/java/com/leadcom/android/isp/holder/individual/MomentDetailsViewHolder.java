@@ -1,6 +1,8 @@
 package com.leadcom.android.isp.holder.individual;
 
+import android.text.SpannableString;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -12,7 +14,6 @@ import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.user.Moment;
 
@@ -34,7 +35,9 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_moment_details_name)
     private TextView authorName;
     @ViewId(R.id.ui_holder_view_moment_details_content)
-    private ExpandableTextView momentContent;
+    private TextView contentView;
+    @ViewId(R.id.ui_holder_view_moment_details_indicator)
+    private TextView indicatorView;
     @ViewId(R.id.ui_holder_view_moment_details_time)
     private TextView timeView;
     @ViewId(R.id.ui_holder_view_moment_details_images1)
@@ -54,6 +57,7 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     @ViewId(R.id.ui_holder_view_moment_details_bottom_padding)
     private View bottomPaddingView;
 
+    private static final int MAX_LINE = 3;
     private ImageLineViewHolder imageLine1, imageLine2, imageLine3;
     private int imageSize;
     private boolean showLike = false;
@@ -107,18 +111,59 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         showLike = shown;
     }
 
-    public void showContent(Moment moment) {
+    public void showContent(final Moment moment) {
         String header = moment.getHeadPhoto();
         if (isEmpty(header) || header.length() < 20) {
             header = "drawable://" + R.drawable.img_default_user_header;
         }
         authorHeader.displayImage(header, imageSize, false, false);
         authorName.setText(moment.getUserName());
+        contentView.setVisibility(isEmpty(moment.getContent()) ? View.GONE : View.VISIBLE);
         if (!isEmpty(moment.getContent())) {
-            momentContent.setText(EmojiUtility.getEmojiString(momentContent.getContext(), moment.getContent(), true));
-            momentContent.makeExpandable();
+            SpannableString content = EmojiUtility.getEmojiString(contentView.getContext(), moment.getContent(), true);
+            if (moment.getCollapseState() == Moment.State.NONE) {
+                // 如果状态还未初始化
+                contentView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        contentView.getViewTreeObserver().removeOnPreDrawListener(this);
+                        // 内容行数超过预设，则状态设置为折叠状态
+                        if (contentView.getLineCount() > MAX_LINE) {
+                            contentView.setMaxLines(MAX_LINE);
+                            indicatorView.setVisibility(View.VISIBLE);
+                            indicatorView.setText(R.string.expandable_view_expand_handle_text);
+                            moment.setCollapseState(Moment.State.COLLAPSED);
+                        } else {
+                            // 行数未超过预设值，不需要折叠，也不需要显示折叠相关的控件
+                            indicatorView.setVisibility(View.GONE);
+                            moment.setCollapseState(Moment.State.NOT_OVERFLOW);
+                        }
+                        return true;
+                    }
+                });
+                contentView.setMaxLines(Integer.MAX_VALUE);
+            } else {
+                // 状态已经设置过了
+                switch (moment.getCollapseState()) {
+                    case Moment.State.COLLAPSED:
+                        contentView.setMaxLines(MAX_LINE);
+                        indicatorView.setVisibility(View.VISIBLE);
+                        indicatorView.setText(R.string.expandable_view_expand_handle_text);
+                        break;
+                    case Moment.State.EXPANDED:
+                        contentView.setMaxLines(Integer.MAX_VALUE);
+                        indicatorView.setVisibility(View.VISIBLE);
+                        indicatorView.setText(R.string.expandable_view_collapse_handle_text);
+                        break;
+                    case Moment.State.NOT_OVERFLOW:
+                        indicatorView.setVisibility(View.GONE);
+                        break;
+                }
+            }
+            contentView.setText(content);
+        } else {
+            contentView.setText(null);
         }
-        momentContent.setVisibility(isEmpty(moment.getContent()) ? View.GONE : View.VISIBLE);
         timeView.setText(fragment().formatTimeAgo(moment.getCreateDate()));
 
         int size = null == moment.getImage() ? 0 : moment.getImage().size();
@@ -170,7 +215,8 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
     }
 
     @Click({R.id.ui_holder_view_moment_details_container,
-            R.id.ui_holder_view_moment_details_more})
+            R.id.ui_holder_view_moment_details_more,
+            R.id.ui_holder_view_moment_details_indicator})
     private void elementClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

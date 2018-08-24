@@ -588,6 +588,30 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                         showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
                     }
                     break;
+                case R.id.ui_holder_view_moment_details_indicator:
+                    // 内容折叠或展开
+                    Moment mmt = (Moment) mAdapter.get(index);
+                    if (mmt.getCollapseState() == Moment.State.COLLAPSED) {
+                        // 展开
+                        mmt.setCollapseState(Moment.State.EXPANDED);
+                        mAdapter.update(mmt);
+                    } else if (mmt.getCollapseState() == Moment.State.EXPANDED) {
+                        mmt.setCollapseState(Moment.State.COLLAPSED);
+                        mAdapter.update(mmt);
+                    }
+                    break;
+                case R.id.ui_tool_view_collection_content_indicator:
+                    // 内容折叠或展开
+                    Collection col = (Collection) mAdapter.get(index);
+                    if (col.getCollapseStatus() == Moment.State.COLLAPSED) {
+                        // 展开
+                        col.setCollapseStatus(Moment.State.EXPANDED);
+                        mAdapter.update(col);
+                    } else if (col.getCollapseStatus() == Moment.State.EXPANDED) {
+                        col.setCollapseStatus(Moment.State.COLLAPSED);
+                        mAdapter.update(col);
+                    }
+                    break;
                 case R.id.ui_holder_view_individual_moment_comment_name_container:
                     selectedComment = index;
                     Comment comment = (Comment) mAdapter.get(selectedComment);

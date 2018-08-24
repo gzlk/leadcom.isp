@@ -1,10 +1,16 @@
 package com.leadcom.android.isp.holder.individual;
 
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.hlk.hlklib.lib.emoji.EmojiUtility;
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.Utils;
@@ -12,15 +18,10 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
-import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
-import com.hlk.hlklib.lib.emoji.EmojiUtility;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
-import com.hlk.hlklib.lib.view.CustomTextView;
+import com.leadcom.android.isp.model.user.Moment;
 
 import java.io.File;
 import java.util.Locale;
@@ -46,7 +47,10 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     private TextView createTime;
 
     @ViewId(R.id.ui_tool_view_collection_content_text)
-    private ExpandableTextView textContent;
+    private TextView textContent;
+    @ViewId(R.id.ui_tool_view_collection_content_indicator)
+    private TextView textIndicator;
+
     @ViewId(R.id.ui_tool_view_collection_content_image)
     private ImageDisplayer imageContent;
 
@@ -148,12 +152,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     private void showCollection(Collection col) {
         switch (col.getType()) {
             case Collection.Type.TEXT:
-                String content = col.getContent();
-                if (isEmpty(content)) {
-                    content = "[空白内容]";
-                }
-                textContent.setText(EmojiUtility.getEmojiString(textContent.getContext(), content, true));
-                textContent.makeExpandable();
+                showTextContent(col);
                 break;
             case Collection.Type.IMAGE:
                 int width = showLargeImage ? fragment().getScreenWidth() : getDimension(R.dimen.ui_static_dp_120);
@@ -202,6 +201,53 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         }
     }
 
+    private static final int MAX_LINE = 3;
+
+    private void showTextContent(final Collection collection) {
+        String content = collection.getContent();
+        if (isEmpty(content)) {
+            content = "[空白内容]";
+        }
+        if (Moment.State.NONE == collection.getCollapseStatus()) {
+            textContent.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    textContent.getViewTreeObserver().removeOnPreDrawListener(this);
+                    // 内容行数超过预设，则状态设置为折叠状态
+                    if (textContent.getLineCount() > MAX_LINE) {
+                        textContent.setMaxLines(MAX_LINE);
+                        textIndicator.setVisibility(View.VISIBLE);
+                        textIndicator.setText(R.string.expandable_view_expand_handle_text);
+                        collection.setCollapseStatus(Moment.State.COLLAPSED);
+                    } else {
+                        // 行数未超过预设值，不需要折叠，也不需要显示折叠相关的控件
+                        textIndicator.setVisibility(View.GONE);
+                        collection.setCollapseStatus(Moment.State.NOT_OVERFLOW);
+                    }
+                    return true;
+                }
+            });
+        } else {
+            // 状态已经设置过了
+            switch (collection.getCollapseStatus()) {
+                case Moment.State.COLLAPSED:
+                    textContent.setMaxLines(MAX_LINE);
+                    textIndicator.setVisibility(View.VISIBLE);
+                    textIndicator.setText(R.string.expandable_view_expand_handle_text);
+                    break;
+                case Moment.State.EXPANDED:
+                    textContent.setMaxLines(Integer.MAX_VALUE);
+                    textIndicator.setVisibility(View.VISIBLE);
+                    textIndicator.setText(R.string.expandable_view_collapse_handle_text);
+                    break;
+                case Moment.State.NOT_OVERFLOW:
+                    textIndicator.setVisibility(View.GONE);
+                    break;
+            }
+        }
+        textContent.setText(EmojiUtility.getEmojiString(textContent.getContext(), content, true));
+    }
+
     private boolean showLargeImage = false;
 
     public void setShowLargeImage(boolean largeImage) {
@@ -212,6 +258,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     @Click({R.id.ui_tool_view_collection_content_archive,
             R.id.ui_holder_view_collection_label_add,
             R.id.ui_holder_view_collection_delete,
+            R.id.ui_tool_view_collection_content_indicator,
             R.id.ui_tool_view_collection_content_attachment})
     private void click(View view) {
         if (null != mOnViewHolderElementClickListener) {

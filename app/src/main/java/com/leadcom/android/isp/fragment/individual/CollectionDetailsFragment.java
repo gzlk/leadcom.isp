@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.fragment.individual;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
@@ -10,9 +11,11 @@ import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.individual.CollectionItemViewHolder;
+import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.user.Collection;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.leadcom.android.isp.model.user.Moment;
 
 /**
  * <b>功能描述：</b>收藏详情<br />
@@ -37,6 +40,7 @@ public class CollectionDetailsFragment extends BaseTransparentSupportFragment {
 
     @ViewId(R.id.ui_collection_details_time)
     private TextView createTime;
+    private Collection mCollection;
 
     private CollectionItemViewHolder collectionHolder;
 
@@ -69,17 +73,35 @@ public class CollectionDetailsFragment extends BaseTransparentSupportFragment {
         if (null == collectionHolder) {
             collectionHolder = new CollectionItemViewHolder(mRootView, this);
             collectionHolder.setShowLargeImage(true);
+            collectionHolder.setOnViewHolderElementClickListener(elementClickListener);
             loadingCollection();
         }
     }
 
+    private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
+        @Override
+        public void onClick(View view, int index) {
+            if (view.getId() == R.id.ui_tool_view_collection_content_indicator) {
+                // 内容折叠或展开
+                if (mCollection.getCollapseStatus() == Moment.State.COLLAPSED) {
+                    // 展开
+                    mCollection.setCollapseStatus(Moment.State.EXPANDED);
+                    collectionHolder.showContent(mCollection);
+                } else if (mCollection.getCollapseStatus() == Moment.State.EXPANDED) {
+                    mCollection.setCollapseStatus(Moment.State.COLLAPSED);
+                    collectionHolder.showContent(mCollection);
+                }
+            }
+        }
+    };
+
     private void loadingCollection() {
-        Collection collection = new Dao<>(Collection.class).query(mQueryId);
-        if (null == collection) {
+        mCollection = new Dao<>(Collection.class).query(mQueryId);
+        if (null == mCollection) {
             fetchingCollection();
         } else {
-            collectionHolder.showContent(collection);
-            showCreateTime(collection.getCreateDate());
+            collectionHolder.showContent(mCollection);
+            showCreateTime(mCollection.getCreateDate());
         }
     }
 
@@ -96,8 +118,9 @@ public class CollectionDetailsFragment extends BaseTransparentSupportFragment {
                 if (success) {
                     if (null != collection && !StringHelper.isEmpty(collection.getId())) {
                         new Dao<>(Collection.class).save(collection);
-                        collectionHolder.showContent(collection);
-                        showCreateTime(collection.getCreateDate());
+                        mCollection = collection;
+                        collectionHolder.showContent(mCollection);
+                        showCreateTime(mCollection.getCreateDate());
                     } else {
                         ToastHelper.make().showMsg(message);
                     }

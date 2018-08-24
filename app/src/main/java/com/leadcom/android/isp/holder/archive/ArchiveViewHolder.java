@@ -15,7 +15,6 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
-import com.leadcom.android.isp.lib.view.ExpandableTextView;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Attachment;
@@ -47,8 +46,6 @@ public class ArchiveViewHolder extends BaseViewHolder {
     private TextView documentTitle;
     @ViewId(R.id.ui_holder_view_document_content_layout)
     private LinearLayout documentContentLayout;
-    @ViewId(R.id.ui_holder_view_document_content_text)
-    private ExpandableTextView documentContentText;
     @ViewId(R.id.ui_holder_view_document_content_image)
     private ImageDisplayer documentContentImage;
     @ViewId(R.id.ui_holder_view_document_content_icon_container)
@@ -85,8 +82,6 @@ public class ArchiveViewHolder extends BaseViewHolder {
         userName.setText(archive.getUserName());
         createTime.setText(fragment().formatDate(archive.getCreateDate()));
         documentTitle.setText(Html.fromHtml(archive.getTitle()));
-        //documentContentText.setText(StringHelper.escapeFromHtml(archive.getIntro()));
-        documentContentText.makeExpandable();
         additionalViewHolder.showContent(archive);
         documentContentIconContainer.setVisibility(View.GONE);
         String path = archive.getCover();

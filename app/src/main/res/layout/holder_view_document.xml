@@ -62,15 +62,6 @@
                     android:textSize="@dimen/ui_base_text_size_huge" />
             </com.hlk.hlklib.lib.view.CorneredView>
 
-            <com.leadcom.android.isp.lib.view.ExpandableTextView
-                android:id="@+id/ui_holder_view_document_content_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name_default"
-                android:textColor="@color/textColorHintDark"
-                android:textSize="@dimen/ui_base_text_size_small"
-                app:lessText="@string/ui_base_text_collapse"
-                app:moreText="@string/ui_base_text_expand" />
         </LinearLayout>
     </LinearLayout>
 

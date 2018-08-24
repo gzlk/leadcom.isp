@@ -3,16 +3,16 @@ package com.leadcom.android.isp.holder.activity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
-import com.leadcom.android.isp.lib.view.ExpandableTextView;
+import com.leadcom.android.isp.lib.view.ExpandableView;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
 import com.leadcom.android.isp.model.activity.vote.AppVote;
-import com.hlk.hlklib.lib.inject.Click;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
 
 /**
  * <b>功能描述：</b><br />
@@ -34,7 +34,7 @@ public class VoteViewHolder extends BaseViewHolder {
     //@ViewId(R.id.ui_holder_view_activity_vote_item_title)
     //private TextView titleView;
     @ViewId(R.id.ui_holder_view_activity_vote_item_desc)
-    private ExpandableTextView descView;
+    private ExpandableView descView;
     @ViewId(R.id.ui_holder_view_activity_vote_item_status_text)
     private TextView statusTextView;
     @ViewId(R.id.ui_holder_view_activity_vote_item_time)
@@ -53,7 +53,6 @@ public class VoteViewHolder extends BaseViewHolder {
         //titleView.setVisibility(isEmpty(appVote.getTitle()) ? View.GONE : View.VISIBLE);
         headerImage.displayImage(appVote.getCreatorHeadPhoto(), getDimension(R.dimen.ui_base_user_header_image_size), false, false);
         descView.setText(appVote.getTitle());
-        descView.makeExpandable();
         timeView.setText(fragment().formatTimeAgo(appVote.getCreateDate()));
         boolean ended = appVote.isEnded();
         statusTextView.setVisibility(ended ? View.VISIBLE : View.INVISIBLE);

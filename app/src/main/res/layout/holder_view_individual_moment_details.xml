@@ -38,14 +38,35 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_name_default" />
 
-            <com.leadcom.android.isp.lib.view.ExpandableTextView
-                android:id="@+id/ui_holder_view_moment_details_content"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name_default"
-                android:textSize="@dimen/ui_base_text_size_small"
-                app:lessText="@string/ui_base_text_collapse"
-                app:moreText="@string/ui_base_text_expand" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/ui_holder_view_moment_details_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name_default"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/ui_holder_view_moment_details_indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ui_static_dp_3"
+                        android:text="@string/expandable_view_expand_handle_text"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/ui_base_text_size_small" />
+
+                </LinearLayout>
+            </LinearLayout>
 
             <include
                 android:id="@+id/ui_holder_view_moment_details_images1"

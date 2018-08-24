@@ -10,18 +10,6 @@
         layout="@layout/holder_view_simple_clickable_gravity_left"
         android:visibility="gone" />
 
-    <com.leadcom.android.isp.lib.view.ExpandableTextView
-        android:id="@+id/ui_activity_sign_details_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:padding="@dimen/ui_base_dimen_margin_padding"
-        android:textColor="@color/textColorHintDark"
-        android:textSize="@dimen/ui_base_text_size_small"
-        android:visibility="gone"
-        app:lessText="@string/ui_base_text_collapse"
-        app:moreText="@string/ui_base_text_expand" />
-
     <LinearLayout
         android:id="@+id/ui_activity_sign_details_notify"
         android:layout_width="match_parent"

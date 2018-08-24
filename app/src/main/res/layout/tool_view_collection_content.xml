@@ -15,15 +15,35 @@
         app:cv_background_type="fill"
         app:cv_border_size="@dimen/ui_static_dp_zero">
 
-        <com.leadcom.android.isp.lib.view.ExpandableTextView
-            android:id="@+id/ui_tool_view_collection_content_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorHintDark"
-            android:textSize="@dimen/ui_base_text_size_small"
-            android:visibility="gone"
-            app:lessText="@string/ui_base_text_collapse"
-            app:moreText="@string/ui_base_text_expand" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ui_tool_view_collection_content_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name_default"
+                android:textSize="@dimen/ui_base_text_size_small" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ui_tool_view_collection_content_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_3"
+                    android:text="@string/expandable_view_expand_handle_text"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/ui_base_text_size_small" />
+
+            </LinearLayout>
+        </LinearLayout>
 
         <com.leadcom.android.isp.lib.view.ImageDisplayer
             android:id="@+id/ui_tool_view_collection_content_image"

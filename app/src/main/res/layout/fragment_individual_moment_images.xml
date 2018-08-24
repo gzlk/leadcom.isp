@@ -11,24 +11,53 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <include layout="@layout/tool_view_view_pager" />
+        <android.support.v4.view.ViewPager
+            android:id="@+id/ui_tool_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-        <com.leadcom.android.isp.lib.view.ExpandableTextView
+        <com.leadcom.android.isp.lib.view.ExpandableView
             android:id="@+id/ui_moment_detail_content_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@color/transparent_40"
-            android:ellipsize="end"
-            android:maxLines="5"
-            android:padding="@dimen/ui_base_dimen_margin_padding"
-            android:scrollbars="vertical"
-            android:singleLine="false"
-            android:textColor="@color/textColorLight"
-            android:textSize="@dimen/ui_base_text_size_small"
-            app:lessText="@string/ui_base_text_collapse"
-            app:maxLines="3"
-            app:moreText="@string/ui_base_text_expand" />
+            app:handlerTextColor="@color/colorPrimary"
+            app:handlerTextSize="@dimen/ui_base_text_size">
+
+            <TextView
+                android:id="@id/expandable_view_container_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/ui_base_dimen_margin_padding"
+                android:paddingStart="@dimen/ui_base_dimen_margin_padding"
+                android:paddingTop="@dimen/ui_base_dimen_margin_padding" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ui_base_dimen_margin_padding"
+                android:layout_marginStart="@dimen/ui_base_dimen_margin_padding"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@id/expandable_view_handler_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ui_static_dp_3" />
+
+                <com.hlk.hlklib.lib.view.CustomTextView
+                    android:id="@+id/expandable_view_handler_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:rotation="90"
+                    android:text="@string/ui_icon_triangle"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/ui_base_text_size_tiny" />
+            </LinearLayout>
+        </com.leadcom.android.isp.lib.view.ExpandableView>
 
         <LinearLayout
             android:id="@+id/ui_moment_details_downloading_progress"

@@ -44,6 +44,28 @@ public class Moment extends Additional {
         int VIDEO = 3;
     }
 
+    /**
+     * 内容折叠状态
+     */
+    public interface State {
+        /**
+         * 没有经过处理
+         */
+        int NONE = 0;
+        /**
+         * 无需折叠，行数没有超过预定值
+         */
+        int NOT_OVERFLOW = 1;
+        /**
+         * 折叠状态
+         */
+        int COLLAPSED = 2;
+        /**
+         * 全展开状态
+         */
+        int EXPANDED = 3;
+    }
+
     //用户姓名
     @Column(Model.Field.UserId)
     private String userId;
@@ -76,6 +98,8 @@ public class Moment extends Additional {
     private ArrayList<ArchiveLike> userMmtLikeList;
     @Ignore
     private ArrayList<Comment> userMmtCmtList;
+
+    private int collapseState;
 
     /**
      * 是否是我发布的动态内容
@@ -201,5 +225,13 @@ public class Moment extends Additional {
 
     public void setUserMmtCmtList(ArrayList<Comment> userMmtCmtList) {
         this.userMmtCmtList = userMmtCmtList;
+    }
+
+    public int getCollapseState() {
+        return collapseState;
+    }
+
+    public void setCollapseState(int collapseState) {
+        this.collapseState = collapseState;
     }
 }

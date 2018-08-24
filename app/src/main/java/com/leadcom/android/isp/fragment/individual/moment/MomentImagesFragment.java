@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -32,9 +31,8 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.FilePreviewHelper;
 import com.leadcom.android.isp.helper.HttpHelper;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.popup.MomentMoreHelper;
-import com.leadcom.android.isp.lib.view.ExpandableTextView;
+import com.leadcom.android.isp.lib.view.ExpandableView;
 import com.leadcom.android.isp.listener.OnTaskCompleteListener;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.model.Dao;
@@ -43,7 +41,6 @@ import com.leadcom.android.isp.model.archive.Comment;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.user.Moment;
-import com.leadcom.android.isp.share.OnGlideFetchingCompleteListener;
 import com.leadcom.android.isp.share.ShareToQQ;
 import com.leadcom.android.isp.share.ShareToWeiXin;
 import com.leadcom.android.isp.share.Shareable;
@@ -123,6 +120,15 @@ public class MomentImagesFragment extends BaseMomentFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         INTERNAL_SHAREABLE = false;
+        contentTextView.setOnExpandStateChangeListener(new ExpandableView.OnExpandStateChangeListener() {
+            @Override
+            public void onExpandStateChange(boolean isExpanded) {
+                indicator.animate()
+                        .rotation(isExpanded ? -90 : 90)
+                        .setDuration(duration())
+                        .start();
+            }
+        });
     }
 
     @Override
@@ -135,7 +141,9 @@ public class MomentImagesFragment extends BaseMomentFragment {
     @ViewId(R.id.ui_tool_view_pager)
     private ViewPager imageViewPager;
     @ViewId(R.id.ui_moment_detail_content_text)
-    private ExpandableTextView detailContentTextView;
+    private ExpandableView contentTextView;
+    @ViewId(R.id.expandable_view_handler_indicator)
+    private View indicator;
     // 附加UI
     @ViewId(R.id.ui_moment_detail_praise_icon)
     private CustomTextView praiseIcon;
@@ -166,7 +174,6 @@ public class MomentImagesFragment extends BaseMomentFragment {
             images = new ArrayList<>();
             displayMomentDetails();
         }
-        detailContentTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         initializeAdapter();
     }
 
@@ -188,10 +195,11 @@ public class MomentImagesFragment extends BaseMomentFragment {
             }
             setCustomTitle(formatDate(mMoment.getCreateDate(), R.string.ui_base_text_date_time_format_chs_hhmm));
             boolean empty = isEmpty(mMoment.getContent());
-            detailContentTextView.setVisibility(empty ? View.GONE : View.VISIBLE);
+            contentTextView.setVisibility(empty ? View.GONE : View.VISIBLE);
             if (!empty) {
-                detailContentTextView.setText(EmojiUtility.getEmojiString(detailContentTextView.getContext(), mMoment.getContent(), true));
-                detailContentTextView.makeExpandable();
+                contentTextView.setText(EmojiUtility.getEmojiString(contentTextView.getContext(), mMoment.getContent(), true));
+                indicator.setVisibility(contentTextView.isExpandCollapseEnable() ? View.VISIBLE : View.GONE);
+                //contentTextView.setText(R.string.temp_long_text_value);
             }
             resetPraiseStatus();
         }

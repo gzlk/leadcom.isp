@@ -429,6 +429,18 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                     int layout = mMoment.isLiked() ? R.id.ui_tooltip_moment_comment_praised : R.id.ui_tooltip_moment_comment;
                     showTooltip(view, layout, true, TooltipHelper.TYPE_RIGHT, onClickListener);
                     break;
+                case R.id.ui_holder_view_moment_details_indicator:
+                    // 内容折叠或展开
+                    Moment mmt = (Moment) mAdapter.get(index);
+                    if (mmt.getCollapseState() == Moment.State.COLLAPSED) {
+                        // 展开
+                        mmt.setCollapseState(Moment.State.EXPANDED);
+                        mAdapter.update(mmt);
+                    } else if (mmt.getCollapseState() == Moment.State.EXPANDED) {
+                        mmt.setCollapseState(Moment.State.COLLAPSED);
+                        mAdapter.update(mmt);
+                    }
+                    break;
                 case R.id.ui_holder_view_moment_comment_container:
                     if (isCollected) {
                         return;
