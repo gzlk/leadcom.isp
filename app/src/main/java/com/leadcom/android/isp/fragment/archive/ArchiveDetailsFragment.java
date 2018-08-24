@@ -446,6 +446,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
                 result.confirm();
                 return true;
+            } else if (message.startsWith("href=")) {
+                String msg = message.replace("href=", "");
+                startingDownload(msg);
+                result.confirm();
+                return true;
             }
             return super.onJsAlert(view, url, message, result);
         }
@@ -453,28 +458,24 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     private class DetailsWebViewClient extends WebViewClient {
 
-        private boolean checkSchema(String url) {
+        private void checkSchema(WebView view, String url) {
             if (url.startsWith("leadcom://")) {
                 WelcomeActivity.open(Activity(), url);
-                return true;
+            } else {
+                view.loadUrl(url);
             }
-            return false;
         }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if (!checkSchema(url)) {
-                view.loadUrl(url);
-            }
+            checkSchema(view, url);
             return true;
         }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             if (Build.VERSION.SDK_INT >= 21) {
-                if (!checkSchema(request.getUrl().toString())) {
-                    view.loadUrl(request.getUrl().toString());
-                }
+                checkSchema(view, request.getUrl().toString());
             }
             return true;
         }
@@ -489,15 +490,23 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         public void onPageFinished(WebView view, String url) {
             displayLoading(false);
             super.onPageFinished(view, url);
-            setImageClick(view);
+            setJsEvents(view);
         }
 
-        private void setImageClick(WebView view) {
+        private void setJsEvents(WebView view) {
             String jsCode = "javascript:(function() {" +
-                    "   $(\"img[src^='http']\").on(\"click\", function() {" +
+                    "   $(\".cont img[src^='http']\").on(\"click\", function() {" +
                     "       alert($(this).attr(\"src\"));" +
-                    //"   }).each(function() {" +
-                    //"       $(this).css(\"width\", \"100%\");" +
+                    "   });" +
+                    "   $(\".cont1 img[src^='http']\").on(\"click\", function() {" +
+                    "       alert($(this).attr(\"src\"));" +
+                    "   });" +
+                    "   $(\".fjlist a\").on(\"click\", function(evt) {" +
+                    "       var href = $(this).attr(\"href\").toLowerCase();" +
+                    "       if((href.indexOf(\".gif\") >=0 ) || (href.indexOf(\".jpg\") >=0 ) || (href.indexOf(\".jpeg\") >=0 ) || (href.indexOf(\".png\") >= 0)) {" +
+                    "           evt.preventDefault();" +
+                    "           alert(\"href=\" + $(this).attr(\"href\"));" +
+                    "       }" +
                     "   });" +
                     "   $(\"video\").each(function() {" +
                     "       $(this).css(\"width\", \"100%\");" +
@@ -507,33 +516,88 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }
     }
 
-    private class DetailsDownloadListener implements DownloadListener {
-        private String local, extension, name, url;
+    private String local, extension, name, url;
 
-        // 通过下载链接获取附件的文件名
-        private String getAttachmentName(String url) {
-            for (Attachment attachment : mArchive.getImage()) {
-                if (url.equals(attachment.getUrl())) {
-                    return attachment.getName();
-                }
-            }
-            for (Attachment attachment : mArchive.getVideo()) {
-                if (url.equals(attachment.getUrl())) {
-                    return attachment.getName();
-                }
-            }
-            for (Attachment attachment : mArchive.getOffice()) {
-                if (url.equals(attachment.getUrl())) {
-                    return attachment.getName();
-                }
-            }
-            for (Attachment attachment : mArchive.getAttach()) {
-                if (url.equals(attachment.getUrl())) {
-                    return attachment.getName();
-                }
-            }
-            return null;
+    private void startingDownload(String url) {
+        String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        if (!downloadPath.endsWith("/")) {
+            downloadPath += "/";
         }
+        this.url = url;
+        name = getAttachmentName(url);
+        if (isEmpty(name)) {
+            name = url.substring(url.lastIndexOf('/') + 1);
+        }
+        local = downloadPath + name;
+        extension = name.substring(name.lastIndexOf('.') + 1);
+        File file = new File(local);
+        boolean exists = file.exists();
+        log(format("download file, url: %s, local: %s, extension: %s, exists: %s", url, local, extension, exists));
+        if (exists) {
+            FilePreviewHelper.previewFile(Activity(), local, name, extension);
+            return;
+        }
+        if (!NetworkUtil.isWifi(App.app())) {
+            // 如果不是wifi环境则提醒用户需要消耗流量下载
+            warningDownload();
+        } else {
+            tryDownload();
+        }
+    }
+
+    // 通过下载链接获取附件的文件名
+    private String getAttachmentName(String url) {
+        for (Attachment attachment : mArchive.getImage()) {
+            if (url.equals(attachment.getUrl())) {
+                return attachment.getName();
+            }
+        }
+        for (Attachment attachment : mArchive.getVideo()) {
+            if (url.equals(attachment.getUrl())) {
+                return attachment.getName();
+            }
+        }
+        for (Attachment attachment : mArchive.getOffice()) {
+            if (url.equals(attachment.getUrl())) {
+                return attachment.getName();
+            }
+        }
+        for (Attachment attachment : mArchive.getAttach()) {
+            if (url.equals(attachment.getUrl())) {
+                return attachment.getName();
+            }
+        }
+        return null;
+    }
+
+    private void warningDownload() {
+        DeleteDialogHelper.helper().init(ArchiveDetailsFragment.this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                tryDownload();
+                return true;
+            }
+        }).setTitleText(R.string.ui_base_text_network_not_wifi).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
+
+    private void tryDownload() {
+        DownloadingHelper.helper().init(Activity()).setShowNotification(true).setOnTaskFailureListener(new OnTaskFailureListener() {
+            @Override
+            public void onFailure() {
+                ToastHelper.make().showMsg(R.string.ui_system_updating_failure);
+            }
+        }).setOnTaskCompleteListener(new OnTaskCompleteListener() {
+            @Override
+            public void onComplete() {
+                //String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+                //ToastHelper.make().showMsg(format("已下载到%s", downloadPath));
+                log(format("downloaded, url: %s, local: %s, ext: %s, name: %s", url, local, extension, name));
+                FilePreviewHelper.previewFile(Activity(), local, name, extension);
+            }
+        }).setRemoveNotificationWhenComplete(true).download(url, local, extension, "", "");
+    }
+
+    private class DetailsDownloadListener implements DownloadListener {
 
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
@@ -541,57 +605,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 ToastHelper.make().showMsg(R.string.ui_base_text_network_invalid);
                 return;
             }
-            String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-            if (!downloadPath.endsWith("/")) {
-                downloadPath += "/";
-            }
-            this.url = url;
-            name = getAttachmentName(url);
-            if (isEmpty(name)) {
-                name = url.substring(url.lastIndexOf('/') + 1);
-            }
-            local = downloadPath + name;
-            extension = isEmpty(mimetype) ? name.substring(name.lastIndexOf('.') + 1) : mimetype;
-            File file = new File(local);
-            boolean exists = file.exists();
-            log(format("download file, url: %s, local: %s, extension: %s, exists: %s", url, local, extension, exists));
-            if (exists) {
-                FilePreviewHelper.previewFile(Activity(), local, name, extension);
-                return;
-            }
-            if (!NetworkUtil.isWifi(App.app())) {
-                // 如果不是wifi环境则提醒用户需要消耗流量下载
-                warningDownload();
-            } else {
-                tryDownload();
-            }
-        }
-
-        private void warningDownload() {
-            DeleteDialogHelper.helper().init(ArchiveDetailsFragment.this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
-                @Override
-                public boolean onConfirm() {
-                    tryDownload();
-                    return true;
-                }
-            }).setTitleText(R.string.ui_base_text_network_not_wifi).setConfirmText(R.string.ui_base_text_confirm).show();
-        }
-
-        private void tryDownload() {
-            DownloadingHelper.helper().init(Activity()).setShowNotification(true).setOnTaskFailureListener(new OnTaskFailureListener() {
-                @Override
-                public void onFailure() {
-                    ToastHelper.make().showMsg(R.string.ui_system_updating_failure);
-                }
-            }).setOnTaskCompleteListener(new OnTaskCompleteListener() {
-                @Override
-                public void onComplete() {
-                    //String downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-                    //ToastHelper.make().showMsg(format("已下载到%s", downloadPath));
-                    log(format("downloaded, url: %s, local: %s, ext: %s, name: %s", url, local, extension, name));
-                    FilePreviewHelper.previewFile(Activity(), local, name, extension);
-                }
-            }).setRemoveNotificationWhenComplete(true).download(url, local, extension, "", "");
+            startingDownload(url);
         }
     }
 
