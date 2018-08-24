@@ -91,7 +91,9 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         if (res != 0) {
             ToastHelper.make().showMsg(res);
         } else {
-            ToastHelper.make().showMsg(getString(R.string.ui_base_share_text_share_to_wx_unknown, null == baseResp ? 0 : baseResp.errCode));
+            if (null == baseResp || baseResp.errCode != BaseResp.ErrCode.ERR_OK) {
+                ToastHelper.make().showMsg(getString(R.string.ui_base_share_text_share_to_wx_unknown, null == baseResp ? 0 : baseResp.errCode));
+            }
         }
         finish();
     }
