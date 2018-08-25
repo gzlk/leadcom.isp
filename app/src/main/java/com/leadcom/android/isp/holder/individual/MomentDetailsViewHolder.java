@@ -15,6 +15,7 @@ import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.user.Moment;
 
 /**
@@ -121,22 +122,23 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
         contentView.setVisibility(isEmpty(moment.getContent()) ? View.GONE : View.VISIBLE);
         if (!isEmpty(moment.getContent())) {
             SpannableString content = EmojiUtility.getEmojiString(contentView.getContext(), moment.getContent(), true);
-            if (moment.getCollapseState() == Moment.State.NONE) {
+            if (moment.getCollapseStatus() == Model.ExpandStatus.NONE) {
                 // 如果状态还未初始化
                 contentView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
                         contentView.getViewTreeObserver().removeOnPreDrawListener(this);
                         // 内容行数超过预设，则状态设置为折叠状态
-                        if (contentView.getLineCount() > MAX_LINE) {
+                        int line = contentView.getLineCount();
+                        if (line > MAX_LINE) {
                             contentView.setMaxLines(MAX_LINE);
                             indicatorView.setVisibility(View.VISIBLE);
                             indicatorView.setText(R.string.expandable_view_expand_handle_text);
-                            moment.setCollapseState(Moment.State.COLLAPSED);
+                            moment.setCollapseStatus(Model.ExpandStatus.COLLAPSED);
                         } else {
                             // 行数未超过预设值，不需要折叠，也不需要显示折叠相关的控件
                             indicatorView.setVisibility(View.GONE);
-                            moment.setCollapseState(Moment.State.NOT_OVERFLOW);
+                            moment.setCollapseStatus(Model.ExpandStatus.NOT_OVERFLOW);
                         }
                         return true;
                     }
@@ -144,24 +146,25 @@ public class MomentDetailsViewHolder extends BaseViewHolder {
                 contentView.setMaxLines(Integer.MAX_VALUE);
             } else {
                 // 状态已经设置过了
-                switch (moment.getCollapseState()) {
-                    case Moment.State.COLLAPSED:
+                switch (moment.getCollapseStatus()) {
+                    case Model.ExpandStatus.COLLAPSED:
                         contentView.setMaxLines(MAX_LINE);
                         indicatorView.setVisibility(View.VISIBLE);
                         indicatorView.setText(R.string.expandable_view_expand_handle_text);
                         break;
-                    case Moment.State.EXPANDED:
+                    case Model.ExpandStatus.EXPANDED:
                         contentView.setMaxLines(Integer.MAX_VALUE);
                         indicatorView.setVisibility(View.VISIBLE);
                         indicatorView.setText(R.string.expandable_view_collapse_handle_text);
                         break;
-                    case Moment.State.NOT_OVERFLOW:
+                    case Model.ExpandStatus.NOT_OVERFLOW:
                         indicatorView.setVisibility(View.GONE);
                         break;
                 }
             }
             contentView.setText(content);
         } else {
+            indicatorView.setVisibility(View.GONE);
             contentView.setText(null);
         }
         timeView.setText(fragment().formatTimeAgo(moment.getCreateDate()));

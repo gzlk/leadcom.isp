@@ -181,26 +181,37 @@ public class ExpandableView extends LinearLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         // 如果本身行数没有达到预定，则不需要再继续
-        final int w = widthMeasureSpec, h = heightMeasureSpec;
+        int lines = textView.getLineCount();
+        if (lines <= expandLines) {
+            isExpandCollapseEnable = false;
+            if (state == STATE_NONE) {
+                state = STATE_NOT_OVERFLOW;
+                if (null != listener) {
+                    listener.onExpandInitialize(state);
+                }
+            }
+            return;
+        }
+
+        handlerView.setVisibility(VISIBLE);
+        isExpandCollapseEnable = true;
+        realTextHeight = getRealTextHeight();
+        if (isCollapsed) {
+            textView.setMaxLines(expandLines);
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (state == STATE_NONE) {
+            state = STATE_COLLAPSED;
+            if (null != listener) {
+                listener.onExpandInitialize(state);
+            }
+        }
         textView.post(new Runnable() {
             @Override
             public void run() {
-                int lines = textView.getLineCount();
-                if (lines <= expandLines) {
-                    isExpandCollapseEnable = false;
-                } else {
-                    handlerView.setVisibility(VISIBLE);
-                    isExpandCollapseEnable = true;
-                    realTextHeight = getRealTextHeight();
-                    if (isCollapsed) {
-                        textView.setMaxLines(expandLines);
-                    }
-                    measure(w, h);
-
-                    if (isCollapsed) {
-                        lastHeight = getHeight() - textView.getHeight();
-                        collapsedHeight = getMeasuredHeight();
-                    }
+                if (isCollapsed) {
+                    lastHeight = getHeight() - textView.getHeight();
+                    collapsedHeight = getMeasuredHeight();
                 }
             }
         });
@@ -284,8 +295,19 @@ public class ExpandableView extends LinearLayout {
         listener = l;
     }
 
+    public static final int STATE_HIDDEN = -1;
+    public static final int STATE_NONE = 0;
+    public static final int STATE_NOT_OVERFLOW = 1;
+    public static final int STATE_COLLAPSED = 2;
+    public static final int STATE_EXPANDED = 3;
+
+    private int state = STATE_NONE;
+
     /***/
     public interface OnExpandStateChangeListener {
+
+        void onExpandInitialize(int status);
+
         void onExpandStateChange(boolean isExpanded);
     }
 }

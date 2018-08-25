@@ -591,24 +591,24 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_holder_view_moment_details_indicator:
                     // 内容折叠或展开
                     Moment mmt = (Moment) mAdapter.get(index);
-                    if (mmt.getCollapseState() == Moment.State.COLLAPSED) {
+                    if (mmt.isCollapsed()) {
                         // 展开
-                        mmt.setCollapseState(Moment.State.EXPANDED);
+                        mmt.setCollapseStatus(Model.ExpandStatus.EXPANDED);
                         mAdapter.update(mmt);
-                    } else if (mmt.getCollapseState() == Moment.State.EXPANDED) {
-                        mmt.setCollapseState(Moment.State.COLLAPSED);
+                    } else if (mmt.isExpanded()) {
+                        mmt.setCollapseStatus(Model.ExpandStatus.COLLAPSED);
                         mAdapter.update(mmt);
                     }
                     break;
                 case R.id.ui_tool_view_collection_content_indicator:
                     // 内容折叠或展开
                     Collection col = (Collection) mAdapter.get(index);
-                    if (col.getCollapseStatus() == Moment.State.COLLAPSED) {
+                    if (col.isCollapsed()) {
                         // 展开
-                        col.setCollapseStatus(Moment.State.EXPANDED);
+                        col.setCollapseStatus(Model.ExpandStatus.EXPANDED);
                         mAdapter.update(col);
-                    } else if (col.getCollapseStatus() == Moment.State.EXPANDED) {
-                        col.setCollapseStatus(Moment.State.COLLAPSED);
+                    } else if (col.isExpanded()) {
+                        col.setCollapseStatus(Model.ExpandStatus.COLLAPSED);
                         mAdapter.update(col);
                     }
                     break;

@@ -235,7 +235,6 @@ public class Collection extends Model {
     //修改日期
     @Column(Archive.Field.LastModifiedDate)
     private String modifiedDate;
-    private int collapseStatus;
 
     public int getType() {
         return type;
@@ -366,13 +365,5 @@ public class Collection extends Model {
 
     public void setModifiedDate(String modifiedDate) {
         this.modifiedDate = modifiedDate;
-    }
-
-    public int getCollapseStatus() {
-        return collapseStatus;
-    }
-
-    public void setCollapseStatus(int collapseStatus) {
-        this.collapseStatus = collapseStatus;
     }
 }

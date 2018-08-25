@@ -38,6 +38,28 @@ public class Model extends BaseModel {
         public static final String HasRead = "hasRead";
     }
 
+    /**
+     * 内容在UI上显示的折叠状态
+     */
+    public interface ExpandStatus {
+        /**
+         * 没有经过处理
+         */
+        int NONE = 0;
+        /**
+         * 无需折叠，行数没有超过预定值
+         */
+        int NOT_OVERFLOW = 1;
+        /**
+         * 折叠状态
+         */
+        int COLLAPSED = 2;
+        /**
+         * 全展开状态
+         */
+        int EXPANDED = 3;
+    }
+
     public static final String DFT_DATE = StringHelper.getString(R.string.ui_base_text_date_default);
     public static final String NO_MORE_ID = StringHelper.getString(R.string.ui_base_text_nothing_more_id);
     public static final String EMPTY_JSON = "{}";
@@ -84,6 +106,8 @@ public class Model extends BaseModel {
     private boolean isSelectable;
     @Ignore
     private boolean isSelected;
+    @Ignore
+    private int collapseStatus;
 
     //@NotNull
     //@PrimaryKey(AssignType.BY_MYSELF)
@@ -184,5 +208,21 @@ public class Model extends BaseModel {
 
     public boolean equals(Model model) {
         return null != model && !isEmpty(getId()) && !isEmpty(model.getId()) && model.getId().equals(getId());
+    }
+
+    public boolean isCollapsed() {
+        return collapseStatus == ExpandStatus.COLLAPSED;
+    }
+
+    public boolean isExpanded() {
+        return collapseStatus == ExpandStatus.EXPANDED;
+    }
+
+    public int getCollapseStatus() {
+        return collapseStatus;
+    }
+
+    public void setCollapseStatus(int collapseStatus) {
+        this.collapseStatus = collapseStatus;
     }
 }

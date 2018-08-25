@@ -121,10 +121,16 @@ public class MomentImagesFragment extends BaseMomentFragment {
         super.onActivityCreated(savedInstanceState);
         INTERNAL_SHAREABLE = false;
         contentTextView.setOnExpandStateChangeListener(new ExpandableView.OnExpandStateChangeListener() {
+
+            @Override
+            public void onExpandInitialize(int status) {
+                indicator.setVisibility(status <= ExpandableView.STATE_NOT_OVERFLOW ? View.GONE : View.VISIBLE);
+            }
+
             @Override
             public void onExpandStateChange(boolean isExpanded) {
                 indicator.animate()
-                        .rotation(isExpanded ? -90 : 90)
+                        .rotation(isExpanded ? 90 : -90)
                         .setDuration(duration())
                         .start();
             }
@@ -195,11 +201,13 @@ public class MomentImagesFragment extends BaseMomentFragment {
             }
             setCustomTitle(formatDate(mMoment.getCreateDate(), R.string.ui_base_text_date_time_format_chs_hhmm));
             boolean empty = isEmpty(mMoment.getContent());
-            contentTextView.setVisibility(empty ? View.GONE : View.VISIBLE);
             if (!empty) {
                 contentTextView.setText(EmojiUtility.getEmojiString(contentTextView.getContext(), mMoment.getContent(), true));
-                indicator.setVisibility(contentTextView.isExpandCollapseEnable() ? View.VISIBLE : View.GONE);
+                //indicator.setVisibility(contentTextView.isExpandCollapseEnable() ? View.VISIBLE : View.GONE);
                 //contentTextView.setText(R.string.temp_long_text_value);
+            } else {
+                contentTextView.setVisibility(View.GONE);
+                indicator.setVisibility(View.GONE);
             }
             resetPraiseStatus();
         }

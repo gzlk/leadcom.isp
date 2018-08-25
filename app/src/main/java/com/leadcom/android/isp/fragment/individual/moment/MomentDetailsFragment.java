@@ -432,12 +432,12 @@ public class MomentDetailsFragment extends BaseMomentFragment {
                 case R.id.ui_holder_view_moment_details_indicator:
                     // 内容折叠或展开
                     Moment mmt = (Moment) mAdapter.get(index);
-                    if (mmt.getCollapseState() == Moment.State.COLLAPSED) {
+                    if (mmt.isCollapsed()) {
                         // 展开
-                        mmt.setCollapseState(Moment.State.EXPANDED);
+                        mmt.setCollapseStatus(Model.ExpandStatus.EXPANDED);
                         mAdapter.update(mmt);
-                    } else if (mmt.getCollapseState() == Moment.State.EXPANDED) {
-                        mmt.setCollapseState(Moment.State.COLLAPSED);
+                    } else if (mmt.isExpanded()) {
+                        mmt.setCollapseStatus(Model.ExpandStatus.COLLAPSED);
                         mAdapter.update(mmt);
                     }
                     break;

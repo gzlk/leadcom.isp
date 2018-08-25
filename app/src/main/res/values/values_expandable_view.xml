@@ -2,7 +2,7 @@
 <resources>
     <item name="expandable_view_container_id" type="id" />
     <item name="expandable_view_handler_id" type="id" />
-    <string name="expandable_view_expand_handle_text">展开</string>
+    <string name="expandable_view_expand_handle_text">全文</string>
     <string name="expandable_view_collapse_handle_text">收起</string>
     <declare-styleable name="ExpandableView">
         <!-- 是否可以显示动画 -->

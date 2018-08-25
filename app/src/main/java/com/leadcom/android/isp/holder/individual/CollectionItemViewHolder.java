@@ -19,9 +19,9 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.holder.attachment.AttachmentViewHolder;
 import com.leadcom.android.isp.lib.view.ImageDisplayer;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.user.Collection;
-import com.leadcom.android.isp.model.user.Moment;
 
 import java.io.File;
 import java.util.Locale;
@@ -150,6 +150,9 @@ public class CollectionItemViewHolder extends BaseViewHolder {
     }
 
     private void showCollection(Collection col) {
+        if (col.getType() != Collection.Type.TEXT) {
+            textIndicator.setVisibility(View.GONE);
+        }
         switch (col.getType()) {
             case Collection.Type.TEXT:
                 showTextContent(col);
@@ -208,7 +211,7 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         if (isEmpty(content)) {
             content = "[空白内容]";
         }
-        if (Moment.State.NONE == collection.getCollapseStatus()) {
+        if (Model.ExpandStatus.NONE == collection.getCollapseStatus()) {
             textContent.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
@@ -218,11 +221,11 @@ public class CollectionItemViewHolder extends BaseViewHolder {
                         textContent.setMaxLines(MAX_LINE);
                         textIndicator.setVisibility(View.VISIBLE);
                         textIndicator.setText(R.string.expandable_view_expand_handle_text);
-                        collection.setCollapseStatus(Moment.State.COLLAPSED);
+                        collection.setCollapseStatus(Model.ExpandStatus.COLLAPSED);
                     } else {
                         // 行数未超过预设值，不需要折叠，也不需要显示折叠相关的控件
                         textIndicator.setVisibility(View.GONE);
-                        collection.setCollapseStatus(Moment.State.NOT_OVERFLOW);
+                        collection.setCollapseStatus(Model.ExpandStatus.NOT_OVERFLOW);
                     }
                     return true;
                 }
@@ -230,17 +233,17 @@ public class CollectionItemViewHolder extends BaseViewHolder {
         } else {
             // 状态已经设置过了
             switch (collection.getCollapseStatus()) {
-                case Moment.State.COLLAPSED:
+                case Model.ExpandStatus.COLLAPSED:
                     textContent.setMaxLines(MAX_LINE);
                     textIndicator.setVisibility(View.VISIBLE);
                     textIndicator.setText(R.string.expandable_view_expand_handle_text);
                     break;
-                case Moment.State.EXPANDED:
+                case Model.ExpandStatus.EXPANDED:
                     textContent.setMaxLines(Integer.MAX_VALUE);
                     textIndicator.setVisibility(View.VISIBLE);
                     textIndicator.setText(R.string.expandable_view_collapse_handle_text);
                     break;
-                case Moment.State.NOT_OVERFLOW:
+                case Model.ExpandStatus.NOT_OVERFLOW:
                     textIndicator.setVisibility(View.GONE);
                     break;
             }

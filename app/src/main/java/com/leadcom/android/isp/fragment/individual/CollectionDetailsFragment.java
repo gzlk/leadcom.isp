@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.CollectionRequest;
@@ -13,9 +14,8 @@ import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.individual.CollectionItemViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Dao;
+import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.user.Collection;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.leadcom.android.isp.model.user.Moment;
 
 /**
  * <b>功能描述：</b>收藏详情<br />
@@ -83,12 +83,12 @@ public class CollectionDetailsFragment extends BaseTransparentSupportFragment {
         public void onClick(View view, int index) {
             if (view.getId() == R.id.ui_tool_view_collection_content_indicator) {
                 // 内容折叠或展开
-                if (mCollection.getCollapseStatus() == Moment.State.COLLAPSED) {
+                if (mCollection.isCollapsed()) {
                     // 展开
-                    mCollection.setCollapseStatus(Moment.State.EXPANDED);
+                    mCollection.setCollapseStatus(Model.ExpandStatus.EXPANDED);
                     collectionHolder.showContent(mCollection);
-                } else if (mCollection.getCollapseStatus() == Moment.State.EXPANDED) {
-                    mCollection.setCollapseStatus(Moment.State.COLLAPSED);
+                } else if (mCollection.isExpanded()) {
+                    mCollection.setCollapseStatus(Model.ExpandStatus.COLLAPSED);
                     collectionHolder.showContent(mCollection);
                 }
             }
