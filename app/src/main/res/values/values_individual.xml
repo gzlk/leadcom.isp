@@ -79,6 +79,7 @@
     <string name="ui_individual_collection_item_add_label_hint">标签名称(不能为空)</string>
     <string name="ui_individual_collection_item_add_label_invalid">标签名称不能为空</string>
     <string name="ui_individual_collection_item_edit_label">修改标签</string>
+    <string name="ui_individual_collection_item_image_url_empty">收藏的图片无法预览(地址为null)</string>
     <string name="ui_individual_collection_item_remove_title">您确定要删除这个收藏内容吗？</string>
 
     <string name="ui_individual_message_fragment_title">消息</string>

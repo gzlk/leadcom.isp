@@ -667,8 +667,12 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
                 case R.id.ui_tool_view_collection_content_image:
                     // 收藏的图片
                     Collection imgCol = (Collection) mAdapter.get(index);
-                    ImageViewerFragment.isCollected = true;
-                    ImageViewerFragment.open(IndividualFragment.this, imgCol.getContent());
+                    if (isEmpty(imgCol.getContent())) {
+                        ToastHelper.make().showMsg(R.string.ui_individual_collection_item_image_url_empty);
+                    } else {
+                        ImageViewerFragment.isCollected = true;
+                        ImageViewerFragment.open(IndividualFragment.this, imgCol.getContent());
+                    }
                     break;
             }
         }
