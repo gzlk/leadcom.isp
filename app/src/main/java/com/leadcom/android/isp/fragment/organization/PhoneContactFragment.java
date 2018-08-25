@@ -263,6 +263,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             slidView.add(contact.getSpell());
         }
         mAdapter.sort();
+        slidView.setVisibility(mAdapter.getItemCount() <= 0 ? View.GONE : View.VISIBLE);
+        setNothingText(R.string.ui_phone_contact_no_more);
+        displayNothing(mAdapter.getItemCount() <= 0);
     }
 
 //    Dao<User> userDao = new Dao<>(User.class);

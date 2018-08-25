@@ -128,6 +128,9 @@ public class SlidView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (list.size() <= 0) {
+            return super.onTouchEvent(event);
+        }
         int action = event.getAction();
         int y = (int) event.getY();
         switch (action) {
