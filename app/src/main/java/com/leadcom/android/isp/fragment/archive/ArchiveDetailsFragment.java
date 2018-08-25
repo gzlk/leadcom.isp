@@ -202,6 +202,17 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         webView.setWebChromeClient(new DetailsChromeClient());
         webView.setWebViewClient(new DetailsWebViewClient());
         webView.setDownloadListener(new DetailsDownloadListener());
+        setLeftText(R.string.ui_base_text_back);
+        setLeftTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                if (!webView.canGoBack()) {
+                    finish();
+                } else {
+                    webView.goBack();
+                }
+            }
+        });
     }
 
     @Override
@@ -250,7 +261,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return true;
+        return false;
     }
 
     @Override
@@ -503,10 +514,14 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     "   });" +
                     "   $(\".fjlist a\").on(\"click\", function(evt) {" +
                     "       var href = $(this).attr(\"href\").toLowerCase();" +
-                    "       if((href.indexOf(\".gif\") >=0 ) || (href.indexOf(\".jpg\") >=0 ) || (href.indexOf(\".jpeg\") >=0 ) || (href.indexOf(\".png\") >= 0)) {" +
+                    "       if((href.indexOf(\".gif\") >=0 ) || (href.indexOf(\".jpg\") >=0 ) || " +
+                    "           (href.indexOf(\".jpeg\") >=0 ) || (href.indexOf(\".png\") >= 0) || " +
+                    "           (href.indexOf(\".txt\") >= 0)) {" +
                     "           evt.preventDefault();" +
                     "           alert(\"href=\" + $(this).attr(\"href\"));" +
                     "       }" +
+                    "   }).each(function(){" +
+                    "       $(this).removeAttr(\"download\");" +
                     "   });" +
                     "   $(\"video\").each(function() {" +
                     "       $(this).css(\"width\", \"100%\");" +
