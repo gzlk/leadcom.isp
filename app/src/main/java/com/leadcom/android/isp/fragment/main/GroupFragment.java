@@ -812,7 +812,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             case 5:
                 //if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
                 // 每个人都可以打开查看关注的组织列表？
-                ConcernedOrganizationFragment.open(this, group.getId(), group.getName(), (index == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
+                ConcernedOrganizationFragment.open(this, group.getId(), group.getName(), (item.getIndex() == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
                 //}
                 break;
             case 6:
