@@ -176,7 +176,7 @@ public class ContactFragment extends BaseOrganizationFragment {
                 setRightTitleClickListener(new OnTitleButtonClickListener() {
                     @Override
                     public void onClick() {
-                        PhoneContactFragment.open(ContactFragment.this, mQueryId, "");
+                        PhoneContactFragment.open(ContactFragment.this, mQueryId, "", members);
                     }
                 });
                 //phoneContactView.setVisibility(View.VISIBLE);

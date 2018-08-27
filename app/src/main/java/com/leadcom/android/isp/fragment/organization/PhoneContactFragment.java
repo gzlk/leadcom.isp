@@ -25,7 +25,6 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -40,9 +39,11 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.common.Contact;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.model.organization.Member;
-import com.leadcom.android.isp.model.user.User;
+import com.leadcom.android.isp.task.AsyncExecutableTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,18 +60,22 @@ import java.util.List;
 
 public class PhoneContactFragment extends BaseOrganizationFragment {
 
+    private static final String PARAM_MEMBERS = "pcf_members";
+
     public static PhoneContactFragment newInstance(Bundle bundle) {
         PhoneContactFragment pcf = new PhoneContactFragment();
         pcf.setArguments(bundle);
         return pcf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String squadId) {
+    public static void open(BaseFragment fragment, String groupId, String squadId, ArrayList<Member> members) {
         Bundle bundle = new Bundle();
         // 组织的id
         bundle.putString(PARAM_QUERY_ID, groupId);
         // 小组的id
         bundle.putString(PARAM_SQUAD_ID, squadId);
+        // 已有的成员列表
+        bundle.putSerializable(PARAM_MEMBERS, members);
         fragment.openActivity(PhoneContactFragment.class.getName(), bundle, true, false);
     }
 
@@ -78,6 +83,8 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     @ViewId(R.id.ui_phone_contact_slid_view)
     private SlidView slidView;
+    @ViewId(R.id.ui_holder_view_searchable_container)
+    private View searchView;
     @ViewId(R.id.ui_phone_contact_center_text_container)
     private CorneredView centerTextContainer;
     @ViewId(R.id.ui_phone_contact_center_text)
@@ -90,10 +97,27 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     private ContactAdapter mAdapter;
 
     @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        members = (ArrayList<Member>) bundle.getSerializable(PARAM_MEMBERS);
+        if (null == members) {
+            members = new ArrayList<>();
+        }
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putSerializable(PARAM_MEMBERS, members);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         hasPermission = false;
         checkPermission();
         super.onActivityCreated(savedInstanceState);
+        setLoadingText(R.string.ui_phone_contact_waiting_read_contacts);
+        setCustomTitle(R.string.ui_squad_contact_menu_2);
     }
 
     @Override
@@ -108,10 +132,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_squad_contact_menu_2);
-        if (!Cache.isReleasable()) {
-            new Dao<>(Contact.class).clear();
-        }
+        //if (!Cache.isReleasable()) {
+        //    new Dao<>(Contact.class).clear();
+        //}
         if (hasPermission) {
             readyToReadContact();
         }
@@ -182,30 +205,22 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     private void initializeAdapter() {
         if (null == inputableSearchViewHolder) {
-            inputableSearchViewHolder = new InputableSearchViewHolder(mRootView, this);
+            inputableSearchViewHolder = new InputableSearchViewHolder(searchView, this);
             inputableSearchViewHolder.setOnSearchingListener(searchingListener);
             inputableSearchViewHolder.setMaxInputLength(11);
             slidView.setOnSlidChangedListener(onSlidChangedListener);
             slidView.clearIndex();
         }
         if (null == mAdapter) {
+            displayLoading(true);
             mAdapter = new ContactAdapter();
             mRecyclerView.addItemDecoration(new StickDecoration());
             mRecyclerView.setAdapter(mAdapter);
-            // 加载成员列表
-            fetchingRemoteMembers(mOrganizationId, mSquadId);
+
             // 读取缓存中已经处理过的联系人列表
-            gotContactFromCache();
+            //gotContactFromCache();
             // 尝试读取手机联系人并更新当前列表
             new ContactTask().exec();
-        }
-    }
-
-    @Override
-    protected void onFetchingRemoteMembersComplete(List<Member> list) {
-        members.clear();
-        if (null != list) {
-            members.addAll(list);
         }
     }
 
@@ -213,7 +228,8 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
      * 查找成员中是否有人具有相同的手机号码
      */
     private boolean isMemberExists(String phone) {
-        for (Member member : members) {
+        for (int i = 0, len = members.size(); i < len; i++) {
+            Member member = members.get(i);
             if (!isEmpty(member.getPhone()) && member.getPhone().equals(phone)) {
                 return true;
             }
@@ -240,7 +256,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     private void gotContactFromCache() {
         List<Contact> list = new Dao<>(Contact.class).query();
-        if (null != list) {
+        if (null != list && list.size() > 0) {
             for (Contact contact : list) {
                 // 检索此用户是否已被邀请
                 //contact.setInvited(invited(contact.getPhone()));
@@ -253,46 +269,24 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     }
 
     private void resetContactAdapter() {
-        mAdapter.clear();
-        for (Contact contact : contacts) {
-            // 搜索时
-            if (!isEmpty(searchingText) && !(contact.getName().contains(searchingText) || contact.getPhone().contains(searchingText))) {
-                continue;
-            }
-            mAdapter.add(contact);
-            slidView.add(contact.getSpell());
-        }
-        mAdapter.sort();
-        slidView.setVisibility(mAdapter.getItemCount() <= 0 ? View.GONE : View.VISIBLE);
-        setNothingText(R.string.ui_phone_contact_no_more);
-        displayNothing(mAdapter.getItemCount() <= 0);
-    }
-
-//    Dao<User> userDao = new Dao<>(User.class);
-//
-//    private User getUser(String phone) {
-//        return userDao.querySingle(User.Field.Phone, phone);
-//    }
-//
-//    private boolean invited(String phone) {
-//        User user = getUser(phone);
-//        if (null != user) {
-//            QueryBuilder<Invitation> builder = new QueryBuilder<>(Invitation.class);
-//            if (!StringHelper.isEmpty(mSquadId)) {
-//                // 邀请进小组的
-//                builder = builder.whereEquals(Organization.Field.SquadId, mSquadId);
-//                //.whereAppendAnd().whereAppend(Organization.Field.GroupId + " IS NULL");
-//            } else {
-//                // 邀请进组织的
-//                builder = builder.whereEquals(Organization.Field.GroupId, mOrganizationId);
-//                //.whereAppendAnd().whereAppend(Organization.Field.SquadId + " IS NULL");
+        new ReadingContactTask().exec();
+//        slidView.setVisibility(View.GONE);
+//        mAdapter.clear();
+//        if (contacts.size() > 0) {
+//            for (Contact contact : contacts) {
+//                // 搜索时
+//                if (!isEmpty(searchingText) && !(contact.getName().contains(searchingText) || contact.getPhone().contains(searchingText))) {
+//                    continue;
+//                }
+//                mAdapter.add(contact);
+//                slidView.add(contact.getSpell());
 //            }
-//            builder = builder.whereAppendAnd().whereEquals(Invitation.Field.InviteeId, user.getId());
-//            List<Invitation> list = new Dao<>(Invitation.class).query(builder);
-//            return null != list && list.size() > 0;
+//            mAdapter.sort();
 //        }
-//        return false;
-//    }
+//        slidView.setVisibility(mAdapter.getItemCount() <= 0 ? View.GONE : View.VISIBLE);
+//        setNothingText(R.string.ui_phone_contact_no_more);
+//        displayNothing(mAdapter.getItemCount() <= 0);
+    }
 
     private SlidView.OnSlidChangedListener onSlidChangedListener = new SlidView.OnSlidChangedListener() {
         @Override
@@ -420,9 +414,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
 
         private int getFirstCharCount(char chr) {
-            int ret = 0, size = getItemCount();
-            for (int i = 0; i < size; i++) {
-                if (get(i).getSpell().charAt(0) == chr) {
+            Iterator<Contact> iterator = iterator();
+            int ret = 0;
+            while (iterator.hasNext()) {
+                Contact contact = iterator.next();
+                if (contact.getSpell().charAt(0) != chr) {
+                    if (ret > 0) {
+                        break;
+                    }
+                } else {
                     ret++;
                 }
             }
@@ -515,6 +515,79 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
     }
 
+    /**
+     * 分页读取联系人列表的task
+     */
+    private class ReadingContactTask extends AsyncExecutableTask<Void, Integer, Void> {
+
+        private List<Contact> list;
+        private int maxPage;
+        private int PAGE_SIZE = 200;
+        private int MAX;
+
+        @Override
+        protected void doBeforeExecute() {
+            MAX = contacts.size();
+            maxPage = MAX / PAGE_SIZE + (MAX % PAGE_SIZE > 0 ? 1 : 0);
+            materialHorizontalProgressBar.setMax(maxPage);
+            materialHorizontalProgressBar.setProgress(0);
+            materialHorizontalProgressBar.setSecondaryProgress(0);
+            materialHorizontalProgressBar.setVisibility(View.VISIBLE);
+            slidView.clearIndex();
+            searchView.setEnabled(false);
+            mAdapter.clear();
+            super.doBeforeExecute();
+        }
+
+        @Override
+        protected Void doInTask(Void... voids) {
+            for (int i = 0; i < maxPage; i++) {
+                publishProgress(i, maxPage);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void doProgress(Integer... values) {
+            log(format("now handling page %d/%d, size : ", values[0] + 1, values[1]));
+            materialHorizontalProgressBar.setProgress(values[0] + 1);
+            int start = values[0] * PAGE_SIZE;
+            int end = start + PAGE_SIZE;
+            if (end >= MAX) {
+                end = MAX - 1;
+            }
+            list = contacts.subList(start, end);
+            for (int i = start; i <= end; i++) {
+                Contact contact = contacts.get(i);
+                // 搜索时
+                if (!isEmpty(searchingText) && !(contact.getName().contains(searchingText) || contact.getPhone().contains(searchingText))) {
+                    continue;
+                }
+                mAdapter.add(contact);
+                slidView.add(contact.getSpell());
+            }
+            super.doProgress(values);
+        }
+
+        @Override
+        protected void doAfterExecute() {
+            displayLoading(false);
+            setNothingText(R.string.ui_phone_contact_no_more);
+            displayNothing(mAdapter.getItemCount() <= 0);
+            slidView.setVisibility(mAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
+            String text = StringHelper.getString(R.string.ui_phone_contact_title_number, mAdapter.getItemCount());
+            setCustomTitle(text);
+            materialHorizontalProgressBar.setVisibility(View.GONE);
+            searchView.setEnabled(true);
+            super.doAfterExecute();
+        }
+    }
+
     private class ContactTask extends AsyncedTask<Void, Integer, Void> {
 
         private String[] FIELDS = new String[]{
@@ -522,7 +595,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 ContactsContract.CommonDataKinds.Phone.NUMBER
         };
 
-        private List<String[]> contacts = new ArrayList<>();
+        private List<String[]> names = new ArrayList<>();
 
         @Override
         protected void onPreExecute() {
@@ -538,7 +611,10 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             displayLoading(false);
             //displayNothing(mAdapter.getItemCount() <= 0);
             materialHorizontalProgressBar.setVisibility(View.GONE);
-            gotContactFromCache();
+            //resetContactAdapter();
+            String text = StringHelper.getString(R.string.ui_phone_contact_title_number, contacts.size());
+            setCustomTitle(text);
+            new ReadingContactTask().exec();
         }
 
         @Override
@@ -565,15 +641,17 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
 
         // 读取手机联系人
-        @SuppressWarnings("ConstantConditions")
         private void gotContacts() {
             try {
+                long start = System.currentTimeMillis();
                 ContentResolver resolver = App.app().getContentResolver();
                 Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
                 Cursor cursor = resolver.query(uri, FIELDS, null, null, null);
+                int max = 0;
                 if (null != cursor) {
                     try {
-                        int index = 0, max = cursor.getCount();
+                        int index = 0;
+                        max = cursor.getCount();
                         publishProgress(0, index, max);
                         while (cursor.moveToNext()) {
                             String name = cursor.getString(cursor.getColumnIndex(FIELDS[0]));
@@ -583,7 +661,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                             }
                             // 名字不为空且号码为手机号码时才加入缓存
                             if (!StringHelper.isEmpty(name) && Utils.isItMobilePhone(phone)) {
-                                contacts.add(new String[]{name, phone});
+                                names.add(new String[]{name, phone});
                             }
                             index++;
                             //log(format("read progress, index: %d, name: %s, phone: %s", index, name, phone));
@@ -593,43 +671,48 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                         cursor.close();
                     }
                 }
+                long end = System.currentTimeMillis();
+                log(format("reading contact(%d) cost: %d milliseconds.", max, end - start));
             } catch (Exception ignore) {
                 ignore.printStackTrace();
             }
-        }
-
-        private String getUserId(String phone, Dao<User> dao) {
-            List<User> list = dao.query(User.Field.Phone, phone);
-            if (null != list && list.size() > 0) {
-                return list.get(0).getId();
-            }
-            return null;
         }
 
         // 处理联系人和本地缓存关系
         private void handleContact() {
-            int index = 0, max = contacts.size();
+            long start = System.currentTimeMillis();
+            int index = 0, max = names.size();
             publishProgress(1, index, max);
             try {
-                Dao<Contact> dao = new Dao<>(Contact.class);
-                Dao<User> udao = new Dao<>(User.class);
-                for (String[] strings : contacts) {
+                ArrayList<Contact> save = new ArrayList<>();
+                for (String[] strings : names) {
                     String name = strings[0];
                     String phone = strings[1];
-                    // contact 主键为 phone 的 md5 值
+                    // contact 主键id为 phone 的 md5 值
                     Contact contact = new Contact();
-                    contact.setUserId(getUserId(phone, udao));
                     contact.setName(name);
                     contact.setPhone(phone);
+                    contact.setMember(isMemberExists(contact.getPhone()));
                     contact.setInvited(false);
-                    dao.save(contact);
+                    save.add(contact);
                     index++;
                     //log(format("handle progress, index: %d, name: %s, phone: %s", index, name, phone));
                     publishProgress(1, index, max);
                 }
+                contacts.clear();
+                contacts.addAll(save);
+                Collections.sort(contacts, new Comparator<Contact>() {
+                    @Override
+                    public int compare(Contact o1, Contact o2) {
+                        return o1.getSpell().compareTo(o2.getSpell());
+                    }
+                });
+                //ContactService.start(contacts);
             } catch (Exception ignore) {
                 ignore.printStackTrace();
             }
+            long end = System.currentTimeMillis();
+            log(format("handing contact(%d) cost: %d milliseconds.", max, end - start));
         }
     }
 }
