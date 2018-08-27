@@ -20,12 +20,12 @@ import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.view.CorneredView;
 import com.hlk.hlklib.tasks.AsyncedTask;
-import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -109,7 +109,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     @Override
     public void doingInResume() {
         setCustomTitle(R.string.ui_squad_contact_menu_2);
-        if (BuildConfig.DEBUG) {
+        if (!Cache.isReleasable()) {
             new Dao<>(Contact.class).clear();
         }
         if (hasPermission) {
