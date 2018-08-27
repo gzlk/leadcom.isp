@@ -35,7 +35,6 @@ import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.PhoneContactViewHolder;
 import com.leadcom.android.isp.lib.view.SlidView;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.common.Contact;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.model.organization.Member;
@@ -95,6 +94,10 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     private ArrayList<Contact> contacts = new ArrayList<>();
     private ArrayList<Member> members = new ArrayList<>();
     private ContactAdapter mAdapter;
+    /**
+     * 是否正在处理分页内容
+     */
+    private boolean isHandlingPagination = false;
 
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
@@ -254,22 +257,12 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
     };
 
-    private void gotContactFromCache() {
-        List<Contact> list = new Dao<>(Contact.class).query();
-        if (null != list && list.size() > 0) {
-            for (Contact contact : list) {
-                // 检索此用户是否已被邀请
-                //contact.setInvited(invited(contact.getPhone()));
-                contact.setMember(isMemberExists(contact.getPhone()));
-            }
-            contacts.clear();
-            contacts.addAll(list);
-        }
-        resetContactAdapter();
-    }
-
     private void resetContactAdapter() {
-        new ReadingContactTask().exec();
+        if (!isHandlingPagination) {
+            new ReadingContactTask().exec();
+        } else {
+            ToastHelper.make().showMsg(R.string.ui_phone_contact_waiting_pagination);
+        }
 //        slidView.setVisibility(View.GONE);
 //        mAdapter.clear();
 //        if (contacts.size() > 0) {
@@ -527,6 +520,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
         @Override
         protected void doBeforeExecute() {
+            isHandlingPagination = true;
             MAX = contacts.size();
             maxPage = MAX / PAGE_SIZE + (MAX % PAGE_SIZE > 0 ? 1 : 0);
             materialHorizontalProgressBar.setMax(maxPage);
@@ -534,7 +528,6 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             materialHorizontalProgressBar.setSecondaryProgress(0);
             materialHorizontalProgressBar.setVisibility(View.VISIBLE);
             slidView.clearIndex();
-            searchView.setEnabled(false);
             mAdapter.clear();
             super.doBeforeExecute();
         }
@@ -583,7 +576,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             String text = StringHelper.getString(R.string.ui_phone_contact_title_number, mAdapter.getItemCount());
             setCustomTitle(text);
             materialHorizontalProgressBar.setVisibility(View.GONE);
-            searchView.setEnabled(true);
+            isHandlingPagination = false;
             super.doAfterExecute();
         }
     }
