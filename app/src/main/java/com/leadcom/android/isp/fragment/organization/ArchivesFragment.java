@@ -15,7 +15,6 @@ import com.leadcom.android.isp.api.user.UserMsgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
-import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
@@ -180,7 +179,7 @@ public class ArchivesFragment extends BaseCmtLikeColFragment {
                 onSwipeRefreshing();
                 break;
             case REQUEST_SELECT:
-                ArchiveEditorFragment.open(ArchivesFragment.this, "", getResultedData(data));
+                //ArchiveEditorFragment.open(ArchivesFragment.this, "", getResultedData(data));
                 break;
         }
         super.onActivityResult(requestCode, data);

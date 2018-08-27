@@ -76,9 +76,7 @@ public class ArchiveDraftFragment extends BaseSwipeRefreshSupportFragment {
     private void resultSelected() {
         if (selected >= 0) {
             Archive draft = (Archive) mAdapter.get(selected);
-            String type = draft.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE :
-                    (draft.isMultimediaArchive() ? ArchiveEditorFragment.MULTIMEDIA : ArchiveEditorFragment.TEMPLATE);
-            ArchiveEditorFragment.open(this, draft.getId(), type);
+            ArchiveEditorFragment.open(this, draft.getId(), draft.getDocType());
         }
         finish();
 //        String json = "";

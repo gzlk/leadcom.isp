@@ -26,7 +26,6 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
-import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseCmtLikeColFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
@@ -453,7 +452,7 @@ public class IndividualFragment extends BaseCmtLikeColFragment {
         switch (requestCode) {
             case REQUEST_SELECT:
                 // 个人档案不需要groupId
-                ArchiveEditorFragment.open(IndividualFragment.this, "", getResultedData(data));
+                //ArchiveEditorFragment.open(IndividualFragment.this, "", getResultedData(data));
                 break;
             case REQUEST_CREATE:
                 onSwipeRefreshing();

@@ -327,9 +327,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
 
     private void rightIconClick() {
         if (isDraft) {
-            String type = mArchive.isAttachmentArchive() ? ArchiveEditorFragment.ATTACHABLE :
-                    (mArchive.isMultimediaArchive() ? ArchiveEditorFragment.MULTIMEDIA : ArchiveEditorFragment.TEMPLATE);
-            ArchiveEditorFragment.open(ArchiveDetailsFragment.this, mQueryId, type);
+            ArchiveEditorFragment.open(ArchiveDetailsFragment.this, mQueryId, mArchive.getDocType());
             finish();
         } else {
             loadingArchivePermission();
