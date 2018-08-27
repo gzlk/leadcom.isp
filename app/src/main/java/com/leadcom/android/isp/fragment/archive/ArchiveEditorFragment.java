@@ -97,13 +97,6 @@ import jp.wasabeef.richeditor.RichEditor;
  */
 public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
-    public static final String MULTIMEDIA = "multimedia";
-    public static final String ATTACHABLE = "attachable";
-    /**
-     * 模板档案
-     */
-    public static final String TEMPLATE = "template";
-    public static final String MOMENT = "moment";
     private static final String PARAM_UPLOAD_TYPE = "aecf_upload_type";
     private static final String PARAM_EDITOR_TYPE = "aecf_archive_editor_type";
     private static final String PARAM_PASTE_CONTENT = "aecf_paste_content";
@@ -123,32 +116,21 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         return aecf;
     }
 
-    private static int getType(String type) {
-        switch (type) {
-            case ATTACHABLE:
-                return Archive.ArchiveType.ATTACHMENT;
-            case MULTIMEDIA:
-                return Archive.ArchiveType.MULTIMEDIA;
-            default:
-                return Archive.ArchiveType.TEMPLATE;
-        }
-    }
-
-    private static Bundle getBundle(String remoteDraftId, String attachType) {
+    private static Bundle getBundle(String remoteDraftId, int archiveType) {
         Bundle bundle = new Bundle();
         // 传过来的档案id（草稿档案），需要从服务器上拉取草稿内容再编辑
         bundle.putString(PARAM_QUERY_ID, remoteDraftId);
         // 编辑器方式（附件方式、图文方式）
-        bundle.putInt(PARAM_EDITOR_TYPE, getType(attachType));
+        bundle.putInt(PARAM_EDITOR_TYPE, archiveType);
         return bundle;
     }
 
-    public static void open(BaseFragment fragment, String remoteDraftId, String attachType) {
-        fragment.openActivity(ArchiveEditorFragment.class.getName(), getBundle(remoteDraftId, attachType), REQUEST_CREATE, true, true);
+    public static void open(BaseFragment fragment, String remoteDraftId, int archiveType) {
+        fragment.openActivity(ArchiveEditorFragment.class.getName(), getBundle(remoteDraftId, archiveType), REQUEST_CREATE, true, true);
     }
 
-    public static void open(Context context, String remoteDraftId, String attachType) {
-        BaseActivity.openActivity(context, ArchiveEditorFragment.class.getName(), getBundle(remoteDraftId, attachType), REQUEST_CREATE, true, true);
+    public static void open(Context context, String remoteDraftId, int archiveType) {
+        BaseActivity.openActivity(context, ArchiveEditorFragment.class.getName(), getBundle(remoteDraftId, archiveType), REQUEST_CREATE, true, true);
     }
 
     @Override

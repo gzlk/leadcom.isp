@@ -21,15 +21,12 @@ import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.archive.ArchiveCreateSelectorFragment;
-import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.SettingFragment;
-import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
 import com.leadcom.android.isp.fragment.main.GroupFragment;
 import com.leadcom.android.isp.fragment.main.HomeFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.fragment.main.SystemMessageFragment;
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.helper.UpgradeHelper;
 import com.leadcom.android.isp.lib.permission.MPermission;
@@ -246,21 +243,6 @@ public class MainActivity extends TitleActivity {
         if (null != alphaView) {
             alphaView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BaseFragment.REQUEST_SELECT) {
-            String result = BaseFragment.getResultedData(data);
-            if (!StringHelper.isEmpty(result, true)) {
-                if (result.equals(ArchiveEditorFragment.MOMENT)) {
-                    MomentCreatorFragment.open(this, "[]");
-                } else {
-                    ArchiveEditorFragment.open(this, "", result);
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

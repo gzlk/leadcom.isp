@@ -10,6 +10,8 @@ import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseTransparentSupportFragment;
 import com.hlk.hlklib.lib.inject.Click;
+import com.leadcom.android.isp.fragment.individual.moment.MomentCreatorFragment;
+import com.leadcom.android.isp.model.archive.Archive;
 
 /**
  * <b>功能描述：</b>新建档案方式选择器<br />
@@ -66,22 +68,23 @@ public class ArchiveCreateSelectorFragment extends BaseTransparentSupportFragmen
             R.id.ui_archive_creator_selector_moment})
     private void elementClick(View view) {
         view.startAnimation(App.clickAnimation());
+        BaseFragment fragment = ArchiveCreateSelectorFragment.this;
         switch (view.getId()) {
             case R.id.ui_archive_creator_selector_cancel:
-                finish();
                 break;
             case R.id.ui_archive_creator_selector_template:
-                resultData(ArchiveEditorFragment.TEMPLATE);
+                ArchiveEditorFragment.open(fragment, "", Archive.ArchiveType.TEMPLATE);
                 break;
             case R.id.ui_archive_creator_selector_rich_text:
-                resultData(ArchiveEditorFragment.MULTIMEDIA);
+                ArchiveEditorFragment.open(fragment, "", Archive.ArchiveType.MULTIMEDIA);
                 break;
             case R.id.ui_archive_creator_selector_attachment:
-                resultData(ArchiveEditorFragment.ATTACHABLE);
+                ArchiveEditorFragment.open(fragment, "", Archive.ArchiveType.ATTACHMENT);
                 break;
             case R.id.ui_archive_creator_selector_moment:
-                resultData(ArchiveEditorFragment.MOMENT);
+                MomentCreatorFragment.open(fragment, "[]");
                 break;
         }
+        finish();
     }
 }
