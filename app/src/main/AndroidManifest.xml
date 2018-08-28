@@ -126,6 +126,15 @@
                 <action android:name="com.leadcom.android.isp.service.DRAFT" />
             </intent-filter>
         </service>
+        <!--保存联系人的service-->
+        <service
+            android:name=".service.ContactService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.leadcom.android.isp.service.CONTACTS" />
+            </intent-filter>
+        </service>
         <!--第三方相册-->
         <activity
             android:name="com.yanzhenjie.album.AlbumActivity"

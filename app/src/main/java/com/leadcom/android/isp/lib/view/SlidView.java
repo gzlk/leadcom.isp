@@ -158,7 +158,7 @@ public class SlidView extends View {
 
     private void showText(String text, boolean shown) {
         if (null != slidChangedListener) {
-            slidChangedListener.slidChanged(text, shown);
+            slidChangedListener.slidChanged(text, shown, isActive);
         }
     }
 
@@ -232,6 +232,6 @@ public class SlidView extends View {
     }
 
     public interface OnSlidChangedListener {
-        void slidChanged(String text, boolean shown);
+        void slidChanged(String text, boolean shown, boolean active);
     }
 }
