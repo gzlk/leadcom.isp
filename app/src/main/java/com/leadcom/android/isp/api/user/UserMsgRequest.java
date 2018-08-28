@@ -3,6 +3,7 @@ package com.leadcom.android.isp.api.user;
 import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
+import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
 import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.user.UserMessage;
@@ -29,6 +30,9 @@ public class UserMsgRequest extends Request<UserMessage> {
     }
 
     private static class MultipleMsg extends PaginationQuery<UserMessage> {
+    }
+
+    private static class BoolMsg extends BoolQuery<UserMessage> {
     }
 
     private static final String MSG = "/user/userInfo";
@@ -72,13 +76,13 @@ public class UserMsgRequest extends Request<UserMessage> {
      * 删除某条消息
      */
     public void delete(String msgId) {
-        executeHttpRequest(getRequest(SingleMsg.class, format("%s?userInfoId=%s", url(DELETE), msgId), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BoolMsg.class, format("%s?userInfoId=%s", url(DELETE), msgId), "", HttpMethods.Get));
     }
 
     /**
      * 情况消息
      */
     public void clear() {
-        executeHttpRequest(getRequest(SingleMsg.class, format("%sByUser", url(DELETE)), "", HttpMethods.Get));
+        executeHttpRequest(getRequest(BoolMsg.class, format("%sByUser", url(DELETE)), "", HttpMethods.Get));
     }
 }
