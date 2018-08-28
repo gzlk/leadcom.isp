@@ -2,10 +2,8 @@ package com.leadcom.android.isp.fragment.organization;
 
 import android.os.Bundle;
 
-import com.leadcom.android.isp.api.activity.ActRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.api.org.MemberRequest;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.api.org.SquadRequest;
@@ -13,7 +11,6 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.activity.Activity;
-import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Squad;
@@ -272,40 +269,5 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
      * 查询本地成员返回了
      */
     protected void onLoadingLocalMembersComplete(String organizationId, String squadId, List<Member> list) {
-    }
-
-    /**
-     * 查询我加入的活动列表
-     */
-    protected void fetchingJoinedActivity(boolean fromRemote) {
-        ActRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Activity>() {
-            @Override
-            public void onResponse(List<Activity> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                onFetchingJoinedActivityComplete(list);
-            }
-        }).list(mOrganizationId, ActRequest.LIST_JOINED, "", remotePageNumber, Cache.cache().groupIds);
-    }
-
-    protected void onFetchingJoinedActivityComplete(List<Activity> list) {
-    }
-
-    /**
-     * 查询本群中我未处理的活动邀请
-     */
-    protected void fetchingUnHandledActivityInvite(String groupId) {
-        InvitationRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Invitation>() {
-            @Override
-            public void onResponse(List<Invitation> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
-                super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
-                onFetchingUnHandledActivityInviteComplete(list);
-            }
-        }).activityInviteNotHandled(groupId, 1, Cache.cache().groupIds);
-    }
-
-    /**
-     * 拉取完毕我未处理的活动请求
-     */
-    protected void onFetchingUnHandledActivityInviteComplete(List<Invitation> list) {
     }
 }

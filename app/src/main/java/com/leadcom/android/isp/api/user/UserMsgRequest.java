@@ -5,7 +5,6 @@ import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.query.BoolQuery;
 import com.leadcom.android.isp.api.query.PaginationQuery;
-import com.leadcom.android.isp.api.query.SingleQuery;
 import com.leadcom.android.isp.model.user.UserMessage;
 import com.litesuits.http.request.param.HttpMethods;
 
@@ -24,9 +23,6 @@ public class UserMsgRequest extends Request<UserMessage> {
 
     public static UserMsgRequest request() {
         return new UserMsgRequest();
-    }
-
-    private static class SingleMsg extends SingleQuery<UserMessage> {
     }
 
     private static class MultipleMsg extends PaginationQuery<UserMessage> {
