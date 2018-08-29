@@ -55,6 +55,13 @@ public class UpgradeHelper {
      * 检测服务器上的最新客户端版本并提示用户更新
      */
     public void checkVersion() {
+        checkVersion(false);
+    }
+
+    /**
+     * 检测服务器上的最新客户端版本并提示用户更新
+     */
+    public void checkVersion(final boolean showMsgNotNeed) {
         UpdateRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<SystemUpdate>() {
             @Override
             public void onResponse(SystemUpdate systemUpdate, boolean success, String message) {
@@ -69,6 +76,8 @@ public class UpgradeHelper {
                         } else {
                             warningUpdatable(url, ver, systemUpdate.getForceUpdate());
                         }
+                    } else if (showMsgNotNeed) {
+                        ToastHelper.make().showMsg(R.string.ui_system_updatable_not_need_update);
                     }
                 }
             }

@@ -163,7 +163,7 @@ public class SettingFragment extends BaseTransparentSupportFragment {
                     break;
                 case 3:
                     // 检查更新
-                    UpgradeHelper.helper(Activity()).checkVersion();
+                    UpgradeHelper.helper(Activity()).checkVersion(true);
                     break;
                 case 4:
                     // 关于
