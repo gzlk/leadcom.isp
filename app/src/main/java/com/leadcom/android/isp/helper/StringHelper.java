@@ -1,10 +1,14 @@
 package com.leadcom.android.isp.helper;
 
+import android.content.res.AssetManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.leadcom.android.isp.application.App;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.Locale;
 
@@ -16,7 +20,6 @@ import java.util.Locale;
  */
 public class StringHelper {
 
-    @SuppressWarnings("ConstantConditions")
     public static String getString(int resId) {
         if (0 == resId)
             return null;
@@ -27,17 +30,50 @@ public class StringHelper {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static String getString(int resId, Object... formatArgs) {
         return App.app().getResources().getString(resId, formatArgs);
     }
 
-    @SuppressWarnings("ConstantConditions")
+    public static String getRawString(int rawId) {
+        InputStream stream = App.app().getResources().openRawResource(rawId);
+        if (null != stream) {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "utf-8"));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+                stream.close();
+                return sb.toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
+
+    public static String getAssetString(String assetPath) {
+        AssetManager assetManager = App.app().getAssets();
+        try {
+            InputStream is = assetManager.open(assetPath);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = br.readLine()) != null) {
+                builder.append(str);
+            }
+            return builder.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static String[] getStringArray(int resid) {
         return App.app().getResources().getStringArray(resid);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static int getInteger(int resId) {
         return App.app().getResources().getInteger(resId);
     }

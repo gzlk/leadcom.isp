@@ -539,9 +539,9 @@ public class Utils {
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
             if (i == 0 && text.charAt(i) == '曾') {
-                buffer.append("ZENG");
+                buffer.append("ZENG ");
             } else {
-                buffer.append(Pinyin.toPinyin(text.charAt(i)));
+                buffer.append(Pinyin.toPinyin(text.charAt(i))).append(' ');
             }
         }
         return buffer.toString();

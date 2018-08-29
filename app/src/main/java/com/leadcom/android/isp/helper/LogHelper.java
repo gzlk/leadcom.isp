@@ -2,6 +2,7 @@ package com.leadcom.android.isp.helper;
 
 import android.util.Log;
 
+import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.etc.Utils;
 
 /**
@@ -28,7 +29,7 @@ public class LogHelper {
     }
 
     private static void print(String tag, String string) {
-        Log.e(tag, string);
+        Log.e(tag + "(" + BuildConfig.BUILD_TYPE + ")", string);
     }
 
     public static void log(String tag, String string) {

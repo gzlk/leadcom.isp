@@ -6,13 +6,13 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.leadcom.android.isp.application.App;
-import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.helper.LogHelper;
-import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.common.Contact;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>功能描述：</b><br />
@@ -26,13 +26,12 @@ import java.util.ArrayList;
  */
 public class ContactService extends Service {
     private static final String TAG = "ContactService";
-    public static final String ACTION_CONTACT = "com.leadcom.android.isp.service.CONTACTS";
-    private static final String EXTRA_CONTACTS = "cs_contacts";
+    public static final String ACTION_WRITE_CONTACT = "com.leadcom.android.isp.service.WRITE_CONTACTS";
+    public static final String ACTION_READ_CONTACT = "com.leadcom.android.isp.service.READ_CONTACTS";
 
-    public static void start(ArrayList<Contact> contacts) {
+    public static void start(boolean writable) {
         Intent intent = new Intent(App.app(), ContactService.class);
-        intent.setAction(ACTION_CONTACT);
-        intent.putExtra(EXTRA_CONTACTS, contacts);
+        intent.setAction(writable ? ACTION_WRITE_CONTACT : ACTION_READ_CONTACT);
         App.app().startService(intent);
     }
 
@@ -62,16 +61,33 @@ public class ContactService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (null != intent) {
+            long start = System.currentTimeMillis(), end;
             String action = intent.getAction();
-            if (ACTION_CONTACT.equals(action)) {
-                ArrayList<Contact> contacts = (ArrayList<Contact>) intent.getSerializableExtra(EXTRA_CONTACTS);
+            if (ACTION_WRITE_CONTACT.equals(action)) {
+                ArrayList<Contact> contacts = App.app().getContacts();
                 if (null != contacts && contacts.size() > 0) {
-                    long start = System.currentTimeMillis();
                     new Dao<>(Contact.class).save(contacts);
-                    long end = System.currentTimeMillis();
+                    end = System.currentTimeMillis();
                     log("save " + contacts.size() + " contacts used " + (end - start) + " milliseconds");
-                    stopSelf();
                 }
+                stopSelf();
+            } else if (ACTION_READ_CONTACT.equals(action)) {
+                App.app().getContacts().clear();
+                Dao<Contact> dao = new Dao(Contact.class);
+                long max = dao.getCount();
+                int PAGE_SIZE = 200;
+                long pages = max / PAGE_SIZE + (max % PAGE_SIZE > 0 ? 1 : 0);
+                for (int i = 0; i < pages; i++) {
+                    List<Contact> page = dao.query(new QueryBuilder<>(Contact.class).limit(i * PAGE_SIZE, PAGE_SIZE));
+                    if (null != page && page.size() > 0) {
+                        App.app().getContacts().addAll(page);
+                        end = System.currentTimeMillis();
+                        log("read " + page.size() + " contacts from SQLite used " + (end - start) + " milliseconds");
+                    }
+                }
+                end = System.currentTimeMillis();
+                log("read " + App.app().getContacts().size() + " contacts used " + (end - start) + " milliseconds");
+                stopSelf();
             }
         }
         return super.onStartCommand(intent, flags, startId);

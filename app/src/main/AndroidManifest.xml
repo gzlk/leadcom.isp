@@ -126,13 +126,14 @@
                 <action android:name="com.leadcom.android.isp.service.DRAFT" />
             </intent-filter>
         </service>
-        <!--保存联系人的service-->
+        <!--处理联系人存取的service-->
         <service
             android:name=".service.ContactService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.leadcom.android.isp.service.CONTACTS" />
+                <action android:name="com.leadcom.android.isp.service.WRITE_CONTACTS" />
+                <action android:name="com.leadcom.android.isp.service.READ_CONTACTS" />
             </intent-filter>
         </service>
         <!--第三方相册-->

@@ -14,8 +14,10 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
+import com.leadcom.android.isp.model.common.Contact;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.user.User;
+import com.leadcom.android.isp.service.ContactService;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -28,6 +30,7 @@ import com.tencent.bugly.Bugly;
 import com.tencent.smtt.sdk.QbSdk;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.jpush.android.api.JPushInterface;
@@ -128,6 +131,8 @@ public class App extends BaseActivityManagedApplication {
             EmojiUtility.setDefaultTextSize(getResources().getDimensionPixelSize(R.dimen.ui_base_text_size));
             initializeImageLoader();
             initializeDatabase();
+            // 读取本地缓存中的联系人列表
+            ContactService.start(false);
         }
     }
 
@@ -271,5 +276,11 @@ public class App extends BaseActivityManagedApplication {
                 }
             }
         }).list();
+    }
+
+    private ArrayList<Contact> contacts = new ArrayList<>();
+
+    public ArrayList<Contact> getContacts() {
+        return contacts;
     }
 }

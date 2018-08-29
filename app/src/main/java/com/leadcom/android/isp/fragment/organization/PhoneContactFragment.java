@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +27,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.InvitationRequest;
 import com.leadcom.android.isp.application.App;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -35,16 +38,25 @@ import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.PhoneContactViewHolder;
 import com.leadcom.android.isp.lib.view.SlidView;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
+import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.common.Contact;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.model.organization.Member;
+import com.leadcom.android.isp.model.user.Name;
+import com.leadcom.android.isp.model.user.Word;
+import com.leadcom.android.isp.service.ContactService;
 import com.leadcom.android.isp.task.AsyncExecutableTask;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * <b>功能描述：</b>手机通讯录<br />
@@ -60,6 +72,10 @@ import java.util.List;
 public class PhoneContactFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_MEMBERS = "pcf_members";
+    /**
+     * 标记是否为测试用，此时不读取手机联系人，而是随机生成人名和电话号码
+     */
+    private static final boolean RANDOM = true;
 
     public static PhoneContactFragment newInstance(Bundle bundle) {
         PhoneContactFragment pcf = new PhoneContactFragment();
@@ -91,14 +107,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     // holder
     private InputableSearchViewHolder inputableSearchViewHolder;
-    private ArrayList<Contact> contacts = new ArrayList<>();
     private ArrayList<Member> members = new ArrayList<>();
     private ContactAdapter mAdapter;
     /**
      * 是否正在处理分页内容
      */
-    private boolean isHandlingPagination = false;
-    private int lastHandlingPage = 0;
+    private static boolean isHandlingPagination = false;
+    private static boolean isIdle = true;
+    private static int lastHandlingPage = 0;
+    private static String searchingText = "";
 
     @SuppressWarnings("unchecked")
     @Override
@@ -119,6 +136,10 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         hasPermission = false;
+        isHandlingPagination = false;
+        searchingText = "";
+        isIdle = true;
+        lastHandlingPage = 0;
         checkPermission();
         super.onActivityCreated(savedInstanceState);
         setLoadingText(R.string.ui_phone_contact_waiting_read_contacts);
@@ -137,9 +158,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     @Override
     public void doingInResume() {
-        //if (!Cache.isReleasable()) {
-        //    new Dao<>(Contact.class).clear();
-        //}
+        if (!Cache.isReleasable()) {
+            new Dao<>(Contact.class).clear();
+        }
         if (hasPermission) {
             readyToReadContact();
         }
@@ -226,11 +247,10 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             // 读取缓存中已经处理过的联系人列表
             //gotContactFromCache();
             // 尝试读取手机联系人并更新当前列表
-            new ContactTask().exec();
+            new ContactTask(this, members).exec();
         }
     }
 
-    private boolean isIdle = true;
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -243,21 +263,6 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             super.onScrolled(recyclerView, dx, dy);
         }
     };
-
-    /**
-     * 查找成员中是否有人具有相同的手机号码
-     */
-    private boolean isMemberExists(String phone) {
-        for (int i = 0, len = members.size(); i < len; i++) {
-            Member member = members.get(i);
-            if (!isEmpty(member.getPhone()) && member.getPhone().equals(phone)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String searchingText = "";
 
     private InputableSearchViewHolder.OnSearchingListener searchingListener = new InputableSearchViewHolder.OnSearchingListener() {
         @Override
@@ -276,7 +281,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     private void resetContactAdapter() {
         if (!isHandlingPagination) {
-            new ReadingContactTask().exec();
+            new ReadingContactTask(this).exec();
         } else {
             ToastHelper.make().showMsg(R.string.ui_phone_contact_waiting_pagination);
         }
@@ -508,7 +513,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
 
         private int getFirstCharCount(char chr) {
-            Iterator<Contact> iterator = contacts.iterator();
+            Iterator<Contact> iterator = App.app().getContacts().iterator();
             int ret = 0;
             while (iterator.hasNext()) {
                 if (iterator.next().getSpell().charAt(0) != chr) {
@@ -526,7 +531,13 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     /**
      * 分页读取联系人列表的task
      */
-    private class ReadingContactTask extends AsyncExecutableTask<Void, Integer, Void> {
+    private static class ReadingContactTask extends AsyncExecutableTask<Void, Integer, Void> {
+
+        private SoftReference<PhoneContactFragment> fragmentReference;
+
+        ReadingContactTask(PhoneContactFragment fragment) {
+            fragmentReference = new SoftReference<>(fragment);
+        }
 
         private int maxPage;
         private int PAGE_SIZE = 50;
@@ -536,14 +547,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         @Override
         protected void doBeforeExecute() {
             isHandlingPagination = true;
-            MAX = contacts.size();
+            MAX = App.app().getContacts().size();
             maxPage = MAX / PAGE_SIZE + (MAX % PAGE_SIZE > 0 ? 1 : 0);
-            materialHorizontalProgressBar.setMax(maxPage);
-            materialHorizontalProgressBar.setProgress(0);
-            materialHorizontalProgressBar.setSecondaryProgress(0);
-            materialHorizontalProgressBar.setVisibility(View.VISIBLE);
-            slidView.clearIndex();
-            mAdapter.clear();
+            PhoneContactFragment fragment = fragmentReference.get();
+            fragment.materialHorizontalProgressBar.setMax(maxPage);
+            fragment.materialHorizontalProgressBar.setProgress(0);
+            fragment.materialHorizontalProgressBar.setSecondaryProgress(0);
+            fragment.materialHorizontalProgressBar.setVisibility(View.VISIBLE);
+            fragment.slidView.clearIndex();
+            fragment.mAdapter.clear();
             lastHandlingPage = 0;
             super.doBeforeExecute();
         }
@@ -585,20 +597,21 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         @Override
         protected void doProgress(Integer... values) {
             log(format("now handling page %d/%d, size : ", values[0] + 1, values[1]));
-            materialHorizontalProgressBar.setProgress(values[0] + 1);
+            PhoneContactFragment fragment = fragmentReference.get();
+            fragment.materialHorizontalProgressBar.setProgress(values[0] + 1);
             int start = values[0] * PAGE_SIZE;
             int end = start + PAGE_SIZE;
             if (end >= MAX) {
                 end = MAX - 1;
             }
             for (int i = start; i <= end; i++) {
-                Contact contact = contacts.get(i);
+                Contact contact = App.app().getContacts().get(i);
                 // 搜索时
                 if (!isEmpty(searchingText) && !(contact.getName().contains(searchingText) || contact.getPhone().contains(searchingText))) {
                     continue;
                 }
-                mAdapter.add(contact);
-                slidView.add(contact.getSpell());
+                fragment.mAdapter.add(contact);
+                fragment.slidView.add(contact.getSpell());
                 if (!isIdle) {
                     lastHandlingPage = values[0];
                     isBreak = true;
@@ -610,68 +623,194 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
         @Override
         protected void doAfterExecute() {
-            displayLoading(false);
-            setNothingText(R.string.ui_phone_contact_no_more);
-            displayNothing(mAdapter.getItemCount() <= 0);
-            slidView.setVisibility(mAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
-            String text = StringHelper.getString(R.string.ui_phone_contact_title_number, mAdapter.getItemCount());
-            setCustomTitle(text);
-            materialHorizontalProgressBar.setVisibility(View.INVISIBLE);
+            PhoneContactFragment fragment = fragmentReference.get();
+            fragment.displayLoading(false);
+            fragment.setNothingText(R.string.ui_phone_contact_no_more);
+            fragment.displayNothing(fragment.mAdapter.getItemCount() <= 0);
+            fragment.slidView.setVisibility(fragment.mAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
+            String text = StringHelper.getString(R.string.ui_phone_contact_title_number, fragment.mAdapter.getItemCount());
+            fragment.setCustomTitle(text);
+            fragment.materialHorizontalProgressBar.setVisibility(View.INVISIBLE);
             isHandlingPagination = false;
             super.doAfterExecute();
         }
     }
 
-    private class ContactTask extends AsyncedTask<Void, Integer, Void> {
+    private static class MsgHandler extends Handler {
+        private SoftReference<PhoneContactFragment> reference;
+
+        MsgHandler(PhoneContactFragment fragment) {
+            reference = new SoftReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            PhoneContactFragment fragment = reference.get();
+            switch (msg.what) {
+
+            }
+        }
+    }
+
+    private static class ContactTask extends AsyncedTask<Void, Integer, Void> {
+        private SoftReference<PhoneContactFragment> reference;
+        private SoftReference<ArrayList<Member>> memberReference;
+        private SoftReference<MsgHandler> handleReference;
+
+        ContactTask(MsgHandler handler) {
+            handleReference = new SoftReference<>(handler);
+        }
+
+        ContactTask(PhoneContactFragment fragment, ArrayList<Member> members) {
+            reference = new SoftReference<>(fragment);
+            memberReference = new SoftReference<>(members);
+        }
 
         private String[] FIELDS = new String[]{
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER
         };
 
-        private List<String[]> names = new ArrayList<>();
+        private List<String[]> nameList = new ArrayList<>();
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            materialHorizontalProgressBar.setVisibility(View.VISIBLE);
-            displayNothing(false);
-            displayLoading(true);
+            PhoneContactFragment fragment = reference.get();
+            fragment.materialHorizontalProgressBar.setVisibility(View.VISIBLE);
+            fragment.displayNothing(false);
+            fragment.displayLoading(true);
         }
 
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            displayLoading(false);
+            PhoneContactFragment fragment = reference.get();
+            fragment.displayLoading(false);
             //displayNothing(mAdapter.getItemCount() <= 0);
-            materialHorizontalProgressBar.setVisibility(View.INVISIBLE);
+            fragment.materialHorizontalProgressBar.setVisibility(View.INVISIBLE);
             //resetContactAdapter();
-            String text = StringHelper.getString(R.string.ui_phone_contact_title_number, contacts.size());
-            setCustomTitle(text);
-            new ReadingContactTask().exec();
+            String text = StringHelper.getString(R.string.ui_phone_contact_title_number, App.app().getContacts().size());
+            fragment.setCustomTitle(text);
+            new ReadingContactTask(fragment).exec();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            gotContacts();
-            handleContact();
+            if (App.app().getContacts().size() <= 0) {
+                if (!RANDOM) {
+                    gotContacts();
+                } else {
+                    randomContacts();
+                }
+                handleContact();
+            }
             return null;
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            if (materialHorizontalProgressBar.getMax() != values[2]) {
-                materialHorizontalProgressBar.setMax(values[2]);
+            PhoneContactFragment fragment = reference.get();
+            if (fragment.materialHorizontalProgressBar.getMax() != values[2]) {
+                fragment.materialHorizontalProgressBar.setMax(values[2]);
             }
             if (values[0] == 0) {
-                materialHorizontalProgressBar.setSecondaryProgress(values[1]);
+                fragment.materialHorizontalProgressBar.setSecondaryProgress(values[1]);
             } else if (values[0] == 1) {
-                materialHorizontalProgressBar.setProgress(values[1]);
+                fragment.materialHorizontalProgressBar.setProgress(values[1]);
             }
             if (values[0] == 1 && values[2] == 0) {
-                warningNoContact();
+                fragment.warningNoContact();
             }
+        }
+
+        // 随机生成联系人列表
+        private void randomContacts() {
+            long start = System.currentTimeMillis();
+            ArrayList<Word> words = Word.fromJson(StringHelper.getAssetString("json/custom.words.json"));
+            ArrayList<Word> specials = Word.fromJson(StringHelper.getAssetString("json/special.words.json"));
+            ArrayList<Name> names = Name.fromJson(StringHelper.getAssetString("json/custom.names.json"));
+            String familyNames = StringHelper.getString(R.string.temp_100_family_names);
+            assert familyNames != null;
+            String[] lastNames = familyNames.replace("\n", "").split(" ");
+            int familyNameSize = lastNames.length, wordSize = words.size(), specialSize = specials.size(), nameSize = names.size();
+            // 姓，随机生成
+            int randomLastName;
+            // 是否单名，随机生成
+            boolean isSingleName, isSpecialName;
+            int max = 4000;
+            Random random = new Random();
+            String name, phone;
+            HashMap<String, String> namesMap = new HashMap<>();
+            while (namesMap.size() < max) {
+                // 生成姓
+                randomLastName = random.nextInt(familyNameSize);
+                if (randomLastName == familyNameSize) {
+                    randomLastName = randomLastName - 1;
+                }
+                name = lastNames[randomLastName];
+                // 是否单字
+                isSingleName = random.nextInt(100) % 2 == 0;
+                if (isSingleName) {
+                    // 是否生僻字
+                    isSpecialName = random.nextInt(100) % 2 == 0;
+                    Word word = isSpecialName ? specials.get(random.nextInt(specialSize)) : words.get(random.nextInt(wordSize));
+                    name += word.getWord();
+                } else {
+                    Name n = names.get(random.nextInt(nameSize));
+                    name += n.getName();
+                }
+                // 生成随机电话号码 130 - 139 之间
+                phone = String.valueOf(getRandomPhone(random));
+                // 不管名字是否相同
+                namesMap.put(name, phone);
+            }
+            long end = System.currentTimeMillis();
+            log(format("random contact(%d) cost: %d milliseconds.", max, end - start));
+            nameList.clear();
+            for (Map.Entry<String, String> entry : namesMap.entrySet()) {
+                nameList.add(new String[]{entry.getKey(), entry.getValue()});
+            }
+            end = System.currentTimeMillis();
+            log(format("handle contact(%d) cost: %d milliseconds.", max, end - start));
+        }
+
+        private long getRandomPhone(Random random) {
+            return (13000000000L + random.nextInt(999999999));
+        }
+
+        /**
+         * 随机汉字
+         */
+        @SuppressWarnings("unused")
+        private char getRandomWord() {
+            return (char) (0x4e00 + (int) (Math.random() * (0x9fa5 - 0x4e00 + 1)));
+        }
+
+        /**
+         * 生成随机简体汉字
+         */
+        @SuppressWarnings("unused")
+        private char getRandomChar() {
+            String str = "";
+            int hightPos;
+            int lowPos;
+            Random random = new Random();
+
+            hightPos = (176 + Math.abs(random.nextInt(39)));
+            lowPos = (161 + Math.abs(random.nextInt(93)));
+            // 一个汉字由两个字节组成
+            byte[] b = new byte[2];
+            b[0] = (Integer.valueOf(hightPos)).byteValue();
+            b[1] = (Integer.valueOf(lowPos)).byteValue();
+            try {
+                str = new String(b, "GBK");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return str.charAt(0);
         }
 
         // 读取手机联系人
@@ -695,7 +834,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                             }
                             // 名字不为空且号码为手机号码时才加入缓存
                             if (!StringHelper.isEmpty(name) && Utils.isItMobilePhone(phone)) {
-                                names.add(new String[]{name, phone});
+                                nameList.add(new String[]{name, phone});
                             }
                             index++;
                             //log(format("read progress, index: %d, name: %s, phone: %s", index, name, phone));
@@ -712,14 +851,27 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             }
         }
 
+        /**
+         * 查找成员中是否有人具有相同的手机号码
+         */
+        private boolean isMemberExists(String phone) {
+            for (int i = 0, len = memberReference.get().size(); i < len; i++) {
+                Member member = memberReference.get().get(i);
+                if (!isEmpty(member.getPhone()) && member.getPhone().equals(phone)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // 处理联系人和本地缓存关系
         private void handleContact() {
             long start = System.currentTimeMillis();
-            int index = 0, max = names.size();
+            int index = 0, max = nameList.size();
             publishProgress(1, index, max);
             try {
                 ArrayList<Contact> save = new ArrayList<>();
-                for (String[] strings : names) {
+                for (String[] strings : nameList) {
                     String name = strings[0];
                     String phone = strings[1];
                     // contact 主键id为 phone 的 md5 值
@@ -733,15 +885,23 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                     //log(format("handle progress, index: %d, name: %s, phone: %s", index, name, phone));
                     publishProgress(1, index, max);
                 }
-                contacts.clear();
-                contacts.addAll(save);
-                Collections.sort(contacts, new Comparator<Contact>() {
+                App.app().getContacts().clear();
+                App.app().getContacts().addAll(save);
+                Collections.sort(App.app().getContacts(), new Comparator<Contact>() {
                     @Override
                     public int compare(Contact o1, Contact o2) {
-                        return o1.getSpell().compareTo(o2.getSpell());
+                        String first1 = o1.getSpell().split(" ")[0];
+                        String first2 = o2.getSpell().split(" ")[0];
+                        int compare = first1.compareTo(first2);
+                        if (compare == 0) {
+                            return o1.getName().compareTo(o2.getName());
+                        }
+                        return compare;
                     }
                 });
-                //ContactService.start(contacts);
+                if (RANDOM) {
+                    ContactService.start(true);
+                }
             } catch (Exception ignore) {
                 ignore.printStackTrace();
             }
