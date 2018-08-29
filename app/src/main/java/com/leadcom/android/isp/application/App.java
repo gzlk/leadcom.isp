@@ -8,7 +8,9 @@ import android.view.animation.AnimationUtils;
 import com.hlk.hlklib.lib.emoji.EmojiUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
+import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.user.PermissionRequest;
+import com.leadcom.android.isp.api.user.UserRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.main.PersonalityFragment;
@@ -221,8 +223,24 @@ public class App extends BaseActivityManagedApplication {
             if (null == Cache.cache().me || !Cache.cache().userId.equals(Cache.cache().me.getId())) {
                 Cache.cache().setCurrentUser(dao().query(Cache.cache().userId));
             }
+            // 此时如果用户信息还是为空的话，则需要拉取
+            if (null == Cache.cache().me) {
+                fetchingMe();
+            }
         }
         setJPushAlias();
+    }
+
+    private void fetchingMe() {
+        UserRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<User>() {
+            @Override
+            public void onResponse(User user, boolean success, String message) {
+                super.onResponse(user, success, message);
+                if (success && null != user) {
+                    Cache.cache().setCurrentUser(user);
+                }
+            }
+        }).find(Cache.cache().userId, true);
     }
 
     /**

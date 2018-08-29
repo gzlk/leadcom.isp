@@ -10,23 +10,18 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
 import android.support.multidex.MultiDex;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
+import com.hlk.hlklib.etc.Cryptography;
 import com.leadcom.android.isp.BuildConfig;
-import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.hlk.hlklib.etc.Cryptography;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
