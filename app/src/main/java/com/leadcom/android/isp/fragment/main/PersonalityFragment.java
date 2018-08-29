@@ -536,7 +536,9 @@ public class PersonalityFragment extends BaseSwipeRefreshSupportFragment {
             mRecyclerView.setAdapter(mAdapter);
             if (isSelf) {
                 mRecyclerView.addOnScrollListener(scrollListener);
-                mAdapter.add(Cache.cache().me);
+                if (null != Cache.cache().me) {
+                    mAdapter.add(Cache.cache().me);
+                }
             }
             initializeItems();
         }
