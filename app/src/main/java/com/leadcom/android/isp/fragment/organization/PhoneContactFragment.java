@@ -8,8 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -636,31 +634,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
     }
 
-    private static class MsgHandler extends Handler {
-        private SoftReference<PhoneContactFragment> reference;
-
-        MsgHandler(PhoneContactFragment fragment) {
-            reference = new SoftReference<>(fragment);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            PhoneContactFragment fragment = reference.get();
-            switch (msg.what) {
-
-            }
-        }
-    }
-
     private static class ContactTask extends AsyncedTask<Void, Integer, Void> {
         private SoftReference<PhoneContactFragment> reference;
         private SoftReference<ArrayList<Member>> memberReference;
-        private SoftReference<MsgHandler> handleReference;
-
-        ContactTask(MsgHandler handler) {
-            handleReference = new SoftReference<>(handler);
-        }
 
         ContactTask(PhoneContactFragment fragment, ArrayList<Member> members) {
             reference = new SoftReference<>(fragment);
@@ -677,10 +653,6 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            PhoneContactFragment fragment = reference.get();
-            fragment.materialHorizontalProgressBar.setVisibility(View.VISIBLE);
-            fragment.displayNothing(false);
-            fragment.displayLoading(true);
         }
 
         @Override
@@ -699,10 +671,14 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         @Override
         protected Void doInBackground(Void... params) {
             if (App.app().getContacts().size() <= 0) {
-                if (!RANDOM) {
+                if (Cache.isReleasable()) {
                     gotContacts();
                 } else {
-                    randomContacts();
+                    if (!RANDOM) {
+                        gotContacts();
+                    } else {
+                        randomContacts();
+                    }
                 }
                 handleContact();
             }
