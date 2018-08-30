@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,15 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         extends RecyclerView.Adapter<VH> implements RecycleAdapter<T> {
 
     /**
+     * 分页的页大小
+     */
+    public static final int PAGER_SIZE = 50;
+    /**
+     * RecyclerView是否处于未滑动状态(静止状态)
+     */
+    private boolean isIdle = true;
+
+    /**
      * 设置item所占的列数，只能用在GridLayoutManager中，其余的LayoutManager无效
      */
     @Override
@@ -63,7 +73,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     public abstract void onBindHolderOfView(VH holder, int position, @Nullable T item);
 
     @Override
-    public void onViewAttachedToWindow(VH holder) {
+    public void onViewAttachedToWindow(@NonNull VH holder) {
         super.onViewAttachedToWindow(holder);
         if (holder instanceof BaseViewHolder) {
             ((BaseViewHolder) holder).attachedFromWindow();
@@ -71,8 +81,9 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        recyclerView.addOnScrollListener(onScrollListener);
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
         if (manager instanceof GridLayoutManager) {
             GridLayoutManager gridManager = ((GridLayoutManager) manager);
@@ -94,15 +105,30 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         }
     }
 
+    private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            isIdle = newState == RecyclerView.SCROLL_STATE_IDLE;
+        }
+    };
+
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        recyclerView.removeOnScrollListener(onScrollListener);
+    }
+
+    @Override
+    @NonNull
+    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(itemLayout(viewType), parent, false);
         return onCreateViewHolder(view, viewType);
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(@NonNull VH holder, int position) {
         onBindHolderOfView(holder, position, innerList.get(position));
         // 是否占满屏幕宽度的设定
         ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
@@ -114,7 +140,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     @Override
-    public void onViewDetachedFromWindow(VH holder) {
+    public void onViewDetachedFromWindow(@NonNull VH holder) {
         if (holder instanceof BaseViewHolder) {
             ((BaseViewHolder) holder).detachedFromWindow();
         }
@@ -248,6 +274,15 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
             innerList.set(index, item);
             notifyItemChanged(index);
         }
+    }
+
+    /**
+     * 设置数据源，需要先确保数据源中有一定的数据
+     */
+    @Override
+    public void setData(List<T> data) {
+        innerList.clear();
+        innerList.addAll(data);
     }
 
     /**

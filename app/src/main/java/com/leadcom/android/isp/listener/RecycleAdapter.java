@@ -52,6 +52,11 @@ public interface RecycleAdapter<T> {
     void add(T item, int position);
 
     /**
+     * 设置数据，Adapter会自动分页加载所有数据
+     */
+    void setData(List<T> data);
+
+    /**
      * 获取指定位置的item
      */
     T get(int position);

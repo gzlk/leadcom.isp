@@ -73,7 +73,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     /**
      * 标记是否为测试用，此时不读取手机联系人，而是随机生成人名和电话号码
      */
-    private static final boolean RANDOM = true;
+    private static final boolean RANDOM = false;
 
     public static PhoneContactFragment newInstance(Bundle bundle) {
         PhoneContactFragment pcf = new PhoneContactFragment();

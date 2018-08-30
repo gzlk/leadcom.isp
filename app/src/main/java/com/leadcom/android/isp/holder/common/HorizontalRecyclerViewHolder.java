@@ -7,16 +7,15 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
+import com.hlk.hlklib.layoutmanager.CustomStaggeredGridLayoutManager;
+import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.listener.RecycleAdapter;
-import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
-import com.hlk.hlklib.layoutmanager.CustomStaggeredGridLayoutManager;
-import com.hlk.hlklib.lib.inject.ViewId;
-import com.hlk.hlklib.lib.inject.ViewUtility;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,7 +145,7 @@ public class HorizontalRecyclerViewHolder extends BaseViewHolder {
         }
     }
 
-    private class ItemAdapter extends RecyclerViewAdapter<TextViewHolder, Item> implements RecycleAdapter<Item> {
+    private class ItemAdapter extends RecyclerViewAdapter<TextViewHolder, Item> {
 
         private void resizeWidth(View itemView) {
             int dimen = getDimension(R.dimen.ui_base_border_size_normal);
