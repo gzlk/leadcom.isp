@@ -36,7 +36,6 @@ import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.PhoneContactViewHolder;
 import com.leadcom.android.isp.lib.view.SlidView;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
-import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.common.Contact;
 import com.leadcom.android.isp.model.organization.Invitation;
 import com.leadcom.android.isp.model.organization.Member;
@@ -106,13 +105,12 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     // holder
     private InputableSearchViewHolder inputableSearchViewHolder;
     private ArrayList<Member> members = new ArrayList<>();
-    private ContactAdapter mAdapter;
+    private ArrayList<Contact> searching = new ArrayList<>();
+    private ContactAdapter mAdapter, sAdapter;
     /**
      * 是否正在处理分页内容
      */
-    private static boolean isHandlingPagination = false;
-    private static boolean isIdle = true;
-    private static int lastHandlingPage = 0;
+    private boolean isHandlingPagination = false;
     private static String searchingText = "";
 
     @SuppressWarnings("unchecked")
@@ -134,10 +132,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         hasPermission = false;
-        isHandlingPagination = false;
         searchingText = "";
-        isIdle = true;
-        lastHandlingPage = 0;
         checkPermission();
         super.onActivityCreated(savedInstanceState);
         setLoadingText(R.string.ui_phone_contact_waiting_read_contacts);
@@ -156,9 +151,9 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     @Override
     public void doingInResume() {
-        if (!Cache.isReleasable()) {
-            new Dao<>(Contact.class).clear();
-        }
+//        if (!Cache.isReleasable()) {
+//            new Dao<>(Contact.class).clear();
+//        }
         if (hasPermission) {
             readyToReadContact();
         }
@@ -238,29 +233,19 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         if (null == mAdapter) {
             displayLoading(true);
             mAdapter = new ContactAdapter();
-            mRecyclerView.addOnScrollListener(onScrollListener);
+            mAdapter.setName("mAdapter");
+            mAdapter.setOnDataHandingListener(handingListener);
             mRecyclerView.addItemDecoration(new StickDecoration());
             mRecyclerView.setAdapter(mAdapter);
-
+            sAdapter = new ContactAdapter();
+            sAdapter.setName("sAdapter");
+            sAdapter.setOnDataHandingListener(handingListener);
             // 读取缓存中已经处理过的联系人列表
             //gotContactFromCache();
             // 尝试读取手机联系人并更新当前列表
             new ContactTask(this, members).exec();
         }
     }
-
-    private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            isIdle = newState == RecyclerView.SCROLL_STATE_IDLE;
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-        }
-    };
 
     private InputableSearchViewHolder.OnSearchingListener searchingListener = new InputableSearchViewHolder.OnSearchingListener() {
         @Override
@@ -277,9 +262,27 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
     };
 
+    private void resetCustomTitle(int count) {
+        String text = StringHelper.getString(R.string.ui_phone_contact_title_number, count);
+        setCustomTitle(text);
+    }
+
     private void resetContactAdapter() {
         if (!isHandlingPagination) {
-            new ReadingContactTask(this).exec();
+            setLoadingText(isEmpty(searchingText) ? R.string.ui_phone_contact_waiting_read_contacts_pagination : R.string.ui_phone_contact_waiting_searching_contacts);
+            if (!isEmpty(searchingText)) {
+                // 搜索时用搜索结果的adapter
+                if (mRecyclerView.getAdapter() != sAdapter) {
+                    mRecyclerView.setAdapter(sAdapter);
+                }
+                new FilterContactTask(sAdapter, searching).exec();
+            } else {
+                // 非搜索时用普通的adapter
+                if (mRecyclerView.getAdapter() != mAdapter) {
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                resetCustomTitle(mAdapter.getItemCount());
+            }
         } else {
             ToastHelper.make().showMsg(R.string.ui_phone_contact_waiting_pagination);
         }
@@ -343,7 +346,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 添加指定index的联系人到小组或组织
-            Contact contact = mAdapter.get(index);
+            Contact contact = !isEmpty(searchingText) ? mAdapter.get(index) : sAdapter.get(index);
             String phone = contact.getPhone();
             if (phone.length() > 11) {
                 phone = phone.substring(phone.length() - 11);
@@ -370,8 +373,13 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
                 if (success) {
-                    mAdapter.get(index).setInvited(true);
-                    mAdapter.notifyItemChanged(index);
+                    if (isEmpty(searchingText)) {
+                        mAdapter.get(index).setInvited(true);
+                        mAdapter.notifyItemChanged(index);
+                    } else {
+                        sAdapter.get(index).setInvited(true);
+                        sAdapter.notifyItemChanged(index);
+                    }
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
@@ -385,8 +393,13 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             public void onResponse(Invitation invitation, boolean success, String message) {
                 super.onResponse(invitation, success, message);
                 if (success) {
-                    mAdapter.get(index).setInvited(true);
-                    mAdapter.notifyItemChanged(index);
+                    if (isEmpty(searchingText)) {
+                        mAdapter.get(index).setInvited(true);
+                        mAdapter.notifyItemChanged(index);
+                    } else {
+                        sAdapter.get(index).setInvited(true);
+                        sAdapter.notifyItemChanged(index);
+                    }
                     ToastHelper.make().showMsg(R.string.ui_phone_contact_invite_success);
                 }
             }
@@ -426,6 +439,39 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             return item1.getSpell().compareTo(item2.getSpell());
         }
     }
+
+    private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
+        @Override
+        public void onStart() {
+            log("onDataHandingListener.onStart()");
+            //isHandlingPagination = true;
+            materialHorizontalProgressBar.setMax(0);
+            materialHorizontalProgressBar.setProgress(0);
+            materialHorizontalProgressBar.setSecondaryProgress(0);
+            materialHorizontalProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onProgress(int currentPage, int maxPage, int maxCount) {
+            if (materialHorizontalProgressBar.getMax() != maxPage) {
+                materialHorizontalProgressBar.setMax(maxPage);
+            }
+            log(format("onDataHandingListener.onProgress(%d, %d, %d)", currentPage + 1, maxPage, maxCount));
+            materialHorizontalProgressBar.setProgress(currentPage + 1);
+        }
+
+        @Override
+        public void onComplete() {
+            log("onDataHandingListener.onComplete()");
+            displayLoading(false);
+            setNothingText(R.string.ui_phone_contact_no_more);
+            int cnt = isEmpty(searchingText) ? mAdapter.getItemCount() : sAdapter.getItemCount();
+            displayNothing(cnt <= 0);
+            resetCustomTitle(cnt);
+            materialHorizontalProgressBar.setVisibility(View.GONE);
+            //isHandlingPagination = false;
+        }
+    };
 
     private class StickDecoration extends RecyclerView.ItemDecoration {
         private int topHeight = getDimension(R.dimen.ui_static_dp_20);
@@ -500,18 +546,29 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
 
         private void drawText(Canvas canvas, int position, float x, float y) {
-            String text = mAdapter.get(position).getSpell().substring(0, 1);
+            String text = isEmpty(searchingText) ? mAdapter.get(position).getSpell().substring(0, 1) : sAdapter.get(position).getSpell().substring(0, 1);
             text = format(FMT, text, getFirstCharCount(text.charAt(0)));
             // 绘制文本
             canvas.drawText(text, x, y, textPaint);
         }
 
         private boolean isFirstInGroup(int position) {
-            return position >= 0 && (position == 0 || mAdapter.get(position).getSpell().charAt(0) != mAdapter.get(position - 1).getSpell().charAt(0));
+            if (position > 0) {
+                Contact cur, pre;
+                if (isEmpty(searchingText)) {
+                    cur = mAdapter.get(position);
+                    pre = mAdapter.get(position - 1);
+                } else {
+                    cur = sAdapter.get(position);
+                    pre = sAdapter.get(position - 1);
+                }
+                return cur.getSpell().charAt(0) != pre.getSpell().charAt(0);
+            }
+            return position == 0;
         }
 
         private int getFirstCharCount(char chr) {
-            Iterator<Contact> iterator = App.app().getContacts().iterator();
+            Iterator<Contact> iterator = isEmpty(searchingText) ? App.app().getContacts().iterator() : searching.iterator();
             int ret = 0;
             while (iterator.hasNext()) {
                 if (iterator.next().getSpell().charAt(0) != chr) {
@@ -526,66 +583,33 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
     }
 
-    /**
-     * 分页读取联系人列表的task
-     */
-    private static class ReadingContactTask extends AsyncExecutableTask<Void, Integer, Void> {
+    private static class FilterContactTask extends AsyncExecutableTask<Void, Void, Void> {
 
-        private SoftReference<PhoneContactFragment> fragmentReference;
-
-        ReadingContactTask(PhoneContactFragment fragment) {
-            fragmentReference = new SoftReference<>(fragment);
+        FilterContactTask(ContactAdapter adapter, ArrayList<Contact> contacts) {
+            adapterReference = new SoftReference<>(adapter);
+            searchingResult = contacts;
         }
 
-        private int maxPage;
-        private int PAGE_SIZE = 50;
-        private int MAX;
-        private boolean isBreak = false;
+        private SoftReference<ContactAdapter> adapterReference;
+        private ArrayList<Contact> searchingResult;
 
         @Override
         protected void doBeforeExecute() {
-            isHandlingPagination = true;
-            MAX = App.app().getContacts().size();
-            maxPage = MAX / PAGE_SIZE + (MAX % PAGE_SIZE > 0 ? 1 : 0);
-            PhoneContactFragment fragment = fragmentReference.get();
-            fragment.materialHorizontalProgressBar.setMax(maxPage);
-            fragment.materialHorizontalProgressBar.setProgress(0);
-            fragment.materialHorizontalProgressBar.setSecondaryProgress(0);
-            fragment.materialHorizontalProgressBar.setVisibility(View.VISIBLE);
-            fragment.slidView.clearIndex();
-            fragment.mAdapter.clear();
-            lastHandlingPage = 0;
             super.doBeforeExecute();
         }
 
         @Override
         protected Void doInTask(Void... voids) {
-            //int resumePage = (null == integers || integers.length <= 0) ? 0 : integers[0];
-            while (true) {
-                if (isIdle) {
-                    isBreak = false;
-                    for (int i = lastHandlingPage; i < maxPage; i++) {
-                        publishProgress(i, maxPage);
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        if (isBreak) {
-                            // recyclerView因为滚动而停止继续增加
-                            break;
-                        }
-                    }
+            if (!isEmpty(searchingText)) {
+                if (null == searchingResult) {
+                    searchingResult = new ArrayList<>();
                 }
-                if (!isBreak) {
-                    // 循环完了且不是因为idle跳出的
-                    break;
-                }
-                if (!isIdle) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                searchingResult.clear();
+                for (int i = 0, len = App.app().getContacts().size(); i < len; i++) {
+                    Contact contact = App.app().getContacts().get(i);
+                    // 搜索时
+                    if (contact.getName().contains(searchingText) || contact.getPhone().contains(searchingText)) {
+                        searchingResult.add(contact);
                     }
                 }
             }
@@ -593,43 +617,12 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
 
         @Override
-        protected void doProgress(Integer... values) {
-            log(format("now handling page %d/%d, size : ", values[0] + 1, values[1]));
-            PhoneContactFragment fragment = fragmentReference.get();
-            fragment.materialHorizontalProgressBar.setProgress(values[0] + 1);
-            int start = values[0] * PAGE_SIZE;
-            int end = start + PAGE_SIZE;
-            if (end >= MAX) {
-                end = MAX - 1;
-            }
-            for (int i = start; i <= end; i++) {
-                Contact contact = App.app().getContacts().get(i);
-                // 搜索时
-                if (!isEmpty(searchingText) && !(contact.getName().contains(searchingText) || contact.getPhone().contains(searchingText))) {
-                    continue;
-                }
-                fragment.mAdapter.add(contact);
-                fragment.slidView.add(contact.getSpell());
-                if (!isIdle) {
-                    lastHandlingPage = values[0];
-                    isBreak = true;
-                    break;
-                }
-            }
-            super.doProgress(values);
-        }
-
-        @Override
         protected void doAfterExecute() {
-            PhoneContactFragment fragment = fragmentReference.get();
-            fragment.displayLoading(false);
-            fragment.setNothingText(R.string.ui_phone_contact_no_more);
-            fragment.displayNothing(fragment.mAdapter.getItemCount() <= 0);
-            fragment.slidView.setVisibility(fragment.mAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE);
-            String text = StringHelper.getString(R.string.ui_phone_contact_title_number, fragment.mAdapter.getItemCount());
-            fragment.setCustomTitle(text);
-            fragment.materialHorizontalProgressBar.setVisibility(View.INVISIBLE);
-            isHandlingPagination = false;
+            if (!isEmpty(searchingText)) {
+                if (null != adapterReference.get()) {
+                    adapterReference.get().setData(searchingResult);
+                }
+            }
             super.doAfterExecute();
         }
     }
@@ -661,11 +654,11 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             PhoneContactFragment fragment = reference.get();
             fragment.displayLoading(false);
             //displayNothing(mAdapter.getItemCount() <= 0);
-            fragment.materialHorizontalProgressBar.setVisibility(View.INVISIBLE);
+            fragment.materialHorizontalProgressBar.setVisibility(View.GONE);
             //resetContactAdapter();
-            String text = StringHelper.getString(R.string.ui_phone_contact_title_number, App.app().getContacts().size());
-            fragment.setCustomTitle(text);
-            new ReadingContactTask(fragment).exec();
+            fragment.resetCustomTitle(App.app().getContacts().size());
+            fragment.mAdapter.setData(App.app().getContacts());
+            //new ReadingContactTask(fragment).exec();
         }
 
         @Override
@@ -771,15 +764,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         @SuppressWarnings("unused")
         private char getRandomChar() {
             String str = "";
-            int hightPos;
+            int highPos;
             int lowPos;
             Random random = new Random();
 
-            hightPos = (176 + Math.abs(random.nextInt(39)));
+            highPos = (176 + Math.abs(random.nextInt(39)));
             lowPos = (161 + Math.abs(random.nextInt(93)));
             // 一个汉字由两个字节组成
             byte[] b = new byte[2];
-            b[0] = (Integer.valueOf(hightPos)).byteValue();
+            b[0] = (Integer.valueOf(highPos)).byteValue();
             b[1] = (Integer.valueOf(lowPos)).byteValue();
             try {
                 str = new String(b, "GBK");
@@ -875,7 +868,8 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                         return compare;
                     }
                 });
-                if (RANDOM) {
+                if (!RANDOM) {
+                    // 不是随机生成的人名才保存
                     ContactService.start(true);
                 }
             } catch (Exception ignore) {

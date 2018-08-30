@@ -5,9 +5,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/holder_view_searchable_inputable" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <include layout="@layout/tool_view_horizontal_progressbar" />
+        <include layout="@layout/holder_view_searchable_inputable" />
+
+        <include
+            layout="@layout/tool_view_horizontal_progressbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ui_holder_view_searchable_container" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

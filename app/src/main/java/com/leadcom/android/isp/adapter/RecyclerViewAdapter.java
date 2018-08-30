@@ -13,7 +13,9 @@ import com.leadcom.android.isp.etc.ReflectionUtil;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.listener.RecycleAdapter;
+import com.leadcom.android.isp.task.AsyncExecutableTask;
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,10 +40,19 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
      * 分页的页大小
      */
     public static final int PAGER_SIZE = 50;
-    /**
-     * RecyclerView是否处于未滑动状态(静止状态)
-     */
-    private boolean isIdle = true;
+    private String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    private void log(String string) {
+        //LogHelper.log(name, string);
+    }
+
+    private static String format(String fmt, Object... args) {
+        return StringHelper.format(fmt, args);
+    }
 
     /**
      * 设置item所占的列数，只能用在GridLayoutManager中，其余的LayoutManager无效
@@ -83,6 +94,12 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        isDetached = false;
+        isIdle = true;
+        if (tempData.size() > 0 && isTempDataHandled && maxPage > 0 && lastHandlingPage <= maxPage) {
+            new DataHandingTask<>(handingListener, tempData, this).exec();
+        }
+        log(format("onAttachedToRecyclerView, tmpsData: %d, lastHandlingPage: %d", tempData.size(), lastHandlingPage));
         recyclerView.addOnScrollListener(onScrollListener);
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
         if (manager instanceof GridLayoutManager) {
@@ -105,6 +122,10 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
         }
     }
 
+    private boolean isIdle = true;
+    private boolean isDetached = false;
+    private boolean isTempDataHandled = false;
+
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -116,6 +137,8 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
+        log(format("onDetachedFromRecyclerView, tmpsData: %d, lastHandlingPage: %d", tempData.size(), lastHandlingPage));
+        isDetached = true;
         recyclerView.removeOnScrollListener(onScrollListener);
     }
 
@@ -277,13 +300,23 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
     }
 
     /**
-     * 设置数据源，需要先确保数据源中有一定的数据
+     * 设置数据源，需要先确保数据源中有一定的数据<br />
+     * 比如有大量数据时，使用此方法，Adapter会自动分页加载所有内容以确保UI不僵死
      */
     @Override
     public void setData(List<T> data) {
-        innerList.clear();
-        innerList.addAll(data);
+        if (null == tempData) {
+            tempData = new ArrayList<>();
+        }
+        tempData.clear();
+        tempData.addAll(data);
+        clear();
+        lastHandlingPage = 0;
+        isTempDataHandled = true;
+        new DataHandingTask<>(handingListener, tempData, this).exec();
     }
+
+    private ArrayList<T> tempData = new ArrayList<>();
 
     /**
      * 更新一个指定id的item内容
@@ -367,4 +400,133 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder, T>
      * 重新排序
      */
     protected abstract int comparator(T item1, T item2);
+
+    private int lastHandlingPage = 0, maxPage = 0;
+
+    private static class DataHandingTask<VH extends RecyclerView.ViewHolder, T> extends AsyncExecutableTask<Void, Integer, Void> {
+
+        DataHandingTask(OnDataHandingListener listener, List<T> data, RecyclerViewAdapter<VH, T> adapter) {
+            listenerSoftReference = new SoftReference<>(listener);
+            adapterSoftReference = new SoftReference<>(adapter);
+            this.data = data;
+        }
+
+        private SoftReference<OnDataHandingListener> listenerSoftReference;
+        private SoftReference<RecyclerViewAdapter<VH, T>> adapterSoftReference;
+        private List<T> data;
+
+        private int maxCount;
+        private boolean isBreak;
+
+        @Override
+        protected void doBeforeExecute() {
+            if (null != listenerSoftReference.get()) {
+                listenerSoftReference.get().onStart();
+            }
+            maxCount = data.size();
+            adapterSoftReference.get().maxPage = maxCount / PAGER_SIZE + (maxCount % PAGER_SIZE > 0 ? 1 : 0);
+            //adapterSoftReference.get().clear();
+            super.doBeforeExecute();
+        }
+
+        @Override
+        protected Void doInTask(Void... voids) {
+            while (true) {
+                if (adapterSoftReference.get().isIdle && !adapterSoftReference.get().isDetached) {
+                    isBreak = false;
+                    for (int i = adapterSoftReference.get().lastHandlingPage; i < adapterSoftReference.get().maxPage; i++) {
+                        if (isBreak || adapterSoftReference.get().isDetached) {
+                            // recyclerView因为滚动而停止继续增加
+                            break;
+                        }
+                        adapterSoftReference.get().log(format("try to handling page: %d", i));
+                        publishProgress(i, adapterSoftReference.get().maxPage);
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if (adapterSoftReference.get().isDetached) {
+                    // 已从RecyclerView卸载，此时推出
+                    adapterSoftReference.get().log("detached, now break doInTask");
+                    break;
+                }
+                if (!isBreak) {
+                    // 循环完了且不是因为idle跳出的
+                    adapterSoftReference.get().isTempDataHandled = false;
+                    adapterSoftReference.get().log("data handing complete, now break doInTask");
+                    break;
+                }
+                if (!adapterSoftReference.get().isIdle) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void doProgress(Integer... values) {
+            adapterSoftReference.get().lastHandlingPage = values[0];
+            int start = values[0] * PAGER_SIZE;
+            int end = start + PAGER_SIZE;
+            if (end >= maxCount) {
+                end = maxCount - 1;
+            }
+            for (int i = start; i <= end; i++) {
+                if (!adapterSoftReference.get().isIdle || adapterSoftReference.get().isDetached) {
+                    adapterSoftReference.get().log(format("isIdle: %s, isDetached: %s, now break doProgress", adapterSoftReference.get().isIdle, adapterSoftReference.get().isDetached));
+                    isBreak = true;
+                    break;
+                }
+                adapterSoftReference.get().add(data.get(i));
+            }
+            if (null != listenerSoftReference.get()) {
+                listenerSoftReference.get().onProgress(values[0], adapterSoftReference.get().maxPage, maxCount);
+            }
+            super.doProgress(values);
+        }
+
+        @Override
+        protected void doAfterExecute() {
+            if (null != listenerSoftReference.get()) {
+                listenerSoftReference.get().onComplete();
+            }
+            super.doAfterExecute();
+        }
+    }
+
+    private OnDataHandingListener handingListener;
+
+    /**
+     * 设置数据处理回调
+     */
+    public void setOnDataHandingListener(OnDataHandingListener l) {
+        handingListener = l;
+    }
+
+    /**
+     * 数据处理回调接口
+     */
+    public interface OnDataHandingListener {
+        /**
+         * 开始处理数据
+         */
+        void onStart();
+
+        /**
+         * 数据处理进行过程
+         */
+        void onProgress(int currentPage, int maxPage, int maxCount);
+
+        /**
+         * 数据处理完毕
+         */
+        void onComplete();
+    }
 }
