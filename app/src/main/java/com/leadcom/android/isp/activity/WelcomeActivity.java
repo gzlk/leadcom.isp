@@ -18,7 +18,6 @@ import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.model.archive.Archive;
 
 /**
  * <b>功能描述：</b>网易云消息处理Activity<br />
