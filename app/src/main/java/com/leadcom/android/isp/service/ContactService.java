@@ -88,7 +88,7 @@ public class ContactService extends BaseService {
         App.app().getContacts().clear();
         Dao<Contact> dao = new Dao<>(Contact.class);
         long max = dao.getCount();
-        int PAGE_SIZE = 200;
+        int PAGE_SIZE = 500;
         long pages = max / PAGE_SIZE + (max % PAGE_SIZE > 0 ? 1 : 0);
         for (int i = 0; i < pages; i++) {
             long start = System.currentTimeMillis(), end;

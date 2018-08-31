@@ -344,7 +344,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         public void slidChanged(String text, boolean shown, boolean active) {
             centerTextContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
             centerTextView.setText(text);
-            if (!isEmpty(text) && !active) {
+            if (!isEmpty(text)) {
                 scrolling(text);
             }
         }
@@ -352,7 +352,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
     private void scrolling(String text) {
         int position = -1;
-        Iterator<Contact> iterator = mAdapter.iterator();
+        Iterator<Contact> iterator = isEmpty(searchingText) ? mAdapter.iterator() : sAdapter.iterator();
         int i = 0;
         while (iterator.hasNext()) {
             Contact contact = iterator.next();
@@ -475,11 +475,14 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
     }
 
+    private ArrayList<String> chars = new ArrayList<>();
+
     private RecyclerViewAdapter.OnDataHandingListener handingListener = new RecyclerViewAdapter.OnDataHandingListener() {
         @Override
         public void onStart() {
             log("onDataHandingListener.onStart()");
             //isHandlingPagination = true;
+            slidView.clearIndex();
             materialHorizontalProgressBar.setMax(0);
             materialHorizontalProgressBar.setProgress(0);
             materialHorizontalProgressBar.setSecondaryProgress(0);
@@ -493,6 +496,22 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             }
             log(format("onDataHandingListener.onProgress(%d, %d, %d)", currentPage + 1, maxPage, maxCount));
             materialHorizontalProgressBar.setProgress(currentPage + 1);
+            int start = currentPage * RecyclerViewAdapter.PAGER_SIZE;
+            int end = start + RecyclerViewAdapter.PAGER_SIZE;
+            if (end >= maxCount) {
+                end = maxCount - 1;
+            }
+            for (int i = start; i <= end; i++) {
+                Contact contact = isEmpty(searchingText) ? App.app().getContacts().get(i) : searching.get(i);
+                if (isEmpty(searchingText)) {
+                    String chr = contact.getSpell().substring(0, 1);
+                    if (!chars.contains(chr)) {
+                        chars.add(chr);
+                    }
+                } else {
+                    slidView.add(contact.getSpell());
+                }
+            }
         }
 
         @Override
@@ -502,6 +521,13 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             setNothingText(R.string.ui_phone_contact_no_more);
             int cnt = isEmpty(searchingText) ? mAdapter.getItemCount() : sAdapter.getItemCount();
             displayNothing(cnt <= 0);
+            if (isEmpty(searchingText)) {
+                slidView.clearIndex();
+                for (String string : chars) {
+                    slidView.add(string);
+                }
+            }
+            slidView.setVisibility(cnt > 0 ? View.VISIBLE : View.GONE);
             resetCustomTitle(cnt);
             materialHorizontalProgressBar.setVisibility(View.GONE);
             //isHandlingPagination = false;
