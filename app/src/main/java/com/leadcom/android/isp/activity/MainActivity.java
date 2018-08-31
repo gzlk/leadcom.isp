@@ -3,7 +3,10 @@ package com.leadcom.android.isp.activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,6 +38,9 @@ import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionGranted;
 import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAgain;
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.model.common.PushMessage;
+import com.leadcom.android.isp.service.ContactService;
+
+import java.util.Observer;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -217,6 +223,8 @@ public class MainActivity extends TitleActivity {
 //        }
     }
 
+    private ContactObserver contactObserver = new ContactObserver(new Handler());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         supportPressAgainToExit = true;
@@ -242,6 +250,34 @@ public class MainActivity extends TitleActivity {
         }
         if (null != alphaView) {
             alphaView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
+        }
+        ContactService.refresh();
+        getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contactObserver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        innerOpen = false;
+        getContentResolver().unregisterContentObserver(contactObserver);
+        App.removeNotificationChangeCallback(callback);
+        super.onDestroy();
+    }
+
+    private class ContactObserver extends ContentObserver {
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        ContactObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            log("contact changed, now try to refresh cached contacts.");
+            ContactService.refresh();
         }
     }
 
@@ -564,12 +600,5 @@ public class MainActivity extends TitleActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.clear();
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onDestroy() {
-        innerOpen = false;
-        App.removeNotificationChangeCallback(callback);
-        super.onDestroy();
     }
 }

@@ -1,7 +1,11 @@
 package com.leadcom.android.isp.fragment.organization;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -30,11 +34,13 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DeleteDialogHelper;
 import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.PhoneContactViewHolder;
 import com.leadcom.android.isp.lib.view.SlidView;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.common.Contact;
 import com.leadcom.android.isp.model.organization.Invitation;
@@ -69,10 +75,11 @@ import java.util.Random;
 public class PhoneContactFragment extends BaseOrganizationFragment {
 
     private static final String PARAM_MEMBERS = "pcf_members";
+    private static final int RANDOM_SIZE = 5000;
     /**
      * 标记是否为测试用，此时不读取手机联系人，而是随机生成人名和电话号码
      */
-    private static final boolean RANDOM = false;
+    private static boolean RANDOM = false;
 
     public static PhoneContactFragment newInstance(Bundle bundle) {
         PhoneContactFragment pcf = new PhoneContactFragment();
@@ -107,11 +114,8 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     private ArrayList<Member> members = new ArrayList<>();
     private ArrayList<Contact> searching = new ArrayList<>();
     private ContactAdapter mAdapter, sAdapter;
-    /**
-     * 是否正在处理分页内容
-     */
-    private boolean isHandlingPagination = false;
     private static String searchingText = "";
+    private ContactRefreshedReceiver refreshedReceiver;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -137,6 +141,40 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         super.onActivityCreated(savedInstanceState);
         setLoadingText(R.string.ui_phone_contact_waiting_read_contacts);
         setCustomTitle(R.string.ui_squad_contact_menu_2);
+        if (null == refreshedReceiver) {
+            refreshedReceiver = new ContactRefreshedReceiver();
+            IntentFilter intent = new IntentFilter();
+            intent.addAction(ContactService.ACTION_REFRESH_COMPLETE);
+            Activity().registerReceiver(refreshedReceiver, intent);
+        }
+        if (!Cache.isReleasable()) {
+            setRightIcon(R.string.ui_icon_more);
+            setRightTitleClickListener(new OnTitleButtonClickListener() {
+                @Override
+                public void onClick() {
+                    warningRandomContact();
+                }
+            });
+        }
+    }
+
+    private void warningRandomContact() {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                RANDOM = true;
+                new ContactTask(PhoneContactFragment.this, members).exec();
+                return true;
+            }
+        }).setTitleText(StringHelper.getString(R.string.ui_phone_contact_random_contacts, RANDOM_SIZE)).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (null != refreshedReceiver) {
+            Activity().unregisterReceiver(refreshedReceiver);
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -268,24 +306,21 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     }
 
     private void resetContactAdapter() {
-        if (!isHandlingPagination) {
-            setLoadingText(isEmpty(searchingText) ? R.string.ui_phone_contact_waiting_read_contacts_pagination : R.string.ui_phone_contact_waiting_searching_contacts);
-            if (!isEmpty(searchingText)) {
-                // 搜索时用搜索结果的adapter
-                if (mRecyclerView.getAdapter() != sAdapter) {
-                    mRecyclerView.setAdapter(sAdapter);
-                }
-                new FilterContactTask(sAdapter, searching).exec();
-            } else {
-                // 非搜索时用普通的adapter
-                if (mRecyclerView.getAdapter() != mAdapter) {
-                    mRecyclerView.setAdapter(mAdapter);
-                }
-                resetCustomTitle(mAdapter.getItemCount());
+        setLoadingText(isEmpty(searchingText) ? R.string.ui_phone_contact_waiting_read_contacts_pagination : R.string.ui_phone_contact_waiting_searching_contacts);
+        if (!isEmpty(searchingText)) {
+            // 搜索时用搜索结果的adapter
+            if (mRecyclerView.getAdapter() != sAdapter) {
+                mRecyclerView.setAdapter(sAdapter);
             }
+            new FilterContactTask(sAdapter, searching).exec();
         } else {
-            ToastHelper.make().showMsg(R.string.ui_phone_contact_waiting_pagination);
+            // 非搜索时用普通的adapter
+            if (mRecyclerView.getAdapter() != mAdapter) {
+                mRecyclerView.setAdapter(mAdapter);
+            }
+            resetCustomTitle(mAdapter.getItemCount());
         }
+
 //        slidView.setVisibility(View.GONE);
 //        mAdapter.clear();
 //        if (contacts.size() > 0) {
@@ -627,6 +662,24 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         }
     }
 
+    private class ContactRefreshedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (null != intent) {
+                String action = intent.getAction();
+                log("received broadcast " + action);
+                if (ContactService.ACTION_REFRESH_COMPLETE.equals(action)) {
+                    Activity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            resetContactAdapter();
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     private static class ContactTask extends AsyncedTask<Void, Integer, Void> {
         private SoftReference<PhoneContactFragment> reference;
         private SoftReference<ArrayList<Member>> memberReference;
@@ -663,17 +716,15 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            if (App.app().getContacts().size() <= 0) {
-                if (Cache.isReleasable()) {
-                    gotContacts();
-                } else {
-                    if (!RANDOM) {
-                        gotContacts();
-                    } else {
-                        randomContacts();
-                    }
-                }
+            if (RANDOM) {
+                RANDOM = false;
+                randomContacts();
                 handleContact();
+            } else {
+                if (App.app().getContacts().size() <= 0) {
+                    gotContacts();
+                    handleContact();
+                }
             }
             return null;
         }
@@ -709,11 +760,11 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             int randomLastName;
             // 是否单名，随机生成
             boolean isSingleName, isSpecialName;
-            int max = 4000;
+
             Random random = new Random();
             String name, phone;
             HashMap<String, String> namesMap = new HashMap<>();
-            while (namesMap.size() < max) {
+            while (namesMap.size() < RANDOM_SIZE) {
                 // 生成姓
                 randomLastName = random.nextInt(familyNameSize);
                 if (randomLastName == familyNameSize) {
@@ -737,13 +788,13 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                 namesMap.put(name, phone);
             }
             long end = System.currentTimeMillis();
-            log(format("random contact(%d) cost: %d milliseconds.", max, end - start));
+            log(format("random contact(%d) cost: %d milliseconds.", RANDOM_SIZE, end - start));
             nameList.clear();
             for (Map.Entry<String, String> entry : namesMap.entrySet()) {
                 nameList.add(new String[]{entry.getKey(), entry.getValue()});
             }
             end = System.currentTimeMillis();
-            log(format("handle contact(%d) cost: %d milliseconds.", max, end - start));
+            log(format("handle contact(%d) cost: %d milliseconds.", RANDOM_SIZE, end - start));
         }
 
         private long getRandomPhone(Random random) {
@@ -868,10 +919,10 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                         return compare;
                     }
                 });
-                if (!RANDOM) {
-                    // 不是随机生成的人名才保存
-                    ContactService.start(true);
-                }
+                //if (!RANDOM) {
+                // 不是随机生成的人名才保存
+                ContactService.start(true);
+                //}
             } catch (Exception ignore) {
                 ignore.printStackTrace();
             }

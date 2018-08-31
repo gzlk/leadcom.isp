@@ -298,7 +298,7 @@ public class App extends BaseActivityManagedApplication {
 
     private ArrayList<Contact> contacts = new ArrayList<>();
 
-    public ArrayList<Contact> getContacts() {
+    public synchronized ArrayList<Contact> getContacts() {
         return contacts;
     }
 }

@@ -22,7 +22,7 @@ import com.leadcom.android.isp.helper.StringHelper;
  */
 public abstract class BaseService extends Service {
 
-    private static final String TAG = DraftService.class.getSimpleName();
+    private final String TAG = DraftService.class.getSimpleName();
 
     @Nullable
     @Override
@@ -36,6 +36,10 @@ public abstract class BaseService extends Service {
 
     protected String format(String fmt, Object... args) {
         return StringHelper.format(fmt, args);
+    }
+
+    protected boolean isEmpty(String string) {
+        return StringHelper.isEmpty(string, true);
     }
 
     @Override

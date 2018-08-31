@@ -134,6 +134,7 @@
             <intent-filter>
                 <action android:name="com.leadcom.android.isp.service.WRITE_CONTACTS" />
                 <action android:name="com.leadcom.android.isp.service.READ_CONTACTS" />
+                <action android:name="com.leadcom.android.isp.service.REFRESH_CONTACTS" />
             </intent-filter>
         </service>
         <!--第三方相册-->
