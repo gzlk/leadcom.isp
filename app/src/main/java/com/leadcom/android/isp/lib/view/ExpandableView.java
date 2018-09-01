@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.lib.view;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
@@ -7,15 +8,14 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.etc.TextViewUtils;
 
 /**
  * <b>功能描述：</b>可收缩、展开的View<br />
@@ -42,24 +42,8 @@ public class ExpandableView extends LinearLayout {
         init(context, attrs);
     }
 
-    // 最大初始展示行数，动画时长
-    private int expandLines, duration;
-    // 实际文本的高度
-    private int realTextHeight;
-    // 剩余展示的高度
-    private int lastHeight;
-    // 收起时的高度
-    private int collapsedHeight;
-    // 文本是否更改
-    private boolean isChanged = false;
-    // 初始化是收缩状态
-    private boolean isCollapsed = true;
-    // 是否正在执行动画
-    private boolean isAnimate = false;
-    // 是否允许动画
-    private boolean animatable = true;
-    // 当前内容是否可以展开、收缩
-    private boolean isExpandCollapseEnable = false;
+    // 最大初始展示行数
+    private int expandLines;
 
     private TextView textView, handlerView;
     private int contentTextColor, handlerTextColor;
@@ -72,7 +56,6 @@ public class ExpandableView extends LinearLayout {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.ExpandableView);
         try {
             expandLines = array.getInteger(R.styleable.ExpandableView_expandLines, 3);
-            duration = array.getInteger(R.styleable.ExpandableView_animationDuration, getResources().getInteger(R.integer.integer_default_animate_duration));
             contentTextColor = array.getColor(R.styleable.ExpandableView_contentTextColor, ContextCompat.getColor(getContext(), R.color.textColor));
             contentTextSize = array.getDimensionPixelSize(R.styleable.ExpandableView_contentTextSize, getResources().getDimensionPixelOffset(R.dimen.ui_base_text_size));
             handlerTextColor = array.getColor(R.styleable.ExpandableView_handlerTextColor, ContextCompat.getColor(getContext(), R.color.colorAccent));
@@ -85,10 +68,13 @@ public class ExpandableView extends LinearLayout {
             if (TextUtils.isEmpty(collapseText)) {
                 collapseText = getResources().getString(R.string.expandable_view_collapse_handle_text);
             }
-            animatable = array.getBoolean(R.styleable.ExpandableView_animatable, true);
         } finally {
             array.recycle();
         }
+    }
+
+    private boolean isCollapsed() {
+        return state == STATE_COLLAPSED;
     }
 
     @Override
@@ -105,136 +91,38 @@ public class ExpandableView extends LinearLayout {
             handlerView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ExpandCollapseAnimation anim = null;
-                    isCollapsed = !isCollapsed;
-                    if (isCollapsed) {
-                        if (animatable) {
-                            anim = new ExpandCollapseAnimation(getHeight(), collapsedHeight);
-                        } else {
-                            handlerView.setText(expandText);
+                    // 展开、收起只有2种情况下可以点击
+                    state = state == STATE_COLLAPSED ? STATE_EXPANDED : STATE_COLLAPSED;
+                    //textView.setMaxLines(isCollapsed() ? expandLines : Integer.MAX_VALUE);
+                    Animator animator = TextViewUtils.setMaxLinesWithAnimation(textView, isCollapsed() ? expandLines : Integer.MAX_VALUE);
+                    assert animator != null;
+                    animator.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
                         }
-                    } else {
-                        if (animatable) {
-                            anim = new ExpandCollapseAnimation(getHeight(), realTextHeight + lastHeight);
-                        } else {
-                            handlerView.setText(collapseText);
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            handlerView.setText(isCollapsed() ? expandText : collapseText);
+                            if (null != listener) {
+                                listener.onStateChanged(state);
+                            }
                         }
-                    }
-                    if (animatable && null != anim) {
-                        anim.setFillAfter(true);
-                        anim.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-                                isAnimate = true;
-                            }
 
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                //clearAnimation();
-                                isAnimate = false;
-                                handlerView.setText(isCollapsed ? expandText : collapseText);
-                                if (null != listener) {
-                                    listener.onExpandStateChange(!isCollapsed);
-                                }
-                            }
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
 
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
-                        });
-                        //clearAnimation();
-                        startAnimation(anim);
-                    } else {
-
-                        // 不带动画的处理方式
-                        isChanged = true;
-                        requestLayout();
-
-                        if (null != listener) {
-                            listener.onExpandStateChange(!isCollapsed);
                         }
-                    }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
                 }
             });
         }
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return isAnimate;
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        // 如果隐藏控件或者textview的值没有发生改变，那么不进行测量
-        if (getVisibility() == GONE || !isChanged) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            return;
-        }
-        isChanged = false;
-
-        // 初始时
-        handlerView.setVisibility(GONE);
-        textView.setMaxLines(Integer.MAX_VALUE);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        // 如果本身行数没有达到预定，则不需要再继续
-        int lines = textView.getLineCount();
-        if (lines <= expandLines) {
-            isExpandCollapseEnable = false;
-            if (state == STATE_NONE) {
-                state = STATE_NOT_OVERFLOW;
-                if (null != listener) {
-                    listener.onExpandInitialize(state);
-                }
-            }
-            return;
-        }
-
-        handlerView.setVisibility(VISIBLE);
-        isExpandCollapseEnable = true;
-        realTextHeight = getRealTextHeight();
-        if (isCollapsed) {
-            textView.setMaxLines(expandLines);
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (state == STATE_NONE) {
-            state = STATE_COLLAPSED;
-            if (null != listener) {
-                listener.onExpandInitialize(state);
-            }
-        }
-        textView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (isCollapsed) {
-                    lastHeight = getHeight() - textView.getHeight();
-                    collapsedHeight = getMeasuredHeight();
-                }
-            }
-        });
-    }
-
-    public int getLineCount() {
-        return textView.getLineCount();
-    }
-
-    /**
-     * 当前显示的内容是否需要展开、收缩
-     */
-    public boolean isExpandCollapseEnable() {
-        return isExpandCollapseEnable;
-    }
-
-    /**
-     * 获取文本的真实高度
-     */
-    private int getRealTextHeight() {
-        // getLineTop 返回值是一个根据行数而形成等差序列，如果参数为行数，则值即为文本的高度
-        int textHeight = textView.getLayout().getLineTop(textView.getLineCount());
-        return textHeight + textView.getCompoundPaddingBottom() + textView.getCompoundPaddingTop();
     }
 
     public void setText(int res) {
@@ -242,48 +130,57 @@ public class ExpandableView extends LinearLayout {
     }
 
     public void setText(CharSequence text) {
-        isChanged = true;
+        if (state == STATE_NONE) {
+            textView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    textView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    int line = textView.getLineCount();
+                    if (line > expandLines) {
+                        textView.setMaxLines(expandLines);
+                        handlerView.setVisibility(VISIBLE);
+                        state = STATE_COLLAPSED;
+                    } else {
+                        handlerView.setVisibility(GONE);
+                        state = STATE_NOT_OVERFLOW;
+                    }
+                    if (null != listener) {
+                        listener.onStateChanged(state);
+                    }
+                    return true;
+                }
+            });
+        } else {
+            switch (state) {
+                case STATE_COLLAPSED:
+                    textView.setMaxLines(expandLines);
+                    handlerView.setVisibility(VISIBLE);
+                    if (null != listener) {
+                        listener.onStateChanged(state);
+                    }
+                    break;
+                case STATE_EXPANDED:
+                    textView.setMaxLines(Integer.MAX_VALUE);
+                    handlerView.setVisibility(VISIBLE);
+                    if (null != listener) {
+                        listener.onStateChanged(state);
+                    }
+                    break;
+                case STATE_NOT_OVERFLOW:
+                    handlerView.setVisibility(GONE);
+                    if (null != listener) {
+                        listener.onStateChanged(state);
+                    }
+                    break;
+            }
+        }
         textView.setText(text);
     }
 
     public void setText(CharSequence text, boolean isCollapsed) {
-        this.isCollapsed = isCollapsed;
-        if (isCollapsed) {
-            handlerView.setText(collapseText);
-        } else {
-            handlerView.setText(expandText);
-        }
-        //clearAnimation();
+        state = isCollapsed ? STATE_COLLAPSED : STATE_EXPANDED;
+        handlerView.setText(isCollapsed() ? expandText : collapseText);
         setText(text);
-        getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-    }
-
-    /**
-     * 展开、收缩动画
-     */
-    private class ExpandCollapseAnimation extends Animation {
-        int startValue;
-        int endValue;
-
-        ExpandCollapseAnimation(int startValue, int endValue) {
-            setDuration(duration);
-            this.startValue = startValue;
-            this.endValue = endValue;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            super.applyTransformation(interpolatedTime, t);
-            int height = (int) ((endValue - startValue) * interpolatedTime + startValue);
-            textView.setMaxHeight(height - lastHeight);
-            getLayoutParams().height = height;
-            requestLayout();
-        }
-
-        @Override
-        public boolean willChangeBounds() {
-            return true;
-        }
     }
 
     private OnExpandStateChangeListener listener;
@@ -295,19 +192,18 @@ public class ExpandableView extends LinearLayout {
         listener = l;
     }
 
-    public static final int STATE_HIDDEN = -1;
-    public static final int STATE_NONE = 0;
+    private static final int STATE_NONE = 0;
     public static final int STATE_NOT_OVERFLOW = 1;
     public static final int STATE_COLLAPSED = 2;
     public static final int STATE_EXPANDED = 3;
 
     private int state = STATE_NONE;
 
-    /***/
+    /**
+     * 展开、收缩状态改变时的回调
+     */
     public interface OnExpandStateChangeListener {
 
-        void onExpandInitialize(int status);
-
-        void onExpandStateChange(boolean isExpanded);
+        void onStateChanged(int state);
     }
 }

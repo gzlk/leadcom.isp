@@ -519,7 +519,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
             log("onDataHandingListener.onComplete()");
             displayLoading(false);
             setNothingText(R.string.ui_phone_contact_no_more);
-            int cnt = isEmpty(searchingText) ? mAdapter.getItemCount() : sAdapter.getItemCount();
+            final int cnt = isEmpty(searchingText) ? mAdapter.getItemCount() : sAdapter.getItemCount();
             displayNothing(cnt <= 0);
             if (isEmpty(searchingText)) {
                 slidView.clearIndex();
@@ -527,7 +527,12 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
                     slidView.add(string);
                 }
             }
-            slidView.setVisibility(cnt > 0 ? View.VISIBLE : View.GONE);
+            slidView.post(new Runnable() {
+                @Override
+                public void run() {
+                    slidView.setVisibility(cnt > 0 ? View.VISIBLE : View.GONE);
+                }
+            });
             resetCustomTitle(cnt);
             materialHorizontalProgressBar.setVisibility(View.GONE);
             //isHandlingPagination = false;

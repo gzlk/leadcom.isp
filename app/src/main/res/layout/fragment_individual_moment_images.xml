@@ -46,7 +46,8 @@
                     android:id="@id/expandable_view_handler_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/ui_static_dp_3" />
+                    android:layout_marginEnd="@dimen/ui_static_dp_3"
+                    android:visibility="gone" />
 
                 <com.hlk.hlklib.lib.view.CustomTextView
                     android:id="@+id/expandable_view_handler_indicator"
@@ -56,7 +57,8 @@
                     android:rotation="-90"
                     android:text="@string/ui_icon_triangle"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/ui_base_text_size_tiny" />
+                    android:textSize="@dimen/ui_base_text_size_tiny"
+                    android:visibility="gone" />
             </LinearLayout>
         </com.leadcom.android.isp.lib.view.ExpandableView>
 
@@ -69,7 +71,42 @@
             <include layout="@layout/tool_view_horizontal_progressbar" />
         </LinearLayout>
 
-        <include layout="@layout/tool_view_loading" />
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/ui_tool_loading_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.hlk.hlklib.lib.view.CorneredView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/ui_base_dimen_margin_padding"
+                app:cv_background="@android:color/transparent"
+                app:cv_background_active="@android:color/transparent"
+                app:cv_background_type="fill"
+                app:cv_border_size="@dimen/ui_static_dp_zero"
+                app:cv_corner_size="@dimen/ui_base_dimen_button_corner_size">
+
+                <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+                    android:id="@+id/ui_tool_loading_progress"
+                    android:layout_width="@dimen/ui_static_dp_50"
+                    android:layout_height="@dimen/ui_static_dp_50"
+                    android:layout_gravity="center"
+                    app:mlpb_enable_circle_background="false"
+                    app:mlpb_progress_color="@color/colorProgressing"
+                    app:mlpb_progress_stoke_width="@dimen/ui_static_dp_2"
+                    app:mlpb_progress_text_visibility="invisible" />
+
+            </com.hlk.hlklib.lib.view.CorneredView>
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
