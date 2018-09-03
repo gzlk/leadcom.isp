@@ -104,10 +104,13 @@ public class SquadsFragment extends BaseOrganizationFragment {
         @Override
         public void onSearching(String text) {
             searchingText = text;
+            if (null == mAdapter) {
+                return;
+            }
             mAdapter.clear();
             if (!isEmpty(searchingText)) {
                 // 搜索小组成员名字
-                searchMemberName();
+                searchSquadName();
             } else {
                 // 恢复已打开的小组和其成员列表
                 for (Squad squad : squads) {
@@ -121,24 +124,12 @@ public class SquadsFragment extends BaseOrganizationFragment {
         }
     };
 
-    private void searchMemberName() {
+    private void searchSquadName() {
         for (Squad squad : squads) {
             // 轮询所有小组
             if (squad.getName().contains(searchingText)) {
                 mAdapter.add(squad);
             }
-//            int cnt = 0;
-//            for (Member member : squad.getGroSquMemberList()) {
-//                if (member.getUserName().contains(searchingText)) {
-//                    if (!mAdapter.exist(squad)) {
-//                        squad.setSelectable(true);
-//                        mAdapter.add(squad);
-//                    }
-//                    mAdapter.add(member);
-//                    cnt++;
-//                }
-//            }
-//            squad.setAccessToken(String.valueOf(cnt));
         }
     }
 

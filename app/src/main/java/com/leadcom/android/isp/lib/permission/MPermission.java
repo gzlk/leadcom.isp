@@ -154,15 +154,13 @@ public class MPermission extends BaseMPermission {
     }
 
     private static void executeMethodWithParam(Object activity, Method executeMethod, Object... args) {
-        if (executeMethod != null) {
+        if (null != executeMethod) {
             try {
                 if (!executeMethod.isAccessible()) {
                     executeMethod.setAccessible(true);
                 }
                 executeMethod.invoke(activity, args);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

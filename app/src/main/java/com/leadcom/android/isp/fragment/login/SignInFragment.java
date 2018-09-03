@@ -84,7 +84,9 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     @OnMPermissionGranted(GRANT_STORAGE)
     private void onStoragePermissionGranted() {
         MPermission.printMPermissionResult(false, Activity(), permissions);
-        signInButton.setEnabled(true);
+        if (null != signInButton) {
+            signInButton.setEnabled(true);
+        }
     }
 
     @Override
@@ -100,7 +102,9 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     @OnMPermissionNeverAskAgain(GRANT_STORAGE)
     private void onStoragePermissionNeverAskAgain() {
         ToastHelper.make().showMsg(R.string.ui_grant_permission_storage_never_ask_again);
-        //signInButton.setEnabled(false);
+        if (null != signInButton) {
+            //signInButton.setEnabled(false);
+        }
     }
 
     @Override

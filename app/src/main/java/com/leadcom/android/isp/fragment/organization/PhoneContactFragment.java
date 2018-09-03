@@ -13,6 +13,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,10 @@ import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.PhoneContactViewHolder;
+import com.leadcom.android.isp.lib.permission.MPermission;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionDenied;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionGranted;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAgain;
 import com.leadcom.android.isp.lib.view.SlidView;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
@@ -98,8 +103,6 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         fragment.openActivity(PhoneContactFragment.class.getName(), bundle, true, false);
     }
 
-    private static boolean hasPermission = false;
-
     @ViewId(R.id.ui_phone_contact_slid_view)
     private SlidView slidView;
     @ViewId(R.id.ui_holder_view_searchable_container)
@@ -133,11 +136,40 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         bundle.putSerializable(PARAM_MEMBERS, members);
     }
 
+    private final String[] permissions = new String[]{
+            Manifest.permission.READ_CONTACTS
+    };
+
+    private void requestReadContactsPermission() {
+        MPermission.printMPermissionResult(true, Activity(), permissions);
+        MPermission.with(this)
+                .setRequestCode(GRANT_CONTACTS)
+                .permissions(permissions)
+                .request();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        MPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    @OnMPermissionGranted(GRANT_CONTACTS)
+    public void onBasePermissionRequested() {
+        MPermission.printMPermissionResult(false, Activity(), permissions);
+    }
+
+    @OnMPermissionDenied(GRANT_CONTACTS)
+    @OnMPermissionNeverAskAgain(GRANT_CONTACTS)
+    public void onBasePermissionRequestFailed() {
+        ToastHelper.make().showMsg(R.string.ui_text_permission_contact_denied);
+        MPermission.printMPermissionResult(false, Activity(), permissions);
+        finish();
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        hasPermission = false;
         searchingText = "";
-        checkPermission();
+        requestReadContactsPermission();
         super.onActivityCreated(savedInstanceState);
         setLoadingText(R.string.ui_phone_contact_waiting_read_contacts);
         setCustomTitle(R.string.ui_squad_contact_menu_2);
@@ -192,7 +224,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
 //        if (!Cache.isReleasable()) {
 //            new Dao<>(Contact.class).clear();
 //        }
-        if (hasPermission) {
+        if (hasPermission(Manifest.permission.READ_CONTACTS)) {
             readyToReadContact();
         }
     }
@@ -220,35 +252,6 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
     @Override
     protected String getLocalPageTag() {
         return null;
-    }
-
-    // 尝试读取手机通讯录
-    private void checkPermission() {
-        if (!hasPermission(Manifest.permission.READ_CONTACTS)) {
-            String text = StringHelper.getString(R.string.ui_text_permission_contact_request);
-            String denied = StringHelper.getString(R.string.ui_text_permission_contact_denied);
-            tryGrantPermission(Manifest.permission.READ_CONTACTS, GRANT_CONTACTS, text, denied);
-        } else {
-            hasPermission = true;
-        }
-    }
-
-    @Override
-    public void permissionGranted(String[] permissions, int requestCode) {
-        if (requestCode == GRANT_CONTACTS) {
-            hasPermission = true;
-        }
-        super.permissionGranted(permissions, requestCode);
-    }
-
-    @Override
-    public void permissionGrantFailed(int requestCode) {
-        super.permissionGrantFailed(requestCode);
-        if (requestCode == GRANT_CONTACTS) {
-            setNothingText(R.string.ui_phone_contact_no_permission);
-            displayNothing(true);
-            finish();
-        }
     }
 
     /**
