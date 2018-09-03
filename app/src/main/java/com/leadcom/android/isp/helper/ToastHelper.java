@@ -3,6 +3,7 @@ package com.leadcom.android.isp.helper;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -109,9 +110,9 @@ public class ToastHelper {
             context = App.app();
         }
         View view = View.inflate(context, R.layout.base_custom_toast, null);
-        TextView text = (TextView) view.findViewById(R.id.ui_base_custom_toast_text);
-        CustomTextView iconView = (CustomTextView) view.findViewById(R.id.ui_base_custom_toast_icon);
-        text.setText(msg);
+        TextView text = view.findViewById(R.id.ui_base_custom_toast_text);
+        CustomTextView iconView = view.findViewById(R.id.ui_base_custom_toast_icon);
+        text.setText(Html.fromHtml(msg));
         iconView.setText(icon);
         iconView.setVisibility(null == icon ? View.GONE : View.VISIBLE);
         Toast toast = new Toast(context);

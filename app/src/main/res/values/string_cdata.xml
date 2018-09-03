@@ -15,10 +15,13 @@
         <![CDATA[<font color="#3cbaff">存储设备</font>]]>
     </string>
     <string name="ui_grant_permission_storage_warning">
-        <![CDATA[您需要允许访问<font color="#3cbaff">存储设备</font>以便App能够管理自身应用内的缓存信息。]]>
+        <![CDATA[您需要允许App访问<font color="#3cbaff">存储设备</font>以便其能够管理自身应用内的缓存信息。]]>
     </string>
     <string name="ui_grant_permission_storage_denied">
         <![CDATA[抱歉，由于您禁止App访问<font color="#3cbaff">存储设备</font>，可能无法完美体验相关功能，敬请谅解。]]>
+    </string>
+    <string name="ui_grant_permission_storage_never_ask_again">
+        <![CDATA[App不能访问<font color="#3cbaff">存储设备</font>，请打开权限之后再继续。]]>
     </string>
 
     <string name="ui_grant_permission_device" formatted="false">

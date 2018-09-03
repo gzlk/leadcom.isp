@@ -112,6 +112,6 @@ public class SettingPasswordFragment extends BaseTransparentSupportFragment {
                     finish();
                 }
             }
-        }).update(UserRequest.UPDATE_PASSWORD, newOne);
+        }).updatePassword(old, newOne);
     }
 }

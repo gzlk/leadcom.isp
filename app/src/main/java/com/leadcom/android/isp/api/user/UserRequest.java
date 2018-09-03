@@ -146,6 +146,11 @@ public class UserRequest extends Request<User> {
         executeHttpRequest(getRequest(SingleUser.class, url(UPDATE), object.toString(), HttpMethods.Post));
     }
 
+    public void updatePassword(String oldPwd, String newPwd) {
+        String param = format("%s?oldPassword=%s&newPassword=%s", url(UPDATE + "/password"), oldPwd, newPwd);
+        executeHttpRequest(getRequest(SingleUser.class, param, "", HttpMethods.Get));
+    }
+
     /**
      * 同时更改名字和签名介绍
      */

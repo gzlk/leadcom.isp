@@ -2,6 +2,7 @@ package com.leadcom.android.isp.fragment.login;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.leadcom.android.isp.R;
@@ -14,6 +15,12 @@ import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseDelayRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
+import com.leadcom.android.isp.lib.permission.MPermission;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionDenied;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionGranted;
+import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAgain;
 import com.leadcom.android.isp.model.user.User;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -57,13 +64,53 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestStoragePermission();
+    }
+
+    private final String[] permissions = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    private void requestStoragePermission() {
+        MPermission.printMPermissionResult(true, Activity(), permissions);
+        MPermission.with(this)
+                .setRequestCode(GRANT_STORAGE)
+                .permissions(permissions)
+                .request();
+    }
+
+    @OnMPermissionGranted(GRANT_STORAGE)
+    private void onStoragePermissionGranted() {
+        MPermission.printMPermissionResult(false, Activity(), permissions);
+        signInButton.setEnabled(true);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        MPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    @OnMPermissionDenied(GRANT_STORAGE)
+    private void onStoragePermissionDenied() {
+        ToastHelper.make().showMsg(R.string.ui_grant_permission_storage_denied);
+    }
+
+    @OnMPermissionNeverAskAgain(GRANT_STORAGE)
+    private void onStoragePermissionNeverAskAgain() {
+        ToastHelper.make().showMsg(R.string.ui_grant_permission_storage_never_ask_again);
+        //signInButton.setEnabled(false);
+    }
+
+    @Override
     public int getLayout() {
         return R.layout.fragment_sign_in;
     }
 
     @Override
     public void doingInResume() {
-        if (checkStoragePermission()) {
+        if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             if (null != Cache.cache().me && isAdded()) {
                 accountText.setValue(Cache.cache().me.getPhone());
                 accountText.focusEnd();
@@ -71,7 +118,6 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
                 signInButton.setText(R.string.ui_text_sign_in_still_processing);
                 // 同步用户信息，如果同步失败则需要重新登录
                 syncUserInfo();
-                //checkNimStatus();
             } else {
                 accountText.setValue(Cache.cache().userPhone);
                 if (!isEmpty(Cache.cache().userPhone)) {
@@ -80,7 +126,7 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
             }
         } else {
             // 尝试获取相关基本的运行时权限
-            grantStoragePermission();
+            //signInButton.setEnabled(false);
         }
     }
 
@@ -110,6 +156,17 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
             } else if (isEmpty(pwd)) {
                 ToastHelper.make(Activity()).showMsg(R.string.ui_text_sign_in_password_value_incorrect);
             } else {
+                if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    String text = StringHelper.getString(R.string.ui_grant_permission_storage_warning);
+                    SimpleDialogHelper.init(Activity()).show(text, new DialogHelper.OnDialogConfirmListener() {
+                        @Override
+                        public boolean onConfirm() {
+                            requestStoragePermission();
+                            return true;
+                        }
+                    }, null);
+                    return;
+                }
                 Utils.hidingInputBoard(accountText);
                 if (!stillInSignIn) {
                     stillInSignIn = true;
@@ -193,19 +250,8 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
     }
 
     private void checkNimStatus() {
-        //StatusCode code = NIMClient.getStatus();
-        //if (code.shouldReLogin() || code.wontAutoLogin()) {
-        // 如果网易云需要重新登录则重新登陆网易云
-        //    doLogin();
-        //} else {
         // 如不需要重新登录网易云则进入主页面
         delayRefreshLoading(1000, DELAY_TYPE_TIME_DELAY);
-        //}
-    }
-
-    private boolean checkStoragePermission() {
-        // 存储设备
-        return hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     private void grantStoragePermission() {
@@ -213,23 +259,5 @@ public class SignInFragment extends BaseDelayRefreshSupportFragment {
         String text = StringHelper.getString(R.string.ui_grant_permission_storage_warning);
         String denied = StringHelper.getString(R.string.ui_grant_permission_storage_denied);
         tryGrantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, GRANT_STORAGE, text, denied);
-    }
-
-    /**
-     * 子类需要重载此方法以便处理权限申请成功之后的事情
-     */
-    @Override
-    public void permissionGranted(String[] permissions, int requestCode) {
-        if (requestCode == GRANT_STORAGE && permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            signInButton.setEnabled(true);
-        }
-    }
-
-    /**
-     * 子类需要重载此方法以便处理权限申请失败之后的事情
-     */
-    @Override
-    public void permissionGrantFailed(int requestCode) {
-        signInButton.setEnabled(true);
     }
 }

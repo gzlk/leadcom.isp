@@ -3,6 +3,7 @@ package com.leadcom.android.isp.activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,8 +40,6 @@ import com.leadcom.android.isp.lib.permission.annotation.OnMPermissionNeverAskAg
 import com.leadcom.android.isp.listener.NotificationChangeHandleCallback;
 import com.leadcom.android.isp.model.common.PushMessage;
 import com.leadcom.android.isp.service.ContactService;
-
-import java.util.Observer;
 
 /**
  * <b>功能描述：</b>主页窗体<br />
@@ -251,14 +250,22 @@ public class MainActivity extends TitleActivity {
         if (null != alphaView) {
             alphaView.setVisibility(Cache.isReleasable() ? View.GONE : View.VISIBLE);
         }
-        ContactService.refresh();
-        getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contactObserver);
+        if (hasPhoneContactPermission()) {
+            ContactService.refresh();
+            getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contactObserver);
+        }
+    }
+
+    private boolean hasPhoneContactPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
     protected void onDestroy() {
         innerOpen = false;
-        getContentResolver().unregisterContentObserver(contactObserver);
+        if (hasPhoneContactPermission()) {
+            getContentResolver().unregisterContentObserver(contactObserver);
+        }
         App.removeNotificationChangeCallback(callback);
         super.onDestroy();
     }

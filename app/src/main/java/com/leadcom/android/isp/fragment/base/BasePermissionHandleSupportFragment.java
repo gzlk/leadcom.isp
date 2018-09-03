@@ -129,8 +129,8 @@ public abstract class BasePermissionHandleSupportFragment extends Fragment {
                     warningPermissionRationale(rationale, permission, requestCode);
                 } else {
                     // 用户禁止了弹出权限提示，尝试直接申请权限
-                    //warningPermissionDenied();
-                    requestPermission(permission, requestCode);
+                    warningPermissionDenied();
+                    //requestPermission(permission, requestCode);
                 }
             } else {
                 // 没有权限且SDK小于23时，只能汇报权限失败
