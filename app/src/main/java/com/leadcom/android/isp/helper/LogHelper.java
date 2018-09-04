@@ -3,6 +3,7 @@ package com.leadcom.android.isp.helper;
 import android.util.Log;
 
 import com.leadcom.android.isp.BuildConfig;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 
 /**
@@ -29,7 +30,10 @@ public class LogHelper {
     }
 
     private static void print(String tag, String string) {
-        Log.e(tag + "(" + BuildConfig.BUILD_TYPE + ")", string);
+        if (!Cache.isReleased()) {
+            // release版本不需要打印log记录
+            Log.e(tag + "(" + BuildConfig.BUILD_TYPE + ")", string);
+        }
     }
 
     public static void log(String tag, String string) {

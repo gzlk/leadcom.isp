@@ -37,6 +37,10 @@ public class Cache {
         return BuildConfig.BUILD_TYPE.equals("beta") || BuildConfig.BUILD_TYPE.equals("release");
     }
 
+    public static boolean isReleased() {
+        return BuildConfig.BUILD_TYPE.equals("release");
+    }
+
     public static int sdk = Build.VERSION.SDK_INT;
 
     private static Cache cache;
