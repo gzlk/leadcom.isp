@@ -537,32 +537,60 @@ public class Utils {
             return "#";
         }
         StringBuilder buffer = new StringBuilder();
+        int len = text.length();
+        char chr = text.charAt(0);
         for (int i = 0; i < text.length(); i++) {
             if (i == 0) {
-                if (text.charAt(i) == '曾') {
+                if (chr == '曾') {
                     buffer.append("ZENG");
-                } else if (text.charAt(i) == '单') {
-                    if (text.length() > 2 && text.charAt(1) == '于') {
+                } else if (chr == '单') {
+                    if (len > 2 && text.charAt(1) == '于') {
                         buffer.append("CHAN");
                     } else {
                         buffer.append("SHAN");
                     }
-                } else if (text.charAt(i) == '乐') {
+                } else if (chr == '乐') {
                     buffer.append("YUE");
-                } else if (text.charAt(i) == '解') {
+                } else if (chr == '解') {
                     buffer.append("XIE");
-                } else if (text.charAt(i) == '仇') {
+                } else if (chr == '仇') {
                     buffer.append("QIU");
-                } else if (text.charAt(i) == '钭') {
+                } else if (chr == '钭') {
                     buffer.append("TOU");
-                } else if (text.charAt(i) == '宿') {
+                } else if (chr == '宿') {
                     buffer.append("SU");
-                } else if (text.charAt(i) == '卻') {
+                } else if (chr == '卻') {
                     buffer.append("XI");
-                } else if (text.charAt(i) == '查') {
+                } else if (chr == '查') {
                     buffer.append("ZHA");
-                } else if (text.charAt(i) == '长') {
-                    buffer.append("ZHANG");
+                } else if (chr == '长') {
+                    if (len > 2 && text.charAt(1) == '孙') {
+                        buffer.append("ZHANG");
+                    } else {
+                        buffer.append("CHANG");
+                    }
+                } else if (chr == '万') {
+                    if (len > 2 && text.charAt(1) == '俟') {
+                        buffer.append("MOQI");
+                        i += 1;
+                    } else {
+                        buffer.append("WAN");
+                    }
+                } else if (chr == '尉') {
+                    if (len > 2 && text.charAt(1) == '迟') {
+                        buffer.append("YU");
+                    } else {
+                        buffer.append("WEI");
+                    }
+                } else if (chr == '澹') {
+                    if (len > 2 && text.charAt(1) == '台') {
+                        buffer.append("TAN");
+                    }
+                } else if (chr == '子') {
+                    if (len > 2 && text.charAt(1) == '车') {
+                        buffer.append("ZIJU");
+                        i += 1;
+                    }
                 } else {
                     buffer.append(Pinyin.toPinyin(text.charAt(i))).append(' ');
                 }
