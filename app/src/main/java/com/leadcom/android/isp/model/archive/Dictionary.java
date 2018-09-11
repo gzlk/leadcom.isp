@@ -2,7 +2,7 @@ package com.leadcom.android.isp.model.archive;
 
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Activity;
+import com.leadcom.android.isp.model.user.Collection;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -39,8 +39,7 @@ public class Dictionary extends Model {
 
     public static List<Dictionary> getLocal(String typeCode) {
         QueryBuilder<Dictionary> builder = new QueryBuilder<>(Dictionary.class);
-        builder.whereEquals(Archive.Field.TypeCode, typeCode).whereAppendAnd()
-                .whereEquals(Activity.Field.IsLocalStorage, true);
+        builder.whereEquals(Archive.Field.TypeCode, typeCode);
         return new Dao<>(Dictionary.class).query(builder);
     }
 
@@ -80,7 +79,7 @@ public class Dictionary extends Model {
     @Column(Archive.Field.TypeCode)
     private String typeCode;
     //是否本地保存的标签
-    @Column(Activity.Field.IsLocalStorage)
+    @Column(Collection.Field.IsLocalStorage)
     private boolean isLocal;
 
     public String getName() {

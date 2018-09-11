@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
-import com.leadcom.android.isp.api.activity.ActLabelRequest;
+import com.leadcom.android.isp.api.activity.LabelRequest;
 import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.archive.DictionaryRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -29,12 +29,11 @@ import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Label;
+import com.leadcom.android.isp.model.archive.Label;
 import com.leadcom.android.isp.model.archive.Classify;
 import com.leadcom.android.isp.model.archive.Dictionary;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -265,7 +264,7 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
 
     // 获取热门标签
     private void loadingTopestLabels() {
-        ActLabelRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Label>() {
+        LabelRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Label>() {
             @Override
             public void onResponse(List<Label> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);

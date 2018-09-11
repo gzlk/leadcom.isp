@@ -1,8 +1,5 @@
 package com.leadcom.android.isp.api.listener;
 
-import com.leadcom.android.isp.model.activity.topic.AppTopic;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +17,6 @@ public abstract class OnMultipleRequestListener<Data> {
 
     public int invtNum;
     public int unreadNum;
-    public ArrayList<AppTopic> actTopicList;
 
     // 个人消息
     public int userInfoNum;

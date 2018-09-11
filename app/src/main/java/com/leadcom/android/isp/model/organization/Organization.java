@@ -2,9 +2,8 @@ package com.leadcom.android.isp.model.organization;
 
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Activity;
-import com.leadcom.android.isp.model.activity.vote.AppVote;
 import com.leadcom.android.isp.model.common.Quantity;
+import com.leadcom.android.isp.model.user.Collection;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -83,10 +82,6 @@ public class Organization extends Model {
         return new Dao<>(Organization.class).query(id);
     }
 
-    @Column(Activity.Field.ActivityId)
-    private String actId;          //初始活动ID
-    @Column(Activity.Field.NimId)
-    private String tid;            //初始群聊的云信高级群ID
     @Column(Model.Field.Name)
     private String name;           //组织名
     @Column(Field.UpperId)
@@ -107,7 +102,7 @@ public class Organization extends Model {
     private String creatorId;      //创建者ID
     @Column(Model.Field.CreatorName)
     private String creatorName;    //创建者名称
-    @Column(AppVote.Field.CreatorHeadPhoto)
+    @Column(Collection.Field.CreatorHeadPhoto)
     private String creatorHeadPhoto;//创建者的用户头像
     @Column(Field.MemberNumber)
     private int memberNum;          // 成员数
@@ -257,22 +252,6 @@ public class Organization extends Model {
 
     public void setConGroup(ArrayList<Concern> conGroup) {
         this.conGroup = conGroup;
-    }
-
-    public String getActId() {
-        return actId;
-    }
-
-    public void setActId(String actId) {
-        this.actId = actId;
-    }
-
-    public String getTid() {
-        return tid;
-    }
-
-    public void setTid(String tid) {
-        this.tid = tid;
     }
 
     public String getCreatorHeadPhoto() {

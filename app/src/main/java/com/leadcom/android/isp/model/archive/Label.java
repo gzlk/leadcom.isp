@@ -1,8 +1,8 @@
-package com.leadcom.android.isp.model.activity;
+package com.leadcom.android.isp.model.archive;
 
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.user.Collection;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -20,12 +20,8 @@ import java.util.List;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-@Table(Activity.Table.LABEL)
+@Table(Archive.Table.LABEL)
 public class Label extends Model {
-
-    public static List<Label> getLabelsByActivityId(String activityId) {
-        return new Dao<>(Label.class).query(Activity.Field.ActivityId, activityId);
-    }
 
     public static List<Label> getLabelsById(List<String> ids) {
         if (null != ids && ids.size() > 0) {
@@ -43,8 +39,8 @@ public class Label extends Model {
      */
     public static List<Label> getLocal() {
         QueryBuilder<Label> builder = new QueryBuilder<>(Label.class)
-                .whereEquals(Activity.Field.IsLocalStorage, true)
-                .appendOrderDescBy(Activity.Field.UsedTimes).limit(0, 10);
+                .whereEquals(Collection.Field.IsLocalStorage, true)
+                .appendOrderDescBy(Collection.Field.UsedTimes).limit(0, 10);
         return new Dao<>(Label.class).query(builder);
     }
 
@@ -87,10 +83,10 @@ public class Label extends Model {
     @Column(Model.Field.Name)
     private String name;
     //是否本地保存的标签
-    @Column(Activity.Field.IsLocalStorage)
+    @Column(Collection.Field.IsLocalStorage)
     private boolean isLocal;
     // 使用次数
-    @Column(Activity.Field.UsedTimes)
+    @Column(Collection.Field.UsedTimes)
     private int signaNum;
 
     public String getName() {

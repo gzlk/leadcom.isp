@@ -3,7 +3,6 @@ package com.leadcom.android.isp.model.organization;
 import com.google.gson.reflect.TypeToken;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
@@ -55,8 +54,6 @@ public class Squad extends Model {
     private int memberNum;      //成员数
     @Ignore
     private Role groRole;      // 当前登录者在组织里的角色
-    @Column(Activity.Field.NimId)
-    private String tid;
     @Ignore
     private ArrayList<Member> groSquMemberList;
 
@@ -125,14 +122,6 @@ public class Squad extends Model {
 
     public void setGroRole(Role groRole) {
         this.groRole = groRole;
-    }
-
-    public String getTid() {
-        return tid;
-    }
-
-    public void setTid(String tid) {
-        this.tid = tid;
     }
 
     public ArrayList<Member> getGroSquMemberList() {

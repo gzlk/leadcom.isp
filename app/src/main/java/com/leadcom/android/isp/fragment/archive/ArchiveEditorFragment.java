@@ -65,7 +65,7 @@ import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Label;
+import com.leadcom.android.isp.model.archive.Label;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchiveQuery;
 import com.leadcom.android.isp.model.common.Attachment;

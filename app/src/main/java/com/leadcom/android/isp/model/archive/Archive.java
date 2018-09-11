@@ -9,7 +9,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.organization.Organization;
@@ -68,6 +67,7 @@ public class Archive extends Additional {
          * 赞
          */
         String LIKE = "archiveLike";
+        String LABEL = "activityLabel";
         /**
          * 封面
          */
@@ -149,6 +149,7 @@ public class Archive extends Additional {
         String Branch = "branch";
         String ShowImage = "showImage";
         String Watermark = "watermark";
+        String Site = "site";
     }
 
     /**
@@ -404,7 +405,7 @@ public class Archive extends Additional {
     @Column(Field.HappenDate)
     private String happenDate;
     // 档案发生地点
-    @Column(Activity.Field.Site)
+    @Column(Field.Site)
     private String site;
     // 档案参与人
     @Column(Field.Participant)

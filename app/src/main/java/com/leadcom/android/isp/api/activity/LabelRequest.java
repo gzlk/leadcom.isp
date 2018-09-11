@@ -8,7 +8,7 @@ import com.leadcom.android.isp.api.Request;
 import com.leadcom.android.isp.api.query.ListQuery;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.model.activity.Label;
+import com.leadcom.android.isp.model.archive.Label;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONException;
@@ -25,10 +25,10 @@ import org.json.JSONObject;
  * <b>修改备注：</b><br />
  */
 
-public class ActLabelRequest extends Request<Label> {
+public class LabelRequest extends Request<Label> {
 
-    public static ActLabelRequest request() {
-        return new ActLabelRequest();
+    public static LabelRequest request() {
+        return new LabelRequest();
     }
 
     private static class SingleLabel extends SingleQuery<Label> {
@@ -51,13 +51,13 @@ public class ActLabelRequest extends Request<Label> {
     }
 
     @Override
-    public ActLabelRequest setOnSingleRequestListener(OnSingleRequestListener<Label> listener) {
+    public LabelRequest setOnSingleRequestListener(OnSingleRequestListener<Label> listener) {
         onSingleRequestListener = listener;
         return this;
     }
 
     @Override
-    public ActLabelRequest setOnMultipleRequestListener(OnMultipleRequestListener<Label> listListener) {
+    public LabelRequest setOnMultipleRequestListener(OnMultipleRequestListener<Label> listListener) {
         onMultipleRequestListener = listListener;
         return this;
     }

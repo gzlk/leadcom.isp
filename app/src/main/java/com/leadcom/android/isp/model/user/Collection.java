@@ -1,7 +1,6 @@
 package com.leadcom.android.isp.model.user;
 
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.vote.AppVote;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.litesuits.orm.db.annotation.Column;
@@ -27,6 +26,9 @@ public class Collection extends Model {
         String SourceType = "sourceType";
         String SourceId = "sourceId";
         String SourceTitle = "sourceTitle";
+        String CreatorHeadPhoto = "creatorHeadPhoto";
+        String IsLocalStorage = "isLocalStorage";
+        String UsedTimes = "usedTimes";
     }
 
     /**
@@ -227,7 +229,7 @@ public class Collection extends Model {
     //原作者名称
     @Column(Archive.Field.CreatorName)
     private String creatorName;
-    @Column(AppVote.Field.CreatorHeadPhoto)
+    @Column(Field.CreatorHeadPhoto)
     private String creatorHeadPhoto;   //原作者用户头像
     //创建日期
     @Column(Model.Field.CreateDate)

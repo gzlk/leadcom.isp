@@ -3,7 +3,6 @@ package com.leadcom.android.isp.model.organization;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -75,17 +74,8 @@ public class Invitation extends Model {
     @Column(Organization.Field.SquadName)
     private String groSquName;
 
-    // 活动相关的邀请
-    @Column(Activity.Field.ActivityId)
-    private String actId;
-    @Column(Activity.Field.ActivityName)
-    private String actName;
-    @Column(Activity.Field.NimId)
-    private String tid;
     @Column(Field.CreateTime)
     private String createTime;
-    @Column(Activity.Field.ActivityImage)
-    private String actImg;
 
     //邀请人ID和姓名
     @Column(Field.InviterId)
@@ -151,44 +141,12 @@ public class Invitation extends Model {
         this.groSquName = groSquName;
     }
 
-    public String getActId() {
-        return actId;
-    }
-
-    public void setActId(String actId) {
-        this.actId = actId;
-    }
-
-    public String getActName() {
-        return actName;
-    }
-
-    public void setActName(String actName) {
-        this.actName = actName;
-    }
-
-    public String getTid() {
-        return tid;
-    }
-
-    public void setTid(String tid) {
-        this.tid = tid;
-    }
-
     public String getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
-    }
-
-    public String getActImg() {
-        return actImg;
-    }
-
-    public void setActImg(String actImg) {
-        this.actImg = actImg;
     }
 
     public String getInviterId() {

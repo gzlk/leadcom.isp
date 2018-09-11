@@ -10,7 +10,6 @@ import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.model.activity.Activity;
 import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Organization;
 import com.leadcom.android.isp.model.organization.Squad;
@@ -254,7 +253,6 @@ public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFr
         } else {
             query = query.whereAppendAnd().whereEquals(Organization.Field.SquadId, squadId);
         }
-        query = query.whereAnd(Activity.Field.ActivityId + " IS NULL");
         return query;
     }
 

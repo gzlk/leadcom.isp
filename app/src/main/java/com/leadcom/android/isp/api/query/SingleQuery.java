@@ -1,9 +1,6 @@
 package com.leadcom.android.isp.api.query;
 
 import com.leadcom.android.isp.api.Api;
-import com.leadcom.android.isp.model.activity.topic.AppTopic;
-import com.leadcom.android.isp.model.activity.vote.AppVoteItem;
-import com.leadcom.android.isp.model.activity.vote.AppVoteRecord;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.user.SimpleMoment;
 
@@ -26,9 +23,6 @@ public class SingleQuery<T> extends Api<T> {
     private ArrayList<SimpleMoment> userMmt;
     private int actInvtStatus;
     private int invtNum;
-    private ArrayList<AppTopic> actTopicList;
-    private ArrayList<AppVoteRecord> commVoteRecordList;
-    private ArrayList<AppVoteItem> commVoteItemList;
     // 个人消息
     private int userInfoNum;
     private String lastHeadPhoto;
@@ -69,14 +63,6 @@ public class SingleQuery<T> extends Api<T> {
         this.invtNum = invtNum;
     }
 
-    public ArrayList<AppTopic> getActTopicList() {
-        return actTopicList;
-    }
-
-    public void setActTopicList(ArrayList<AppTopic> actTopicList) {
-        this.actTopicList = actTopicList;
-    }
-
     public int getUserInfoNum() {
         return userInfoNum;
     }
@@ -99,21 +85,5 @@ public class SingleQuery<T> extends Api<T> {
 
     public void setUserRelateGroupList(ArrayList<RelateGroup> userRelateGroupList) {
         this.userRelateGroupList = userRelateGroupList;
-    }
-
-    public ArrayList<AppVoteRecord> getCommVoteRecordList() {
-        return commVoteRecordList;
-    }
-
-    public void setCommVoteRecordList(ArrayList<AppVoteRecord> commVoteRecordList) {
-        this.commVoteRecordList = commVoteRecordList;
-    }
-
-    public ArrayList<AppVoteItem> getCommVoteItemList() {
-        return commVoteItemList;
-    }
-
-    public void setCommVoteItemList(ArrayList<AppVoteItem> commVoteItemList) {
-        this.commVoteItemList = commVoteItemList;
     }
 }

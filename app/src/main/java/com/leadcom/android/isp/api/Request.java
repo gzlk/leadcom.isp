@@ -21,7 +21,6 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.listener.OnHttpListener;
 import com.leadcom.android.isp.model.Dao;
-import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.query.FullTextQuery;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.log.HttpLog;
@@ -225,12 +224,8 @@ public abstract class Request<T> {
                             Pagination<T> pagination = paginationQuery.getData();
                             save(pagination.getList());
                             onMultipleRequestListener.invtNum = paginationQuery.getInvtNum();
-                            onMultipleRequestListener.actTopicList = paginationQuery.getActTopicList();
                             onMultipleRequestListener.userInfoNum = paginationQuery.getUserInfoNum();
                             onMultipleRequestListener.lastHeadPhoto = paginationQuery.getLastHeadPhoto();
-                            if (null != paginationQuery.getActTopicList()) {
-                                AppTopic.save(paginationQuery.getActTopicList());
-                            }
                             onMultipleRequestListener.onResponse(pagination.getList(), data.success(),
                                     pagination.getTotalPages(), pagination.getPageSize(),
                                     pagination.getTotal(), pagination.getPageNumber());
@@ -256,8 +251,6 @@ public abstract class Request<T> {
                             onSingleRequestListener.query = singleQuery;
                             onSingleRequestListener.userRelateGroupList = singleQuery.getUserRelateGroupList();
                             onSingleRequestListener.actInviteStatus = singleQuery.getActInvtStatus();
-                            onSingleRequestListener.commVoteItemList = singleQuery.getCommVoteItemList();
-                            onSingleRequestListener.commVoteRecordList = singleQuery.getCommVoteRecordList();
                             if (singleQuery.getData() instanceof FullTextQuery) {
                                 onSingleRequestListener.onResponse(singleQuery.getData(), data.success(), response.getRawString());
                             } else {

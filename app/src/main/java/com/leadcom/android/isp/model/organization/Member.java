@@ -8,18 +8,13 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.Model;
-import com.leadcom.android.isp.model.activity.Activity;
-import com.leadcom.android.isp.model.activity.topic.AppTopic;
 import com.leadcom.android.isp.model.common.Leaguer;
-import com.leadcom.android.isp.model.common.TalkTeam;
-import com.leadcom.android.isp.model.operation.ACTOperation;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
 import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.assit.QueryBuilder;
-import com.litesuits.orm.db.assit.WhereBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,17 +128,9 @@ public class Member extends Leaguer {
     }
 
     public static void save(Member member) {
-        if (null != member.getActRole()) {
-            member.setActRoleId(member.getActRole().getId());
-            Role.save(member.getActRole());
-        }
         if (null != member.getGroRole()) {
             member.setGroRoleId(member.getGroRole().getId());
             Role.save(member.getGroRole());
-        }
-        if (null != member.getCommRole()) {
-            member.setCommRoleId(member.getCommRole().getId());
-            Role.save(member.getCommRole());
         }
         new Dao<>(Member.class).save(member);
     }
@@ -179,45 +166,7 @@ public class Member extends Leaguer {
         } else {
             query = query.whereAppendAnd().whereEquals(Organization.Field.SquadId, squadId);
         }
-        query = query.whereAnd(Activity.Field.ActivityId + " IS NULL ")
-                .whereAnd(AppTopic.Field.TopicId + " IS NULL ");
         return new Dao<>(Member.class).query(query);
-    }
-
-    /**
-     * 获取指定活动的成员列表
-     */
-    public static List<Member> getMemberOfActivity(String activityId) {
-        return new Dao<>(Member.class).query(Activity.Field.ActivityId, activityId);
-    }
-
-    /**
-     * 我是否是指定tid的议题中的成员
-     */
-    public static boolean isMeMemberOfTopic(String tid) {
-        AppTopic topic = AppTopic.queryByTid(tid);
-        return null != topic && null != getMyMemberOfTopic(topic.getId());
-    }
-
-    /**
-     * 查询我在指定议题id中的成员信息
-     */
-    private static Member getMyMemberOfTopic(String topicId) {
-        QueryBuilder<Member> builder = new QueryBuilder<>(Member.class)
-                .whereEquals(AppTopic.Field.TopicId, topicId)
-                .whereAppendAnd()
-                .whereEquals(Field.UserId, Cache.cache().userId);
-        List<Member> list = new Dao<>(Member.class).query(builder);
-        return (null == list || list.size() < 1) ? null : list.get(0);
-    }
-
-    /**
-     * 从本地议题成员里删除指定议题的所有成员(退出议题、解散议题时用到)
-     */
-    public static void removeMemberOfTopicId(String topicId) {
-        WhereBuilder builder = new WhereBuilder(Member.class)
-                .where(AppTopic.Field.TopicId + " = ?", topicId);
-        new Dao<>(Member.class).delete(builder);
     }
 
     @Column(Organization.Field.GroupId)
@@ -232,33 +181,15 @@ public class Member extends Leaguer {
     @Column(Organization.Field.Rank)
     private int rank;
 
-    //活动Id
-    @Column(Activity.Field.ActivityId)
-    private String actId;
-
-    @Column(AppTopic.Field.TopicId)
-    private String actTopicId;          //活动议题ID
-
     @Ignore
     private Role groRole;
     @Ignore
     private Role actRole;
-    @Column(Activity.Field.ActivityRoleId)
-    private String actRoleId;
     @Column(Organization.Field.GroupRoleId)
     private String groRoleId;
 
-    // 群聊沟通相关
-    @Column(Activity.Field.NimId)
-    private String tid;// 群聊云信id
-    @Column(TalkTeam.Field.TeamId)
-    private String commId;// 群聊id
     @Ignore
     private Role commRole;// 角色
-    @Column(TalkTeam.Field.RoleId)
-    private String commRoleId;
-    @Column(Activity.Field.UserIdList)
-    private ArrayList<String> userIdList;
 
     public String getGroupId() {
         return groupId;
@@ -292,22 +223,6 @@ public class Member extends Leaguer {
         this.rank = rank;
     }
 
-    public String getActId() {
-        return actId;
-    }
-
-    public void setActId(String actId) {
-        this.actId = actId;
-    }
-
-    public String getActTopicId() {
-        return actTopicId;
-    }
-
-    public void setActTopicId(String actTopicId) {
-        this.actTopicId = actTopicId;
-    }
-
     public Role getGroRole() {
         if (null == groRole) {
             groRole = Role.getRoleById(groRoleId);
@@ -330,75 +245,12 @@ public class Member extends Leaguer {
         this.groRoleId = groRoleId;
     }
 
-    public Role getActRole() {
-        if (null == actRole) {
-            actRole = Role.getRoleById(actRoleId);
-        }
-        return actRole;
-    }
-
-    public void setActRole(Role actRole) {
-        this.actRole = actRole;
-    }
-
-    public String getActRoleId() {
-        return actRoleId;
-    }
-
-    public void setActRoleId(String actRoleId) {
-        this.actRoleId = actRoleId;
-    }
-
     public static ExclusionStrategy getStrategy() {
         return strategy;
     }
 
     public static void setStrategy(ExclusionStrategy strategy) {
         Member.strategy = strategy;
-    }
-
-    public String getTid() {
-        return tid;
-    }
-
-    public void setTid(String tid) {
-        this.tid = tid;
-    }
-
-    public String getCommId() {
-        return commId;
-    }
-
-    public void setCommId(String commId) {
-        this.commId = commId;
-    }
-
-    public Role getCommRole() {
-        if (null == commRole) {
-            commRole = Role.getRoleById(getCommRoleId());
-        }
-        return commRole;
-    }
-
-    public void setCommRole(Role commRole) {
-        this.commRole = commRole;
-        commRoleId = commRole.getId();
-    }
-
-    public String getCommRoleId() {
-        return commRoleId;
-    }
-
-    public void setCommRoleId(String commRoleId) {
-        this.commRoleId = commRoleId;
-    }
-
-    public ArrayList<String> getUserIdList() {
-        return userIdList;
-    }
-
-    public void setUserIdList(ArrayList<String> userIdList) {
-        this.userIdList = userIdList;
     }
 
     /**
@@ -415,10 +267,6 @@ public class Member extends Leaguer {
 //        return false;
     }
 
-    private boolean hasActivityOperation(String operation) {
-        return null != getActRole() && getActRole().hasOperation(operation);
-    }
-
     /**
      * 是否是群管理员
      */
@@ -433,12 +281,6 @@ public class Member extends Leaguer {
         return null != getGroRole() && getGroRole().isSquadManager();
     }
 
-    /**
-     * 是否是活动管理员
-     */
-    public boolean isActivityManager() {
-        return null != getActRole() && getActRole().isActivityManager();
-    }
     /*
      * 是否是群主
      */
@@ -458,20 +300,6 @@ public class Member extends Leaguer {
      */
     public boolean isArchiveManager() {
         return null != getGroRole() && getGroRole().isArchiveManager();
-    }
-
-    /**
-     * 是否群聊的管理员
-     */
-    public boolean isCommunicationManager() {
-        return null != getCommRole() && getCommRole().isCommunicationManager();
-    }
-
-    /**
-     * 是否群聊普通成员
-     */
-    public boolean isCommunicationMember() {
-        return null != getCommRole() && getCommRole().isCommunicationMember();
     }
 
     /**
@@ -563,47 +391,5 @@ public class Member extends Leaguer {
      */
     public boolean squadMemberDeletable() {
         return hasOperation(GRPOperation.SQUAD_MEMBER_DELETE);
-    }
-
-    /**
-     * 是否可以编辑活动的属性
-     */
-    public boolean activeEditable() {
-        return hasActivityOperation(ACTOperation.PROPERTY_EDIT);
-    }
-
-    /**
-     * 是否可以结束活动
-     */
-    public boolean activityEndable() {
-        return hasActivityOperation(ACTOperation.CLOSEABLE);
-    }
-
-    /**
-     * 是否可以删除活动
-     */
-    public boolean activityDeletable() {
-        return hasActivityOperation(ACTOperation.DELETABLE);
-    }
-
-    /**
-     * 是否可以查看活动
-     */
-    public boolean activityCheckable() {
-        return hasActivityOperation(ACTOperation.CHECKABLE);
-    }
-
-    /**
-     * 是否可以添加成员
-     */
-    public boolean activityMemberAddable() {
-        return hasActivityOperation(ACTOperation.MEMBER_ADDABLE);
-    }
-
-    /**
-     * 是否可以删除成员
-     */
-    public boolean activityMemberDeletable() {
-        return hasActivityOperation(ACTOperation.MEMBER_DELETABLE);
     }
 }
