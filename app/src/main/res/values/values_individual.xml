@@ -149,7 +149,7 @@
     <string name="ui_text_feedback_content_empty">请先输入您的意见！</string>
     <string name="ui_text_feedback_committed">谢谢您的参与</string>
 
-    <string name="ui_text_document_create_fragment_title">新建档案</string>
+    <string name="ui_text_document_create_fragment_title" formatted="false">新建%s</string>
     <string name="ui_text_document_create_fragment_title_edit">修改档案</string>
     <string name="ui_text_document_edit_not_exist">您要修改的档案不存在。\n要建一个新的吗？</string>
     <string name="ui_text_document_create_content_hint">档案简介</string>

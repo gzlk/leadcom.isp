@@ -356,6 +356,38 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         attachmentRecyclerView.setLayoutManager(new CustomLinearLayoutManager(attachmentRecyclerView.getContext()));
         aAdapter = new AttachmentAdapter();
         attachmentRecyclerView.setAdapter(aAdapter);
+        resetTitle();
+    }
+
+    private void resetTitle() {
+        String title = "";
+        switch (editorType) {
+            case Archive.ArchiveType.ATTACHMENT:
+                title = StringHelper.getString(R.string.ui_archive_creator_selector_text_attachment);
+                break;
+            case Archive.ArchiveType.MULTIMEDIA:
+                title = StringHelper.getString(R.string.ui_archive_creator_selector_text_image);
+                break;
+            case Archive.ArchiveType.SUGGEST:
+                break;
+            case Archive.ArchiveType.TEMPLATE:
+                title = StringHelper.getString(R.string.ui_archive_creator_selector_text_template);
+                break;
+        }
+        if (editorType == Archive.ArchiveType.ATTACHMENT) {
+            setCustomTitle(title);
+        } else {
+            setCustomTitle(StringHelper.getString(R.string.ui_text_document_create_fragment_title, title));
+        }
+        setRightIcon(0);
+        setRightText(R.string.ui_base_text_next_step);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                // 显示附加菜单信息
+                openSettingDialog();
+            }
+        });
     }
 
     private void resetEditorLayout() {
@@ -414,6 +446,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 resetAttachmentImages(mArchive.getImage());
             }
         }
+        setCustomTitle(R.string.ui_text_document_create_fragment_title_edit);
     }
 
     private void fetchingDraft() {
@@ -663,16 +696,6 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        setCustomTitle(R.string.ui_text_document_create_fragment_title);
-        setRightIcon(0);
-        setRightText(R.string.ui_base_text_next_step);
-        setRightTitleClickListener(new OnTitleButtonClickListener() {
-            @Override
-            public void onClick() {
-                // 显示附加菜单信息
-                openSettingDialog();
-            }
-        });
         if (mArchive.isTemplateArchive()) {
             isGroupArchive = true;
             initializeTemplate();
