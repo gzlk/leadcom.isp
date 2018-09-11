@@ -538,10 +538,34 @@ public class Utils {
         }
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
-            if (i == 0 && text.charAt(i) == '曾') {
-                buffer.append("ZENG ");
-            } else if (i == 0 && text.charAt(i) == '单') {
-                buffer.append("SHAN");
+            if (i == 0) {
+                if (text.charAt(i) == '曾') {
+                    buffer.append("ZENG");
+                } else if (text.charAt(i) == '单') {
+                    if (text.length() > 2 && text.charAt(1) == '于') {
+                        buffer.append("CHAN");
+                    } else {
+                        buffer.append("SHAN");
+                    }
+                } else if (text.charAt(i) == '乐') {
+                    buffer.append("YUE");
+                } else if (text.charAt(i) == '解') {
+                    buffer.append("XIE");
+                } else if (text.charAt(i) == '仇') {
+                    buffer.append("QIU");
+                } else if (text.charAt(i) == '钭') {
+                    buffer.append("TOU");
+                } else if (text.charAt(i) == '宿') {
+                    buffer.append("SU");
+                } else if (text.charAt(i) == '卻') {
+                    buffer.append("XI");
+                } else if (text.charAt(i) == '查') {
+                    buffer.append("ZHA");
+                } else if (text.charAt(i) == '长') {
+                    buffer.append("ZHANG");
+                } else {
+                    buffer.append(Pinyin.toPinyin(text.charAt(i))).append(' ');
+                }
             } else {
                 buffer.append(Pinyin.toPinyin(text.charAt(i))).append(' ');
             }
