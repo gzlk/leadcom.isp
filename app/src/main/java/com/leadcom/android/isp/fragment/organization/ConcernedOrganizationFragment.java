@@ -54,7 +54,7 @@ public class ConcernedOrganizationFragment extends BaseOrganizationFragment {
         return cof;
     }
 
-    private static Bundle getBundle(String groupId, String groupName, int concernType) {
+    static Bundle getBundle(String groupId, String groupName, int concernType) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_GROUP_NAME, groupName);

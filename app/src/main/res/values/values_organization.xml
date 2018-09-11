@@ -38,6 +38,8 @@
     <string name="ui_organization_concerned_nothing">没有关注过其他组织</string>
     <string name="ui_organization_concerned_from_nothing">暂时没有更多的关注者</string>
     <string name="ui_organization_concerned_search_nothing">没有组织</string>
+    <string name="ui_group_concern_main_concern_to">关注</string>
+    <string name="ui_group_concern_main_concern_from">被关注</string>
     <string-array name="ui_organization_concerned_type">
         <item>当前组织</item>
         <item>上级</item>
@@ -71,14 +73,14 @@
         <item>9|清空聊天记录||0</item>
     </string-array>
     <string-array name="ui_group_details_items">
-        <item>1|全体成员|%d|1|0xe674</item>
-        <item>2|下属分支|%d|1|0xe696</item>
+        <item>1|通讯录|%d|1|0xe674</item>
+        <item>2|组织架构||1|0xe6ac</item>
+        <item>8|履职统计||1|0xe6ad</item>
+        <item>9|活动管理||1|0xe62e</item>
         <item>3|组织档案|%d|1|0xe670</item>
-        <item>4|关注|%d|1|0xe678</item>
-        <item>5|被关注|%d|1|0xe678</item>
-        <item>6|本组织成员信息统计||1|0xe6a1</item>
+        <item>6|成员信息统计||1|0xe6a1</item>
         <item>7|资料授权管理和查看||1|0xe6de</item>
-        <item>8|成员履职统计||1|0xe6ad</item>
+        <item>4|关注和被关注|%d|1|0xe678</item>
     </string-array>
     <string name="ui_group_details_self_define">自定义创建栏目</string>
     <string name="ui_group_details_self_define_hint">栏目名称(最大限10字)</string>

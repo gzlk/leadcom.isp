@@ -36,6 +36,7 @@ import com.leadcom.android.isp.fragment.organization.ConcernedOrganizationFragme
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
 import com.leadcom.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
+import com.leadcom.android.isp.fragment.organization.GroupConcernedMainFragment;
 import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.fragment.organization.SquadsFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
@@ -537,6 +538,7 @@ public class GroupFragment extends BaseOrganizationFragment {
     private void onGroupChange(Organization group) {
         titleTextView.setText(Html.fromHtml(group.getName()));
         PreferenceHelper.save(Cache.get(R.string.pf_last_login_user_group_current, R.string.pf_last_login_user_group_current_beta), group.getId());
+        currentGroup = group.getId();
         if (null != gAdapter) {
             for (int i = 0, len = gAdapter.getItemCount(); i < len; i++) {
                 Organization org = gAdapter.get(i);
@@ -556,10 +558,33 @@ public class GroupFragment extends BaseOrganizationFragment {
             dAdapter.replace(group, 0);
         }
         resetQuantity(group.getCalculate());
-        // 是否有查看成员资料统计权限
-        SimpleClickableItem item = new SimpleClickableItem(items[5]);
+        // 是否可以查看履职统计数据
+        SimpleClickableItem item = new SimpleClickableItem(items[2]);
+        if (isMember(group.getId())) {
+            // 履职统计在组织架构后面
+            int in = dAdapter.indexOf(new SimpleClickableItem(items[1]));
+            if (dAdapter.indexOf(item) < 0) {
+                dAdapter.add(item, in + 1);
+            }
+            //dAdapter.update(item);
+            if (isSingle) {
+                dAdapter.remove(item);
+            }
+        } else {
+            dAdapter.remove(item);
+        }
+        // 是否有查看成员信息统计权限
+        item = new SimpleClickableItem(items[5]);
+        boolean hasNatureCount = false;
         if (hasOperation(group.getId(), GRPOperation.MEMBER_NATURE_COUNT)) {
-            dAdapter.update(item);
+            hasNatureCount = true;
+            // 成员信息统计在组织档案后面
+            int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
+            if (dAdapter.indexOf(item) < 0) {
+                dAdapter.add(item, in + 1);
+            } else {
+                dAdapter.update(item);
+            }
             if (isSingle) {
                 dAdapter.remove(item);
             }
@@ -569,21 +594,13 @@ public class GroupFragment extends BaseOrganizationFragment {
         // 是否有授权管理权限
         item = new SimpleClickableItem(items[6]);
         if (hasOperation(group.getId(), GRPOperation.GROUP_PERMISSION)) {
-            dAdapter.update(item);
-            if (isSingle) {
-                dAdapter.remove(item);
-            }
-        } else {
-            dAdapter.remove(item);
-        }
-        // 是否可以查看履职统计数据
-        item = new SimpleClickableItem(items[7]);
-        if (isMember(group.getId())) {
-            int in = dAdapter.indexOf(new SimpleClickableItem(items[2]));
+            // 授权管理在组织档案后面的后面
+            int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
             if (dAdapter.indexOf(item) < 0) {
-                dAdapter.add(item, in + 1);
+                dAdapter.add(item, in + (hasNatureCount ? 2 : 1));
+            } else {
+                dAdapter.update(item);
             }
-            //dAdapter.update(item);
             if (isSingle) {
                 dAdapter.remove(item);
             }
@@ -638,16 +655,16 @@ public class GroupFragment extends BaseOrganizationFragment {
             int index = item.getIndex();
             switch (index) {
                 case 1:
-                    item.setSource(format(items[index - 1], quantity.getMemberNum()));
+                    item.setSource(format(items[0], quantity.getMemberNum()));
                     break;
                 case 2:
-                    item.setSource(format(items[index - 1], quantity.getSquadNum()));
+                    item.setSource(format(items[1], quantity.getSquadNum()));
                     break;
                 case 3:
-                    item.setSource(format(items[index - 1], quantity.getDocNum()));
+                    item.setSource(format(items[4], quantity.getDocNum()));
                     break;
                 case 4:
-                    item.setSource(format(items[index - 1], quantity.getConGroupNum()));
+                    item.setSource(format(items[7], quantity.getConGroupNum()));
                     break;
                 case 5:
                     item.setSource(format(items[index - 1], quantity.getConMeNum()));
@@ -810,13 +827,14 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 4:
             case 5:
+                GroupConcernedMainFragment.open(this, group.getId(), group.getName());
                 //if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
                 // 每个人都可以打开查看关注的组织列表？
-                ConcernedOrganizationFragment.open(this, group.getId(), group.getName(), (item.getIndex() == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
+                //ConcernedOrganizationFragment.open(this, group.getId(), group.getName(), (item.getIndex() == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
                 //}
                 break;
             case 6:
-                // 成员资料统计
+                // 成员信息统计
                 MemberNatureMainFragment.open(this, group.getId(), group.getName(), false, "");
                 break;
             case 7:
