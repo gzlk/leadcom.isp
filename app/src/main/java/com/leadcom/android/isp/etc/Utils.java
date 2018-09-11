@@ -540,6 +540,8 @@ public class Utils {
         for (int i = 0; i < text.length(); i++) {
             if (i == 0 && text.charAt(i) == '曾') {
                 buffer.append("ZENG ");
+            } else if (i == 0 && text.charAt(i) == '单') {
+                buffer.append("SHAN");
             } else {
                 buffer.append(Pinyin.toPinyin(text.charAt(i))).append(' ');
             }
