@@ -96,6 +96,13 @@
     <string name="ui_group_squad_nothing">组织还没有分支，您来添加第一个吧</string>
     <string name="ui_organization_details_not_exists">抱歉，该组织不存在</string>
 
+    <string name="ui_group_constructor_fragment_title">组织架构</string>
+    <string-array name="ui_group_constructor_items">
+        <item>0|上级组织||1|0xe6ae</item>
+        <item>1|下级组织||1|0xe6af</item>
+        <item>2|下属分支||1|0xe6ab</item>
+    </string-array>
+
     <string name="ui_organization_squad_add_title">名称：</string>
     <string name="ui_organization_squad_add_hint">分支名称(10个字以内)</string>
     <string name="ui_organization_squad_add_name_invalid">分支名称不符合要求</string>
