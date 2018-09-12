@@ -384,7 +384,7 @@ public class PhoneContactFragment extends BaseOrganizationFragment {
         @Override
         public void onClick(int index) {
             // 添加指定index的联系人到小组或组织
-            Contact contact = !isEmpty(searchingText) ? mAdapter.get(index) : sAdapter.get(index);
+            Contact contact = isEmpty(searchingText) ? mAdapter.get(index) : sAdapter.get(index);
             String phone = contact.getPhone();
             if (phone.length() > 11) {
                 phone = phone.substring(phone.length() - 11);
