@@ -291,7 +291,10 @@ public class LabelPickFragment extends BaseSwipeRefreshSupportFragment {
                         }
                     }
                 }
-                readLocalDictionary();
+                if (mType == TYPE_LABEL) {
+                    // 标签才读取本地自定义内容
+                    readLocalDictionary();
+                }
                 stopRefreshing();
             }
         }).list(mType == TYPE_CATEGORY ? Dictionary.Type.ARCHIVE_TYPE : Dictionary.Type.ARCHIVE_NATURE);
