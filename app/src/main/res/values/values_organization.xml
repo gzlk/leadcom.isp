@@ -75,9 +75,9 @@
     <string-array name="ui_group_details_items">
         <item>1|通讯录||1|0xe674</item>
         <item>2|组织架构||1|0xe6ac</item>
-        <item>8|履职统计||1|0xe6ad</item>
-        <item>9|活动管理||1|0xe62e</item>
-        <item>3|组织档案||1|0xe670</item>
+        <item>3|履职统计||1|0xe6ad</item>
+        <item>4|活动管理||1|0xe62e</item>
+        <item>5|组织档案||1|0xe670</item>
         <item>6|成员信息统计||1|0xe6a1</item>
     </string-array>
     <string name="ui_group_details_self_define">自定义创建栏目</string>

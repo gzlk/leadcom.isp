@@ -713,7 +713,8 @@ public class GroupFragment extends BaseOrganizationFragment {
 
             dAdapter.add(new Organization());
             for (String string : items) {
-                if (string.contains("6|") || string.contains("7|") || string.contains("8|")) {
+                if (string.contains("3|") || string.contains("6|")) {
+                //if (string.contains("6|") || string.contains("7|") || string.contains("8|")) {
                     continue;
                 }
                 SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
@@ -822,13 +823,17 @@ public class GroupFragment extends BaseOrganizationFragment {
                 GroupConstructFragment.open(this, group.getId());
                 break;
             case 3:
-                // 组织档案
-                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_GROUP, group.getId(), "", group.getName());
+                // 成员履职统计
+                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_DUTY, group.getId(), "", group.getName());
                 //ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;
             case 4:
+                // 活动管理
+                break;
             case 5:
-                GroupConcernedMainFragment.open(this, group.getId(), group.getName());
+                // 组织档案
+                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_GROUP, group.getId(), "", group.getName());
+                //GroupConcernedMainFragment.open(this, group.getId(), group.getName());
                 //if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
                 // 每个人都可以打开查看关注的组织列表？
                 //ConcernedOrganizationFragment.open(this, group.getId(), group.getName(), (item.getIndex() == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
@@ -843,8 +848,6 @@ public class GroupFragment extends BaseOrganizationFragment {
                 GroupAuthorizeFragment.open(this, group.getId(), group.getName());
                 break;
             case 8:
-                // 成员履职统计
-                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_DUTY, group.getId(), "", group.getName());
                 break;
             default:
                 break;
