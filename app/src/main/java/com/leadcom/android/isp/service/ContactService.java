@@ -1,9 +1,11 @@
 package com.leadcom.android.isp.service;
 
+import android.app.Notification;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
@@ -40,6 +42,7 @@ public class ContactService extends BaseService {
     public static final String ACTION_READ_CONTACT = "com.leadcom.android.isp.service.READ_CONTACTS";
     public static final String ACTION_REFRESH_CONTACT = "com.leadcom.android.isp.service.REFRESH_CONTACTS";
     public static final String ACTION_REFRESH_COMPLETE = "com.leadcom.android.isp.service.REFRESH_COMPLETE";
+    private static final int SERVICE_ID = Integer.MAX_VALUE;
 
     public static void start(boolean writable) {
         Intent intent = new Intent(App.app(), ContactService.class);
@@ -50,7 +53,19 @@ public class ContactService extends BaseService {
     public static void refresh() {
         Intent intent = new Intent(App.app(), ContactService.class);
         intent.setAction(ACTION_REFRESH_CONTACT);
-        App.app().startService(intent);
+        if (Build.VERSION.SDK_INT >= 26) {
+            App.app().startForegroundService(intent);
+        } else {
+            App.app().startService(intent);
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (Build.VERSION.SDK_INT >= 26) {
+            startForeground(SERVICE_ID, new Notification());
+        }
     }
 
     @Override
