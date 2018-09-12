@@ -558,7 +558,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             mQueryId = "";
             dAdapter.replace(group, 0);
         }
-        resetQuantity(group.getCalculate());
+        //resetQuantity(group.getCalculate());
         // 是否可以查看履职统计数据
         SimpleClickableItem item = new SimpleClickableItem(items[2]);
         if (isMember(group.getId())) {
@@ -593,28 +593,28 @@ public class GroupFragment extends BaseOrganizationFragment {
             dAdapter.remove(item);
         }
         // 是否有授权管理权限
-        item = new SimpleClickableItem(items[6]);
-        if (hasOperation(group.getId(), GRPOperation.GROUP_PERMISSION)) {
-            // 授权管理在组织档案后面的后面
-            int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
-            if (dAdapter.indexOf(item) < 0) {
-                dAdapter.add(item, in + (hasNatureCount ? 2 : 1));
-            } else {
-                dAdapter.update(item);
-            }
-            if (isSingle) {
-                dAdapter.remove(item);
-            }
-        } else {
-            dAdapter.remove(item);
-        }
-        removeClassify();
+//        item = new SimpleClickableItem(items[6]);
+//        if (hasOperation(group.getId(), GRPOperation.GROUP_PERMISSION)) {
+//            // 授权管理在组织档案后面的后面
+//            int in = dAdapter.indexOf(new SimpleClickableItem(items[4]));
+//            if (dAdapter.indexOf(item) < 0) {
+//                dAdapter.add(item, in + (hasNatureCount ? 2 : 1));
+//            } else {
+//                dAdapter.update(item);
+//            }
+//            if (isSingle) {
+//                dAdapter.remove(item);
+//            }
+//        } else {
+//            dAdapter.remove(item);
+//        }
+        //removeClassify();
         //dAdapter.sort();
-        if (isSingle) {
-            return;
-        }
-        loadGroupSelfDefined();
-        selfDefine.setVisibility(hasOperation(group.getId(), GRPOperation.GROUP_DEFINE) ? View.VISIBLE : View.GONE);
+        //if (isSingle) {
+        //    return;
+        //}
+        //loadGroupSelfDefined();
+        //selfDefine.setVisibility(hasOperation(group.getId(), GRPOperation.GROUP_DEFINE) ? View.VISIBLE : View.GONE);
     }
 
     private void removeClassify() {
