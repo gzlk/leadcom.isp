@@ -111,6 +111,7 @@
     <string name="ui_base_text_think_again">再想想</string>
     <string name="ui_base_text_new">新建</string>
     <string name="ui_base_text_add">添加</string>
+    <string name="ui_base_text_added">已添加</string>
     <string name="ui_base_text_launch">发起</string>
     <string name="ui_base_text_management">管理</string>
     <string name="ui_base_text_yes">是的</string>

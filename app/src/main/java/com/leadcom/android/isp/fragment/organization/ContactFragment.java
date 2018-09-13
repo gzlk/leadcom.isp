@@ -216,7 +216,7 @@ public class ContactFragment extends BaseOrganizationFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_organization_contact;
+        return R.layout.fragment_searchable_list_swipe_enabled;
     }
 
     @Override

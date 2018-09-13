@@ -31,6 +31,7 @@ import java.util.List;
 public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFragment {
 
     protected static final String PARAM_SQUAD_ID = "bof_squad_id";
+    protected static final String PARAM_NAME = "bof_name";
     protected String mOrganizationId, mSquadId;
 
     @Override

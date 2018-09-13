@@ -155,7 +155,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_group_squads;
+        return R.layout.fragment_searchable_list_swipe_disabled;
     }
 
     @Override

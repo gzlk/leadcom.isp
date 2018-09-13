@@ -100,6 +100,19 @@
         <item>1|下级组织||1|0xe6af</item>
         <item>2|下属分支||1|0xe6ab</item>
     </string-array>
+    <string name="ui_group_constructor_groups_fragment_title_supper">上级组织</string>
+    <string name="ui_group_constructor_groups_fragment_title_supper_add">添加上级组织</string>
+    <string name="ui_group_constructor_groups_fragment_title_sub">下级组织</string>
+    <string name="ui_group_constructor_groups_add_self_warning">不能添加组织本身为上级</string>
+    <string name="ui_group_constructor_groups_add_warning" formatted="false">
+        <![CDATA[您确定要将<font color="#3cbaff">%s</font>加为上级组织吗？]]>
+    </string>
+    <string name="ui_group_constructor_groups_remove_warning" formatted="false">
+        <![CDATA[正在取消<font color="#3cbaff">%s</font>(上级)与您的组织<font color="#3cbaff">%s</font>(下级)的上下级关系，确定继续吗？]]>
+    </string>
+    <string name="ui_group_constructor_groups_none_superior">没有上级组织</string>
+    <string name="ui_group_constructor_groups_none_sub">没有下级组织</string>
+    <string name="ui_group_constructor_groups_none_search">找不到您想要的组织</string>
 
     <string name="ui_organization_squad_add_title">名称：</string>
     <string name="ui_organization_squad_add_hint">分支名称(10个字以内)</string>
@@ -169,14 +182,14 @@
     <string name="ui_phone_contact_waiting_searching_contacts">正在搜索联系人，请稍候&#8230;</string>
     <string name="ui_phone_contact_waiting_read_contacts_pagination">正在处理分页%d/%d，请稍候&#8230;</string>
     <string name="ui_phone_contact_random_contacts" formatted="false">随机生成%d个联系人(请放心，本操作仅供测试用，不会真实导入您的设备)</string>
-    <string name="ui_phone_contact_waiting_pagination">正在忙，请勿打扰&#8230;</string>
+    <string name="ui_phone_contact_waiting_pagination">正在忙，请稍候&#8230;</string>
     <string name="ui_phone_contact_nothing_read">
         <![CDATA[<b>没有读取到任何联系人</b><br/>由此造成的原因可能是您确实没有保存过联系人，或者因为其他<font color="#3cbaff">安全管理类软件</font>限制了相应的权限，请确认后再试试。]]>
     </string>
     <string name="ui_phone_contact_invite">邀请</string>
     <string name="ui_phone_contact_add">添加</string>
     <string name="ui_phone_contact_inviting">已邀请</string>
-    <string name="ui_phone_contact_invited">已添加</string>
+    <string name="ui_phone_contact_invited">@string/ui_base_text_added</string>
     <string name="ui_phone_contact_invite_user_to_organization" formatted="false">【%s】正在邀请您加入『%s』</string>
     <string name="ui_phone_contact_invite_success">邀请已发出，请等待对方确认后会有消息提醒</string>
     <string name="ui_phone_contact_invite_failed_not_exist" formatted="false">很抱歉，%s不是注册用户</string>

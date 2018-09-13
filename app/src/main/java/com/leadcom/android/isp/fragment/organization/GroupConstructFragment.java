@@ -11,6 +11,7 @@ import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.home.GroupDetailsViewHolder;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.common.SimpleClickableItem;
+import com.leadcom.android.isp.model.organization.RelateGroup;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
@@ -32,14 +33,16 @@ public class GroupConstructFragment extends BaseOrganizationFragment {
         return gcf;
     }
 
-    public static void open(BaseFragment fragment, String groupId) {
+    public static void open(BaseFragment fragment, String groupId, String groupName) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
+        bundle.putString(PARAM_NAME, groupName);
         fragment.openActivity(GroupConstructFragment.class.getName(), bundle, true, false);
     }
 
     private ItemAdapter mAdapter;
     private String[] items;
+    private String mGroupName;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -47,6 +50,18 @@ public class GroupConstructFragment extends BaseOrganizationFragment {
         enableSwipe(false);
         isLoadingComplete(true);
         setCustomTitle(R.string.ui_group_constructor_fragment_title);
+    }
+
+    @Override
+    protected void getParamsFromBundle(Bundle bundle) {
+        super.getParamsFromBundle(bundle);
+        mGroupName = bundle.getString(PARAM_NAME, "");
+    }
+
+    @Override
+    protected void saveParamsToBundle(Bundle bundle) {
+        super.saveParamsToBundle(bundle);
+        bundle.putString(PARAM_NAME, mGroupName);
     }
 
     @Override
@@ -72,10 +87,14 @@ public class GroupConstructFragment extends BaseOrganizationFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-            switch (index){
+            switch (index) {
                 case 0:
+                    // 上级组织
+                    GroupsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.SUPERIOR);
                     break;
                 case 1:
+                    // 下级组织
+                    GroupsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.SUBORDINATE);
                     break;
                 case 2:
                     // 下属小组

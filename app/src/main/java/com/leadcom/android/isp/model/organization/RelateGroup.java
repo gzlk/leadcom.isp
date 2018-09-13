@@ -50,6 +50,32 @@ public class RelateGroup extends Model {
         int FOLLOWED = 2;
     }
 
+    /**
+     * 上下级关系
+     */
+    public interface RelationType {
+        /**
+         * 上级
+         */
+        int SUPERIOR = 1;
+        /**
+         * 下级
+         */
+        int SUBORDINATE = 2;
+        /**
+         * 友好
+         */
+        int FRIEND = 3;
+        /**
+         * 无关系
+         */
+        int NONE = 4;
+        /**
+         * 添加上级组织
+         */
+        int ADD = 99;
+    }
+
     public RelateGroup() {
     }
 
@@ -65,8 +91,10 @@ public class RelateGroup extends Model {
     private String groupId;     //组织ID
     private String groupName;   //组织的名称
     private String logo;   // 组织的logo
+    private String groupLogo;
     private String intro;  // 组织的简介
     private int type;        //关联的类型:1.加入的组织,2.关注的组织
+    private int relationType;
     private Role groRole;    //组织角色
 
     public String getConGroupId() {
@@ -109,6 +137,14 @@ public class RelateGroup extends Model {
         this.logo = logo;
     }
 
+    public String getGroupLogo() {
+        return groupLogo;
+    }
+
+    public void setGroupLogo(String groupLogo) {
+        this.groupLogo = groupLogo;
+    }
+
     public String getIntro() {
         return intro;
     }
@@ -123,6 +159,35 @@ public class RelateGroup extends Model {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getRelationType() {
+        return relationType;
+    }
+
+    public void setRelationType(int relationType) {
+        this.relationType = relationType;
+    }
+
+    /**
+     * 是否上级组织
+     */
+    public boolean isSuperior() {
+        return relationType == RelationType.SUPERIOR;
+    }
+
+    /**
+     * 是否下级组织
+     */
+    public boolean isSubordinate() {
+        return relationType == RelationType.SUBORDINATE;
+    }
+
+    /**
+     * 没有任何关系
+     */
+    public boolean isNoneRelation() {
+        return relationType == RelationType.NONE;
     }
 
     public Role getGroRole() {

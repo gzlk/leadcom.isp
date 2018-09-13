@@ -17,6 +17,7 @@ import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.CorneredButton;
+import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Squad;
 
 /**
@@ -164,6 +165,25 @@ public class GroupInterestViewHolder extends BaseViewHolder {
         buttonView.setTextColor(getColor(concern.isAuthorized() ? R.color.colorPrimary : R.color.textColor));
         buttonView.setBackgroundType(CorneredButton.BORDER);
         buttonView.setNormalColor(getColor(concern.isAuthorized() ? R.color.colorPrimary : R.color.textColor));
+    }
+
+    public void showContent(RelateGroup group, String searchingText) {
+        buttonView.setVisibility(showButton ? View.VISIBLE : View.GONE);
+        buttonView.setText(group.isSuperior() ? (group.isSelectable() ? R.string.ui_base_text_added : R.string.ui_base_text_cancel) : R.string.ui_base_text_add);
+        buttonView.setNormalColor(getColor(group.isSuperior() ? R.color.colorCaution : R.color.colorPrimary));
+        buttonView.setEnabled(!group.isSelectable());
+        String cover = group.getGroupLogo();
+        if (isEmpty(cover) || cover.length() < 20) {
+            cover = "drawable://" + R.drawable.img_default_group_icon;
+        }
+        coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_35), false, false);
+        selector.setVisibility(View.GONE);
+        String name = group.getGroupName();
+        if (isEmpty(name)) {
+            name = StringHelper.getString(R.string.ui_base_text_no_name_group);
+        }
+        name = getSearchingText(name, searchingText);
+        nameView.setText(Html.fromHtml(name));
     }
 
     @Click({R.id.ui_holder_view_group_interest_root, R.id.ui_holder_view_group_interest_button})

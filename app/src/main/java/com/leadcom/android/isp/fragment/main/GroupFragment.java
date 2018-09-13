@@ -714,7 +714,7 @@ public class GroupFragment extends BaseOrganizationFragment {
             dAdapter.add(new Organization());
             for (String string : items) {
                 if (string.contains("3|") || string.contains("6|")) {
-                //if (string.contains("6|") || string.contains("7|") || string.contains("8|")) {
+                    //if (string.contains("6|") || string.contains("7|") || string.contains("8|")) {
                     continue;
                 }
                 SimpleClickableItem item = new SimpleClickableItem(format(string, 0));
@@ -820,7 +820,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 2:
                 // 组织架构
-                GroupConstructFragment.open(this, group.getId());
+                GroupConstructFragment.open(this, group.getId(), group.getName());
                 break;
             case 3:
                 // 成员履职统计
