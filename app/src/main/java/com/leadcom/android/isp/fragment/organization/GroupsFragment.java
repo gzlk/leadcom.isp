@@ -12,6 +12,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.RelationRequest;
+import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -21,7 +22,9 @@ import com.leadcom.android.isp.holder.common.InputableSearchViewHolder;
 import com.leadcom.android.isp.holder.organization.GroupInterestViewHolder;
 import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
 import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
+import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.RelateGroup;
+import com.leadcom.android.isp.model.organization.Role;
 
 import java.util.List;
 
@@ -61,11 +64,16 @@ public class GroupsFragment extends BaseOrganizationFragment {
     private int mRelateType;
     private boolean isSearching = false;
 
+    private boolean hasOperation(String operation) {
+        Role role = Cache.cache().getGroupRole(mQueryId);
+        return null != role && role.hasOperation(operation);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setCustomTitle(mRelateType == RelateGroup.RelationType.SUPERIOR ? R.string.ui_group_constructor_groups_fragment_title_supper : (mRelateType == RelateGroup.RelationType.ADD ? R.string.ui_group_constructor_groups_fragment_title_supper_add : R.string.ui_group_constructor_groups_fragment_title_sub));
-        if (mRelateType == RelateGroup.RelationType.SUPERIOR) {
+        if (mRelateType == RelateGroup.RelationType.SUPERIOR && hasOperation(GRPOperation.GROUP_ASSOCIATION)) {
             setRightText(R.string.ui_base_text_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override

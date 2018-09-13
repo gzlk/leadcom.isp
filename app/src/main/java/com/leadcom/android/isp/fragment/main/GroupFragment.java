@@ -38,6 +38,7 @@ import com.leadcom.android.isp.fragment.organization.CreateOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConcernedMainFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
+import com.leadcom.android.isp.fragment.organization.GroupMemberDutyMainFragment;
 import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
 import com.leadcom.android.isp.fragment.organization.SquadsFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
@@ -824,7 +825,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 3:
                 // 成员履职统计
-                ArchiveSearchFragment.open(this, ArchiveSearchFragment.SEARCH_DUTY, group.getId(), "", group.getName());
+                GroupMemberDutyMainFragment.open(this, group.getId(), group.getName());
                 //ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;
             case 4:
