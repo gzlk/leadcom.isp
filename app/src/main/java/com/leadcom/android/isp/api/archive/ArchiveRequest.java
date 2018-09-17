@@ -501,4 +501,12 @@ public class ArchiveRequest extends Request<Archive> {
         }
         executeHttpRequest(getRequest(ListArchive.class, url, "", HttpMethods.Get));
     }
+
+    /**
+     * 拉取组织的活动列表
+     */
+    public void listActivities(String groupId, int pageNumber) {
+        String url = format("/group/groActivityNotice%s?groupId=%s", LIST, groupId);
+        executeHttpRequest(getRequest(ListArchive.class, url, "", HttpMethods.Get));
+    }
 }

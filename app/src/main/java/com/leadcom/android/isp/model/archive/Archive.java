@@ -138,6 +138,7 @@ public class Archive extends Additional {
         String Property = "property";
         String Category = "category";
         String Participant = "participant";
+        String Participator = "participator";
         String Participants = "participants";
         String TypeName = "typeName";
         String Code = "code";
@@ -150,6 +151,7 @@ public class Archive extends Additional {
         String ShowImage = "showImage";
         String Watermark = "watermark";
         String Site = "site";
+        String Recorder = "recorder";
     }
 
     /**
@@ -194,6 +196,10 @@ public class Archive extends Additional {
          * 意见和建议
          */
         int SUGGEST = 4;
+        /**
+         * 活动
+         */
+        int ACTIVITY = 10;
     }
 
     /**
@@ -440,6 +446,13 @@ public class Archive extends Additional {
     @Ignore
     private ArrayList<Attachment> attach;
 
+    // 活动相关
+    // 活动参与人
+    @Column(Field.Participator)
+    private String participator;
+    @Column(Field.Recorder)
+    private String recorder;
+
     // 创建者相关信息 ********************************************************************************
 
     //档案发起者ID
@@ -537,6 +550,10 @@ public class Archive extends Additional {
      */
     public boolean isTemplateArchive() {
         return docType == ArchiveType.TEMPLATE;
+    }
+
+    public boolean isActivity() {
+        return docType == ArchiveType.ACTIVITY;
     }
 
     public int getOwnType() {
@@ -866,6 +883,22 @@ public class Archive extends Additional {
 
     public void setAttach(ArrayList<Attachment> attach) {
         this.attach = attach;
+    }
+
+    public String getParticipator() {
+        return participator;
+    }
+
+    public void setParticipator(String participator) {
+        this.participator = participator;
+    }
+
+    public String getRecorder() {
+        return recorder;
+    }
+
+    public void setRecorder(String recorder) {
+        this.recorder = recorder;
     }
 
     public String getHappenDate() {

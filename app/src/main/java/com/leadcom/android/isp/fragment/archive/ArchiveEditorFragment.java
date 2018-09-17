@@ -299,6 +299,14 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         super.onDestroy();
     }
 
+    private boolean isActivity() {
+        return editorType == Archive.ArchiveType.ACTIVITY;
+    }
+
+    private boolean isAttachment() {
+        return editorType == Archive.ArchiveType.ATTACHMENT;
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         editorFocused = false;
@@ -342,7 +350,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 如果不是传入的服务器草稿id则判断是否有草稿
         if (isEmpty(mQueryId)) {
             // 图文模式下检索是否有未提交的草稿
-            if (editorType != Archive.ArchiveType.ATTACHMENT) {
+            if (!isActivity() && !isAttachment()) {
                 fetchingDraft();
             }
         } else {
@@ -362,6 +370,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private void resetTitle() {
         String title = "";
         switch (editorType) {
+            case Archive.ArchiveType.ACTIVITY:
+                title = StringHelper.getString(R.string.ui_group_activity_launch_title);
+                break;
             case Archive.ArchiveType.ATTACHMENT:
                 title = StringHelper.getString(R.string.ui_archive_creator_selector_text_attachment);
                 break;
@@ -374,7 +385,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 title = StringHelper.getString(R.string.ui_archive_creator_selector_text_template);
                 break;
         }
-        if (editorType == Archive.ArchiveType.ATTACHMENT) {
+        if (isAttachment() || isActivity()) {
             setCustomTitle(title);
         } else {
             setCustomTitle(StringHelper.getString(R.string.ui_text_document_create_fragment_title, title));
@@ -396,9 +407,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         }
         attachmentView.setVisibility(mArchive.isAttachmentArchive() ? View.VISIBLE : View.GONE);
         multimediaControlView.setVisibility(mArchive.isMultimediaArchive() ? View.VISIBLE : View.GONE);
-        multimediaView.setVisibility(mArchive.isTemplateArchive() ? View.GONE : View.VISIBLE);
-        templateView.setVisibility(mArchive.isTemplateArchive() ? View.VISIBLE : View.GONE);
-        if (mArchive.isTemplateArchive()) {
+        multimediaView.setVisibility(mArchive.isTemplateArchive() || mArchive.isActivity() ? View.GONE : View.VISIBLE);
+        templateView.setVisibility(mArchive.isTemplateArchive() || mArchive.isActivity() ? View.VISIBLE : View.GONE);
+        if (mArchive.isTemplateArchive() || mArchive.isActivity()) {
             isGroupArchive = true;
             isUserArchive = false;
         }
@@ -616,7 +627,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void onStop() {
-        if (!mArchive.isAttachmentArchive() && !isOpenOther) {
+        if (!mArchive.isAttachmentArchive() && !mArchive.isActivity() && !isOpenOther) {
             // 图文的组织档案才保存草稿
             saveDraft();
         }
@@ -696,7 +707,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
 
     @Override
     public void doingInResume() {
-        if (mArchive.isTemplateArchive()) {
+        if (mArchive.isTemplateArchive() || mArchive.isActivity()) {
             isGroupArchive = true;
             initializeTemplate();
         }
@@ -1349,7 +1360,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private OnImageSelectedListener imageSelectedListener = new OnImageSelectedListener() {
         @Override
         public void onImageSelected(ArrayList<String> selected) {
-            if (mArchive.isTemplateArchive()) {
+            if (mArchive.isTemplateArchive() || mArchive.isActivity()) {
                 resetImages(selected, false);
             } else {
                 if (null != selected && selected.size() > 0) {
@@ -2035,8 +2046,12 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private View authorView;
     @ViewId(R.id.ui_holder_view_simple_inputable_topic)
     private CorneredEditText topicContent;
+    @ViewId(R.id.ui_archive_creator_rich_editor_minute_title)
+    private TextView minuteTitle;
     @ViewId(R.id.ui_holder_view_simple_inputable_minute)
     private CorneredEditText minuteContent;
+    @ViewId(R.id.ui_archive_creator_rich_editor_attachment_title)
+    private TextView imageTitle;
     @ViewId(R.id.ui_archive_creator_rich_editor_template_images)
     private RecyclerView templateRecyclerView;
     private SimpleClickableViewHolder timeHolder;
@@ -2077,6 +2092,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         if (null == authorHolder) {
             authorHolder = new SimpleInputableViewHolder(authorView, this);
             authorHolder.showContent(format(templateItems[3], Cache.cache().userName));
+        }
+        if (mArchive.isActivity()) {
+            minuteTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_minute_title));
+            imageTitle.setText(StringHelper.getString(R.string.ui_group_activity_editor_files_title));
         }
     }
 

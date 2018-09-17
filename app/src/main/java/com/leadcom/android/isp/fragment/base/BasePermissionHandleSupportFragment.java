@@ -12,10 +12,10 @@ import android.support.v4.content.ContextCompat;
 
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
-import com.leadcom.android.isp.helper.popup.DialogHelper;
 import com.leadcom.android.isp.helper.LogHelper;
-import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
+import com.leadcom.android.isp.helper.popup.DialogHelper;
+import com.leadcom.android.isp.helper.popup.SimpleDialogHelper;
 
 /**
  * <b>功能描述：</b>提供Android 6.0+权限相关操作的fragment基类<br />
@@ -28,7 +28,7 @@ import com.leadcom.android.isp.helper.StringHelper;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BasePermissionHandleSupportFragment extends Fragment {
+public class BasePermissionHandleSupportFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {

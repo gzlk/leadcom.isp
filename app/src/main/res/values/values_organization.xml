@@ -120,6 +120,13 @@
         <item>1|下属支部履职统计||1|0xe6ab</item>
     </string-array>
 
+    <string name="ui_group_activity_fragment_title"></string>
+    <string name="ui_group_activity_loading">正在加载活动，请稍候&#8230;</string>
+    <string name="ui_group_activity_nothing">目前没有可参与的活动</string>
+    <string name="ui_group_activity_launch_title">发起活动</string>
+    <string name="ui_group_activity_editor_minute_title">活动\n描述</string>
+    <string name="ui_group_activity_editor_files_title">文件/图片(总数≤8，选填项)</string>
+
     <string name="ui_organization_squad_add_title">名称：</string>
     <string name="ui_organization_squad_add_hint">分支名称(10个字以内)</string>
     <string name="ui_organization_squad_add_name_invalid">分支名称不符合要求</string>

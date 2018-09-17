@@ -30,6 +30,7 @@ import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
+import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
 import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
 import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.ConcernedOrganizationFragment;
@@ -830,6 +831,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 4:
                 // 活动管理
+                ActivitiesFragment.open(this, group.getId(), group.getName());
                 break;
             case 5:
                 // 组织档案
