@@ -4,13 +4,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
-import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.fragment.base.BaseFragment;
-import com.leadcom.android.isp.helper.StringHelper;
-import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
 import com.hlk.hlklib.lib.view.ClearEditText;
+import com.leadcom.android.isp.R;
+import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.holder.BaseViewHolder;
 
 /**
  * <b>功能描述：</b><br />
@@ -39,6 +38,8 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
         ViewUtility.bind(this, itemView);
     }
 
+    private static final String KEY = "content_key_listener";
+
     /**
      * 显示内容
      * 标题，内容，hint，内容过滤，内容验证，最大长度
@@ -54,6 +55,10 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
             rightAddIcon.setVisibility(icon >= 2 ? View.VISIBLE : View.GONE);
         }
         showContent(strings[0], strings[1], strings[2], strings[3], strings[4], Integer.valueOf(strings[5]));
+    }
+
+    public void setEditable(boolean editable) {
+        contentView.setEnabled(editable);
     }
 
     public void setMaximumLines(int maxLines) {

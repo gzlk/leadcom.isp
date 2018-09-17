@@ -2,9 +2,7 @@ package com.leadcom.android.isp.model.organization;
 
 import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.etc.Cryptography;
-import com.hlk.hlklib.etc.Utility;
 import com.leadcom.android.isp.R;
-import com.leadcom.android.isp.etc.Utils;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.lib.Json;
 import com.leadcom.android.isp.model.user.SimpleUser;
@@ -105,8 +103,23 @@ public class SubMember implements Serializable {
         return members;
     }
 
+    /**
+     * 成员类别
+     */
+    public interface MemberType {
+        /**
+         * 用户
+         */
+        int USER = 1;
+        /**
+         * 组织
+         */
+        int GROUP = 2;
+    }
+
     private String userId;
     private String userName;
+    private int type;
 
     public SubMember() {
     }
@@ -114,11 +127,19 @@ public class SubMember implements Serializable {
     public SubMember(Member member) {
         userId = member.getUserId();
         userName = member.getUserName();
+        type = MemberType.USER;
     }
 
     public SubMember(SimpleUser user) {
         userId = user.getUserId();
         userName = user.getUserName();
+        type = MemberType.USER;
+    }
+
+    public SubMember(Organization group) {
+        userId = group.getId();
+        userName = group.getName();
+        type = MemberType.GROUP;
     }
 
     public String getUserId() {
@@ -138,6 +159,22 @@ public class SubMember implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isMember() {
+        return type == MemberType.USER;
+    }
+
+    public boolean isGroup() {
+        return type == MemberType.GROUP;
     }
 
     @Override

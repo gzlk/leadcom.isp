@@ -45,6 +45,7 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.common.ImageViewerFragment;
 import com.leadcom.android.isp.fragment.common.LabelPickFragment;
+import com.leadcom.android.isp.fragment.organization.GroupAllPickerFragment;
 import com.leadcom.android.isp.fragment.organization.GroupContactPickFragment;
 import com.leadcom.android.isp.fragment.organization.GroupPickerFragment;
 import com.leadcom.android.isp.fragment.organization.SquadPickerFragment;
@@ -156,7 +157,10 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         // 新建的档案都为临时档案
         //mArchive.setId(Archive.getDraftId());
         // 标记是否为组织档案
-        //mArchive.setGroupId(mQueryId);
+        if (editorType == Archive.ArchiveType.ACTIVITY) {
+            mArchive.setGroupId(mQueryId);
+            mQueryId = "";
+        }
         // 档案默认向所有人公开的
         mArchive.setAuthPublic(Seclusion.Type.Public);
         // 默认草稿作者为当前登录用户
@@ -391,14 +395,33 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             setCustomTitle(StringHelper.getString(R.string.ui_text_document_create_fragment_title, title));
         }
         setRightIcon(0);
-        setRightText(R.string.ui_base_text_next_step);
+        setRightText(isActivity() ? R.string.ui_base_text_publish : R.string.ui_base_text_next_step);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                // 显示附加菜单信息
-                openSettingDialog();
+                if (isActivity()) {
+                    // 发布
+                    if (resetActivityParameters()) {
+                        createActivity();
+                    }
+                } else {
+                    // 显示附加菜单信息
+                    openSettingDialog();
+                }
             }
         });
+    }
+
+    private void createActivity() {
+        ArchiveRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Archive>() {
+            @Override
+            public void onResponse(Archive archive, boolean success, String message) {
+                super.onResponse(archive, success, message);
+                if (success) {
+                    resultData(archive.getId());
+                }
+            }
+        }).createActivity(mArchive);
     }
 
     private void resetEditorLayout() {
@@ -577,12 +600,25 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                         if (null == oNames || !oNames.contains(member.getUserName())) {
                             names += (isEmpty(names) ? "" : "、") + member.getUserName();
                         }
-                        if (!mArchive.getParticipantIdList().contains(member.getUserId())) {
-                            mArchive.getParticipantIdList().add(member.getUserId());
+                        if (mArchive.isActivity()) {
+                            if (member.isGroup()) {
+                                if (!mArchive.getGroupIdList().contains(member.getUserId())) {
+                                    mArchive.getGroupIdList().add(member.getUserId());
+                                }
+                            } else if (member.isMember()) {
+                                if (!mArchive.getUserIdList().contains(member.getUserId())) {
+                                    mArchive.getUserIdList().add(member.getUserId());
+                                }
+                            }
+                        } else {
+                            if (!mArchive.getParticipantIdList().contains(member.getUserId())) {
+                                mArchive.getParticipantIdList().add(member.getUserId());
+                            }
                         }
                     }
                 }
                 mArchive.setParticipant(names);
+                mArchive.setParticipator(names);
                 if (null != participantHolder) {
                     participantHolder.showContent(format(templateItems[2], names));
                 }
@@ -770,6 +806,32 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 return false;
             }
         }
+        return true;
+    }
+
+    private boolean resetActivityParameters() {
+        mArchive.setTitle(titleView.getValue());
+        if (isEmpty(mArchive.getTitle())) {
+            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_title_is_blank);
+            return false;
+        }
+        if (mArchive.getHappenDate().equals(Model.DFT_DATE)) {
+            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_happen_date_is_blank);
+            return false;
+        }
+        mArchive.setSite(addressHolder.getValue());
+        if (isEmpty(mArchive.getSite())) {
+            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_site_is_blank);
+            return false;
+        }
+        mArchive.setParticipator(participantHolder.getValue());
+        if (isEmpty(mArchive.getParticipator())) {
+            ToastHelper.make().showMsg(R.string.ui_group_activity_editor_participator_is_blank);
+            return false;
+        }
+        mArchive.setRecorder(authorHolder.getValue());
+        mArchive.setTopic(topicContent.getValue());
+        mArchive.setContent(minuteContent.getValue());
         return true;
     }
 
@@ -2088,6 +2150,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
             participantHolder = new SimpleInputableViewHolder(participantView, this);
             participantHolder.showContent(format(templateItems[2], ""));
             participantHolder.setOnViewHolderElementClickListener(elementClickListener);
+            if (mArchive.isActivity()) {
+                participantHolder.setEditable(false);
+            }
         }
         if (null == authorHolder) {
             authorHolder = new SimpleInputableViewHolder(authorView, this);
@@ -2148,7 +2213,16 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-            openMemberPicker();
+            if (mArchive.isActivity()) {
+                // 组织、下级组织、成员拾取器
+                ArrayList<String> list = new ArrayList<>();
+                list.addAll(mArchive.getGroupIdList());
+                list.addAll(mArchive.getUserIdList());
+                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mQueryId, "", list);
+            } else {
+                // 参与者
+                openMemberPicker();
+            }
         }
     };
 
@@ -2169,6 +2243,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 imageAdapter.remove(image);
                 removeImageFromArchive(image);
             }
+            waitingFroCompressImages.clear();
         }
         // 清除档案原有的已上传列表
         if (mArchive.getImage().size() > 0) {

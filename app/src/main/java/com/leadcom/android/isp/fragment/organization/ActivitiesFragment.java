@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.organization;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -55,16 +56,24 @@ public class ActivitiesFragment extends BaseOrganizationFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isLoadingComplete(true);
-        setCustomTitle(R.string.ui_activity_manage_tooltip_menu_1);
+        setCustomTitle(R.string.ui_group_activity_fragment_title);
         if (isManager()) {
             setRightText(R.string.ui_base_text_launch);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
-                    ArchiveEditorFragment.open(ActivitiesFragment.this, "", Archive.ArchiveType.ACTIVITY);
+                    ArchiveEditorFragment.open(ActivitiesFragment.this, mQueryId, Archive.ArchiveType.ACTIVITY);
                 }
             });
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == REQUEST_CREATE) {
+            loadingActivities();
+        }
+        super.onActivityResult(requestCode, data);
     }
 
     @Override

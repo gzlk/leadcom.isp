@@ -452,6 +452,10 @@ public class Archive extends Additional {
     private String participator;
     @Column(Field.Recorder)
     private String recorder;
+    @Ignore
+    private ArrayList<String> groupIdList;
+    @Ignore
+    private ArrayList<String> userIdList;
 
     // 创建者相关信息 ********************************************************************************
 
@@ -899,6 +903,28 @@ public class Archive extends Additional {
 
     public void setRecorder(String recorder) {
         this.recorder = recorder;
+    }
+
+    public ArrayList<String> getGroupIdList() {
+        if (null == groupIdList) {
+            groupIdList = new ArrayList<>();
+        }
+        return groupIdList;
+    }
+
+    public void setGroupIdList(ArrayList<String> groupIdList) {
+        this.groupIdList = groupIdList;
+    }
+
+    public ArrayList<String> getUserIdList() {
+        if (null == userIdList) {
+            userIdList = new ArrayList<>();
+        }
+        return userIdList;
+    }
+
+    public void setUserIdList(ArrayList<String> userIdList) {
+        this.userIdList = userIdList;
     }
 
     public String getHappenDate() {

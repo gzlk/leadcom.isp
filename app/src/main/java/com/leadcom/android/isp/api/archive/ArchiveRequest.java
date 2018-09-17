@@ -503,6 +503,28 @@ public class ArchiveRequest extends Request<Archive> {
     }
 
     /**
+     * 创建一个活动
+     */
+    public void createActivity(Archive archive) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("groupId", archive.getGroupId())
+                    .put("title", archive.getTitle())
+                    .put("happenDate", archive.getHappenDate())
+                    .put("site", archive.getSite())
+                    .put("participator", archive.getParticipator())
+                    .put("recorder", checkNull(archive.getRecorder()))
+                    .put("topic", checkNull(archive.getTopic()))
+                    .put("content", checkNull(archive.getContent()))
+                    .put("groupIdList", new JSONArray(archive.getGroupIdList()))
+                    .put("userIdList", new JSONArray(archive.getUserIdList()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        executeHttpRequest(getRequest(SingleArchive.class, "/group/groActivity/add", object.toString(), HttpMethods.Post));
+    }
+
+    /**
      * 拉取组织的活动列表
      */
     public void listActivities(String groupId, int pageNumber) {
