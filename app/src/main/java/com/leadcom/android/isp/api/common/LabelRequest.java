@@ -1,4 +1,4 @@
-package com.leadcom.android.isp.api.activity;
+package com.leadcom.android.isp.api.common;
 
 import android.support.annotation.NonNull;
 

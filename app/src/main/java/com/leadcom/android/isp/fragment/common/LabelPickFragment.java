@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.hlk.hlklib.lib.view.ClearEditText;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
-import com.leadcom.android.isp.api.activity.LabelRequest;
+import com.leadcom.android.isp.api.common.LabelRequest;
 import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.archive.DictionaryRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
