@@ -58,7 +58,7 @@ public class SimpleInputableViewHolder extends BaseViewHolder {
     }
 
     public void setEditable(boolean editable) {
-        contentView.setEnabled(editable);
+        contentView.setEditable(editable);
     }
 
     public void setMaximumLines(int maxLines) {

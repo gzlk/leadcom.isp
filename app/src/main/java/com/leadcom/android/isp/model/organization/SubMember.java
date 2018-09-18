@@ -142,6 +142,12 @@ public class SubMember implements Serializable {
         type = MemberType.GROUP;
     }
 
+    public SubMember(RelateGroup group){
+        userId = group.getGroupId();
+        userName = group.getGroupName();
+        type = MemberType.GROUP;
+    }
+
     public String getUserId() {
         if (StringHelper.isEmpty(userId, true)) {
             userId = Cryptography.md5(userName);

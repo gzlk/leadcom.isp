@@ -2218,7 +2218,7 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 ArrayList<String> list = new ArrayList<>();
                 list.addAll(mArchive.getGroupIdList());
                 list.addAll(mArchive.getUserIdList());
-                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mQueryId, "", list);
+                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), mArchive.getGroupName(), list);
             } else {
                 // 参与者
                 openMemberPicker();

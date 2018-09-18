@@ -67,6 +67,8 @@ public class SquadsFragment extends BaseOrganizationFragment {
 
     @ViewId(R.id.ui_holder_view_searchable_container)
     private View searchInputableView;
+    @ViewId(R.id.ui_tool_view_select_all_root)
+    private View selectAll;
 
     private SquadAdapter mAdapter;
     private static String searchingText = "";
@@ -81,6 +83,7 @@ public class SquadsFragment extends BaseOrganizationFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        selectAll.setVisibility(View.GONE);
         dialIndex = -1;
         searchingText = "";
         enableSwipe(false);

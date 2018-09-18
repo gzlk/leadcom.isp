@@ -1,6 +1,7 @@
 package com.leadcom.android.isp.fragment.organization;
 
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -9,10 +10,11 @@ import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseViewPagerSupportFragment;
+import com.leadcom.android.isp.listener.OnTitleButtonClickListener;
+import com.leadcom.android.isp.model.organization.RelateGroup;
+import com.leadcom.android.isp.model.organization.SubMember;
 
 import java.util.ArrayList;
-
-import static com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment.PARAM_NAME;
 
 /**
  * <b>功能描述：</b>组织成员、下级组织/支部/成员拾取器<br />
@@ -35,7 +37,7 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     public static void open(BaseFragment fragment, String groupId, String groupName, ArrayList<String> selected) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
-        bundle.putString(PARAM_NAME, groupName);
+        bundle.putString(BaseOrganizationFragment.PARAM_NAME, groupName);
         bundle.putStringArrayList(PARAM_JSON, selected);
         fragment.openActivity(GroupAllPickerFragment.class.getName(), bundle, REQUEST_SELECT, true, false);
     }
@@ -79,11 +81,28 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
         setCustomTitle(R.string.ui_group_activity_editor_participator_select_fragment_title);
         topText1.setText(R.string.ui_group_activity_editor_participator_select_1);
         topText2.setText(R.string.ui_group_activity_editor_participator_select_2);
+        topText1.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
+        topText2.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimension(R.dimen.ui_base_text_size_small));
+        setRightText(R.string.ui_base_text_complete);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                ArrayList<SubMember> members = new ArrayList<>();
+                GroupsFragment groups = (GroupsFragment) mFragments.get(0);
+                members.addAll(groups.getSelectedItems());
+                resultData(SubMember.toJson(members));
+            }
+        });
     }
 
     @Override
     protected void initializeFragments() {
-
+        if (mFragments.size() <= 0) {
+            // 下级组织
+            Bundle bundle = GroupsFragment.getBundle(mQueryId, "", RelateGroup.RelationType.SUBORDINATE, true, mSelected);
+            GroupsFragment groups = GroupsFragment.newInstance(bundle);
+            mFragments.add(groups);
+        }
     }
 
     @Override

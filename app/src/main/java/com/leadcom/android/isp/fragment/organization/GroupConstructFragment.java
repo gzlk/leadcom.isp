@@ -81,7 +81,7 @@ public class GroupConstructFragment extends BaseOrganizationFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return false;
+        return true;
     }
 
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
@@ -90,11 +90,11 @@ public class GroupConstructFragment extends BaseOrganizationFragment {
             switch (index) {
                 case 0:
                     // 上级组织
-                    GroupsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.SUPERIOR);
+                    GroupsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.SUPERIOR, false, null);
                     break;
                 case 1:
                     // 下级组织
-                    GroupsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.SUBORDINATE);
+                    GroupsFragment.open(GroupConstructFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.SUBORDINATE, false, null);
                     break;
                 case 2:
                     // 下属小组

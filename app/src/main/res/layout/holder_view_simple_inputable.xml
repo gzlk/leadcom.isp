@@ -41,7 +41,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/ui_base_dimen_simple_item_height">
+            android:minHeight="@dimen/ui_base_dimen_simple_item_height"
+            android:paddingEnd="@dimen/ui_static_dp_5"
+            android:paddingStart="@dimen/ui_static_dp_5">
 
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:id="@+id/ui_holder_view_simple_clickable_right_icon_add"
@@ -51,7 +53,7 @@
                 android:textColor="@color/textColorHint"
                 android:visibility="gone"
                 app:ctv_active_color="@color/colorPrimary"
-                app:ctv_normal_color="@color/textColorHint" />
+                app:ctv_normal_color="@color/colorPrimary" />
 
             <com.hlk.hlklib.lib.view.CustomTextView
                 android:id="@+id/ui_holder_view_simple_clickable_right_icon"

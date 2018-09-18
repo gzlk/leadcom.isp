@@ -6,6 +6,8 @@
 
     <include layout="@layout/holder_view_searchable_inputable" />
 
+    <include layout="@layout/tool_view_select_all" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

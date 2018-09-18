@@ -177,7 +177,9 @@ public class GroupInterestViewHolder extends BaseViewHolder {
             cover = "drawable://" + R.drawable.img_default_group_icon;
         }
         coverView.displayImage(cover, getDimension(R.dimen.ui_static_dp_35), false, false);
-        selector.setVisibility(View.GONE);
+        coverView.setVisibility(selectable ? View.GONE : View.VISIBLE);
+        selector.setVisibility(selectable ? View.VISIBLE : View.GONE);
+        selector.setTextColor(getColor(group.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
         String name = group.getGroupName();
         if (isEmpty(name)) {
             name = StringHelper.getString(R.string.ui_base_text_no_name_group);

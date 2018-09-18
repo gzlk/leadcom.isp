@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
@@ -25,7 +27,10 @@ import com.leadcom.android.isp.listener.OnViewHolderElementClickListener;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.model.organization.SubMember;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,21 +53,33 @@ public class GroupsFragment extends BaseOrganizationFragment {
         return gf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String groupName, int openType) {
+    public static Bundle getBundle(String groupId, String groupName, int openType, boolean selectable, ArrayList<String> selected) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, groupName);
         bundle.putInt(PARAM_GROUPS_TYPE, openType);
+        bundle.putBoolean(PARAM_SELECTABLE, selectable);
+        bundle.putStringArrayList(PARAM_JSON, selected);
+        return bundle;
+    }
+
+    public static void open(BaseFragment fragment, String groupId, String groupName, int openType, boolean selectable, ArrayList<String> selected) {
+        Bundle bundle = getBundle(groupId, groupName, openType, selectable, selected);
         fragment.openActivity(GroupsFragment.class.getName(), bundle, REQUEST_CREATE, true, false);
     }
 
     @ViewId(R.id.ui_holder_view_searchable_container)
     private View searchView;
+    @ViewId(R.id.ui_tool_view_select_all_root)
+    private View selectAll;
+    @ViewId(R.id.ui_tool_view_select_all_icon)
+    private CustomTextView selectAllIcon;
 
     private RelationAdapter mAdapter;
     private String mGroupName, mSearchingText = "";
     private int mRelateType;
-    private boolean isSearching = false;
+    private boolean isSearching = false, mSelectable, mAllSelected = false;
+    private ArrayList<String> mSelected;
 
     private boolean hasOperation(String operation) {
         Role role = Cache.cache().getGroupRole(mQueryId);
@@ -72,13 +89,16 @@ public class GroupsFragment extends BaseOrganizationFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setCustomTitle(mRelateType == RelateGroup.RelationType.SUPERIOR ? R.string.ui_group_constructor_groups_fragment_title_supper : (mRelateType == RelateGroup.RelationType.ADD ? R.string.ui_group_constructor_groups_fragment_title_supper_add : R.string.ui_group_constructor_groups_fragment_title_sub));
+        if (!mSelectable) {
+            setCustomTitle(mRelateType == RelateGroup.RelationType.SUPERIOR ? R.string.ui_group_constructor_groups_fragment_title_supper : (mRelateType == RelateGroup.RelationType.ADD ? R.string.ui_group_constructor_groups_fragment_title_supper_add : R.string.ui_group_constructor_groups_fragment_title_sub));
+        }
+        selectAll.setVisibility(mSelectable ? View.VISIBLE : View.GONE);
         if (mRelateType == RelateGroup.RelationType.SUPERIOR && hasOperation(GRPOperation.GROUP_ASSOCIATION)) {
             setRightText(R.string.ui_base_text_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {
                 @Override
                 public void onClick() {
-                    GroupsFragment.open(GroupsFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.ADD);
+                    open(GroupsFragment.this, mQueryId, mGroupName, RelateGroup.RelationType.ADD, false, getExistsItems());
                 }
             });
         }
@@ -107,6 +127,11 @@ public class GroupsFragment extends BaseOrganizationFragment {
         super.getParamsFromBundle(bundle);
         mGroupName = bundle.getString(PARAM_NAME, "");
         mRelateType = bundle.getInt(PARAM_GROUPS_TYPE, RelateGroup.RelationType.NONE);
+        mSelectable = bundle.getBoolean(PARAM_SELECTABLE, false);
+        mSelected = bundle.getStringArrayList(PARAM_JSON);
+        if (null == mSelected) {
+            mSelected = new ArrayList<>();
+        }
     }
 
     @Override
@@ -114,6 +139,8 @@ public class GroupsFragment extends BaseOrganizationFragment {
         super.saveParamsToBundle(bundle);
         bundle.putString(PARAM_NAME, mGroupName);
         bundle.putInt(PARAM_GROUPS_TYPE, mRelateType);
+        bundle.putBoolean(PARAM_SELECTABLE, mSelectable);
+        bundle.putStringArrayList(PARAM_JSON, mSelected);
     }
 
     @Override
@@ -151,6 +178,53 @@ public class GroupsFragment extends BaseOrganizationFragment {
         return true;
     }
 
+    public ArrayList<SubMember> getSelectedItems() {
+        ArrayList<SubMember> list = new ArrayList<>();
+        Iterator<RelateGroup> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            RelateGroup group = iterator.next();
+            if (group.isSelected()) {
+                list.add(new SubMember(group));
+            }
+        }
+        return list;
+    }
+
+    private ArrayList<String> getExistsItems() {
+        ArrayList<String> list = new ArrayList<>();
+        Iterator<RelateGroup> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            RelateGroup group = iterator.next();
+            list.add(group.getId() + "," + group.getGroupId());
+        }
+        return list;
+    }
+
+    @Click({R.id.ui_tool_view_select_all_root})
+    void click(View view) {
+        // 全选
+        mAllSelected = !mAllSelected;
+        Iterator<RelateGroup> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            RelateGroup group = iterator.next();
+            if (mAllSelected) {
+                if (!group.isSelected()) {
+                    group.setSelected(true);
+                    mAdapter.update(group);
+                }
+            } else {
+                // 非全选
+                if (group.isSelected()) {
+                    if (!mSelected.contains(group.getGroupId())) {
+                        group.setSelected(false);
+                        mAdapter.update(group);
+                    }
+                }
+            }
+        }
+        selectAllIcon.setTextColor(getColor(mAllSelected ? R.color.colorPrimary : R.color.textColorHintLight));
+    }
+
     private void initializeAdapter() {
         if (null == mAdapter) {
             mAdapter = new RelationAdapter();
@@ -167,9 +241,9 @@ public class GroupsFragment extends BaseOrganizationFragment {
             if (isEmpty(group.getId())) {
                 group.setId(group.getGroupId());
             }
-            if (group.isSuperior() && mRelateType == RelateGroup.RelationType.ADD) {
-                group.setSelectable(true);
-            }
+            //if (group.isSuperior() && mRelateType == RelateGroup.RelationType.ADD) {
+            //    group.setSelectable(true);
+            //}
         }
         // 分页处理，避免主UI卡死
         mAdapter.setData(list);
@@ -190,6 +264,9 @@ public class GroupsFragment extends BaseOrganizationFragment {
         public void onComplete() {
             displayNothing(mAdapter.getItemCount() <= 0);
             isSearching = false;
+            // 查看是否所有的项目都选中了
+            mAllSelected = isAllSelected();
+            selectAllIcon.setTextColor(getColor(mAllSelected ? R.color.colorPrimary : R.color.textColorHintLight));
         }
     };
 
@@ -199,6 +276,11 @@ public class GroupsFragment extends BaseOrganizationFragment {
             public void onResponse(List<RelateGroup> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success && null != list) {
+                    for (RelateGroup group : list) {
+                        if (mSelected.contains(group.getGroupId())) {
+                            group.setSelected(true);
+                        }
+                    }
                     handleData(list);
                 }
             }
@@ -212,31 +294,70 @@ public class GroupsFragment extends BaseOrganizationFragment {
             public void onResponse(List<RelateGroup> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success && null != list) {
+                    // 查询的时候根据传入的已添加的上级组织列表设置是否可以在这里取消
+                    for (RelateGroup group : list) {
+                        String exist = getExistsGroup(group.getGroupId());
+                        if (!isEmpty(exist)) {
+                            assert exist != null;
+                            String[] split = exist.split(",");
+                            group.setId(split[0]);
+                        }
+                    }
                     handleData(list);
                 }
             }
         }).search(mQueryId, RelateGroup.RelationType.SUPERIOR, mSearchingText);
     }
 
+    private String getExistsGroup(String groupId) {
+        for (String string : mSelected) {
+            if (string.contains("," + groupId)) {
+                return string;
+            }
+        }
+        return null;
+    }
+
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
+            RelateGroup group = mAdapter.get(index);
             switch (view.getId()) {
                 case R.id.ui_holder_view_group_interest_button:
-                    RelateGroup group = mAdapter.get(index);
-                    if (group.isNoneRelation()) {
-                        if (mQueryId.equals(group.getGroupId())) {
-                            ToastHelper.make().showMsg(R.string.ui_group_constructor_groups_add_self_warning);
-                        } else {
-                            warningRelationAdd(group.getGroupId(), group.getGroupName());
+                    if (!mSelectable) {
+                        if (group.isNoneRelation()) {
+                            if (mQueryId.equals(group.getGroupId())) {
+                                ToastHelper.make().showMsg(R.string.ui_group_constructor_groups_add_self_warning);
+                            } else {
+                                warningRelationAdd(group.getGroupId(), group.getGroupName());
+                            }
+                        } else if (group.isSuperior()) {
+                            warningRelationRemove(group.getId(), group.getGroupId(), group.getGroupName());
                         }
-                    } else if (group.isSuperior()) {
-                        warningRelationRemove(group.getId(), group.getGroupId(), group.getGroupName());
+                    }
+                    break;
+                case R.id.ui_holder_view_group_interest_root:
+                    if (mSelectable) {
+                        group.setSelected(!group.isSelected());
+                        mAdapter.update(group);
+                        mAllSelected = isAllSelected();
+                        selectAllIcon.setTextColor(getColor(mAllSelected ? R.color.colorPrimary : R.color.textColorHintLight));
                     }
                     break;
             }
         }
     };
+
+    private boolean isAllSelected() {
+        Iterator<RelateGroup> iterator = mAdapter.iterator();
+        while (iterator.hasNext()) {
+            RelateGroup group = iterator.next();
+            if (!group.isSelected()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private void warningRelationAdd(final String groupId, String groupName) {
         String title = StringHelper.getString(R.string.ui_group_constructor_groups_add_warning, groupName);
@@ -302,8 +423,9 @@ public class GroupsFragment extends BaseOrganizationFragment {
         public GroupInterestViewHolder onCreateViewHolder(View itemView, int viewType) {
             GroupInterestViewHolder givh = new GroupInterestViewHolder(itemView, GroupsFragment.this);
             givh.setOnViewHolderElementClickListener(elementClickListener);
+            givh.setSelectable(mSelectable);
             // 显示上下级时才显示按钮
-            givh.setButtonShown(mRelateType == RelateGroup.RelationType.SUPERIOR || mRelateType == RelateGroup.RelationType.ADD);
+            givh.setButtonShown(!mSelectable && (mRelateType == RelateGroup.RelationType.SUPERIOR || mRelateType == RelateGroup.RelationType.ADD));
             return givh;
         }
 
