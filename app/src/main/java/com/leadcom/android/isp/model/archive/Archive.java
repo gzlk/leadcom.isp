@@ -12,6 +12,7 @@ import com.leadcom.android.isp.model.Model;
 import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.Seclusion;
 import com.leadcom.android.isp.model.organization.Organization;
+import com.leadcom.android.isp.model.organization.SubMember;
 import com.leadcom.android.isp.model.user.User;
 import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Ignore;
@@ -152,6 +153,7 @@ public class Archive extends Additional {
         String Watermark = "watermark";
         String Site = "site";
         String Recorder = "recorder";
+        String GroupActivityId = "groupActivityId";
     }
 
     /**
@@ -452,10 +454,12 @@ public class Archive extends Additional {
     private String participator;
     @Column(Field.Recorder)
     private String recorder;
+    @Column(Field.GroupActivityId)
+    private String groActivityId;
     @Ignore
     private ArrayList<String> groupIdList;
     @Ignore
-    private ArrayList<String> userIdList;
+    private ArrayList<SubMember> groSquMemberList;
 
     // 创建者相关信息 ********************************************************************************
 
@@ -905,6 +909,14 @@ public class Archive extends Additional {
         this.recorder = recorder;
     }
 
+    public String getGroActivityId() {
+        return groActivityId;
+    }
+
+    public void setGroActivityId(String groActivityId) {
+        this.groActivityId = groActivityId;
+    }
+
     public ArrayList<String> getGroupIdList() {
         if (null == groupIdList) {
             groupIdList = new ArrayList<>();
@@ -916,15 +928,15 @@ public class Archive extends Additional {
         this.groupIdList = groupIdList;
     }
 
-    public ArrayList<String> getUserIdList() {
-        if (null == userIdList) {
-            userIdList = new ArrayList<>();
+    public ArrayList<SubMember> getGroSquMemberList() {
+        if (null == groSquMemberList) {
+            groSquMemberList = new ArrayList<>();
         }
-        return userIdList;
+        return groSquMemberList;
     }
 
-    public void setUserIdList(ArrayList<String> userIdList) {
-        this.userIdList = userIdList;
+    public void setGroSquMemberList(ArrayList<SubMember> groSquMemberList) {
+        this.groSquMemberList = groSquMemberList;
     }
 
     public String getHappenDate() {

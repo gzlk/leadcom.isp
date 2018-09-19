@@ -11,6 +11,16 @@
     app:layout_itemType="main">
 
     <com.hlk.hlklib.lib.view.CustomTextView
+        android:id="@+id/ui_holder_view_group_squad_picker"
+        android:layout_width="@dimen/ui_static_dp_35"
+        android:layout_height="@dimen/ui_static_dp_35"
+        android:gravity="center"
+        android:text="@string/ui_icon_select_solid"
+        android:textColor="@color/textColorHintLight"
+        android:textSize="@dimen/ui_base_text_size_big"
+        android:visibility="gone" />
+
+    <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_holder_view_group_squad_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,6 +28,7 @@
         android:layout_marginEnd="@dimen/ui_static_dp_10"
         android:layout_marginStart="@dimen/ui_static_dp_10"
         android:layout_marginTop="@dimen/ui_static_dp_5"
+        android:layout_toEndOf="@+id/ui_holder_view_group_squad_picker"
         android:text="@string/ui_icon_group"
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/ui_base_text_size_huge" />
@@ -27,8 +38,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:gravity="center_vertical"
         android:layout_toEndOf="@+id/ui_holder_view_group_squad_logo"
         android:layout_toStartOf="@+id/ui_holder_view_group_squad_members"
+        android:minHeight="@dimen/ui_static_dp_35"
         android:text="@string/app_name_default" />
 
     <TextView
@@ -45,6 +58,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/ui_base_border_size_normal"
-        android:layout_below="@+id/ui_holder_view_group_squad_logo"
+        android:layout_below="@+id/ui_holder_view_group_squad_name"
         android:background="@color/windowBackground" />
 </RelativeLayout>

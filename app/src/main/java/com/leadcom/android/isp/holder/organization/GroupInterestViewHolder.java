@@ -45,7 +45,7 @@ public class GroupInterestViewHolder extends BaseViewHolder {
     private CorneredButton buttonView;
     @ViewId(R.id.ui_holder_view_group_interest_right_icon)
     private CustomTextView rightIcon;
-    @ViewId(R.id.ui_holder_view_group_interest_left_blank)
+    @ViewId(R.id.ui_holder_view_item_left_blank)
     private View leftBlank;
 
     private boolean selectable = false, showButton = true;

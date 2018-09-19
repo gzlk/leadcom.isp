@@ -8,11 +8,13 @@ import com.hlk.hlklib.etc.Utility;
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.hlk.hlklib.lib.view.CustomTextView;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.operation.GRPOperation;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.Squad;
 
 /**
@@ -28,12 +30,18 @@ import com.leadcom.android.isp.model.organization.Squad;
 
 public class SquadViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_group_squad_picker)
+    private CustomTextView picker;
+    @ViewId(R.id.ui_holder_view_group_squad_logo)
+    private CustomTextView logo;
     @ViewId(R.id.ui_holder_view_group_squad_name)
     private TextView nameView;
     @ViewId(R.id.ui_holder_view_group_squad_members)
     private TextView numberView;
     @ViewId(R.id.ui_tool_view_contact_button_edit)
     private View editButton;
+
+    private boolean showPicker = false;
 
     public SquadViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
@@ -44,6 +52,14 @@ public class SquadViewHolder extends BaseViewHolder {
         if (null != editButton) {
             editButton.setVisibility(shown ? View.VISIBLE : View.GONE);
         }
+    }
+
+    public void showPicker(boolean shown) {
+        showPicker = shown;
+        if (null != picker) {
+            picker.setVisibility(shown ? View.VISIBLE : View.GONE);
+        }
+        logo.setVisibility(shown ? View.GONE : View.VISIBLE);
     }
 
     public void showContent(Squad squad, String searchingText) {
@@ -57,11 +73,29 @@ public class SquadViewHolder extends BaseViewHolder {
         if (null != editButton && editButton.getVisibility() != View.VISIBLE) {
             showEdit(null != squad.getGroRole() && squad.getGroRole().hasOperation(GRPOperation.SQUAD_PROPERTY));
         }
+        if (null != picker) {
+            // 小组中成员是否被全选中
+            picker.setTextColor(getColor(squad.isSelectable() ? R.color.colorPrimary : R.color.textColorHintLight));
+        }
         nameView.setText(Html.fromHtml(name));
-        numberView.setText(format("%d人", squad.isSelectable() ? Integer.valueOf(squad.getAccessToken()) : squad.getMemberNum()));
+        int selected = getSquadMemberSelected(squad);
+        numberView.setText(format("%s%d人", (showPicker ? (selected > 0 ? format("%d/", selected) : "") : ""), squad.getGroSquMemberList().size()));
     }
 
-    @Click({R.id.ui_holder_view_group_squad_container, R.id.ui_tool_view_contact_button_edit, R.id.ui_tool_view_contact_button2})
+    private int getSquadMemberSelected(Squad squad) {
+        int cnt = 0;
+        for (Member member : squad.getGroSquMemberList()) {
+            if (member.isSelected()) {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+
+    @Click({R.id.ui_holder_view_group_squad_container,
+            R.id.ui_tool_view_contact_button_edit,
+            R.id.ui_tool_view_contact_button2,
+            R.id.ui_holder_view_group_squad_picker})
     private void viewClick(View view) {
         if (null != mOnViewHolderElementClickListener) {
             mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());

@@ -10,6 +10,7 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ArchiveRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.cache.Cache;
+import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.archive.ArchiveEditorFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.holder.organization.ActivityItemViewHolder;
@@ -57,15 +58,15 @@ public class ActivitiesFragment extends BaseOrganizationFragment {
         super.onActivityCreated(savedInstanceState);
         isLoadingComplete(true);
         setCustomTitle(R.string.ui_group_activity_fragment_title);
-        if (isManager()) {
-            setRightText(R.string.ui_base_text_launch);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
-                @Override
-                public void onClick() {
-                    ArchiveEditorFragment.open(ActivitiesFragment.this, mQueryId, Archive.ArchiveType.ACTIVITY);
-                }
-            });
-        }
+        //if (isManager()) {
+        setRightText(R.string.ui_base_text_launch);
+        setRightTitleClickListener(new OnTitleButtonClickListener() {
+            @Override
+            public void onClick() {
+                ArchiveEditorFragment.open(ActivitiesFragment.this, mQueryId, Archive.ArchiveType.ACTIVITY);
+            }
+        });
+        //}
     }
 
     @Override
@@ -104,6 +105,11 @@ public class ActivitiesFragment extends BaseOrganizationFragment {
             public void onResponse(List<Archive> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success && null != list) {
+                    for (Archive archive : list) {
+                        if (isEmpty(archive.getId())) {
+                            archive.setId(archive.getGroActivityId());
+                        }
+                    }
                     mAdapter.setData(list);
                 }
                 displayLoading(false);
@@ -143,7 +149,7 @@ public class ActivitiesFragment extends BaseOrganizationFragment {
     private OnViewHolderElementClickListener elementClickListener = new OnViewHolderElementClickListener() {
         @Override
         public void onClick(View view, int index) {
-
+            ArchiveDetailsFragment.open(ActivitiesFragment.this, mAdapter.get(index));
         }
     };
 

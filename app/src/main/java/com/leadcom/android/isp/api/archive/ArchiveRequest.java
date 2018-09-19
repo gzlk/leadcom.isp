@@ -15,6 +15,7 @@ import com.leadcom.android.isp.model.Dao;
 import com.leadcom.android.isp.model.archive.Archive;
 import com.leadcom.android.isp.model.archive.ArchivePushTarget;
 import com.leadcom.android.isp.model.common.Attachment;
+import com.leadcom.android.isp.model.organization.SubMember;
 import com.litesuits.http.request.param.HttpMethods;
 
 import org.json.JSONArray;
@@ -517,7 +518,7 @@ public class ArchiveRequest extends Request<Archive> {
                     .put("topic", checkNull(archive.getTopic()))
                     .put("content", checkNull(archive.getContent()))
                     .put("groupIdList", new JSONArray(archive.getGroupIdList()))
-                    .put("userIdList", new JSONArray(archive.getUserIdList()));
+                    .put("groSquMemberList", new JSONArray(SubMember.toJson(archive.getGroSquMemberList(), new String[]{"userName", "type"})));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -528,7 +529,7 @@ public class ArchiveRequest extends Request<Archive> {
      * 拉取组织的活动列表
      */
     public void listActivities(String groupId, int pageNumber) {
-        String url = format("/group/groActivityNotice%s?groupId=%s", LIST, groupId);
+        String url = format("/group/groActivityNotice%s?groupId=%s&pageNumber=%d", LIST, groupId, pageNumber);
         executeHttpRequest(getRequest(ListArchive.class, url, "", HttpMethods.Get));
     }
 }

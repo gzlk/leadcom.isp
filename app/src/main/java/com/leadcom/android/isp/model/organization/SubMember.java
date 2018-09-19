@@ -1,5 +1,7 @@
 package com.leadcom.android.isp.model.organization;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.reflect.TypeToken;
 import com.hlk.hlklib.etc.Cryptography;
 import com.leadcom.android.isp.R;
@@ -9,6 +11,8 @@ import com.leadcom.android.isp.model.user.SimpleUser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <b>功能描述：</b>只包含userId和userName两个属性的简单member对象<br />
@@ -30,6 +34,22 @@ public class SubMember implements Serializable {
 
     public static String toJson(SubMember member) {
         return null == member ? "{}" : Json.gson().toJson(member, new TypeToken<SubMember>() {
+        }.getType());
+    }
+
+    public static String toJson(ArrayList<SubMember> list, String[] ignoreFields) {
+        final List<String> ids = Arrays.asList(ignoreFields);
+        return Json.gson(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes f) {
+                return ids.contains(f.getName());
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return false;
+            }
+        }).toJson((null == list ? new ArrayList<>() : list), new TypeToken<ArrayList<SubMember>>() {
         }.getType());
     }
 
@@ -119,6 +139,7 @@ public class SubMember implements Serializable {
 
     private String userId;
     private String userName;
+    private String squadId;
     private int type;
 
     public SubMember() {
@@ -127,6 +148,7 @@ public class SubMember implements Serializable {
     public SubMember(Member member) {
         userId = member.getUserId();
         userName = member.getUserName();
+        squadId = member.getSquadId();
         type = MemberType.USER;
     }
 
@@ -136,13 +158,7 @@ public class SubMember implements Serializable {
         type = MemberType.USER;
     }
 
-    public SubMember(Organization group) {
-        userId = group.getId();
-        userName = group.getName();
-        type = MemberType.GROUP;
-    }
-
-    public SubMember(RelateGroup group){
+    public SubMember(RelateGroup group) {
         userId = group.getGroupId();
         userName = group.getGroupName();
         type = MemberType.GROUP;
@@ -167,6 +183,14 @@ public class SubMember implements Serializable {
         this.userName = userName;
     }
 
+    public String getSquadId() {
+        return squadId;
+    }
+
+    public void setSquadId(String squadId) {
+        this.squadId = squadId;
+    }
+
     public int getType() {
         return type;
     }
@@ -183,15 +207,23 @@ public class SubMember implements Serializable {
         return type == MemberType.GROUP;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        return null != object && getClass() == object.getClass() && equals((SubMember) object);
+    private static boolean isEmpty(String string) {
+        return StringHelper.isEmpty(string);
     }
 
-    public boolean equals(SubMember member) {
-        return null != member &&
-                !StringHelper.isEmpty(getUserId()) &&
-                !StringHelper.isEmpty(member.getUserId()) &&
-                member.getUserId().equals(getUserId());
+    @Override
+    public boolean equals(Object object) {
+        if (null == object) return false;
+        if (object instanceof SubMember) {
+            SubMember member = (SubMember) object;
+            boolean equals = !isEmpty(userId) &&
+                    !isEmpty(member.getUserId()) &&
+                    member.getUserId().equals(userId);
+            if (!isEmpty(member.getSquadId())) {
+                return equals && !isEmpty(squadId) && squadId.equals(member.getSquadId());
+            }
+            return equals;
+        }
+        return false;
     }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ui_holder_view_item_left_blank"
+    android:layout_width="@dimen/ui_static_dp_20"
+    android:layout_height="@dimen/ui_static_dp_15"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+</LinearLayout>

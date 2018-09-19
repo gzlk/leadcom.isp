@@ -23,11 +23,7 @@
             app:id_image_src="@drawable/img_default_user_header"
             app:id_image_type="oval" />
 
-        <View
-            android:id="@+id/ui_holder_view_group_interest_left_blank"
-            android:layout_width="@dimen/ui_static_dp_20"
-            android:layout_height="@dimen/ui_static_dp_15"
-            android:visibility="gone" />
+        <include layout="@layout/tool_view_item_left_blank" />
 
         <com.hlk.hlklib.lib.view.CustomTextView
             android:id="@+id/ui_holder_view_group_interest_select"

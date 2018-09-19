@@ -122,9 +122,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }
         isLoaded = false;
         archive.setOwnType(isEmpty(archive.getGroupId()) ? Archive.Type.USER : Archive.Type.GROUP);
-        fragment.openActivity(ArchiveDetailsFragment.class.getName(),
-                getBundle(archive, archive.getId(), isDraft, true),
-                true, false);
+        Bundle bundle = getBundle(archive, archive.getId(), isDraft, true);
+        fragment.openActivity(ArchiveDetailsFragment.class.getName(), bundle, true, false);
     }
 
     public static void open(Context context, String groupId, String archiveId, boolean isDraft, boolean innerOpen, String authorId) {
@@ -133,8 +132,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         archive.setGroupId(groupId);
         archive.setUserId(authorId);
         isLoaded = false;
-        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(),
-                getBundle(archive, archiveId, isDraft, innerOpen), true, false);
+        Bundle bundle = getBundle(archive, archiveId, isDraft, innerOpen);
+        BaseActivity.openActivity(context, ArchiveDetailsFragment.class.getName(), bundle, true, false);
     }
 
     private static Bundle getBundle(Archive archive, String archiveId, boolean isDraft, boolean innerOpen) {
@@ -160,7 +159,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     }
 
     private static boolean isH5(String h5) {
-        return !isEmpty(h5) && h5.contains("quesinfo.html");
+        // 问答或活动
+        return !isEmpty(h5) && (h5.contains("quesinfo.html") || h5.contains("activedetail.html"));
     }
 
     @Override

@@ -1,9 +1,14 @@
 package com.leadcom.android.isp.holder.organization;
 
 import android.view.View;
+import android.widget.TextView;
 
+import com.hlk.hlklib.lib.inject.Click;
+import com.hlk.hlklib.lib.inject.ViewId;
 import com.hlk.hlklib.lib.inject.ViewUtility;
+import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
+import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
 import com.leadcom.android.isp.model.archive.Archive;
 
@@ -20,11 +25,28 @@ import com.leadcom.android.isp.model.archive.Archive;
  */
 public class ActivityItemViewHolder extends BaseViewHolder {
 
+    @ViewId(R.id.ui_holder_view_group_activity_item_title)
+    private TextView titleView;
+    @ViewId(R.id.ui_holder_view_group_activity_item_time)
+    private TextView timeView;
+
     public ActivityItemViewHolder(View itemView, BaseFragment fragment) {
         super(itemView, fragment);
         ViewUtility.bind(this, itemView);
     }
 
     public void showContent(Archive activity) {
+        titleView.setText(activity.getTitle());
+        titleView.setSelected(true);
+        timeView.setText(StringHelper.getString(R.string.ui_group_activity_item_time, fragment().formatDate(activity.getCreateDate())));
+    }
+
+    @Click({R.id.ui_holder_view_group_activity_item_layout})
+    private void click(View view) {
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+        } else if (null != mOnViewHolderClickListener) {
+            mOnViewHolderClickListener.onClick(getAdapterPosition());
+        }
     }
 }

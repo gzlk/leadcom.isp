@@ -47,7 +47,11 @@ public class ContactService extends BaseService {
     public static void start(boolean writable) {
         Intent intent = new Intent(App.app(), ContactService.class);
         intent.setAction(writable ? ACTION_WRITE_CONTACT : ACTION_READ_CONTACT);
-        App.app().startService(intent);
+        if (Build.VERSION.SDK_INT >= 26) {
+            App.app().startForegroundService(intent);
+        } else {
+            App.app().startService(intent);
+        }
     }
 
     public static void refresh() {

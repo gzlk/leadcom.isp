@@ -598,7 +598,9 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                 if (null != members && members.size() > 0) {
                     for (SubMember member : members) {
                         if (null == oNames || !oNames.contains(member.getUserName())) {
-                            names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                            if (!names.contains(member.getUserName())) {
+                                names += (isEmpty(names) ? "" : "、") + member.getUserName();
+                            }
                         }
                         if (mArchive.isActivity()) {
                             if (member.isGroup()) {
@@ -606,8 +608,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
                                     mArchive.getGroupIdList().add(member.getUserId());
                                 }
                             } else if (member.isMember()) {
-                                if (!mArchive.getUserIdList().contains(member.getUserId())) {
-                                    mArchive.getUserIdList().add(member.getUserId());
+                                if (!mArchive.getGroSquMemberList().contains(member)) {
+                                    mArchive.getGroSquMemberList().add(member);
                                 }
                             }
                         } else {
@@ -2215,10 +2217,8 @@ public class ArchiveEditorFragment extends BaseSwipeRefreshSupportFragment {
         public void onClick(View view, int index) {
             if (mArchive.isActivity()) {
                 // 组织、下级组织、成员拾取器
-                ArrayList<String> list = new ArrayList<>();
-                list.addAll(mArchive.getGroupIdList());
-                list.addAll(mArchive.getUserIdList());
-                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), mArchive.getGroupName(), list);
+                GroupAllPickerFragment.open(ArchiveEditorFragment.this, mArchive.getGroupId(), mArchive.getGroupName(),
+                        mArchive.getGroupIdList(), mArchive.getGroSquMemberList());
             } else {
                 // 参与者
                 openMemberPicker();

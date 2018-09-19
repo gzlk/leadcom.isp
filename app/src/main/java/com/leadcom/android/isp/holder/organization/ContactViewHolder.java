@@ -57,6 +57,8 @@ public class ContactViewHolder extends BaseViewHolder {
     private CustomTextView iconPicker;
     @ViewId(R.id.ui_holder_view_contact_locked)
     private CustomTextView lockFlag;
+    @ViewId(R.id.ui_holder_view_item_left_blank)
+    private View leftBlank;
 
     private boolean buttonInviteVisible = false;
     private boolean pickerVisible = false;
@@ -195,6 +197,7 @@ public class ContactViewHolder extends BaseViewHolder {
                 buttonInvite.setText(member.isSelected() ? R.string.ui_phone_contact_invited : R.string.ui_phone_contact_add);
             }
         }
+        leftBlank.setVisibility(pickerVisible ? View.VISIBLE : View.GONE);
         iconPicker.setVisibility(pickerVisible ? View.VISIBLE : View.GONE);
         iconPicker.setTextColor(getColor(member.isSelected() ? R.color.colorPrimary : R.color.textColorHintLight));
     }
@@ -227,6 +230,9 @@ public class ContactViewHolder extends BaseViewHolder {
             R.id.ui_holder_view_contact_invite_button,
             R.id.ui_holder_view_contact_picker})
     private void click(View view) {
+        if (null != mOnViewHolderElementClickListener) {
+            mOnViewHolderElementClickListener.onClick(view, getAdapterPosition());
+        }
         switch (view.getId()) {
             case R.id.ui_holder_view_contact_layout:
                 // 点击了整个item view，打开用户详情页

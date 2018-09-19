@@ -175,7 +175,7 @@ public class GroupsFragment extends BaseOrganizationFragment {
 
     @Override
     protected boolean shouldSetDefaultTitleEvents() {
-        return true;
+        return !mSelectable;
     }
 
     public ArrayList<SubMember> getSelectedItems() {

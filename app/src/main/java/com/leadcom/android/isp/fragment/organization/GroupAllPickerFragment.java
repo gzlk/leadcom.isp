@@ -28,17 +28,20 @@ import java.util.ArrayList;
  */
 public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
 
+    private static final String PARAM_MEMBERS = "gpf_param_selected_members";
+
     public static GroupAllPickerFragment newInstance(Bundle bundle) {
         GroupAllPickerFragment gapf = new GroupAllPickerFragment();
         gapf.setArguments(bundle);
         return gapf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String groupName, ArrayList<String> selected) {
+    public static void open(BaseFragment fragment, String groupId, String groupName, ArrayList<String> groups, ArrayList<SubMember> members) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(BaseOrganizationFragment.PARAM_NAME, groupName);
-        bundle.putStringArrayList(PARAM_JSON, selected);
+        bundle.putStringArrayList(PARAM_JSON, groups);
+        bundle.putSerializable(PARAM_MEMBERS, members);
         fragment.openActivity(GroupAllPickerFragment.class.getName(), bundle, REQUEST_SELECT, true, false);
     }
 
@@ -52,7 +55,8 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     private View topLine2;
     @ViewId(R.id.ui_ui_custom_title_left_container)
     private View leftView;
-    private ArrayList<String> mSelected;
+    private ArrayList<String> selectedGroups;
+    private ArrayList<SubMember> selectedMembers;
 
     @Override
     public int getLayout() {
@@ -62,16 +66,20 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void getParamsFromBundle(Bundle bundle) {
         super.getParamsFromBundle(bundle);
-        mSelected = bundle.getStringArrayList(PARAM_JSON);
-        if (null == mSelected) {
-            mSelected = new ArrayList<>();
+        selectedGroups = bundle.getStringArrayList(PARAM_JSON);
+        if (null == selectedGroups) {
+            selectedGroups = new ArrayList<>();
+        }
+        selectedMembers = (ArrayList<SubMember>) bundle.getSerializable(PARAM_MEMBERS);
+        if (null == selectedMembers) {
+            selectedMembers = new ArrayList<>();
         }
     }
 
     @Override
     protected void saveParamsToBundle(Bundle bundle) {
         super.saveParamsToBundle(bundle);
-        bundle.putStringArrayList(PARAM_JSON, mSelected);
+        bundle.putStringArrayList(PARAM_JSON, selectedGroups);
     }
 
     @Override
@@ -87,9 +95,10 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
-                ArrayList<SubMember> members = new ArrayList<>();
                 GroupsFragment groups = (GroupsFragment) mFragments.get(0);
-                members.addAll(groups.getSelectedItems());
+                ArrayList<SubMember> members = groups.getSelectedItems();
+                SquadsFragment squads = (SquadsFragment) mFragments.get(1);
+                members.addAll(squads.getSelectedItems());
                 resultData(SubMember.toJson(members));
             }
         });
@@ -99,15 +108,25 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     protected void initializeFragments() {
         if (mFragments.size() <= 0) {
             // 下级组织
-            Bundle bundle = GroupsFragment.getBundle(mQueryId, "", RelateGroup.RelationType.SUBORDINATE, true, mSelected);
+            Bundle bundle = GroupsFragment.getBundle(mQueryId, "", RelateGroup.RelationType.SUBORDINATE, true, selectedGroups);
             GroupsFragment groups = GroupsFragment.newInstance(bundle);
             mFragments.add(groups);
+            // 本组织支部以及成员
+            bundle = SquadsFragment.getBundle(mQueryId, true, selectedMembers);
+            SquadsFragment squads = SquadsFragment.newInstance(bundle);
+            mFragments.add(squads);
         }
     }
 
     @Override
     protected void viewPagerSelectionChanged(int position) {
+        int color1 = getColor(R.color.textColor);
+        int color2 = getColor(R.color.textColorHint);
+        topLine1.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
+        topText1.setTextColor(position == 0 ? color1 : color2);
 
+        topLine2.setVisibility(position == 1 ? View.VISIBLE : View.INVISIBLE);
+        topText2.setTextColor(position == 1 ? color1 : color2);
     }
 
     @Override
@@ -118,6 +137,13 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     @Click({R.id.ui_group_concern_main_top_channel_1,
             R.id.ui_group_concern_main_top_channel_2})
     private void click(View view) {
-
+        switch (view.getId()) {
+            case R.id.ui_group_concern_main_top_channel_1:
+                setDisplayPage(0);
+                break;
+            case R.id.ui_group_concern_main_top_channel_2:
+                setDisplayPage(1);
+                break;
+        }
     }
 }

@@ -9,6 +9,8 @@
     android:orientation="horizontal"
     app:layout_itemType="main">
 
+    <include layout="@layout/tool_view_item_left_blank" />
+
     <com.hlk.hlklib.lib.view.CustomTextView
         android:id="@+id/ui_holder_view_contact_picker"
         android:layout_width="@dimen/ui_static_dp_35"

@@ -123,6 +123,7 @@
     <string name="ui_group_activity_fragment_title">@string/ui_activity_manage_tooltip_menu_1</string>
     <string name="ui_group_activity_loading">正在加载活动，请稍候&#8230;</string>
     <string name="ui_group_activity_nothing">目前没有可参与的活动</string>
+    <string name="ui_group_activity_item_time" formatted="false">时间：%s</string>
     <string name="ui_group_activity_launch_title">发起活动</string>
     <string name="ui_group_activity_editor_minute_title">活动\n描述</string>
     <string name="ui_group_activity_editor_files_title">文件/图片(总数≤8，选填项)</string>
