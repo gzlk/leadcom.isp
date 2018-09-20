@@ -304,6 +304,15 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 tryJoinInActivity(signIn);
                 return true;
             }
+        }).setOnDialogCancelListener(new DialogHelper.OnDialogCancelListener() {
+            @Override
+            public void onCancel() {
+                if (signIn) {
+                    signButton.setEnabled(true);
+                } else {
+                    leaveButton.setEnabled(true);
+                }
+            }
         }).setTitleText(title).setConfirmText(R.string.ui_base_text_confirm).show();
     }
 
@@ -316,6 +325,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     ToastHelper.make().showMsg(signIn ? R.string.ui_group_activity_details_sign_up_succeed : R.string.ui_group_activity_details_leave_succeed);
                     member.setStatus(String.valueOf(signIn ? Member.ActivityStatus.JOINED : Member.ActivityStatus.LEAVE));
                     refreshReportButtons(member);
+                } else {
+                    if (signIn) {
+                        signButton.setEnabled(true);
+                    } else {
+                        leaveButton.setEnabled(true);
+                    }
                 }
             }
         }).joinActivity(mArchive.getGroupId(), mArchive.getGroActivityId(), signIn ? Member.ActivityStatus.JOINED : Member.ActivityStatus.LEAVE);
