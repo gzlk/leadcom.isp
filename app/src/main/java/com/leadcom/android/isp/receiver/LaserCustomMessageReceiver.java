@@ -8,12 +8,10 @@ import android.os.Bundle;
 import com.leadcom.android.isp.BuildConfig;
 import com.leadcom.android.isp.api.common.PushMsgRequest;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.etc.SysInfoUtil;
 import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.individual.moment.MomentDetailsFragment;
-import com.leadcom.android.isp.fragment.organization.ConcernedOrganizationFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
 import com.leadcom.android.isp.helper.LogHelper;
 import com.leadcom.android.isp.helper.StringHelper;
@@ -59,7 +57,7 @@ public class LaserCustomMessageReceiver extends BroadcastReceiver {
         switch (extra.getMessageCode()) {
             case PushMessage.MsgCode.GROUP_ATTENTION:
             case PushMessage.MsgCode.GROUP_ATTENTION_CANCEL:
-                //ConcernedOrganizationFragment.open(context, extra.getGroupId(), "", ConcernRequest.CONCERN_FROM);
+                //GroupConcernedFragment.open(context, extra.getGroupId(), "", ConcernRequest.CONCERN_FROM);
                 break;
             case PushMessage.MsgCode.GROUP_AUTHORIZE:
             case PushMessage.MsgCode.GROUP_AUTHORIZE_CANCEL:

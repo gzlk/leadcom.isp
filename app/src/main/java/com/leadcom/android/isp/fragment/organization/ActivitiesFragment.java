@@ -31,7 +31,7 @@ import java.util.List;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class ActivitiesFragment extends BaseOrganizationFragment {
+public class ActivitiesFragment extends GroupBaseFragment {
 
     public static ActivitiesFragment newInstance(Bundle bundle) {
         ActivitiesFragment fragment = new ActivitiesFragment();

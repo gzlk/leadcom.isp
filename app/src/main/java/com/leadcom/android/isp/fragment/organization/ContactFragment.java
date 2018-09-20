@@ -55,7 +55,7 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  * <b>修改备注：</b><br />
  */
 
-public class ContactFragment extends BaseOrganizationFragment {
+public class ContactFragment extends GroupBaseFragment {
 
     private static final String PARAM_TYPE = "_cf_type_";
     private static final String PARAM_CREATOR = "_cf_manager_";

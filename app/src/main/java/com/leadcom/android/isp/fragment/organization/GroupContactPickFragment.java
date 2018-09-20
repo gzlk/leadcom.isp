@@ -37,7 +37,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class GroupContactPickFragment extends BaseOrganizationFragment {
+public class GroupContactPickFragment extends GroupBaseFragment {
 
     private static final String PARAM_SELECT_ALL = "ocpf_select_all";
     private static final String PARAM_FORCE_LOCK = "ocpf_force_to_lock";

@@ -32,7 +32,7 @@ import com.leadcom.android.isp.fragment.archive.ArchiveDetailsFragment;
 import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.base.BaseSwipeRefreshSupportFragment;
 import com.leadcom.android.isp.fragment.individual.UserMessageFragment;
-import com.leadcom.android.isp.fragment.organization.GroupMemberDutyDetailsFragment;
+import com.leadcom.android.isp.fragment.organization.MemberDutyDetailsFragment;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
 import com.leadcom.android.isp.holder.BaseViewHolder;
@@ -1090,7 +1090,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     if (duty.getDocNum() <= 0) {
                         ToastHelper.make().showMsg(R.string.ui_group_member_duty_count_no_archive);
                     } else {
-                        GroupMemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ARCHIVE,
+                        MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ARCHIVE,
                                 duty.getDocNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
                     }
                     break;
@@ -1099,7 +1099,7 @@ public class ArchiveSearchFragment extends BaseSwipeRefreshSupportFragment {
                     if (duty.getActivityNum() <= 0) {
                         ToastHelper.make().showMsg(R.string.ui_group_member_duty_count_no_activity);
                     } else {
-                        GroupMemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ACTIVITY,
+                        MemberDutyDetailsFragment.open(ArchiveSearchFragment.this, mQueryId, duty.getUserId(), duty.getUserName(), MemberDutyRequest.OPE_ACTIVITY,
                                 duty.getActivityNum(), Integer.valueOf(isEmpty(searchingYear) ? "0" : searchingYear), searchingNature1, searchingType);
                     }
                     break;

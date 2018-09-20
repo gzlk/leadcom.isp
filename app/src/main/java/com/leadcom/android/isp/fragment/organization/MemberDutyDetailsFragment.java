@@ -31,7 +31,7 @@ import java.util.List;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class GroupMemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
+public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_USER_ID = "gmddf_user_id";
     private static final String PARAM_USER_NAME = "gmddf_user_name";
@@ -41,8 +41,8 @@ public class GroupMemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragm
     private static final String PARAM_NATURE = "gmddf_nature";
     private static final String PARAM_TYPE = "gmddf_type";
 
-    public static GroupMemberDutyDetailsFragment newInstance(Bundle bundle) {
-        GroupMemberDutyDetailsFragment gmddf = new GroupMemberDutyDetailsFragment();
+    public static MemberDutyDetailsFragment newInstance(Bundle bundle) {
+        MemberDutyDetailsFragment gmddf = new MemberDutyDetailsFragment();
         gmddf.setArguments(bundle);
         return gmddf;
     }
@@ -57,7 +57,7 @@ public class GroupMemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragm
         bundle.putInt(PARAM_YEAR, year);
         bundle.putString(PARAM_NATURE, nature);
         bundle.putString(PARAM_TYPE, type);
-        fragment.openActivity(GroupMemberDutyDetailsFragment.class.getName(), bundle, true, false);
+        fragment.openActivity(MemberDutyDetailsFragment.class.getName(), bundle, true, false);
     }
 
     private String mUserId, mUserName, mNature, mType;
@@ -164,7 +164,7 @@ public class GroupMemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragm
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {
         @Override
         public void onClick(int index) {
-            ArchiveDetailsFragment.open(GroupMemberDutyDetailsFragment.this, mAdapter.get(index));
+            ArchiveDetailsFragment.open(MemberDutyDetailsFragment.this, mAdapter.get(index));
         }
     };
 
@@ -172,7 +172,7 @@ public class GroupMemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragm
 
         @Override
         public TextViewHolder onCreateViewHolder(View itemView, int viewType) {
-            TextViewHolder holder = new TextViewHolder(itemView, GroupMemberDutyDetailsFragment.this);
+            TextViewHolder holder = new TextViewHolder(itemView, MemberDutyDetailsFragment.this);
             holder.setGravity(Gravity.START);
             holder.addOnViewHolderClickListener(clickListener);
             return holder;

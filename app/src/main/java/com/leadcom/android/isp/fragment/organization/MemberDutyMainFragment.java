@@ -25,10 +25,10 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class GroupMemberDutyMainFragment extends BaseOrganizationFragment {
+public class MemberDutyMainFragment extends GroupBaseFragment {
 
-    public static GroupMemberDutyMainFragment newInstance(Bundle bundle) {
-        GroupMemberDutyMainFragment gmdmf = new GroupMemberDutyMainFragment();
+    public static MemberDutyMainFragment newInstance(Bundle bundle) {
+        MemberDutyMainFragment gmdmf = new MemberDutyMainFragment();
         gmdmf.setArguments(bundle);
         return gmdmf;
     }
@@ -37,7 +37,7 @@ public class GroupMemberDutyMainFragment extends BaseOrganizationFragment {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_NAME, groupName);
-        fragment.openActivity(GroupMemberDutyMainFragment.class.getName(), bundle, true, false);
+        fragment.openActivity(MemberDutyMainFragment.class.getName(), bundle, true, false);
     }
 
     private ItemAdapter mAdapter;
@@ -105,7 +105,7 @@ public class GroupMemberDutyMainFragment extends BaseOrganizationFragment {
             switch (index) {
                 case 0:
                     // 本组成员履职统计
-                    ArchiveSearchFragment.open(GroupMemberDutyMainFragment.this, ArchiveSearchFragment.SEARCH_DUTY, mQueryId, "", mGroupName);
+                    ArchiveSearchFragment.open(MemberDutyMainFragment.this, ArchiveSearchFragment.SEARCH_DUTY, mQueryId, "", mGroupName);
                     break;
                 case 1:
                     break;
@@ -117,7 +117,7 @@ public class GroupMemberDutyMainFragment extends BaseOrganizationFragment {
 
         @Override
         public GroupDetailsViewHolder onCreateViewHolder(View itemView, int viewType) {
-            GroupDetailsViewHolder gdvh = new GroupDetailsViewHolder(itemView, GroupMemberDutyMainFragment.this);
+            GroupDetailsViewHolder gdvh = new GroupDetailsViewHolder(itemView, MemberDutyMainFragment.this);
             gdvh.setOnViewHolderElementClickListener(elementClickListener);
             return gdvh;
         }

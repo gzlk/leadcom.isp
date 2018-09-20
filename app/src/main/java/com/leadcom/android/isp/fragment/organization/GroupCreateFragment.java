@@ -33,14 +33,14 @@ import java.util.ArrayList;
  * <b>修改备注：</b><br />
  */
 
-public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment {
+public class GroupCreateFragment extends BaseSwipeRefreshSupportFragment {
 
     private static final String PARAM_NAME = "cof_name";
     private static final String PARAM_LOGO = "cof_logo";
     private static final String PARAM_INTRO = "cof_intro";
 
-    public static CreateOrganizationFragment newInstance(String params) {
-        CreateOrganizationFragment cof = new CreateOrganizationFragment();
+    public static GroupCreateFragment newInstance(String params) {
+        GroupCreateFragment cof = new GroupCreateFragment();
         String[] strings = splitParameters(params, 4);
         Bundle bundle = new Bundle();
         // 组织id
@@ -61,7 +61,7 @@ public class CreateOrganizationFragment extends BaseSwipeRefreshSupportFragment 
     }
 
     private static void open(BaseFragment fragment, String groupId, String name, String logo, String intro) {
-        fragment.openActivity(CreateOrganizationFragment.class.getName(), format("%s,%s,%s,%s", groupId, name, logo, intro), isEmpty(groupId) ? REQUEST_CREATE : REQUEST_CHANGE, true, true);
+        fragment.openActivity(GroupCreateFragment.class.getName(), format("%s,%s,%s,%s", groupId, name, logo, intro), isEmpty(groupId) ? REQUEST_CREATE : REQUEST_CHANGE, true, true);
     }
 
     // view

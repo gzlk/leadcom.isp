@@ -36,7 +36,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class GroupSquadContactPickerFragment extends BaseOrganizationFragment {
+public class GroupSquadContactPickerFragment extends GroupBaseFragment {
 
     private static final String PARAM_USERS = "gscpf_members";
     private static final String PARAM_FORCE_LOCK = "gscpf_force_to_lock";

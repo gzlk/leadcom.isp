@@ -23,7 +23,6 @@ import com.leadcom.android.isp.adapter.RecyclerViewAdapter;
 import com.leadcom.android.isp.api.archive.ClassifyRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
-import com.leadcom.android.isp.api.org.ConcernRequest;
 import com.leadcom.android.isp.api.org.OrgRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
@@ -32,16 +31,13 @@ import com.leadcom.android.isp.fragment.base.BaseFragment;
 import com.leadcom.android.isp.fragment.individual.UserIntroductionFragment;
 import com.leadcom.android.isp.fragment.organization.ActivitiesFragment;
 import com.leadcom.android.isp.fragment.organization.ArchivesFragment;
-import com.leadcom.android.isp.fragment.organization.BaseOrganizationFragment;
-import com.leadcom.android.isp.fragment.organization.ConcernedOrganizationFragment;
+import com.leadcom.android.isp.fragment.organization.GroupBaseFragment;
 import com.leadcom.android.isp.fragment.organization.ContactFragment;
-import com.leadcom.android.isp.fragment.organization.CreateOrganizationFragment;
+import com.leadcom.android.isp.fragment.organization.GroupCreateFragment;
 import com.leadcom.android.isp.fragment.organization.GroupAuthorizeFragment;
-import com.leadcom.android.isp.fragment.organization.GroupConcernedMainFragment;
 import com.leadcom.android.isp.fragment.organization.GroupConstructFragment;
-import com.leadcom.android.isp.fragment.organization.GroupMemberDutyMainFragment;
+import com.leadcom.android.isp.fragment.organization.MemberDutyMainFragment;
 import com.leadcom.android.isp.fragment.organization.MemberNatureMainFragment;
-import com.leadcom.android.isp.fragment.organization.SquadsFragment;
 import com.leadcom.android.isp.helper.PreferenceHelper;
 import com.leadcom.android.isp.helper.StringHelper;
 import com.leadcom.android.isp.helper.ToastHelper;
@@ -79,7 +75,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class GroupFragment extends BaseOrganizationFragment {
+public class GroupFragment extends GroupBaseFragment {
 
     private static final String PARAM_SINGLE = "gf_single";
     private static final String PARAM_SELECTED = "gf_selected";
@@ -297,7 +293,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 Organization group = (Organization) dAdapter.get(0);
                 if (hasOperation(group.getId(), GRPOperation.GROUP_PROPERTY)) {
                     // 登录者有组织属性编辑权限时，打开组织属性编辑页面
-                    CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                    GroupCreateFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
                 }
                 break;
         }
@@ -318,7 +314,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case R.id.ui_main_group_create:
                 view.startAnimation(App.clickAnimation());
-                CreateOrganizationFragment.open(GroupFragment.this);
+                GroupCreateFragment.open(GroupFragment.this);
                 break;
             case R.id.ui_ui_custom_title_left_container:
                 finish();
@@ -755,7 +751,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                             openImageSelector(true);
                         } else if (view.getId() == R.id.ui_holder_view_group_header_edit_icon) {
                             // 登录者有组织属性编辑权限时，打开组织属性编辑页面
-                            CreateOrganizationFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
+                            GroupCreateFragment.open(GroupFragment.this, (Organization) dAdapter.get(0));
                         } else {
                             // 查看组织简介
                             UserIntroductionFragment.open(GroupFragment.this, group, !isSingle);
@@ -826,7 +822,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 break;
             case 3:
                 // 成员履职统计
-                GroupMemberDutyMainFragment.open(this, group.getId(), group.getName());
+                MemberDutyMainFragment.open(this, group.getId(), group.getName());
                 //ArchivesFragment.open(this, group.getId(), getString(R.string.ui_group_archive_fragment_title));
                 break;
             case 4:
@@ -839,7 +835,7 @@ public class GroupFragment extends BaseOrganizationFragment {
                 //GroupConcernedMainFragment.open(this, group.getId(), group.getName());
                 //if (hasOperation(group.getId(), GRPOperation.GROUP_ASSOCIATION)) {
                 // 每个人都可以打开查看关注的组织列表？
-                //ConcernedOrganizationFragment.open(this, group.getId(), group.getName(), (item.getIndex() == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
+                //GroupConcernedFragment.open(this, group.getId(), group.getName(), (item.getIndex() == 4 ? ConcernRequest.CONCERN_TO : ConcernRequest.CONCERN_FROM));
                 //}
                 break;
             case 6:

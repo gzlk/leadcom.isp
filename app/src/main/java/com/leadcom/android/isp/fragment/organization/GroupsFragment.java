@@ -43,7 +43,7 @@ import java.util.List;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class GroupsFragment extends BaseOrganizationFragment {
+public class GroupsFragment extends GroupBaseFragment {
 
     private static final String PARAM_GROUPS_TYPE = "gf_param_groups_type";
 

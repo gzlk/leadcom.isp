@@ -25,7 +25,7 @@ import java.util.List;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class SquadPickerFragment extends BaseOrganizationFragment {
+public class SquadPickerFragment extends GroupBaseFragment {
 
     public static SquadPickerFragment newInstance(Bundle bundle) {
         SquadPickerFragment spf = new SquadPickerFragment();

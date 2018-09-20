@@ -30,7 +30,7 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class GroupPickerFragment extends BaseOrganizationFragment {
+public class GroupPickerFragment extends GroupBaseFragment {
 
     private static final String PARAM_MULTIPLE = "gpf_multiple_selectable";
 

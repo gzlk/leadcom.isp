@@ -52,7 +52,7 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class SquadsFragment extends BaseOrganizationFragment {
+public class SquadsFragment extends GroupBaseFragment {
 
     public static SquadsFragment newInstance(Bundle bundle) {
         SquadsFragment sf = new SquadsFragment();

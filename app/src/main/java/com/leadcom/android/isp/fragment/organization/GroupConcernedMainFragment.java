@@ -79,8 +79,8 @@ public class GroupConcernedMainFragment extends BaseViewPagerSupportFragment {
     @Override
     protected void initializeFragments() {
         if (mFragments.size() < 1) {
-            mFragments.add(ConcernedOrganizationFragment.newInstance(ConcernedOrganizationFragment.getBundle(mQueryId, mGroupName, ConcernRequest.CONCERN_TO)));
-            mFragments.add(ConcernedOrganizationFragment.newInstance(ConcernedOrganizationFragment.getBundle(mQueryId, mGroupName, ConcernRequest.CONCERN_FROM)));
+            mFragments.add(GroupConcernedFragment.newInstance(GroupConcernedFragment.getBundle(mQueryId, mGroupName, ConcernRequest.CONCERN_TO)));
+            mFragments.add(GroupConcernedFragment.newInstance(GroupConcernedFragment.getBundle(mQueryId, mGroupName, ConcernRequest.CONCERN_FROM)));
         }
     }
 

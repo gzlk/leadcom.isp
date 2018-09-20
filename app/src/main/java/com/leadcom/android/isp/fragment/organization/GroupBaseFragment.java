@@ -28,7 +28,7 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public abstract class BaseOrganizationFragment extends BaseSwipeRefreshSupportFragment {
+public abstract class GroupBaseFragment extends BaseSwipeRefreshSupportFragment {
 
     protected static final String PARAM_SQUAD_ID = "bof_squad_id";
     protected static final String PARAM_NAME = "bof_name";

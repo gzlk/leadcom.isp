@@ -42,14 +42,14 @@ import java.util.List;
  * <b>修改备注：</b><br />
  */
 
-public class ConcernedOrganizationFragment extends BaseOrganizationFragment {
+public class GroupConcernedFragment extends GroupBaseFragment {
 
     private static final String PARAM_UPPER = "cof_upper";
     private static final String PARAM_GROUP_NAME = "cof_group_name";
     private static final String PARAM_TYPE = "cof_concern_type";
 
-    public static ConcernedOrganizationFragment newInstance(Bundle bundle) {
-        ConcernedOrganizationFragment cof = new ConcernedOrganizationFragment();
+    public static GroupConcernedFragment newInstance(Bundle bundle) {
+        GroupConcernedFragment cof = new GroupConcernedFragment();
         cof.setArguments(bundle);
         return cof;
     }
@@ -63,12 +63,12 @@ public class ConcernedOrganizationFragment extends BaseOrganizationFragment {
     }
 
     public static void open(BaseFragment fragment, String groupId, String groupName, int concernType) {
-        fragment.openActivity(ConcernedOrganizationFragment.class.getName(),
+        fragment.openActivity(GroupConcernedFragment.class.getName(),
                 getBundle(groupId, groupName, concernType), REQUEST_CONCERNED, true, false);
     }
 
     public static void open(Context context, String groupId, String groupName, int concernType) {
-        BaseActivity.openActivity(context, ConcernedOrganizationFragment.class.getName(),
+        BaseActivity.openActivity(context, GroupConcernedFragment.class.getName(),
                 getBundle(groupId, groupName, concernType), REQUEST_CONCERNED, true, false);
     }
 
@@ -371,8 +371,8 @@ public class ConcernedOrganizationFragment extends BaseOrganizationFragment {
             switch (view.getId()) {
                 case R.id.ui_holder_view_group_interest_root:
                 case R.id.ui_holder_view_group_interest_cover:
-                    //UserIntroductionFragment.open(ConcernedOrganizationFragment.this, mAdapter.get(index));
-                    GroupFragment.open(ConcernedOrganizationFragment.this, mAdapter.get(index).getId());
+                    //UserIntroductionFragment.open(GroupConcernedFragment.this, mAdapter.get(index));
+                    GroupFragment.open(GroupConcernedFragment.this, mAdapter.get(index).getId());
                     break;
                 case R.id.ui_holder_view_group_interest_button:
                     checkConcern(index);
@@ -384,7 +384,7 @@ public class ConcernedOrganizationFragment extends BaseOrganizationFragment {
     private class ConcernedAdapter extends RecyclerViewAdapter<GroupInterestViewHolder, Concern> {
         @Override
         public GroupInterestViewHolder onCreateViewHolder(View itemView, int viewType) {
-            GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, ConcernedOrganizationFragment.this);
+            GroupInterestViewHolder holder = new GroupInterestViewHolder(itemView, GroupConcernedFragment.this);
             holder.setOnViewHolderElementClickListener(elementClickListener);
             holder.setButtonShown(mConcernType == ConcernRequest.CONCERN_TO && hasOperation(mQueryId, GRPOperation.GROUP_ASSOCIATION));
             return holder;

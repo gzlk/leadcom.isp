@@ -39,7 +39,7 @@ public class GroupAllPickerFragment extends BaseViewPagerSupportFragment {
     public static void open(BaseFragment fragment, String groupId, String groupName, ArrayList<String> groups, ArrayList<SubMember> members) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
-        bundle.putString(BaseOrganizationFragment.PARAM_NAME, groupName);
+        bundle.putString(GroupBaseFragment.PARAM_NAME, groupName);
         bundle.putStringArrayList(PARAM_JSON, groups);
         bundle.putSerializable(PARAM_MEMBERS, members);
         fragment.openActivity(GroupAllPickerFragment.class.getName(), bundle, REQUEST_SELECT, true, false);

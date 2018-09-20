@@ -77,7 +77,7 @@ import java.util.Random;
  * <b>修改备注：</b><br />
  */
 
-public class PhoneContactFragment extends BaseOrganizationFragment {
+public class PhoneContactFragment extends GroupBaseFragment {
 
     private static final String PARAM_MEMBERS = "pcf_members";
     private static final int RANDOM_SIZE = 5000;

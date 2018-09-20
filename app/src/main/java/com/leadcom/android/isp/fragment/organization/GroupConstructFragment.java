@@ -25,7 +25,7 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  * <b>修改人员：</b><br />
  * <b>修改备注：</b><br />
  */
-public class GroupConstructFragment extends BaseOrganizationFragment {
+public class GroupConstructFragment extends GroupBaseFragment {
 
     public static GroupConstructFragment newInstance(Bundle bundle) {
         GroupConstructFragment gcf = new GroupConstructFragment();
