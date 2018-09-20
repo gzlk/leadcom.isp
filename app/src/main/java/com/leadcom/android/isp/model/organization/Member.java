@@ -86,6 +86,24 @@ public class Member extends Leaguer {
         int TEAM = 5;
     }
 
+    /**
+     * 成员的活动参加状态
+     */
+    public interface ActivityStatus {
+        /**
+         * 已报名参加
+         */
+        int JOINED = 1;
+        /**
+         * 已报名请假
+         */
+        int LEAVE = 2;
+        /**
+         * 缺席
+         */
+        int ABSENT = 3;
+    }
+
     private static ExclusionStrategy strategy = new ExclusionStrategy() {
         @Override
         public boolean shouldSkipField(FieldAttributes f) {
@@ -107,9 +125,11 @@ public class Member extends Leaguer {
         }.getType());
     }
 
-    public static ArrayList<Member> fromJsonArray(String array){
-        return Json.gson().fromJson(array,new TypeToken<ArrayList<Member>>(){}.getType());
+    public static ArrayList<Member> fromJsonArray(String array) {
+        return Json.gson().fromJson(array, new TypeToken<ArrayList<Member>>() {
+        }.getType());
     }
+
     /**
      * 查询指定用户是否在本地缓存中的某个组织或小组里
      */
@@ -191,6 +211,10 @@ public class Member extends Leaguer {
     @Ignore
     private Role commRole;// 角色
 
+    // 组织活动相关
+    private String groActivityId;
+    private String status;
+
     public String getGroupId() {
         return groupId;
     }
@@ -244,6 +268,43 @@ public class Member extends Leaguer {
     public void setGroRoleId(String groRoleId) {
         this.groRoleId = groRoleId;
     }
+
+    public String getGroActivityId() {
+        return groActivityId;
+    }
+
+    public void setGroActivityId(String groActivityId) {
+        this.groActivityId = groActivityId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * 是否参加了活动
+     */
+//    public boolean isActJoined() {
+//        return status == ActivityStatus.JOINED;
+//    }
+
+    /**
+     * 是否请假了
+     */
+//    public boolean isActLeaved() {
+//        return status == ActivityStatus.LEAVE;
+//    }
+
+    /**
+     * 是否缺席了活动
+     */
+//    public boolean isActAbsent() {
+//        return status == ActivityStatus.ABSENT;
+//    }
 
     public static ExclusionStrategy getStrategy() {
         return strategy;

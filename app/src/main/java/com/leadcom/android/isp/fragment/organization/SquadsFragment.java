@@ -2,6 +2,7 @@ package com.leadcom.android.isp.fragment.organization;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -82,6 +83,8 @@ public class SquadsFragment extends GroupBaseFragment {
     private View searchInputableView;
     @ViewId(R.id.ui_tool_view_select_all_root)
     private View selectAll;
+    @ViewId(R.id.ui_tool_view_select_all_title)
+    private TextView selectAllTitle;
     @ViewId(R.id.ui_tool_view_select_all_icon)
     private CustomTextView selectAllIcon;
 
@@ -134,6 +137,8 @@ public class SquadsFragment extends GroupBaseFragment {
                 });
             }
             setNothingText(R.string.ui_group_squad_nothing);
+        } else {
+            selectAllTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_activity_editor_participator_select_all_2)));
         }
         searchInputableView.setVisibility(selectable ? View.GONE : View.VISIBLE);
         InputableSearchViewHolder searchViewHolder = new InputableSearchViewHolder(searchInputableView, this);
@@ -529,7 +534,7 @@ public class SquadsFragment extends GroupBaseFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
-            setLoadingText(0);
+            //setLoadingText(0);
             mAdapter = new SquadAdapter();
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);

@@ -184,6 +184,7 @@
         <item>10|0|取消|#f7f7f7|#db7763|#ff4081|已获奖</item>
         <item>11|0|&#xe6a3;|#f7f7f7|#295391|#425f78|归类</item>
         <item>12|0|&#xe6a0;|#f7f7f7|#54c1fd|#a1a1a1|回复</item>
+        <item>13|0|&#xe67c;|#f7f7f7|#148dfe|#295391|下发</item>
     </string-array>
 
     <string name="ui_text_archive_details_editor_setting_time_title">发生时间</string>

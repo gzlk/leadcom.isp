@@ -1,5 +1,6 @@
 package com.leadcom.android.isp.fragment.archive;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -22,6 +23,7 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.hlk.hlklib.layoutmanager.CustomLinearLayoutManager;
+import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
 import com.leadcom.android.isp.R;
 import com.leadcom.android.isp.activity.BaseActivity;
@@ -35,6 +37,8 @@ import com.leadcom.android.isp.api.common.ShareRequest;
 import com.leadcom.android.isp.api.listener.OnMultipleRequestListener;
 import com.leadcom.android.isp.api.listener.OnSingleRequestListener;
 import com.leadcom.android.isp.api.org.ConcernRequest;
+import com.leadcom.android.isp.api.org.MemberRequest;
+import com.leadcom.android.isp.api.org.SquadRequest;
 import com.leadcom.android.isp.application.App;
 import com.leadcom.android.isp.cache.Cache;
 import com.leadcom.android.isp.etc.NetworkUtil;
@@ -66,8 +70,10 @@ import com.leadcom.android.isp.model.common.Attachment;
 import com.leadcom.android.isp.model.common.ShareInfo;
 import com.leadcom.android.isp.model.operation.GRPOperation;
 import com.leadcom.android.isp.model.organization.Concern;
+import com.leadcom.android.isp.model.organization.Member;
 import com.leadcom.android.isp.model.organization.RelateGroup;
 import com.leadcom.android.isp.model.organization.Role;
+import com.leadcom.android.isp.model.organization.Squad;
 import com.leadcom.android.isp.model.user.Collection;
 
 import java.io.File;
@@ -213,6 +219,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }
             }
         });
+        initializeActivityControlPosition();
     }
 
     @Override
@@ -236,10 +243,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private boolean isDraft;
     private String groupId, authorId;
     private int pushingType = 0;
+    private long archiveLoadingStart;
     /**
      * 分类到别的组织或当前组织的栏目
      */
-    private static final int PUSH_GROUPS = 1, PUSH_CLASSIFY = 2;
+    private static final int PUSH_GROUPS = 1, PUSH_CLASSIFY = 2, PUSH_TRANSFORM = 3;
     /**
      * 标记是否是app内部打开的详情页
      */
@@ -248,6 +256,46 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     private Role myRole;
     @ViewId(R.id.ui_archive_details_content)
     private WebView webView;
+    @ViewId(R.id.ui_archive_details_activity_control)
+    private View activityControl;
+
+    @Click({R.id.ui_archive_details_activity_sign_in,
+            R.id.ui_archive_details_activity_leave,
+            R.id.ui_archive_details_activity_report})
+    private void viewClick(View view) {
+        switch (view.getId()) {
+            case R.id.ui_archive_details_activity_sign_in:
+                warningSingInOrLeave(true);
+                break;
+            case R.id.ui_archive_details_activity_leave:
+                warningSingInOrLeave(false);
+                break;
+            case R.id.ui_archive_details_activity_report:
+                break;
+        }
+    }
+
+    private void warningSingInOrLeave(final boolean signIn) {
+        DeleteDialogHelper.helper().init(this).setOnDialogConfirmListener(new DialogHelper.OnDialogConfirmListener() {
+            @Override
+            public boolean onConfirm() {
+                tryJoinInActivity(signIn);
+                return true;
+            }
+        }).setTitleText(signIn ? R.string.ui_group_activity_details_sign_up_warning_title : R.string.ui_group_activity_details_leave_warning_title).setConfirmText(R.string.ui_base_text_confirm).show();
+    }
+
+    private void tryJoinInActivity(final boolean signIn) {
+        MemberRequest.request().setOnSingleRequestListener(new OnSingleRequestListener<Member>() {
+            @Override
+            public void onResponse(Member member, boolean success, String message) {
+                super.onResponse(member, success, message);
+                if (success) {
+                    ToastHelper.make().showMsg(signIn ? R.string.ui_group_activity_details_sign_up_succeed : R.string.ui_group_activity_details_leave_succeed);
+                }
+            }
+        }).joinActivity(mArchive.getGroupId(), mArchive.getGroActivityId(), signIn ? Member.ActivityStatus.JOINED : Member.ActivityStatus.LEAVE);
+    }
 
     @Override
     protected void onDelayRefreshComplete(int type) {
@@ -315,8 +363,9 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         }).delete(archiveType, mQueryId);
     }
 
-    private void resetRightIconEvent() {
-        setRightText(R.string.ui_base_text_edit);
+    private void resetRightIconEvent(int icon, int text) {
+        setRightText(text);
+        setRightIcon(icon);
         setRightTitleClickListener(new OnTitleButtonClickListener() {
             @Override
             public void onClick() {
@@ -325,12 +374,26 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         });
     }
 
+    private boolean isManager() {
+        Role role = Cache.cache().getGroupRole(mArchive.getGroupId());
+        return null != role && role.isManager();
+    }
+
     private void rightIconClick() {
         if (isDraft) {
             ArchiveEditorFragment.open(ArchiveDetailsFragment.this, mQueryId, mArchive.getDocType());
             finish();
         } else {
-            loadingArchivePermission();
+            if (mArchive.isActivity()) {
+                enableShareWX = false;
+                enableShareTimeLine = false;
+                enableShareQQ = false;
+                enableShareQZone = false;
+                enableTransform = isManager();
+                openShareDialog();
+            } else {
+                loadingArchivePermission();
+            }
         }
     }
 
@@ -370,18 +433,17 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         if (isDraft) {
             // 草稿档案只能查看
             if (archive.isAuthor()) {
-                resetRightIconEvent();
+                resetRightIconEvent(0, R.string.ui_base_text_edit);
+            }
+        } else if (mArchive.isActivity()) {
+            if (isManager()) {
+                // 组织管理员才有下发活动的权限
+                resetRightIconEvent(R.string.ui_icon_more, 0);
             }
         } else if (!isCollected && !isH5(archive.getH5())) {
             // 不是收藏过来的内容
             // 非草稿档案，可以分享等等
-            setRightIcon(R.string.ui_icon_more);
-            setRightTitleClickListener(new OnTitleButtonClickListener() {
-                @Override
-                public void onClick() {
-                    rightIconClick();
-                }
-            });
+            resetRightIconEvent(R.string.ui_icon_more, 0);
         }
         myRole = Cache.cache().getGroupRole(archive.getGroupId());
         // 设置收藏的参数为档案
@@ -429,6 +491,46 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
             enableShareRecommended = archive.isRecommend() && hasOperation(GRPOperation.ARCHIVE_RECOMMEND);
 
         }
+    }
+
+    private void initializeActivityControlPosition() {
+        Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                displayActivityControl(false);
+            }
+        });
+    }
+
+    private void displayActivityControl(final boolean shown) {
+        activityControl.animate().alpha(shown ? 1.0f : 0.0f)
+                .translationY(shown ? 0 : activityControl.getMeasuredHeight() * 1.1f)
+                .setDuration(duration())
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (shown) {
+                            activityControl.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (!shown) {
+                            activityControl.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                }).start();
     }
 
     private class DetailsChromeClient extends WebChromeClient {
@@ -492,6 +594,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
+            archiveLoadingStart = System.currentTimeMillis();
             displayLoading(true);
         }
 
@@ -499,6 +602,11 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
         public void onPageFinished(WebView view, String url) {
             displayLoading(false);
             super.onPageFinished(view, url);
+            log(format("loading archive content used: %dms", System.currentTimeMillis() - archiveLoadingStart));
+            // 活动时显示报名按钮
+            if (null != mArchive && !isEmpty(mArchive.getGroActivityId())) {
+                displayActivityControl(true);
+            }
             setJsEvents(view);
         }
 
@@ -743,6 +851,23 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 }).list(mArchive.getGroupId());
             }
 
+            // 显示组织的支部和成员列表
+            private void showSquadsMember() {
+                nothingText.setText(R.string.ui_group_activity_details_transform_dialog_no_squad);
+                SquadRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<Squad>() {
+                    @Override
+                    public void onResponse(List<Squad> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
+                        super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
+                        if (success && null != list) {
+                            for (Squad squad : list) {
+                                cAdapter.add(squad);
+                            }
+                        }
+                        nothingView.setVisibility(null == list || list.size() <= 0 ? View.VISIBLE : View.GONE);
+                    }
+                }).list(mArchive.getGroupId(), 1);
+            }
+
             @Override
             public void onBindData(View dialogView, DialogHelper helper) {
                 cAdapter.clear();
@@ -754,6 +879,10 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     case PUSH_CLASSIFY:
                         pushTitleText.setText(R.string.ui_text_archive_details_push_dialog_title_classify);
                         showSelfDefined();
+                        break;
+                    case PUSH_TRANSFORM:
+                        pushTitleText.setText(R.string.ui_group_activity_details_transform_dialog_title);
+                        showSquadsMember();
                         break;
                 }
             }
@@ -775,6 +904,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                         break;
                     case PUSH_CLASSIFY:
                         prepareClassify();
+                        break;
+                    case PUSH_TRANSFORM:
                         break;
                 }
                 return true;
@@ -821,7 +952,7 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                     classifyArchive(classifyId, classifyName);
                 }
             }
-        }).setConfirmText(pushingType == PUSH_GROUPS ? R.string.ui_base_text_forward : R.string.ui_base_text_classify).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
+        }).setConfirmText(pushingType == PUSH_GROUPS ? R.string.ui_base_text_forward : (pushingType == PUSH_CLASSIFY ? R.string.ui_base_text_classify : R.string.ui_base_text_confirm)).setPopupType(DialogHelper.SLID_IN_RIGHT).show();
     }
 
     private void tryPushArchive(ArrayList<String> groupIds) {
@@ -946,6 +1077,8 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
                 holder.showContent((Concern) item);
             } else if (item instanceof Classify) {
                 holder.showContent((Classify) item);
+            } else if (item instanceof Squad) {
+                holder.showContent((Squad) item);
             }
         }
 
@@ -999,6 +1132,12 @@ public class ArchiveDetailsFragment extends BaseCmtLikeColFragment {
     @Override
     protected void shareToReply() {
         ArchiveReplyFragment.open(this, mQueryId, mArchive.getTitle(), mArchive.getGroupName(), mArchive.getCreateDate(), mArchive.getContent());
+    }
+
+    @Override
+    protected void transform() {
+        pushingType = PUSH_TRANSFORM;
+        openPushDialog();
     }
 
     @Override

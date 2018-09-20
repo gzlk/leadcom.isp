@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.view.View;
+import android.widget.TextView;
 
 import com.hlk.hlklib.lib.inject.Click;
 import com.hlk.hlklib.lib.inject.ViewId;
@@ -72,6 +74,8 @@ public class GroupsFragment extends GroupBaseFragment {
     private View searchView;
     @ViewId(R.id.ui_tool_view_select_all_root)
     private View selectAll;
+    @ViewId(R.id.ui_tool_view_select_all_title)
+    private TextView selectAllTitle;
     @ViewId(R.id.ui_tool_view_select_all_icon)
     private CustomTextView selectAllIcon;
 
@@ -93,6 +97,9 @@ public class GroupsFragment extends GroupBaseFragment {
             setCustomTitle(mRelateType == RelateGroup.RelationType.SUPERIOR ? R.string.ui_group_constructor_groups_fragment_title_supper : (mRelateType == RelateGroup.RelationType.ADD ? R.string.ui_group_constructor_groups_fragment_title_supper_add : R.string.ui_group_constructor_groups_fragment_title_sub));
         }
         selectAll.setVisibility(mSelectable ? View.VISIBLE : View.GONE);
+        if (mSelectable) {
+            selectAllTitle.setText(Html.fromHtml(StringHelper.getString(R.string.ui_group_activity_editor_participator_select_all_1)));
+        }
         if (mRelateType == RelateGroup.RelationType.SUPERIOR && hasOperation(GRPOperation.GROUP_ASSOCIATION)) {
             setRightText(R.string.ui_base_text_add);
             setRightTitleClickListener(new OnTitleButtonClickListener() {

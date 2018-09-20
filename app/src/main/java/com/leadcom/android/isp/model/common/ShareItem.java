@@ -120,6 +120,22 @@ public class ShareItem extends Model {
         return visible > 0;
     }
 
+    public boolean wx() {
+        return index == 0;
+    }
+
+    public boolean timeline() {
+        return index == 1;
+    }
+
+    public boolean qq() {
+        return index == 2;
+    }
+
+    public boolean qzone() {
+        return index == 3;
+    }
+
     public boolean deletable() {
         return index == 5;
     }
@@ -150,5 +166,12 @@ public class ShareItem extends Model {
 
     public boolean repliable() {
         return index == 12;
+    }
+
+    /**
+     * 是否可以下发
+     */
+    public boolean transformable() {
+        return index == 13;
     }
 }

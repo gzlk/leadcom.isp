@@ -106,6 +106,10 @@ public class ActivitiesFragment extends GroupBaseFragment {
                 super.onResponse(list, success, totalPages, pageSize, total, pageNumber);
                 if (success && null != list) {
                     for (Archive archive : list) {
+                        archive.setDocType(Archive.ArchiveType.ACTIVITY);
+                        if (isEmpty(archive.getGroupId())) {
+                            archive.setGroupId(mQueryId);
+                        }
                         if (isEmpty(archive.getId())) {
                             archive.setId(archive.getGroActivityId());
                         }

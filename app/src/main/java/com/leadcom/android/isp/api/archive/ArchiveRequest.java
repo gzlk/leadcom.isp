@@ -491,8 +491,13 @@ public class ArchiveRequest extends Request<Archive> {
      * @param classifyId 档案性质
      * @param category   档案类型
      */
-    public void listMemberDuty(int ope, String groupId, String userId, int createYear, String classifyId, String category) {
-        String url = format("/user/appUserRecord/list?groupId=%s&userId=%s&ope=%d", groupId, userId, ope);
+    public void listMemberDuty(int ope, String groupId, String squadId, String userId, int createYear, String classifyId, String category) {
+        String url = format("/user/appUserRecord/list?ope=%d&", ope);
+        if (!isEmpty(squadId)) {
+            url = format("%ssquadId=%s", url, squadId);
+        } else {
+            url = format("%sgroupIdId=%s", url, groupId);
+        }
         url = format("%s&createDate=%d", url, createYear);
         if (!isEmpty(classifyId)) {
             url = format("%s&docClassifyId=%s", url, classifyId);

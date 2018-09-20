@@ -576,8 +576,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
     /**
      * 是否允许删除档案、转发档案、推荐档案到首页、取消首页档案的推荐
      */
-    protected boolean enableShareDelete = false, enableShareForward = false, enableShareRecommend = false, enableShareRecommended = false,
-            enableAward = false, enableAwarded = false, enableClassify = false, enableReplay = false;
+    protected boolean enableShareWX = true, enableShareTimeLine = true, enableShareQQ = true, enableShareQZone = true,
+            enableShareDelete = false, enableShareForward = false, enableShareRecommend = false, enableShareRecommended = false,
+            enableAward = false, enableAwarded = false, enableClassify = false, enableReplay = false, enableTransform = false;
 
     /**
      * 打开分享选择对话框
@@ -607,13 +608,17 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                     int count = 0;
                     for (ShareItem item : ShareItem.items) {
                         if (item.visible()) {
-                            sAdapter.add(item);
-                            count++;
+                            if ((item.wx() && enableShareWX) || (item.timeline() && enableShareTimeLine) ||
+                                    (item.qq() && enableShareQQ) || (item.qzone() && enableShareQZone)) {
+                                sAdapter.add(item);
+                                count++;
+                            }
                         } else {
                             if ((item.deletable() && enableShareDelete) || (item.forwardable() && enableShareForward) ||
                                     (item.recommendable() && enableShareRecommend) || (item.unrecommendable() && enableShareRecommended) ||
                                     (item.awardable() && enableAward) || (item.unawardable() && enableAwarded) ||
-                                    (item.classfiyable() && enableClassify) || (item.repliable() && enableReplay)) {
+                                    (item.classfiyable() && enableClassify) || (item.repliable() && enableReplay) ||
+                                    (item.transformable() && enableTransform)) {
                                 sAdapter.add(item);
                                 count++;
                             }
@@ -679,6 +684,9 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
                     break;
                 case 12:
                     shareToReply();
+                    break;
+                case 13:
+                    transform();
                     break;
             }
             shareDialogHelper.dismiss();
@@ -822,6 +830,12 @@ public abstract class BaseFragment extends BasePermissionHandleSupportFragment {
      * 档案回复
      */
     protected void shareToReply() {
+    }
+
+    /**
+     * 下发活动
+     */
+    protected void transform() {
     }
 
     /**

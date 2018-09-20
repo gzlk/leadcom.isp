@@ -19,6 +19,7 @@
         android:textColor="@color/textColorHintLight" />
 
     <TextView
+        android:id="@+id/ui_tool_view_select_all_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ui_base_text_select_all" />

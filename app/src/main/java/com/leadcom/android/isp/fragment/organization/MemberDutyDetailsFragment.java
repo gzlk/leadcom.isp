@@ -40,6 +40,7 @@ public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
     private static final String PARAM_YEAR = "gmddf_year";
     private static final String PARAM_NATURE = "gmddf_nature";
     private static final String PARAM_TYPE = "gmddf_type";
+    private static final String PARAM_SQUAD_ID = "gmddf_squad_id";
 
     public static MemberDutyDetailsFragment newInstance(Bundle bundle) {
         MemberDutyDetailsFragment gmddf = new MemberDutyDetailsFragment();
@@ -47,7 +48,7 @@ public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
         return gmddf;
     }
 
-    public static void open(BaseFragment fragment, String groupId, String userId, String userName, int option, long count, int year, String nature, String type) {
+    public static void open(BaseFragment fragment, String groupId, String squadId, String userId, String userName, int option, long count, int year, String nature, String type) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_QUERY_ID, groupId);
         bundle.putString(PARAM_USER_ID, userId);
@@ -57,10 +58,11 @@ public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putInt(PARAM_YEAR, year);
         bundle.putString(PARAM_NATURE, nature);
         bundle.putString(PARAM_TYPE, type);
+        bundle.putString(PARAM_SQUAD_ID, squadId);
         fragment.openActivity(MemberDutyDetailsFragment.class.getName(), bundle, true, false);
     }
 
-    private String mUserId, mUserName, mNature, mType;
+    private String mUserId, mUserName, mNature, mType, mSquadId;
     private int mOpe, mYear;
     private long mCount;
 
@@ -76,6 +78,7 @@ public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
         mOpe = bundle.getInt(PARAM_OPTION, MemberDutyRequest.OPE_NONE);
         mCount = bundle.getLong(PARAM_COUNT, 0);
         mYear = bundle.getInt(PARAM_YEAR, MemberDutyRequest.YEAR_ALL);
+        mSquadId = bundle.getString(PARAM_SQUAD_ID, "");
     }
 
     @Override
@@ -88,6 +91,7 @@ public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
         bundle.putInt(PARAM_YEAR, mYear);
         bundle.putString(PARAM_NATURE, mNature);
         bundle.putString(PARAM_TYPE, mType);
+        bundle.putString(PARAM_SQUAD_ID, mSquadId);
     }
 
     @Override
@@ -158,7 +162,7 @@ public class MemberDutyDetailsFragment extends BaseSwipeRefreshSupportFragment {
                 displayLoading(false);
                 displayNothing(mAdapter.getItemCount() <= 0);
             }
-        }).listMemberDuty(mOpe, mQueryId, mUserId, mYear, mNature, mType);
+        }).listMemberDuty(mOpe, mQueryId, mSquadId, mUserId, mYear, mNature, mType);
     }
 
     private OnViewHolderClickListener clickListener = new OnViewHolderClickListener() {

@@ -54,7 +54,7 @@ public class MemberRequest extends Request<Member> {
     // 成员
     private static final String GROUP_MEMBER = "/group/groMember";
     private static final String SQUAD_MEMBER = "/group/groSquMember";
-    private static final String ACTIVITY_MEMBER = "/activity/actMember";
+    private static final String ACTIVITY_MEMBER = "/group/groActivityMember";
     private static final String TOPIC_MEMBER = "/activity/actTopicMember";
     private static final String TEAM_MEMBER = "/communication/commMember";
 
@@ -315,6 +315,30 @@ public class MemberRequest extends Request<Member> {
      */
     public void listByMemberNature(String groupId, String natureId, String type) {
         String param = format("%s%s?groupId=%s&templateId=%s", "/user/appUserNature/list/", type, groupId, natureId);
+        executeHttpRequest(getRequest(PageMember.class, param, "", HttpMethods.Get));
+    }
+
+    /**
+     * 加入活动
+     */
+    public void joinActivity(String groupId, String activityId, int status) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("groupId", groupId)
+                    .put("groActivityId", activityId)
+                    .put("status", status);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        executeHttpRequest(getRequest(SingleMember.class, url(Member.Type.ACTIVITY, UPDATE), object.toString(), HttpMethods.Post));
+    }
+
+    /**
+     * 拉取组织活动成员列表
+     */
+    public void listActivityMember(String groupId, String activityId) {
+        String param = format("%s%s?groupId=%s&groActivityId=%s", url(Member.Type.ACTIVITY, LIST), groupId, activityId);
         executeHttpRequest(getRequest(PageMember.class, param, "", HttpMethods.Get));
     }
 }
