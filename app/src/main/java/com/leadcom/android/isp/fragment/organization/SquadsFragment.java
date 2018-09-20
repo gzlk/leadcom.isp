@@ -350,9 +350,9 @@ public class SquadsFragment extends GroupBaseFragment {
                     Member member = (Member) model;
                     if (selectable) {
                         member.setSelected(!member.isSelected());
-                        refreshMemberSelectInSquads(member.getUserId(), member.isSelected());
-                        //mAdapter.update(member);
-                        //checkSquadMemberAllSelected(member.getSquadId());
+                        //refreshMemberSelectInSquads(member.getUserId(), member.isSelected());
+                        mAdapter.update(member);
+                        checkSquadMemberAllSelected(member.getSquadId());
                     } else {
                         App.openUserInfo(SquadsFragment.this, member.getUserId(), member.getGroupId());
                     }
@@ -529,10 +529,12 @@ public class SquadsFragment extends GroupBaseFragment {
 
     private void initializeAdapter() {
         if (null == mAdapter) {
+            setLoadingText(0);
             mAdapter = new SquadAdapter();
             mRecyclerView.addOnItemTouchListener(new SwipeItemLayout.OnSwipeItemTouchListener(Activity()));
             mRecyclerView.setAdapter(mAdapter);
             OverScrollDecoratorHelper.setUpOverScroll(mRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+            displayLoading(true);
             fetchingRemoteSquads(mQueryId);
         }
     }
@@ -545,13 +547,15 @@ public class SquadsFragment extends GroupBaseFragment {
         }
         for (Squad squad : squads) {
             for (Member member : squad.getGroSquMemberList()) {
-                if (selected.contains(member.getUserId())) {
+                SubMember sub = new SubMember(member);
+                if (selected.contains(sub)) {
                     member.setSelected(true);
                 }
             }
             squad.setSelectable(isSquadMemberAllSelected(squad));
             mAdapter.update(squad);
         }
+        displayLoading(false);
         displayNothing(mAdapter.getItemCount() <= 0);
     }
 

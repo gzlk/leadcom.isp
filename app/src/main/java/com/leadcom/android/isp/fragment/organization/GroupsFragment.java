@@ -271,6 +271,7 @@ public class GroupsFragment extends GroupBaseFragment {
     };
 
     private void loadingGroups() {
+        displayLoading(true);
         RelationRequest.request().setOnMultipleRequestListener(new OnMultipleRequestListener<RelateGroup>() {
             @Override
             public void onResponse(List<RelateGroup> list, boolean success, int totalPages, int pageSize, int total, int pageNumber) {
@@ -283,6 +284,7 @@ public class GroupsFragment extends GroupBaseFragment {
                     }
                     handleData(list);
                 }
+                displayLoading(false);
             }
         }).list(mQueryId, mRelateType);
     }
