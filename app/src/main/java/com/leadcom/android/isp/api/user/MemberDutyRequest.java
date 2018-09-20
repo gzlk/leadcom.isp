@@ -83,7 +83,14 @@ public class MemberDutyRequest extends Request<MemberDuty> {
      * @param category   档案类型
      */
     public void list(String groupId, String squadId, int createYear, String classifyId, String category) {
-        String url = format("%s/count?groupId=%s%s", url(LIST), groupId, (isEmpty(squadId) ? "" : format("&squadId=%s", squadId)));
+        //String url = format("%s/count?groupId=%s%s", url(LIST), groupId, (isEmpty(squadId) ? "" : format("&squadId=%s", squadId)));
+        String url = format("%s/count?", url(LIST));
+        // 小组id和组织id不能同时传
+        if (!isEmpty(squadId)) {
+            url = format("%ssquadId=%s", url, squadId);
+        } else {
+            url = format("%sgroupId=%s", url, groupId);
+        }
         url = format("%s&createDate=%d", url, createYear);
         if (!isEmpty(classifyId)) {
             url = format("%s&docClassifyId=%s", url, classifyId);
